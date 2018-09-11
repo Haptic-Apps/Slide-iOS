@@ -507,8 +507,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     var progressBar: ProgressBarView!
     var typeImage: UIImageView!
-    var panGestureRecognizer: UIPanGestureRecognizer!
-    var panGestureRecognizer2: UIPanGestureRecognizer!
+    var panGestureRecognizer: UIPanGestureRecognizer?
+    var panGestureRecognizer2: UIPanGestureRecognizer?
     var previousTranslation: CGFloat!
     var previousProgress: Float!
     var dragCancelled = false
@@ -530,11 +530,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.layer.cornerRadius = 22.5
                 $0.clipsToBounds = true
             }
-            contentView.addSubviews(typeImage, progressBar)
-            contentView.bringSubview(toFront: typeImage)
-            typeImage.centerAnchors == self.contentView.centerAnchors
-            typeImage.heightAnchor == 45
-            typeImage.widthAnchor == 45
             previousTranslation = 0
             previousProgress = 0
         }
@@ -560,7 +555,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
                 dragCancelled = true
                 return
+            } else if progressBar.superview == nil {
+                contentView.addSubviews(typeImage, progressBar)
+                contentView.bringSubview(toFront: typeImage)
+                typeImage.centerAnchors == self.contentView.centerAnchors
+                typeImage.heightAnchor == 45
+                typeImage.widthAnchor == 45
             }
+            
             progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
             let currentProgress = progressBar.progress
             if previousProgress >= 0.1 && currentProgress < 0.1 {
@@ -600,19 +602,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.progressBar.alpha = 0
                 self.typeImage.alpha = 0
                 self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-            }) { (_) in
+            }, completion: { (_) in
                 self.progressBar.removeFromSuperview()
                 self.typeImage.removeFromSuperview()
-            }
+            })
         } else {
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.progressBar.progress = 0
                 self.progressBar.alpha = 0
                 self.typeImage.alpha = 0
-            }) { (_) in
+            }, completion: { (_) in
                 self.progressBar.removeFromSuperview()
                 self.typeImage.removeFromSuperview()
-            }
+            })
         }
         
         if dragCancelled {
@@ -620,10 +622,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.progressBar.progress = 0
                 self.typeImage.alpha = 0
                 self.progressBar.alpha = 0
-            }) { (_) in
+            }, completion: { (_) in
                 self.progressBar.removeFromSuperview()
                 self.typeImage.removeFromSuperview()
-            }
+            })
         }
     }
     
@@ -757,8 +759,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 } else {
                     sideButtons.leftAnchor == contentView.leftAnchor + ceight
                 }
-                sideScore.widthAnchor == CGFloat(48)
-                sideButtons.widthAnchor == CGFloat(48)
+                sideScore.widthAnchor == CGFloat(40)
+                sideButtons.widthAnchor == CGFloat(40)
             }
             
             title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
@@ -899,7 +901,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func doDTap(_ sender: AnyObject) {
-        switch SettingValues.submissionActionDoubleTap {
+        doAction(item: SettingValues.submissionActionDoubleTap)
+    }
+    
+    func doAction(item: SettingValues.SubmissionAction) {
+        switch item {
         case .UPVOTE:
             self.upvote()
         case .DOWNVOTE:
@@ -914,37 +920,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         case .SUBREDDIT:
             let sub = SingleSubredditViewController.init(subName: self.link!.subreddit, single: true)
-            VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
-        default:
-            break
-        }
-    }
-    
-    func doAction(left: Bool) {
-        switch left ? SettingValues.submissionActionLeft : SettingValues.submissionActionRight {
-        case .UPVOTE:
-            self.upvote()
-        case .DOWNVOTE:
-            self.downvote()
-        case .SAVE:
-            self.save()
-        case .MENU:
-            self.more()
-        default:
-            break
-        }
-    }
-    
-    func doAction(item: SettingValues.SubmissionAction) {
-        switch item {
-        case .UPVOTE:
-            self.upvote()
-        case .DOWNVOTE:
-            self.downvote()
-        case .SAVE:
-            self.save()
-        case .MENU:
-            self.more()
+            VCPresenter.showVC(viewController: sub, popupIfPossible: false, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
         default:
             break
         }
@@ -981,8 +957,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if !activeSet {
             let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
-            title.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            title.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            title.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+            title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             activeSet = true
         }
         
@@ -1595,12 +1571,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func unmute() {
         self.videoView?.player?.isMuted = false
-        print("Un muting")
         UIView.animate(withDuration: 0.5, animations: {
             self.sound.alpha = 0
-        }) { (_) in
+        }, completion: { (_) in
             self.sound.isHidden = true
-        }
+        })
     }
     
     func submitFlairChange(_ flair: FlairTemplate, text: String? = "") {

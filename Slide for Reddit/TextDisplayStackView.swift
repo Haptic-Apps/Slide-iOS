@@ -101,8 +101,8 @@ public class TextDisplayStackView: UIStackView {
             activeSet = true
             let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
         }
         
         firstTextView.setText(string)
@@ -145,8 +145,8 @@ public class TextDisplayStackView: UIStackView {
             
             let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             
             firstTextView.setText(newTitle)
             if let long = parentLongPress {
@@ -179,8 +179,8 @@ public class TextDisplayStackView: UIStackView {
             
                 let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             
             firstTextView.setText(newTitle)
             if let long = parentLongPress {
@@ -221,8 +221,8 @@ public class TextDisplayStackView: UIStackView {
                 activeSet = true
                 let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             }
             
             firstTextView.setText(text)
@@ -300,8 +300,8 @@ public class TextDisplayStackView: UIStackView {
                 
                 let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = tColor
-                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                label.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+                label.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
                 label.setText(text)
                 

@@ -141,34 +141,34 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         
         menuButton = UIButton().then {
             $0.accessibilityIdentifier = "More Button"
-            $0.setImage(UIImage(named: "moreh")?.navIcon(), for: [])
+            $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         downloadButton = UIButton().then {
             $0.accessibilityIdentifier = "Download Button"
-            $0.setImage(UIImage(named: "download")?.navIcon(), for: [])
+            $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
             $0.isHidden = true // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         ytButton = UIButton().then {
             $0.accessibilityIdentifier = "Open in YouTube"
-            $0.setImage(UIImage(named: "youtube")?.navIcon(), for: [])
+            $0.setImage(UIImage(named: "youtube")?.navIcon(true), for: [])
             $0.isHidden = true // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         goToCommentsButton = UIButton().then {
             $0.accessibilityIdentifier = "Go to Comments Button"
-            $0.setImage(UIImage(named: "comments")?.navIcon(), for: [])
+            $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
             $0.isHidden = commentCallback == nil
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
                 
         showTitleButton = UIButton().then {
             $0.accessibilityIdentifier = "Show Title Button"
-            $0.setImage(UIImage(named: "size")?.navIcon(), for: [])
+            $0.setImage(UIImage(named: "size")?.navIcon(true), for: [])
             $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }

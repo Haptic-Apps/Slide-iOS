@@ -286,13 +286,13 @@ class AnyModalViewController: UIViewController {
         
         menuButton = UIButton().then {
             $0.accessibilityIdentifier = "More Button"
-            $0.setImage(UIImage(named: "moreh")?.navIcon(), for: [])
+            $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         downloadButton = UIButton().then {
             $0.accessibilityIdentifier = "Download Button"
-            $0.setImage(UIImage(named: "download")?.navIcon(), for: [])
+            $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
             $0.isHidden = true // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
@@ -304,7 +304,7 @@ class AnyModalViewController: UIViewController {
         
         let navItem = UINavigationItem(title: "")
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
+        close.setImage(UIImage.init(named: "close")?.navIcon(true), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)

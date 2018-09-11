@@ -57,7 +57,7 @@ public class LocalKeystore {
                     "expires_in": token.expiresIn as AnyObject,
                     "expires_date": token.expiresDate as AnyObject,
                     "scope": token.scope as AnyObject,
-                    "refresh_token": token.refreshToken as AnyObject]
+                    "refresh_token": token.refreshToken as AnyObject,]
 
             let data = try JSONSerialization.data(withJSONObject: JSONObject, options: [])
             UserDefaults.standard.set(data, forKey: "AUTH+\(token.name)")
@@ -82,7 +82,7 @@ public class LocalKeystore {
                 "expires_in": token.expiresIn as AnyObject,
                 "expires_date": token.expiresDate as AnyObject,
                 "scope": token.scope as AnyObject,
-                "refresh_token": token.refreshToken as AnyObject]
+                "refresh_token": token.refreshToken as AnyObject,]
             
             let data = try JSONSerialization.data(withJSONObject: JSONObject, options: [])
             UserDefaults.standard.set(data, forKey: "AUTH+\(name)")

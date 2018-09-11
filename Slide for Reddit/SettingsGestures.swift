@@ -243,7 +243,7 @@ class SettingsGestures: UITableViewController {
             HapticUtility.hapticActionWeak()
             var actions = [UIContextualAction]()
             if SettingValues.commentActionRightRight != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
                     b(true)
                 })
                 action.backgroundColor = SettingValues.commentActionRightRight.getColor()
@@ -252,7 +252,7 @@ class SettingsGestures: UITableViewController {
                 actions.append(action)
             }
             if SettingValues.commentActionRightLeft != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
                     b(true)
                 })
                 action.backgroundColor = SettingValues.commentActionRightLeft.getColor()

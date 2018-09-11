@@ -1176,7 +1176,7 @@ class SingleSubredditViewController: MediaViewController {
                             let pageItem = RSubmission()
                             pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
                             pageItem.author = "PAGE_SEPARATOR"
-                            pageItem.title = "Page \(self.page + 1)\n\(self.links.count + values.count) posts"
+                            pageItem.title = "Page \(self.page + 1)\n\(self.links.count + values.count - self.page) posts"
                             values.insert(pageItem, at: 0)
                         }
                         self.page += 1
@@ -1517,7 +1517,7 @@ class SingleSubredditViewController: MediaViewController {
         }
         
         if SettingValues.actionBarMode.isSide() {
-            estimatedUsableWidth -= 36
+            estimatedUsableWidth -= 40
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
             if thumb {
                 estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
@@ -1993,6 +1993,9 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         cell.del = self
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.main.scale
+        
+        cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
+        cell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
 
         cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub)
 

@@ -460,8 +460,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                 
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
-                text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                text1.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+                text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
                 text1.setText(content)
 
@@ -672,8 +672,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                 
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
                 activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
-                text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-                text1.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+                text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+                text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
                 text1.setText(content)
 

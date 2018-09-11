@@ -91,7 +91,7 @@ extension RSubmission {
         if target == .thumb {
             cell = ThumbnailLinkCellView()
         } else if target == .banner {
-            if SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO){
+            if SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO) {
                 cell = AutoplayBannerLinkCellView()
             } else {
                 cell = BannerLinkCellView()

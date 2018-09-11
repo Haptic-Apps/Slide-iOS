@@ -549,7 +549,7 @@ extension Session {
      
      - parameter completion: The completion handler to call when the load request is complete.
      */
-    public func refreshTokenLocal(_ completion: @escaping (Result<Token>) -> Void) throws -> Void {
+    public func refreshTokenLocal(_ completion: @escaping (Result<Token>) -> Void) throws {
         guard let currentToken = token as? OAuth2Token
             else { throw ReddiftError.tokenIsNotAvailable as NSError }
         do {
@@ -575,7 +575,7 @@ extension Session {
      
      - parameter completion: The completion handler to call when the load request is complete.
      */
-    public func revokeTokenLocal(_ completion: @escaping (Result<Token>) -> Void) throws -> Void {
+    public func revokeTokenLocal(_ completion: @escaping (Result<Token>) -> Void) throws {
         guard let currentToken = token as? OAuth2Token
             else { throw ReddiftError.tokenIsNotAvailable as NSError }
         do {

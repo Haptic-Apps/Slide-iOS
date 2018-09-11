@@ -56,7 +56,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                 animated: true,
                                 completion: nil)
         self.navItem?.title = "1/\(self.urlStringKeys.count)"
-        let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(overview(_:)))
+        let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon(true), style: .plain, target: self, action: #selector(overview(_:)))
         navItem?.rightBarButtonItem = gridB
     }
     
@@ -206,9 +206,10 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true
+        navigationBar.tintColor = .white
         navItem = UINavigationItem(title: "Loading album...")
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
+        close.setImage(UIImage.init(named: "close")?.navIcon(true), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)

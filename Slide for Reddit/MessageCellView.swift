@@ -145,8 +145,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
             
             let activeLinkAttributes = NSMutableDictionary(dictionary: textView.activeLinkAttributes)
             activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
-            textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
-            textView.linkAttributes = activeLinkAttributes as NSDictionary as! [AnyHashable: Any]
+            textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+            textView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
             textView.setText(content)
             let framesetterB = CTFramesetterCreateWithAttributedString(content!)
