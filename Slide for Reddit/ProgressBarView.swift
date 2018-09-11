@@ -17,7 +17,7 @@ class ProgressBarView: UIView {
     var progressType: SettingValues.SubmissionAction!
     
     var progress: Float = 0 {
-        willSet(newValue) {
+        didSet(newValue) {
             progressLayer.strokeEnd = CGFloat(newValue)
         }
     }

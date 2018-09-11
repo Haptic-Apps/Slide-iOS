@@ -1994,8 +1994,8 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.main.scale
         
-        cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
-        cell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
+        //cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
+        //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
 
         cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub)
 

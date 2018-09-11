@@ -563,7 +563,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 typeImage.widthAnchor == 45
             }
             
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
             progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
+            CATransaction.commit()
+
             let currentProgress = progressBar.progress
             if previousProgress >= 0.1 && currentProgress < 0.1 {
                 progressBar.setMode(type: .NONE)
@@ -571,12 +575,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if currentTranslation > 0 && direction == 1 {
                     let action = SettingValues.submissionActionRight
                     progressBar.setMode(type: action, flip: currentTranslation < 0)
-                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 20), withColor: .white)
                     typeImage.backgroundColor = action.getColor()
                 } else if currentTranslation <= 0 && direction == -1 {
                     let action = SettingValues.submissionActionLeft
                     progressBar.setMode(type: action, flip: currentTranslation < 0)
-                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 20), withColor: .white)
                     typeImage.backgroundColor = action.getColor()
                 }
             }
@@ -586,13 +590,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
             }
             typeImage.alpha = CGFloat(currentProgress)
-            if currentProgress == 1 {
-                doAction(item: progressBar.progressType!)
-                UIView.animate(withDuration: 0.4, animations: {
-                    self.progressBar.alpha = 0
-                })
-                progressBar.progressType = .NONE
-            }
             previousTranslation = currentTranslation
             previousProgress = currentProgress
         } else if sender.state == .ended && progressBar.progress >= 0.4 {

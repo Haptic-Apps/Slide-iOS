@@ -64,7 +64,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.dataSource = self
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
-         let firstViewController = vCs[0]
+        let firstViewController = vCs[0]
 
         if SettingValues.swipeAnywhereComments {
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
