@@ -1173,7 +1173,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if big {
             bannerImage.isHidden = false
             updater?.invalidate()
-            if (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && SettingValues.shouldAutoPlay() && ContentType.displayVideo(t: type) && type != .VIDEO)) && SettingValues.autoPlayMode != .TAP {
+            let shouldAutoplay = SettingValues.shouldAutoPlay()
+            if (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay && ContentType.displayVideo(t: type) && type != .VIDEO)) && SettingValues.autoPlayMode != .TAP {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
@@ -1186,7 +1187,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.topVideoView.isHidden = true
             }
             
-            if SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView) {
+            if (SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false

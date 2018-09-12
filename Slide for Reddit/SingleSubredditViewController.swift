@@ -1603,7 +1603,7 @@ class SingleSubredditViewController: MediaViewController {
         if thumb && !big {
             target = .thumb
         } else if big {
-            if SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO) {
+            if SettingValues.autoPlayMode != .NEVER && (ContentType.displayVideo(t: type) && type != .VIDEO) {
                 target = .autoplay
             } else {
                 target = .banner
