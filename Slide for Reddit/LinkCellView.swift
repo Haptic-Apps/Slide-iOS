@@ -99,6 +99,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var sound: UIButton!
     var updater: CADisplayLink?
     var timeView: UILabel!
+    var playView: UIImageView!
     
     var avPlayerItem: AVPlayerItem?
     
@@ -359,7 +360,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if !SettingValues.flatMode {
                     $0.layer.cornerRadius = 15
                 }
-                $0.backgroundColor = .black
+                $0.backgroundColor = .clear
                 $0.layer.masksToBounds = true
             }
             
@@ -382,6 +383,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             contentView.addSubviews(videoView, topVideoView)
             contentView.bringSubview(toFront: videoView)
             contentView.bringSubview(toFront: topVideoView)
+            
+            playView = UIImageView().then {
+                    $0.image = UIImage(named: "play")?.getCopy(withSize: CGSize.square(size: 70), withColor: .white)
+                    $0.contentMode = .center
+                    $0.isHidden = true
+            }
+            topVideoView.addSubview(playView)
         }
         
         contentView.layer.masksToBounds = true
@@ -737,6 +745,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             sound.heightAnchor == 30
             sound.rightAnchor == topVideoView.rightAnchor
             sound.bottomAnchor == topVideoView.bottomAnchor
+            
+            playView.widthAnchor == 70
+            playView.heightAnchor == 70
+            playView.centerAnchors == topVideoView.centerAnchors
         }
         
         // Remove all constraints previously applied by this method
@@ -1161,49 +1173,28 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if big {
             bannerImage.isHidden = false
             updater?.invalidate()
-            if self is AutoplayBannerLinkCellView || (self is FullLinkCellView && SettingValues.shouldAutoPlay() && ContentType.displayVideo(t: type) && type != .VIDEO) {
+            if (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && SettingValues.shouldAutoPlay() && ContentType.displayVideo(t: type) && type != .VIDEO)) && SettingValues.autoPlayMode != .TAP {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
                 sound.isHidden = true
                 self.updateProgress(-1, "")
                 self.contentView.bringSubview(toFront: topVideoView!)
-                let baseUrl: URL
-                if !submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: submission.url!) {
-                    baseUrl = URL.init(string: link!.videoPreview)!
-                } else {
-                    baseUrl = submission.url!
-                }
-                let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
-                let videoType = VideoMediaViewController.VideoType.fromPath(url)
-                videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
-                    guard let strongSelf = self else { return }
-                    DispatchQueue.main.async {
-                        strongSelf.bannerImage.isHidden = true
-                        strongSelf.avPlayerItem = AVPlayerItem(url: URL(string: urlString)!)
-                        strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
-                        do {
-                            if SettingValues.matchSilence {
-                                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-                            } else {
-                                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-                            }
-                        } catch {
-                            
-                        }
-                        strongSelf.videoView?.player?.play()
-                        strongSelf.videoView?.player?.isMuted = true
-                        strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
-                        strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
-                        strongSelf.updater?.add(to: .current, forMode: .defaultRunLoopMode)
-                        strongSelf.updater?.isPaused = false
-                    }
-                    }, failure: {
-                        
-                })
+                doLoadVideo()
             } else if self is FullLinkCellView {
                 self.videoView.isHidden = true
                 self.topVideoView.isHidden = true
+            }
+            
+            if SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView) {
+                videoView?.player?.pause()
+                videoView?.isHidden = false
+                topVideoView?.isHidden = false
+                sound.isHidden = true
+                self.updateProgress(-1, "")
+                self.contentView.bringSubview(toFront: topVideoView!)
+                self.playView.isHidden = false
+                self.progressDot.isHidden = true
             }
             
             bannerImage.alpha = 0
@@ -1382,6 +1373,47 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         case .Online(.WiFi):
             return true
         }
+    }
+    
+    func doLoadVideo() {
+        let baseUrl: URL
+        if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!) {
+            baseUrl = URL.init(string: link!.videoPreview)!
+        } else {
+            baseUrl = link!.url!
+        }
+        let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
+        let videoType = VideoMediaViewController.VideoType.fromPath(url)
+        videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
+            guard let strongSelf = self else { return }
+            DispatchQueue.main.async {
+                strongSelf.avPlayerItem = AVPlayerItem(url: URL(string: urlString)!)
+                strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
+                do {
+                    if SettingValues.matchSilence {
+                        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                    } else {
+                        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                    }
+                } catch {
+                    
+                }
+                strongSelf.videoView?.player?.play()
+                strongSelf.videoView?.player?.isMuted = true
+                strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
+                strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
+                strongSelf.updater?.add(to: .current, forMode: .defaultRunLoopMode)
+                strongSelf.updater?.isPaused = false
+                UIView.animate(withDuration: 0.3, animations: {
+                    strongSelf.bannerImage.alpha = 0
+                }, completion: { (_) in
+                    strongSelf.bannerImage.isHidden = true
+                    strongSelf.bannerImage.alpha = 1
+                })
+            }
+            }, failure: {
+                
+        })
     }
     
     public static var cachedInternet: Bool?
@@ -1857,13 +1889,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func openLinkVideo(sender: UITapGestureRecognizer? = nil) {
-        let controller = AnyModalViewController(cellView: self)
-        let postContentTransitioningDelegate = PostContentPresentationManager()
-        postContentTransitioningDelegate.sourceImageView = self.videoView
-        controller.transitioningDelegate = postContentTransitioningDelegate
-        controller.modalPresentationStyle = .custom
-
-        parentViewController?.present(controller, animated: true, completion: nil)
+        if !playView.isHidden {
+            doLoadVideo()
+            playView.isHidden = true
+            self.progressDot.isHidden = false
+        } else {
+            let controller = AnyModalViewController(cellView: self)
+            let postContentTransitioningDelegate = PostContentPresentationManager()
+            postContentTransitioningDelegate.sourceImageView = self.videoView
+            controller.transitioningDelegate = postContentTransitioningDelegate
+            controller.modalPresentationStyle = .custom
+            
+            parentViewController?.present(controller, animated: true, completion: nil)
+        }
     }
     
     func openComment(sender: UITapGestureRecognizer? = nil) {

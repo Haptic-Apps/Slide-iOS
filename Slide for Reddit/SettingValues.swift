@@ -233,11 +233,12 @@ class SettingValues {
     }
 
     enum AutoPlay: String {
-        static let cases: [AutoPlay] = [.ALWAYS, .WIFI, .NEVER]
+        static let cases: [AutoPlay] = [.ALWAYS, .WIFI, .TAP, .NEVER]
 
         case NEVER = "never"
         case WIFI = "wifi_only"
         case ALWAYS = "always"
+        case TAP = "tap"
         
         func description() -> String {
             switch self {
@@ -247,6 +248,8 @@ class SettingValues {
                 return "Always autoplay videos"
             case .WIFI:
                 return "Autoplay only on WiFi"
+            case .TAP:
+                return "Play videos on tap"
             }
         }
     }
@@ -259,6 +262,8 @@ class SettingValues {
             return LinkCellView.checkWiFi()
         case .NEVER:
             return false
+        case .TAP:
+            return true
         }
     }
 
