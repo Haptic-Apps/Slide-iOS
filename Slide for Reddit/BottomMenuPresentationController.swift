@@ -267,27 +267,6 @@ extension PanGestureInteractionController: UIGestureRecognizerDelegate {
 
 }
 
-extension CGPoint {
-
-    static func * (left: CGPoint, right: CGPoint) -> CGFloat {
-        return left.x * right.x + left.y * right.y
-    }
-
-    /**
-     * Returns the length (magnitude) of the vector described by the CGPoint.
-     */
-    public var magnitude: CGFloat {
-        return sqrt(lengthSquare)
-    }
-
-    /**
-     * Returns the squared length of the vector described by the CGPoint.
-     */
-    public var lengthSquare: CGFloat {
-        return x * x + y * y
-    }
-}
-
 extension UIPanGestureRecognizer {
 
     fileprivate func angle(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
@@ -295,7 +274,7 @@ extension UIPanGestureRecognizer {
         return atan2(a.y, a.x) - atan2(b.y, b.x)
     }
 
-    func shouldRecognizeForDirection() -> Bool {
+    fileprivate func shouldRecognizeForDirection() -> Bool {
         guard let view = view else {
             return false
         }

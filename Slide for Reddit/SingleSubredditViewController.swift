@@ -21,7 +21,7 @@ import UIKit
 import XLActionController
 
 // MARK: - Base
-class SingleSubredditViewController: MediaViewController, UIGestureRecognizerDelegate {
+class SingleSubredditViewController: MediaViewController {
 
     override var keyCommands: [UIKeyCommand]? {
         return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
@@ -173,9 +173,6 @@ class SingleSubredditViewController: MediaViewController, UIGestureRecognizerDel
     
     var translatingCell: LinkCellView?
     func panCell(_ recognizer: UIPanGestureRecognizer) {
-        if recognizer != panGesture || recognizer.shouldRecognizeForDirection() {
-            return
-        }
         
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!).x
@@ -2233,6 +2230,28 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         self.present(actionSheetController, animated: true, completion: nil)
 
     }
+}
+
+extension SingleSubredditViewController: UIGestureRecognizerDelegate {
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if gestureRecognizer == panGesture {
+            if SettingValues.submissionActionLeft == .NONE && SettingValues.submissionActionRight == .NONE {
+                return false
+            }
+        }
+        return true
+    }
+
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Limit angle of pan gesture recognizer to avoid interfering with scrolling
+        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
+            return recognizer.shouldRecognizeForAxis(.horizontal, withAngleToleranceInDegrees: 30)
+        }
+
+        return true
+    }
+
 }
 
 public class LoadingCell: UICollectionViewCell {
