@@ -6,15 +6,18 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import reddift
 import UIKit
 
 class GalleryTableViewController: MediaTableViewController {
-    var panGestureRecognizer: UIPanGestureRecognizer?
-    public var background: UIView?
-        var originalPosition: CGPoint?
+    var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
-    
+    var exit: UIView!
+    var done = false
+    public var blurView: UIVisualEffectView?
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+
     var items: [RSubmission] = []
     
     func setLinks(links: [RSubmission]) {
@@ -25,6 +28,43 @@ class GalleryTableViewController: MediaTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UIApplication.shared.statusBarView?.backgroundColor = .black
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !done {
+            done = true
+            if let view = self.view.superview {
+                view.addSubview(exit)
+                view.bringSubview(toFront: exit)
+                exit.bottomAnchor == view.bottomAnchor - 8
+                exit.rightAnchor == view.rightAnchor - 8
+                exit.widthAnchor == 50
+                exit.heightAnchor == 50
+                exit.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+                
+                blurView = UIVisualEffectView(frame: exit.bounds)
+                blurEffect.setValue(3, forKeyPath: "blurRadius")
+                blurView!.effect = blurEffect
+                exit.insertSubview(blurView!, at: 0)
+                blurView!.edgeAnchors == exit.edgeAnchors
+                
+                let image = UIImageView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
+                    $0.image = UIImage(named: "close")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    $0.contentMode = .center
+                }
+                exit.addSubview(image)
+                image.edgeAnchors == exit.edgeAnchors
+                exit.addTapGestureRecognizer {
+                    self.exit.removeFromSuperview()
+                    self.doExit()
+                }
+                
+                UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
+                    self.exit.transform = .identity
+                }, completion: nil)
+            }
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -46,71 +86,15 @@ class GalleryTableViewController: MediaTableViewController {
         self.tableView.register(GalleryCellView.classForCoder(), forCellReuseIdentifier: "cell")
         self.tableView.backgroundColor = UIColor.black
         self.tableView.separatorStyle = .none
-        let exit = UIView.init(frame: CGRect.init(x: 0, y: UIScreen.main.bounds.height - 56, width: self.view.frame.size.width, height: 56))
-        exit.backgroundColor = .black
-
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: self.view.frame.size.width - 40, y: 13, width: 30, height: 30)
-
-        exit.addSubview(close)
-        self.view.addSubview(exit)
         
-        panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
-        panGestureRecognizer!.direction = .vertical
-        view.addGestureRecognizer(panGestureRecognizer!)
-        panGestureRecognizer?.require(toFail: tableView.panGestureRecognizer)
-        background = UIView()
-        background!.frame = self.view.frame
-        background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        background!.backgroundColor = .black
-
-    }
-    
-    func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
-        let translation = panGesture.translation(in: view)
-        
-        if panGesture.state == .began {
-            originalPosition = view.center
-            currentPositionTouched = panGesture.location(in: view)
-        } else if panGesture.state == .changed {
-            view.frame.origin = CGPoint(
-                x: 0,
-                y: translation.y
-            )
-            let progress = translation.y / (self.view.frame.size.height / 2)
-            background!.alpha = 1 - (abs(progress) * 0.9)
-            
-        } else if panGesture.state == .ended {
-            let velocity = panGesture.velocity(in: view)
-            
-            let down = panGesture.velocity(in: view).y > 0
-            if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2 {
-                
-                UIView.animate(withDuration: 0.2, animations: {
-                        self.view.frame.origin = CGPoint(
-                            x: self.view.frame.origin.x,
-                            y: self.view.frame.size.height * (down ? 1 : -1) )
-                        
-                        self.background!.alpha = 0.1
-                        
-                }, completion: { (isCompleted) in
-                    if isCompleted {
-                        self.dismiss(animated: false, completion: nil)
-                    }
-                })
-            } else {
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.view.center = self.originalPosition!
-                    self.background!.alpha = 1
-                    
-                })
-            }
+        exit = UIView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
+            $0.clipsToBounds = true
+            $0.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+            $0.layer.cornerRadius = 25
         }
     }
-
-    func exit() {
+    
+    func doExit() {
         self.dismiss(animated: true, completion: nil)
     }
 

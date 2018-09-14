@@ -330,6 +330,7 @@ class AnyModalViewController: UIViewController {
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
         
         scrubber.horizontalAnchors == view.safeHorizontalAnchors + 8
+        scrubber.heightAnchor == 28
         scrubber.bottomAnchor == bottomButtons.topAnchor - 16
         
         if #available(iOS 11, *) {

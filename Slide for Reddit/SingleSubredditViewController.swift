@@ -44,6 +44,8 @@ class SingleSubredditViewController: MediaViewController {
     let margin: CGFloat = 10
     let cellsPerRow = 3
     
+    var panGesture: UIPanGestureRecognizer!
+    
     var times = 0
     var startTime = Date()
 
@@ -141,7 +143,11 @@ class SingleSubredditViewController: MediaViewController {
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
-
+        
+        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
+        panGesture.direction = .horizontal
+        self.tableView.addGestureRecognizer(panGesture)
+    
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
@@ -158,6 +164,28 @@ class SingleSubredditViewController: MediaViewController {
                     break
                 }
             }
+        }
+    }
+    
+    var translatingCell: LinkCellView?
+    func panCell(_ recognizer: UIPanGestureRecognizer) {
+        if recognizer != panGesture {
+            return
+        }
+        
+        if recognizer.state == .began || translatingCell == nil {
+            let point = recognizer.location(in: self.tableView)
+            let indexpath = self.tableView.indexPathForItem(at: point)
+            if indexpath == nil{  return }
+
+            guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
+                return
+            }
+            translatingCell = cell
+        }
+        translatingCell?.handlePan(recognizer)
+        if recognizer.state == .ended {
+            translatingCell = nil
         }
     }
 
@@ -295,14 +323,8 @@ class SingleSubredditViewController: MediaViewController {
         }
         lastYUsed = currentY
         lastY = currentY
-        
-        if scrollView.contentSize.height - (scrollView.contentOffset.y + scrollView.frame.size.height) < 300 {
-            if !loading && !nomore {
-                self.loadMore()
-            }
-        }
     }
-
+    
     func hideUI(inHeader: Bool) {
         isHiding = true
         if navbarEnabled {
@@ -363,7 +385,6 @@ class SingleSubredditViewController: MediaViewController {
                         } else {
                             UIView.animate(withDuration: 0.25) {
                                 self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
-                                self.parentController?.menuNav?.topView?.layer.cornerRadius = 0
                             }
                         }
                     }
@@ -1921,6 +1942,7 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
             (cell as! LinkCellView).videoView!.player?.pause()
             (cell as! LinkCellView).videoView!.player?.currentItem?.asset.cancelLoading()
             (cell as! LinkCellView).videoView!.player?.currentItem?.cancelPendingSeeks()
+            (cell as! LinkCellView).videoView!.player = nil
             (cell as! LinkCellView).updater?.invalidate()
         }
         if SettingValues.markReadOnScroll && indexPath.row < links.count {
@@ -1941,6 +1963,9 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
             cell.loader.color = ColorUtil.fontColor
             cell.loader.startAnimating()
+            if !loading && !nomore {
+                self.loadMore()
+            }
             return cell
         }
 

@@ -43,14 +43,14 @@ class ProgressBarView: UIView {
         baseLayer.path = cPath.cgPath
         baseLayer.lineWidth = self.frame.height
         baseLayer.fillColor = nil
-        baseLayer.strokeColor = UIColor.clear.withAlphaComponent(0.3).cgColor
+        baseLayer.strokeColor = UIColor.clear.cgColor
         
         progressLayer = CAShapeLayer()
         progressLayer.path = cPath.cgPath
         progressLayer.lineCap = kCALineCapButt
         progressLayer.lineWidth = self.frame.height
         progressLayer.fillColor = nil
-        progressLayer.strokeColor = UIColor.clear.withAlphaComponent(0.6).cgColor
+        progressLayer.strokeColor = UIColor.clear.cgColor
         progressLayer.strokeEnd = 0.0
         
         self.layer.addSublayer(baseLayer)

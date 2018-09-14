@@ -217,6 +217,7 @@ class VideoMediaViewController: EmbeddableMediaViewController {
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
 
         scrubber.horizontalAnchors == view.safeHorizontalAnchors + 8
+        scrubber.heightAnchor == 10
         scrubber.bottomAnchor == bottomButtons.topAnchor - 16
 
     }

@@ -487,26 +487,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 self.contentView.addGestureRecognizer(longPress!)
             }
-            
-            if panGestureRecognizer == nil && (SettingValues.submissionActionRight != .NONE || SettingValues.submissionActionLeft != .NONE) {
-                panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(LinkCellView.handlePan(_:)))
-                panGestureRecognizer!.direction = .horizontal
-                panGestureRecognizer!.delegate = self
-                self.title.addGestureRecognizer(panGestureRecognizer!)
-            }
-            if panGestureRecognizer2 == nil && (SettingValues.submissionActionRight != .NONE || SettingValues.submissionActionLeft != .NONE) && (self is BannerLinkCellView || self is AutoplayBannerLinkCellView || self is FullLinkCellView) {
-                panGestureRecognizer2 = UIPanGestureRecognizer(target: self, action: #selector(LinkCellView.handlePan(_:)))
-                panGestureRecognizer2!.direction = .horizontal
-                panGestureRecognizer2!.delegate = self
-                if self is BannerLinkCellView {
-                    self.bannerImage.addGestureRecognizer(panGestureRecognizer2!)
-                } else if self is AutoplayBannerLinkCellView {
-                    self.topVideoView.addGestureRecognizer(panGestureRecognizer2!)
-                } else {
-                    self.bannerImage.addGestureRecognizer(panGestureRecognizer2!)
-                }
-            }
-
             addTouch = true
         }
         
@@ -517,28 +497,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     var progressBar: ProgressBarView!
     var typeImage: UIImageView!
-    var panGestureRecognizer: UIPanGestureRecognizer?
-    var panGestureRecognizer2: UIPanGestureRecognizer?
-    var previousTranslation: CGFloat!
+    var previousTranslation: CGFloat = 0
     var previousProgress: Float!
     var dragCancelled = false
     var direction = 0
     
-    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
-            return !isVerticalGesture(panGestureRecognizer)
-        }
-        return super.gestureRecognizerShouldBegin(gestureRecognizer)
-    }
-    
-    private func isVerticalGesture(_ recognizer: UIPanGestureRecognizer) -> Bool {
-        let translation = recognizer.translation(in: superview!)
-        if fabs(translation.y) > fabs(translation.x) {
-            return true
-        }
-        return false
-    }
-
     func handlePan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began {
             dragCancelled = false
@@ -559,30 +522,36 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             previousTranslation = 0
             previousProgress = 0
         }
+        
         if dragCancelled {
             return
         }
-        if sender.state != .ended {
+        let xVelocity = sender.velocity(in: contentView).x
+        print("\(xVelocity)")
+        if sender.state != .ended && sender.state != .began {
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: contentView).x
-            let currentTranslation = ((direction == 0 && sender.translation(in: sender.view!).x < 0) || direction == -1) ? 0 - (contentView.bounds.size.width - posx) : posx
-            if previousTranslation <= 0 && currentTranslation > 0 {
-                if direction != -1 {
+            if direction == 0 {
+                if xVelocity > 0 {
                     direction = 1
-                    progressBar.setMode(type: .NONE, flip: false)
-                }
-            } else if previousTranslation >= 0 && currentTranslation < 0 {
-                if direction != 1 {
+                    progressBar.setMode(type: SettingValues.submissionActionRight, flip: false)
+                    typeImage.image = UIImage(named: SettingValues.submissionActionRight.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.backgroundColor = SettingValues.submissionActionRight.getColor()
+                } else {
                     direction = -1
-                    progressBar.setMode(type: .NONE, flip: true)
+                    progressBar.setMode(type: SettingValues.submissionActionLeft, flip: true)
+                    typeImage.image = UIImage(named: SettingValues.submissionActionLeft.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.backgroundColor = SettingValues.submissionActionLeft.getColor()
                 }
             }
+            
+            let currentTranslation = direction == -1 ? 0 - (contentView.bounds.size.width - posx) : posx
             
             if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
                 dragCancelled = true
                 sender.cancel()
                 return
-            } else if progressBar.superview == nil && (abs(currentTranslation) / (contentView.bounds.width)) > 0.2 {
+            } else if progressBar.superview == nil {
                 contentView.addSubviews(typeImage, progressBar)
                 contentView.bringSubview(toFront: typeImage)
                 typeImage.centerAnchors == self.contentView.centerAnchors
@@ -596,21 +565,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             CATransaction.commit()
 
             let currentProgress = progressBar.progress
-            if previousProgress >= 0.1 && currentProgress < 0.2 {
-                progressBar.setMode(type: .NONE)
-            } else if previousProgress <= 0.1 && currentProgress > 0.2 {
-                if currentTranslation > 0 && direction == 1 {
-                    let action = SettingValues.submissionActionRight
-                    progressBar.setMode(type: action, flip: currentTranslation < 0)
-                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
-                    typeImage.backgroundColor = action.getColor()
-                } else if currentTranslation <= 0 && direction == -1 {
-                    let action = SettingValues.submissionActionLeft
-                    progressBar.setMode(type: action, flip: currentTranslation < 0)
-                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
-                    typeImage.backgroundColor = action.getColor()
-                }
-            }
             if currentProgress >= 0.6 && previousProgress < 0.6 || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
@@ -619,7 +573,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             typeImage.alpha = CGFloat(currentProgress)
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && progressBar.progress >= 0.6 {
+        } else if sender.state == .ended && (progressBar.progress >= 0.6 || abs(xVelocity) > 1000) {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressType!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
@@ -630,7 +584,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.progressBar.removeFromSuperview()
                 self.typeImage.removeFromSuperview()
             })
-        } else {
+        } else if sender.state != .began {
             if self.progressBar.superview == nil {
                 return
             }
@@ -1894,7 +1848,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             doLoadVideo()
             playView.isHidden = true
             self.progressDot.isHidden = false
-        } else {
+        } else if self.videoView.player != nil {
             let controller = AnyModalViewController(cellView: self)
             let postContentTransitioningDelegate = PostContentPresentationManager()
             postContentTransitioningDelegate.sourceImageView = self.videoView

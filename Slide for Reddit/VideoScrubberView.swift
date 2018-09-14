@@ -57,7 +57,7 @@ class VideoScrubberView: UIView {
     var playButton = UIButton(type: .system)
     
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIViewNoIntrinsicMetric, height: 12)
+        return CGSize(width: UIViewNoIntrinsicMetric, height: 16)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -78,14 +78,14 @@ class VideoScrubberView: UIView {
 //        slider.thumbTintColor = ColorUtil.accentColorForSub(sub: "")
         slider.minimumTrackTintColor = ColorUtil.accentColorForSub(sub: "")
         slider.maximumTrackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.4)
-        slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withColor: .white), for: .normal)
+        slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white), for: .normal)
         self.addSubview(slider)
 
         self.addSubview(playButton)
         self.addSubview(timeTotalLabel)
         slider.leftAnchor == playButton.rightAnchor + 8
         slider.topAnchor == self.topAnchor
-        slider.bottomAnchor == self.bottomAnchor - 8
+        slider.bottomAnchor == self.bottomAnchor
         slider.rightAnchor == timeTotalLabel.leftAnchor - 8
         
         //timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -103,14 +103,14 @@ class VideoScrubberView: UIView {
         timeTotalLabel.textColor = UIColor.white
 
         timeTotalLabel.centerYAnchor == self.centerYAnchor
-        timeTotalLabel.rightAnchor == self.rightAnchor - 16
+        timeTotalLabel.rightAnchor == self.rightAnchor - 8
 
         playButton.setImage(UIImage.init(named: "pause"), for: .normal)
         playButton.tintColor = UIColor.white
         playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
 
-        playButton.sizeAnchors == .square(size: 36)
-        playButton.leftAnchor == self.leftAnchor + 16
+        playButton.sizeAnchors == .square(size: 28)
+        playButton.leftAnchor == self.leftAnchor + 8
         playButton.centerYAnchor == self.centerYAnchor
 
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
@@ -144,7 +144,7 @@ class VideoScrubberView: UIView {
         }
     }
 
-    private func getTimeString(_ time: Int) -> String {
+    fileprivate func getTimeString(_ time: Int) -> String {
         let h = time / 3600
         let m = (time % 3600) / 60
         let s = (time % 3600) % 60
@@ -164,14 +164,17 @@ class VideoScrubberView: UIView {
 extension VideoScrubberView {
     func sliderValueChanged(_ sender: ThickSlider) {
         delegate?.sliderValueChanged(toSeconds: sender.value)
+        timeTotalLabel.text = "+\(getTimeString(Int(floor(sender.value))))"
     }
 
     func sliderDidBeginDragging(_ sender: ThickSlider) {
         delegate?.sliderDidBeginDragging()
+        slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white), for: .normal)
     }
 
     func sliderDidEndDragging(_ sender: ThickSlider) {
         delegate?.sliderDidEndDragging()
+        slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white), for: .normal)
     }
 
     func playButtonTapped(_ sender: UIButton) {
@@ -188,7 +191,7 @@ extension VideoScrubberView {
 public class ThickSlider: UISlider {
     override public func trackRect(forBounds bounds: CGRect) -> CGRect {
         var result = super.trackRect(forBounds: bounds)
-        result.size.height = 8
+        result.size.height = 4
         return result
     }
 }
