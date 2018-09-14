@@ -21,7 +21,7 @@ import UIKit
 import XLActionController
 
 // MARK: - Base
-class SingleSubredditViewController: MediaViewController {
+class SingleSubredditViewController: MediaViewController, UIGestureRecognizerDelegate {
 
     override var keyCommands: [UIKeyCommand]? {
         return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
@@ -146,7 +146,11 @@ class SingleSubredditViewController: MediaViewController {
         
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
+        panGesture.delegate = self
         self.tableView.addGestureRecognizer(panGesture)
+        if single && navigationController != nil {
+            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+        }
     
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -169,14 +173,22 @@ class SingleSubredditViewController: MediaViewController {
     
     var translatingCell: LinkCellView?
     func panCell(_ recognizer: UIPanGestureRecognizer) {
-        if recognizer != panGesture {
+        if recognizer != panGesture || recognizer.shouldRecognizeForDirection() {
             return
         }
         
+        if recognizer.view != nil {
+            let velocity = recognizer.velocity(in: recognizer.view!).x
+            if (velocity > 0 && SettingValues.submissionActionLeft == .NONE) || (velocity < 0 && SettingValues.submissionActionRight == .NONE) {
+                return
+            }
+        }
         if recognizer.state == .began || translatingCell == nil {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForItem(at: point)
-            if indexpath == nil{  return }
+            if indexpath == nil {
+                return
+            }
 
             guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
                 return
@@ -300,10 +312,6 @@ class SingleSubredditViewController: MediaViewController {
         }
     }
     
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-
     static func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
         let ratio = imageHeight / imageWidth
         return viewWidth * ratio
@@ -474,7 +482,7 @@ class SingleSubredditViewController: MediaViewController {
             self.fab!.clipsToBounds = true
             let title = "  " + SettingValues.fabType.getTitle()
             self.fab!.setTitle(title, for: .normal)
-            self.fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.navIcon())!, renderMode: UIImageRenderingMode.alwaysOriginal)
+            self.fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.navIcon(true))!, renderMode: UIImageRenderingMode.alwaysOriginal)
             self.fab!.elevate(elevation: 2)
             self.fab!.titleLabel?.textAlignment = .center
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)

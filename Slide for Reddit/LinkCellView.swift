@@ -527,7 +527,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             return
         }
         let xVelocity = sender.velocity(in: contentView).x
-        print("\(xVelocity)")
         if sender.state != .ended && sender.state != .began {
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: contentView).x
@@ -573,7 +572,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             typeImage.alpha = CGFloat(currentProgress)
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && (progressBar.progress >= 0.6 || abs(xVelocity) > 1000) {
+        } else if sender.state == .ended && (progressBar.progress >= 0.6 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000)) {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressType!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
@@ -863,6 +862,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.link = submission
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, true, false))
+        title.delegate = self
         
         if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
@@ -942,13 +942,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             navViewController = nav
         }
         
-        if !activeSet {
-            let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
-            title.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-            title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-            activeSet = true
-        }
+        let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
+        activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
+        title.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+        title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+        activeSet = true
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
         
