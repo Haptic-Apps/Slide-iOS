@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09328D7720F9547B00A48983 /* VideoScrubberView.swift */; };
+		09526EF8214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09526EF7214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift */; };
+		09526EFA214C39F0005A3F6B /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09526EF9214C39F0005A3F6B /* CGPoint+Extensions.swift */; };
 		0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260420E168B200EA53BE /* UIView+Extensions.swift */; };
 		0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260620E28FEE00EA53BE /* UIStackView+Extensions.swift */; };
 		0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260820E2982A00EA53BE /* UIImage+Extensions.swift */; };
@@ -247,6 +249,8 @@
 
 /* Begin PBXFileReference section */
 		09328D7720F9547B00A48983 /* VideoScrubberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoScrubberView.swift; sourceTree = "<group>"; };
+		09526EF7214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPanGestureRecognizer+Utilities.swift"; sourceTree = "<group>"; };
+		09526EF9214C39F0005A3F6B /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
 		0965260420E168B200EA53BE /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		0965260620E28FEE00EA53BE /* UIStackView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extensions.swift"; sourceTree = "<group>"; };
 		0965260820E2982A00EA53BE /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
@@ -524,6 +528,8 @@
 				BE3B74362107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift */,
 				BE3B74382107AA1200658DE9 /* UIAlertController+Extensions.swift */,
 				0991D2A4211CDF8100E86B4C /* UIColor+Extensions.swift */,
+				09526EF7214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift */,
+				09526EF9214C39F0005A3F6B /* CGPoint+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -1416,6 +1422,7 @@
 				BEE5BF841E14836E00E3C9AE /* MediaVCDelegate.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
+				09526EFA214C39F0005A3F6B /* CGPoint+Extensions.swift in Sources */,
 				BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */,
@@ -1486,6 +1493,7 @@
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
 				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,
 				B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */,
+				09526EF8214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift in Sources */,
 				B776B69E386227A51C8E10DF /* MediaTableViewController.swift in Sources */,
 				B776B1E23F4DEC18069F1579 /* MediaViewController.swift in Sources */,
 			);
