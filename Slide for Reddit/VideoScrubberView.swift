@@ -56,10 +56,6 @@ class VideoScrubberView: UIView {
 
     var playButton = UIButton(type: .system)
     
-    override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIViewNoIntrinsicMetric, height: 16)
-    }
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -83,9 +79,9 @@ class VideoScrubberView: UIView {
 
         self.addSubview(playButton)
         self.addSubview(timeTotalLabel)
-        slider.leftAnchor == playButton.rightAnchor + 8
-        slider.topAnchor == self.topAnchor
-        slider.bottomAnchor == self.bottomAnchor
+        slider.leftAnchor == self.leftAnchor + 8
+        slider.heightAnchor == 20
+        slider.bottomAnchor == self.bottomAnchor - 4
         slider.rightAnchor == timeTotalLabel.leftAnchor - 8
         
         //timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -102,29 +98,27 @@ class VideoScrubberView: UIView {
         timeTotalLabel.textAlignment = .center
         timeTotalLabel.textColor = UIColor.white
 
-        timeTotalLabel.centerYAnchor == self.centerYAnchor
+        timeTotalLabel.centerYAnchor == slider.centerYAnchor
         timeTotalLabel.rightAnchor == self.rightAnchor - 8
 
         playButton.setImage(UIImage.init(named: "pause"), for: .normal)
         playButton.tintColor = UIColor.white
         playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
 
-        playButton.sizeAnchors == .square(size: 28)
-        playButton.leftAnchor == self.leftAnchor + 8
-        playButton.centerYAnchor == self.centerYAnchor
+        playButton.sizeAnchors == .square(size: 60)
+        playButton.centerAnchors == self.centerAnchors
 
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .touchDown)
         slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: [.touchUpInside, .touchUpOutside])
         
-        self.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
         
         let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
         blurEffect.setValue(3, forKeyPath: "blurRadius")
         blurView.effect = blurEffect
-        self.insertSubview(blurView, at: 0)
+       // self.insertSubview(blurView, at: 0)
     }
     
     func updateWithTime(elapsedTime: CMTime) {

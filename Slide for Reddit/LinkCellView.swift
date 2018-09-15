@@ -1139,7 +1139,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.topVideoView.isHidden = true
             }
             
-            if (SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay) {
+            if (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false

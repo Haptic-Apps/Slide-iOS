@@ -245,9 +245,10 @@ class ColorUtil {
         case SEPIA = "sepia"
         case RED = "red"
         case DEEP = "deep"
+        case MINT = "mint"
 
         public static var cases: [Theme] {
-            return [.LIGHT, .DARK, .BLACK, .BLUE, .SEPIA, .RED, .DEEP]
+            return [.LIGHT, .DARK, .BLACK, .BLUE, .SEPIA, .RED, .DEEP, .MINT]
         }
         public var foregroundColor: UIColor {
             switch self {
@@ -265,6 +266,8 @@ class ColorUtil {
                 return UIColor(hexString: "#402c2c")
             case .BLACK:
                 return UIColor.black
+            case .MINT:
+                return UIColor.white
             }
         }
 
@@ -284,6 +287,8 @@ class ColorUtil {
                 return UIColor(hexString: "#312322")
             case .BLACK:
                 return UIColor.black
+            case .MINT:
+                return UIColor(hexString: "#e6f7dc")
             }
         }
 
@@ -303,6 +308,8 @@ class ColorUtil {
                 return UIColor(hexString: "#fff7ed").withAlphaComponent(0.87)
             case .BLACK:
                 return UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87)
+            case .MINT:
+                return UIColor(hexString: "#09360f").withAlphaComponent(0.87)
             }
         }
     }

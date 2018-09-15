@@ -702,9 +702,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             sideView.layer.cornerRadius = 7.5
             sideView.clipsToBounds = true
         }
-
     }
 
+    var popup: UILabel!
+    
     func doBanner(_ link: RSubmission) {
         var text = ""
         if np {
@@ -730,7 +731,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if width > 375 {
                 width = 375
             }
-            let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: width, height: 48))
+            popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: width, height: 48))
             popup.backgroundColor = ColorUtil.accentColorForSub(sub: link.subreddit)
             popup.textAlignment = .center
             popup.isUserInteractionEnabled = true
@@ -763,7 +764,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.view.bringSubview(toFront: popup)
 
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+                self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
             }, completion: nil)
 
         } else {
@@ -1846,7 +1847,11 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         isHiding = true
         //self.tableView.endEditing(true)
         (navigationController)?.setNavigationBarHidden(true, animated: true)
-        (self.navigationController)?.setToolbarHidden(true, animated: true)
+        
+        if popup == nil {
+            (self.navigationController)?.setToolbarHidden(true, animated: true)
+        }
+        
         self.isToolbarHidden = true
         isHiding = false
     }
