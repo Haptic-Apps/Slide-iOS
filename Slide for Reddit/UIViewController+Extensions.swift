@@ -34,7 +34,7 @@ extension UIViewController {
         navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         let textAttributes = [NSForegroundColorAttributeName: SettingValues.reduceColor ? ColorUtil.fontColor : .white]
         navigationController?.navigationBar.titleTextAttributes = textAttributes
-        if SettingValues.reduceColor && ColorUtil.theme == .LIGHT {
+        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
             UIApplication.shared.statusBarStyle = .default
         } else {
             UIApplication.shared.statusBarStyle = .lightContent

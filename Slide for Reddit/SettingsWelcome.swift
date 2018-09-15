@@ -38,7 +38,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         
         self.view.backgroundColor = ColorUtil.backgroundColor
         
-        if ColorUtil.theme == .LIGHT {
+        if ColorUtil.theme.isLight() {
             UIApplication.shared.statusBarStyle = .default
         } else {
             UIApplication.shared.statusBarStyle = .lightContent

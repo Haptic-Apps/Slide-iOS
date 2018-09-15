@@ -288,8 +288,12 @@ class ColorUtil {
             case .BLACK:
                 return UIColor.black
             case .MINT:
-                return UIColor(hexString: "#e6f7dc")
+                return UIColor(hexString: "#eef6e8")
             }
+        }
+        
+        public func isLight() -> Bool {
+            return self == .LIGHT || self == .MINT
         }
 
         public var fontColor: UIColor {

@@ -52,7 +52,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.view.backgroundColor = UIColor.clear
         self.navigationController?.view.backgroundColor = .clear
         
-        if SettingValues.reduceColor && ColorUtil.theme == .LIGHT {
+        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
             UIApplication.shared.statusBarStyle = .default
         } else {
             UIApplication.shared.statusBarStyle = .lightContent

@@ -154,7 +154,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.backgroundView.alpha = 0
             strongSelf.topView?.alpha = 1
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
-            strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme == .LIGHT ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             strongSelf.topView?.layer.cornerRadius = 15
         }
         

@@ -1034,7 +1034,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             tableView.reloadData()
         }
         
-        if SettingValues.reduceColor && ColorUtil.theme == .LIGHT {
+        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
             UIApplication.shared.statusBarStyle = .default
         } else {
             UIApplication.shared.statusBarStyle = .lightContent

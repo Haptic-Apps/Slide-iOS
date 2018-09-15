@@ -76,7 +76,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             menuNav?.tableView.reloadData()
         }
         
-        if SettingValues.reduceColor && ColorUtil.theme == .LIGHT {
+        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
             UIApplication.shared.statusBarStyle = .default
         } else {
             UIApplication.shared.statusBarStyle = .lightContent
@@ -336,8 +336,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         toolbar!.layer.cornerRadius = 15
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)
-        menuNav?.muxColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme == .LIGHT ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
-        toolbar!.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme == .LIGHT ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        menuNav?.muxColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        toolbar!.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
         toolbar!.topAnchor == menuNav!.view.topAnchor
         toolbar!.heightAnchor == 90
