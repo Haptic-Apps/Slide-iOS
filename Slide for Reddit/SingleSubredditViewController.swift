@@ -158,17 +158,17 @@ class SingleSubredditViewController: MediaViewController {
 
         reloadNeedingColor()
         
-        if false && single && !isModal { //todo reimplement soon?
-            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
-            for view in view.subviews {
-                if view is UIScrollView {
-                    let scrollView = view as! UIScrollView
-                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
-                    break
-                }
-            }
-        }
+//        if false && single && !isModal { //todo reimplement soon?
+//            swiper = SloppySwiper.init(navigationController: self.navigationController!)
+//            self.navigationController!.delegate = swiper!
+//            for view in view.subviews {
+//                if view is UIScrollView {
+//                    let scrollView = view as! UIScrollView
+//                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+//                    break
+//                }
+//            }
+//        }
     }
     
     var translatingCell: LinkCellView?
@@ -2236,6 +2236,10 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer == panGesture {
+            if !SettingValues.submissionGesturesEnabled {
+                return false
+            }
+            
             if SettingValues.submissionActionLeft == .NONE && SettingValues.submissionActionRight == .NONE {
                 return false
             }
@@ -2245,6 +2249,16 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         // Limit angle of pan gesture recognizer to avoid interfering with scrolling
+        if gestureRecognizer == panGesture {
+            if !SettingValues.submissionGesturesEnabled {
+                return false
+            }
+            
+            if SettingValues.submissionActionLeft == .NONE && SettingValues.submissionActionRight == .NONE {
+                return false
+            }
+        }
+        
         if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
             return recognizer.shouldRecognizeForAxis(.horizontal, withAngleToleranceInDegrees: 30)
         }

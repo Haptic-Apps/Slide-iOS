@@ -12,11 +12,11 @@ import XLActionController
 
 class SettingsGestures: UITableViewController {
     
-    var doubleSwipeCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "double")
-    var doubleSwipe = UISwitch()
+    var submissionGesturesCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "subs")
+    var submissionGestures = UISwitch()
     
-    var swipeAnywhereCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "anywhere")
-    var swipeAnywhere = UISwitch()
+    var commentGesturesCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "comments")
+    var commentGestures = UISwitch()
 
     var rightLeftActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "left")
 
@@ -42,12 +42,12 @@ class SettingsGestures: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if changed == doubleSwipe {
-            SettingValues.commentTwoSwipe = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentTwoSwipe)
-        } else if changed == swipeAnywhere {
-            SettingValues.swipeAnywhereComments = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_swipeAnywhereComments)
+        if changed == commentGestures {
+            SettingValues.commentGesturesEnabled = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentGesturesEnabled)
+        } else if changed == submissionGestures {
+            SettingValues.submissionGesturesEnabled = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_submissionGesturesEnabled)
         }
 
         UserDefaults.standard.synchronize()
@@ -62,9 +62,8 @@ class SettingsGestures: UITableViewController {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch section {
-        case 0: label.text  = "General"
+        case 0: label.text  = "Submissions"
         case 1: label.text  = "Comments"
-        case 2: label.text  = "Submissions"
         default: label.text  = ""
         }
         return toReturn
@@ -73,13 +72,13 @@ class SettingsGestures: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.row == 0 && indexPath.section == 2 {
+        if indexPath.row == 1 && indexPath.section == 0 {
             showActionSub(cell: doubleTapSubActionCell)
             return
-        } else if indexPath.row == 1 && indexPath.section == 2 {
+        } else if indexPath.row == 2 && indexPath.section == 0 {
             showActionSub(cell: leftSubActionCell)
             return
-        } else if indexPath.row == 2 && indexPath.section == 2 {
+        } else if indexPath.row == 3 && indexPath.section == 0 {
             showActionSub(cell: rightSubActionCell)
             return
         }
@@ -87,15 +86,15 @@ class SettingsGestures: UITableViewController {
         if indexPath.section != 1 {
             return
         }
-        if indexPath.row == 1 {
+        if indexPath.row == 2 {
             showAction(cell: rightRightActionCell)
-        } else if indexPath.row == 2 {
-            showAction(cell: rightLeftActionCell)
         } else if indexPath.row == 3 {
-            showAction(cell: leftLeftActionCell)
+            showAction(cell: rightLeftActionCell)
         } else if indexPath.row == 4 {
-            showAction(cell: leftRightActionCell)
+            showAction(cell: leftLeftActionCell)
         } else if indexPath.row == 5 {
+            showAction(cell: leftRightActionCell)
+        } else if indexPath.row == 6 {
             showAction(cell: doubleTapActionCell)
         }
     }
@@ -172,17 +171,19 @@ class SettingsGestures: UITableViewController {
         self.title = "Gestures"
         self.tableView.separatorStyle = .none
         
-        createCell(doubleSwipeCell, doubleSwipe, isOn: SettingValues.commentTwoSwipe, text: "Swipe between comments using two fingers")
-        self.doubleSwipeCell.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.doubleSwipeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.doubleSwipeCell.detailTextLabel?.numberOfLines = 0
-        self.doubleSwipeCell.detailTextLabel?.text = "Disabling this setting will disable all comment swipe gestures"
+        createCell(submissionGesturesCell, submissionGestures, isOn: SettingValues.submissionGesturesEnabled, text: "Enable submission gestures")
+        self.submissionGesturesCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.submissionGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.submissionGesturesCell.detailTextLabel?.numberOfLines = 0
+        self.submissionGesturesCell.detailTextLabel?.text = "Enabling submission gestures will require two fingers to swipe between subreddits in the main view"
+        self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.foregroundColor
         
-        createCell(swipeAnywhereCell, swipeAnywhere, isOn: SettingValues.swipeAnywhereComments, text: "Swipe anywhere to exit comments")
-        self.swipeAnywhereCell.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.swipeAnywhereCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.swipeAnywhereCell.detailTextLabel?.numberOfLines = 0
-        self.swipeAnywhereCell.detailTextLabel?.text = "Disabling this setting enables the left-side comment gestures"
+        createCell(commentGesturesCell, commentGestures, isOn: SettingValues.commentGesturesEnabled, text: "Enable comment gestures")
+        self.commentGesturesCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.commentGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.commentGesturesCell.detailTextLabel?.numberOfLines = 0
+        self.commentGesturesCell.detailTextLabel?.text = "Enabling comment gestures will require two fingers to swipe between submissions in the comment view"
+        self.commentGesturesCell.contentView.backgroundColor = ColorUtil.foregroundColor
 
         updateCells()
         self.tableView.tableFooterView = UIView()
@@ -239,7 +240,7 @@ class SettingsGestures: UITableViewController {
             return nil
         }
         
-        if SettingValues.commentTwoSwipe && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
+        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
             HapticUtility.hapticActionWeak()
             var actions = [UIContextualAction]()
             if SettingValues.commentActionRightRight != .NONE {
@@ -275,7 +276,7 @@ class SettingsGestures: UITableViewController {
             return nil
         }
 
-        if !SettingValues.swipeAnywhereComments && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
+        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
             HapticUtility.hapticActionWeak()
             var actions = [UIContextualAction]()
             if SettingValues.commentActionLeftLeft != .NONE {
@@ -314,9 +315,6 @@ class SettingsGestures: UITableViewController {
         createCell(doubleTapSubActionCell, nil, isOn: false, text: "Double tap submission action")
         createCell(leftSubActionCell, nil, isOn: false, text: "Left submission swipe")
         createCell(rightSubActionCell, nil, isOn: false, text: "Right submission swipe")
-
-        createLeftView(cell: doubleSwipeCell, image: "twofinger", color: ColorUtil.foregroundColor)
-        createLeftView(cell: swipeAnywhereCell, image: "back", color: ColorUtil.foregroundColor)
 
         createLeftView(cell: rightRightActionCell, image: SettingValues.commentActionRightRight.getPhoto(), color: SettingValues.commentActionRightRight.getColor())
         self.rightRightActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -367,28 +365,36 @@ class SettingsGestures: UITableViewController {
         self.rightSubActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
         self.rightSubActionCell.imageView?.layer.cornerRadius = 5
 
-        if !SettingValues.commentTwoSwipe {
+        if !SettingValues.commentGesturesEnabled {
             self.rightRightActionCell.isUserInteractionEnabled = false
             self.rightRightActionCell.contentView.alpha = 0.5
             self.rightLeftActionCell.isUserInteractionEnabled = false
             self.rightLeftActionCell.contentView.alpha = 0.5
+            self.leftRightActionCell.isUserInteractionEnabled = false
+            self.leftRightActionCell.contentView.alpha = 0.5
+            self.leftLeftActionCell.isUserInteractionEnabled = false
+            self.leftLeftActionCell.contentView.alpha = 0.5
         } else {
             self.rightRightActionCell.isUserInteractionEnabled = true
             self.rightRightActionCell.contentView.alpha = 1
             self.rightLeftActionCell.isUserInteractionEnabled = true
             self.rightLeftActionCell.contentView.alpha = 1
-        }
-        
-        if SettingValues.swipeAnywhereComments {
-            self.leftLeftActionCell.isUserInteractionEnabled = false
-            self.leftLeftActionCell.contentView.alpha = 0.5
-            self.leftRightActionCell.isUserInteractionEnabled = false
-            self.leftRightActionCell.contentView.alpha = 0.5
-        } else {
-            self.leftLeftActionCell.isUserInteractionEnabled = true
-            self.leftLeftActionCell.contentView.alpha = 1
             self.leftRightActionCell.isUserInteractionEnabled = true
             self.leftRightActionCell.contentView.alpha = 1
+            self.leftLeftActionCell.isUserInteractionEnabled = true
+            self.leftLeftActionCell.contentView.alpha = 1
+        }
+        
+        if !SettingValues.submissionGesturesEnabled {
+            self.leftSubActionCell.isUserInteractionEnabled = false
+            self.leftSubActionCell.contentView.alpha = 0.5
+            self.rightSubActionCell.isUserInteractionEnabled = false
+            self.rightSubActionCell.contentView.alpha = 0.5
+        } else {
+            self.leftSubActionCell.isUserInteractionEnabled = true
+            self.leftSubActionCell.contentView.alpha = 1
+            self.rightSubActionCell.isUserInteractionEnabled = true
+            self.rightSubActionCell.contentView.alpha = 1
         }
         
         createLeftView(cell: doubleTapSubActionCell, image: SettingValues.submissionActionDoubleTap.getPhoto(), color: SettingValues.submissionActionDoubleTap.getColor())
@@ -405,17 +411,14 @@ class SettingsGestures: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 2
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            return 0
-        }
         return 70
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return (indexPath.row == 0 || indexPath.row == 1) && indexPath.section == 0 ? 150 : 70
+        return indexPath.row == 0 ? 100 : 70
     }
     
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -423,27 +426,23 @@ class SettingsGestures: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
-        case 0:
-            switch indexPath.row {
-            case 0: return self.doubleSwipeCell
-            case 1: return self.swipeAnywhereCell
-            default: fatalError("Unknown row in section 0")
-            }
         case 1:
             switch indexPath.row {
-            case 0: return self.commentCell
-            case 1: return self.rightRightActionCell
-            case 2: return self.rightLeftActionCell
-            case 3: return self.leftLeftActionCell
-            case 4: return self.leftRightActionCell
-            case 5: return self.doubleTapActionCell
+            case 0: return self.commentGesturesCell
+            case 1: return self.commentCell
+            case 2: return self.rightRightActionCell
+            case 3: return self.rightLeftActionCell
+            case 4: return self.leftLeftActionCell
+            case 5: return self.leftRightActionCell
+            case 6: return self.doubleTapActionCell
             default: fatalError("Unknown row in section 0")
             }
-        case 2:
+        case 0:
             switch indexPath.row {
-            case 0: return self.doubleTapSubActionCell
-            case 1: return self.leftSubActionCell
-            case 2: return self.rightSubActionCell
+            case 0: return self.submissionGesturesCell
+            case 1: return self.doubleTapSubActionCell
+            case 2: return self.leftSubActionCell
+            case 3: return self.rightSubActionCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -453,9 +452,8 @@ class SettingsGestures: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 2
-        case 1: return 6
-        case 2: return 3
+        case 0: return 4
+        case 1: return 7
         default: fatalError("Unknown number of sections")
         }
     }

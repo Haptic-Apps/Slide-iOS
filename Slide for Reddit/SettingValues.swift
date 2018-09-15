@@ -76,7 +76,6 @@ class SettingValues {
     public static let pref_autoCache = "AUTO_CACHE"
     public static let pref_pro = "RELEASE_PRO_ENABLED"
     public static let pref_pinToolbar = "PIN_TOOLBAR"
-    public static let pref_commentTwoSwipe = "COMMENT_GESTURES"
     public static let pref_commentActionRightLeft = "COMMENT_LEFT"
     public static let pref_commentActionRightRight = "COMMENT_RIGHT"
     public static let pref_commentActionLeftLeft = "COMMENT_LEFT_LEFT"
@@ -94,7 +93,8 @@ class SettingValues {
     public static let pref_lockCommentBottomBar = "LOCK_COMMENT_BOTTOM"
     public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
     public static let pref_hideAutomod = "HIDE_AUTOMOD"
-    public static let pref_swipeAnywhereComments = "SWIPE_ANYWHERE_COMMENTS"
+    public static let pref_commentGesturesEnabled = "COMMENT_GESTURES"
+    public static let pref_submissionGesturesEnabled = "SUBMISSIONS_GESTURES"
     public static let pref_autoKeyboard = "AUTO_KEYBOARD"
     public static let pref_reduceColor = "REDUCE_COLORS"
     public static let pref_browser = "WEB_BROWSER"
@@ -124,7 +124,6 @@ class SettingValues {
 
     public static var browser = "firefox"
     public static var viewType = true
-    public static var commentTwoSwipe = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true
     public static var defaultSorting = LinkSortType.hot
@@ -151,7 +150,8 @@ class SettingValues {
     public static var wideIndicators = false
     public static var blackShadowbox = false
     public static var hideAutomod = false
-    public static var swipeAnywhereComments = false
+    public static var commentGesturesEnabled = false
+    public static var submissionGesturesEnabled = false
     public static var infoBelowTitle = false
     public static var matchSilence = true
     public static var showPages = true
@@ -318,7 +318,8 @@ class SettingValues {
         }
 
         SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
-        SettingValues.swipeAnywhereComments = settings.object(forKey: SettingValues.pref_swipeAnywhereComments) == nil ? true : settings.bool(forKey: SettingValues.pref_swipeAnywhereComments)
+        SettingValues.commentGesturesEnabled = settings.object(forKey: SettingValues.pref_commentGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_commentGesturesEnabled)
+        SettingValues.submissionGesturesEnabled = settings.object(forKey: SettingValues.pref_submissionGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_submissionGesturesEnabled)
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
         for time in TimeFilterWithin.cases {
@@ -394,7 +395,6 @@ class SettingValues {
         SettingValues.loadContentHQ = settings.bool(forKey: SettingValues.pref_loadContentHQ)
         SettingValues.noImages = settings.bool(forKey: SettingValues.pref_noImg)
         SettingValues.lqLow = settings.bool(forKey: SettingValues.pref_lqLow)
-        SettingValues.commentTwoSwipe = settings.object(forKey: SettingValues.pref_commentTwoSwipe) == nil ? true : settings.bool(forKey: SettingValues.pref_commentTwoSwipe)
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
         SettingValues.nightModeEnabled = settings.bool(forKey: SettingValues.pref_nightMode)

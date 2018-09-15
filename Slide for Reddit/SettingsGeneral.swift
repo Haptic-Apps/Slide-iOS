@@ -325,9 +325,9 @@ class SettingsGeneral: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
 
-        if indexPath.section == 2 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             showMenu(tableView.cellForRow(at: indexPath))
-        } else if indexPath.section == 2 && indexPath.row == 1 {
+        } else if indexPath.section == 3 && indexPath.row == 1 {
             showMenuComments(tableView.cellForRow(at: indexPath))
         }
 

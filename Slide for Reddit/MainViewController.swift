@@ -429,6 +429,18 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             UIApplication.shared.shortcutItems = subs
         }
 
+        if SettingValues.submissionGesturesEnabled {
+            for view in view.subviews {
+                if view is UIScrollView {
+                    let scrollView = view as! UIScrollView
+                    if scrollView.isPagingEnabled {
+                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                    }
+                    break
+                }
+            }
+        }
+
         let firstViewController = MainViewController.vCs[0]
 
         setViewControllers([firstViewController],

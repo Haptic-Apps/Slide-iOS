@@ -249,8 +249,11 @@ public class ToolbarTextView: NSObject {
 
                                 alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
                                     let text = self.insertText ?? ""
-                                    self.text!.insertText("[\(text)](\(link))")
-
+                                    if text.isEmpty() {
+                                        self.text!.insertText("\(link)")
+                                    } else {
+                                        self.text!.insertText("[\(text)](\(link))")
+                                    }
                                 }))
 
                                 alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))

@@ -870,17 +870,17 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         super.viewDidLoad()
 
         //Disabled for now, need to figure out why this breaks inbox and profile views
-        if false && (self.navigationController != nil && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.swipeAnywhereComments {
-            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
-            for view in view.subviews {
-                if view is UIScrollView {
-                    let scrollView = view as! UIScrollView
-                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
-                    break
-                }
-            }
-        }
+//        if false && (self.navigationController != nil && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.commentGesturesEnabled {
+//            swiper = SloppySwiper.init(navigationController: self.navigationController!)
+//            self.navigationController!.delegate = swiper!
+//            for view in view.subviews {
+//                if view is UIScrollView {
+//                    let scrollView = view as! UIScrollView
+//                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+//                    break
+//                }
+//            }
+//        }
 
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
 
@@ -1891,7 +1891,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     @available(iOS 11.0, *)
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let cell = tableView.cellForRow(at: indexPath)
-        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentTwoSwipe && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
+        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
             HapticUtility.hapticActionWeak()
             var actions = [UIContextualAction]()
             if SettingValues.commentActionRightRight != .NONE {
@@ -1926,7 +1926,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     @available(iOS 11.0, *)
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let cell = tableView.cellForRow(at: indexPath)
-        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && !SettingValues.swipeAnywhereComments && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
+        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentGesturesEnabled && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
             HapticUtility.hapticActionWeak()
             var actions = [UIContextualAction]()
             if SettingValues.commentActionLeftLeft != .NONE {
