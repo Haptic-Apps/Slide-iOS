@@ -57,6 +57,8 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         } else {
             UIApplication.shared.statusBarStyle = .lightContent
         }
+        
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     override func viewDidLoad() {
@@ -66,35 +68,15 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.navigationController?.view.backgroundColor = UIColor.clear
         let firstViewController = vCs[0]
 
-        //Disable this for now
-//        if SettingValues.swipeAnywhereComments && false {
-//            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-//            self.navigationController!.delegate = swiper!
-//            for view in view.subviews {
-//                if view is UIScrollView {
-//                    let scrollView = view as! UIScrollView
-//                    //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
-//                    scrollView.delegate = self
-//                    if scrollView.isPagingEnabled && SettingValues.commentTwoSwipe {
-//                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-//                    }
-//                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
-//                    break
-//                }
-//            }
-//        }
-        
-        if SettingValues.commentGesturesEnabled {
-            for view in view.subviews {
-                if view is UIScrollView {
-                    let scrollView = view as! UIScrollView
-                    //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
-                    scrollView.delegate = self
-                    if scrollView.isPagingEnabled {
-                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                    }
-                    break
+        for view in view.subviews {
+            if view is UIScrollView {
+                let scrollView = view as! UIScrollView
+                //swiper!.panRecognizer.require(toFail:scrollView.panGestureRecognizer)
+                scrollView.delegate = self
+                if scrollView.isPagingEnabled && SettingValues.commentGesturesEnabled {
+                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
                 }
+                scrollView.panGestureRecognizer.require(toFail: navigationController!.interactivePopGestureRecognizer!)
             }
         }
         

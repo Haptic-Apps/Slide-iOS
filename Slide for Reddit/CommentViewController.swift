@@ -1058,7 +1058,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     var duringAnimation = false
-    var interactionController: UIPercentDrivenInteractiveTransition?
 
     func close(_ sender: AnyObject) {
         if self.navigationController?.viewControllers.count == 1 && self.navigationController?.navigationController == nil {
