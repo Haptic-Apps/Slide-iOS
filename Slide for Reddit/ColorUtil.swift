@@ -246,9 +246,10 @@ class ColorUtil {
         case RED = "red"
         case DEEP = "deep"
         case MINT = "mint"
+        case CREAM = "cream"
 
         public static var cases: [Theme] {
-            return [.LIGHT, .DARK, .BLACK, .BLUE, .SEPIA, .RED, .DEEP, .MINT]
+            return [.LIGHT, .DARK, .BLACK, .BLUE, .SEPIA, .RED, .DEEP, .MINT, .CREAM]
         }
         public var foregroundColor: UIColor {
             switch self {
@@ -268,6 +269,8 @@ class ColorUtil {
                 return UIColor.black
             case .MINT:
                 return UIColor.white
+            case .CREAM:
+                return UIColor(hexString: "#DCD8C2")
             }
         }
 
@@ -289,11 +292,13 @@ class ColorUtil {
                 return UIColor.black
             case .MINT:
                 return UIColor(hexString: "#eef6e8")
+            case .CREAM:
+                return UIColor(hexString: "#D1CDB9")
             }
         }
         
         public func isLight() -> Bool {
-            return self == .LIGHT || self == .MINT
+            return self == .LIGHT || self == .MINT || self == .CREAM
         }
 
         public var fontColor: UIColor {
@@ -314,6 +319,8 @@ class ColorUtil {
                 return UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87)
             case .MINT:
                 return UIColor(hexString: "#09360f").withAlphaComponent(0.87)
+            case .CREAM:
+                return UIColor(hexString: "#444139").withAlphaComponent(0.87)
             }
         }
     }
