@@ -45,7 +45,8 @@ class SingleSubredditViewController: MediaViewController {
     let cellsPerRow = 3
     
     var panGesture: UIPanGestureRecognizer!
-    
+    var translatingCell: LinkCellView?
+
     var times = 0
     var startTime = Date()
 
@@ -169,33 +170,6 @@ class SingleSubredditViewController: MediaViewController {
 //                }
 //            }
 //        }
-    }
-    
-    var translatingCell: LinkCellView?
-    func panCell(_ recognizer: UIPanGestureRecognizer) {
-        
-        if recognizer.view != nil {
-            let velocity = recognizer.velocity(in: recognizer.view!).x
-            if (velocity > 0 && SettingValues.submissionActionLeft == .NONE) || (velocity < 0 && SettingValues.submissionActionRight == .NONE) {
-                return
-            }
-        }
-        if recognizer.state == .began || translatingCell == nil {
-            let point = recognizer.location(in: self.tableView)
-            let indexpath = self.tableView.indexPathForItem(at: point)
-            if indexpath == nil {
-                return
-            }
-
-            guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
-                return
-            }
-            translatingCell = cell
-        }
-        translatingCell?.handlePan(recognizer)
-        if recognizer.state == .ended {
-            translatingCell = nil
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -2265,7 +2239,32 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
         return true
     }
-
+    
+    func panCell(_ recognizer: UIPanGestureRecognizer) {
+        
+        if recognizer.view != nil {
+            let velocity = recognizer.velocity(in: recognizer.view!).x
+            if (velocity > 0 && SettingValues.submissionActionLeft == .NONE) || (velocity < 0 && SettingValues.submissionActionRight == .NONE) {
+                return
+            }
+        }
+        if recognizer.state == .began || translatingCell == nil {
+            let point = recognizer.location(in: self.tableView)
+            let indexpath = self.tableView.indexPathForItem(at: point)
+            if indexpath == nil {
+                return
+            }
+            
+            guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
+                return
+            }
+            translatingCell = cell
+        }
+        translatingCell?.handlePan(recognizer)
+        if recognizer.state == .ended {
+            translatingCell = nil
+        }
+    }
 }
 
 public class LoadingCell: UICollectionViewCell {

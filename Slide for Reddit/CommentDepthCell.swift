@@ -212,6 +212,146 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.pushedSingleTap(sender)
         }
     }
+    
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
+        let textClicked = label.attributedText.attributedSubstring(from: result.range).string
+        if textClicked.contains("[[s[") {
+            parent?.showSpoiler(textClicked)
+        } else {
+            let urlClicked = result.url!
+            parent?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
+        }
+    }
+    
+    var progressBar: ProgressBarView!
+    var typeImage: UIImageView!
+    var previousTranslation: CGFloat = 0
+    var previousProgress: Float!
+    var dragCancelled = false
+    var direction = 0
+    
+    func handlePan(_ sender: UIPanGestureRecognizer) {
+        if sender.state == .began {
+            dragCancelled = false
+            direction = 0
+            progressBar = ProgressBarView(frame: contentView.bounds).then {
+                $0.accessibilityIdentifier = "Progress Bar"
+            }
+            typeImage = UIImageView().then {
+                $0.accessibilityIdentifier = "Action type"
+                $0.layer.cornerRadius = 22.5
+                $0.clipsToBounds = true
+                $0.contentMode = .center
+            }
+            previousTranslation = 0
+            previousProgress = 0
+        }
+        
+        if self.isMore {
+            sender.cancel()
+            dragCancelled = true
+            return
+        }
+
+        if dragCancelled {
+            return
+        }
+        let xVelocity = sender.velocity(in: contentView).x
+        if sender.state != .ended && sender.state != .began {
+            guard previousProgress != 1 else { return }
+            let posx = sender.location(in: contentView).x
+            if direction == 0 {
+                if xVelocity > 0 {
+                    direction = 1
+                    progressBar.setModeComment(type: SettingValues.commentActionLeftLeft, flip: false)
+                    typeImage.image = UIImage(named: SettingValues.commentActionLeftLeft.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
+                } else {
+                    direction = -1
+                    progressBar.setModeComment(type: SettingValues.commentActionRightRight, flip: true)
+                    typeImage.image = UIImage(named: SettingValues.commentActionRightRight.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.backgroundColor = SettingValues.commentActionRightRight.getColor()
+                }
+            }
+            
+            let currentTranslation = direction == -1 ? 0 - (contentView.bounds.size.width - posx) : posx
+            
+            if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE) {
+                dragCancelled = true
+                sender.cancel()
+                return
+            } else if progressBar.superview == nil {
+                contentView.addSubviews(typeImage, progressBar)
+                contentView.bringSubview(toFront: typeImage)
+                typeImage.centerAnchors == self.contentView.centerAnchors
+                typeImage.heightAnchor == 45
+                typeImage.widthAnchor == 45
+            }
+            
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
+            CATransaction.commit()
+            
+            let currentProgress = progressBar.progress
+            if currentProgress >= 0.6 && previousProgress < 0.6 || sender.state == .ended {
+                if #available(iOS 10.0, *) {
+                    HapticUtility.hapticActionWeak()
+                }
+            }
+            typeImage.alpha = CGFloat(currentProgress)
+            previousTranslation = currentTranslation
+            previousProgress = currentProgress
+        } else if sender.state == .ended && (progressBar.progress >= 0.6 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000)) {
+            self.progressBar.progressLayer.strokeEnd = 1
+            doAction(item: progressBar.progressTypeComment!)
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+                self.typeImage.alpha = 0
+                self.progressBar.alpha = 0
+                self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+            }, completion: { (_) in
+                self.progressBar.removeFromSuperview()
+                self.typeImage.removeFromSuperview()
+            })
+        } else if sender.state != .began {
+            if self.progressBar.superview == nil {
+                return
+            }
+            self.progressBar.progressLayer.strokeEnd = 0
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+                self.progressBar.alpha = 0
+                self.typeImage.alpha = 0
+            }, completion: { (_) in
+                self.progressBar.removeFromSuperview()
+                self.typeImage.removeFromSuperview()
+            })
+        }
+        
+        if dragCancelled {
+            if self.progressBar.superview == nil {
+                return
+            }
+            self.progressBar.progressLayer.strokeEnd = 0
+            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut, animations: {
+                self.typeImage.alpha = 0
+                self.progressBar.alpha = 0
+            }, completion: { (_) in
+                self.progressBar.removeFromSuperview()
+                self.typeImage.removeFromSuperview()
+            })
+        }
+    }
+    
+    func doDTap(_ sender: AnyObject) {
+        if isMore {
+            return
+        }
+        parent?.doAction(cell: self, action: SettingValues.commentActionDoubleTap, indexPath: currentPath)
+    }
+    
+    func doAction(item: SettingValues.CommentAction) {
+        parent?.doAction(cell: self, action: item, indexPath: currentPath)
+    }
 
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer.view == self.title {
@@ -1147,13 +1287,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
-    func doDTap(_ sender: AnyObject) {
-        if isMore {
-            return
-        }
-        parent?.doAction(cell: self, action: SettingValues.commentActionDoubleTap, indexPath: currentPath)
-    }
-
     var cellContent: NSAttributedString?
 
     var savedAuthor: String = ""
@@ -1389,16 +1522,6 @@ extension CommentDepthCell: TTTAttributedLabelDelegate {
                 }))
             }
             parent?.present(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
-        let textClicked = label.attributedText.attributedSubstring(from: result.range).string
-        if textClicked.contains("[[s[") {
-            parent?.showSpoiler(textClicked)
-        } else {
-            let urlClicked = result.url!
-            parent?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
         }
     }
 }

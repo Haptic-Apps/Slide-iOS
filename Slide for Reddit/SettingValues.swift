@@ -515,7 +515,7 @@ class SettingValues {
         func getColor() -> UIColor {
             switch self {
             case .COLLAPSE :
-                return ColorUtil.backgroundColor
+                return ColorUtil.baseAccent
             case .UPVOTE:
                 return ColorUtil.upvoteColor
             case .DOWNVOTE:

@@ -17,7 +17,7 @@ import TTTAttributedLabel
 import UIKit
 import XLActionController
 
-class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
+class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
 
     var menuCell: CommentDepthCell?
     var menuId: String?
@@ -25,6 +25,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     
     var commentDepthColors = [UIColor]()
 
+    var panGesture: UIPanGestureRecognizer!
+    var translatingCell: CommentDepthCell?
+    
     func isMenuShown() -> Bool {
         return menuCell != nil
     }
@@ -917,6 +920,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.view.frame.size.width)
         headerCell!.showBody(width: self.view.frame.size.width - 24)
 
+        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
+        panGesture.direction = .horizontal
+        panGesture.delegate = self
+        self.tableView.addGestureRecognizer(panGesture)
+        if navigationController != nil {
+            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+        }
     }
 
     var keyboardHeight = CGFloat(0)
@@ -1051,11 +1061,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         navigationController?.setToolbarHidden(false, animated: true)
         self.isToolbarHidden = false
-    }
-
-    func gestureRecognizer(_ sender: UIGestureRecognizer,
-                           shouldRecognizeSimultaneouslyWith shouldRecognizeSimultaneouslyWithGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
     }
 
     var duringAnimation = false
@@ -1892,75 +1897,75 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         return cell
     }
 
-    @available(iOS 11.0, *)
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let cell = tableView.cellForRow(at: indexPath)
-        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
-            HapticUtility.hapticActionWeak()
-            var actions = [UIContextualAction]()
-            if SettingValues.commentActionRightRight != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
-                    b(true)
-                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightRight, indexPath: indexPath)
-                })
-                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
-
-                actions.append(action)
-            }
-            if SettingValues.commentActionRightLeft != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
-                    b(true)
-                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightLeft, indexPath: indexPath)
-                })
-                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
-
-                actions.append(action)
-            }
-            let config = UISwipeActionsConfiguration.init(actions: actions)
-
-            return config
-
-        } else {
-            return UISwipeActionsConfiguration.init()
-        }
-    }
-    
-    @available(iOS 11.0, *)
-    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let cell = tableView.cellForRow(at: indexPath)
-        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentGesturesEnabled && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
-            HapticUtility.hapticActionWeak()
-            var actions = [UIContextualAction]()
-            if SettingValues.commentActionLeftLeft != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
-                    b(true)
-                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftLeft, indexPath: indexPath)
-                })
-                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
-                
-                actions.append(action)
-            }
-            if SettingValues.commentActionLeftRight != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
-                    b(true)
-                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftRight, indexPath: indexPath)
-                })
-                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
-                
-                actions.append(action)
-            }
-            let config = UISwipeActionsConfiguration.init(actions: actions)
-            
-            return config
-            
-        } else {
-            return UISwipeActionsConfiguration.init()
-        }
-    }
+//    @available(iOS 11.0, *)
+//    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        let cell = tableView.cellForRow(at: indexPath)
+//        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
+//            HapticUtility.hapticActionWeak()
+//            var actions = [UIContextualAction]()
+//            if SettingValues.commentActionRightRight != .NONE {
+//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+//                    b(true)
+//                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightRight, indexPath: indexPath)
+//                })
+//                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
+//                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
+//
+//                actions.append(action)
+//            }
+//            if SettingValues.commentActionRightLeft != .NONE {
+//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+//                    b(true)
+//                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightLeft, indexPath: indexPath)
+//                })
+//                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
+//                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
+//
+//                actions.append(action)
+//            }
+//            let config = UISwipeActionsConfiguration.init(actions: actions)
+//
+//            return config
+//
+//        } else {
+//            return UISwipeActionsConfiguration.init()
+//        }
+//    }
+//
+//    @available(iOS 11.0, *)
+//    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        let cell = tableView.cellForRow(at: indexPath)
+//        if cell is CommentDepthCell && (cell as! CommentDepthCell).comment != nil && SettingValues.commentGesturesEnabled && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
+//            HapticUtility.hapticActionWeak()
+//            var actions = [UIContextualAction]()
+//            if SettingValues.commentActionLeftLeft != .NONE {
+//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+//                    b(true)
+//                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftLeft, indexPath: indexPath)
+//                })
+//                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
+//                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
+//
+//                actions.append(action)
+//            }
+//            if SettingValues.commentActionLeftRight != .NONE {
+//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (action, _, b) in
+//                    b(true)
+//                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftRight, indexPath: indexPath)
+//                })
+//                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
+//                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
+//
+//                actions.append(action)
+//            }
+//            let config = UISwipeActionsConfiguration.init(actions: actions)
+//
+//            return config
+//
+//        } else {
+//            return UISwipeActionsConfiguration.init()
+//        }
+//    }
 
     func doAction(cell: CommentDepthCell, action: SettingValues.CommentAction, indexPath: IndexPath) {
         switch action {
@@ -2242,5 +2247,66 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 extension Thing {
     func getId() -> String {
         return Self.kind + "_" + id
+    }
+}
+
+extension CommentViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if gestureRecognizer == panGesture {
+            if !SettingValues.commentGesturesEnabled {
+                return false
+            }
+            
+            if SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightRight == .NONE {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Limit angle of pan gesture recognizer to avoid interfering with scrolling
+        if gestureRecognizer == panGesture {
+            if !SettingValues.commentGesturesEnabled {
+                return false
+            }
+            
+            if SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightRight == .NONE {
+                return false
+            }
+        }
+        
+        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
+            return recognizer.shouldRecognizeForAxis(.horizontal, withAngleToleranceInDegrees: 30)
+        }
+        
+        return true
+    }
+    
+    func panCell(_ recognizer: UIPanGestureRecognizer) {
+        
+        if recognizer.view != nil {
+            let velocity = recognizer.velocity(in: recognizer.view!).x
+            if (velocity > 0 && SettingValues.commentActionLeftLeft == .NONE) || (velocity < 0 && SettingValues.commentActionRightRight == .NONE) {
+                return
+            }
+        }
+        if recognizer.state == .began || translatingCell == nil {
+            let point = recognizer.location(in: self.tableView)
+            let indexpath = self.tableView.indexPathForRow(at: point)
+            if indexpath == nil {
+                return
+            }
+            
+            guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else {
+                return
+        }
+            translatingCell = cell
+        }
+        translatingCell?.handlePan(recognizer)
+        if recognizer.state == .ended {
+            translatingCell = nil
+        }
     }
 }

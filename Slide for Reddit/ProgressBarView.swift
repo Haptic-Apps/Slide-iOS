@@ -15,7 +15,8 @@ class ProgressBarView: UIView {
     var baseLayer: CAShapeLayer!
     var progressLayer: CAShapeLayer!
     var progressType: SettingValues.SubmissionAction!
-    
+    var progressTypeComment: SettingValues.CommentAction!
+
     var progress: Float = 0 {
         didSet(newValue) {
             progressLayer.strokeEnd = CGFloat(newValue)
@@ -25,6 +26,7 @@ class ProgressBarView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         progressType = .NONE
+        progressTypeComment = .NONE
         cPath = UIBezierPath()
         self.addShapeLayers()
     }
@@ -32,6 +34,7 @@ class ProgressBarView: UIView {
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         progressType = .NONE
+        progressTypeComment = .NONE
         cPath = UIBezierPath()
         self.addShapeLayers()
     }
@@ -82,6 +85,34 @@ class ProgressBarView: UIView {
             color = ColorUtil.foregroundColor
         }
 
+        if flip {
+            createLinePath(xStart: xStart, xEnd: xEnd)
+            baseLayer.path = cPath.cgPath
+            progressLayer.path = cPath.cgPath
+        }
+        
+        progressLayer.strokeColor = type == .NONE ? color.withAlphaComponent(0).cgColor : color.cgColor
+    }
+    
+    func setModeComment(type: SettingValues.CommentAction, flip: Bool = false) {
+        progressTypeComment = type
+        var xStart: CGFloat!
+        var xEnd: CGFloat!
+        var color: UIColor!
+        
+        if flip {
+            xStart = self.frame.width
+            xEnd = 0
+        } else {
+            xStart = 0
+            xEnd = self.frame.width
+        }
+        color = type.getColor()
+        
+        if type == .NONE {
+            color = ColorUtil.foregroundColor
+        }
+        
         if flip {
             createLinePath(xStart: xStart, xEnd: xEnd)
             baseLayer.path = cPath.cgPath
