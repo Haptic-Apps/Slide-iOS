@@ -1308,11 +1308,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
         title.firstTextView.textInsets = UIEdgeInsets(top: 3, left: 0, bottom: 1, right: 0)
 
-        let scoreString = NSMutableAttributedString(string: ((comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))") + (comment.controversiality > 0 ? "†  •  " : "  •  ")), attributes: [NSForegroundColorAttributeName: color, NSFontAttributeName: boldFont])
+        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: [NSForegroundColorAttributeName: color, NSFontAttributeName: boldFont])
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 2
 
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
+        let endString = NSMutableAttributedString(string: (comment.controversiality > 0 ? "†  •  " : "  •  ") + "\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
         
         if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
             endString.addAttributes([kTTTBackgroundFillColorAttributeName: ColorUtil.getColorForSub(sub: comment.subreddit), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange(location: 0, length: endString.length))

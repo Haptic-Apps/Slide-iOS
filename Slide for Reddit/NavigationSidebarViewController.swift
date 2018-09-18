@@ -139,7 +139,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
         backgroundView.alpha = percentMoved
         topView?.alpha = 1 - normalizedAlphaBar
-        topView?.layer.cornerRadius = max(15, 30 * normalizedPercentBar)
+        topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : max(15, 30 * normalizedPercentBar)
     }
     
     private func percentCompleteForTranslation(_ recognizer: UIPanGestureRecognizer) -> CGFloat {
@@ -155,7 +155,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.topView?.alpha = 1
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
-            strongSelf.topView?.layer.cornerRadius = 15
+            strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
         }
         
         self.callbacks.didCollapse?()
@@ -163,7 +163,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
-            strongSelf.topView?.layer.cornerRadius = 15
+            strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
         }
 
         UIView.animate(withDuration: 0.4,
