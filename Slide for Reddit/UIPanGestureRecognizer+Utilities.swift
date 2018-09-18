@@ -32,25 +32,12 @@ extension UIPanGestureRecognizer {
         guard let view = view else {
             return false
         }
-
+        
         let vel = velocity(in: view)
-        let a = angle(vel, direction.pointVector)
+        let a = angle(direction.pointVector, vel)
         let toleranceRadians = tolerance * .pi / 180
-        return abs(a) < toleranceRadians
-        //return abs(a) < CGFloat.pi / 4 // Angle should be within 45 degrees
+        return abs(a) <= toleranceRadians / 2 || abs(a) >= (2 * .pi) - toleranceRadians / 2
     }
-
-    func shouldRecognizeForAxis(_ axis: PanAxis, withAngleToleranceInDegrees tolerance: CGFloat = 45) -> Bool {
-        switch axis {
-        case .horizontal:
-            return shouldRecognizeForDirection(.left, withAngleToleranceInDegrees: tolerance) ||
-                shouldRecognizeForDirection(.right, withAngleToleranceInDegrees: tolerance)
-        case .vertical:
-            return shouldRecognizeForDirection(.up, withAngleToleranceInDegrees: tolerance) ||
-                shouldRecognizeForDirection(.down, withAngleToleranceInDegrees: tolerance)
-        }
-    }
-
 }
 
 /// Returns angle from a to b in radians.
