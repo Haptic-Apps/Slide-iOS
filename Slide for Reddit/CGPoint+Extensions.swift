@@ -10,7 +10,6 @@ import Foundation
 
 extension CGPoint {
 
-
     static func * (left: CGPoint, right: CGPoint) -> CGFloat {
         return left.x * right.x + left.y * right.y
     }

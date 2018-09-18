@@ -370,7 +370,7 @@ public class TextDisplayStackView: UIStackView {
         
         html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
             if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName: NSNumber(floatLiteral: 0), "TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName: NSNumber(value: 1)], range: range)
+                html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName: 0, "TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName: NSNumber(value: 1)], range: range)
             }
         })
         
@@ -398,7 +398,7 @@ public class TextDisplayStackView: UIStackView {
 
         html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
             if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName: NSNumber(floatLiteral: 0), "TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName: NSNumber(value: 1)], range: range)
+                html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName: 0, "TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName: NSNumber(value: 1)], range: range)
             }
         })
         return LinkParser.parse(html, accentColor)

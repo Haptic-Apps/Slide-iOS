@@ -13,6 +13,7 @@ import RealmSwift
 import RLBAlertsPickers
 import SDWebImage
 import UIKit
+import XLActionController
 
 class SettingsViewController: UITableViewController, MFMailComposeViewControllerDelegate {
 
@@ -40,6 +41,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var cacheCell: UITableViewCell = UITableViewCell()
     var backupCell: UITableViewCell = UITableViewCell()
     var gestureCell: UITableViewCell = UITableViewCell()
+    var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
 
     var multiColumnCell: UITableViewCell = UITableViewCell()
     var multiColumn = UISwitch()
@@ -275,6 +277,17 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.contributorsCell.imageView?.image = UIImage.init(named: "happy")?.toolbarIcon()
         self.contributorsCell.imageView?.tintColor = ColorUtil.fontColor
 
+        self.autoPlayCell.textLabel?.text = "Autoplay videos and gifs"
+        self.autoPlayCell.accessoryType = .none
+        self.autoPlayCell.backgroundColor = ColorUtil.foregroundColor
+        self.autoPlayCell.textLabel?.textColor = ColorUtil.fontColor
+        self.autoPlayCell.imageView?.image = UIImage.init(named: "play")?.toolbarIcon()
+        self.autoPlayCell.imageView?.tintColor = ColorUtil.fontColor
+        self.autoPlayCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description()
+        self.autoPlayCell.detailTextLabel?.numberOfLines = 0
+        self.autoPlayCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+
         multiColumnCell.textLabel?.text = "Multi-Column mode settings"
         multiColumnCell.backgroundColor = ColorUtil.foregroundColor
         multiColumnCell.textLabel?.textColor = ColorUtil.fontColor
@@ -389,9 +402,10 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 0: return self.mainTheme
             case 1: return self.reduceColorCell
             case 2: return self.postLayout
-            case 3: return self.subThemes
-            case 4: return self.font
-            case 5: return self.comments
+            case 3: return self.autoPlayCell
+            case 4: return self.subThemes
+            case 5: return self.font
+            case 6: return self.comments
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -455,88 +469,133 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         var ch: UIViewController?
-        if indexPath.section == 0 && indexPath.row == 1 {
-            ch = SubredditReorderViewController()
-        } else if indexPath.section == 0 && indexPath.row == 0 {
-            ch = SettingsGeneral()
-        } else if indexPath.section == 0 && indexPath.row == 2 {
-            if !SettingValues.isPro {
-                ch = SettingsPro()
-            } else {
-                showMultiColumn()
+        
+        switch indexPath.section {
+        case 0:
+            switch indexPath.row {
+            case 0:
+                ch = SettingsGeneral()
+            case 1:
+                ch = SubredditReorderViewController()
+            case 2:
+                if !SettingValues.isPro {
+                    ch = SettingsPro()
+                } else {
+                    showMultiColumn()
+                }
+            case 3:
+                if !SettingValues.isPro {
+                    showMultiColumn()
+                }
+            case 4:
+                if SettingValues.isPro {
+                    ch = SettingsGestures()
+                }
+            case 5:
+                if !SettingValues.isPro {
+                    ch = SettingsGestures()
+                }
+            default:
+                break
             }
-        } else if indexPath.section == 0 && indexPath.row == 3 {
-            if !SettingValues.isPro {
-                showMultiColumn()
+        case 1:
+            switch indexPath.row {
+            case 0:
+                ch = SettingsTheme()
+                (ch as! SettingsTheme).tochange = self
+            case 2:
+                ch = SettingsLayout()
+            case 4:
+                ch = SubredditThemeViewController()
+            case 3:
+                let alertController: BottomSheetActionController = BottomSheetActionController()
+                for item in SettingValues.AutoPlay.cases {
+                    alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
+                        UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_autoPlayMode)
+                        SettingValues.autoPlayMode = item
+                        UserDefaults.standard.synchronize()
+                        self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description()
+                        SingleSubredditViewController.cellVersion += 1
+                        SubredditReorderViewController.changed = true
+                    }))
+                }
+                VCPresenter.presentAlert(alertController, parentVC: self)
+            case 5:
+                ch = SettingsFont()
+            case 6:
+                ch = SettingsComments()
+            default:
+                break
             }
-        } else if indexPath.section == 2 && indexPath.row == 4 {
-            ch = FiltersViewController()
-        } else if indexPath.section == 1 && indexPath.row == 3 {
-            ch = SubredditThemeViewController()
-        } else if indexPath.section == 1 && indexPath.row == 0 {
-            ch = SettingsTheme()
-            (ch as! SettingsTheme).tochange = self
-        } else if indexPath.section == 1 && indexPath.row == 4 {
-            ch = SettingsFont()
-        } else if indexPath.section == 1 && indexPath.row == 2 {
-            ch = SettingsLayout()
-        } else if indexPath.section == 2 && indexPath.row == 2 {
-            ch = SettingsData()
-        } else if indexPath.section == 2 && indexPath.row == 3 {
-            ch = SettingsContent()
-        } else if indexPath.section == 1 && indexPath.row == 5 {
-            ch = SettingsComments()
-        } else if indexPath.section == 2 && indexPath.row == 0 {
-            ch = SettingsLinkHandling()
-        } else if indexPath.section == 2 && indexPath.row == 1 {
-            ch = SettingsHistory()
-        } else if indexPath.section == 0 && indexPath.row == (SettingValues.isPro ? 4 : 5) {
-            ch = SettingsGestures()
-        } else if indexPath.section == 2 && indexPath.row == 7 {
-            if !SettingValues.isPro {
-                ch = SettingsPro()
-            } else {
-                ch = SettingsBackup()
+        case 2:
+            switch indexPath.row {
+            case 0:
+                ch = SettingsLinkHandling()
+            case 1:
+                ch = SettingsHistory()
+            case 2:
+                ch = SettingsData()
+            case 3:
+                ch = SettingsContent()
+            case 4:
+                ch = FiltersViewController()
+            case 5:
+                ch = CacheSettings()
+            case 6:
+                let realm = try! Realm()
+                try! realm.write {
+                    realm.deleteAll()
+                }
+                
+                SDImageCache.shared().clearMemory()
+                SDImageCache.shared().clearDisk()
+                SDWebImageManager.shared().imageCache?.clearMemory()
+                SDWebImageManager.shared().imageCache?.clearDisk()
+                
+                BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
+            case 7:
+                if !SettingValues.isPro {
+                    ch = SettingsPro()
+                } else {
+                    ch = SettingsBackup()
+                }
+            default:
+                break
             }
-        } else if indexPath.section == 2 && indexPath.row == 6 {
-            let realm = try! Realm()
-            try! realm.write {
-                realm.deleteAll()
+        case 3:
+            switch indexPath.row {
+            case 0:
+                let url = UserDefaults.standard.string(forKey: "vlink")!
+                VCPresenter.openRedditLink(url, self.navigationController, self)
+            case 1:
+                ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
+            case 2:
+                let url = URL.init(string: "https://github.com/ccrama/Slide-ios/graphs/contributors")!
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(url)
+                }
+            case 3:
+                let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(url)
+                }
+            case 4:
+                ch = LicensesViewController()
+                let file = Bundle.main.path(forResource: "Credits", ofType: "plist")!
+                (ch as! LicensesViewController).loadPlist(NSDictionary(contentsOfFile: file)!)
+            default:
+                break
             }
+        default:
+            break
 
-            SDImageCache.shared().clearMemory()
-            SDImageCache.shared().clearDisk()
-            SDWebImageManager.shared().imageCache?.clearMemory()
-            SDWebImageManager.shared().imageCache?.clearDisk()
-            
-            BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
-        } else if indexPath.section == 3 && indexPath.row == 0 {
-            let url = UserDefaults.standard.string(forKey: "vlink")!
-            VCPresenter.openRedditLink(url, self.navigationController, self)
-        } else if indexPath.section == 3 && indexPath.row == 1 {
-            ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
-        } else if indexPath.section == 2 && indexPath.row == 5 {
-            ch = CacheSettings()
-        } else if indexPath.section == 3 && indexPath.row == 2 {
-            let url = URL.init(string: "https://github.com/ccrama/Slide-ios/graphs/contributors")!
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
-        } else if indexPath.section == 3 && indexPath.row == 3 {
-            let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
-        } else if indexPath.section == 3 && indexPath.row == 4 {
-            ch = LicensesViewController()
-            let file = Bundle.main.path(forResource: "Credits", ofType: "plist")!
-            (ch as! LicensesViewController).loadPlist(NSDictionary(contentsOfFile: file)!)
         }
-        if let n = ch {
+
+            if let n = ch {
             VCPresenter.showVC(viewController: n, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
         }
     }
@@ -561,7 +620,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return (SettingValues.isPro) ? 5 : 6
-        case 1: return 6
+        case 1: return 7
         case 2: return 8
         case 3: return 5
         default: fatalError("Unknown number of sections")
