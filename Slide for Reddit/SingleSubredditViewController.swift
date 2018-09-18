@@ -2234,7 +2234,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         }
         
         if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
-            return recognizer.shouldRecognizeForDirection(.horizontal, withAngleToleranceInDegrees: 45)
+            return recognizer.shouldRecognizeForDirection(.left, withAngleToleranceInDegrees: 45) || recognizer.shouldRecognizeForDirection(.right, withAngleToleranceInDegrees: 45)
         }
 
         return true
