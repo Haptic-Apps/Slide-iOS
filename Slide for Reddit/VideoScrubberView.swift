@@ -80,7 +80,7 @@ class VideoScrubberView: UIView {
         self.addSubview(playButton)
         self.addSubview(timeTotalLabel)
         slider.leftAnchor == self.leftAnchor + 8
-        slider.heightAnchor == 20
+        slider.heightAnchor == 24
         slider.bottomAnchor == self.bottomAnchor - 4
         slider.rightAnchor == timeTotalLabel.leftAnchor - 8
         
@@ -98,7 +98,7 @@ class VideoScrubberView: UIView {
         timeTotalLabel.textAlignment = .center
         timeTotalLabel.textColor = UIColor.white
 
-        timeTotalLabel.centerYAnchor == slider.centerYAnchor
+        timeTotalLabel.centerYAnchor == slider.centerYAnchor + 1
         timeTotalLabel.rightAnchor == self.rightAnchor - 8
 
         playButton.setImage(UIImage.init(named: "pause"), for: .normal)
