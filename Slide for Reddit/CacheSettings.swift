@@ -113,7 +113,7 @@ class CacheSettings: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 2 : subs.count
+        return section == 0 ? 1 : subs.count
     }
 
     func switchIsChanged(_ changed: UISwitch) {

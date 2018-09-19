@@ -67,7 +67,7 @@ final class BannerLinkCellView: LinkCellView {
                 if SettingValues.actionBarMode.isSide() {
                     sideButtons.topAnchor == bannerImage.bottomAnchor + ceight
                     sideButtons.heightAnchor >= CGFloat(60)
-                    sideButtons.bottomAnchor <= contentView.bottomAnchor - ceight
+                    sideButtons.bottomAnchor >= contentView.bottomAnchor - ceight
                 }
             }
 

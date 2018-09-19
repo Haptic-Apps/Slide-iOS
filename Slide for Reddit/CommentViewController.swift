@@ -759,12 +759,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             popup.clipsToBounds = true
             popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             
-            self.view.addSubview(popup)
-            popup.bottomAnchor == self.view.safeBottomAnchor - 8
+            self.navigationController!.view.addSubview(popup)
+            popup.bottomAnchor == self.navigationController!.view.safeBottomAnchor - 8
             popup.widthAnchor == width
             popup.heightAnchor == 48
-            popup.centerXAnchor == self.view.centerXAnchor
-            self.view.bringSubview(toFront: popup)
+            popup.centerXAnchor == self.navigationController!.view.centerXAnchor
+            self.navigationController!.view.bringSubview(toFront: popup)
 
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
@@ -779,7 +779,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             normalInsets = UIEdgeInsets.init(top: top, left: 0, bottom: bottom, right: 0)
         }
         self.tableView.contentInset = normalInsets
-
     }
     
     var savedBack = UIBarButtonItem()
@@ -990,28 +989,62 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     // MARK: - Table view data source
 
     var forceLoad = false
+    var startedOnce = false
+    
+    func doStartupItems() {
+        if !startedOnce {
+            startedOnce = true
+            (navigationController)?.setNavigationBarHidden(false, animated: false)
+            self.edgesForExtendedLayout = UIRectEdge.all
+            self.extendedLayoutIncludesOpaqueBars = true
+            
+            if navigationController != nil {
+                self.updateToolbar()
+            }
+            
+            self.commentDepthColors = ColorUtil.getCommentDepthColors()
+            
+            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
+            
+            self.navigationItem.backBarButtonItem?.title = ""
+            
+            if submission != nil {
+                self.setBarColors(color: ColorUtil.getColorForSub(sub: submission == nil ? subreddit : submission!.subreddit))
+            }
+            
+            self.authorColor = ColorUtil.getCommentNameColor(submission == nil ? subreddit : submission!.subreddit)
+            
+            doHeadView(self.view.frame.size)
+            
+            navigationController?.setToolbarHidden(false, animated: true)
+            self.isToolbarHidden = false
+        }
+    }
 
+    var appearing = false
+    
     override func viewWillAppear(_ animated: Bool) {
+        appearing = true
         super.viewWillAppear(animated)
-        (navigationController)?.setNavigationBarHidden(false, animated: false)
-        self.edgesForExtendedLayout = UIRectEdge.all
-        self.extendedLayoutIncludesOpaqueBars = true
         
         if navigationController != nil {
-            self.updateToolbar()
+            let sort = UIButton.init(type: .custom)
+            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
+            sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
+            sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let sortB = UIBarButtonItem.init(customView: sort)
+            
+            let search = UIButton.init(type: .custom)
+            search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControlState.normal)
+            search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
+            search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let searchB = UIBarButtonItem.init(customView: search)
+            
+            navigationItem.rightBarButtonItems = [sortB, searchB]
+            navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
         }
         
-        self.commentDepthColors = ColorUtil.getCommentDepthColors()
-        
-        self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
-
-        self.navigationItem.backBarButtonItem?.title = ""
-
-        if submission != nil {
-            self.setBarColors(color: ColorUtil.getColorForSub(sub: submission == nil ? subreddit : submission!.subreddit))
-        }
-
-        self.authorColor = ColorUtil.getCommentNameColor(submission == nil ? subreddit : submission!.subreddit)
+        doStartupItems()
 
         if !loaded && (single || forceLoad) {
             refresh(self)
@@ -1020,24 +1053,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if headerCell.videoView != nil {
             headerCell.videoView?.player?.play()
         }
-
-        if navigationController != nil {
-            let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-            sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
-            sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let sortB = UIBarButtonItem.init(customView: sort)
-
-            let search = UIButton.init(type: .custom)
-            search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControlState.normal)
-            search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
-            search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let searchB = UIBarButtonItem.init(customView: search)
-
-            navigationItem.rightBarButtonItems = [sortB, searchB]
-            navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
-        }
-        doHeadView(self.view.frame.size)
         
         if isSearching {
             isSearching = false
@@ -1049,6 +1064,25 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             UIApplication.shared.statusBarStyle = .lightContent
         }
+        
+        if popup != nil {
+            var width = UIScreen.main.bounds.width - 24
+            if width > 375 {
+                width = 375
+            }
+            self.navigationController!.view.addSubview(popup)
+            popup.transform = .identity
+            popup.bottomAnchor == self.navigationController!.view.safeBottomAnchor - 8
+            popup.widthAnchor == width
+            popup.heightAnchor == 48
+            popup.centerXAnchor == self.navigationController!.view.centerXAnchor
+            self.navigationController!.view.bringSubview(toFront: popup)
+            
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+            }, completion: nil)
+        }
+
     }
 
     var originalPosition: CGPoint?
@@ -1059,8 +1093,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }
-        navigationController?.setToolbarHidden(false, animated: true)
-        self.isToolbarHidden = false
+        appearing = false
     }
 
     var duringAnimation = false
@@ -1562,6 +1595,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         super.viewWillDisappear(animated)
         inHeadView.removeFromSuperview()
         headerCell.videoView?.player?.pause()
+        
+        if popup != nil {
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.popup.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+            }, completion: { (_) in
+                self.popup.removeFromSuperview()
+            })
+        }
     }
 
     func collapseAll() {
@@ -1834,7 +1875,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         //self.tableView.endEditing(true)
         let currentY = scrollView.contentOffset.y
-        if !SettingValues.lockCommentBars {
+    
+        if !SettingValues.lockCommentBars && !appearing {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !goingToCell && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
@@ -2009,7 +2051,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             
             if !skipTop {
                 self.tableView.scrollToRow(at: indexPath,
-                                           at: UITableViewScrollPosition.none, animated: true)
+                                           at: UITableViewScrollPosition.none, animated: false)
             }
             
             id = (contents as! RComment).getIdentifier()
