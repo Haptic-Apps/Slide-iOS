@@ -21,7 +21,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         return contentType == ContentType.CType.VIDEO
     }
 
-    var globalAspect = CGFloat(0)
+    var youtubeResolution = CGSize(width: 16, height: 9)
     var videoView = VideoView()
     var youtubeView = YTPlayerView()
     var downloadedOnce = false
@@ -111,8 +111,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         super.viewWillLayoutSubviews()
 
         // Recalculate youtube frame size
-        // TODO: Use aspect ratio of actual video
-        self.youtubeView.frame = AVMakeRect(aspectRatio: CGSize(width: 16.0, height: 9.0), insideRect: self.view.bounds)
+        self.youtubeView.frame = AVMakeRect(aspectRatio: youtubeResolution, insideRect: self.view.bounds)
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -632,13 +631,13 @@ extension VideoMediaViewController {
             video = video.substring(0, length: video.indexOf("?")!)
         }
 
-        getRemoteAspectRatio(videoId: video) { [weak self] (aspect) in
+        getYoutubeVideoResolution(videoId: video) { [weak self] (resolution) in
             guard let strongSelf = self else {
                 return
             }
             
-            strongSelf.globalAspect = aspect
-//            strongSelf.youtubeHeightConstraint = strongSelf.youtubeView.heightAnchor == strongSelf.youtubeView.widthAnchor * aspect
+            strongSelf.youtubeResolution = resolution
+            strongSelf.view.setNeedsLayout()
             let vars = [
                 "controls": 0, // Disable controls
                 "playsinline": 1,
@@ -685,13 +684,13 @@ extension VideoMediaViewController {
         }
     }
 
-    func getRemoteAspectRatio(videoId: String, completion: @escaping (CGFloat) -> Void) {
+    func getYoutubeVideoResolution(videoId: String, completion: @escaping (CGSize) -> Void) {
         let metaURL = URL(string: "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=\(videoId)&format=json")!
 
         print(metaURL)
         func failureBlock() {
             OperationQueue.main.addOperation({
-                completion(CGFloat(9 / 16))
+                completion(CGSize(width: 16, height: 9))
             })
         }
         
@@ -712,8 +711,8 @@ extension VideoMediaViewController {
             let width = dict.value(forKey: "width") as! CGFloat
 
             OperationQueue.main.addOperation({
-                print("Is \(CGFloat(height / width)) with \(height) and \(width)")
-                completion(CGFloat(height / width))
+                print("Youtube video is \(width)x\(height)")
+                completion(CGSize(width: width, height: height))
             })
 
         }).resume()
