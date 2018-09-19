@@ -29,8 +29,8 @@ extension UIViewController {
         }
     }
     
-    func setupBaseBarColors() {
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
+    func setupBaseBarColors(_ overrideColor: UIColor? = nil) {
+        navigationController?.navigationBar.barTintColor = overrideColor ?? ColorUtil.getColorForSub(sub: "", true)
         navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         let textAttributes = [NSForegroundColorAttributeName: SettingValues.reduceColor ? ColorUtil.fontColor : .white]
         navigationController?.navigationBar.titleTextAttributes = textAttributes

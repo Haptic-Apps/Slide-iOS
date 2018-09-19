@@ -181,7 +181,10 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
     var selected = false
     var currentVc = UIViewController()
-    
+    override func prefersHomeIndicatorAutoHidden() -> Bool {
+        return true
+    }
+
 }
 
 extension UIPanGestureRecognizer {

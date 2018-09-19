@@ -25,6 +25,10 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         SDImageCache.shared().config.shouldCacheImagesInMemory = true
     }
 
+    override func prefersHomeIndicatorAutoHidden() -> Bool {
+        return true
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         SDImageCache.shared().config.shouldCacheImagesInMemory = false

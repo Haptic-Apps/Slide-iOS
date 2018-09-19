@@ -29,13 +29,15 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     var titleLabel = UILabel()
 
     var accentChosen: UIColor?
+    var primaryChosen: UIColor?
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
             titleLabel.textColor = self.accentChosen!
         } else {
-            setupBaseBarColors()
+            primaryChosen = colorPickerView.colors[indexPath.row]
+            setupBaseBarColors(primaryChosen)
         }
     }
 
@@ -77,6 +79,11 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         })*/
 
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (_: UIAlertAction!) in
+            if self.primaryChosen != nil {
+                UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "basecolor")
+                UserDefaults.standard.synchronize()
+            }
+
             UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
             UserDefaults.standard.synchronize()
             _ = ColorUtil.doInit()

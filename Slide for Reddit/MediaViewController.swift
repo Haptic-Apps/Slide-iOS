@@ -22,6 +22,10 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     var link: RSubmission!
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
+    
+    override func prefersHomeIndicatorAutoHidden() -> Bool {
+        return true
+    }
 
     public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?) { //lq is should load lq and did load lq
         if saveHistory {
