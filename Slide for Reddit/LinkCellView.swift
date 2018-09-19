@@ -1860,6 +1860,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func openComment(sender: UITapGestureRecognizer? = nil) {
         if !full {
             if let delegate = self.del {
+                if videoView != nil {
+                    videoView?.player?.pause()
+                }
                 delegate.openComments(id: link!.getId(), subreddit: link!.subreddit)
             }
         }

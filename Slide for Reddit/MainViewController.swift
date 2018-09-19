@@ -83,6 +83,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
     }
     
+//    override func preferredScreenEdgesDeferringSystemGestures() -> UIRectEdge {
+//        return .bottom
+//    }
+    
+    override func prefersHomeIndicatorAutoHidden() -> Bool {
+        return true
+    }
+    
     //from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift
     private func requestReviewIfAppropriate() {
         if #available(iOS 10.3, *) {
@@ -922,10 +930,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         UIApplication.shared.statusBarView?.backgroundColor = .clear
         
         menuNav?.view.isHidden = true
-
-        if navigationController?.isNavigationBarHidden ?? false {
-            navigationController?.setNavigationBarHidden(false, animated: false)
-        }
     }
 
     func showSortMenu(_ sender: UIButton?) {

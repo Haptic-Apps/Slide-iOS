@@ -1014,18 +1014,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             
             self.authorColor = ColorUtil.getCommentNameColor(submission == nil ? subreddit : submission!.subreddit)
             
-            doHeadView(self.view.frame.size)
-            
             navigationController?.setToolbarHidden(false, animated: true)
             self.isToolbarHidden = false
         }
     }
 
-    var appearing = false
-    
     override func viewWillAppear(_ animated: Bool) {
-        appearing = true
         super.viewWillAppear(animated)
+        
+        doHeadView(self.view.frame.size)
         
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
@@ -1093,7 +1090,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }
-        appearing = false
     }
 
     var duringAnimation = false
@@ -1590,14 +1586,18 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     var isCurrentlyChanging = false
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        inHeadView.removeFromSuperview()
+        headerCell.videoView?.player?.pause()
+    }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        inHeadView.removeFromSuperview()
-        headerCell.videoView?.player?.pause()
         
         if popup != nil {
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.popup.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { (_) in
                 self.popup.removeFromSuperview()
@@ -1875,8 +1875,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         //self.tableView.endEditing(true)
         let currentY = scrollView.contentOffset.y
-    
-        if !SettingValues.lockCommentBars && !appearing {
+        if !SettingValues.lockCommentBars {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !goingToCell && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
