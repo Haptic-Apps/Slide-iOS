@@ -8,6 +8,16 @@
 
 import Foundation
 
+// https://stackoverflow.com/a/29179878/7138792
+fileprivate extension BinaryInteger {
+    var degreesToRadians: CGFloat { return CGFloat(Int(self)) * .pi / 180 }
+}
+fileprivate extension FloatingPoint {
+    var degreesToRadians: Self { return self * .pi / 180 }
+    var radiansToDegrees: Self { return self * 180 / .pi }
+}
+
+
 enum PanDirection {
     case left, right, up, down
 
@@ -34,14 +44,25 @@ extension UIPanGestureRecognizer {
         }
         
         let vel = velocity(in: view)
-        let a = angle(direction.pointVector, vel)
-        let toleranceRadians = tolerance * .pi / 180
-        return abs(a) <= toleranceRadians / 2 || abs(a) >= (2 * .pi) - toleranceRadians / 2
+        let a = angle(direction.pointVector, vel).radiansToDegrees
+        return abs(a) <= tolerance / 2 || abs(a) >= 360 - (tolerance / 2)
+
     }
+
+    func shouldRecognizeForAxis(_ axis: PanAxis, withAngleToleranceInDegrees tolerance: CGFloat = 45) -> Bool {
+        switch axis {
+        case .horizontal:
+            return shouldRecognizeForDirection(.left, withAngleToleranceInDegrees: tolerance) ||
+                shouldRecognizeForDirection(.right, withAngleToleranceInDegrees: tolerance)
+        case .vertical:
+            return shouldRecognizeForDirection(.up, withAngleToleranceInDegrees: tolerance) ||
+                shouldRecognizeForDirection(.down, withAngleToleranceInDegrees: tolerance)
+        }
+    }
+
 }
 
-/// Returns angle from a to b in radians.
+/// Returns angle between vector a and vector b in radians.
 func angle(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
-    // TODO | - Not sure if this is correct
     return atan2(a.y, a.x) - atan2(b.y, b.x)
 }
