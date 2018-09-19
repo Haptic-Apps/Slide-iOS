@@ -307,10 +307,10 @@ class SettingsGestures: UITableViewController {
     }
 
     func updateCells() {
-        createCell(rightRightActionCell, nil, isOn: false, text: "First right slide button (also triggered by a long slide)")
-        createCell(rightLeftActionCell, nil, isOn: false, text: "Second right slide button")
-        createCell(leftLeftActionCell, nil, isOn: false, text: "First left slide button (also triggered by a long slide)")
-        createCell(leftRightActionCell, nil, isOn: false, text: "Second left slide button")
+        createCell(rightRightActionCell, nil, isOn: false, text: "First action swiping left to right")
+        createCell(rightLeftActionCell, nil, isOn: false, text: "Second action swiping left to right")
+        createCell(leftLeftActionCell, nil, isOn: false, text: "First action swiping right to left")
+        createCell(leftRightActionCell, nil, isOn: false, text: "Second action swiping right to left")
         createCell(doubleTapActionCell, nil, isOn: false, text: "Double tap comment action")
         createCell(doubleTapSubActionCell, nil, isOn: false, text: "Double tap submission action")
         createCell(leftSubActionCell, nil, isOn: false, text: "Left submission swipe")

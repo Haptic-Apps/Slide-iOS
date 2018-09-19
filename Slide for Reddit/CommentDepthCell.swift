@@ -328,7 +328,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             CATransaction.commit()
             
             let currentProgress = progressBar.progress
-            if (isTwoForDirection(left: direction == 1) && (currentProgress >= 0.3 && previousProgress < 0.3)) || (currentProgress >= 0.6 && previousProgress < 0.6) || sender.state == .ended {
+            if (isTwoForDirection(left: direction == 1) && (currentProgress >= 0.3 && previousProgress < 0.3)) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.6 && previousProgress < 0.6) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
                 }
@@ -336,7 +336,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             typeImage.alpha = CGFloat(currentProgress)
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && ((isTwoForDirection(left: direction == 1) && (progressBar.progress >= 0.3 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000))) || (progressBar.progress >= 0.6 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000))) {
+        } else if sender.state == .ended && ((isTwoForDirection(left: direction == 1) && (progressBar.progress >= 0.3 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000))) || (progressBar.progress >= 0.5 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000))) {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressTypeComment!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
