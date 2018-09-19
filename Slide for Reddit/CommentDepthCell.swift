@@ -230,6 +230,18 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var dragCancelled = false
     var direction = 0
     
+    func isTwoForDirection(left: Bool) -> Bool {
+        return left ? (SettingValues.commentActionLeftLeft != .NONE && SettingValues.commentActionLeftRight != .NONE) : (SettingValues.commentActionRightLeft != .NONE && SettingValues.commentActionRightRight != .NONE)
+    }
+    
+    func getFirstAction(left: Bool) -> SettingValues.CommentAction {
+        return !left ? (SettingValues.commentActionLeftLeft != .NONE ? SettingValues.commentActionLeftLeft : SettingValues.commentActionLeftRight) : (SettingValues.commentActionRightRight != .NONE ? SettingValues.commentActionRightRight : SettingValues.commentActionRightLeft) //Setting is for right swipe, left here is right side. So needs to be flipped (!left)
+    }
+    
+    func getSecondAction(left: Bool) -> SettingValues.CommentAction {
+        return !left ? (SettingValues.commentActionLeftRight != .NONE ? SettingValues.commentActionLeftRight : SettingValues.commentActionLeftLeft) : (SettingValues.commentActionRightLeft != .NONE ? SettingValues.commentActionRightLeft : SettingValues.commentActionRightRight) //Setting is for right swipe, left here is right side. So needs to be flipped (!left)
+    }
+
     func handlePan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began {
             dragCancelled = false
@@ -263,20 +275,22 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
-                    progressBar.setModeComment(type: SettingValues.commentActionLeftLeft, flip: false)
-                    typeImage.image = UIImage(named: SettingValues.commentActionLeftLeft.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
-                    typeImage.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
+                    let action = getFirstAction(left: true)
+                    progressBar.setModeComment(type: action, flip: false)
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.backgroundColor = action.getColor()
                 } else {
                     direction = -1
-                    progressBar.setModeComment(type: SettingValues.commentActionRightRight, flip: true)
-                    typeImage.image = UIImage(named: SettingValues.commentActionRightRight.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
-                    typeImage.backgroundColor = SettingValues.commentActionRightRight.getColor()
+                    let action = getFirstAction(left: false)
+                    progressBar.setModeComment(type: action, flip: true)
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.backgroundColor = action.getColor()
                 }
             }
             
             let currentTranslation = direction == -1 ? 0 - (contentView.bounds.size.width - posx) : posx
             
-            if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE) {
+            if (direction == -1 && SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE) || (direction == 1 && SettingValues.commentActionLeftRight == .NONE && SettingValues.commentActionLeftLeft == .NONE) {
                 dragCancelled = true
                 sender.cancel()
                 return
@@ -288,13 +302,33 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 typeImage.widthAnchor == 45
             }
             
+            var progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
+            
+            if progress > 0.5 && previousProgress <= 0.5 && isTwoForDirection(left: direction == 1) {
+                let action = getSecondAction(left: direction == 1)
+                progressBar.setModeComment(type: action, flip: direction != 1)
+                typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                typeImage.backgroundColor = action.getColor()
+                if #available(iOS 10.0, *) {
+                    HapticUtility.hapticActionWeak()
+                }
+            } else if progress < 0.5 && previousProgress >= 0.5 && isTwoForDirection(left: direction == 1) {
+                let action = getFirstAction(left: direction == 1)
+                progressBar.setModeComment(type: action, flip: direction != 1)
+                typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                typeImage.backgroundColor = action.getColor()
+                if #available(iOS 10.0, *) {
+                    HapticUtility.hapticActionWeak()
+                }
+            }
+            
             CATransaction.begin()
             CATransaction.setDisableActions(true)
-            progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
+            progressBar.progress = progress
             CATransaction.commit()
             
             let currentProgress = progressBar.progress
-            if currentProgress >= 0.6 && previousProgress < 0.6 || sender.state == .ended {
+            if (isTwoForDirection(left: direction == 1) && (currentProgress >= 0.3 && previousProgress < 0.3)) || (currentProgress >= 0.6 && previousProgress < 0.6) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
                 }
@@ -302,7 +336,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             typeImage.alpha = CGFloat(currentProgress)
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && (progressBar.progress >= 0.6 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000)) {
+        } else if sender.state == .ended && ((isTwoForDirection(left: direction == 1) && (progressBar.progress >= 0.3 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000))) || (progressBar.progress >= 0.6 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000))) {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressTypeComment!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
