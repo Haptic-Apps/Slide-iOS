@@ -1846,7 +1846,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             doLoadVideo()
             playView.isHidden = true
             self.progressDot.isHidden = false
-        } else if self.videoView.player != nil {
+        } else if self.videoView.player != nil && self.videoView.player?.currentItem != nil {
             let controller = AnyModalViewController(cellView: self)
             let postContentTransitioningDelegate = PostContentPresentationManager()
             postContentTransitioningDelegate.sourceImageView = self.videoView
