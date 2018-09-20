@@ -429,12 +429,12 @@ class SettingsGestures: UITableViewController {
         case 1:
             switch indexPath.row {
             case 0: return self.commentGesturesCell
-            case 1: return self.commentCell
-            case 2: return self.rightRightActionCell
-            case 3: return self.rightLeftActionCell
-            case 4: return self.leftLeftActionCell
-            case 5: return self.leftRightActionCell
-            case 6: return self.doubleTapActionCell
+            //case 1: return self.commentCell
+            case 1: return self.rightRightActionCell
+            case 2: return self.rightLeftActionCell
+            case 3: return self.leftLeftActionCell
+            case 4: return self.leftRightActionCell
+            case 5: return self.doubleTapActionCell
             default: fatalError("Unknown row in section 0")
             }
         case 0:
@@ -453,7 +453,7 @@ class SettingsGestures: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 4
-        case 1: return 7
+        case 1: return 6
         default: fatalError("Unknown number of sections")
         }
     }
