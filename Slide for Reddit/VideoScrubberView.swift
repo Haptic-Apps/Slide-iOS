@@ -76,7 +76,7 @@ class VideoScrubberView: UIView {
         slider.maximumTrackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.4)
         slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white), for: .normal)
         self.addSubview(slider)
-
+        
         self.addSubview(playButton)
         self.addSubview(timeTotalLabel)
         slider.leftAnchor == self.leftAnchor + 8
@@ -88,7 +88,6 @@ class VideoScrubberView: UIView {
         //timeElapsedLabel.textAlignment = .center
         //timeElapsedLabel.textColor = UIColor.white
         //self.addSubview(timeElapsedLabel)
-
         //timeElapsedLabel.centerYAnchor == slider.centerYAnchor
         //timeElapsedLabel.leftAnchor >= slider.leftAnchor ~ .high
 //        timeElapsedRightConstraint = timeElapsedLabel.rightAnchor == CGFloat(slider.thumbCenterX - 16) ~ .low
@@ -106,7 +105,6 @@ class VideoScrubberView: UIView {
         playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
 
         playButton.sizeAnchors == .square(size: 60)
-        playButton.centerAnchors == self.centerAnchors
 
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .touchDown)

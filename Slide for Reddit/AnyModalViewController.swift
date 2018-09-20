@@ -361,7 +361,9 @@ class AnyModalViewController: UIViewController {
         
         scrubber.horizontalAnchors == view.safeHorizontalAnchors + 8
         scrubber.topAnchor == view.safeTopAnchor + 8
-        scrubber.bottomAnchor == bottomButtons.topAnchor - 16
+        scrubber.bottomAnchor == bottomButtons.topAnchor - 4
+
+        scrubber.playButton.centerAnchors == self.videoView.centerAnchors
 
         if #available(iOS 11, *) {
             self.navigationBar.topAnchor == self.view.safeTopAnchor

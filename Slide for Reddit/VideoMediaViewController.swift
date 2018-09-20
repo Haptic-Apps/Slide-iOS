@@ -229,7 +229,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         scrubber.horizontalAnchors == view.safeHorizontalAnchors + 8
         scrubber.topAnchor == view.safeTopAnchor + 8
-        scrubber.bottomAnchor == bottomButtons.topAnchor - 16
+        scrubber.bottomAnchor == bottomButtons.topAnchor - 4
+        
+        scrubber.playButton.centerAnchors == self.videoView.centerAnchors
     }
     
     func handleTap(_ sender: UITapGestureRecognizer) {
