@@ -86,15 +86,15 @@ class SettingsGestures: UITableViewController {
         if indexPath.section != 1 {
             return
         }
-        if indexPath.row == 2 {
+        if indexPath.row == 1 {
             showAction(cell: rightRightActionCell)
-        } else if indexPath.row == 3 {
+        } else if indexPath.row == 2 {
             showAction(cell: rightLeftActionCell)
-        } else if indexPath.row == 4 {
+        } else if indexPath.row == 3 {
             showAction(cell: leftLeftActionCell)
-        } else if indexPath.row == 5 {
+        } else if indexPath.row == 4 {
             showAction(cell: leftRightActionCell)
-        } else if indexPath.row == 6 {
+        } else if indexPath.row == 5 {
             showAction(cell: doubleTapActionCell)
         }
     }
@@ -234,77 +234,77 @@ class SettingsGestures: UITableViewController {
         return newTitle
     }
     
-    @available(iOS 11.0, *)
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if indexPath.row != 0 || indexPath.section != 1 {
-            return nil
-        }
-        
-        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
-            HapticUtility.hapticActionWeak()
-            var actions = [UIContextualAction]()
-            if SettingValues.commentActionRightRight != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
-                    b(true)
-                })
-                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
-                
-                actions.append(action)
-            }
-            if SettingValues.commentActionRightLeft != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
-                    b(true)
-                })
-                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
-                
-                actions.append(action)
-            }
-            let config = UISwipeActionsConfiguration.init(actions: actions)
-            
-            return config
-            
-        } else {
-            return UISwipeActionsConfiguration.init()
-        }
-    }
-    
-    @available(iOS 11.0, *)
-    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if indexPath.row != 0 || indexPath.section != 1 {
-            return nil
-        }
-
-        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
-            HapticUtility.hapticActionWeak()
-            var actions = [UIContextualAction]()
-            if SettingValues.commentActionLeftLeft != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
-                    b(true)
-                })
-                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
-                
-                actions.append(action)
-            }
-            if SettingValues.commentActionLeftRight != .NONE {
-                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
-                    b(true)
-                })
-                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
-                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
-                
-                actions.append(action)
-            }
-            let config = UISwipeActionsConfiguration.init(actions: actions)
-            
-            return config
-            
-        } else {
-            return UISwipeActionsConfiguration.init()
-        }
-    }
+//    @available(iOS 11.0, *)
+//    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        if indexPath.row != 0 || indexPath.section != 1 {
+//            return nil
+//        }
+//        
+//        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
+//            HapticUtility.hapticActionWeak()
+//            var actions = [UIContextualAction]()
+//            if SettingValues.commentActionRightRight != .NONE {
+//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
+//                    b(true)
+//                })
+//                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
+//                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
+//                
+//                actions.append(action)
+//            }
+//            if SettingValues.commentActionRightLeft != .NONE {
+//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
+//                    b(true)
+//                })
+//                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
+//                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
+//                
+//                actions.append(action)
+//            }
+//            let config = UISwipeActionsConfiguration.init(actions: actions)
+//            
+//            return config
+//            
+//        } else {
+//            return UISwipeActionsConfiguration.init()
+//        }
+//    }
+//    
+//    @available(iOS 11.0, *)
+//    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        if indexPath.row != 0 || indexPath.section != 1 {
+//            return nil
+//        }
+//
+//        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
+//            HapticUtility.hapticActionWeak()
+//            var actions = [UIContextualAction]()
+//            if SettingValues.commentActionLeftLeft != .NONE {
+//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
+//                    b(true)
+//                })
+//                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
+//                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
+//                
+//                actions.append(action)
+//            }
+//            if SettingValues.commentActionLeftRight != .NONE {
+//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
+//                    b(true)
+//                })
+//                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
+//                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
+//                
+//                actions.append(action)
+//            }
+//            let config = UISwipeActionsConfiguration.init(actions: actions)
+//            
+//            return config
+//            
+//        } else {
+//            return UISwipeActionsConfiguration.init()
+//        }
+//    }
 
     func updateCells() {
         createCell(rightRightActionCell, nil, isOn: false, text: "First action swiping left to right")

@@ -231,7 +231,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var direction = 0
     
     func isTwoForDirection(left: Bool) -> Bool {
-        return left ? (SettingValues.commentActionLeftLeft != .NONE && SettingValues.commentActionLeftRight != .NONE) : (SettingValues.commentActionRightLeft != .NONE && SettingValues.commentActionRightRight != .NONE)
+        return !left ? (SettingValues.commentActionLeftLeft != .NONE && SettingValues.commentActionLeftRight != .NONE) : (SettingValues.commentActionRightLeft != .NONE && SettingValues.commentActionRightRight != .NONE)
     }
     
     func getFirstAction(left: Bool) -> SettingValues.CommentAction {
@@ -243,7 +243,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func handlePan(_ sender: UIPanGestureRecognizer) {
-        if sender.state == .began {
+        if sender.state == .began || progressBar == nil {
             dragCancelled = false
             direction = 0
             progressBar = ProgressBarView(frame: contentView.bounds).then {
@@ -290,7 +290,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             let currentTranslation = direction == -1 ? 0 - (contentView.bounds.size.width - posx) : posx
             
-            if (direction == -1 && SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE) || (direction == 1 && SettingValues.commentActionLeftRight == .NONE && SettingValues.commentActionLeftLeft == .NONE) {
+            if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionRightLeft == .NONE) {
                 dragCancelled = true
                 sender.cancel()
                 return
@@ -302,7 +302,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 typeImage.widthAnchor == 45
             }
             
-            var progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
+            let progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
             
             if progress > 0.5 && previousProgress <= 0.5 && isTwoForDirection(left: direction == 1) {
                 let action = getSecondAction(left: direction == 1)
@@ -310,7 +310,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                 typeImage.backgroundColor = action.getColor()
                 if #available(iOS 10.0, *) {
-                    HapticUtility.hapticActionWeak()
+                    HapticUtility.hapticActionStrong()
                 }
             } else if progress < 0.5 && previousProgress >= 0.5 && isTwoForDirection(left: direction == 1) {
                 let action = getFirstAction(left: direction == 1)
@@ -318,7 +318,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                 typeImage.backgroundColor = action.getColor()
                 if #available(iOS 10.0, *) {
-                    HapticUtility.hapticActionWeak()
+                    HapticUtility.hapticActionStrong()
                 }
             }
             
@@ -326,17 +326,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             CATransaction.setDisableActions(true)
             progressBar.progress = progress
             CATransaction.commit()
-            
+            print(progress)
             let currentProgress = progressBar.progress
             if (isTwoForDirection(left: direction == 1) && (currentProgress >= 0.3 && previousProgress < 0.3)) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.6 && previousProgress < 0.6) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
                 }
             }
-            typeImage.alpha = CGFloat(currentProgress)
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && ((isTwoForDirection(left: direction == 1) && (progressBar.progress >= 0.3 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000))) || (progressBar.progress >= 0.5 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000))) {
+        } else if sender.state == .ended && ((progressBar.progress >= (isTwoForDirection(left: direction == 1) ? 0.3 : 0.6) && !((xVelocity > 0 && direction == -1) || (xVelocity < 0 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressTypeComment!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
@@ -348,17 +347,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 self.typeImage.removeFromSuperview()
             })
         } else if sender.state != .began {
-            if self.progressBar.superview == nil {
-                return
-            }
-            self.progressBar.progressLayer.strokeEnd = 0
-            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-                self.progressBar.alpha = 0
-                self.typeImage.alpha = 0
-            }, completion: { (_) in
-                self.progressBar.removeFromSuperview()
-                self.typeImage.removeFromSuperview()
-            })
+            dragCancelled = true
         }
         
         if dragCancelled {
