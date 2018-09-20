@@ -100,11 +100,14 @@ class VideoScrubberView: UIView {
         timeTotalLabel.centerYAnchor == slider.centerYAnchor + 1
         timeTotalLabel.rightAnchor == self.rightAnchor - 8
 
-        playButton.setImage(UIImage.init(named: "pause"), for: .normal)
+        playButton.setImage(UIImage.init(named: "pause")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
         playButton.tintColor = UIColor.white
         playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
 
         playButton.sizeAnchors == .square(size: 60)
+        playButton.clipsToBounds = true
+        playButton.layer.cornerRadius = 30
+        playButton.backgroundColor = UIColor.black.withAlphaComponent(0.5)
 
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .touchDown)
@@ -116,7 +119,11 @@ class VideoScrubberView: UIView {
         let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
         blurEffect.setValue(3, forKeyPath: "blurRadius")
         blurView.effect = blurEffect
-       // self.insertSubview(blurView, at: 0)
+        blurView.clipsToBounds = true
+        blurView.layer.cornerRadius = 30
+        //self.insertSubview(blurView, at: 0)
+       // blurView.edgeAnchors == playButton.edgeAnchors
+       // self.bringSubview(toFront: playButton)
     }
     
     func updateWithTime(elapsedTime: CMTime) {
@@ -144,11 +151,11 @@ class VideoScrubberView: UIView {
     }
 
     func setPlayButton() {
-        playButton.setImage(UIImage.init(named: "play"), for: .normal)
+        playButton.setImage(UIImage.init(named: "play")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
     }
 
     func setPauseButton() {
-        playButton.setImage(UIImage.init(named: "pause"), for: .normal)
+        playButton.setImage(UIImage.init(named: "pause")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
     }
 
 }

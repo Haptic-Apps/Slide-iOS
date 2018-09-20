@@ -239,7 +239,7 @@ class SettingsGestures: UITableViewController {
 //        if indexPath.row != 0 || indexPath.section != 1 {
 //            return nil
 //        }
-//        
+//
 //        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
 //            HapticUtility.hapticActionWeak()
 //            var actions = [UIContextualAction]()
@@ -249,7 +249,7 @@ class SettingsGestures: UITableViewController {
 //                })
 //                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
 //                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
-//                
+//
 //                actions.append(action)
 //            }
 //            if SettingValues.commentActionRightLeft != .NONE {
@@ -258,18 +258,18 @@ class SettingsGestures: UITableViewController {
 //                })
 //                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
 //                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
-//                
+//
 //                actions.append(action)
 //            }
 //            let config = UISwipeActionsConfiguration.init(actions: actions)
-//            
+//
 //            return config
-//            
+//
 //        } else {
 //            return UISwipeActionsConfiguration.init()
 //        }
 //    }
-//    
+//
 //    @available(iOS 11.0, *)
 //    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 //        if indexPath.row != 0 || indexPath.section != 1 {
@@ -285,7 +285,7 @@ class SettingsGestures: UITableViewController {
 //                })
 //                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
 //                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
-//                
+//
 //                actions.append(action)
 //            }
 //            if SettingValues.commentActionLeftRight != .NONE {
@@ -294,13 +294,13 @@ class SettingsGestures: UITableViewController {
 //                })
 //                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
 //                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
-//                
+//
 //                actions.append(action)
 //            }
 //            let config = UISwipeActionsConfiguration.init(actions: actions)
-//            
+//
 //            return config
-//            
+//
 //        } else {
 //            return UISwipeActionsConfiguration.init()
 //        }

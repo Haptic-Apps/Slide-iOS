@@ -385,7 +385,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             contentView.bringSubview(toFront: topVideoView)
             
             playView = UIImageView().then {
-                    $0.image = UIImage(named: "play")?.getCopy(withSize: CGSize.square(size: 70), withColor: .white)
+                    $0.image = UIImage(named: "play")?.getCopy(withSize: CGSize.square(size: 60), withColor: .white)
                     $0.contentMode = .center
                     $0.isHidden = true
             }
@@ -566,7 +566,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let currentProgress = progressBar.progress
             if currentProgress >= 0.6 && previousProgress < 0.6 || sender.state == .ended {
                 if #available(iOS 10.0, *) {
-                    HapticUtility.hapticActionWeak()
+                    HapticUtility.hapticActionStrong()
                 }
             }
             typeImage.alpha = CGFloat(currentProgress)
@@ -702,6 +702,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             playView.widthAnchor == 70
             playView.heightAnchor == 70
             playView.centerAnchors == topVideoView.centerAnchors
+            playView.clipsToBounds = true
+            playView.layer.cornerRadius = 35
+            playView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         }
         
         // Remove all constraints previously applied by this method
