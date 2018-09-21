@@ -269,7 +269,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         let xVelocity = sender.velocity(in: contentView).x
-        print(xVelocity)
+        
+        if sender.state == .ended {
+            print(xVelocity)
+        }
         if sender.state != .ended && sender.state != .began {
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: contentView).x
@@ -328,14 +331,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             progressBar.progress = progress
             CATransaction.commit()
             let currentProgress = progressBar.progress
-            if (isTwoForDirection(left: direction == 1) && (currentProgress >= 0.3 && previousProgress < 0.3)) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.6 && previousProgress < 0.6) || sender.state == .ended {
+            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.2 && previousProgress < 0.2) || (currentProgress <= 0.2 && previousProgress > 0.2))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.6 && previousProgress < 0.6) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
                 }
             }
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && ((progressBar.progress >= (isTwoForDirection(left: direction == 1) ? 0.2 : 0.6) && !((xVelocity > 100 && direction == -1) || (xVelocity < 100 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
+        } else if sender.state == .ended && ((progressBar.progress >= (isTwoForDirection(left: direction == 1) ? 0.2 : 0.6) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressTypeComment!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
