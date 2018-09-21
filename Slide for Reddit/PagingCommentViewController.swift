@@ -31,6 +31,18 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
+    func next() {
+        if currentIndex + 1 < vCs.count {
+            currentIndex += 1
+            let vc = vCs[currentIndex] as! CommentViewController
+            setViewControllers([vc],
+                                   direction: .forward,
+                                   animated: true,
+                                   completion: nil)
+            vc.refresh(vc)
+        }
+    }
+    
     public init(comments: [CommentViewController]) {
         for c in comments {
             vCs.append(c)
@@ -117,9 +129,12 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         guard transitionCompleted else { return }
         if !(self.viewControllers!.first! is ClearVC) {
             PagingCommentViewController.savedComment = self.viewControllers!.first as? CommentViewController
-        }
-            currentIndex = vCs.index(of: PagingCommentViewController.savedComment!)!
+            if !PagingCommentViewController.savedComment!.loaded {
+                PagingCommentViewController.savedComment!.refresh(pageViewController)
+            }
 
+        }
+        currentIndex = vCs.index(of: PagingCommentViewController.savedComment!)!
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,

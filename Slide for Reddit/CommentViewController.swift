@@ -398,7 +398,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             tableView.addSubview(refreshControl!)
         }
-        refreshControl?.beginRefreshing()
     }
 
     func getSelf() -> CommentViewController {
@@ -926,6 +925,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if navigationController != nil {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
+        
+        if !single && parent is PagingCommentViewController {
+            for view in view.subviews {
+                if view is UIScrollView && !(view is UITableView) {
+                    let scrollView = view as! UIScrollView
+                    panGesture.require(toFail: scrollView.panGestureRecognizer)
+                }
+            }
+        }
     }
 
     var keyboardHeight = CGFloat(0)
@@ -1079,7 +1087,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
             }, completion: nil)
         }
-
+        
+        if !loaded {
+            refreshControl?.beginRefreshing()
+        }
     }
 
     var originalPosition: CGPoint?
@@ -1095,13 +1106,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var duringAnimation = false
 
     func close(_ sender: AnyObject) {
-        if self.navigationController?.viewControllers.count == 1 && self.navigationController?.navigationController == nil {
-            self.navigationController?.dismiss(animated: true, completion: nil)
-        } else if self.navigationController is TapBehindModalViewController {
-            self.navigationController?.popViewController(animated: true)
-        } else {
-            self.navigationController?.navigationController?.popToRootViewController(animated: true)
-        }
+        self.navigationController?.popViewController(animated: true)
     }
     
     func showMod(_ sender: AnyObject) {
@@ -2022,6 +2027,12 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             collapseParent(indexPath, baseCell: cell)
         case .REPLY:
             cell.reply(cell)
+        case .EXIT:
+            self.close(cell)
+        case .NEXT:
+            if parent is PagingCommentViewController {
+                (parent as! PagingCommentViewController).next()
+            }
         case .NONE:
             break
         }

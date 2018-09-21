@@ -326,7 +326,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             CATransaction.setDisableActions(true)
             progressBar.progress = progress
             CATransaction.commit()
-            print(progress)
             let currentProgress = progressBar.progress
             if (isTwoForDirection(left: direction == 1) && (currentProgress >= 0.3 && previousProgress < 0.3)) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.6 && previousProgress < 0.6) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
@@ -335,7 +334,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && ((progressBar.progress >= (isTwoForDirection(left: direction == 1) ? 0.3 : 0.6) && !((xVelocity > 0 && direction == -1) || (xVelocity < 0 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
+        } else if sender.state == .ended && ((progressBar.progress >= (isTwoForDirection(left: direction == 1) ? 0.2 : 0.6) && !((xVelocity > 0 && direction == -1) || (xVelocity < 0 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressTypeComment!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {

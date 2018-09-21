@@ -157,7 +157,6 @@ class VideoScrubberView: UIView {
     func setPauseButton() {
         playButton.setImage(UIImage.init(named: "pause")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
     }
-
 }
 
 extension VideoScrubberView {

@@ -530,6 +530,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if sender.state != .ended && sender.state != .began {
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: contentView).x
+            
+            if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
+                dragCancelled = true
+                sender.cancel()
+                return
+            } else if progressBar.superview == nil {
+                contentView.addSubviews(typeImage, progressBar)
+                contentView.bringSubview(toFront: typeImage)
+                typeImage.centerAnchors == self.contentView.centerAnchors
+                typeImage.heightAnchor == 45
+                typeImage.widthAnchor == 45
+            }
+
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
@@ -545,18 +558,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             
             let currentTranslation = direction == -1 ? 0 - (contentView.bounds.size.width - posx) : posx
-            
-            if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
-                dragCancelled = true
-                sender.cancel()
-                return
-            } else if progressBar.superview == nil {
-                contentView.addSubviews(typeImage, progressBar)
-                contentView.bringSubview(toFront: typeImage)
-                typeImage.centerAnchors == self.contentView.centerAnchors
-                typeImage.heightAnchor == 45
-                typeImage.widthAnchor == 45
-            }
             
             CATransaction.begin()
             CATransaction.setDisableActions(true)
@@ -912,6 +913,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         case .SUBREDDIT:
             let sub = SingleSubredditViewController.init(subName: self.link!.subreddit, single: true)
             VCPresenter.showVC(viewController: sub, popupIfPossible: false, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+        case .AUTHOR:
+            let profile = ProfileViewController.init(name: self.link!.author)
+            VCPresenter.showVC(viewController: profile, popupIfPossible: false, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+        case .EXTERNAL:
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(self.link!.url ?? URL(string: self.link!.permalink)!)
+            }
+        case .SHARE:
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [self.link!.url ?? URL(string: self.link!.permalink)!], applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = self.contentView
+                presenter.sourceRect = self.contentView.bounds
+            }
+            let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil)
         default:
             break
         }

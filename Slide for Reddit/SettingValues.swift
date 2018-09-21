@@ -464,7 +464,7 @@ class SettingValues {
     }
     
     public enum CommentAction: String {
-        public static let cases: [CommentAction] = [.UPVOTE, .DOWNVOTE, .MENU, .COLLAPSE, .SAVE, .REPLY, .NONE]
+        public static let cases: [CommentAction] = [.UPVOTE, .DOWNVOTE, .MENU, .COLLAPSE, .SAVE, .REPLY, .EXIT, .NEXT, .NONE]
         
         case UPVOTE = "upvote"
         case DOWNVOTE = "downvote"
@@ -473,6 +473,8 @@ class SettingValues {
         case SAVE = "save"
         case NONE = "none"
         case REPLY = "reply"
+        case NEXT = "next"
+        case EXIT = "exit"
         
         func getTitle() -> String {
             switch self {
@@ -490,6 +492,10 @@ class SettingValues {
                 return "Disabled"
             case .REPLY:
                 return "Reply"
+            case .EXIT:
+                return "Close comments"
+            case .NEXT:
+                return "Next comment page"
             }
         }
         
@@ -509,6 +515,10 @@ class SettingValues {
                 return "close"
             case .REPLY:
                 return "reply"
+            case .EXIT:
+                return "back"
+            case .NEXT:
+                return "next"
             }
         }
         
@@ -528,12 +538,16 @@ class SettingValues {
                 return GMColor.red500Color()
             case .REPLY:
                 return GMColor.green500Color()
+            case .EXIT:
+                return ColorUtil.baseAccent
+            case .NEXT:
+                return ColorUtil.baseAccent
             }
         }
     }
 
     public enum SubmissionAction: String {
-        public static let cases: [SubmissionAction] = [.UPVOTE, .DOWNVOTE, .MENU, .HIDE, .SAVE, .SUBREDDIT, .NONE]
+        public static let cases: [SubmissionAction] = [.UPVOTE, .DOWNVOTE, .MENU, .HIDE, .SAVE, .SUBREDDIT, .SHARE, .AUTHOR, .EXTERNAL, .NONE]
         
         case UPVOTE = "upvote"
         case DOWNVOTE = "downvote"
@@ -542,6 +556,9 @@ class SettingValues {
         case SAVE = "save"
         case NONE = "none"
         case SUBREDDIT = "sub"
+        case SHARE = "share"
+        case AUTHOR = "author"
+        case EXTERNAL = "external"
         
         func getTitle() -> String {
             switch self {
@@ -559,6 +576,12 @@ class SettingValues {
                 return "Disabled"
             case .SUBREDDIT:
                 return "Visit subreddit"
+            case .AUTHOR:
+                return "Visit author profile"
+            case .EXTERNAL:
+                return "Open submission link externally"
+            case .SHARE:
+                return "Share submission link"
             }
         }
         
@@ -578,6 +601,12 @@ class SettingValues {
                 return "close"
             case .SUBREDDIT:
                 return "subs"
+            case .AUTHOR:
+                return "profile"
+            case .EXTERNAL:
+                return "world"
+            case .SHARE:
+                return "share"
             }
         }
         
@@ -597,6 +626,12 @@ class SettingValues {
                 return GMColor.red500Color()
             case .SUBREDDIT:
                 return GMColor.green500Color()
+            case .EXTERNAL:
+                return GMColor.green500Color()
+            case .AUTHOR:
+                return GMColor.blue500Color()
+            case .SHARE:
+                return GMColor.lightGreen500Color()
             }
         }
     }
