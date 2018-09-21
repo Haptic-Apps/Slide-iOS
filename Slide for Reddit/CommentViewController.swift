@@ -1006,10 +1006,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.edgesForExtendedLayout = UIRectEdge.all
             self.extendedLayoutIncludesOpaqueBars = true
             
-            if navigationController != nil {
-                self.updateToolbar()
-            }
-            
             self.commentDepthColors = ColorUtil.getCommentDepthColors()
             
             self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
@@ -1069,7 +1065,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             UIApplication.shared.statusBarStyle = .lightContent
         }
-        
+        if navigationController != nil {
+            self.updateToolbar()
+        }
+
         if popup != nil {
             var width = UIScreen.main.bounds.width - 24
             if width > 375 {
