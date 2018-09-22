@@ -1435,7 +1435,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func playerItemDidreachEnd() {
-        self.videoView?.player?.seek(to: kCMTimeZero)
+        self.videoView?.player?.seek(to: CMTimeMake(1, 1000))
         self.videoView?.player?.play()
     }
     
