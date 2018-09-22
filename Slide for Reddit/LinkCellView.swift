@@ -1160,7 +1160,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.isHidden = false
             updater?.invalidate()
             let shouldAutoplay = SettingValues.shouldAutoPlay()
-            if (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay && ContentType.displayVideo(t: type) && type != .VIDEO)) && SettingValues.autoPlayMode != .TAP {
+            if (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay && ContentType.displayVideo(t: type) && type != .VIDEO)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
@@ -1175,7 +1175,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.progressDot.isHidden = true
             }
             
-            if (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) {
+            if (self is AutoplayBannerLinkCellView || self is FullLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay)) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
@@ -1184,6 +1184,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.contentView.bringSubview(toFront: topVideoView!)
                 self.playView.isHidden = false
                 self.progressDot.isHidden = true
+                self.timeView.isHidden = true
             }
             
             bannerImage.alpha = 0
