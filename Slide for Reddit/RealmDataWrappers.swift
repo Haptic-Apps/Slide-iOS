@@ -157,7 +157,7 @@ class RealmDataWrapper {
     }
 
     //Takes a Link from reddift and turns it into a Realm model
-    static func updateSubmission(_ rSubmission: RSubmission, _ submission: Link) {
+    static func updateSubmission(_ rSubmission: RSubmission, _ submission: Link) -> RSubmission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
         let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
 
@@ -177,6 +177,7 @@ class RealmDataWrapper {
         let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
 
         var videoPreview = (((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+
         if videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil {
             videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }
@@ -273,6 +274,7 @@ class RealmDataWrapper {
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
+        rSubmission.videoPreview = try! (videoPreview ?? "").convertHtmlSymbols() ?? ""
 
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
             let array = item as! [Any]
@@ -284,7 +286,7 @@ class RealmDataWrapper {
         }
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
         rSubmission.approved = !rSubmission.approvedBy.isEmpty()
-
+        return rSubmission
     }
 
     static func friendToRealm(user: User) -> Object {

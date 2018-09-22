@@ -243,7 +243,7 @@ class SettingValues {
         func description() -> String {
             switch self {
             case .NEVER:
-                return "Never autoplay videos (lowers data use, disables video streaming)"
+                return "Never autoplay videos"
             case .ALWAYS:
                 return "Always autoplay videos"
             case .WIFI:

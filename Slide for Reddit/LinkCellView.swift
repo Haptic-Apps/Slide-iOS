@@ -367,15 +367,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.topVideoView = UIView()
             self.progressDot = UIView()
             progressDot.alpha = 0.7
+            progressDot.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
             sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
             
             timeView = UILabel().then {
                 $0.textColor = .white
-                $0.font = UIFont.systemFont(ofSize: 10)
+                $0.font = UIFont.monospacedDigitSystemFont(ofSize: 11, weight: 5)
                 $0.textAlignment = .center
                 $0.alpha = 0.6
+                $0.layer.cornerRadius = 5
+                $0.clipsToBounds = true
+                //$0.textContainerInset = UIEdgeInsetsMake(2, 2, 2, 2)
+                $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             }
             
             topVideoView.addSubviews(progressDot, sound, timeView)
@@ -565,7 +570,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             CATransaction.commit()
 
             let currentProgress = progressBar.progress
-            if currentProgress >= 0.6 && previousProgress < 0.6 || sender.state == .ended {
+            if currentProgress >= 0.5 && previousProgress < 0.5 || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
                 }
@@ -573,7 +578,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             typeImage.alpha = CGFloat(currentProgress)
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && (progressBar.progress >= 0.6 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000)) {
+        } else if sender.state == .ended && (progressBar.progress >= 0.5 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000)) {
             self.progressBar.progressLayer.strokeEnd = 1
             doAction(item: progressBar.progressType!)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
@@ -642,7 +647,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         progressDot.layer.removeAllAnimations()
         progressDot.layer.addSublayer(circleShape)
         
-        timeView.text = total
+        timeView.text = "\(total)  "
         
         if oldPercent == -1 {
             let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
@@ -663,6 +668,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             
             progressDot.layer.add(pulseAnimation, forKey: "scale")
             progressDot.layer.add(fadeAnimation, forKey: "fade")
+        } else {
+            timeView.isHidden = false
         }
     }
     
@@ -690,10 +697,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             progressDot.heightAnchor == 20
             progressDot.leftAnchor == topVideoView.leftAnchor + 8
             progressDot.bottomAnchor == topVideoView.bottomAnchor - 8
+            progressDot.layer.cornerRadius = 10
+            progressDot.clipsToBounds = true
             
             timeView.leftAnchor == progressDot.rightAnchor + 8
             timeView.bottomAnchor == topVideoView.bottomAnchor - 8
             timeView.heightAnchor == 20
+            timeView.isHidden = true
             
             sound.widthAnchor == 30
             sound.heightAnchor == 30
@@ -1158,6 +1168,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             } else if self is FullLinkCellView {
                 self.videoView.isHidden = true
                 self.topVideoView.isHidden = true
+                self.timeView.isHidden = true
+                self.progressDot.isHidden = true
             }
             
             if (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay) {

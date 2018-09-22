@@ -270,9 +270,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         let xVelocity = sender.velocity(in: contentView).x
         
-        if sender.state == .ended {
-            print(xVelocity)
-        }
         if sender.state != .ended && sender.state != .began {
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: contentView).x
@@ -437,31 +434,39 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func showCommentMenu() {
         upvoteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "upvote")?.navIcon(), for: .normal)
+            if ActionStates.getVoteDirection(s: comment!) == .up {
+                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor), for: .normal)
+            } else {
+                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true), for: .normal)
+            }
             $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControlEvents.touchUpInside)
         })
         downvoteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "downvote")?.navIcon(), for: .normal)
+            if ActionStates.getVoteDirection(s: comment!) == .down {
+                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor), for: .normal)
+            } else {
+                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true), for: .normal)
+            }
             $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControlEvents.touchUpInside)
         })
         replyButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "reply")?.navIcon(), for: .normal)
+            $0.setImage(UIImage.init(named: "reply")?.navIcon(true), for: .normal)
             $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControlEvents.touchUpInside)
         })
         moreButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(), for: .normal)
+            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(true), for: .normal)
             $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControlEvents.touchUpInside)
         })
         editButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "edit")?.navIcon(), for: .normal)
+            $0.setImage(UIImage.init(named: "edit")?.navIcon(true), for: .normal)
             $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControlEvents.touchUpInside)
         })
         deleteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "delete")?.navIcon(), for: .normal)
+            $0.setImage(UIImage.init(named: "delete")?.navIcon(true), for: .normal)
             $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControlEvents.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "mod")?.navIcon(), for: .normal)
+            $0.setImage(UIImage.init(named: "mod")?.navIcon(true), for: .normal)
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControlEvents.touchUpInside)
         })
         

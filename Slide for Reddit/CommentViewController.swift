@@ -503,9 +503,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                         if self.submission == nil {
                             self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
                         } else {
-                            RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
+                            self.submission = RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
                         }
-
+                        
                         var allIncoming: [(Thing, Int)] = []
                         self.submission!.comments.removeAll()
                         self.parents = [:]
@@ -924,15 +924,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.tableView.addGestureRecognizer(panGesture)
         if navigationController != nil {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-        }
-        
-        if !single && parent is PagingCommentViewController {
-            for view in view.subviews {
-                if view is UIScrollView && !(view is UITableView) {
-                    let scrollView = view as! UIScrollView
-                    panGesture.require(toFail: scrollView.panGestureRecognizer)
-                }
-            }
         }
     }
 
@@ -2314,6 +2305,13 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
         }
         return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer.numberOfTouches == 2 {
+            return true
+        }
+        return false
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

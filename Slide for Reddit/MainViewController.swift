@@ -619,12 +619,18 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         makeMenuNav()
         doButtons()
-        menuNav!.collapse()
-        menuNav!.view.isHidden = true
+        var wasntHidden = false
+        if !menuNav!.view.isHidden {
+            wasntHidden = true
+            menuNav!.view.isHidden = true
+        }
         super.viewWillTransition(to: size, with: coordinator)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-            self.menuNav!.view.isHidden = false
-            (MainViewController.vCs[self.currentPage] as! SingleSubredditViewController).showUI()
+            if wasntHidden {
+                self.menuNav!.view.isHidden = false
+            }
+            self.menuNav!.doRotate(false)
+            (MainViewController.vCs[self.currentPage] as! SingleSubredditViewController).showUI(false)
         }
     }
     
@@ -861,10 +867,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 toolbarItems = [settingsB, flexButton, offlineB]
             }
         }
-        
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
-        swipe.direction = .up
-        self.navigationController?.toolbar.addGestureRecognizer(swipe)
     }
 
     func checkForUpdate() {

@@ -152,7 +152,7 @@ class SingleSubredditViewController: MediaViewController {
         if single && navigationController != nil {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
-    
+
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
@@ -341,7 +341,7 @@ class SingleSubredditViewController: MediaViewController {
         }
     }
 
-    func showUI() {
+    func showUI(_ disableBottom: Bool = false) {
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
@@ -361,7 +361,7 @@ class SingleSubredditViewController: MediaViewController {
                     if !SettingValues.bottomBarHidden || SettingValues.viewType {
                         if self.single {
                             self.navigationController?.setToolbarHidden(false, animated: true)
-                        } else {
+                        } else if !disableBottom {
                             UIView.animate(withDuration: 0.25) {
                                 self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
                             }
@@ -385,7 +385,7 @@ class SingleSubredditViewController: MediaViewController {
             if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 if single {
                     navigationController?.setToolbarHidden(false, animated: true)
-                } else {
+                } else if !disableBottom {
                     UIView.animate(withDuration: 0.25) {
                         self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
                     }
@@ -2219,6 +2219,13 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             }
         }
         return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer.numberOfTouches == 2 {
+            return true
+        }
+        return false
     }
 
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

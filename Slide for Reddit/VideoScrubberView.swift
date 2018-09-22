@@ -79,10 +79,10 @@ class VideoScrubberView: UIView {
         
         self.addSubview(playButton)
         self.addSubview(timeTotalLabel)
-        slider.leftAnchor == self.leftAnchor + 8
+        slider.rightAnchor == self.rightAnchor - 8
         slider.heightAnchor == 24
         slider.bottomAnchor == self.bottomAnchor - 4
-        slider.rightAnchor == timeTotalLabel.leftAnchor - 8
+        slider.leftAnchor == timeTotalLabel.rightAnchor + 8
         
         //timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
         //timeElapsedLabel.textAlignment = .center
@@ -93,12 +93,12 @@ class VideoScrubberView: UIView {
 //        timeElapsedRightConstraint = timeElapsedLabel.rightAnchor == CGFloat(slider.thumbCenterX - 16) ~ .low
 //        slider
 
-        timeTotalLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        timeTotalLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: 10)
         timeTotalLabel.textAlignment = .center
         timeTotalLabel.textColor = UIColor.white
 
         timeTotalLabel.centerYAnchor == slider.centerYAnchor + 1
-        timeTotalLabel.rightAnchor == self.rightAnchor - 8
+        timeTotalLabel.leftAnchor == self.leftAnchor + 8
 
         playButton.setImage(UIImage.init(named: "pause")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
         playButton.tintColor = UIColor.white

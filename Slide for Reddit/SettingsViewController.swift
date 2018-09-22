@@ -284,7 +284,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.autoPlayCell.imageView?.image = UIImage.init(named: "play")?.toolbarIcon()
         self.autoPlayCell.imageView?.tintColor = ColorUtil.fontColor
         self.autoPlayCell.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description()
+        self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoplaying videos can lead to more data use"
         self.autoPlayCell.detailTextLabel?.numberOfLines = 0
         self.autoPlayCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
@@ -514,7 +514,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                         UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_autoPlayMode)
                         SettingValues.autoPlayMode = item
                         UserDefaults.standard.synchronize()
-                        self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description()
+                        self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoplaying videos can lead to more data use"
                         SingleSubredditViewController.cellVersion += 1
                         SubredditReorderViewController.changed = true
                     }))

@@ -36,11 +36,9 @@ class AccountController {
 
     static func delete(name: String) {
         do {
-            if isMigrated(name) {
-                try LocalKeystore.removeToken(of: name)
-            } else {
-                try OAuth2TokenRepository.removeToken(of: name)
-            }
+            try LocalKeystore.removeToken(of: name)
+            try OAuth2TokenRepository.removeToken(of: name)
+
             names.remove(at: names.index(of: name)!)
             UserDefaults.standard.set(name, forKey: "GUEST")
             UserDefaults.standard.synchronize()
