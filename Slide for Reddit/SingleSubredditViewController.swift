@@ -256,8 +256,6 @@ class SingleSubredditViewController: MediaViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        UIApplication.shared.statusBarStyle = .lightContent
-
         if single {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
         }

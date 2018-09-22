@@ -508,7 +508,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var direction = 0
     
     func handlePan(_ sender: UIPanGestureRecognizer) {
-        if sender.state == .began {
+        if sender.state == .began || progressBar == nil {
             dragCancelled = false
             direction = 0
             progressBar = ProgressBarView(frame: contentView.bounds).then {
@@ -618,7 +618,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func updateProgress(_ oldPercent: CGFloat, _ total: String) {
+    func updateProgress(_ oldPercent: CGFloat, _ total: String, buffering: Bool) {
         var percent = oldPercent
         if percent == -1 {
             percent = 1
@@ -644,12 +644,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         for layer in progressDot.layer.sublayers ?? [CALayer]() {
             layer.removeFromSuperlayer()
         }
-        progressDot.layer.removeAllAnimations()
-        progressDot.layer.addSublayer(circleShape)
+
+        if !buffering {
+            progressDot.layer.removeAllAnimations()
+            progressDot.layer.addSublayer(circleShape)
+        }
         
         timeView.text = "\(total)  "
         
-        if oldPercent == -1 {
+        if oldPercent == -1 || (buffering && progressDot.layer.animation(forKey: "opacity") == nil) {
             let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
             pulseAnimation.duration = 0.5
             pulseAnimation.toValue = 1.2
@@ -668,7 +671,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             
             progressDot.layer.add(pulseAnimation, forKey: "scale")
             progressDot.layer.add(fadeAnimation, forKey: "fade")
-        } else {
+        } else if !buffering {
             timeView.isHidden = false
         }
     }
@@ -1162,7 +1165,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
                 sound.isHidden = true
-                self.updateProgress(-1, "")
+                self.updateProgress(-1, "", buffering: false)
                 self.contentView.bringSubview(toFront: topVideoView!)
                 doLoadVideo()
             } else if self is FullLinkCellView {
@@ -1172,12 +1175,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.progressDot.isHidden = true
             }
             
-            if (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay) {
+            if (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay && (self is AutoplayBannerLinkCellView || self is FullLinkCellView)) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
                 sound.isHidden = true
-                self.updateProgress(-1, "")
+                self.updateProgress(-1, "", buffering: false)
                 self.contentView.bringSubview(toFront: topVideoView!)
                 self.playView.isHidden = false
                 self.progressDot.isHidden = true
@@ -1384,6 +1387,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 } catch {
                     
                 }
+//                Is currently causing issues with not resuming after buffering
+//                if #available(iOS 10.0, *) {
+//                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
+//                }
                 strongSelf.videoView?.player?.play()
                 strongSelf.videoView?.player?.isMuted = true
                 strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
@@ -1456,7 +1463,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let time = Float(CMTimeGetSeconds(elapsedTime))
             
             if duration.isFinite && duration > 0 {
-                updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))")
+                updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))", buffering: !(self.videoView.player?.currentItem?.isPlaybackLikelyToKeepUp ?? true))
             }
             if (time / duration) >= 0.99 {
                 self.playerItemDidreachEnd()
