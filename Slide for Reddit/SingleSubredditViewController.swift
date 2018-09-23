@@ -2247,7 +2247,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     
     func panCell(_ recognizer: UIPanGestureRecognizer) {
         
-        if recognizer.view != nil {
+        if recognizer.view != nil && recognizer.state == .began {
             let velocity = recognizer.velocity(in: recognizer.view!).x
             if (velocity > 0 && SettingValues.submissionActionRight == .NONE) || (velocity < 0 && SettingValues.submissionActionLeft == .NONE) {
                 return
