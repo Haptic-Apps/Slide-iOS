@@ -67,7 +67,7 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 bannerImage.bottomAnchor == title.topAnchor - ceight
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 if SettingValues.actionBarMode.isSide() {
-                    sideButtons.topAnchor == bannerImage.bottomAnchor + ceight
+                    sideButtons.topAnchor == videoView.bottomAnchor + ceight
                 }
                 
                 videoView.edgeAnchors == bannerImage.edgeAnchors

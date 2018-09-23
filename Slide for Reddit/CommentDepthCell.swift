@@ -280,12 +280,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     progressBar.setModeComment(type: action, flip: false)
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.backgroundColor = action.getColor()
+                    typeImage.isHidden = true
+                    progressBar.progressLayer.strokeColor = ColorUtil.fontColor.withAlphaComponent(0.5).cgColor
                 } else {
                     direction = -1
                     let action = getFirstAction(left: false)
                     progressBar.setModeComment(type: action, flip: true)
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.backgroundColor = action.getColor()
+                    typeImage.isHidden = true
+                    progressBar.progressLayer.strokeColor = ColorUtil.fontColor.withAlphaComponent(0.5).cgColor
                 }
             }
             
@@ -305,7 +309,22 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             let progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
             
-            if progress > 0.6 && previousProgress <= 0.6 && isTwoForDirection(left: direction == 1) {
+            if progress > 0.2 && previousProgress <= 0.2 && isTwoForDirection(left: direction == 1) {
+                typeImage.isHidden = false
+                typeImage.alpha = 0
+                UIView.animate(withDuration: 0.2) {
+                    self.typeImage.alpha = 1
+                }
+                progressBar.progressLayer.strokeColor = progressBar.progressTypeComment.getColor().cgColor
+            } else if progress < 0.2  && previousProgress >= 0.2 && isTwoForDirection(left: direction == 1) {
+                typeImage.alpha = 1
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.typeImage.alpha = 0
+                }, completion: { (_) in
+                    self.typeImage.isHidden = true
+                })
+                progressBar.progressLayer.strokeColor = ColorUtil.fontColor.withAlphaComponent(0.5).cgColor
+            } else if progress > 0.6 && previousProgress <= 0.6 && isTwoForDirection(left: direction == 1) {
                 let action = getSecondAction(left: direction == 1)
                 progressBar.setModeComment(type: action, flip: direction != 1)
                 typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
