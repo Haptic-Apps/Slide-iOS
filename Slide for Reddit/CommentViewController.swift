@@ -709,6 +709,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var popup: UILabel!
     
     func doBanner(_ link: RSubmission) {
+        if popup != nil {
+            popup.removeFromSuperview()
+        }
         var text = ""
         if np {
             text = "This is a no participation link.\nPlease don't vote or comment"
@@ -759,7 +762,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             
             self.navigationController!.view.addSubview(popup)
-            let bottomHeight : CGFloat
+            let bottomHeight: CGFloat
             if #available(iOS 11.0, *) {
                 bottomHeight = self.additionalSafeAreaInsets.bottom
             } else {
