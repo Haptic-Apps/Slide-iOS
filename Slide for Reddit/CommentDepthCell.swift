@@ -305,7 +305,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             let progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
             
-            if progress > 0.5 && previousProgress <= 0.5 && isTwoForDirection(left: direction == 1) {
+            if progress > 0.6 && previousProgress <= 0.6 && isTwoForDirection(left: direction == 1) {
                 let action = getSecondAction(left: direction == 1)
                 progressBar.setModeComment(type: action, flip: direction != 1)
                 typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
@@ -313,7 +313,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
                 }
-            } else if progress < 0.5 && previousProgress >= 0.5 && isTwoForDirection(left: direction == 1) {
+            } else if progress < 0.6 && previousProgress >= 0.6 && isTwoForDirection(left: direction == 1) {
                 let action = getFirstAction(left: direction == 1)
                 progressBar.setModeComment(type: action, flip: direction != 1)
                 typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
