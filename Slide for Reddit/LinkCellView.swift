@@ -536,18 +536,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: contentView).x
             
-            if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
-                dragCancelled = true
-                sender.cancel()
-                return
-            } else if progressBar.superview == nil {
-                contentView.addSubviews(typeImage, progressBar)
-                contentView.bringSubview(toFront: typeImage)
-                typeImage.centerAnchors == self.contentView.centerAnchors
-                typeImage.heightAnchor == 45
-                typeImage.widthAnchor == 45
-            }
-
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
@@ -560,6 +548,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     typeImage.image = UIImage(named: SettingValues.submissionActionLeft.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.backgroundColor = SettingValues.submissionActionLeft.getColor()
                 }
+            }
+            
+            if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
+                dragCancelled = true
+                sender.cancel()
+                return
+            } else if progressBar.superview == nil {
+                contentView.addSubviews(typeImage, progressBar)
+                contentView.bringSubview(toFront: typeImage)
+                typeImage.centerAnchors == self.contentView.centerAnchors
+                typeImage.heightAnchor == 45
+                typeImage.widthAnchor == 45
             }
             
             let currentTranslation = direction == -1 ? 0 - (contentView.bounds.size.width - posx) : posx
@@ -1844,7 +1844,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             
-            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 50) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 50) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras
+            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras
             estimatedHeight = totalHeight
         }
         return estimatedHeight

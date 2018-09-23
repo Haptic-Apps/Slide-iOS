@@ -169,7 +169,7 @@ public class ToolbarTextView: NSObject {
                                     self.alertView!.dismiss(animated: true, completion: {
                                         if last != "Failure" {
                                             if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
-                                                (self.parent as! ReplyViewController).text![2].text = url
+                                                (self.parent as! ReplyViewController).text!.last!.text = url
                                             } else {
                                                 let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
 
@@ -223,7 +223,7 @@ public class ToolbarTextView: NSObject {
                     self.alertView!.dismiss(animated: true, completion: {
                         if link != "Failure" {
                             if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
-                                (self.parent as! ReplyViewController).text![2].text = link
+                                (self.parent as! ReplyViewController).text!.last!.text = link
                             } else {
                                 let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
 
