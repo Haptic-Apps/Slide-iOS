@@ -74,6 +74,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
         setupBaseBarColors()
         navigationController?.setToolbarHidden(true, animated: false)
     }
