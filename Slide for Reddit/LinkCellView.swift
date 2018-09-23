@@ -1379,6 +1379,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             DispatchQueue.main.async {
                 strongSelf.avPlayerItem = AVPlayerItem(url: URL(string: urlString)!)
                 strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
+                strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
                 do {
                     if SettingValues.matchSilence {
                         try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
@@ -1435,9 +1436,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
+    var handlingPlayerItemDidreachEnd = false
+    
     func playerItemDidreachEnd() {
-        self.videoView?.player?.seek(to: CMTimeMake(1, 1000))
-        self.videoView?.player?.play()
+        self.videoView?.player?.seek(to: CMTimeMake(1, 1000), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { [weak self] (finished) in
+            guard let strongSelf = self else { return }
+            // NOTE: the following is not needed since `strongSelf.videoView.player?.actionAtItemEnd` is set to `AVPlayerActionAtItemEnd.none`
+//            if finished {
+//                strongSelf.videoView?.player?.play()
+//            }
+            strongSelf.handlingPlayerItemDidreachEnd = false
+        })
     }
     
     var longPress: UILongPressGestureRecognizer?
@@ -1466,7 +1475,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if duration.isFinite && duration > 0 {
                 updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))", buffering: !(self.videoView.player?.currentItem?.isPlaybackLikelyToKeepUp ?? true))
             }
-            if (time / duration) >= 0.99 {
+            if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+                handlingPlayerItemDidreachEnd = true
                 self.playerItemDidreachEnd()
             }
         }
