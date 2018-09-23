@@ -43,7 +43,7 @@ public class VCPresenter {
                 newParent.modalPresentationStyle = .pageSheet
                 newParent.modalTransitionStyle = .crossDissolve
             } else {
-                newParent.modalPresentationStyle = .fullScreen
+                newParent.modalPresentationStyle = .overCurrentContext
                 newParent.modalTransitionStyle = .crossDissolve
             }
 

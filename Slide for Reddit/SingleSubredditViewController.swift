@@ -193,8 +193,6 @@ class SingleSubredditViewController: MediaViewController {
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
 
-        showUI()
-
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
 
         self.automaticallyAdjustsScrollViewInsets = false
@@ -212,6 +210,9 @@ class SingleSubredditViewController: MediaViewController {
 
         if single {
             setupBaseBarColors()
+            if !loaded {
+                showUI()
+            }
         }
         self.view.backgroundColor = ColorUtil.backgroundColor
     }
@@ -237,6 +238,9 @@ class SingleSubredditViewController: MediaViewController {
             if single {
                 navigationController?.setToolbarHidden(true, animated: false)
             }
+        }
+        if loaded {
+            showUI()
         }
         SingleSubredditViewController.nextSingle = self.single
     }

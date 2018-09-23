@@ -650,6 +650,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             progressDot.layer.addSublayer(circleShape)
         }
         
+        if timeView.isHidden {
+            timeView.isHidden = false
+        }
         timeView.text = "\(total)  "
         
         if oldPercent == -1 || (buffering && progressDot.layer.animation(forKey: "opacity") == nil) {
@@ -1160,11 +1163,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.isHidden = false
             updater?.invalidate()
             let shouldAutoplay = SettingValues.shouldAutoPlay()
-            if (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay && ContentType.displayVideo(t: type) && type != .VIDEO)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
+            if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
                 sound.isHidden = true
+                self.timeView.isHidden = true
                 self.updateProgress(-1, "", buffering: false)
                 self.contentView.bringSubview(toFront: topVideoView!)
                 doLoadVideo()

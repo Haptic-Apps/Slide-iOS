@@ -759,7 +759,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             
             self.navigationController!.view.addSubview(popup)
-            popup.bottomAnchor == self.navigationController!.view.safeBottomAnchor - 8
+            let bottomHeight : CGFloat
+            if #available(iOS 11.0, *) {
+                bottomHeight = self.additionalSafeAreaInsets.bottom
+            } else {
+                bottomHeight = 0
+            }
+            popup.bottomAnchor == self.navigationController!.view.safeBottomAnchor - 8 - 48 - bottomHeight
             popup.widthAnchor == width
             popup.heightAnchor == 48
             popup.centerXAnchor == self.navigationController!.view.centerXAnchor
