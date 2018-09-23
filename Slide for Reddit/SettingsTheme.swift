@@ -80,7 +80,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (_: UIAlertAction!) in
             if self.primaryChosen != nil {
-                UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "basecolor")
+                UserDefaults.standard.setColor(color: self.primaryChosen!, forKey: "basecolor")
                 UserDefaults.standard.synchronize()
             }
 
