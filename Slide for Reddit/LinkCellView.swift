@@ -1240,6 +1240,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         } else {
             bannerImage.sd_setImage(with: URL.init(string: ""))
+            self.videoView.isHidden = true
+            self.topVideoView.isHidden = true
+            self.timeView.isHidden = true
+            self.progressDot.isHidden = true
         }
         
         if !full && !test {

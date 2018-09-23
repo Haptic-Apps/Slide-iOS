@@ -86,6 +86,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         request?.cancel()
         stopDisplayLink()
         videoView.player?.pause()
+        videoView.player?.currentItem?.cancelPendingSeeks()
+        videoView.player?.currentItem?.asset.cancelLoading()
+        stopDisplayLink()
         super.viewWillDisappear(animated)
     }
 
