@@ -346,6 +346,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.present(actionSheetController, animated: true, completion: nil)
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
+            (cell as! LinkCellView).videoView!.player?.pause()
+            (cell as! LinkCellView).videoView!.player?.currentItem?.asset.cancelLoading()
+            (cell as! LinkCellView).videoView!.player?.currentItem?.cancelPendingSeeks()
+            (cell as! LinkCellView).videoView!.player = nil
+            (cell as! LinkCellView).updater?.invalidate()
+        }
+    }
 
     var refreshControl: UIRefreshControl!
 
