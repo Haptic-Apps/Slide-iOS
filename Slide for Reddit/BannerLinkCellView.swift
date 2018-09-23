@@ -56,7 +56,7 @@ final class BannerLinkCellView: LinkCellView {
                 }
                 
                 if SettingValues.actionBarMode != .FULL {
-                    title.bottomAnchor == contentView.bottomAnchor - ceight
+                    title.bottomAnchor <= contentView.bottomAnchor - ceight
                 } else {
                     title.bottomAnchor == box.topAnchor - ceight
                 }
@@ -66,6 +66,8 @@ final class BannerLinkCellView: LinkCellView {
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 if SettingValues.actionBarMode.isSide() {
                     sideButtons.topAnchor == bannerImage.bottomAnchor + ceight
+                    sideButtons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                    sideButtons.bottomAnchor <= contentView.bottomAnchor - ceight
                 }
             }
 

@@ -58,7 +58,7 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 }
                 
                 if SettingValues.actionBarMode != .FULL {
-                    title.bottomAnchor == contentView.bottomAnchor - ceight
+                    title.bottomAnchor <= contentView.bottomAnchor - ceight
                 } else {
                     title.bottomAnchor == box.topAnchor - ceight
                 }
@@ -67,7 +67,9 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 bannerImage.bottomAnchor == title.topAnchor - ceight
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 if SettingValues.actionBarMode.isSide() {
-                    sideButtons.topAnchor == videoView.bottomAnchor + ceight
+                    sideButtons.topAnchor == bannerImage.bottomAnchor + ceight
+                    sideButtons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                    sideButtons.bottomAnchor <= contentView.bottomAnchor - ceight
                 }
                 
                 videoView.edgeAnchors == bannerImage.edgeAnchors
