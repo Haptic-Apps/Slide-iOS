@@ -377,6 +377,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if url.absoluteString.contains("/r/") {
             VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), nil, window?.rootViewController)
             return true
+        } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("redd.it") {
+                VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), nil, window?.rootViewController)
+                return true
         } else {
             print("Returning \(url.absoluteString)")
             var parameters: [String: String] = url.getKeyVals()!

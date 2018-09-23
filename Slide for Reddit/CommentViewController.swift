@@ -2064,6 +2064,10 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                 if !SettingValues.collapseFully {
                 } else if cell.isCollapsed {
                 } else {
+                    oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
+                    if !hiddenPersons.contains(cell.comment!.getIdentifier()) {
+                        hiddenPersons.insert(cell.comment!.getIdentifier())
+                    }
                     self.tableView.beginUpdates()
                     oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
                     cell.collapse(childNumber: 0)
