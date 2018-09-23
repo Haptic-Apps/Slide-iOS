@@ -482,14 +482,23 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.downloadButton.isHidden = false
         let playerItem = AVPlayerItem(url: SettingValues.shouldAutoPlay() ? URL(string: url)! : URL(fileURLWithPath: getKeyFromURL()))
         videoView.player = AVPlayer(playerItem: playerItem)
+        videoView.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
         videoView.player?.play()
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
     }
     
+    var handlingPlayerItemDidreachEnd = false
+    
     func playerItemDidreachEnd() {
-        self.videoView.player!.seek(to: CMTimeMake(1, 1000))
-        self.videoView.player!.play()
+        self.videoView.player!.seek(to: CMTimeMake(1, 1000), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { [weak self] (finished) in
+            guard let strongSelf = self else { return }
+            // NOTE: the following is not needed since `strongSelf.videoView.player?.actionAtItemEnd` is set to `AVPlayerActionAtItemEnd.none`
+//            if finished {
+//                strongSelf.videoView?.player?.play()
+//            }
+            strongSelf.handlingPlayerItemDidreachEnd = false
+        })
     }
     
     static func format(sS: String, _ hls: Bool = false) -> String {
@@ -749,7 +758,8 @@ extension VideoMediaViewController {
                     scrubber.updateWithTime(elapsedTime: player.currentTime())
                     let duration = Float(CMTimeGetSeconds(player.currentItem!.duration))
                     let time = Float(CMTimeGetSeconds(player.currentTime()))
-                    if (time / duration) >= 0.99 {
+                    if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+                        handlingPlayerItemDidreachEnd = true
                         self.playerItemDidreachEnd()
                     }
                 }
