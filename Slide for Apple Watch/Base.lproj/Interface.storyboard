@@ -8,10 +8,28 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14238.10"/>
     </dependencies>
     <scenes>
-        <!--subreddit-->
+        <!--Post Action Menu Controller-->
+        <scene sceneID="Nxq-cl-i3Z">
+            <objects>
+                <controller id="lXM-Ia-ysh" customClass="PostActionMenuController" customModule="Slide_for_Apple_Watch_Extension">
+                    <menu key="menu" id="1fd-fx-4Rh">
+                        <items>
+                            <menuItem title="Upvote" image="upvote" id="6PC-Mk-gOi">
+                                <connections>
+                                    <action selector="doUpvote" destination="lXM-Ia-ysh" id="v2h-XR-M4E"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Menu Item" id="dxa-ys-3wD"/>
+                        </items>
+                    </menu>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-70" y="74"/>
+        </scene>
+        <!--Loading...-->
         <scene sceneID="aou-V4-d1y">
             <objects>
-                <controller title="subreddit" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Slide_for_Apple_Watch" customModuleProvider="target">
+                <controller title="Loading..." id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Slide_for_Apple_Watch" customModuleProvider="target">
                     <items>
                         <table alignment="left" id="Pa7-Zw-cdM">
                             <items>
@@ -19,8 +37,13 @@
                                     <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="W3d-Sw-uKV">
                                         <items>
                                             <imageView width="1" alignment="left" id="BKv-Le-LtF"/>
-                                            <label alignment="left" text="Label" id="hPB-op-io3"/>
+                                            <label alignment="left" text="Label" numberOfLines="0" id="hPB-op-io3">
+                                                <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
+                                            </label>
                                         </items>
+                                        <connections>
+                                            <segue destination="lXM-Ia-ysh" kind="modal" id="9Ie-8C-8J1"/>
+                                        </connections>
                                     </group>
                                     <connections>
                                         <outlet property="bannerImage" destination="BKv-Le-LtF" id="z0j-EJ-AyM"/>

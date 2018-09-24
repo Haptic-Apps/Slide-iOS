@@ -14,13 +14,20 @@ import Foundation
 class InterfaceController: WKInterfaceController {
 
     @IBOutlet weak var table: WKInterfaceTable!
+    
+    
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         
         // Configure interface objects here.
     }
+    @IBAction func onMenuItemPlayTap() {
+        print("Play Tapped")
+    }
     
-    var links = [String: String]()
+    
+    var links = [NSDictionary]()
+    var subs = [String]()
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
@@ -28,6 +35,28 @@ class InterfaceController: WKInterfaceController {
         let watchSession = WCSession.default
         watchSession.delegate = self
         watchSession.activate()
+        watchSession.sendMessage(["sublist": true], replyHandler: { (message) in
+            self.subs = message["subs"] as? [String] ?? [String]()
+            if self.subs.count > 0 {
+                self.getSubmissions(self.subs[0])
+            }
+        }) { (error) in
+            print(error)
+        }
+    }
+    
+    func getSubmissions(_ subreddit: String) {
+        DispatchQueue.main.async {
+            self.setTitle("r/\(subreddit)")
+        }
+        WCSession.default.sendMessage(["links": subreddit], replyHandler: { (message) in
+            if let links = message["links"] as? [NSDictionary] {
+                self.links = links
+            }
+            self.beginLoadingTable()
+        }) { (error) in
+            print(error)
+        }
     }
     
     override func didDeactivate() {
@@ -40,21 +69,20 @@ class InterfaceController: WKInterfaceController {
         var index = 0
         for item in links {
             if let rowController = table.rowController(at: index) as? SubmissionRowController {
-                rowController.titleLabel.setText(item.key)
-                rowController.titleLabel.setTextColor(UIColor(hexString: item.value))
+                rowController.titleLabel.setAttributedText(rowController.getTitle(dictionary: item))
             }
             index += 1
         }
     }
 
 }
+
 extension InterfaceController: WCSessionDelegate {
     
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
         print("Doing links")
         DispatchQueue.main.async {
             self.setTitle(applicationContext["title"] as? String)
-            self.links = applicationContext["subs"] as? [String: String] ?? [String: String]()
             self.beginLoadingTable()
         }
     }
@@ -62,6 +90,8 @@ extension InterfaceController: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
     }
 }
+
+
 extension UIColor {
     convenience init(hexString: String) {
         let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
