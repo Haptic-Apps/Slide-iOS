@@ -14,6 +14,16 @@
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
+		<key>Slide for Apple Watch (Notification).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>36</integer>
+		</dict>
+		<key>Slide for Apple Watch.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>35</integer>
+		</dict>
 		<key>Slide for Reddit.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -25,22 +35,22 @@
 		<key>BE0EF7C81F43F9C20058D572</key>
 		<dict>
 			<key>primary</key>
-			<true />
+			<true/>
 		</dict>
 		<key>BE8FCA031E0C46090063B8EF</key>
 		<dict>
 			<key>primary</key>
-			<true />
+			<true/>
 		</dict>
 		<key>BE8FCA171E0C46090063B8EF</key>
 		<dict>
 			<key>primary</key>
-			<true />
+			<true/>
 		</dict>
 		<key>BE8FCA221E0C46090063B8EF</key>
 		<dict>
 			<key>primary</key>
-			<true />
+			<true/>
 		</dict>
 	</dict>
 </dict>
