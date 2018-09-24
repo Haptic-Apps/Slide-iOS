@@ -12,6 +12,7 @@ import RealmSwift
 import reddift
 import StoreKit
 import UIKit
+import WatchConnectivity
 
 class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate {
 
@@ -734,7 +735,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
     
         checkForUpdate()
-
+    
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
             self.edgesForExtendedLayout = UIRectEdge.all
             self.extendedLayoutIncludesOpaqueBars = true

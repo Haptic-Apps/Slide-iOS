@@ -12,6 +12,8 @@ import reddift
 import SDWebImage
 import UIKit
 import UserNotifications
+import WatchKit
+import WatchConnectivity
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
@@ -155,6 +157,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.makeKeyAndVisible()
         }
 
+        WatchSessionManager.sharedManager.startSessionWithShelter(shelter)
+        WatchSessionManager.sharedManager.updateApplicationContext()
+        
         return true
     }
     
@@ -533,7 +538,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
     }
-
 }
 
 extension UIApplication {
