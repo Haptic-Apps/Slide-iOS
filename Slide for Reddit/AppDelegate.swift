@@ -155,8 +155,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.makeKeyAndVisible()
         }
 
-        WatchSessionManager.sharedManager.startSessionWithShelter(shelter)
-        WatchSessionManager.sharedManager.updateApplicationContext()
+        WatchSessionManager.sharedManager.doInit()
         
         return true
     }
