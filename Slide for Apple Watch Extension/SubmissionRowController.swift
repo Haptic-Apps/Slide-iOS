@@ -152,17 +152,17 @@ public class SubmissionRowController: NSObject {
         commentsLabel.setText("\(dictionary["num_comments"] as? Int ?? 0)")
         if let thumburl = (dictionary["thumbnail"] as? String), !thumburl.isEmpty(), thumburl.startsWith("http") {
             DispatchQueue.global().async {
-                let url = URL(string: thumburl)!
-                
-                do {
-                    let data = try Data(contentsOf: url)
-                    self.thumbnail = UIImage(data: data)!
-                    DispatchQueue.main.async {
-                        self.bannerImage.setImage(self.thumbnail!)
+                let imageUrl = URL(string: thumburl)!
+                URLSession.shared.dataTask(with: imageUrl, completionHandler: { (data, _, _) in
+                    if let image = UIImage(data: data!) {
+                        self.thumbnail = image
+                        DispatchQueue.main.async {
+                            self.bannerImage.setImage(self.thumbnail!)
+                        }
+                    } else {
+                        NSLog("could not load data from image URL: \(imageUrl)")
                     }
-                } catch {
-                    
-                }
+                }).resume()
             }
         } else {
             if dictionary["spoiler"] as? Bool ?? false {
