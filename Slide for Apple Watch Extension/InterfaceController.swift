@@ -14,7 +14,7 @@ import Foundation
 class InterfaceController: WKInterfaceController {
 
     @IBOutlet weak var table: WKInterfaceTable!
-    
+    @IBOutlet weak var loadingImage: WKInterfaceImage!
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
@@ -25,9 +25,9 @@ class InterfaceController: WKInterfaceController {
         print("Play Tapped")
     }
     
-    
     var links = [NSDictionary]()
-    var subs = [String]()
+    var subs = [String: String]()
+    var subsOrdered = [String]()
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
@@ -35,21 +35,40 @@ class InterfaceController: WKInterfaceController {
         let watchSession = WCSession.default
         watchSession.delegate = self
         watchSession.activate()
-        watchSession.sendMessage(["sublist": true], replyHandler: { (message) in
-            self.subs = message["subs"] as? [String] ?? [String]()
-            if self.subs.count > 0 {
-                self.getSubmissions(self.subs[0])
+        if subs.isEmpty {
+            loadingImage.setImageNamed("Activity")
+            loadingImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
+            watchSession.sendMessage(["sublist": true], replyHandler: { (message) in
+                self.subs = message["subs"] as? [String: String] ?? [String: String]()
+                if self.subs.count > 0 {
+                    self.subsOrdered = Array(self.subs.keys).sorted(by: { (a, b) -> Bool in
+                        return a.lowercased() < b.lowercased()
+                    })
+                    self.subsOrdered = self.subsOrdered.filter({ (a) -> Bool in
+                        !a.startsWith("/")
+                    })
+                    self.getSubmissions(self.subsOrdered[0])
+                }
+            }) { (error) in
+                print(error)
             }
-        }) { (error) in
-            print(error)
+        }
+    }
+    
+    @IBAction func gotosub() {
+        presentTextInputController(withSuggestions: subsOrdered, allowedInputMode: .plain) { (subs) in
+            self.getSubmissions((subs ?? ["all"])[0] as! String)
         }
     }
     
     func getSubmissions(_ subreddit: String) {
+        self.loadingImage.setHidden(false)
         DispatchQueue.main.async {
             self.setTitle("r/\(subreddit)")
+            self.table.setNumberOfRows(0, withRowType: "SubmissionRowController")
         }
         WCSession.default.sendMessage(["links": subreddit], replyHandler: { (message) in
+            self.loadingImage.setHidden(true)
             if let links = message["links"] as? [NSDictionary] {
                 self.links = links
             }
@@ -69,7 +88,8 @@ class InterfaceController: WKInterfaceController {
         var index = 0
         for item in links {
             if let rowController = table.rowController(at: index) as? SubmissionRowController {
-                rowController.titleLabel.setAttributedText(rowController.getTitle(dictionary: item))
+                rowController.parent = self
+                rowController.setData(dictionary: item, color: UIColor(hexString: self.subs[item["subreddit"] as? String ?? ""] ?? "#ffffff"))
             }
             index += 1
         }

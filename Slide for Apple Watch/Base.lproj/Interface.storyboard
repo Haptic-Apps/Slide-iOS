@@ -8,20 +8,58 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14238.10"/>
     </dependencies>
     <scenes>
-        <!--Post Action Menu Controller-->
+        <!--DetailView-->
         <scene sceneID="Nxq-cl-i3Z">
             <objects>
-                <controller id="lXM-Ia-ysh" customClass="PostActionMenuController" customModule="Slide_for_Apple_Watch_Extension">
-                    <menu key="menu" id="1fd-fx-4Rh">
-                        <items>
-                            <menuItem title="Upvote" image="upvote" id="6PC-Mk-gOi">
-                                <connections>
-                                    <action selector="doUpvote" destination="lXM-Ia-ysh" id="v2h-XR-M4E"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Menu Item" id="dxa-ys-3wD"/>
-                        </items>
-                    </menu>
+                <controller identifier="DetailView" alwaysBounce="YES" fullScreen="YES" id="lXM-Ia-ysh" customClass="PostActionMenuController" customModule="Slide_for_Apple_Watch_Extension">
+                    <items>
+                        <group width="1" alignment="left" id="UZW-Un-KSZ">
+                            <items>
+                                <imageView width="1" alignment="left" id="NpS-dD-jG4"/>
+                            </items>
+                        </group>
+                        <label alignment="left" text="Label" numberOfLines="0" id="e1k-XM-k2I">
+                            <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
+                        </label>
+                        <group width="1" alignment="left" alpha="0.69999999999999996" id="MtM-lO-Hti">
+                            <items>
+                                <imageView width="15" height="15" alignment="left" image="upvote" contentMode="scaleAspectFit" id="1r3-Z8-r8L">
+                                    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                </imageView>
+                                <label alignment="left" verticalAlignment="center" text="2.5k  " textAlignment="left" id="TtZ-h5-zAT">
+                                    <fontDescription key="font" type="boldSystem" pointSize="12"/>
+                                </label>
+                                <imageView width="15" height="15" alignment="left" image="comments" contentMode="scaleAspectFit" id="f6k-im-y8q">
+                                    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                </imageView>
+                                <label alignment="left" verticalAlignment="center" text="300" textAlignment="left" id="DKi-23-d26">
+                                    <fontDescription key="font" type="boldSystem" pointSize="12"/>
+                                </label>
+                            </items>
+                        </group>
+                        <button width="1" alignment="left" title="Comments" id="2PX-VI-Mpg">
+                            <connections>
+                                <action selector="openComments" destination="lXM-Ia-ysh" id="d2m-5c-uez"/>
+                            </connections>
+                        </button>
+                        <button width="1" alignment="left" title="Read Later" id="zAt-DZ-GVK">
+                            <connections>
+                                <action selector="readLater" destination="lXM-Ia-ysh" id="qKx-3l-T58"/>
+                            </connections>
+                        </button>
+                        <button width="1" alignment="left" title="Upvote" id="gm8-5O-9wo">
+                            <connections>
+                                <action selector="doUpvote" destination="lXM-Ia-ysh" id="X0R-kp-nte"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <connections>
+                        <outlet property="bannerImage" destination="NpS-dD-jG4" id="EDR-kd-qNu"/>
+                        <outlet property="commentLabel" destination="DKi-23-d26" id="Dsp-Vw-sDm"/>
+                        <outlet property="imageGroup" destination="UZW-Un-KSZ" id="pQL-zA-1E1"/>
+                        <outlet property="scoreLabel" destination="TtZ-h5-zAT" id="zQQ-Ug-haI"/>
+                        <outlet property="titleLabel" destination="e1k-XM-k2I" id="8T2-xw-IEf"/>
+                    </connections>
                 </controller>
             </objects>
             <point key="canvasLocation" x="-70" y="74"/>
@@ -31,65 +69,84 @@
             <objects>
                 <controller title="Loading..." id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Slide_for_Apple_Watch" customModuleProvider="target">
                     <items>
+                        <imageView width="1" height="1" alignment="left" hidden="YES" contentMode="center" id="HRU-tu-C7x"/>
                         <table alignment="left" id="Pa7-Zw-cdM">
                             <items>
                                 <tableRow identifier="SubmissionRowController" id="UNR-fY-Dh7" customClass="SubmissionRowController" customModule="Slide_for_Apple_Watch_Extension">
                                     <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="W3d-Sw-uKV">
                                         <items>
-                                            <imageView width="1" alignment="left" id="BKv-Le-LtF"/>
-                                            <label alignment="left" text="Label" numberOfLines="0" id="hPB-op-io3">
-                                                <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
-                                            </label>
+                                            <button alignment="left" id="nER-Gs-p1E">
+                                                <group key="contentGroup" width="1" alignment="left" layout="vertical" spacing="8" id="LFH-vM-kmB">
+                                                    <items>
+                                                        <label alignment="left" textAlignment="left" numberOfLines="0" id="DLp-71-bfA">
+                                                            <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
+                                                        </label>
+                                                        <group width="1" alignment="left" spacing="8" id="hjo-gb-dkI">
+                                                            <items>
+                                                                <group width="45" height="45" alignment="left" id="YxL-zX-Lwp">
+                                                                    <items>
+                                                                        <imageView width="45" height="45" alignment="left" contentMode="center" id="BKv-Le-LtF"/>
+                                                                    </items>
+                                                                </group>
+                                                                <label alignment="left" verticalAlignment="center" textAlignment="left" numberOfLines="0" id="hPB-op-io3">
+                                                                    <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
+                                                                </label>
+                                                            </items>
+                                                        </group>
+                                                        <group width="1" alignment="left" alpha="0.59999999999999998" id="Tn9-ge-fqX">
+                                                            <items>
+                                                                <imageView width="15" height="15" alignment="left" image="upvote" contentMode="scaleAspectFit" id="B3o-jh-jlx">
+                                                                    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                                                </imageView>
+                                                                <label alignment="left" verticalAlignment="center" textAlignment="left" id="1GD-eU-fvT">
+                                                                    <fontDescription key="font" type="boldSystem" pointSize="12"/>
+                                                                </label>
+                                                                <imageView width="15" height="15" alignment="left" image="comments" contentMode="scaleAspectFit" id="LKs-jG-M2D">
+                                                                    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                                                </imageView>
+                                                                <label alignment="left" verticalAlignment="center" textAlignment="left" id="Z3p-gy-LUK">
+                                                                    <fontDescription key="font" type="boldSystem" pointSize="12"/>
+                                                                </label>
+                                                            </items>
+                                                        </group>
+                                                    </items>
+                                                    <edgeInsets key="margins" left="3" right="3" top="3" bottom="3"/>
+                                                </group>
+                                                <connections>
+                                                    <action selector="didSelect" destination="UNR-fY-Dh7" id="rau-L9-0Jo"/>
+                                                </connections>
+                                            </button>
                                         </items>
-                                        <connections>
-                                            <segue destination="lXM-Ia-ysh" kind="modal" id="9Ie-8C-8J1"/>
-                                        </connections>
+                                        <edgeInsets key="margins" left="5" right="5" top="5" bottom="5"/>
                                     </group>
                                     <connections>
                                         <outlet property="bannerImage" destination="BKv-Le-LtF" id="z0j-EJ-AyM"/>
-                                        <outlet property="titleLabel" destination="hPB-op-io3" id="82M-PM-aPd"/>
+                                        <outlet property="commentsLabel" destination="Z3p-gy-LUK" id="iyj-Zh-CLu"/>
+                                        <outlet property="imageGroup" destination="YxL-zX-Lwp" id="wlp-bV-HEe"/>
+                                        <outlet property="infoLabel" destination="hPB-op-io3" id="DJb-4I-nix"/>
+                                        <outlet property="scoreLabel" destination="1GD-eU-fvT" id="8Sw-92-7hb"/>
+                                        <outlet property="titleLabel" destination="DLp-71-bfA" id="tt6-sB-dR4"/>
                                     </connections>
                                 </tableRow>
                             </items>
                         </table>
                     </items>
+                    <menu key="menu" id="0rw-jP-R08">
+                        <items>
+                            <menuItem title="Go to subreddit" icon="play" id="VrF-CI-CIz">
+                                <connections>
+                                    <action selector="gotosub" destination="AgC-eL-Hgc" id="mKS-LU-duf"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
                     <connections>
+                        <outlet property="loadingImage" destination="HRU-tu-C7x" id="y2B-rx-5f8"/>
                         <outlet property="table" destination="Pa7-Zw-cdM" id="AGM-Hd-2aS"/>
                     </connections>
                 </controller>
             </objects>
             <point key="canvasLocation" x="220" y="345"/>
-        </scene>
-        <!--Static Notification Interface Controller-->
-        <scene sceneID="AEw-b0-oYE">
-            <objects>
-                <notificationController id="YCC-NB-fut">
-                    <items>
-                        <label alignment="left" text="Alert Label" numberOfLines="0" id="IdU-wH-bcW"/>
-                    </items>
-                    <notificationCategory key="notificationCategory" identifier="myCategory" id="JfB-70-Muf"/>
-                    <connections>
-                        <outlet property="notificationAlertLabel" destination="IdU-wH-bcW" id="JKC-fr-R95"/>
-                        <segue destination="4sK-HA-Art" kind="relationship" relationship="dynamicNotificationInterface" id="kXh-Jw-8B1"/>
-                        <segue destination="eXb-UN-Cd0" kind="relationship" relationship="dynamicInteractiveNotificationInterface" id="mpB-YA-K8N"/>
-                    </connections>
-                </notificationController>
-            </objects>
-            <point key="canvasLocation" x="220" y="643"/>
-        </scene>
-        <!--Notification Controller-->
-        <scene sceneID="ZPc-GJ-vnh">
-            <objects>
-                <controller id="4sK-HA-Art" customClass="NotificationController" customModule="Slide_for_Apple_Watch" customModuleProvider="target"/>
-            </objects>
-            <point key="canvasLocation" x="468" y="643"/>
-        </scene>
-        <!--Notification Controller-->
-        <scene sceneID="Niz-AI-uX2">
-            <objects>
-                <controller id="eXb-UN-Cd0" customClass="NotificationController" customModule="Slide_for_Apple_Watch" customModuleProvider="target"/>
-            </objects>
-            <point key="canvasLocation" x="468" y="345"/>
         </scene>
     </scenes>
 </document>

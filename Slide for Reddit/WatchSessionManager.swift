@@ -24,23 +24,27 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
         
     }
     
-    public func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String : Any]) -> Void) {
+    public func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
         //replyHandler(["subreddit": "r/all", "loading":true])
         if message["sublist"] != nil {
-            replyHandler(["subs": Subscriptions.subreddits])
+            var colorDict = [String: String]()
+            for sub in Subscriptions.subreddits {
+                colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString
+            }
+            replyHandler(["subs": colorDict])
         } else if message["links"] != nil {
             let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
             do {
-                try redditSession.getList(Paginator(), subreddit: Subreddit.init(subreddit: "all"), sort: .hot, timeFilterWithin: .day) { (result) in
+                try redditSession.getList(Paginator(), subreddit: Subreddit.init(subreddit: message["links"] as! String), sort: .hot, timeFilterWithin: .day, limit: 10) { (result) in
                     switch result {
                     case .failure(let error):
                         print(error)
                     case .success(let listing):
                         var results = [NSDictionary]()
                         for link in listing.children {
-                            var dict = NSMutableDictionary()
+                            let dict = NSMutableDictionary()
                             for item in ((link as! Link).baseJson) {
-                                if item.value is String {
+                                if (item.key == "subreddit" || item.key == "author" || item.key == "title" || item.key == "thumbnail" || item.key == "is_self" || item.key == "over_18" || item.key == "spoiler" || item.key == "locked" || item.key == "author" || item.key == "id" || item.key == "permalink" || item.key == "url" || item.key == "created"  || item.key == "stickied" || item.key == "link_flair_text") && (item.value is String || item.value is Int || item.value is Double){
                                     dict[item.key] = item.value
                                 }
                             }
