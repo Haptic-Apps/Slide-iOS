@@ -27,7 +27,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: CommentDepthCell?
-    
+    var didDisappearCompletely = false
+
     func isMenuShown() -> Bool {
         return menuCell != nil
     }
@@ -1065,10 +1066,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             UIApplication.shared.statusBarStyle = .lightContent
         }
-        if navigationController != nil {
+        if navigationController != nil || didDisappearCompletely {
+            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
             self.updateToolbar()
         }
-
+        
         if popup != nil {
             var width = UIScreen.main.bounds.width - 24
             if width > 375 {
@@ -1100,6 +1102,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }
+        didDisappearCompletely = false
     }
 
     var duringAnimation = false
@@ -1595,6 +1598,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         super.viewDidDisappear(animated)
         inHeadView.removeFromSuperview()
         headerCell.videoView?.player?.pause()
+        self.didDisappearCompletely = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {

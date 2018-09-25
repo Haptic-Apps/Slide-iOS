@@ -25,17 +25,19 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 title.topAnchor == contentView.topAnchor + ctwelve
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     sideButtons.topAnchor == contentView.topAnchor + ctwelve
+                    sideButtons.bottomAnchor <= bannerImage.topAnchor - ceight
                     title.rightAnchor == sideButtons.leftAnchor - ceight
                     title.leftAnchor == contentView.leftAnchor + ctwelve
                 } else if SettingValues.actionBarMode == .SIDE {
                     sideButtons.topAnchor == contentView.topAnchor + ctwelve
+                    sideButtons.bottomAnchor <= bannerImage.topAnchor - ceight
                     title.leftAnchor == sideButtons.rightAnchor + ceight
                     title.rightAnchor == contentView.rightAnchor - ctwelve
                 } else {
                     title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
                 }
-                title.bottomAnchor == bannerImage.topAnchor - ceight
-                
+                title.bottomAnchor <= bannerImage.topAnchor - ceight
+
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 videoView.edgeAnchors == bannerImage.edgeAnchors
                 topVideoView.edgeAnchors == videoView.edgeAnchors

@@ -125,6 +125,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var tempConstraints: [NSLayoutConstraint] = []
     var constraintsForType: [NSLayoutConstraint] = []
     var constraintsForContent: [NSLayoutConstraint] = []
+    var bannerHeightConstraint: [NSLayoutConstraint] = []
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -1237,6 +1238,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         }
                     })
                 }
+            }
+            
+            NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
+            self.bannerHeightConstraint = batch {
+                self.bannerImage.heightAnchor == self.submissionHeight ~ .low
             }
         } else {
             bannerImage.sd_setImage(with: URL.init(string: ""))
