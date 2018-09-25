@@ -87,6 +87,7 @@
                                                                     <items>
                                                                         <imageView width="45" height="45" alignment="left" contentMode="center" id="BKv-Le-LtF"/>
                                                                     </items>
+                                                                    <color key="backgroundColor" red="0.046915479274611371" green="0.046915479274611371" blue="0.046915479274611371" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                 </group>
                                                                 <label alignment="left" verticalAlignment="center" textAlignment="left" numberOfLines="0" id="hPB-op-io3">
                                                                     <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
