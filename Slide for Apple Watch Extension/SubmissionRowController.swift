@@ -166,11 +166,11 @@ public class SubmissionRowController: NSObject {
             }
         } else {
             if dictionary["spoiler"] as? Bool ?? false {
-                self.bannerImage.setImage(UIImage(named: "reports"))
+                self.bannerImage.setImage(UIImage(named: "reports")?.getCopy(withSize: CGSize(width: 25, height: 25)))
             } else if type == .REDDIT {
-                self.bannerImage.setImage(UIImage(named: "reddit"))
+                self.bannerImage.setImage(UIImage(named: "reddit")?.getCopy(withSize: CGSize(width: 25, height: 25)))
             } else {
-                self.bannerImage.setImage(UIImage(named: "nav"))
+                self.bannerImage.setImage(UIImage(named: "nav")?.getCopy(withSize: CGSize(width: 25, height: 25)))
             }
         }
         self.imageGroup.setCornerRadius(10)
@@ -233,5 +233,34 @@ extension DateFormatter {
         }
         
         return result
+    }
+}
+
+
+extension UIImage {
+    
+    func getCopy(withSize size: CGSize) -> UIImage {
+        let hasAlpha = true
+        let scale: CGFloat = 0.0 // Use scale factor of main screen
+        
+        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+        self.draw(in: CGRect(origin: CGPoint.zero, size: size))
+        
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        return scaledImage!
+    }
+    
+    func getCopy(withColor color: UIColor) -> UIImage {
+        var image = withRenderingMode(.alwaysTemplate)
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        color.set()
+        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        image = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return image
+    }
+    
+    func getCopy(withSize size: CGSize, withColor color: UIColor) -> UIImage {
+        return self.getCopy(withSize: size).getCopy(withColor: color)
     }
 }
