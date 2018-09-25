@@ -85,7 +85,7 @@
                                                             <items>
                                                                 <group width="45" height="45" alignment="left" id="YxL-zX-Lwp">
                                                                     <items>
-                                                                        <imageView width="45" height="45" alignment="left" contentMode="center" id="BKv-Le-LtF"/>
+                                                                        <imageView width="45" height="45" alignment="left" contentMode="scaleAspectFill" id="BKv-Le-LtF"/>
                                                                     </items>
                                                                     <color key="backgroundColor" red="0.046915479274611371" green="0.046915479274611371" blue="0.046915479274611371" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                 </group>
