@@ -6,16 +6,30 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import CoreGraphics
 import Foundation
 import WatchKit
+import UIKit
 
 public class SubmissionRowController: NSObject {
     
+    var titleText: NSAttributedString?
+    var parent: InterfaceController?
+    var thumbnail: UIImage?
+    
     @IBOutlet weak var bannerImage: WKInterfaceImage!
+    @IBOutlet weak var imageGroup: WKInterfaceGroup!
+    @IBOutlet weak var scoreLabel: WKInterfaceLabel!
+    @IBOutlet weak var commentsLabel: WKInterfaceLabel!
+    @IBOutlet weak var infoLabel: WKInterfaceLabel!
     @IBOutlet weak var titleLabel: WKInterfaceLabel!
     
-    func getTitle(dictionary: NSDictionary) -> NSAttributedString {
-        let titleFont = UIFont.systemFont(ofSize: 12)
+    @IBAction func didSelect() {
+        self.parent?.presentController(withName: "DetailView", context: self)
+
+    }
+    func setData(dictionary: NSDictionary, color: UIColor) {
+        let titleFont = UIFont.systemFont(ofSize: 14)
         let subtitleFont = UIFont.boldSystemFont(ofSize: 10)
         let attributedTitle = NSMutableAttributedString(string: dictionary["title"] as! String, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.white])
         
@@ -41,9 +55,9 @@ public class SubmissionRowController: NSObject {
         
         let attrs = [NSAttributedString.Key.font: subtitleFont, NSAttributedString.Key.foregroundColor: UIColor.white]
         
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval(dictionary["created"] as? Int ?? 0)), numericDates: true))  •  ", attributes: [NSAttributedString.Key.font: subtitleFont])
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval(dictionary["created"] as? Int ?? 0)), numericDates: true))", attributes: [NSAttributedString.Key.font: subtitleFont, NSAttributedString.Key.foregroundColor: UIColor.gray])
         
-        let authorString = NSMutableAttributedString(string: "\u{00A0}u/\(dictionary["author"] as? String ?? "")\u{00A0}", attributes: [NSAttributedString.Key.font: subtitleFont, NSAttributedString.Key.foregroundColor: UIColor.gray])
+        let authorString = NSMutableAttributedString(string: "\nu/\(dictionary["author"] as? String ?? "")", attributes: [NSAttributedString.Key.font: subtitleFont, NSAttributedString.Key.foregroundColor: UIColor.gray])
         
         endString.append(authorString)
 //        if SettingValues.domainInInfo && !full {
@@ -60,14 +74,55 @@ public class SubmissionRowController: NSObject {
 //
         let boldString = NSMutableAttributedString(string: "r/\(dictionary["subreddit"] ?? "")", attributes: attrs)
         
-            boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.blue, range: NSRange.init(location: 0, length: boldString.length))
+            boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
         
         let infoString = NSMutableAttributedString()
             infoString.append(boldString)
             infoString.append(endString)
-            infoString.append(NSAttributedString.init(string: "\n"))
-            infoString.append(attributedTitle)
+        infoString.append(NSAttributedString(string: "\n"))
+        infoString.append(attributedTitle)
+        titleLabel.setAttributedText(infoString)
+
+        let type = ContentType.getContentType(dict: dictionary)
+        var text = ""
+        switch type {
+        case .ALBUM:
+            text = ("Album")
+        case .EXTERNAL:
+            text = "External Link"
+        case .LINK, .EMBEDDED, .NONE:
+            text = "Link"
+        case .DEVIANTART:
+            text = "Deviantart"
+        case .TUMBLR:
+            text = "Tumblr"
+        case .XKCD:
+            text = ("XKCD")
+        case .GIF:
+            if (dictionary["domain"] as? String ?? "") == "v.redd.it" {
+                text = "Reddit Video"
+            } else {
+                text = ("GIF")
+            }
+        case .IMGUR:
+            text = ("Imgur")
+        case .VIDEO:
+            text = "YouTube"
+        case .STREAMABLE:
+            text = "Streamable"
+        case .VID_ME:
+            text = ("Vid.me")
+        case .REDDIT:
+            text = ("Reddit content")
+        default:
+            text = "Link"
+        }
         
+        let domain = dictionary["domain"] as? String ?? ""
+        let aboutString = NSMutableAttributedString(string: "\(text)", attributes: [NSAttributedString.Key.font: subtitleFont.withSize(13)])
+        aboutString.append(NSMutableAttributedString(string: "\n\(domain)", attributes: [NSAttributedString.Key.font: subtitleFont]))
+        infoLabel.setAttributedText(aboutString)
+
 //            infoString.append(NSAttributedString.init(string: "\n"))
 //            var sColor = UIColor.white
 //            switch ActionStates.getVoteDirection(s: submission) {
@@ -88,7 +143,37 @@ public class SubmissionRowController: NSObject {
 //            }
 //            let scoreString = NSMutableAttributedString(string: "\(submission.commentCount) comments", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: colorF])
 //            infoString.append(scoreString)
-        return infoString
+        titleText = infoString
+        
+        let scoreNumber = dictionary["score"] as? Int ?? 0
+        let score = scoreNumber > 1000 ?
+            String(format: "%0.1fk   ", (Double(scoreNumber) / Double(1000))) : "\(scoreNumber)   "
+        scoreLabel.setText(score)
+        commentsLabel.setText("\(dictionary["num_comments"] as? Int ?? 0)")
+        if let thumburl = (dictionary["thumbnail"] as? String), !thumburl.isEmpty(), thumburl.startsWith("http") {
+            DispatchQueue.global().async {
+                let url = URL(string: thumburl)!
+                
+                do {
+                    let data = try Data(contentsOf: url)
+                    self.thumbnail = UIImage(data: data)!
+                    DispatchQueue.main.async {
+                        self.bannerImage.setImage(self.thumbnail!)
+                    }
+                } catch {
+                    
+                }
+            }
+        } else {
+            if dictionary["spoiler"] as? Bool ?? false {
+                self.bannerImage.setImage(UIImage(named: "reports"))
+            } else if type == .REDDIT {
+                self.bannerImage.setImage(UIImage(named: "reddit"))
+            } else {
+                self.bannerImage.setImage(UIImage(named: "nav"))
+            }
+        }
+        self.imageGroup.setCornerRadius(10)
     }
 }
 extension DateFormatter {
