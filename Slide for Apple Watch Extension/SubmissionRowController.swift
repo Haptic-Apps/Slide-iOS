@@ -167,7 +167,7 @@ public class SubmissionRowController: NSObject {
         } else {
             if dictionary["spoiler"] as? Bool ?? false {
                 self.bannerImage.setImage(UIImage(named: "reports")?.getCopy(withSize: CGSize(width: 25, height: 25)))
-            } else if type == .REDDIT {
+            } else if type == .REDDIT || (dictionary["is_self"] as? Bool ?? false) {
                 self.bannerImage.setImage(UIImage(named: "reddit")?.getCopy(withSize: CGSize(width: 25, height: 25)))
             } else {
                 self.bannerImage.setImage(UIImage(named: "nav")?.getCopy(withSize: CGSize(width: 25, height: 25)))
