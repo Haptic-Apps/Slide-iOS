@@ -236,15 +236,14 @@ extension DateFormatter {
     }
 }
 
-
 extension UIImage {
     
     func getCopy(withSize size: CGSize) -> UIImage {
         let hasAlpha = true
         let scale: CGFloat = 0.0 // Use scale factor of main screen
-        
-        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-        self.draw(in: CGRect(origin: CGPoint.zero, size: size))
+        let biggerSize = CGSize(width: size.width + 20, height: size.height + 20)
+        UIGraphicsBeginImageContextWithOptions(biggerSize, !hasAlpha, scale)
+        self.draw(in: CGRect(origin: CGPoint(x: 10, y: 10), size: size))
         
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         return scaledImage!

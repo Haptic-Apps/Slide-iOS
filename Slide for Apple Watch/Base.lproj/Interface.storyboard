@@ -15,7 +15,7 @@
                     <items>
                         <group width="1" alignment="left" id="UZW-Un-KSZ">
                             <items>
-                                <imageView width="1" alignment="left" id="NpS-dD-jG4"/>
+                                <imageView width="1" alignment="left" contentMode="scaleAspectFill" id="NpS-dD-jG4"/>
                             </items>
                         </group>
                         <label alignment="left" text="Label" numberOfLines="0" id="e1k-XM-k2I">
