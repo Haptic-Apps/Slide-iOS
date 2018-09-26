@@ -185,6 +185,9 @@
 		BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45E01E23EED800764BB8 /* SettingValues.swift */; };
 		BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494271E307D57006618F3 /* GalleryTableViewController.swift */; };
 		BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494291E307DDA006618F3 /* GalleryCellView.swift */; };
+		BEC5FA28215BDBD400C412D0 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC5FA27215BDBD400C412D0 /* ShareViewController.swift */; };
+		BEC5FA2B215BDBD400C412D0 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BEC5FA29215BDBD400C412D0 /* MainInterface.storyboard */; };
+		BEC5FA2F215BDBD400C412D0 /* Share to Slide.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BEC5FA25215BDBD300C412D0 /* Share to Slide.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
 		BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECF52462012B8E700A310F9 /* YTPlayerView.m */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
@@ -222,6 +225,13 @@
 			remoteGlobalIDString = BE8FCA031E0C46090063B8EF;
 			remoteInfo = "Slide for Reddit";
 		};
+		BEC5FA2D215BDBD400C412D0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BEC5FA24215BDBD300C412D0;
+			remoteInfo = "Share to Slide";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -231,6 +241,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				BEC5FA2F215BDBD400C412D0 /* Share to Slide.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,6 +446,11 @@
 		BEBF45E01E23EED800764BB8 /* SettingValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingValues.swift; sourceTree = "<group>"; };
 		BEC494271E307D57006618F3 /* GalleryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryTableViewController.swift; sourceTree = "<group>"; };
 		BEC494291E307DDA006618F3 /* GalleryCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCellView.swift; sourceTree = "<group>"; };
+		BEC5FA25215BDBD300C412D0 /* Share to Slide.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Share to Slide.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEC5FA27215BDBD400C412D0 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		BEC5FA2A215BDBD400C412D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		BEC5FA2C215BDBD400C412D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BEC5FA33215BDC0D00C412D0 /* Share to Slide.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Share to Slide.entitlements"; sourceTree = "<group>"; };
 		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
 		BECF52452012B8E700A310F9 /* YTPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YTPlayerView.h; sourceTree = "<group>"; };
 		BECF52462012B8E700A310F9 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YTPlayerView.m; sourceTree = "<group>"; };
@@ -487,6 +503,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				2097F94228BB31C58ECC96F9 /* Pods_Slide_for_RedditUITests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BEC5FA22215BDBD300C412D0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,6 +756,7 @@
 			isa = PBXGroup;
 			children = (
 				BE77470720367D98006C72E8 /* Credits.plist */,
+				BEC5FA26215BDBD400C412D0 /* Share to Slide */,
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				CA62E6258F89232082F52D05 /* Pods */,
 				BE8FCA051E0C46090063B8EF /* Products */,
@@ -748,6 +772,7 @@
 				BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */,
 				BE8FCA181E0C46090063B8EF /* Slide for RedditTests.xctest */,
 				BE8FCA231E0C46090063B8EF /* Slide for RedditUITests.xctest */,
+				BEC5FA25215BDBD300C412D0 /* Share to Slide.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -883,6 +908,17 @@
 			name = LinkCellViews;
 			sourceTree = "<group>";
 		};
+		BEC5FA26215BDBD400C412D0 /* Share to Slide */ = {
+			isa = PBXGroup;
+			children = (
+				BEC5FA33215BDC0D00C412D0 /* Share to Slide.entitlements */,
+				BEC5FA27215BDBD400C412D0 /* ShareViewController.swift */,
+				BEC5FA29215BDBD400C412D0 /* MainInterface.storyboard */,
+				BEC5FA2C215BDBD400C412D0 /* Info.plist */,
+			);
+			path = "Share to Slide";
+			sourceTree = "<group>";
+		};
 		CA62E6258F89232082F52D05 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -918,6 +954,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				BEC5FA2E215BDBD400C412D0 /* PBXTargetDependency */,
 			);
 			name = "Slide for Reddit";
 			productName = "Slide for Reddit";
@@ -966,13 +1003,30 @@
 			productReference = BE8FCA231E0C46090063B8EF /* Slide for RedditUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		BEC5FA24215BDBD300C412D0 /* Share to Slide */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BEC5FA32215BDBD400C412D0 /* Build configuration list for PBXNativeTarget "Share to Slide" */;
+			buildPhases = (
+				BEC5FA21215BDBD300C412D0 /* Sources */,
+				BEC5FA22215BDBD300C412D0 /* Frameworks */,
+				BEC5FA23215BDBD300C412D0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Share to Slide";
+			productName = "Share to Slide";
+			productReference = BEC5FA25215BDBD300C412D0 /* Share to Slide.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		BE8FC9FC1E0C46090063B8EF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0830;
+				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
@@ -982,6 +1036,9 @@
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
@@ -1008,6 +1065,16 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
+					BEC5FA24215BDBD300C412D0 = {
+						CreatedOnToolsVersion = 10.0;
+						DevelopmentTeam = FTT89576VQ;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
+					};
 				};
 			};
 			buildConfigurationList = BE8FC9FF1E0C46090063B8EF /* Build configuration list for PBXProject "Slide for Reddit" */;
@@ -1026,6 +1093,7 @@
 				BE8FCA031E0C46090063B8EF /* Slide for Reddit */,
 				BE8FCA171E0C46090063B8EF /* Slide for RedditTests */,
 				BE8FCA221E0C46090063B8EF /* Slide for RedditUITests */,
+				BEC5FA24215BDBD300C412D0 /* Share to Slide */,
 			);
 		};
 /* End PBXProject section */
@@ -1070,6 +1138,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BEC5FA23215BDBD300C412D0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEC5FA2B215BDBD400C412D0 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1517,6 +1593,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BEC5FA21215BDBD300C412D0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEC5FA28215BDBD400C412D0 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1530,6 +1614,11 @@
 			target = BE8FCA031E0C46090063B8EF /* Slide for Reddit */;
 			targetProxy = BE8FCA241E0C46090063B8EF /* PBXContainerItemProxy */;
 		};
+		BEC5FA2E215BDBD400C412D0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BEC5FA24215BDBD300C412D0 /* Share to Slide */;
+			targetProxy = BEC5FA2D215BDBD400C412D0 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1539,6 +1628,14 @@
 				BE8FCA111E0C46090063B8EF /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		BEC5FA29215BDBD400C412D0 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BEC5FA2A215BDBD400C412D0 /* Base */,
+			);
+			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1784,6 +1881,57 @@
 			};
 			name = Release;
 		};
+		BEC5FA30215BDBD400C412D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Share to Slide/Share to Slide.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Share to Slide/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.Share-link-to-Slide";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BEC5FA31215BDBD400C412D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Share to Slide/Share to Slide.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Share to Slide/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.Share-link-to-Slide";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1819,6 +1967,15 @@
 			buildConfigurations = (
 				BE8FCA331E0C46090063B8EF /* Debug */,
 				BE8FCA341E0C46090063B8EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BEC5FA32215BDBD400C412D0 /* Build configuration list for PBXNativeTarget "Share to Slide" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BEC5FA30215BDBD400C412D0 /* Debug */,
+				BEC5FA31215BDBD400C412D0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -2,12 +2,12 @@
 //  ShareViewController.swift
 //  Share to Slide
 //
-//  Created by Carlos Crane on 6/3/18.
+//  Created by Carlos Crane on 9/26/18.
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import Social
 import UIKit
+import Social
 
 class ShareViewController: SLComposeServiceViewController {
 
