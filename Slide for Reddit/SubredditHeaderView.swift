@@ -233,7 +233,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     }
 
     func showTimeMenu(s: LinkSortType, selector: UITableViewCell) {
-        if s == .hot || s == .new || s == .rising {
+        if s == .hot || s == .new || s == .rising || s == .best {
             UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName.lowercased() + "Sorting")
             UserDefaults.standard.set(TimeFilterWithin.day.param, forKey: self.subreddit!.displayName.lowercased() + "Time")
             UserDefaults.standard.synchronize()

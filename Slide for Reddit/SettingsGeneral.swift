@@ -278,7 +278,7 @@ class SettingsGeneral: UITableViewController {
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
-        if s == .hot || s == .new || s == .rising {
+        if s == .hot || s == .new || s == .rising || s == .best {
             SettingValues.defaultSorting = s
             UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
             UserDefaults.standard.synchronize()

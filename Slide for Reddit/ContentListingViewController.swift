@@ -317,7 +317,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIButton?) {
-        if s == .hot || s == .new || s == .rising {
+        if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
             refresh()
             return
