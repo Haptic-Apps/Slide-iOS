@@ -14,7 +14,7 @@ class History {
     public static var commentCounts = NSMutableDictionary()
     
     public static var currentVisits = [String]()
-
+    
     //mark Submissions
     public static func getSeen(s: RSubmission) -> Bool {
         if !SettingValues.saveHistory {
@@ -28,17 +28,17 @@ class History {
         }
         return (s.visited || s.likes != .none)
     }
-
+    
     public static func getSeenTime(s: RSubmission) -> Double {
-    let fullname = s.getId()
-       if let time = seenTimes.object(forKey: fullname) {
-        if time is NSNumber {
-            return Double(time as! NSNumber)
+        let fullname = s.getId()
+        if let time = seenTimes.object(forKey: fullname) {
+            if time is NSNumber {
+                return Double(time as! NSNumber)
+            } else {
+                return 0
+            }
         } else {
             return 0
-        }
-       } else {
-        return 0
         }
     }
     
@@ -47,16 +47,18 @@ class History {
             //Possibly do this, although it's only available as an API endpoint if the user has Reddit gold
         }
     }
-
+    
     public static var currentSeen: [String] = [String]()
-    public static func addSeen(s: RSubmission) {
+    public static func addSeen(s: RSubmission, skipDuplicates: Bool = false) {
         currentSeen.append(s.getId())
         if !SettingValues.saveNSFWHistory && s.nsfw {
             
         } else if SettingValues.saveHistory {
-        let fullname = s.getId()
-        seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
-        currentVisits.append(s.getId())
+            let fullname = s.getId()
+            if !skipDuplicates || (skipDuplicates && commentCounts.object(forKey: s.getId()) != nil) {
+                seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
+            }
+            currentVisits.append(s.getId())
         }
     }
     
@@ -67,7 +69,7 @@ class History {
     public static func inboxSeen() {
         seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: "inbox")
     }
-
+    
     public static func getInboxSeen() -> Double {
         if let time = seenTimes.object(forKey: "inbox") {
             if time is NSNumber {
