@@ -44,7 +44,7 @@ class ContentType {
     
     public static func shouldOpenBrowser(_ url: URL) -> Bool {
         let browser = SettingValues.browser
-        if browser == SettingValues.BROWSER_INTERNAL || browser == SettingValues.BROWSER_SAFARI_INTERNAL {
+        if browser == SettingValues.BROWSER_INTERNAL || browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY || browser == SettingValues.BROWSER_SAFARI_INTERNAL {
             return false
         } else {
             let type = getContentType(baseUrl: url)

@@ -7,6 +7,7 @@ import Foundation
 import SafariServices
 
 class SFHideSafariViewController: SFSafariViewController {
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         UIApplication.shared.statusBarStyle = ColorUtil.theme.isLight() ? .default : .lightContent

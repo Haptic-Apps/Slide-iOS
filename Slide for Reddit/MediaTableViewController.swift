@@ -34,8 +34,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         
         failureCallback = { (url: URL) in
             let vc: UIViewController
-            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
-                let safariVC = SFHideSafariViewController(url: url)
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
+                let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                     safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -92,8 +92,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             return AlbumViewController.init(urlB: contentUrl!)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
-                if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
-                    let safariVC = SFHideSafariViewController(url: contentUrl!)
+                if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
+                    let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                         safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -106,8 +106,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
-            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
-                let safariVC = SFHideSafariViewController(url: contentUrl!)
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
+                let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                     safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -121,8 +121,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         } else if type == ContentType.CType.REDDIT {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
-        if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
-            let safariVC = SFHideSafariViewController(url: contentUrl!)
+        if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
+            let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                 safariVC.preferredControlTintColor = ColorUtil.fontColor
@@ -157,8 +157,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         failureCallback = {[weak self] (url: URL) in
             guard let strongSelf = self else { return }
             let vc: UIViewController
-            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL {
-                let safariVC = SFHideSafariViewController(url: url)
+            if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
+                let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.backgroundColor
                     safariVC.preferredControlTintColor = ColorUtil.fontColor

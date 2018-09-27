@@ -103,6 +103,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         
         if #available(iOS 10, *) {
             browsers.append(SettingValues.BROWSER_SAFARI_INTERNAL)
+            browsers.append(SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
         }
         
         if sharedApplication.canOpenURL(chromeURL) {
@@ -228,6 +229,9 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
                 cell.imageView?.image = safariIcon
             } else if text == SettingValues.BROWSER_SAFARI_INTERNAL {
                 cell.textLabel?.text = "Internal Safari"
+                cell.imageView?.image = safariInternalIcon
+            } else if text == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
+                cell.textLabel?.text = "Internal Safari with Readability"
                 cell.imageView?.image = safariInternalIcon
             } else if text == SettingValues.BROWSER_CHROME {
                 cell.textLabel?.text = "Chrome"

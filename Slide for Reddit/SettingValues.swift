@@ -106,6 +106,7 @@ class SettingValues {
     public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
 
     public static let BROWSER_INTERNAL = "internal"
+    public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
     public static let BROWSER_FIREFOX = "firefox"
     public static let BROWSER_SAFARI = "safari"
     public static let BROWSER_SAFARI_INTERNAL = "safariinternal"
