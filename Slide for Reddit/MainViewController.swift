@@ -10,7 +10,6 @@ import Anchorage
 import MaterialComponents.MaterialTabs
 import RealmSwift
 import reddift
-import SideMenu
 import StoreKit
 import UIKit
 
@@ -944,7 +943,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
             if AccountController.isLoggedIn && AccountController.isGold {
-                session.setVisited(names: History.currentSeen) { (result) in
+                do {
+                    try session.setVisited(names: History.currentSeen) { (result) in
+                        
+                    }
+                } catch {
                     
                 }
             }

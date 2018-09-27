@@ -8,7 +8,6 @@ target 'Slide for Reddit' do
 
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
   pod 'SDWebImage', '~>4.1.2'
-  pod 'SideMenu'
   pod 'MKColorPicker'
   pod 'BadgeSwift', '~> 5.0'
   pod 'LicensesViewController', '~> 0.6.5'

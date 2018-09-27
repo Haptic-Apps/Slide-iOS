@@ -14,7 +14,6 @@ import RealmSwift
 import reddift
 import RLBAlertsPickers
 import SDWebImage
-import SideMenu
 import SloppySwiper
 import TTTAttributedLabel
 import UIKit

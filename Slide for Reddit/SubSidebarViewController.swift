@@ -9,7 +9,6 @@
 import Anchorage
 import reddift
 import SDWebImage
-import SideMenu
 import UIKit
 
 class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate {

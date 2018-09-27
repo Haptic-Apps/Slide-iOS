@@ -71,7 +71,6 @@ PODS:
   - SDWebImage (4.1.2):
     - SDWebImage/Core (= 4.1.2)
   - SDWebImage/Core (4.1.2)
-  - SideMenu (5.0.1)
   - SloppySwiper (0.6)
   - Starscream (3.0.5)
   - SubtleVolume (0.5.2)
@@ -102,7 +101,6 @@ DEPENDENCIES:
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
   - SDWebImage (~> 4.1.2)
-  - SideMenu
   - SloppySwiper (from `https://github.com/fastred/sloppySwiper`)
   - Starscream (~> 3.0.2)
   - SubtleVolume
@@ -168,7 +166,6 @@ SPEC CHECKSUMS:
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
-  SideMenu: 87efd943737bb83aedf0358884d09fcf5576636d
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SubtleVolume: 605eef49ca714af247c0a8efae63e86b3530480b
@@ -179,6 +176,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 
-PODFILE CHECKSUM: 8730bd8917f924ade293116f31265669b07f0400
+PODFILE CHECKSUM: 5bbd2b0b1d83f438b5954675d442f16de7abc270
 
 COCOAPODS: 1.4.0
