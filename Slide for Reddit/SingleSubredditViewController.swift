@@ -241,6 +241,8 @@ class SingleSubredditViewController: MediaViewController {
         navigationController?.navigationBar.isTranslucent = false
         
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+        navigationController?.toolbar.tintColor = ColorUtil.fontColor
     }
 
     override func viewWillLayoutSubviews() {
