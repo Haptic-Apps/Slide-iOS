@@ -21,6 +21,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     public static var current: String = ""
     public static var needsRestart = false
     public var toolbar: UIView?
+    var more = UIButton()
+    var menu = UIButton()
 
     var menuPresentationController: BottomMenuPresentationController?
     
@@ -402,6 +404,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
             MainViewController.isOffline = true
+            menu.removeFromSuperview()
+            more.removeFromSuperview()
             let baseSubs = Subscriptions.subreddits
             do {
             let realm = try Realm()
@@ -797,6 +801,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var drawerButton = UIImageView()
 
     func doButtons() {
+        if menu.superview != nil {
+            return
+        }
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -821,13 +828,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         if !MainViewController.isOffline {
             if SettingValues.bottomBarHidden && !SettingValues.viewType {
-                let more = UIButton.init(type: .custom)
+                more = UIButton.init(type: .custom)
                 more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
                 more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 let moreB = UIBarButtonItem.init(customView: more)
                 
-                let menu = UIButton.init(type: .custom)
+                menu = UIButton.init(type: .custom)
                 menu.setImage(UIImage.init(named: "menu")?.navIcon(), for: UIControlState.normal)
                 menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
                 menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
@@ -836,12 +843,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 navigationItem.leftBarButtonItem = menuB
                 navigationItem.rightBarButtonItems = [moreB, sortB]
             } else {
-                let more = UIButton.init(type: .custom)
+                more = UIButton.init(type: .custom)
+                more.accessibilityIdentifier = "more"
                 more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
                 more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
                 more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 
-                let menu = UIButton.init(type: .custom)
+                menu = UIButton.init(type: .custom)
+                menu.accessibilityIdentifier = "menu"
                 menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
                 menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
                 menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)

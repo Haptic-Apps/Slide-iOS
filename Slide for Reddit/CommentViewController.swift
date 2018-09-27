@@ -1295,6 +1295,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         return count
     }
+    
+    override func prefersHomeIndicatorAutoHidden() -> Bool {
+        return true
+    }
 
     func showNavTypes(_ sender: UIView) {
         if !loaded {

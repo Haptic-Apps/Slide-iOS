@@ -39,7 +39,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         super.init(nibName: nil, bundle: nil)
         
         if UIDevice.current.userInterfaceIdiom == .phone {
-            if UIScreen.main.bounds.height == 812 {
+            if UIScreen.main.bounds.height >= 812 {
                 bottomOffset = 84
             }
         }
@@ -150,6 +150,19 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     func collapse() {
         let y = UIScreen.main.bounds.height - bottomOffset
+        if let parent = self.parentController, parent.menu.superview != nil {
+            parent.menu.deactivateImmediateConstraints()
+            parent.menu.topAnchor == parent.toolbar!.topAnchor
+            parent.menu.widthAnchor == 56
+            parent.menu.heightAnchor == 56
+            parent.menu.leftAnchor == parent.toolbar!.leftAnchor
+            
+            parent.more.deactivateImmediateConstraints()
+            parent.more.topAnchor == parent.toolbar!.topAnchor
+            parent.more.widthAnchor == 56
+            parent.more.heightAnchor == 56
+            parent.more.rightAnchor == parent.toolbar!.rightAnchor
+        }
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.backgroundView.alpha = 0
@@ -157,6 +170,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
+            strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+            strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
         
         self.callbacks.didCollapse?()
@@ -222,12 +237,27 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         parentController!.navigationController?.view.bringSubview(toFront: self.view)
         
         let y = UIScreen.main.bounds.height - self.view.frame.size.height
+        if let parent = self.parentController, parent.menu.superview != nil {
+            parent.menu.deactivateImmediateConstraints()
+            parent.menu.topAnchor == parent.toolbar!.topAnchor
+            parent.menu.widthAnchor == 56
+            parent.menu.heightAnchor == 56
+            parent.menu.leftAnchor == parent.toolbar!.leftAnchor
+            
+            parent.more.deactivateImmediateConstraints()
+            parent.more.topAnchor == parent.toolbar!.topAnchor
+            parent.more.widthAnchor == 56
+            parent.more.heightAnchor == 56
+            parent.more.rightAnchor == parent.toolbar!.rightAnchor
+        }
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.backgroundView.alpha = 1
             strongSelf.topView?.alpha = 0
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = strongSelf.header.back.backgroundColor
+            strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+            strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
         
         let completionBlock: (Bool) -> Void = { [weak self] finished in
