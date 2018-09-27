@@ -1673,8 +1673,6 @@
 					"-framework",
 					"\"SDWebImage\"",
 					"-framework",
-					"\"SideMenu\"",
-					"-framework",
 					"\"reddift\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide;
@@ -1707,8 +1705,6 @@
 					"$(inherited)",
 					"-framework",
 					"\"SDWebImage\"",
-					"-framework",
-					"\"SideMenu\"",
 					"-framework",
 					"\"reddift\"",
 				);

@@ -17,6 +17,11 @@ class History {
 
     //mark Submissions
     public static func getSeen(s: RSubmission) -> Bool {
+        if !SettingValues.saveHistory {
+            return false
+        } else if s.nsfw && !SettingValues.saveNSFWHistory {
+            return false
+        }
         let fullname = s.getId()
         if seenTimes.object(forKey: fullname) != nil {
             return true

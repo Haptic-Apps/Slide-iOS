@@ -1027,7 +1027,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        print(self.content.count)
         doHeadView(self.view.frame.size)
         
         if navigationController != nil {
@@ -1209,9 +1208,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func updateStrings(_ newComments: [(Thing, Int)]) {
         var color = UIColor.black
+        var first = true
         for thing in newComments {
-            if color == .black && thing.0 is Comment {
+            if first && thing.0 is Comment {
                 color = ColorUtil.accentColorForSub(sub: ((newComments[0].0 as! Comment).subreddit))
+                first = false
             }
             if let comment = thing.0 as? Comment {
                 let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
@@ -2326,7 +2327,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 return false
             }
             
-            if SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightRight == .NONE {
+            if SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionLeftRight == .NONE {
                 return false
             }
         }
@@ -2347,7 +2348,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 return false
             }
             
-            if SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightRight == .NONE {
+            if SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionLeftRight == .NONE {
                 return false
             }
         }
@@ -2363,7 +2364,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!).x
-            if (velocity > 0 && SettingValues.commentActionLeftLeft == .NONE) || (velocity < 0 && SettingValues.commentActionRightRight == .NONE) {
+            if (velocity > 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE)) || (velocity < 0 && (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) {
                 return
             }
         }
