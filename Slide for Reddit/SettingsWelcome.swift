@@ -222,7 +222,10 @@ class SettingsWelcomeTheme: UIViewController {
         let about = UILabel.init(frame: CGRect.init(x: 48, y: 70, width: self.view.frame.size.width - 96, height: 100))
         about.textColor = ColorUtil.fontColor
         about.font = UIFont.boldSystemFont(ofSize: 26)
-        about.text = "Choose a theme to get started"
+        let attributedTitle = NSMutableAttributedString(string: "Choose a theme to get started!", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 26), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        attributedTitle.appendString("\n")
+        attributedTitle.append(NSAttributedString(string: "There are more themes available in Settings after setup", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18), NSForegroundColorAttributeName: ColorUtil.fontColor]))
+        about.attributedText = attributedTitle
         about.textAlignment = .center
         about.numberOfLines = 0
         about.lineBreakMode = .byWordWrapping

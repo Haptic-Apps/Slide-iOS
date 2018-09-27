@@ -973,7 +973,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         actionSheetController.addAction(cancelActionButton)
 
         for theme in ColorUtil.Theme.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { _ -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
                 UserDefaults.standard.set(theme.rawValue, forKey: "theme")
                 UserDefaults.standard.synchronize()
                 _ = ColorUtil.doInit()

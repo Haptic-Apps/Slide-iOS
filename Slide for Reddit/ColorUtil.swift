@@ -247,9 +247,35 @@ class ColorUtil {
         case DEEP = "deep"
         case MINT = "mint"
         case CREAM = "cream"
+        case CONTRAST = "acontrast"
+        
+        public var displayName: String {
+            switch self {
+            case .LIGHT:
+                return "Light"
+            case .DEEP:
+                return "Deep purple"
+            case .DARK:
+                return "Dark gray"
+            case .BLUE:
+                return "Blue"
+            case .SEPIA:
+                return "Sepia"
+            case .RED:
+                return "Dark red"
+            case .BLACK:
+                return "AMOLED black"
+            case .CONTRAST:
+                return "AMOLED black with contrast"
+            case .MINT:
+                return "Mint green"
+            case .CREAM:
+                return "Crème"
+            }
+        }
 
         public static var cases: [Theme] {
-            return [.LIGHT, .DARK, .BLACK, .BLUE, .SEPIA, .RED, .DEEP, .MINT, .CREAM]
+            return [.LIGHT, .DARK, .BLACK, .CONTRAST, .BLUE, .SEPIA, .RED, .DEEP, .MINT, .CREAM]
         }
         public var foregroundColor: UIColor {
             switch self {
@@ -266,6 +292,8 @@ class ColorUtil {
             case .RED:
                 return UIColor(hexString: "#402c2c")
             case .BLACK:
+                return UIColor.black
+            case .CONTRAST:
                 return UIColor.black
             case .MINT:
                 return UIColor.white
@@ -290,6 +318,8 @@ class ColorUtil {
                 return UIColor(hexString: "#312322")
             case .BLACK:
                 return UIColor.black
+            case .CONTRAST:
+                return UIColor(hexString: "#111010")
             case .MINT:
                 return UIColor(hexString: "#eef6e8")
             case .CREAM:
@@ -316,6 +346,8 @@ class ColorUtil {
             case .RED:
                 return UIColor(hexString: "#fff7ed").withAlphaComponent(0.87)
             case .BLACK:
+                return UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87)
+            case .CONTRAST:
                 return UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87)
             case .MINT:
                 return UIColor(hexString: "#09360f").withAlphaComponent(0.87)

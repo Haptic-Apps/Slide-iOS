@@ -424,8 +424,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         actionSheetController.addAction(cancelActionButton)
 
         for theme in ColorUtil.Theme.cases {
-            if theme != .LIGHT {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { _ -> Void in
+            if theme != .LIGHT && theme != .MINT && theme != .CREAM {
+                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
                     SettingValues.nightTheme = theme
                     UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
                     UserDefaults.standard.synchronize()
@@ -494,7 +494,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                     _ = VCPresenter.proDialogShown(feature: false, self)
                 }
             } else {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.rawValue, style: .default) { _ -> Void in
+                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
                     UserDefaults.standard.set(theme.rawValue, forKey: "theme")
                     UserDefaults.standard.synchronize()
                     _ = ColorUtil.doInit()
