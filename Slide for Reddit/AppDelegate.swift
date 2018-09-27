@@ -185,8 +185,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-        let url = shortcutItem.userInfo!["sub"]!
-        VCPresenter.openRedditLink("/r/\(url)", nil, window?.rootViewController)
+        if let url = shortcutItem.userInfo?["sub"] {
+            VCPresenter.openRedditLink("/r/\(url)", nil, window?.rootViewController)
+        } else if shortcutItem.userInfo?["clipboard"] != nil {
+            var clipUrl: URL?
+            if let url = UIPasteboard.general.url {
+                if ContentType.getContentType(baseUrl: url) == .REDDIT {
+                    clipUrl = url
+                }
+            }
+            if clipUrl == nil {
+                if let urlS = UIPasteboard.general.string {
+                    if let url = URL.init(string: urlS) {
+                        if ContentType.getContentType(baseUrl: url) == .REDDIT {
+                            clipUrl = url
+                        }
+                    }
+                }
+            }
+            
+            if clipUrl != nil {
+                VCPresenter.openRedditLink(clipUrl!.absoluteString, nil, window?.rootViewController)
+            }
+
+        }
     }
     
     /* Disable this for now

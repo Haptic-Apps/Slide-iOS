@@ -432,9 +432,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             var subs = [UIMutableApplicationShortcutItem]()
             for subname in finalSubs {
                 MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
-                if subs.count < 3 && !subname.contains("/") {
+                if subs.count < 2 && !subname.contains("/") {
                     subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
                 }
+                subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current Reddit link in your clipboard", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" ]))
                 subs.reverse()
             }
             UIApplication.shared.shortcutItems = subs

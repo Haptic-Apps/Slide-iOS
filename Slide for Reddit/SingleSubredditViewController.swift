@@ -184,16 +184,6 @@ class SingleSubredditViewController: MediaViewController {
             self.tableView.reloadData()
         }
 
-        doHeadView()
-
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
-        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
-
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = false
-
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
-
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
@@ -242,6 +232,15 @@ class SingleSubredditViewController: MediaViewController {
             showUI()
         }
         SingleSubredditViewController.nextSingle = self.single
+        doHeadView()
+        
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
+        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
+        
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = false
+        
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
     }
 
     override func viewWillLayoutSubviews() {
