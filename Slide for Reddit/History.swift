@@ -43,13 +43,15 @@ class History {
         }
     }
 
+    public static var currentSeen: [String] = [String]()
     public static func addSeen(s: RSubmission) {
-        currentVisits.append(s.getId())
+        currentSeen.append(s.getId())
         if !SettingValues.saveNSFWHistory && s.nsfw {
             
         } else if SettingValues.saveHistory {
         let fullname = s.getId()
         seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
+        currentVisits.append(s.getId())
         }
     }
     

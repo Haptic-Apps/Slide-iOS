@@ -1,7 +1,7 @@
 PODS:
   - ActionSheetPicker-3.0 (2.2.0)
   - Alamofire (4.7.3)
-  - Anchorage (4.2.4)
+  - Anchorage (4.3)
   - BadgeSwift (5.0.1)
   - BiometricAuthentication (2.0.2)
   - DTCoreText (1.6.21):
@@ -23,26 +23,26 @@ PODS:
     - DTFoundation/Core
   - Embassy (4.0.8)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (63.0.0):
+  - MaterialComponents/ActivityIndicator (64.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (63.0.0)
-  - MaterialComponents/Ink (63.0.0):
+  - MaterialComponents/AnimationTiming (64.0.0)
+  - MaterialComponents/Ink (64.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (63.0.0)
-  - MaterialComponents/private/Application (63.0.0)
-  - MaterialComponents/private/Math (63.0.0)
-  - MaterialComponents/ProgressView (63.0.0):
+  - MaterialComponents/Palettes (64.0.0)
+  - MaterialComponents/private/Application (64.0.0)
+  - MaterialComponents/private/Math (64.0.0)
+  - MaterialComponents/ProgressView (64.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (63.0.0)
-  - MaterialComponents/ShadowLayer (63.0.0):
+  - MaterialComponents/ShadowElevations (64.0.0)
+  - MaterialComponents/ShadowLayer (64.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (63.0.0):
+  - MaterialComponents/Tabs (64.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -50,7 +50,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (63.0.0):
+  - MaterialComponents/Typography (64.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (1.1.0)
@@ -71,14 +71,14 @@ PODS:
   - SDWebImage (4.1.2):
     - SDWebImage/Core (= 4.1.2)
   - SDWebImage/Core (4.1.2)
-  - SideMenu (4.0.0)
+  - SideMenu (5.0.1)
   - SloppySwiper (0.6)
   - Starscream (3.0.5)
   - SubtleVolume (0.5.2)
   - SwiftLint (0.27.0)
   - SwiftSpreadsheet (1.2.0)
-  - SwiftyJSON (4.1.0)
-  - Then (2.3.0)
+  - SwiftyJSON (4.2.0)
+  - Then (2.4.0)
   - TTTAttributedLabel (2.0.0)
   - XLActionController (4.0.1):
     - XLActionController/Core (= 4.0.1)
@@ -135,7 +135,7 @@ CHECKOUT OPTIONS:
     :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: a646e7f2d9a0bd3d6036c43e209fe128490dae05
+    :commit: ed8878857e331a4fa9ab1a31f7842eb5de941a9c
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -150,14 +150,14 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
-  Anchorage: f855157310859280c706cc0b9c9281c21702f515
+  Anchorage: 21a98675245188427f0bcea21404d42a824a766f
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
   BiometricAuthentication: ce2f923d4df7a4b340e154137e7b47e544abc1ae
   DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: 4e0c0ee000e0dcbf5214b0054767ef9f8f812264
+  MaterialComponents: 8a8301debcb5fe3583a386914a5a64b7c83f0ae8
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
@@ -168,14 +168,14 @@ SPEC CHECKSUMS:
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
-  SideMenu: 70ee5657df63ec3382660ec4ef470bf1cf5db07d
+  SideMenu: 87efd943737bb83aedf0358884d09fcf5576636d
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SubtleVolume: 605eef49ca714af247c0a8efae63e86b3530480b
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
-  SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
-  Then: ee21c97b85ff6062b9b0080c9abb1eea46743345
+  SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
+  Then: 71866660c7af35a7343831f7668e7cd2b62ee0f2
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
 

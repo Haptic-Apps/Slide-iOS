@@ -941,6 +941,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         UIApplication.shared.statusBarView?.backgroundColor = .clear
         
         menuNav?.view.isHidden = true
+        
+        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+            if AccountController.isLoggedIn && AccountController.isGold {
+                session.setVisited(names: History.currentSeen) { (result) in
+                    
+                }
+            }
+            History.currentSeen.removeAll()
+        }
     }
 
     func showSortMenu(_ sender: UIButton?) {

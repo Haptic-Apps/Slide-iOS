@@ -723,7 +723,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             text = "This is a locked post.\nYou won't be able to comment"
         }
 
-        if !text.isEmpty {
+        if !text.isEmpty && self.navigationController != nil {
             var top = CGFloat(64)
             var bottom = CGFloat(45)
             if #available(iOS 11.0, *) {
@@ -1027,6 +1027,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        print(self.content.count)
         doHeadView(self.view.frame.size)
         
         if navigationController != nil {
@@ -1929,6 +1930,10 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         let parentOP = parents[thing]
 
         cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
+    if content.isEmpty || text.isEmpty || cDepth.isEmpty {
+        self.refresh(self)
+        return cell
+    }
         if let cell = cell as? CommentDepthCell {
             if content[thing] is RComment {
                 var count = 0
