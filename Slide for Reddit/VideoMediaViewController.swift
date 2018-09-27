@@ -10,6 +10,7 @@ import Alamofire
 import Anchorage
 import AVFoundation
 import SDWebImage
+import SubtleVolume
 import Then
 import UIKit
 
@@ -20,7 +21,18 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var isYoutubeView: Bool {
         return contentType == ContentType.CType.VIDEO
     }
-
+    
+    let volume = SubtleVolume(style: SubtleVolumeStyle.roundedLine)
+    let volumeHeight: CGFloat = 3
+    
+    var safeAreaInsets: UIEdgeInsets {
+        if #available(iOS 11.0, tvOS 11.0, *) {
+            return view.safeAreaInsets
+        } else {
+            return UIEdgeInsets.zero
+        }
+    }
+    
     var youtubeResolution = CGSize(width: 16, height: 9)
     var videoView = VideoView()
     var youtubeView = YTPlayerView()
@@ -66,6 +78,24 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         loadContent()
         handleHideUI()
+        
+        volume.barTintColor = .white
+        volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+        volume.animation = .slideDown
+        view.addSubview(volume)
+        
+        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        layoutVolume()
+    }
+    
+    func layoutVolume() {
+        let volumeYPadding: CGFloat = 10
+        let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
+        volume.superview?.bringSubview(toFront: volume)
+        volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
     }
 
     func stopDisplayLink() {

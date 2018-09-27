@@ -143,7 +143,7 @@ class SingleSubredditViewController: MediaViewController {
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
-        
+
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
@@ -268,6 +268,18 @@ class SingleSubredditViewController: MediaViewController {
                 }, completion: { _ in
                     self.fab?.removeFromSuperview()
                 })
+        }
+        
+        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+            if AccountController.isLoggedIn && AccountController.isGold {
+                do {
+                    try session.setVisited(names: History.currentSeen) { (_) in
+                    }
+                } catch {
+                    
+                }
+            }
+            History.currentSeen.removeAll()
         }
     }
 
