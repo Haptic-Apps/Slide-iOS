@@ -204,6 +204,14 @@ class SingleSubredditViewController: MediaViewController {
             }
         }
         self.view.backgroundColor = ColorUtil.backgroundColor
+        
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
+        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
+        
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = false
+        
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -783,7 +791,6 @@ class SingleSubredditViewController: MediaViewController {
             let color = ColorUtil.getColorForSub(sub: s)
             if color != ColorUtil.baseColor {
                 somethingAction.setValue(color, forKey: "titleTextColor")
-
             }
             alrController.addAction(somethingAction)
 

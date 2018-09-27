@@ -412,7 +412,6 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         }
 
         self.present(alert, animated: true, completion: nil)
-
     }
 
     func selectTheme() {
@@ -443,9 +442,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             presenter.sourceView = selectedTableView
             presenter.sourceRect = selectedTableView.bounds
         }
-
+        
         self.present(actionSheetController, animated: true, completion: nil)
-
     }
 
     func showNightTheme() {
