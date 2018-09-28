@@ -1532,10 +1532,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (isSearching ? self.filteredData.count : self.comments.count - self.hidden.count)
     }
-
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if SettingValues.collapseFully {
             let datasetPosition = (indexPath as NSIndexPath).row
+            if dataArray.isEmpty {
+                UITableViewAutomaticDimension
+            }
             let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
             if !hiddenPersons.contains(thing) && thing != self.menuId {
                 if let height = oldHeights[thing] {
