@@ -221,10 +221,6 @@ class ContentType {
      * @see #getContentType(String)
      */
     public static func getContentType(dict: NSDictionary) -> CType {
-        if dict == nil {
-            return CType.SELF; //hopefully shouldn't be null, but catch it in case
-        }
-        
         let url = URL(string: dict["url"] as? String ?? "")
         if url == nil {
             return .NONE

@@ -524,7 +524,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var handlingPlayerItemDidreachEnd = false
     
     func playerItemDidreachEnd() {
-        self.videoView.player!.seek(to: CMTimeMake(1, 1000), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { [weak self] (finished) in
+        self.videoView.player!.seek(to: CMTimeMake(1, 1000), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { [weak self]  (_) in
             guard let strongSelf = self else { return }
             // NOTE: the following is not needed since `strongSelf.videoView.player?.actionAtItemEnd` is set to `AVPlayerActionAtItemEnd.none`
 //            if finished {

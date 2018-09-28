@@ -17,7 +17,6 @@ fileprivate extension FloatingPoint {
     var radiansToDegrees: Self { return self * 180 / .pi }
 }
 
-
 enum PanDirection {
     case left, right, up, down
 

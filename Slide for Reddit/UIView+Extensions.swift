@@ -195,7 +195,7 @@ extension UIView {
     /**
      * Gets self.constraints + superview?.constraints for this particular view
      */
-    var immediateConstraints:[NSLayoutConstraint] {
+    var immediateConstraints: [NSLayoutConstraint] {
         let constraints = self.superview?.constraints.filter {
             $0.firstItem as? UIView === self || $0.secondItem as? UIView === self
             } ?? []

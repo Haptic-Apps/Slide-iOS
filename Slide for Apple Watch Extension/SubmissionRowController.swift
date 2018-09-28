@@ -8,8 +8,8 @@
 
 import CoreGraphics
 import Foundation
-import WatchKit
 import UIKit
+import WatchKit
 
 public class SubmissionRowController: NSObject {
     
