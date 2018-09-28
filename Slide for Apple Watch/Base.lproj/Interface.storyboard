@@ -48,6 +48,7 @@
                             </connections>
                         </button>
                         <button width="1" alignment="left" title="Upvote" id="gm8-5O-9wo">
+                            <color key="backgroundColor" red="1" green="0.59607843137254901" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             <connections>
                                 <action selector="doUpvote" destination="lXM-Ia-ysh" id="X0R-kp-nte"/>
                             </connections>

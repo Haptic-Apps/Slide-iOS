@@ -185,6 +185,7 @@
 		BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */; };
 		BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */; };
 		BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9742371F0409BA00BF48E0 /* SettingsComments.swift */; };
+		BE97FE59215EAE850048AEB8 /* ScrollTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97FE58215EAE850048AEB8 /* ScrollTable.swift */; };
 		BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE981D341E31855500BD3846 /* OpenInChrome.swift */; };
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
@@ -488,6 +489,7 @@
 		BE97422D1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailLinkCellView.swift; sourceTree = "<group>"; };
 		BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextLinkCellView.swift; sourceTree = "<group>"; };
 		BE9742371F0409BA00BF48E0 /* SettingsComments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsComments.swift; sourceTree = "<group>"; };
+		BE97FE58215EAE850048AEB8 /* ScrollTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollTable.swift; sourceTree = "<group>"; };
 		BE981D341E31855500BD3846 /* OpenInChrome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenInChrome.swift; sourceTree = "<group>"; };
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
@@ -694,6 +696,7 @@
 				BE20853921589FD600D8F33C /* SubmissionRowController.swift */,
 				BE0D639C215983260006A2DD /* PostActionMenuController.swift */,
 				BE0D63A2215AA5CD0006A2DD /* ContentType.swift */,
+				BE97FE58215EAE850048AEB8 /* ScrollTable.swift */,
 			);
 			path = "Slide for Apple Watch Extension";
 			sourceTree = "<group>";
@@ -1500,6 +1503,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */,
+				BE97FE59215EAE850048AEB8 /* ScrollTable.swift in Sources */,
 				BE20852721588F3B00D8F33C /* NotificationController.swift in Sources */,
 				BE20852521588F3B00D8F33C /* ExtensionDelegate.swift in Sources */,
 				BE0D639D215983260006A2DD /* PostActionMenuController.swift in Sources */,

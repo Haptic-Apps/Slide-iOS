@@ -6,9 +6,9 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import WatchKit
-import WatchConnectivity
 import Foundation
+import WatchConnectivity
+import WatchKit
 
 class PostActionMenuController: WKInterfaceController {
     @IBOutlet weak var bannerImage: WKInterfaceImage!
@@ -37,4 +37,3 @@ class PostActionMenuController: WKInterfaceController {
         imageGroup.setCornerRadius(5)
     }
 }
-

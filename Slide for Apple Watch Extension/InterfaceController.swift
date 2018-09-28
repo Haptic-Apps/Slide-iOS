@@ -10,9 +10,7 @@ import WatchKit
 import WatchConnectivity
 import Foundation
 
-
 class InterfaceController: WKInterfaceController {
-
     @IBOutlet weak var table: WKInterfaceTable!
     @IBOutlet weak var loadingImage: WKInterfaceImage!
     
@@ -40,18 +38,13 @@ class InterfaceController: WKInterfaceController {
             loadingImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
             watchSession.sendMessage(["sublist": true], replyHandler: { (message) in
                 self.subs = message["subs"] as? [String: String] ?? [String: String]()
-                if self.subs.count > 0 {
-                    self.subsOrdered = Array(self.subs.keys).sorted(by: { (a, b) -> Bool in
-                        return a.lowercased() < b.lowercased()
-                    })
-                    self.subsOrdered = self.subsOrdered.filter({ (a) -> Bool in
-                        !a.startsWith("/")
-                    })
+                self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
+                if self.subsOrdered.count > 0 {
                     self.getSubmissions(self.subsOrdered[0])
                 }
-            }) { (error) in
+            }, errorHandler: { (error) in
                 print(error)
-            }
+            })
         }
     }
     
@@ -73,9 +66,9 @@ class InterfaceController: WKInterfaceController {
                 self.links = links
             }
             self.beginLoadingTable()
-        }) { (error) in
+        }, errorHandler: { (error) in
             print(error)
-        }
+        })
     }
     
     override func didDeactivate() {
@@ -110,7 +103,6 @@ extension InterfaceController: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
     }
 }
-
 
 extension UIColor {
     convenience init(hexString: String) {

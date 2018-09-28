@@ -28,10 +28,12 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
         //replyHandler(["subreddit": "r/all", "loading":true])
         if message["sublist"] != nil {
             var colorDict = [String: String]()
+            let sublist = Subscriptions.subreddits
             for sub in Subscriptions.subreddits {
                 colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString
             }
             replyHandler(["subs": colorDict])
+            replyHandler(["orderedsubs": sublist])
         } else if message["links"] != nil {
             let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
             do {
