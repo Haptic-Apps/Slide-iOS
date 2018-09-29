@@ -444,6 +444,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                     subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
                 }
             }
+            
             subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" ]))
             subs.reverse()
             UIApplication.shared.shortcutItems = subs
@@ -953,7 +954,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
             if AccountController.isLoggedIn && AccountController.isGold {
                 do {
-                    try session.setVisited(names: History.currentSeen) { (result) in
+                    try session.setVisited(names: History.currentSeen) { (_) in
                         
                     }
                 } catch {

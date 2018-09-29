@@ -33,7 +33,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var login: MainViewController?
     var seenFile: String?
     var commentsFile: String?
-    var totalBackground = true
+    var readLaterFile: String?
+    var totalBackground = false
     var isPro = false
     
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
@@ -63,6 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let documentDirectory = paths[0] as! String
         seenFile = documentDirectory.appending("/seen.plist")
         commentsFile = documentDirectory.appending("/comments.plist")
+        readLaterFile = documentDirectory.appending("/readlater.plist")
 
         let config = Realm.Configuration(
                 schemaVersion: 11,
@@ -88,6 +90,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("file myData.plist already exits at path.")
         }
 
+        if !fileManager.fileExists(atPath: readLaterFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "readlater", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: readLaterFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
+        
         if !fileManager.fileExists(atPath: commentsFile!) {
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist") {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
@@ -106,6 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         session = Session()
         History.seenTimes = NSMutableDictionary.init(contentsOfFile: seenFile!)!
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
+        ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
 
         UIApplication.shared.statusBarStyle = .lightContent
         SettingValues.initialize()
@@ -474,6 +492,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
+        ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 

@@ -17,6 +17,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
     }
+    public var inHeadView = UIView()
 
     var baseData: ContributionLoader
     var session: Session?
@@ -344,6 +345,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             }
 
             self.present(actionSheetController, animated: true, completion: nil)
+        }
+    }
+    
+    func doHeadView() {
+        inHeadView.removeFromSuperview()
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
+        
+        if !(navigationController is TapBehindModalViewController) {
+            self.view.addSubview(inHeadView)
         }
     }
     
