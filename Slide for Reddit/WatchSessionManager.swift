@@ -27,8 +27,6 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
     public var paginator = Paginator()
     
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
-        //replyHandler(["subreddit": "r/all", "loading":true])
-
         if message["sublist"] != nil {
             var colorDict = [String: String]()
             let sublist = Subscriptions.subreddits

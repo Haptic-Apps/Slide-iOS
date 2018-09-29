@@ -34,21 +34,6 @@ class InterfaceController: WKInterfaceController {
         let watchSession = WCSession.default
         watchSession.delegate = self
         watchSession.activate()
-        print(subs)
-        if subs.isEmpty {
-            loadingImage.setHidden(false)
-            loadingImage.setImageNamed("Activity")
-            loadingImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
-            watchSession.sendMessage(["sublist": true], replyHandler: { (message) in
-                self.subs = message["subs"] as? [String: String] ?? [String: String]()
-                self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
-                if self.subsOrdered.count > 0 {
-                    self.getSubmissions(self.subsOrdered[0], reset: true)
-                }
-            }, errorHandler: { (error) in
-                print(error)
-            })
-        }
     }
     
     @IBAction func gotosub() {
@@ -60,7 +45,10 @@ class InterfaceController: WKInterfaceController {
     func getSubmissions(_ subreddit: String, reset: Bool) {
         currentSub = subreddit
         if reset {
+            self.page = 1
+            self.last = 0
             self.loadingImage.setHidden(false)
+            self.links.removeAll()
             DispatchQueue.main.async {
                 self.setTitle("r/\(subreddit)")
                 self.table.setNumberOfRows(0, withRowType: "SubmissionRowController")
@@ -125,6 +113,20 @@ extension InterfaceController: WCSessionDelegate {
     }
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        if subs.isEmpty {
+            loadingImage.setHidden(false)
+            loadingImage.setImageNamed("Activity")
+            loadingImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
+            session.sendMessage(["sublist": true], replyHandler: { (message) in
+                self.subs = message["subs"] as? [String: String] ?? [String: String]()
+                self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
+                if self.subsOrdered.count > 0 {
+                    self.getSubmissions(self.subsOrdered[0], reset: true)
+                }
+            }, errorHandler: { (error) in
+                print(error)
+            })
+        }
     }
 }
 
