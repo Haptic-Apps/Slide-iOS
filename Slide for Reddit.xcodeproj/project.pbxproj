@@ -66,6 +66,7 @@
 		BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */; };
 		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
 		BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11351B2159390700502C5B /* WatchSessionManager.swift */; };
+		BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A249215FE878002C6CE6 /* MoreRowController.swift */; };
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
@@ -359,6 +360,7 @@
 		BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWelcome.swift; sourceTree = "<group>"; };
 		BE0EF7C31F43C9510058D572 /* Spoilers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spoilers.swift; sourceTree = "<group>"; };
 		BE11351B2159390700502C5B /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
+		BE17A249215FE878002C6CE6 /* MoreRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreRowController.swift; sourceTree = "<group>"; };
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
@@ -690,6 +692,7 @@
 				BE20852821588F3B00D8F33C /* Assets.xcassets */,
 				BE20852B21588F3B00D8F33C /* PushNotificationPayload.apns */,
 				BE20853921589FD600D8F33C /* SubmissionRowController.swift */,
+				BE17A249215FE878002C6CE6 /* MoreRowController.swift */,
 				BE0D639C215983260006A2DD /* PostActionMenuController.swift */,
 				BE0D63A2215AA5CD0006A2DD /* ContentType.swift */,
 				BE97FE58215EAE850048AEB8 /* ScrollTable.swift */,
@@ -1496,6 +1499,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */,
+				BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */,
 				BE97FE59215EAE850048AEB8 /* ScrollTable.swift in Sources */,
 				BE20852721588F3B00D8F33C /* NotificationController.swift in Sources */,
 				BE20852521588F3B00D8F33C /* ExtensionDelegate.swift in Sources */,

@@ -19,13 +19,14 @@ class InterfaceController: WKInterfaceController {
         
         // Configure interface objects here.
     }
-    @IBAction func onMenuItemPlayTap() {
-        print("Play Tapped")
-    }
-    
+
     var links = [NSDictionary]()
     var subs = [String: String]()
     var subsOrdered = [String]()
+    var page = 1
+    var last = 0
+    var currentSub = ""
+    
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
@@ -33,14 +34,16 @@ class InterfaceController: WKInterfaceController {
         let watchSession = WCSession.default
         watchSession.delegate = self
         watchSession.activate()
+        print(subs)
         if subs.isEmpty {
+            loadingImage.setHidden(false)
             loadingImage.setImageNamed("Activity")
             loadingImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
             watchSession.sendMessage(["sublist": true], replyHandler: { (message) in
                 self.subs = message["subs"] as? [String: String] ?? [String: String]()
                 self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
                 if self.subsOrdered.count > 0 {
-                    self.getSubmissions(self.subsOrdered[0])
+                    self.getSubmissions(self.subsOrdered[0], reset: true)
                 }
             }, errorHandler: { (error) in
                 print(error)
@@ -50,20 +53,23 @@ class InterfaceController: WKInterfaceController {
     
     @IBAction func gotosub() {
         presentTextInputController(withSuggestions: subsOrdered, allowedInputMode: .plain) { (subs) in
-            self.getSubmissions((subs ?? ["all"])[0] as! String)
+            self.getSubmissions((subs ?? ["all"])[0] as! String, reset: true)
         }
     }
     
-    func getSubmissions(_ subreddit: String) {
-        self.loadingImage.setHidden(false)
-        DispatchQueue.main.async {
-            self.setTitle("r/\(subreddit)")
-            self.table.setNumberOfRows(0, withRowType: "SubmissionRowController")
+    func getSubmissions(_ subreddit: String, reset: Bool) {
+        currentSub = subreddit
+        if reset {
+            self.loadingImage.setHidden(false)
+            DispatchQueue.main.async {
+                self.setTitle("r/\(subreddit)")
+                self.table.setNumberOfRows(0, withRowType: "SubmissionRowController")
+            }
         }
-        WCSession.default.sendMessage(["links": subreddit], replyHandler: { (message) in
+        WCSession.default.sendMessage(["links": subreddit, "reset": reset], replyHandler: { (message) in
             self.loadingImage.setHidden(true)
-            if let links = message["links"] as? [NSDictionary] {
-                self.links = links
+            if let newLinks = message["links"] as? [NSDictionary] {
+                self.links.append(contentsOf: newLinks)
             }
             self.beginLoadingTable()
         }, errorHandler: { (error) in
@@ -77,14 +83,32 @@ class InterfaceController: WKInterfaceController {
     }
     
     func beginLoadingTable() {
-        table.setNumberOfRows(links.count, withRowType: "SubmissionRowController")
-        var index = 0
-        for item in links {
+        page += 1
+        if page > 1 {
+            table.removeRows(at: IndexSet(integer: last))
+        }
+
+        table.insertRows(at: IndexSet(integersIn: last...(links.count - 1)), withRowType: "SubmissionRowController")
+        
+        for index in last...(links.count - 1) {
+            let item = links[index]
             if let rowController = table.rowController(at: index) as? SubmissionRowController {
                 rowController.parent = self
                 rowController.setData(dictionary: item, color: UIColor(hexString: self.subs[item["subreddit"] as? String ?? ""] ?? "#ffffff"))
             }
-            index += 1
+        }
+        
+        last = links.count
+        table.insertRows(at: IndexSet(integer: links.count), withRowType: "MoreRowController")
+        if let rowController = table.rowController(at: links.count) as? MoreRowController {
+            rowController.loadButton.setTitle("Load page \(page)")
+            rowController.completion = {
+                rowController.progressImage.setImageNamed("Activity")
+                rowController.progressImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
+                rowController.loadButton.setTitle("Loading...")
+
+                self.getSubmissions(self.currentSub, reset: false)
+            }
         }
     }
 

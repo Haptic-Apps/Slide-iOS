@@ -8,7 +8,3 @@
 
 import Foundation
 import WatchKit
-
-var scrollTable: WKInterfaceTable {
-    override func scro
-}
