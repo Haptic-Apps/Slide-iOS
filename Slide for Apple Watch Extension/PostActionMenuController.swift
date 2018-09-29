@@ -19,15 +19,26 @@ class PostActionMenuController: WKInterfaceController {
     public var modelContext: SubmissionRowController?
 
     @IBAction func openComments() {
+        WCSession.default.sendMessage(["comments": modelContext!.id!], replyHandler: { (_) in
+        }, errorHandler: { (error) in
+            print(error)
+        })
     }
     @IBAction func readLater() {
-        WCSession.default.sendMessage(["readlater": modelContext!.id!, "sub" : modelContext!.sub!], replyHandler: { (message) in
+        WCSession.default.sendMessage(["readlater": modelContext!.id!, "sub": modelContext!.sub!], replyHandler: { (_) in
             self.dismiss()
         }, errorHandler: { (error) in
             print(error)
         })
     }
     @IBAction func doUpvote() {
+        WCSession.default.sendMessage(["upvote": modelContext!.id!], replyHandler: { (result) in
+            if result["failed"] == nil {
+                self.dismiss()
+            }
+        }, errorHandler: { (error) in
+            print(error)
+        })
     }
     
     override init () {

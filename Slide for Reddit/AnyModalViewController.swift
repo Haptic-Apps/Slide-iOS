@@ -13,9 +13,6 @@ import Then
 import UIKit
 
 class AnyModalViewController: UIViewController {
-    
-    //    var loadedURL: URL?
-    
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
     let volumeHeight: CGFloat = 3
     

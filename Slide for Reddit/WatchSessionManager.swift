@@ -27,7 +27,18 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
     public var paginator = Paginator()
     
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
-        if message["readlater"] != nil {
+        if message["comments"] != nil {
+            VCPresenter.openRedditLink("https://redd.it/\((message["comments"] as! String))", nil, (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController)
+        } else if message["upvote"] != nil {
+            let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
+            do {
+                try redditSession.setVote(.up, name: "t3_" + (message["upvote"] as! String), completion: { (_) in
+                    replyHandler([:])
+                })
+            } catch {
+                replyHandler(["failed": true])
+            }
+        } else if message["readlater"] != nil {
             ReadLater.addReadLater(id: message["readlater"] as! String, subreddit: message["sub"] as! String)
             replyHandler([:])
         } else if message["sublist"] != nil {
