@@ -16,10 +16,16 @@ class PostActionMenuController: WKInterfaceController {
     @IBOutlet weak var scoreLabel: WKInterfaceLabel!
     @IBOutlet weak var commentLabel: WKInterfaceLabel!
     @IBOutlet weak var imageGroup: WKInterfaceGroup!
-    
+    public var modelContext: SubmissionRowController?
+
     @IBAction func openComments() {
     }
     @IBAction func readLater() {
+        WCSession.default.sendMessage(["readlater": modelContext!.id!, "sub" : modelContext!.sub!], replyHandler: { (message) in
+            self.dismiss()
+        }, errorHandler: { (error) in
+            print(error)
+        })
     }
     @IBAction func doUpvote() {
     }
@@ -32,6 +38,7 @@ class PostActionMenuController: WKInterfaceController {
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         let myModel = context as! SubmissionRowController //make the model
+        self.modelContext = myModel
         titleLabel.setAttributedText(myModel.titleText)
         bannerImage.setImage(myModel.thumbnail)
         imageGroup.setCornerRadius(5)
