@@ -16,7 +16,9 @@ public class SubmissionRowController: NSObject {
     var titleText: NSAttributedString?
     var parent: InterfaceController?
     var thumbnail: UIImage?
-    
+    var id: String?
+    var sub: String?
+
     @IBOutlet weak var bannerImage: WKInterfaceImage!
     @IBOutlet weak var imageGroup: WKInterfaceGroup!
     @IBOutlet weak var scoreLabel: WKInterfaceLabel!
@@ -32,7 +34,8 @@ public class SubmissionRowController: NSObject {
         let titleFont = UIFont.systemFont(ofSize: 14)
         let subtitleFont = UIFont.boldSystemFont(ofSize: 10)
         let attributedTitle = NSMutableAttributedString(string: dictionary["title"] as! String, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.white])
-        
+        id = dictionary["id"] as? String ?? ""
+        sub = dictionary["subreddit"] as? String ?? ""
         let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.foregroundColor: UIColor.red, NSAttributedString.Key.font: subtitleFont])
         
         let spoiler = NSMutableAttributedString.init(string: "\u{00A0}SPOILER\u{00A0}", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray, NSAttributedString.Key.font: subtitleFont])
