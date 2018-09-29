@@ -6,9 +6,9 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import WatchKit
-import WatchConnectivity
 import Foundation
+import WatchConnectivity
+import WatchKit
 
 class InterfaceController: WKInterfaceController {
     @IBOutlet weak var table: WKInterfaceTable!

@@ -67,6 +67,10 @@
 		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
 		BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11351B2159390700502C5B /* WatchSessionManager.swift */; };
 		BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A249215FE878002C6CE6 /* MoreRowController.swift */; };
+		BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A24B215FFD91002C6CE6 /* ReadLater.swift */; };
+		BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE17A24D215FFE76002C6CE6 /* readlater.plist */; };
+		BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */; };
+		BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */; };
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
@@ -361,6 +365,10 @@
 		BE0EF7C31F43C9510058D572 /* Spoilers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spoilers.swift; sourceTree = "<group>"; };
 		BE11351B2159390700502C5B /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
 		BE17A249215FE878002C6CE6 /* MoreRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreRowController.swift; sourceTree = "<group>"; };
+		BE17A24B215FFD91002C6CE6 /* ReadLater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLater.swift; sourceTree = "<group>"; };
+		BE17A24D215FFE76002C6CE6 /* readlater.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = readlater.plist; sourceTree = "<group>"; };
+		BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterContributionLoader.swift; sourceTree = "<group>"; };
+		BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterViewController.swift; sourceTree = "<group>"; };
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
@@ -531,6 +539,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3A42EBBBA49AE81BA699304A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE20851A21588F3A00D8F33C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -827,6 +842,7 @@
 				BE86300E1E2E6A54004F0E1F /* PostFilter.swift */,
 				BE780B681E3527D900DAA1EB /* Drafts.swift */,
 				BE1CD01420F51C37007746B6 /* RemovalReasons.swift */,
+				BE17A24B215FFD91002C6CE6 /* ReadLater.swift */,
 			);
 			name = ContentUtilities;
 			sourceTree = "<group>";
@@ -879,6 +895,7 @@
 				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
 				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
+				BE17A24D215FFE76002C6CE6 /* readlater.plist */,
 				BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */,
 				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
 				BEF3ACE11E15C101005848B6 /* ContentType.swift */,
@@ -947,6 +964,8 @@
 				BEB81A6721445FE4007E326B /* FriendCellView.swift */,
 				323EFB2721434781005157FA /* ProgressBarView.swift */,
 				BE11351B2159390700502C5B /* WatchSessionManager.swift */,
+				BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */,
+				BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1012,6 +1031,7 @@
 			buildPhases = (
 				BE20850F21588F3900D8F33C /* Resources */,
 				BE20853421588F3B00D8F33C /* Embed App Extensions */,
+				3A42EBBBA49AE81BA699304A /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1224,6 +1244,7 @@
 				BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */,
 				BEBF45DD1E23384500764BB8 /* comments.plist in Resources */,
 				BE35216C1E3D22B000C30B8D /* Roboto-Medium.ttf in Resources */,
+				BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */,
 				BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */,
 				BE35216E1E3D22B000C30B8D /* RobotoCondensed-Regular.ttf in Resources */,
 				BE3521771E3D2E3300C30B8D /* Roboto-BoldItalic.ttf in Resources */,
@@ -1598,6 +1619,7 @@
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
+				BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */,
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
 				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
 				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
@@ -1672,6 +1694,7 @@
 				09F48EBC20F652CF00BAC8AC /* VideoView.swift in Sources */,
 				BE77638A211B732B002F2969 /* SubredditFindReturnViewController.swift in Sources */,
 				09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */,
+				BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */,
 				0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */,
 				B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */,
 				B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */,
@@ -1679,6 +1702,7 @@
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
+				BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */,
 				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,
 				B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */,
 				09526EF8214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift in Sources */,

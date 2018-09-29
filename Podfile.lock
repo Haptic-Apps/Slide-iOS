@@ -23,26 +23,26 @@ PODS:
     - DTFoundation/Core
   - Embassy (4.0.8)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (64.0.0):
+  - MaterialComponents/ActivityIndicator (65.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (64.0.0)
-  - MaterialComponents/Ink (64.0.0):
+  - MaterialComponents/AnimationTiming (65.0.0)
+  - MaterialComponents/Ink (65.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (64.0.0)
-  - MaterialComponents/private/Application (64.0.0)
-  - MaterialComponents/private/Math (64.0.0)
-  - MaterialComponents/ProgressView (64.0.0):
+  - MaterialComponents/Palettes (65.0.0)
+  - MaterialComponents/private/Application (65.0.0)
+  - MaterialComponents/private/Math (65.0.0)
+  - MaterialComponents/ProgressView (65.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (64.0.0)
-  - MaterialComponents/ShadowLayer (64.0.0):
+  - MaterialComponents/ShadowElevations (65.0.0)
+  - MaterialComponents/ShadowLayer (65.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (64.0.0):
+  - MaterialComponents/Tabs (65.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -50,7 +50,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (64.0.0):
+  - MaterialComponents/Typography (65.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (1.1.0)
@@ -73,7 +73,7 @@ PODS:
   - SDWebImage/Core (4.1.2)
   - SloppySwiper (0.6)
   - Starscream (3.0.5)
-  - SubtleVolume (0.5.2)
+  - SubtleVolume (1.0.0)
   - SwiftLint (0.27.0)
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.2.0)
@@ -133,7 +133,7 @@ CHECKOUT OPTIONS:
     :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: ed8878857e331a4fa9ab1a31f7842eb5de941a9c
+    :commit: 981eb2a59dec9fdf5dd86bf895b1c47bd22e0bbb
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -155,7 +155,7 @@ SPEC CHECKSUMS:
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: 8a8301debcb5fe3583a386914a5a64b7c83f0ae8
+  MaterialComponents: ea21a99bd4da688f9becf8c3e9416016343cbe32
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
@@ -168,7 +168,7 @@ SPEC CHECKSUMS:
   SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
-  SubtleVolume: 605eef49ca714af247c0a8efae63e86b3530480b
+  SubtleVolume: e5320af68833521f22e73529737c3d320f565148
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
