@@ -24,24 +24,30 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
         
     }
     
+    public var paginator = Paginator()
+    
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
         //replyHandler(["subreddit": "r/all", "loading":true])
+
         if message["sublist"] != nil {
             var colorDict = [String: String]()
             let sublist = Subscriptions.subreddits
             for sub in Subscriptions.subreddits {
                 colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString
             }
-            replyHandler(["subs": colorDict])
-            replyHandler(["orderedsubs": sublist])
+            replyHandler(["subs": colorDict, "orderedsubs": sublist])
         } else if message["links"] != nil {
+            if message["reset"] as? Bool ?? true {
+                paginator = Paginator()
+            }
             let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
             do {
-                try redditSession.getList(Paginator(), subreddit: Subreddit.init(subreddit: message["links"] as! String), sort: .hot, timeFilterWithin: .day, limit: 10) { (result) in
+                try redditSession.getList(paginator, subreddit: Subreddit.init(subreddit: message["links"] as! String), sort: .hot, timeFilterWithin: .day, limit: 10) { (result) in
                     switch result {
                     case .failure(let error):
                         print(error)
                     case .success(let listing):
+                        self.paginator = listing.paginator
                         var results = [NSDictionary]()
                         for link in listing.children {
                             let dict = NSMutableDictionary()

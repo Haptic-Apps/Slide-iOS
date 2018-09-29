@@ -130,6 +130,24 @@
                                         <outlet property="titleLabel" destination="DLp-71-bfA" id="tt6-sB-dR4"/>
                                     </connections>
                                 </tableRow>
+                                <tableRow identifier="MoreRowController" id="OWV-7z-UIY" customClass="MoreRowController" customModule="Slide_for_Apple_Watch_Extension">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="myc-i2-KeW">
+                                        <items>
+                                            <button width="1" alignment="left" title="Load page 2" id="zSe-k3-YVj">
+                                                <color key="backgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <connections>
+                                                    <action selector="doLoadMore" destination="OWV-7z-UIY" id="813-Ns-U24"/>
+                                                </connections>
+                                            </button>
+                                            <imageView width="1" alignment="left" contentMode="center" id="mry-DN-EXD"/>
+                                        </items>
+                                        <edgeInsets key="margins" left="5" right="5" top="5" bottom="5"/>
+                                    </group>
+                                    <connections>
+                                        <outlet property="loadButton" destination="zSe-k3-YVj" id="myC-KQ-JRH"/>
+                                        <outlet property="progressImage" destination="mry-DN-EXD" id="32h-uB-OAU"/>
+                                    </connections>
+                                </tableRow>
                             </items>
                         </table>
                     </items>
