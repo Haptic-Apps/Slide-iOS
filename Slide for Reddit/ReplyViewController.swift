@@ -922,7 +922,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
             return
         }
 
-        if body.text.isEmpty() {
+        if body.text.isEmpty() && (type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) {
             BannerUtil.makeBanner(text: (type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) ? "Link cannot be empty" : "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
             return
         }
