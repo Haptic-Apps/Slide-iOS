@@ -28,7 +28,9 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
     
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
         if message["comments"] != nil {
-            VCPresenter.openRedditLink("https://redd.it/\((message["comments"] as! String))", nil, (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController)
+            DispatchQueue.main.async {
+               VCPresenter.openRedditLink("https://redd.it/\((message["comments"] as! String))", nil, (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController)
+            }
         } else if message["upvote"] != nil {
             let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
             do {
