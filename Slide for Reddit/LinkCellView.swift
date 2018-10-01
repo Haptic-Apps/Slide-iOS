@@ -981,7 +981,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
-        activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
+        activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
         title.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
         title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
         activeSet = true

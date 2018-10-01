@@ -51,7 +51,8 @@ class SingleSubredditViewController: MediaViewController {
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
-    
+    var primaryChosen: UIColor?
+
     var isModal = false
 
     var isAccent = false
@@ -1822,13 +1823,13 @@ extension SingleSubredditViewController {
          }*/
 
         alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
-            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            ColorUtil.setColorForSub(sub: self.sub, color: self.primaryChosen ?? ColorUtil.baseColor)
             self.pickAccent(sender: sender, parent: parent)
             self.reloadDataReset()
         }
 
         alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
-            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            ColorUtil.setColorForSub(sub: self.sub, color: self.primaryChosen ?? ColorUtil.baseColor)
             self.reloadDataReset()
             if self.parentController != nil {
                 self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
@@ -2117,6 +2118,7 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
             self.fab?.backgroundColor = accentChosen
         } else {
             let c = colorPickerView.colors[indexPath.row]
+            primaryChosen = c
             self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
             sideView.backgroundColor = c
             sideView.backgroundColor = c

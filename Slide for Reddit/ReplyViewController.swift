@@ -459,7 +459,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
+                activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
                 text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
@@ -671,7 +671,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
+                activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
                 text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 

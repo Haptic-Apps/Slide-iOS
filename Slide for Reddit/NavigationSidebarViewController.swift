@@ -25,6 +25,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var bottomOffset: CGFloat = 64
     var muxColor = ColorUtil.foregroundColor
     var lastY: CGFloat = 0.0
+    var timer: Timer?
 
     var header: NavigationHeaderView = NavigationHeaderView()
 
@@ -522,6 +523,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
 extension NavigationSidebarViewController: UISearchBarDelegate {
 
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
+        timer?.invalidate()
         filteredContent = []
         suggestions = []
         if textSearched.length != 0 {
@@ -530,8 +532,15 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
         } else {
             isSearching = false
         }
+        
         tableView.reloadData()
-        getSuggestions()
+        if searchBar.text!.count >= 3 {
+            timer = Timer.scheduledTimer(timeInterval: 0.5,
+                                         target: self,
+                                         selector: #selector(self.getSuggestions),
+                                         userInfo: nil,
+                                         repeats: false)
+        }
 
         if textSearched == "uuddlrlrba" {
             UIColor.💀()
