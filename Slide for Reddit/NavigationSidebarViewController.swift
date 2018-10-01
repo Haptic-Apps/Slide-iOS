@@ -535,7 +535,7 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
         
         tableView.reloadData()
         if searchBar.text!.count >= 3 {
-            timer = Timer.scheduledTimer(timeInterval: 0.5,
+            timer = Timer.scheduledTimer(timeInterval: 0.35,
                                          target: self,
                                          selector: #selector(self.getSuggestions),
                                          userInfo: nil,
@@ -552,7 +552,7 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
             task?.cancel()
         }
         do {
-            task = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchBar!.text!, paginator: Paginator(), completion: { (result) in
+            task = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchBar?.text ?? "", paginator: Paginator(), completion: { (result) in
                 switch result {
                 case .success(let subs):
                     for sub in subs.children {

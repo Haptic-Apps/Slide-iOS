@@ -512,7 +512,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     func playVideo(_ url: String = "") {
         self.setProgressViewVisible(false)
         self.size.isHidden = true
-        self.downloadButton.isHidden = false
+        self.downloadButton.isHidden = true //todo maybe download videos in the future?
         let playerItem = AVPlayerItem(url: SettingValues.shouldAutoPlay() ? URL(string: url)! : URL(fileURLWithPath: getKeyFromURL()))
         videoView.player = AVPlayer(playerItem: playerItem)
         videoView.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
