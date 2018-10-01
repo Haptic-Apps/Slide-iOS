@@ -354,8 +354,8 @@ extension ImageMediaViewController: UIScrollViewDelegate {
     }
 
     func updateMinZoomScaleForSize(_ size: CGSize) {
-        let widthScale = (size.width / (imageView.image?.size.width ?? imageView.bounds.width)) + 0.01
-        let heightScale = (size.height / (imageView.image?.size.height ?? imageView.bounds.height)) + 0.01
+        let widthScale = (size.width / (imageView.image?.size.width ?? imageView.bounds.width)) - 0.01
+        let heightScale = (size.height / (imageView.image?.size.height ?? imageView.bounds.height)) - 0.01
         let minScale = min(widthScale, heightScale)
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale

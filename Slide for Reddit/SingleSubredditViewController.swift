@@ -1148,9 +1148,8 @@ class SingleSubredditViewController: MediaViewController {
                     indicator?.radius = 15
                     indicator?.indicatorMode = .indeterminate
                     indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
-                    let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2)
-                    indicator?.center = center
                     self.tableView.addSubview(indicator!)
+                    indicator!.centerAnchors == self.tableView.centerAnchors
                     indicator?.startAnimating()
                 }
             }

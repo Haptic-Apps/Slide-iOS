@@ -16,7 +16,7 @@ class AnyModalViewController: UIViewController {
     
     //    var loadedURL: URL?
     
-    let volume = SubtleVolume(style: SubtleVolumeStyle.roundedLine)
+    let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
     let volumeHeight: CGFloat = 3
     
     var safeAreaInsets: UIEdgeInsets {

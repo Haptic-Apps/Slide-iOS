@@ -1059,7 +1059,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let fullImage = ContentType.fullImage(t: type)
         let shouldAutoplay = SettingValues.shouldAutoPlay()
         
-        let overrideFull = ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay))
+        let overrideFull = ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay) || SettingValues.autoPlayMode == .TAP)
 
         if !fullImage && submissionHeight < 50 {
             big = false
@@ -1166,6 +1166,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if big {
             bannerImage.isHidden = false
             updater?.invalidate()
+            var videoOverride = false
             if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
                 videoView?.player?.pause()
                 videoView?.isHidden = false
@@ -1175,6 +1176,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.updateProgress(-1, "", buffering: false)
                 self.contentView.bringSubview(toFront: topVideoView!)
                 doLoadVideo()
+                videoOverride = true
             } else if self is FullLinkCellView {
                 self.videoView.isHidden = true
                 self.topVideoView.isHidden = true
@@ -1192,6 +1194,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.playView.isHidden = false
                 self.progressDot.isHidden = true
                 self.timeView.isHidden = true
+                videoOverride = true
             }
             
             bannerImage.alpha = 0
@@ -1201,7 +1204,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if aspect == 0 || aspect > 10000 || aspect.isNaN {
                 aspect = 1
             }
-            if (full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE) {
+            if !videoOverride && ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) {
                 aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
                 if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1

@@ -232,7 +232,6 @@ class RealmDataWrapper {
             }
 
         }
-        rSubmission.id = submission.getId()
         rSubmission.author = submission.author
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
         rSubmission.isEdited = submission.edited > 0

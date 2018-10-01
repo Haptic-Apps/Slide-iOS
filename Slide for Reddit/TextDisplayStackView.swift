@@ -100,7 +100,7 @@ public class TextDisplayStackView: UIStackView {
         if !activeSet {
             activeSet = true
             let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
             firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
         }
@@ -146,7 +146,7 @@ public class TextDisplayStackView: UIStackView {
             }
             
             let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
             firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             
@@ -179,8 +179,8 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
             
-                let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
             firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             
@@ -222,7 +222,7 @@ public class TextDisplayStackView: UIStackView {
             if !activeSet {
                 activeSet = true
                 let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
                 firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             }
@@ -301,7 +301,7 @@ public class TextDisplayStackView: UIStackView {
                 label.numberOfLines = 0
                 
                 let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
                 label.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 label.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
@@ -334,7 +334,7 @@ public class TextDisplayStackView: UIStackView {
                     long.require(toFail: label.longPressGestureRecognizer)
                 }
                 let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
-                activeLinkAttributes[NSForegroundColorAttributeName] = tColor
+                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
                 label.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 label.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 label.numberOfLines = 0
@@ -379,7 +379,8 @@ public class TextDisplayStackView: UIStackView {
         return LinkParser.parse(html, .white)
     }
     
-    public static func createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
+    public static func
+        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
