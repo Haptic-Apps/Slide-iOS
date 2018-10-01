@@ -78,7 +78,11 @@ class SingleSubredditViewController: MediaViewController {
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
 
     static var firstPresented = true
-    static var cellVersion = 0
+    static var cellVersion = 0 {
+        didSet {
+            PagingCommentViewController.savedComment = nil
+        }
+    }
     var swiper: SloppySwiper?
 
     var headerView = UIView()
@@ -1553,10 +1557,7 @@ class SingleSubredditViewController: MediaViewController {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             }
         } else {
-            if !submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
-            }
-            innerPadding += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between top and title
+            innerPadding += (SettingValues.postViewMode == .COMPACT ? 12 : 16) //between top and title
             if SettingValues.actionBarMode == .FULL {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end

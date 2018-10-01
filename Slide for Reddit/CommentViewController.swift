@@ -1573,7 +1573,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if SettingValues.collapseFully {
             let datasetPosition = (indexPath as NSIndexPath).row
             if dataArray.isEmpty {
-                UITableViewAutomaticDimension
+                return UITableViewAutomaticDimension
             }
             let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
             if !hiddenPersons.contains(thing) && thing != self.menuId {

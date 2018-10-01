@@ -226,9 +226,11 @@ class CachedTitle {
             infoString.append(endString)
         }
 
-        if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.nsfw && !full && !submission.htmlBody.trimmed().isEmpty {
+        if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.nsfw && !full && !submission.body.trimmed().isEmpty {
             let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
-            let text = submission.htmlBody.substring(0, length: length).trimmed()
+            var text = submission.htmlBody.substring(0, length: length).trimmed()
+
+            text = text.replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: "")
             let attr = TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit))
             if !text.isEmpty() {
                 infoString.append(NSAttributedString.init(string: "\n\n"))
