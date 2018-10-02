@@ -1561,6 +1561,8 @@ class SingleSubredditViewController: MediaViewController {
             if SettingValues.actionBarMode == .FULL {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            } else {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between title and bottom
             }
         }
         
@@ -1569,8 +1571,6 @@ class SingleSubredditViewController: MediaViewController {
             estimatedUsableWidth -= thumbheight //is the same as the width
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
-        } else {
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
         }
         
         if SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {

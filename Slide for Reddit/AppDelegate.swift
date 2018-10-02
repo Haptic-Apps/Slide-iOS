@@ -135,8 +135,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _ = ColorUtil.doInit()
 
-        doBios()
-
         SDWebImageManager.shared().imageCache?.config.maxCacheAge = 1209600 //2 weeks
         SDWebImageManager.shared().imageCache?.config.maxCacheSize = 250 * 1024 * 1024
         
@@ -164,26 +162,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var statusBar = UIView()
 
-    func doBios() {
-        if SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate() {
-            BioMetricAuthenticator.authenticateWithBioMetrics(reason: "", success: {
-                self.backView!.isHidden = true
-            }, failure: { [weak self] (error) in
-
-                // do nothing on canceled
-                if error == .canceledByUser || error == .canceledBySystem {
-                    exit(0)
-                }
-
-                BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
-                    self?.backView?.isHidden = true
-                }, failure: { (_) in
-                    exit(0)
-                })
-            })
-        }
-    }
-    
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
             VCPresenter.openRedditLink("/r/\(url)", nil, window?.rootViewController)
@@ -443,16 +421,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             rootViewController.pushViewController(MainViewController(coder: NSCoder.init())!, animated: false)
         }
     }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        if !totalBackground && SettingValues.biometrics && !TopLockViewController.presented {
+            let topLock = TopLockViewController()
+            topLock.modalPresentationStyle = .overFullScreen
+            UIApplication.shared.keyWindow?.topViewController()?.present(topLock, animated: false, completion: nil)
+        }
+    }
 
-    var backView: UIView?
     func applicationWillResignActive(_ application: UIApplication) {
-        if SettingValues.biometrics {
-            if backView == nil {
-                backView = UIView.init(frame: self.window!.frame)
-                backView?.backgroundColor = ColorUtil.backgroundColor
-                self.window?.addSubview(backView!)
-            }
-            self.backView?.isHidden = false
+        if SettingValues.biometrics && !TopLockViewController.presented {
+            let topLock = TopLockViewController()
+            topLock.modalPresentationStyle = .overFullScreen
+            UIApplication.shared.keyWindow?.topViewController()?.present(topLock, animated: false, completion: nil)
         }
         totalBackground = false
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -470,20 +452,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        doBios()
         self.refreshSession()
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        if !totalBackground {
-            if backView == nil {
-                backView = UIView.init(frame: self.window!.frame)
-                backView?.backgroundColor = ColorUtil.backgroundColor
-                self.window?.addSubview(backView!)
-            }
-            self.backView?.isHidden = true
-        }
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
