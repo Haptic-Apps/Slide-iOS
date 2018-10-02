@@ -3,7 +3,7 @@ PODS:
   - Alamofire (4.7.3)
   - Anchorage (4.3)
   - BadgeSwift (5.0.1)
-  - BiometricAuthentication (2.0.2)
+  - BiometricAuthentication (2.1)
   - DTCoreText (1.6.21):
     - DTCoreText/Core (= 1.6.21)
     - DTFoundation/Core (~> 1.7.5)
@@ -130,7 +130,7 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   DTCoreText:
-    :commit: 1e48b2ff36f1218fb69ed88678297b204ebcc144
+    :commit: 04d0c7d878284632d79ced139b3f128c2b33c94c
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
     :commit: 981eb2a59dec9fdf5dd86bf895b1c47bd22e0bbb
@@ -150,8 +150,8 @@ SPEC CHECKSUMS:
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   Anchorage: 21a98675245188427f0bcea21404d42a824a766f
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
-  BiometricAuthentication: ce2f923d4df7a4b340e154137e7b47e544abc1ae
-  DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
+  BiometricAuthentication: 6928c01583bc707f92c11349f190d5ae052217d3
+  DTCoreText: c07f9d7109a1dd637d7190032261b7c8aff23c92
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907

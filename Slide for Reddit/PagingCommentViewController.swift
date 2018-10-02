@@ -31,6 +31,10 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
+    override func prefersHomeIndicatorAutoHidden() -> Bool {
+        return true
+    }
+    
     func next() {
         if currentIndex + 1 < vCs.count {
             currentIndex += 1

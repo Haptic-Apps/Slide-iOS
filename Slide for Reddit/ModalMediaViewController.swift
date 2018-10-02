@@ -242,6 +242,7 @@ class ModalMediaViewController: UIViewController {
         if parent is AlbumViewController || parent is ShadowboxLinkViewController {
             self.embeddedVC.navigationBar.isHidden = true
         }
+        UIApplication.shared.statusBarStyle = .lightContent
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -257,6 +258,12 @@ class ModalMediaViewController: UIViewController {
         UIApplication.shared.statusBarView?.isHidden = false
         if savedColor != nil {
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
+        }
+        
+        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
+            UIApplication.shared.statusBarStyle = .default
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
         }
     }
 

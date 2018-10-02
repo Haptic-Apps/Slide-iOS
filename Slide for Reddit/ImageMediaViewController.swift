@@ -77,7 +77,15 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             $0.contentMode = .scaleAspectFit
         }
         scrollView.addSubview(imageView)
-
+        
+        if let parent = parent as? ModalMediaViewController, let gesture = parent.panGestureRecognizer {
+            scrollView.panGestureRecognizer.require(toFail: gesture)
+            gesture.delegate = self
+        } else if let parent = parent as? SwipeDownModalVC, let gesture = parent.panGestureRecognizer {
+            scrollView.panGestureRecognizer.require(toFail: gesture)
+            gesture.delegate = self
+        }
+        
         // Buttons along bottom
 
         bottomButtons = UIStackView().then {
@@ -354,8 +362,8 @@ extension ImageMediaViewController: UIScrollViewDelegate {
     }
 
     func updateMinZoomScaleForSize(_ size: CGSize) {
-        let widthScale = (size.width / (imageView.image?.size.width ?? imageView.bounds.width)) + 0.01
-        let heightScale = (size.height / (imageView.image?.size.height ?? imageView.bounds.height)) + 0.01
+        let widthScale = (size.width / (imageView.image?.size.width ?? imageView.bounds.width))
+        let heightScale = (size.height / (imageView.image?.size.height ?? imageView.bounds.height))
         let minScale = min(widthScale, heightScale)
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale
@@ -385,5 +393,7 @@ extension ImageMediaViewController: UIScrollViewDelegate {
 }
 
 extension ImageMediaViewController: UIGestureRecognizerDelegate {
-
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return scrollView.zoomScale == scrollView.minimumZoomScale
+    }
 }

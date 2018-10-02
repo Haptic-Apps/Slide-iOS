@@ -50,10 +50,10 @@ public class AutoCache: NSObject {
             }
             return
         }
+        var done = done
+        var failed = failed
         do {
             let link = currentLinks[commentIndex]
-            var done = done
-            var failed = failed
             try (UIApplication.shared.delegate as! AppDelegate).session?.getArticles(link.name, sort: SettingValues.defaultCommentSorting, comments: nil, context: 3, completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):
@@ -104,7 +104,9 @@ public class AutoCache: NSObject {
                 }
             })
         } catch {
-            print(error)
+            done += 1
+            failed += 1
+            progress(subs[index], done, currentLinks.count, failed)
         }
 
     }

@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var seenFile: String?
     var commentsFile: String?
     var readLaterFile: String?
-    var totalBackground = false
+    var totalBackground = true
     var isPro = false
     
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
@@ -155,8 +155,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _ = ColorUtil.doInit()
 
-        doBios()
-
         SDWebImageManager.shared().imageCache?.config.maxCacheAge = 1209600 //2 weeks
         SDWebImageManager.shared().imageCache?.config.maxCacheSize = 250 * 1024 * 1024
         
@@ -186,26 +184,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var statusBar = UIView()
 
-    func doBios() {
-        if SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate() {
-            BioMetricAuthenticator.authenticateWithBioMetrics(reason: "", success: {
-                self.backView!.isHidden = true
-            }, failure: { [weak self] (error) in
-
-                // do nothing on canceled
-                if error == .canceledByUser || error == .canceledBySystem {
-                    exit(0)
-                }
-
-                BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password", cancelTitle: "Exit", success: {
-                    self?.backView!.isHidden = true
-                }, failure: { (_) in
-                    exit(0)
-                })
-            })
-        }
-    }
-    
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
             VCPresenter.openRedditLink("/r/\(url)", nil, window?.rootViewController)
@@ -424,7 +402,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("redd.it") {
                 VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), nil, window?.rootViewController)
                 return true
-        } else {
+        } else if url.query?.components(separatedBy: "&").count ?? 0 < 0 {
             print("Returning \(url.absoluteString)")
             var parameters: [String: String] = url.getKeyVals()!
             
@@ -454,6 +432,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     })
                 }
             })
+        } else {
+            return true
         }
     }
 
@@ -465,6 +445,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             rootViewController.pushViewController(MainViewController(coder: NSCoder.init())!, animated: false)
         }
     }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.backView?.alpha = 0
+        }, completion: { (_) in
+            self.backView?.alpha = 1
+            self.backView?.isHidden = true
+        })
+        if totalBackground && SettingValues.biometrics && !TopLockViewController.presented {
+            let topLock = TopLockViewController()
+            topLock.modalPresentationStyle = .overFullScreen
+            UIApplication.shared.keyWindow?.topViewController()?.present(topLock, animated: false, completion: nil)
+        }
+    }
 
     var backView: UIView?
     func applicationWillResignActive(_ application: UIApplication) {
@@ -474,7 +468,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 backView?.backgroundColor = ColorUtil.backgroundColor
                 self.window?.addSubview(backView!)
             }
-            self.backView!.isHidden = false
+                self.backView?.isHidden = false
         }
         totalBackground = false
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -492,20 +486,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        doBios()
         self.refreshSession()
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        if !totalBackground {
-            if backView == nil {
-                backView = UIView.init(frame: self.window!.frame)
-                backView?.backgroundColor = ColorUtil.backgroundColor
-                self.window?.addSubview(backView!)
-            }
-            self.backView!.isHidden = true
-        }
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -578,7 +559,7 @@ extension URL {
     func getKeyVals() -> [String: String]? {
         var results = [String: String]()
         let keyValues = self.query?.components(separatedBy: "&")
-        if (keyValues?.count)! > 0 {
+        if (keyValues?.count) ?? 0 > 0 {
             for pair in keyValues! {
                 let kv = pair.components(separatedBy: "=")
                 if kv.count > 1 {

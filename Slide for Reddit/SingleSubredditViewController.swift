@@ -52,7 +52,8 @@ class SingleSubredditViewController: MediaViewController {
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
-    
+    var primaryChosen: UIColor?
+
     var isModal = false
 
     var isAccent = false
@@ -78,7 +79,11 @@ class SingleSubredditViewController: MediaViewController {
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
 
     static var firstPresented = true
-    static var cellVersion = 0
+    static var cellVersion = 0 {
+        didSet {
+            PagingCommentViewController.savedComment = nil
+        }
+    }
     var swiper: SloppySwiper?
 
     var headerView = UIView()
@@ -1158,9 +1163,8 @@ class SingleSubredditViewController: MediaViewController {
                     indicator?.radius = 15
                     indicator?.indicatorMode = .indeterminate
                     indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
-                    let center = CGPoint.init(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2)
-                    indicator?.center = center
                     self.tableView.addSubview(indicator!)
+                    indicator!.centerAnchors == self.tableView.centerAnchors
                     indicator?.startAnimating()
                 }
             }
@@ -1563,13 +1567,12 @@ class SingleSubredditViewController: MediaViewController {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             }
         } else {
-            if !submission.body.trimmed().isEmpty() && SettingValues.showFirstParagraph {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8)
-            }
-            innerPadding += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between top and title
+            innerPadding += (SettingValues.postViewMode == .COMPACT ? 12 : 16) //between top and title
             if SettingValues.actionBarMode == .FULL {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+            } else {
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between title and bottom
             }
         }
         
@@ -1578,8 +1581,8 @@ class SingleSubredditViewController: MediaViewController {
             estimatedUsableWidth -= thumbheight //is the same as the width
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
-        } else {
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //12 padding on either side
+        } else if SettingValues.actionBarMode == .FULL {
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title label padding
         }
         
         if SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
@@ -1833,13 +1836,13 @@ extension SingleSubredditViewController {
          }*/
 
         alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
-            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            ColorUtil.setColorForSub(sub: self.sub, color: self.primaryChosen ?? ColorUtil.baseColor)
             self.pickAccent(sender: sender, parent: parent)
             self.reloadDataReset()
         }
 
         alertController.addAction(image: nil, title: "Save", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
-            ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
+            ColorUtil.setColorForSub(sub: self.sub, color: self.primaryChosen ?? ColorUtil.baseColor)
             self.reloadDataReset()
             if self.parentController != nil {
                 self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
@@ -2141,6 +2144,7 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
             self.fab?.backgroundColor = accentChosen
         } else {
             let c = colorPickerView.colors[indexPath.row]
+            primaryChosen = c
             self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
             sideView.backgroundColor = c
             sideView.backgroundColor = c
