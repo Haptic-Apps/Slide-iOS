@@ -380,7 +380,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("redd.it") {
                 VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), nil, window?.rootViewController)
                 return true
-        } else {
+        } else if url.query?.components(separatedBy: "&").count ?? 0 < 0 {
             print("Returning \(url.absoluteString)")
             var parameters: [String: String] = url.getKeyVals()!
             
@@ -410,6 +410,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     })
                 }
             })
+        } else {
+            return true
         }
     }
 
@@ -535,7 +537,7 @@ extension URL {
     func getKeyVals() -> [String: String]? {
         var results = [String: String]()
         let keyValues = self.query?.components(separatedBy: "&")
-        if (keyValues?.count)! > 0 {
+        if (keyValues?.count) ?? 0 > 0 {
             for pair in keyValues! {
                 let kv = pair.components(separatedBy: "=")
                 if kv.count > 1 {
