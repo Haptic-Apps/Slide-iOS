@@ -2010,7 +2010,7 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.row == 0 && readLaterArticles > 0 {
+        if indexPath.row == 0 && readLaterArticles > 0 && !loading && loaded {
             VCPresenter.showVC(viewController: ReadLaterViewController(subreddit: sub) , popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         }
     }
@@ -2020,17 +2020,17 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count + ((links.count != 0 && loaded) ? 1 : 0) + (readLaterArticles != 0 ? 1 : 0)
+        return links.count + ((links.count != 0 && loaded) ? 1 : 0) + (readLaterArticles > 0 && !loading && loaded ? 1 : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.row == 0 && readLaterArticles > 0 {
+        if indexPath.row == 0 && readLaterArticles > 0 && !loading && loaded {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "readlater", for: indexPath) as! ReadLaterCell
             cell.setArticles(articles: self.readLaterArticles)
             return cell
         }
         
-        let row = indexPath.row - (readLaterArticles > 0 ? 1 : 0)
+        let row = indexPath.row - (readLaterArticles > 0 && !loading && loaded ? 1 : 0)
         if row >= self.links.count {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
             cell.loader.color = ColorUtil.fontColor
@@ -2159,10 +2159,10 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
 // MARK: - Wrapping Flow Layout Delegate
 extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        if indexPath.row == 0 && readLaterArticles > 0 {
+        if indexPath.row == 0 && readLaterArticles > 0 && !loading && loaded {
             return CGSize(width: width, height: 60)
         }
-        let row = indexPath.row - (readLaterArticles > 0 ? 1 : 0)
+        let row = indexPath.row - (readLaterArticles > 0 && !loading && loaded ? 1 : 0)
         if row < links.count {
             let submission = links[row]
             if submission.author == "PAGE_SEPARATOR" {
@@ -2409,9 +2409,12 @@ public class ReadLaterCell: UICollectionViewCell {
     }
     
     func setArticles(articles: Int) {
-        let text = "Read later: \(articles)"
-        
-        let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+        let text = " articles in your Read Later list"
+        let numberText = "\(articles)"
+        let number = NSMutableAttributedString.init(string: numberText, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)])
+        let finalText = number
+        finalText.append(NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.systemFont(ofSize: 15)]))
+
         title.attributedText = finalText
     }
     
@@ -2462,6 +2465,7 @@ public class PageCell: UICollectionViewCell {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textAlignment = .center
+        title.textColor = ColorUtil.fontColor
         
         time.heightAnchor == 60
         time.leftAnchor == self.contentView.leftAnchor
