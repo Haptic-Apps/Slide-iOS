@@ -232,6 +232,8 @@ class ModalMediaViewController: UIViewController {
         } else {
             shouldLoad = true
         }
+        
+        UIApplication.shared.statusBarStyle = .lightContent
     }
 
     override func viewWillAppear(_ animated: Bool) {

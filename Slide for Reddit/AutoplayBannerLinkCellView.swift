@@ -39,14 +39,15 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 title.bottomAnchor <= bannerImage.topAnchor - ceight
 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
-                videoView.edgeAnchors == bannerImage.edgeAnchors
-                topVideoView.edgeAnchors == videoView.edgeAnchors
                 
                 if SettingValues.actionBarMode == .FULL {
                     bannerImage.bottomAnchor == box.topAnchor - ctwelve
                 } else {
                     bannerImage.bottomAnchor == contentView.bottomAnchor - ctwelve
                 }
+                
+                videoView.edgeAnchors == bannerImage.edgeAnchors
+                topVideoView.edgeAnchors == videoView.edgeAnchors
             } else {
                 // Image goes above title
                 if SettingValues.actionBarMode == .SIDE_RIGHT {

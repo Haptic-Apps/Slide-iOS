@@ -573,7 +573,7 @@ class SettingValues {
             case .SAVE:
                 return "Save"
             case .MENU:
-                return "Comment menu"
+                return "Submission menu"
             case .NONE:
                 return "Disabled"
             case .SUBREDDIT:
