@@ -68,6 +68,7 @@
 		BE13C2C721641FEA002687F2 /* SubmissionCommentDualViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2C621641FEA002687F2 /* SubmissionCommentDualViewController.swift */; };
 		BE15FE752163D03900288D86 /* TopLockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE15FE742163D03900288D86 /* TopLockViewController.swift */; };
 		BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11351B2159390700502C5B /* WatchSessionManager.swift */; };
+		BE15FE752163D03900288D86 /* TopLockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE15FE742163D03900288D86 /* TopLockViewController.swift */; };
 		BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A249215FE878002C6CE6 /* MoreRowController.swift */; };
 		BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A24B215FFD91002C6CE6 /* ReadLater.swift */; };
 		BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE17A24D215FFE76002C6CE6 /* readlater.plist */; };
@@ -368,6 +369,7 @@
 		BE13C2C621641FEA002687F2 /* SubmissionCommentDualViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionCommentDualViewController.swift; sourceTree = "<group>"; };
 		BE15FE742163D03900288D86 /* TopLockViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLockViewController.swift; sourceTree = "<group>"; };
 		BE11351B2159390700502C5B /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
+		BE15FE742163D03900288D86 /* TopLockViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLockViewController.swift; sourceTree = "<group>"; };
 		BE17A249215FE878002C6CE6 /* MoreRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreRowController.swift; sourceTree = "<group>"; };
 		BE17A24B215FFD91002C6CE6 /* ReadLater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLater.swift; sourceTree = "<group>"; };
 		BE17A24D215FFE76002C6CE6 /* readlater.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = readlater.plist; sourceTree = "<group>"; };
