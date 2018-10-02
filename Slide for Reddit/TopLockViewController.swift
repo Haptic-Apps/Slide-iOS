@@ -19,7 +19,7 @@ public class TopLockViewController: UIViewController {
     public override func viewDidLoad() {
         imageView.image = UIImage(named: "roundicon")
         unlockButton.backgroundColor = .clear
-        unlockButton.setTitle("Unlock Slide", for: .normal)
+        unlockButton.setTitle("Tap to Unlock Slide", for: .normal)
         unlockButton.setTitleColor(ColorUtil.fontColor, for: .normal)
         unlockButton.addTarget(self, action: #selector(doBios), for: .touchUpInside)
         self.view.backgroundColor = ColorUtil.backgroundColor

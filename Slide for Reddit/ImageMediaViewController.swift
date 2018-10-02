@@ -80,8 +80,10 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         
         if let parent = parent as? ModalMediaViewController, let gesture = parent.panGestureRecognizer {
             scrollView.panGestureRecognizer.require(toFail: gesture)
+            gesture.delegate = self
         } else if let parent = parent as? SwipeDownModalVC, let gesture = parent.panGestureRecognizer {
             scrollView.panGestureRecognizer.require(toFail: gesture)
+            gesture.delegate = self
         }
         
         // Buttons along bottom
@@ -391,5 +393,7 @@ extension ImageMediaViewController: UIScrollViewDelegate {
 }
 
 extension ImageMediaViewController: UIGestureRecognizerDelegate {
-
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return scrollView.zoomScale == scrollView.minimumZoomScale
+    }
 }

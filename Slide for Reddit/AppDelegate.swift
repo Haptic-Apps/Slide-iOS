@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var login: MainViewController?
     var seenFile: String?
     var commentsFile: String?
-    var totalBackground = false
+    var totalBackground = true
     var isPro = false
     
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
@@ -444,11 +444,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 backView?.backgroundColor = ColorUtil.backgroundColor
                 self.window?.addSubview(backView!)
             }
-            if !TopLockViewController.presented {
                 self.backView?.isHidden = false
-            } else {
-                self.backView?.isHidden = true
-            }
         }
         totalBackground = false
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

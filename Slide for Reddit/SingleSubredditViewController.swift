@@ -1571,6 +1571,8 @@ class SingleSubredditViewController: MediaViewController {
             estimatedUsableWidth -= thumbheight //is the same as the width
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
+        } else if SettingValues.actionBarMode == .FULL {
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title label padding
         }
         
         if SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {

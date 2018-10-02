@@ -140,7 +140,7 @@ public class TextDisplayStackView: UIStackView {
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
                     newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
-                    newTitle.append(createAttributedChunk(baseHTML: blocks[0]))
+                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], accent: tColor))
                 }
                 startIndex = 1
             }
@@ -176,7 +176,7 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(body!)
             } else if !htmlString.isEmpty() {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
-                newTitle.append(createAttributedChunk(baseHTML: htmlString))
+                newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor))
             }
             
             let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
@@ -217,7 +217,7 @@ public class TextDisplayStackView: UIStackView {
         var startIndex = 0
         
         if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
-            let text = createAttributedChunk(baseHTML: blocks[0])
+            let text = createAttributedChunk(baseHTML: blocks[0], accent: tColor)
             
             if !activeSet {
                 activeSet = true
@@ -292,7 +292,7 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<cite>") {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "Quote"
-                let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</cite>", with: "").replacingOccurrences(of: "</p>", with: "").trimmed())
+                let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</cite>", with: "").replacingOccurrences(of: "</p>", with: "").trimmed(), accent: tColor)
                 label.delegate = delegate
                 if let long = parentLongPress {
                     long.require(toFail: label.longPressGestureRecognizer)
@@ -328,7 +328,7 @@ public class TextDisplayStackView: UIStackView {
             } else {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "New text"
-                let text = createAttributedChunk(baseHTML: block.trimmed())
+                let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor)
                 label.delegate = delegate
                 if let long = parentLongPress {
                     long.require(toFail: label.longPressGestureRecognizer)
@@ -351,7 +351,7 @@ public class TextDisplayStackView: UIStackView {
         overflow.setNeedsLayout()
     }
     
-    public func createAttributedChunk(baseHTML: String) -> NSAttributedString {
+    public func createAttributedChunk(baseHTML: String, accent: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
@@ -376,7 +376,7 @@ public class TextDisplayStackView: UIStackView {
             }
         })
         
-        return LinkParser.parse(html, .white)
+        return LinkParser.parse(html, accent)
     }
     
     public static func
