@@ -446,7 +446,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 if split {
                     let split = SubmissionCommentDualViewController()
                     split.submissionsViewController = SingleSubredditViewController(subName: subname, parent: self)
-                    MainViewController.vCs.append(UINavigationController(rootViewController: split))
+                    MainViewController.vCs.append(split)
                 } else {
                     MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
                 }
@@ -968,8 +968,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {
-        if MainViewController.vCs[0] is UINavigationController {
-            return ((MainViewController.vCs[currentPage] as? UINavigationController)?.viewControllers[0] as? SubmissionCommentDualViewController)?.submissionsViewController
+        if MainViewController.vCs[0] is SubmissionCommentDualViewController {
+            return (MainViewController.vCs[currentPage] as? SubmissionCommentDualViewController)?.submissionsViewController
         } else {
             return (MainViewController.vCs[currentPage] as? SingleSubredditViewController)
         }
