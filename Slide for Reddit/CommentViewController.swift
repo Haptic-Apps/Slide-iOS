@@ -24,6 +24,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     public var inHeadView = UIView()
     
     var commentDepthColors = [UIColor]()
+    var pan: UIPanGestureRecognizer!
 
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: CommentDepthCell?
@@ -762,23 +763,24 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             popup.clipsToBounds = true
             popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             
-            self.navigationController!.view.addSubview(popup)
-            let bottomHeight: CGFloat
-            if #available(iOS 11.0, *) {
-                bottomHeight = self.additionalSafeAreaInsets.bottom
-            } else {
-                bottomHeight = 0
+            if let view = self.navigationController?.view {
+                view.addSubview(popup)
+                let bottomHeight: CGFloat
+                if #available(iOS 11.0, *) {
+                    bottomHeight = self.additionalSafeAreaInsets.bottom
+                } else {
+                    bottomHeight = 0
+                }
+                popup.bottomAnchor == self.navigationController!.view.safeBottomAnchor - 8 - 48 - bottomHeight
+                popup.widthAnchor == width
+                popup.heightAnchor == 48
+                popup.centerXAnchor == self.navigationController!.view.centerXAnchor
+                self.navigationController!.view.bringSubview(toFront: popup)
+                
+                UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                    self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
+                }, completion: nil)
             }
-            popup.bottomAnchor == self.navigationController!.view.safeBottomAnchor - 8 - 48 - bottomHeight
-            popup.widthAnchor == width
-            popup.heightAnchor == 48
-            popup.centerXAnchor == self.navigationController!.view.centerXAnchor
-            self.navigationController!.view.bringSubview(toFront: popup)
-
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-            }, completion: nil)
-
         } else {
             var top = CGFloat(64)
             let bottom = CGFloat(45)
@@ -931,11 +933,46 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
+        
+//        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
+//        pan.direction = .horizontal
+        
         self.tableView.addGestureRecognizer(panGesture)
         if navigationController != nil {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
     }
+
+//    func handlePop(_ panGesture: UIPanGestureRecognizer) {
+//
+//        let percent = max(panGesture.translation(in: view).x, 0) / view.frame.width
+//
+//        switch panGesture.state {
+//
+//        case .began:
+//            navigationController?.delegate = self
+//            navigationController?.popViewController(animated: true)
+//
+//        case .changed:
+//            UIPercentDrivenInteractiveTransition.update(percent)
+//
+//        case .ended:
+//            let velocity = panGesture.velocity(in: view).x
+//
+//            // Continue if drag more than 50% of screen width or velocity is higher than 1000
+//            if percent > 0.5 || velocity > 1000 {
+//                UIPercentDrivenInteractiveTransition.finish(<#T##UIPercentDrivenInteractiveTransition#>)
+//            } else {
+//                UIPercentDrivenInteractiveTransition.cancelInteractiveTransition()
+//            }
+//
+//        case .cancelled, .failed:
+//            UIPercentDrivenInteractiveTransition.cancelInteractiveTransition()
+//            
+//        default:
+//            break
+//        }
+//    }
 
     var keyboardHeight = CGFloat(0)
 

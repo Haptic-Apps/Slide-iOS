@@ -78,6 +78,7 @@ class GMPalette {
         for i in allAccent() {
             toReturn.append(contentsOf: i)
         }
+        toReturn.append(UIColor.black)
         return toReturn
     }
 

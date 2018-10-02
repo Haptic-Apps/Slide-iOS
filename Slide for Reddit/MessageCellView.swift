@@ -144,7 +144,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
             content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
             
             let activeLinkAttributes = NSMutableDictionary(dictionary: textView.activeLinkAttributes)
-            activeLinkAttributes[NSForegroundColorAttributeName] = ColorUtil.baseAccent
+            activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
             textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             textView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 

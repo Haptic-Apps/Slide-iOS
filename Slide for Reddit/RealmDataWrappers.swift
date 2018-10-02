@@ -15,8 +15,9 @@ class RealmDataWrapper {
     //Takes a Link from reddift and turns it into a Realm model
     static func linkToRSubmission(submission: Link) -> RSubmission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
-        let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
-        
+        var bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
+
         var json: JSONDictionary?
         json = submission.baseJson
 
@@ -159,7 +160,8 @@ class RealmDataWrapper {
     //Takes a Link from reddift and turns it into a Realm model
     static func updateSubmission(_ rSubmission: RSubmission, _ submission: Link) -> RSubmission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
-        let bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        var bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
 
         var json: JSONDictionary?
         json = submission.baseJson
@@ -232,7 +234,6 @@ class RealmDataWrapper {
             }
 
         }
-        rSubmission.id = submission.getId()
         rSubmission.author = submission.author
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
         rSubmission.isEdited = submission.edited > 0
@@ -307,7 +308,8 @@ class RealmDataWrapper {
     //Takes a Comment from reddift and turns it into a Realm model
     static func commentToRComment(comment: Comment, depth: Int) -> RComment {
         let flair = comment.authorFlairCssClass.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText
-        let bodyHtml = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        var bodyHtml = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
         let rComment = RComment()
         rComment.id = comment.getId()
         rComment.author = comment.author
@@ -356,7 +358,8 @@ class RealmDataWrapper {
 
     static func messageToRMessage(message: Message) -> RMessage {
         let title = message.baseJson["link_title"] as? String ?? ""
-        let bodyHtml = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        var bodyHtml = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
         let rMessage = RMessage()
         rMessage.htmlBody = bodyHtml
         rMessage.name = message.name

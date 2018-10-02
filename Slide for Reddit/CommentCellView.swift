@@ -48,6 +48,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     }
     
     func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
+        text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         parentViewController = parent
         if navViewController == nil && nav != nil {
             navViewController = nav

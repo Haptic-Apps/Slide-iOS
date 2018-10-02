@@ -220,6 +220,7 @@ class SettingValues {
         case FULL_IMAGE = "full"
         case CROPPED_IMAGE = "cropped"
         case THUMBNAIL = "thumbnail"
+        //for future implementation case NONE = "none"
     }
 
     enum ActionBarMode: String {
@@ -572,7 +573,7 @@ class SettingValues {
             case .SAVE:
                 return "Save"
             case .MENU:
-                return "Comment menu"
+                return "Submission menu"
             case .NONE:
                 return "Disabled"
             case .SUBREDDIT:

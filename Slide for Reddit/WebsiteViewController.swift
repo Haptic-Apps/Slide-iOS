@@ -65,6 +65,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.setToolbarHidden(true, animated: false)
 
         self.navigationController?.navigationBar.backItem?.title = ""
         webView = WKWebView(frame: self.view.frame)

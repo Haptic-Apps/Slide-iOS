@@ -142,7 +142,7 @@ class TableDisplayView: UIScrollView {
     }
     
     func addSubviews() {
-        let activeLinkAttributes = [NSForegroundColorAttributeName: tColor]
+        let activeLinkAttributes = [kCTForegroundColorAttributeName: tColor]
         var odd = false
         for row in baseData {
             let rowStack = UIStackView().then({
