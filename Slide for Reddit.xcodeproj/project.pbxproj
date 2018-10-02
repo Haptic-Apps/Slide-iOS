@@ -72,6 +72,7 @@
 		BE13C2CE21655A9A002687F2 /* DateFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2CD21655A9A002687F2 /* DateFormatter+Extensions.swift */; };
 		BE13C2D021655AF7002687F2 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2CF21655AF7002687F2 /* String+Extensions.swift */; };
 		BE13C2D221655E43002687F2 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2D121655E43002687F2 /* UIColor+Extensions.swift */; };
+		BE13C2C721641FEA002687F2 /* SubmissionCommentDualViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2C621641FEA002687F2 /* SubmissionCommentDualViewController.swift */; };
 		BE15FE752163D03900288D86 /* TopLockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE15FE742163D03900288D86 /* TopLockViewController.swift */; };
 		BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A249215FE878002C6CE6 /* MoreRowController.swift */; };
 		BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A24B215FFD91002C6CE6 /* ReadLater.swift */; };
@@ -376,6 +377,7 @@
 		BE13C2CD21655A9A002687F2 /* DateFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extensions.swift"; sourceTree = "<group>"; };
 		BE13C2CF21655AF7002687F2 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		BE13C2D121655E43002687F2 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
+		BE13C2C621641FEA002687F2 /* SubmissionCommentDualViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionCommentDualViewController.swift; sourceTree = "<group>"; };
 		BE15FE742163D03900288D86 /* TopLockViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLockViewController.swift; sourceTree = "<group>"; };
 		BE17A249215FE878002C6CE6 /* MoreRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreRowController.swift; sourceTree = "<group>"; };
 		BE17A24B215FFD91002C6CE6 /* ReadLater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLater.swift; sourceTree = "<group>"; };
@@ -991,6 +993,8 @@
 				BE11351B2159390700502C5B /* WatchSessionManager.swift */,
 				BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */,
 				BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */,
+				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
+				BE13C2C621641FEA002687F2 /* SubmissionCommentDualViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
