@@ -70,8 +70,6 @@ public class TopLockViewController: UIViewController {
             })
         }
     }
-    
-
 }
 
 extension UIWindow {
