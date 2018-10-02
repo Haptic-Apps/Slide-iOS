@@ -423,18 +423,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        if !totalBackground && SettingValues.biometrics && !TopLockViewController.presented {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.backView?.alpha = 0
+        }, completion: { (_) in
+            self.backView?.alpha = 1
+            self.backView?.isHidden = true
+        })
+        if totalBackground && SettingValues.biometrics && !TopLockViewController.presented {
             let topLock = TopLockViewController()
             topLock.modalPresentationStyle = .overFullScreen
             UIApplication.shared.keyWindow?.topViewController()?.present(topLock, animated: false, completion: nil)
         }
     }
 
+    var backView: UIView?
     func applicationWillResignActive(_ application: UIApplication) {
-        if SettingValues.biometrics && !TopLockViewController.presented {
-            let topLock = TopLockViewController()
-            topLock.modalPresentationStyle = .overFullScreen
-            UIApplication.shared.keyWindow?.topViewController()?.present(topLock, animated: false, completion: nil)
+        if SettingValues.biometrics {
+            if backView == nil {
+                backView = UIView.init(frame: self.window!.frame)
+                backView?.backgroundColor = ColorUtil.backgroundColor
+                self.window?.addSubview(backView!)
+            }
+            if !TopLockViewController.presented {
+                self.backView?.isHidden = false
+            } else {
+                self.backView?.isHidden = true
+            }
         }
         totalBackground = false
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

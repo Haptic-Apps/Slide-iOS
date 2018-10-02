@@ -40,6 +40,14 @@ public class TopLockViewController: UIViewController {
     }
     
     public override func viewDidAppear(_ animated: Bool) {
+        if let delegate = UIApplication.shared.delegate as? AppDelegate {
+            UIView.animate(withDuration: 0.25, animations: {
+                delegate.backView?.alpha = 0
+            }, completion: { (_) in
+                delegate.backView?.alpha = 1
+                delegate.backView?.isHidden = true
+            })
+        }
         doBios()
     }
     
