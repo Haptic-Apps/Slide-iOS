@@ -430,8 +430,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             finalSubs = Subscriptions.subreddits
             MainViewController.isOffline = false
             var subs = [UIMutableApplicationShortcutItem]()
+            var split = true
             for subname in finalSubs {
-                MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+                if split {
+                    let split = SubmissionCommentDualViewController()
+                    split.submissionsViewController = SingleSubredditViewController(subName: subname, parent: self)
+                    MainViewController.vCs.append(UINavigationController(rootViewController: split))
+                } else {
+                    MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+                }
                 if subs.count < 2 && !subname.contains("/") {
                     subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
                 }
@@ -540,64 +547,65 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func doCurrentPage(_ page: Int) {
         self.currentPage = page
-        let vc = (MainViewController.vCs[page] as? SingleSubredditViewController) ?? MainViewController.vCs[0] as! SingleSubredditViewController
-        vc.doHeadView()
-        MainViewController.current = vc.sub
-        self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
-        self.menuNav?.setSubreddit(subreddit: MainViewController.current)
-        self.currentTitle = MainViewController.current
-        menuNav!.setColors(MainViewController.current)
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub, true)
-
-        if !(vc).loaded || !SettingValues.viewType {
-            if vc.loaded {
-                vc.indicator?.isHidden = false
-                vc.indicator?.startAnimating()
-                vc.refresh(false)
+        if let vc = getSubredditVC() {
+            vc.doHeadView()
+            MainViewController.current = vc.sub
+            self.tintColor = ColorUtil.getColorForSub(sub: MainViewController.current)
+            self.menuNav?.setSubreddit(subreddit: MainViewController.current)
+            self.currentTitle = MainViewController.current
+            menuNav!.setColors(MainViewController.current)
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
+            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub, true)
+            
+            if !(vc).loaded || !SettingValues.viewType {
+                if vc.loaded {
+                    vc.indicator?.isHidden = false
+                    vc.indicator?.startAnimating()
+                    vc.refresh(false)
+                } else {
+                    (vc).load(reset: true)
+                }
+            }
+            
+            let label = UILabel()
+            label.text = "   \(SettingValues.reduceColor ? "    " : "")\(self.currentTitle)"
+            label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
+            label.adjustsFontSizeToFitWidth = true
+            label.font = UIFont.boldSystemFont(ofSize: 20)
+            
+            if SettingValues.reduceColor {
+                var sideView = UIView()
+                sideView = UIView(frame: CGRect(x: 5, y: 5, width: 15, height: 15))
+                sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+                sideView.translatesAutoresizingMaskIntoConstraints = false
+                label.addSubview(sideView)
+                sideView.layer.cornerRadius = 7.5
+                sideView.clipsToBounds = true
+            }
+            
+            label.sizeToFit()
+            let leftItem = UIBarButtonItem(customView: label)
+            
+            if SettingValues.bottomBarHidden && !SettingValues.viewType {
+                self.navigationItem.leftBarButtonItems = [menuB, leftItem]
             } else {
-                (vc).load(reset: true)
+                self.navigationItem.leftBarButtonItems = [leftItem]
             }
-        }
-
-        let label = UILabel()
-        label.text = "   \(SettingValues.reduceColor ? "    " : "")\(self.currentTitle)"
-        label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
-        label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.boldSystemFont(ofSize: 20)
-        
-        if SettingValues.reduceColor {
-            var sideView = UIView()
-            sideView = UIView(frame: CGRect(x: 5, y: 5, width: 15, height: 15))
-            sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-            sideView.translatesAutoresizingMaskIntoConstraints = false
-            label.addSubview(sideView)
-            sideView.layer.cornerRadius = 7.5
-            sideView.clipsToBounds = true
-        }
-
-        label.sizeToFit()
-        let leftItem = UIBarButtonItem(customView: label)
-
-        if SettingValues.bottomBarHidden && !SettingValues.viewType {
-            self.navigationItem.leftBarButtonItems = [menuB, leftItem]
-        } else {
-            self.navigationItem.leftBarButtonItems = [leftItem]
-        }
-
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.layoutIfNeeded()
-
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
-
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
-        if !selected {
-            let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
-            if !tabBar.items.isEmpty {
-                tabBar.setSelectedItem(tabBar.items[page!], animated: true)
+            
+            self.navigationController?.navigationBar.shadowImage = UIImage()
+            self.navigationController?.navigationBar.layoutIfNeeded()
+            
+            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
+            
+            tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
+            if !selected {
+                let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
+                if !tabBar.items.isEmpty {
+                    tabBar.setSelectedItem(tabBar.items[page!], animated: true)
+                }
+            } else {
+                selected = false
             }
-        } else {
-            selected = false
         }
     }
     
@@ -633,13 +641,13 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 self.menuNav!.view.isHidden = false
             }
             self.menuNav!.doRotate(false)
-            (MainViewController.vCs[self.currentPage] as! SingleSubredditViewController).showUI(false)
+            self.getSubredditVC()?.showUI(false)
         }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as! SingleSubredditViewController).sub)
-        color1 = ColorUtil.getColorForSub(sub: (MainViewController.vCs[currentPage] as! SingleSubredditViewController).sub)
+        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as? SingleSubredditViewController ?? (pendingViewControllers[0] as! SubmissionCommentDualViewController).submissionsViewController!).sub)
+        color1 = ColorUtil.getColorForSub(sub: getSubredditVC()!.sub)
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -691,8 +699,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            let vc = (MainViewController.vCs[self.currentPage] as! SingleSubredditViewController)
-            vc.tableView.contentOffset.y += 350
+            if let vc = self.getSubredditVC() {
+                vc.tableView.contentOffset.y += 350
+            }
         }, completion: nil)
     }
 
@@ -943,7 +952,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func showSortMenu(_ sender: UIButton?) {
-        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.showSortMenu(sender)
+        getSubredditVC()?.showSortMenu(sender)
+    }
+    
+    func getSubredditVC() -> SingleSubredditViewController? {
+        if MainViewController.vCs[0] is UINavigationController {
+            return ((MainViewController.vCs[currentPage] as? UINavigationController)?.viewControllers[0] as? SubmissionCommentDualViewController)?.submissionsViewController
+        } else {
+            return (MainViewController.vCs[currentPage] as? SingleSubredditViewController)
+        }
     }
 
     var currentPage = 0
@@ -957,11 +974,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func shadowbox() {
-        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.shadowboxMode()
+        getSubredditVC()?.shadowboxMode()
     }
 
     func showMenu(_ sender: AnyObject) {
-        (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.showMore(sender, parentVC: self)
+        getSubredditVC()?.showMore(sender, parentVC: self)
     }
 
     func showThemeMenu() {
