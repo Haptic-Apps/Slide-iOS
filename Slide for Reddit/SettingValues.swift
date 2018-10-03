@@ -104,6 +104,7 @@ class SettingValues {
     public static let pref_showPages = "SHOW_PAGES"
     public static let pref_submissionActionLeft = "SUBMISSION_LEFT"
     public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
+    public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -122,6 +123,7 @@ class SettingValues {
     public static var submissionActionDoubleTap = SubmissionAction.NONE
     public static var submissionActionLeft = SubmissionAction.UPVOTE
     public static var submissionActionRight = SubmissionAction.SAVE
+    public static var commentGesturesMode = CommentGesturesMode.NONE
 
     public static var browser = "firefox"
     public static var viewType = true
@@ -151,7 +153,6 @@ class SettingValues {
     public static var wideIndicators = false
     public static var blackShadowbox = false
     public static var hideAutomod = false
-    public static var commentGesturesEnabled = false
     public static var submissionGesturesEnabled = false
     public static var infoBelowTitle = false
     public static var matchSilence = true
@@ -256,6 +257,25 @@ class SettingValues {
         }
     }
     
+    enum CommentGesturesMode: String {
+        static let cases: [CommentGesturesMode] = [.GESTURES, .NONE, .SWIPE_ANYWHERE]
+        
+        case GESTURES = "never"
+        case NONE = "wifi_only"
+        case SWIPE_ANYWHERE = "always"
+        
+        func description() -> String {
+            switch self {
+            case .GESTURES:
+                return "Swipe gestures"
+            case .NONE:
+                return "Slide between posts"
+            case .SWIPE_ANYWHERE:
+                return "Swipe anywhere to exit"
+            }
+        }
+    }
+    
     public static func shouldAutoPlay() -> Bool {
         switch SettingValues.autoPlayMode {
         case .ALWAYS:
@@ -320,7 +340,6 @@ class SettingValues {
         }
 
         SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
-        SettingValues.commentGesturesEnabled = settings.object(forKey: SettingValues.pref_commentGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_commentGesturesEnabled)
         SettingValues.submissionGesturesEnabled = settings.object(forKey: SettingValues.pref_submissionGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_submissionGesturesEnabled)
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
@@ -424,7 +443,8 @@ class SettingValues {
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
-        
+        SettingValues.commentGesturesMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "none") ?? .NONE
+
         SettingValues.commentActionRightLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightLeft) ?? "downvote")!
         SettingValues.commentActionRightRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightRight) ?? "upvote")!
         SettingValues.commentActionLeftLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftLeft) ?? "collapse")!

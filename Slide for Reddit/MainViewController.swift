@@ -65,8 +65,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
         
-        self.navigationController?.delegate = self
-        
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         
         if SettingValues.viewType {
@@ -206,6 +204,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
         }
+        self.navigationController?.delegate = self
     }
 
     func addAccount() {

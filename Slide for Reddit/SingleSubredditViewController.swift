@@ -248,9 +248,7 @@ class SingleSubredditViewController: MediaViewController {
                 navigationController?.setToolbarHidden(true, animated: false)
             }
         }
-        if loaded {
-            showUI()
-        }
+
         SingleSubredditViewController.nextSingle = self.single
         doHeadView()
         

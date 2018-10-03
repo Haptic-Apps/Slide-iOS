@@ -16,7 +16,6 @@ class SettingsGestures: UITableViewController {
     var submissionGestures = UISwitch()
     
     var commentGesturesCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "comments")
-    var commentGestures = UISwitch()
 
     var rightLeftActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "left")
 
@@ -42,10 +41,7 @@ class SettingsGestures: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if changed == commentGestures {
-            SettingValues.commentGesturesEnabled = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentGesturesEnabled)
-        } else if changed == submissionGestures {
+        if changed == submissionGestures {
             SettingValues.submissionGesturesEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_submissionGesturesEnabled)
         }
@@ -69,8 +65,27 @@ class SettingsGestures: UITableViewController {
         return toReturn
     }
     
+    func showCommentGesturesMenu() {
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        for item in SettingValues.CommentGesturesMode.cases {
+            alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
+                UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_commentGesturesMode)
+                SettingValues.commentGesturesMode = item
+                UserDefaults.standard.synchronize()
+                self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
+                self.updateCells()
+            }))
+        }
+        VCPresenter.presentAlert(alertController, parentVC: self)
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.row == 0 && indexPath.section == 1 {
+            showCommentGesturesMenu()
+            return
+        }
         
         if indexPath.row == 1 && indexPath.section == 0 {
             showActionSub(cell: doubleTapSubActionCell)
@@ -178,11 +193,11 @@ class SettingsGestures: UITableViewController {
         self.submissionGesturesCell.detailTextLabel?.text = "Enabling submission gestures will require two fingers to swipe between subreddits in the main view"
         self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.foregroundColor
         
-        createCell(commentGesturesCell, commentGestures, isOn: SettingValues.commentGesturesEnabled, text: "Enable comment gestures")
+        createCell(commentGesturesCell, nil, isOn: false, text: "Comment gestures mode")
         self.commentGesturesCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.commentGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.commentGesturesCell.detailTextLabel?.numberOfLines = 0
-        self.commentGesturesCell.detailTextLabel?.text = "Enabling comment gestures will require two fingers to swipe between submissions in the comment view"
+        self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
         self.commentGesturesCell.contentView.backgroundColor = ColorUtil.foregroundColor
 
         updateCells()
@@ -365,7 +380,7 @@ class SettingsGestures: UITableViewController {
         self.rightSubActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
         self.rightSubActionCell.imageView?.layer.cornerRadius = 5
 
-        if !SettingValues.commentGesturesEnabled {
+        if SettingValues.commentGesturesMode != .GESTURES {
             self.rightRightActionCell.isUserInteractionEnabled = false
             self.rightRightActionCell.contentView.alpha = 0.5
             self.rightLeftActionCell.isUserInteractionEnabled = false
