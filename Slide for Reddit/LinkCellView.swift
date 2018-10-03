@@ -933,6 +933,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         case .AUTHOR:
             let profile = ProfileViewController.init(name: self.link!.author)
             VCPresenter.showVC(viewController: profile, popupIfPossible: false, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+        case .READ_LATER:
+            ReadLater.addReadLater(id: self.link!.getId(), subreddit: self.link!.subreddit)
         case .EXTERNAL:
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: [:], completionHandler: nil)
