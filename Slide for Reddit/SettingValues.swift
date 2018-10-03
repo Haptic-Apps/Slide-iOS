@@ -549,7 +549,7 @@ class SettingValues {
     }
 
     public enum SubmissionAction: String {
-        public static let cases: [SubmissionAction] = [.UPVOTE, .DOWNVOTE, .MENU, .HIDE, .SAVE, .SUBREDDIT, .SHARE, .AUTHOR, .EXTERNAL, .NONE]
+        public static let cases: [SubmissionAction] = [.UPVOTE, .DOWNVOTE, .MENU, .HIDE, .SAVE, .READ_LATER, .SUBREDDIT, .SHARE, .AUTHOR, .EXTERNAL, .NONE]
         
         case UPVOTE = "upvote"
         case DOWNVOTE = "downvote"
@@ -561,6 +561,7 @@ class SettingValues {
         case SHARE = "share"
         case AUTHOR = "author"
         case EXTERNAL = "external"
+        case READ_LATER = "readlater"
         
         func getTitle() -> String {
             switch self {
@@ -584,6 +585,8 @@ class SettingValues {
                 return "Open submission link externally"
             case .SHARE:
                 return "Share submission link"
+            case .READ_LATER:
+                return "Add to Read Later list"
             }
         }
         
@@ -609,6 +612,8 @@ class SettingValues {
                 return "world"
             case .SHARE:
                 return "share"
+            case .READ_LATER:
+                return "history"
             }
         }
         
@@ -634,6 +639,8 @@ class SettingValues {
                 return GMColor.blue500Color()
             case .SHARE:
                 return GMColor.lightGreen500Color()
+            case .READ_LATER:
+                return GMColor.orange400Color()
             }
         }
     }
