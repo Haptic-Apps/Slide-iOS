@@ -31,6 +31,13 @@ class ReadLater {
     }
     
     public static func removeReadLater(id: String) {
+        print(readLaterIDs)
+        print(id)
+        var shortId = id
+        if shortId.contains("_") {
+            shortId = shortId.substring(3, length: id.length - 3)
+            readLaterIDs.removeObject(forKey: shortId)
+        }
         readLaterIDs.removeObject(forKey: id)
     }
 

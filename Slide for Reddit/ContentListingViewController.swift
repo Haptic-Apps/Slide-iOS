@@ -157,11 +157,17 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
-
+            
             (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "")
 
             c?.layer.shouldRasterize = true
             c?.layer.rasterizationScale = UIScreen.main.scale
+            
+            if self is ReadLaterViewController {
+                c?.hide.isHidden = false
+                c?.hide.setImage(UIImage(named: "done")?.menuIcon().getCopy(withColor: GMColor.red500Color()), for: .normal)
+            }
+
             cell = c
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
@@ -488,7 +494,16 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
 
     func hide(_ cell: LinkCellView) {
-
+        if self is ReadLaterViewController {
+            ReadLater.removeReadLater(id: cell.link!.getId())
+            let savedIndex = tableView.indexPath(for: cell)?.row ?? 0
+            self.baseData.content.remove(at: savedIndex)
+            self.tableView.reloadData()
+            BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.red500Color(), seconds: 3, context: self, top: false) {
+                ReadLater.addReadLater(id: cell.link!.getId(), subreddit: cell.link!.subreddit)
+                self.baseData.content.insert(cell.link!, at: savedIndex)
+            }
+        }
     }
 
     func mod(_ cell: LinkCellView) {
