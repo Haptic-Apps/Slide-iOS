@@ -49,7 +49,7 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
             for sub in Subscriptions.subreddits {
                 colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString
             }
-            replyHandler(["subs": colorDict, "orderedsubs": sublist])
+            replyHandler(["subs": colorDict, "orderedsubs": sublist, "pro": SettingValues.isPro])
         } else if message["links"] != nil {
             if message["reset"] as? Bool ?? true {
                 paginator = Paginator()

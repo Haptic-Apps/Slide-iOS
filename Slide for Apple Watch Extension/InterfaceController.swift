@@ -26,6 +26,7 @@ class InterfaceController: WKInterfaceController {
     var page = 1
     var last = 0
     var currentSub = ""
+    var isPro = false
     
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
@@ -105,7 +106,6 @@ class InterfaceController: WKInterfaceController {
 extension InterfaceController: WCSessionDelegate {
     
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
-        print("Doing links")
         DispatchQueue.main.async {
             self.setTitle(applicationContext["title"] as? String)
             self.beginLoadingTable()
@@ -120,6 +120,7 @@ extension InterfaceController: WCSessionDelegate {
             session.sendMessage(["sublist": true], replyHandler: { (message) in
                 self.subs = message["subs"] as? [String: String] ?? [String: String]()
                 self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
+                self.isPro = message["pro"] as? Bool ?? false
                 if self.subsOrdered.count > 0 {
                     self.getSubmissions(self.subsOrdered[0], reset: true)
                 }

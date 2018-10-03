@@ -137,7 +137,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if baseData.content.count == 0 {
-            return tableView.dequeueReusableCell(withReuseIdentifier: "nocontent", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nocontent", for: indexPath) as! NoContentCell
+            cell.doText(controller: self)
+            return cell
         }
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
@@ -498,10 +500,15 @@ extension ContentListingViewController: LinkCellViewDelegate {
             ReadLater.removeReadLater(id: cell.link!.getId())
             let savedIndex = tableView.indexPath(for: cell)?.row ?? 0
             self.baseData.content.remove(at: savedIndex)
-            self.tableView.reloadData()
+            if self.baseData.content.count == 0 {
+                self.tableView.reloadData()
+            } else {
+                self.tableView.deleteItems(at: [IndexPath.init(row: savedIndex, section: 0)])
+            }
             BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.red500Color(), seconds: 3, context: self, top: false) {
                 ReadLater.addReadLater(id: cell.link!.getId(), subreddit: cell.link!.subreddit)
                 self.baseData.content.insert(cell.link!, at: savedIndex)
+                self.tableView.insertItems(at: [IndexPath.init(row: savedIndex, section: 0)])
             }
         }
     }
@@ -516,17 +523,19 @@ public class NoContentCell: UICollectionViewCell {
         super.init(frame: frame)
         setupView()
     }
+    var title = UILabel()
     
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupView() {
-        let title = UILabel()
-        title.backgroundColor = ColorUtil.foregroundColor
-        title.textAlignment = .center
-        
-        let text = "Nothing to see here!\nNo content was found"
+    func doText(controller: ContentListingViewController){
+        let text: String
+        if controller is ReadLaterViewController {
+            text = "Nothing to see here!\nNo more posts to Read Later"
+        } else {
+            text = "Nothing to see here!\nNo content was found"
+        }
         let textParts = text.components(separatedBy: "\n")
         
         let finalText: NSMutableAttributedString!
@@ -539,6 +548,13 @@ public class NoContentCell: UICollectionViewCell {
             finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
         }
         title.attributedText = finalText
+    }
+    
+    func setupView() {
+        title = UILabel()
+        title.backgroundColor = ColorUtil.foregroundColor
+        title.textAlignment = .center
+        
         title.numberOfLines = 0
         title.layer.cornerRadius = 15
         title.clipsToBounds = true
