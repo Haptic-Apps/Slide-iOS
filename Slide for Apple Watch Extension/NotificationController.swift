@@ -6,10 +6,9 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import WatchKit
 import Foundation
 import UserNotifications
-
+import WatchKit
 
 class NotificationController: WKUserNotificationInterfaceController {
 

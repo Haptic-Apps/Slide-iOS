@@ -1962,18 +1962,17 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
     }
 
 override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UITableViewCell! = nil
+    var cell: UITableViewCell! = nil
 
-        let datasetPosition = (indexPath as NSIndexPath).row
+    let datasetPosition = (indexPath as NSIndexPath).row
 
-        let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
-        let parentOP = parents[thing]
-
-        cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
-    if content.isEmpty || text.isEmpty || cDepth.isEmpty {
+    cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
+    if content.isEmpty || text.isEmpty || cDepth.isEmpty || filteredData.isEmpty || dataArray.isEmpty {
         self.refresh(self)
         return cell
     }
+    let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
+    let parentOP = parents[thing]
         if let cell = cell as? CommentDepthCell {
             if content[thing] is RComment {
                 var count = 0
