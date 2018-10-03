@@ -2362,7 +2362,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer == panGesture {
-            if !SettingValues.commentGesturesEnabled {
+            if SettingValues.commentGesturesMode != .GESTURES {
                 return false
             }
             
@@ -2383,7 +2383,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         // Limit angle of pan gesture recognizer to avoid interfering with scrolling
         if gestureRecognizer == panGesture {
-            if !SettingValues.commentGesturesEnabled {
+            if SettingValues.commentGesturesMode != .GESTURES {
                 return false
             }
             
