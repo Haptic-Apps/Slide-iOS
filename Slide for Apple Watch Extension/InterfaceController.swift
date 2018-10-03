@@ -77,7 +77,7 @@ class InterfaceController: WKInterfaceController {
             table.removeRows(at: IndexSet(integer: last))
         }
 
-        table.insertRows(at: IndexSet(integersIn: last...(links.count - 1)), withRowType: "SubmissionRowController")
+        table.insertRows(at: IndexSet(integersIn: last ..< links.count), withRowType: "SubmissionRowController")
         
         for index in last...(links.count - 1) {
             let item = links[index]
@@ -91,12 +91,13 @@ class InterfaceController: WKInterfaceController {
         table.insertRows(at: IndexSet(integer: links.count), withRowType: "MoreRowController")
         if let rowController = table.rowController(at: links.count) as? MoreRowController {
             rowController.loadButton.setTitle("Load page \(page)")
-            rowController.completion = {
+            rowController.completion = {[weak self] in
                 rowController.progressImage.setImageNamed("Activity")
                 rowController.progressImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
                 rowController.loadButton.setTitle("Loading...")
-
-                self.getSubmissions(self.currentSub, reset: false)
+                if let strongSelf = self {
+                    strongSelf.getSubmissions(strongSelf.currentSub, reset: false)
+                }
             }
         }
     }
@@ -128,25 +129,5 @@ extension InterfaceController: WCSessionDelegate {
                 print(error)
             })
         }
-    }
-}
-
-extension UIColor {
-    convenience init(hexString: String) {
-        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int = UInt32()
-        Scanner(string: hex).scanHexInt32(&int)
-        let a, r, g, b: UInt32
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
     }
 }

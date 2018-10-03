@@ -42,7 +42,15 @@ class SingleSubredditViewController: MediaViewController {
 
     let margin: CGFloat = 10
     let cellsPerRow = 3
-    var readLaterArticles = 0
+    var readLaterArticles: Int {
+        get{
+            return ReadLater.readLaterIDs.allKeys.filter { (value) -> Bool in
+                if sub == "all" || sub == "frontpage" { return true }
+                guard let valueStr = value as? String else { return false }
+                return valueStr.lowercased() == sub.lowercased()
+                }.count
+        }
+    }
     
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: LinkCellView?
@@ -196,12 +204,6 @@ class SingleSubredditViewController: MediaViewController {
 
         first = false
         tableView.delegate = self
-        readLaterArticles = 0
-        for key in ReadLater.readLaterIDs.allKeys {
-            if (ReadLater.readLaterIDs[key] as! String).lowercased() == self.sub.lowercased() || self.sub == "all" || self.sub == "frontpage" {
-                readLaterArticles += 1
-            }
-        }
 
         if savedIndex != nil {
             tableView.reloadItems(at: [savedIndex!])
@@ -1151,14 +1153,6 @@ class SingleSubredditViewController: MediaViewController {
             self.refreshControl.endRefreshing()
             return
         }
-        if reset {
-            readLaterArticles = 0
-            for key in ReadLater.readLaterIDs.allKeys {
-                if (ReadLater.readLaterIDs[key] as! String).lowercased() == self.sub.lowercased() || self.sub == "all" || self.sub == "frontpage" {
-                    readLaterArticles += 1
-                }
-            }
-        }
         if !loading {
             if !loaded {
                 if indicator == nil {
@@ -1172,7 +1166,6 @@ class SingleSubredditViewController: MediaViewController {
                     indicator?.startAnimating()
                 }
             }
-            loaded = true
 
             do {
                 loading = true
@@ -1190,6 +1183,7 @@ class SingleSubredditViewController: MediaViewController {
                 }
 
                 try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
+                    self.loaded = true
                     switch result {
                     case .failure:
                         print(result.error!)
