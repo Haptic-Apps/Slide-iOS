@@ -1967,7 +1967,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     let datasetPosition = (indexPath as NSIndexPath).row
 
     cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
-    if content.isEmpty || text.isEmpty || cDepth.isEmpty || filteredData.isEmpty || dataArray.isEmpty {
+    if content.isEmpty || text.isEmpty || cDepth.isEmpty || dataArray.isEmpty {
         self.refresh(self)
         return cell
     }

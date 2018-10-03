@@ -43,13 +43,11 @@ class SingleSubredditViewController: MediaViewController {
     let margin: CGFloat = 10
     let cellsPerRow = 3
     var readLaterArticles: Int {
-        get{
-            return ReadLater.readLaterIDs.allKeys.filter { (value) -> Bool in
+        return ReadLater.readLaterIDs.allKeys.filter { (value) -> Bool in
                 if sub == "all" || sub == "frontpage" { return true }
                 guard let valueStr = value as? String else { return false }
                 return valueStr.lowercased() == sub.lowercased()
                 }.count
-        }
     }
     
     var panGesture: UIPanGestureRecognizer!
