@@ -45,7 +45,6 @@ class ReadLaterContributionLoader: ContributionLoader {
                     case .failure:
                         self.delegate?.failed(error: result.error!)
                     case .success(let listing):
-                        
                         if reload {
                             self.content = []
                         }
