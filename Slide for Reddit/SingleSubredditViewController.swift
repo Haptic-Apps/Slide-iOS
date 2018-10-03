@@ -196,6 +196,12 @@ class SingleSubredditViewController: MediaViewController {
 
         first = false
         tableView.delegate = self
+        readLaterArticles = 0
+        for key in ReadLater.readLaterIDs.allKeys {
+            if (ReadLater.readLaterIDs[key] as! String).lowercased() == self.sub.lowercased() || self.sub == "all" || self.sub == "frontpage" {
+                readLaterArticles += 1
+            }
+        }
 
         if savedIndex != nil {
             tableView.reloadItems(at: [savedIndex!])
@@ -2408,7 +2414,7 @@ public class ReadLaterCell: UICollectionViewCell {
     }
     
     func setArticles(articles: Int) {
-        let text = " articles in your Read Later list"
+        let text = " articles to Read Later"
         let numberText = "\(articles)"
         let number = NSMutableAttributedString.init(string: numberText, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)])
         let finalText = number
