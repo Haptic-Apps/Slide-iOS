@@ -910,6 +910,35 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func doDTap(_ sender: AnyObject) {
+        typeImage = UIImageView().then {
+            $0.accessibilityIdentifier = "Action type"
+            $0.layer.cornerRadius = 22.5
+            $0.clipsToBounds = true
+            $0.contentMode = .center
+        }
+        let overView = UIView()
+        if !SettingValues.flatMode {
+            overView.layer.cornerRadius = 15
+            overView.clipsToBounds = true
+        }
+        typeImage.image = UIImage(named: SettingValues.submissionActionDoubleTap.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+        typeImage.backgroundColor = SettingValues.submissionActionDoubleTap.getColor()
+        contentView.addSubviews(typeImage, overView)
+        contentView.bringSubview(toFront: overView)
+        contentView.bringSubview(toFront: typeImage)
+        overView.backgroundColor = SettingValues.submissionActionDoubleTap.getColor()
+        overView.edgeAnchors == self.contentView.edgeAnchors
+        typeImage.centerAnchors == self.contentView.centerAnchors
+        typeImage.heightAnchor == 45
+        typeImage.widthAnchor == 45
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+            self.typeImage.alpha = 0
+            overView.alpha = 0
+            self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        }, completion: { (_) in
+            self.typeImage.removeFromSuperview()
+            overView.removeFromSuperview()
+        })
         doAction(item: SettingValues.submissionActionDoubleTap)
     }
     

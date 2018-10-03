@@ -38,7 +38,7 @@ class ReadLaterViewController: ContentListingViewController {
             for item in self.baseData.content {
                 ReadLater.removeReadLater(id: item.getIdentifier())
             }
-            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popViewController(animated: true)
         }))
         alert.addAction(UIAlertAction(title: "No", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
