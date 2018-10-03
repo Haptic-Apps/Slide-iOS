@@ -921,6 +921,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             overView.layer.cornerRadius = 15
             overView.clipsToBounds = true
         }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        }
         typeImage.image = UIImage(named: SettingValues.submissionActionDoubleTap.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
         typeImage.backgroundColor = SettingValues.submissionActionDoubleTap.getColor()
         contentView.addSubviews(typeImage, overView)
@@ -931,7 +934,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         typeImage.centerAnchors == self.contentView.centerAnchors
         typeImage.heightAnchor == 45
         typeImage.widthAnchor == 45
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
             self.typeImage.alpha = 0
             overView.alpha = 0
             self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)

@@ -2016,7 +2016,7 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.row == 0 && readLaterArticles > 0 && !loading && loaded {
+        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
             VCPresenter.showVC(viewController: ReadLaterViewController(subreddit: sub) , popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         }
     }
@@ -2026,17 +2026,17 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count + ((links.count != 0 && loaded) ? 1 : 0) + (readLaterArticles > 0 && !loading && loaded ? 1 : 0)
+        return links.count + ((links.count != 0 && loaded) ? 1 : 0) + (readLaterArticles > 0 && loaded ? 1 : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.row == 0 && readLaterArticles > 0 && !loading && loaded {
+        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "readlater", for: indexPath) as! ReadLaterCell
             cell.setArticles(articles: self.readLaterArticles)
             return cell
         }
         
-        let row = indexPath.row - (readLaterArticles > 0 && !loading && loaded ? 1 : 0)
+        let row = indexPath.row - (readLaterArticles > 0 && loaded ? 1 : 0)
         if row >= self.links.count {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
             cell.loader.color = ColorUtil.fontColor
@@ -2164,10 +2164,10 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
 // MARK: - Wrapping Flow Layout Delegate
 extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        if indexPath.row == 0 && readLaterArticles > 0 && !loading && loaded {
+        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
             return CGSize(width: width, height: 60)
         }
-        let row = indexPath.row - (readLaterArticles > 0 && !loading && loaded ? 1 : 0)
+        let row = indexPath.row - (readLaterArticles > 0 && loaded ? 1 : 0)
         if row < links.count {
             let submission = links[row]
             if submission.author == "PAGE_SEPARATOR" {
