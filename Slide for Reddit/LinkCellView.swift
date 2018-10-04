@@ -1944,6 +1944,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
             (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController) //todo check this
+            if History.getSeen(s: link) && !full {
+                self.title.alpha = 0.7
+            } else {
+                self.title.alpha = 1
+            }
         }
     }
     

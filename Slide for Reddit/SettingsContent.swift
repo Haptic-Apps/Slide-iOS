@@ -45,10 +45,10 @@ class SettingsContent: UITableViewController {
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwEnabled)
         } else if changed == showNSFWPreviews {
             SettingValues.nsfwPreviews = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwPreviews)
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwPreviews + AccountController.currentName)
         } else if changed == hideCollectionViews {
             SettingValues.hideNSFWCollection = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideNSFWCollection)
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideNSFWCollection + AccountController.currentName)
         }
         UserDefaults.standard.synchronize()
         doDisables()

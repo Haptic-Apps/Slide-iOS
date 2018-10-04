@@ -166,6 +166,17 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         print(error)
                     case .success(let profile):
                         SettingValues.nsfwEnabled = profile.over18
+                        if let nsfw = UserDefaults.standard.object(forKey: SettingValues.pref_hideNSFWCollection + AccountController.currentName) {
+                            SettingValues.hideNSFWCollection = nsfw as! Bool
+                        } else {
+                            SettingValues.hideNSFWCollection = UserDefaults.standard.bool(forKey: SettingValues.pref_hideNSFWCollection)
+                        }
+                        if let nsfw = UserDefaults.standard.object(forKey: SettingValues.pref_nsfwPreviews + AccountController.currentName) {
+                            SettingValues.nsfwPreviews = nsfw as! Bool
+                        } else {
+                            SettingValues.nsfwPreviews = UserDefaults.standard.bool(forKey: SettingValues.pref_nsfwPreviews)
+                        }
+
                         let unread = profile.inboxCount
                         let diff = unread - lastMail
                         if profile.isMod && AccountController.modSubs.isEmpty {

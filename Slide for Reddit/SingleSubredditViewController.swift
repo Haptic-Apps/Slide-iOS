@@ -2000,8 +2000,10 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
             (cell as! LinkCellView).videoView!.player = nil
             (cell as! LinkCellView).updater?.invalidate()
         }
-        if SettingValues.markReadOnScroll && indexPath.row < links.count {
-            History.addSeen(s: links[indexPath.row], skipDuplicates: true)
+        if !tableView.indexPathsForVisibleItems.contains(indexPath) {
+            if SettingValues.markReadOnScroll && indexPath.row < links.count {
+                History.addSeen(s: links[indexPath.row], skipDuplicates: true)
+            }
         }
     }
     
