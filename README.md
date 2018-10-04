@@ -26,7 +26,7 @@ Below are the steps to getting started:
 
 ### If you are having trouble building on XCode 10 or MacOS Mojave
 
-Try running "chmod 666 Pods/Realm/include/RLMPlatform.h" from terminal in the project root directory
+Try running `chmod 666 Pods/Realm/include/RLMPlatform.h` from Terminal in the project root directory.
 
 
 ### If you don't have a paid Apple Developer account and you get warnings about iCloud entitlements
