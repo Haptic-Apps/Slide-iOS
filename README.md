@@ -6,6 +6,8 @@ Slide is an open-source, ad-free Reddit browser for iOS and is available on the 
 
 <br>
 <br>
+<br>
+<br>
 
 ## Contributing
 
