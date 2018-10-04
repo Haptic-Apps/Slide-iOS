@@ -550,8 +550,19 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 
                 SDImageCache.shared().clearMemory()
                 SDImageCache.shared().clearDisk()
-                SDWebImageManager.shared().imageCache?.clearMemory()
-                SDWebImageManager.shared().imageCache?.clearDisk()
+                
+                do {
+                    var cache_path = SDImageCache.shared().makeDiskCachePath("")!
+                    cache_path += cache_path.endsWith("/") ? "" : "/"
+                    let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
+                    for file in files {
+                        if file.endsWith(".mp4") {
+                            try FileManager.default.removeItem(atPath: cache_path + file)
+                        }
+                    }
+                } catch {
+                    print(error)
+                }
                 
                 BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
             case 7:
