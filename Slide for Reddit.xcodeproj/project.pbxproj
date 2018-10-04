@@ -1965,8 +1965,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USR_BASE_IDENTIFIER = "ccrama.me.redditslide-debug";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
 				USR_DISPLAY_NAME = "Slide Debug";
+				USR_DOMAIN = ccrama.me;
 			};
 			name = Debug;
 		};
@@ -2018,8 +2019,9 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USR_BASE_IDENTIFIER = ccrama.me.redditslide;
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_DISPLAY_NAME = Slide;
+				USR_DOMAIN = ccrama.me;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
