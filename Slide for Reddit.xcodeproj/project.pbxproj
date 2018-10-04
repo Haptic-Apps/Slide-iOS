@@ -1821,7 +1821,6 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_BASE_IDENTIFIER = "ccrama.me.redditslide-debug";
 				WATCHOS_DEPLOYMENT_TARGET = 5.0;
 			};
 			name = Debug;
@@ -2047,7 +2046,6 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_VERSION = 3.0;
-				USR_BASE_IDENTIFIER = "ccrama.me.redditslide-debug";
 			};
 			name = Debug;
 		};
@@ -2079,7 +2077,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
-				USR_BASE_IDENTIFIER = ccrama.me.redditslide;
 			};
 			name = Release;
 		};
