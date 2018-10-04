@@ -1,10 +1,8 @@
-# Slide [![iOS App Store](https://img.shields.io/itunes/v/1260626828.svg)](https://itunes.apple.com/us/app/slide-for-reddit/id1260626828) [![Reddit](https://img.shields.io/badge/reddit-%2Fr%2Fslide__ios-brightgreen.svg)](https://www.reddit.com/r/slide_ios) [![Discord](https://img.shields.io/discord/407573578985242635.svg)](https://discord.gg/hVWAY8A)  
+# Slide for Reddit [![iOS App Store](https://img.shields.io/itunes/v/1260626828.svg)](https://itunes.apple.com/us/app/slide-for-reddit/id1260626828) [![Reddit](https://img.shields.io/badge/reddit-%2Fr%2Fslide__ios-brightgreen.svg)](https://www.reddit.com/r/slide_ios) [![Discord](https://img.shields.io/discord/407573578985242635.svg)](https://discord.gg/hVWAY8A)  
 
 <img src="/slide_ios_rounded.png" align="left" width="150" hspace="10" vspace="10">
 
-Slide is an open-source, ad-free Reddit browser for iOS. Slide is avaliable for download on the [App Store](https://itunes.apple.com/us/app/slide-for-reddit/id1260626828).
-
-Feel free to join us on [the subreddit](https://www.reddit.com/r/slide_ios)!
+Slide is an open-source, ad-free Reddit browser for iOS and is available on the [App Store](https://itunes.apple.com/us/app/slide-for-reddit/id1260626828). Feel free to join us on [the official subreddit](https://www.reddit.com/r/slide_ios) for discussion or requests!
 
 <br>
 <br>
