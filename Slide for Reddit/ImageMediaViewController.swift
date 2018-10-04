@@ -394,6 +394,6 @@ extension ImageMediaViewController: UIScrollViewDelegate {
 
 extension ImageMediaViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return scrollView.zoomScale == scrollView.minimumZoomScale
+        return scrollView.zoomScale == min(scrollView.minimumZoomScale, 1)
     }
 }
