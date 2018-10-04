@@ -27,8 +27,11 @@ public class SubmissionRowController: NSObject {
     @IBOutlet weak var titleLabel: WKInterfaceLabel!
     
     @IBAction func didSelect() {
-        self.parent?.presentController(withName: "DetailView", context: self)
-
+        if !(self.parent?.isPro ?? true) {
+            self.parent?.presentController(withName: "Pro", context: self)
+        } else {
+            self.parent?.presentController(withName: "DetailView", context: self)
+        }
     }
     func setData(dictionary: NSDictionary, color: UIColor) {
         let titleFont = UIFont.systemFont(ofSize: 14)
