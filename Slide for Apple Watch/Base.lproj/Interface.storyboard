@@ -74,19 +74,16 @@
                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <color key="backgroundColor" red="0.2274509804" green="0.7521325418068493" blue="0.25698655321232877" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         </button>
-                        <table alignment="left" id="Mkv-hg-NKf">
+                        <group width="1" height="0.0" alignment="left" id="WCO-fE-Uhp">
                             <items>
-                                <tableRow id="hza-lD-Lt3">
-                                    <group key="rootItem" width="1" height="0.0" alignment="left" id="deM-eN-flu">
-                                        <items>
-                                            <label width="1" height="1" alignment="left" textAlignment="left" numberOfLines="0" id="4Ih-bL-HUR">
-                                                <string key="text">Upgrade to Slide Pro to support development of Slide, and enable some awesome features including the ability to vote and add to your Read Later list from your Apple Watch!</string>
-                                            </label>
-                                        </items>
-                                    </group>
-                                </tableRow>
+                                <label width="1" alignment="left" textAlignment="left" numberOfLines="0" id="4Ih-bL-HUR">
+                                    <string key="text">Upgrade to Slide Pro to support development of Slide, and enable some awesome features including the ability to vote and add to your Read Later list from your Apple Watch!</string>
+                                </label>
+                                <label width="1" height="1" alignment="left" textAlignment="left" numberOfLines="0" id="DyK-KD-bil">
+                                    <string key="text">Upgrade to Slide Pro to support development of Slide, and enable some awesome features including the ability to vote and add to your Read Later list from your Apple Watch!</string>
+                                </label>
                             </items>
-                        </table>
+                        </group>
                     </items>
                 </controller>
             </objects>

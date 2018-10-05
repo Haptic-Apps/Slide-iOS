@@ -1129,6 +1129,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !loaded {
             refreshControl?.beginRefreshing()
         }
+        
+        if !(parent is PagingCommentViewController) {
+            if SettingValues.commentGesturesMode == .SWIPE_ANYWHERE && !(self.navigationController?.delegate is SloppySwiper) {
+                swiper = SloppySwiper.init(navigationController: self.navigationController!)
+                self.navigationController!.delegate = swiper!
+            }
+        }
     }
 
     var originalPosition: CGPoint?

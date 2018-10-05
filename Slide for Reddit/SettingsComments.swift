@@ -162,6 +162,17 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             self.setDepthColors(colorArray)
         }))
         
+        alertController.addAction(Action(ActionData(title: "Invisible", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.backgroundColor)), style: .default, handler: { _ in
+            let baseColor = ColorUtil.backgroundColor
+            var colorArray = [UIColor]()
+            colorArray.append(baseColor)
+            colorArray.append(baseColor)
+            colorArray.append(baseColor)
+            colorArray.append(baseColor)
+            colorArray.append(baseColor)
+            self.setDepthColors(colorArray)
+        }))
+        
         alertController.addAction(Action(ActionData(title: "Accent color", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.baseAccent)), style: .default, handler: { _ in
             let baseColor = ColorUtil.baseAccent
             var colorArray = [UIColor]()
