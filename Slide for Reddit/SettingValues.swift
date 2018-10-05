@@ -104,6 +104,7 @@ class SettingValues {
     public static let pref_showPages = "SHOW_PAGES"
     public static let pref_submissionActionLeft = "SUBMISSION_LEFT"
     public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
+    public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -122,6 +123,7 @@ class SettingValues {
     public static var submissionActionDoubleTap = SubmissionAction.NONE
     public static var submissionActionLeft = SubmissionAction.UPVOTE
     public static var submissionActionRight = SubmissionAction.SAVE
+    public static var commentGesturesMode = CommentGesturesMode.NONE
 
     public static var browser = "firefox"
     public static var viewType = true
@@ -151,7 +153,6 @@ class SettingValues {
     public static var wideIndicators = false
     public static var blackShadowbox = false
     public static var hideAutomod = false
-    public static var commentGesturesEnabled = false
     public static var submissionGesturesEnabled = false
     public static var infoBelowTitle = false
     public static var matchSilence = true
@@ -256,6 +257,25 @@ class SettingValues {
         }
     }
     
+    enum CommentGesturesMode: String {
+        static let cases: [CommentGesturesMode] = [.GESTURES, .NONE, .SWIPE_ANYWHERE]
+        
+        case GESTURES = "never"
+        case NONE = "wifi_only"
+        case SWIPE_ANYWHERE = "always"
+        
+        func description() -> String {
+            switch self {
+            case .GESTURES:
+                return "Swipe gestures"
+            case .NONE:
+                return "Slide between posts"
+            case .SWIPE_ANYWHERE:
+                return "Swipe anywhere to exit"
+            }
+        }
+    }
+    
     public static func shouldAutoPlay() -> Bool {
         switch SettingValues.autoPlayMode {
         case .ALWAYS:
@@ -320,7 +340,6 @@ class SettingValues {
         }
 
         SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
-        SettingValues.commentGesturesEnabled = settings.object(forKey: SettingValues.pref_commentGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_commentGesturesEnabled)
         SettingValues.submissionGesturesEnabled = settings.object(forKey: SettingValues.pref_submissionGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_submissionGesturesEnabled)
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
@@ -364,7 +383,6 @@ class SettingValues {
         SettingValues.smallerTag = settings.object(forKey: SettingValues.pref_smallTag) == nil ? true : settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.blackShadowbox = settings.bool(forKey: SettingValues.pref_blackShadowbox)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
-        SettingValues.nsfwPreviews = settings.bool(forKey: SettingValues.pref_nsfwPreviews)
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
         SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)
@@ -372,7 +390,6 @@ class SettingValues {
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
         SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
-        SettingValues.hideNSFWCollection = settings.bool(forKey: SettingValues.pref_hideNSFWCollection)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
         SettingValues.lockCommentBars = settings.bool(forKey: SettingValues.pref_lockCommentBottomBar)
         SettingValues.autoCache = settings.bool(forKey: SettingValues.pref_autoCache)
@@ -424,6 +441,7 @@ class SettingValues {
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
+        SettingValues.commentGesturesMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "none") ?? .NONE
         
         SettingValues.commentActionRightLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightLeft) ?? "downvote") ?? .DOWNVOTE
         SettingValues.commentActionRightRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightRight) ?? "upvote") ?? .UPVOTE
@@ -549,7 +567,7 @@ class SettingValues {
     }
 
     public enum SubmissionAction: String {
-        public static let cases: [SubmissionAction] = [.UPVOTE, .DOWNVOTE, .MENU, .HIDE, .SAVE, .SUBREDDIT, .SHARE, .AUTHOR, .EXTERNAL, .NONE]
+        public static let cases: [SubmissionAction] = [.UPVOTE, .DOWNVOTE, .MENU, .HIDE, .SAVE, .READ_LATER, .SUBREDDIT, .SHARE, .AUTHOR, .EXTERNAL, .NONE]
         
         case UPVOTE = "upvote"
         case DOWNVOTE = "downvote"
@@ -561,6 +579,7 @@ class SettingValues {
         case SHARE = "share"
         case AUTHOR = "author"
         case EXTERNAL = "external"
+        case READ_LATER = "readlater"
         
         func getTitle() -> String {
             switch self {
@@ -584,6 +603,8 @@ class SettingValues {
                 return "Open submission link externally"
             case .SHARE:
                 return "Share submission link"
+            case .READ_LATER:
+                return "Add to Read Later list"
             }
         }
         
@@ -609,6 +630,8 @@ class SettingValues {
                 return "world"
             case .SHARE:
                 return "share"
+            case .READ_LATER:
+                return "history"
             }
         }
         
@@ -634,6 +657,8 @@ class SettingValues {
                 return GMColor.blue500Color()
             case .SHARE:
                 return GMColor.lightGreen500Color()
+            case .READ_LATER:
+                return GMColor.orange400Color()
             }
         }
     }

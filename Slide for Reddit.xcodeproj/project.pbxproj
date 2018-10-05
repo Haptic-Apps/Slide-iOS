@@ -61,15 +61,36 @@
 		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
+		BE0D639D215983260006A2DD /* PostActionMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D639C215983260006A2DD /* PostActionMenuController.swift */; };
+		BE0D63A3215AA5CD0006A2DD /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D63A2215AA5CD0006A2DD /* ContentType.swift */; };
 		BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */; };
 		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
+		BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11351B2159390700502C5B /* WatchSessionManager.swift */; };
+		BE13C2CC21655A40002687F2 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2CB21655A40002687F2 /* UIImage+Extensions.swift */; };
+		BE13C2CE21655A9A002687F2 /* DateFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2CD21655A9A002687F2 /* DateFormatter+Extensions.swift */; };
+		BE13C2D021655AF7002687F2 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2CF21655AF7002687F2 /* String+Extensions.swift */; };
+		BE13C2D221655E43002687F2 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2D121655E43002687F2 /* UIColor+Extensions.swift */; };
 		BE15FE752163D03900288D86 /* TopLockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE15FE742163D03900288D86 /* TopLockViewController.swift */; };
+		BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A249215FE878002C6CE6 /* MoreRowController.swift */; };
+		BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A24B215FFD91002C6CE6 /* ReadLater.swift */; };
+		BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE17A24D215FFE76002C6CE6 /* readlater.plist */; };
+		BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */; };
+		BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */; };
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
 		BE1CD01920F599C7007746B6 /* TextStackEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01820F599C7007746B6 /* TextStackEstimator.swift */; };
 		BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */; };
 		BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */; };
+		BE20851521588F3A00D8F33C /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE20851321588F3900D8F33C /* Interface.storyboard */; };
+		BE20851721588F3A00D8F33C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE20851621588F3A00D8F33C /* Assets.xcassets */; };
+		BE20851E21588F3B00D8F33C /* Slide for Apple Watch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BE20852321588F3B00D8F33C /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20852221588F3B00D8F33C /* InterfaceController.swift */; };
+		BE20852521588F3B00D8F33C /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20852421588F3B00D8F33C /* ExtensionDelegate.swift */; };
+		BE20852721588F3B00D8F33C /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20852621588F3B00D8F33C /* NotificationController.swift */; };
+		BE20852921588F3B00D8F33C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE20852821588F3B00D8F33C /* Assets.xcassets */; };
+		BE20852E21588F3B00D8F33C /* Slide for Apple Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BE20851121588F3900D8F33C /* Slide for Apple Watch.app */; };
+		BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20853921589FD600D8F33C /* SubmissionRowController.swift */; };
 		BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE292568213C5730006B5130 /* LocalKeystore.swift */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
@@ -209,6 +230,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		BE20851F21588F3B00D8F33C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE20851C21588F3A00D8F33C;
+			remoteInfo = "Slide for Apple Watch Extension";
+		};
+		BE20852C21588F3B00D8F33C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE20851021588F3900D8F33C;
+			remoteInfo = "Slide for Apple Watch";
+		};
 		BE8FCA191E0C46090063B8EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
@@ -234,6 +269,28 @@
 			files = (
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE20853421588F3B00D8F33C /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BE20851E21588F3B00D8F33C /* Slide for Apple Watch Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE20853621588F3B00D8F33C /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				BE20852E21588F3B00D8F33C /* Slide for Apple Watch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BE2B8A061E25BD220053D493 /* Embed Frameworks */ = {
@@ -306,15 +363,39 @@
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
 		BA9177B1039FF29FE7BFC503 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		BE0D639C215983260006A2DD /* PostActionMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostActionMenuController.swift; sourceTree = "<group>"; };
+		BE0D63A2215AA5CD0006A2DD /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWelcome.swift; sourceTree = "<group>"; };
 		BE0EF7C31F43C9510058D572 /* Spoilers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spoilers.swift; sourceTree = "<group>"; };
+		BE11351B2159390700502C5B /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
+		BE13C2CB21655A40002687F2 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
+		BE13C2CD21655A9A002687F2 /* DateFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extensions.swift"; sourceTree = "<group>"; };
+		BE13C2CF21655AF7002687F2 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		BE13C2D121655E43002687F2 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		BE15FE742163D03900288D86 /* TopLockViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLockViewController.swift; sourceTree = "<group>"; };
+		BE17A249215FE878002C6CE6 /* MoreRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreRowController.swift; sourceTree = "<group>"; };
+		BE17A24B215FFD91002C6CE6 /* ReadLater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLater.swift; sourceTree = "<group>"; };
+		BE17A24D215FFE76002C6CE6 /* readlater.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = readlater.plist; sourceTree = "<group>"; };
+		BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterContributionLoader.swift; sourceTree = "<group>"; };
+		BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterViewController.swift; sourceTree = "<group>"; };
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
 		BE1CD01820F599C7007746B6 /* TextStackEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStackEstimator.swift; sourceTree = "<group>"; };
 		BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContributionLoader.swift; sourceTree = "<group>"; };
+		BE20851121588F3900D8F33C /* Slide for Apple Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Slide for Apple Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE20851421588F3A00D8F33C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		BE20851621588F3A00D8F33C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BE20851821588F3A00D8F33C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Slide for Apple Watch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE20852221588F3B00D8F33C /* InterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
+		BE20852421588F3B00D8F33C /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
+		BE20852621588F3B00D8F33C /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
+		BE20852821588F3B00D8F33C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BE20852A21588F3B00D8F33C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BE20852B21588F3B00D8F33C /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
+		BE20853921589FD600D8F33C /* SubmissionRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionRowController.swift; sourceTree = "<group>"; };
 		BE292568213C5730006B5130 /* LocalKeystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalKeystore.swift; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
@@ -466,6 +547,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3A42EBBBA49AE81BA699304A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE20851A21588F3A00D8F33C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE8FCA011E0C46090063B8EF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -581,6 +676,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BE13C2CA21655A31002687F2 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BE13C2CB21655A40002687F2 /* UIImage+Extensions.swift */,
+				BE13C2CD21655A9A002687F2 /* DateFormatter+Extensions.swift */,
+				BE13C2CF21655AF7002687F2 /* String+Extensions.swift */,
+				BE13C2D121655E43002687F2 /* UIColor+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		BE1DA3991E26D52500EC0A04 /* ContentViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -598,6 +704,34 @@
 				B776B2E54F7438959A76E42E /* LiveThreadUpdate.swift */,
 			);
 			name = ContentViewControllers;
+			sourceTree = "<group>";
+		};
+		BE20851221588F3900D8F33C /* Slide for Apple Watch */ = {
+			isa = PBXGroup;
+			children = (
+				BE20851321588F3900D8F33C /* Interface.storyboard */,
+				BE20851621588F3A00D8F33C /* Assets.xcassets */,
+				BE20851821588F3A00D8F33C /* Info.plist */,
+			);
+			path = "Slide for Apple Watch";
+			sourceTree = "<group>";
+		};
+		BE20852121588F3B00D8F33C /* Slide for Apple Watch Extension */ = {
+			isa = PBXGroup;
+			children = (
+				BE13C2CA21655A31002687F2 /* Extensions */,
+				BE20852221588F3B00D8F33C /* InterfaceController.swift */,
+				BE20852421588F3B00D8F33C /* ExtensionDelegate.swift */,
+				BE20852A21588F3B00D8F33C /* Info.plist */,
+				BE20852621588F3B00D8F33C /* NotificationController.swift */,
+				BE20852821588F3B00D8F33C /* Assets.xcassets */,
+				BE20852B21588F3B00D8F33C /* PushNotificationPayload.apns */,
+				BE20853921589FD600D8F33C /* SubmissionRowController.swift */,
+				BE17A249215FE878002C6CE6 /* MoreRowController.swift */,
+				BE0D639C215983260006A2DD /* PostActionMenuController.swift */,
+				BE0D63A2215AA5CD0006A2DD /* ContentType.swift */,
+			);
+			path = "Slide for Apple Watch Extension";
 			sourceTree = "<group>";
 		};
 		BE2DEAAC1E26828B00FBF0B5 /* Settings */ = {
@@ -727,6 +861,7 @@
 				BE86300E1E2E6A54004F0E1F /* PostFilter.swift */,
 				BE780B681E3527D900DAA1EB /* Drafts.swift */,
 				BE1CD01420F51C37007746B6 /* RemovalReasons.swift */,
+				BE17A24B215FFD91002C6CE6 /* ReadLater.swift */,
 			);
 			name = ContentUtilities;
 			sourceTree = "<group>";
@@ -735,6 +870,8 @@
 			isa = PBXGroup;
 			children = (
 				BE77470720367D98006C72E8 /* Credits.plist */,
+				BE20851221588F3900D8F33C /* Slide for Apple Watch */,
+				BE20852121588F3B00D8F33C /* Slide for Apple Watch Extension */,
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				CA62E6258F89232082F52D05 /* Pods */,
 				BE8FCA051E0C46090063B8EF /* Products */,
@@ -750,6 +887,8 @@
 				BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */,
 				BE8FCA181E0C46090063B8EF /* Slide for RedditTests.xctest */,
 				BE8FCA231E0C46090063B8EF /* Slide for RedditUITests.xctest */,
+				BE20851121588F3900D8F33C /* Slide for Apple Watch.app */,
+				BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -775,6 +914,7 @@
 				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
 				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
+				BE17A24D215FFE76002C6CE6 /* readlater.plist */,
 				BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */,
 				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
 				BEF3ACE11E15C101005848B6 /* ContentType.swift */,
@@ -842,6 +982,9 @@
 				BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */,
 				BEB81A6721445FE4007E326B /* FriendCellView.swift */,
 				323EFB2721434781005157FA /* ProgressBarView.swift */,
+				BE11351B2159390700502C5B /* WatchSessionManager.swift */,
+				BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */,
+				BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */,
 				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
 			);
 			path = "Slide for Reddit";
@@ -902,6 +1045,41 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		BE20851021588F3900D8F33C /* Slide for Apple Watch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE20853521588F3B00D8F33C /* Build configuration list for PBXNativeTarget "Slide for Apple Watch" */;
+			buildPhases = (
+				BE20850F21588F3900D8F33C /* Resources */,
+				BE20853421588F3B00D8F33C /* Embed App Extensions */,
+				3A42EBBBA49AE81BA699304A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BE20852021588F3B00D8F33C /* PBXTargetDependency */,
+			);
+			name = "Slide for Apple Watch";
+			productName = "Slide for Apple Watch";
+			productReference = BE20851121588F3900D8F33C /* Slide for Apple Watch.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		BE20851C21588F3A00D8F33C /* Slide for Apple Watch Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE20853321588F3B00D8F33C /* Build configuration list for PBXNativeTarget "Slide for Apple Watch Extension" */;
+			buildPhases = (
+				BE20851921588F3A00D8F33C /* Sources */,
+				BE20851A21588F3A00D8F33C /* Frameworks */,
+				BE20851B21588F3A00D8F33C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Slide for Apple Watch Extension";
+			productName = "Slide for Apple Watch Extension";
+			productReference = BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
 		BE8FCA031E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE8FCA2C1E0C46090063B8EF /* Build configuration list for PBXNativeTarget "Slide for Reddit" */;
@@ -917,10 +1095,12 @@
 				0991C18B2108CDC600B6BA16 /* Run SwiftLint */,
 				0984BE512114C9490091C2E1 /* Integrate Reveal Server */,
 				91C0F2C1C6430D33BAF719ED /* [CP] Copy Pods Resources */,
+				BE20853621588F3B00D8F33C /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BE20852D21588F3B00D8F33C /* PBXTargetDependency */,
 			);
 			name = "Slide for Reddit";
 			productName = "Slide for Reddit";
@@ -975,10 +1155,20 @@
 		BE8FC9FC1E0C46090063B8EF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0830;
+				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
+					BE20851021588F3900D8F33C = {
+						CreatedOnToolsVersion = 10.0;
+						DevelopmentTeam = FTT89576VQ;
+						ProvisioningStyle = Automatic;
+					};
+					BE20851C21588F3A00D8F33C = {
+						CreatedOnToolsVersion = 10.0;
+						DevelopmentTeam = FTT89576VQ;
+						ProvisioningStyle = Automatic;
+					};
 					BE8FCA031E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
 						DevelopmentTeam = FTT89576VQ;
@@ -1029,11 +1219,30 @@
 				BE8FCA031E0C46090063B8EF /* Slide for Reddit */,
 				BE8FCA171E0C46090063B8EF /* Slide for RedditTests */,
 				BE8FCA221E0C46090063B8EF /* Slide for RedditUITests */,
+				BE20851021588F3900D8F33C /* Slide for Apple Watch */,
+				BE20851C21588F3A00D8F33C /* Slide for Apple Watch Extension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		BE20850F21588F3900D8F33C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE20851721588F3A00D8F33C /* Assets.xcassets in Resources */,
+				BE20851521588F3A00D8F33C /* Interface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE20851B21588F3A00D8F33C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE20852921588F3B00D8F33C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE8FCA021E0C46090063B8EF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1055,6 +1264,7 @@
 				BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */,
 				BEBF45DD1E23384500764BB8 /* comments.plist in Resources */,
 				BE35216C1E3D22B000C30B8D /* Roboto-Medium.ttf in Resources */,
+				BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */,
 				BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */,
 				BE35216E1E3D22B000C30B8D /* RobotoCondensed-Regular.ttf in Resources */,
 				BE3521771E3D2E3300C30B8D /* Roboto-BoldItalic.ttf in Resources */,
@@ -1325,6 +1535,24 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		BE20851921588F3A00D8F33C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */,
+				BE13C2D021655AF7002687F2 /* String+Extensions.swift in Sources */,
+				BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */,
+				BE13C2CC21655A40002687F2 /* UIImage+Extensions.swift in Sources */,
+				BE20852721588F3B00D8F33C /* NotificationController.swift in Sources */,
+				BE20852521588F3B00D8F33C /* ExtensionDelegate.swift in Sources */,
+				BE13C2CE21655A9A002687F2 /* DateFormatter+Extensions.swift in Sources */,
+				BE0D639D215983260006A2DD /* PostActionMenuController.swift in Sources */,
+				BE13C2D221655E43002687F2 /* UIColor+Extensions.swift in Sources */,
+				BE20852321588F3B00D8F33C /* InterfaceController.swift in Sources */,
+				BE0D63A3215AA5CD0006A2DD /* ContentType.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE8FCA001E0C46090063B8EF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1389,6 +1617,7 @@
 				BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */,
 				0965260B20E2987800EA53BE /* UISearchBar+Extensions.swift in Sources */,
 				BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */,
+				BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
 				0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */,
@@ -1413,6 +1642,7 @@
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
+				BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */,
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
 				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
 				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
@@ -1488,6 +1718,7 @@
 				09F48EBC20F652CF00BAC8AC /* VideoView.swift in Sources */,
 				BE77638A211B732B002F2969 /* SubredditFindReturnViewController.swift in Sources */,
 				09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */,
+				BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */,
 				0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */,
 				B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */,
 				B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */,
@@ -1495,6 +1726,7 @@
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
+				BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */,
 				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,
 				B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */,
 				09526EF8214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift in Sources */,
@@ -1522,6 +1754,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		BE20852021588F3B00D8F33C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE20851C21588F3A00D8F33C /* Slide for Apple Watch Extension */;
+			targetProxy = BE20851F21588F3B00D8F33C /* PBXContainerItemProxy */;
+		};
+		BE20852D21588F3B00D8F33C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE20851021588F3900D8F33C /* Slide for Apple Watch */;
+			targetProxy = BE20852C21588F3B00D8F33C /* PBXContainerItemProxy */;
+		};
 		BE8FCA1A1E0C46090063B8EF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BE8FCA031E0C46090063B8EF /* Slide for Reddit */;
@@ -1535,6 +1777,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		BE20851321588F3900D8F33C /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE20851421588F3A00D8F33C /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
 		BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1546,6 +1796,112 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		BE20852F21588F3B00D8F33C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
+				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Debug;
+		};
+		BE20853021588F3B00D8F33C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
+				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Release;
+		};
+		BE20853121588F3B00D8F33C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Debug;
+		};
+		BE20853221588F3B00D8F33C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Release;
+		};
 		BE8FCA2A1E0C46090063B8EF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1602,6 +1958,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
+				USR_DISPLAY_NAME = "Slide Debug";
+				USR_DOMAIN = ccrama.me;
 			};
 			name = Debug;
 		};
@@ -1653,6 +2012,9 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_DISPLAY_NAME = Slide;
+				USR_DOMAIN = ccrama.me;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1667,6 +2029,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Slide for Reddit/Slide for Reddit.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
@@ -1679,7 +2042,7 @@
 					"-framework",
 					"\"reddift\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -1697,8 +2060,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Slide for Reddit/Slide for Reddit.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_UNUSED_PARAMETER = YES;
@@ -1712,7 +2076,7 @@
 					"-framework",
 					"\"reddift\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -1729,7 +2093,7 @@
 				DEVELOPMENT_TEAM = 68GVUVA6AU;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-for-RedditTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide for Reddit.app/Slide for Reddit";
@@ -1745,7 +2109,7 @@
 				DEVELOPMENT_TEAM = 68GVUVA6AU;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-for-RedditTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide for Reddit.app/Slide for Reddit";
@@ -1760,7 +2124,7 @@
 				DEVELOPMENT_TEAM = 68GVUVA6AU;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-for-RedditUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = "Slide for Reddit";
@@ -1775,7 +2139,7 @@
 				DEVELOPMENT_TEAM = 68GVUVA6AU;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-for-RedditUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = "Slide for Reddit";
@@ -1785,6 +2149,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		BE20853321588F3B00D8F33C /* Build configuration list for PBXNativeTarget "Slide for Apple Watch Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE20853121588F3B00D8F33C /* Debug */,
+				BE20853221588F3B00D8F33C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BE20853521588F3B00D8F33C /* Build configuration list for PBXNativeTarget "Slide for Apple Watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE20852F21588F3B00D8F33C /* Debug */,
+				BE20853021588F3B00D8F33C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BE8FC9FF1E0C46090063B8EF /* Build configuration list for PBXProject "Slide for Reddit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

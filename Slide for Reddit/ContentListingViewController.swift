@@ -17,6 +17,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
     }
+    public var inHeadView = UIView()
 
     var baseData: ContributionLoader
     var session: Session?
@@ -136,7 +137,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if baseData.content.count == 0 {
-            return tableView.dequeueReusableCell(withReuseIdentifier: "nocontent", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nocontent", for: indexPath) as! NoContentCell
+            cell.doText(controller: self)
+            return cell
         }
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
@@ -156,11 +159,17 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
-
+            
             (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "")
 
             c?.layer.shouldRasterize = true
             c?.layer.rasterizationScale = UIScreen.main.scale
+            
+            if self is ReadLaterViewController {
+                c?.hide.isHidden = false
+                c?.hide.setImage(UIImage(named: "done")?.menuIcon().getCopy(withColor: GMColor.red500Color()), for: .normal)
+            }
+
             cell = c
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
@@ -347,6 +356,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         }
     }
     
+    func doHeadView() {
+        inHeadView.removeFromSuperview()
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
+        
+        if !(navigationController is TapBehindModalViewController) {
+            self.view.addSubview(inHeadView)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
             (cell as! LinkCellView).videoView!.player?.pause()
@@ -477,7 +496,21 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
 
     func hide(_ cell: LinkCellView) {
-
+        if self is ReadLaterViewController {
+            ReadLater.removeReadLater(id: cell.link!.getId())
+            let savedIndex = tableView.indexPath(for: cell)?.row ?? 0
+            self.baseData.content.remove(at: savedIndex)
+            if self.baseData.content.count == 0 {
+                self.tableView.reloadData()
+            } else {
+                self.tableView.deleteItems(at: [IndexPath.init(row: savedIndex, section: 0)])
+            }
+            BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.red500Color(), seconds: 3, context: self, top: false) {
+                ReadLater.addReadLater(id: cell.link!.getId(), subreddit: cell.link!.subreddit)
+                self.baseData.content.insert(cell.link!, at: savedIndex)
+                self.tableView.insertItems(at: [IndexPath.init(row: savedIndex, section: 0)])
+            }
+        }
     }
 
     func mod(_ cell: LinkCellView) {
@@ -490,17 +523,19 @@ public class NoContentCell: UICollectionViewCell {
         super.init(frame: frame)
         setupView()
     }
+    var title = UILabel()
     
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupView() {
-        let title = UILabel()
-        title.backgroundColor = ColorUtil.foregroundColor
-        title.textAlignment = .center
-        
-        let text = "Nothing to see here!\nNo content was found"
+    func doText(controller: ContentListingViewController){
+        let text: String
+        if controller is ReadLaterViewController {
+            text = "Nothing to see here!\nNo more posts to Read Later"
+        } else {
+            text = "Nothing to see here!\nNo content was found"
+        }
         let textParts = text.components(separatedBy: "\n")
         
         let finalText: NSMutableAttributedString!
@@ -513,6 +548,13 @@ public class NoContentCell: UICollectionViewCell {
             finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
         }
         title.attributedText = finalText
+    }
+    
+    func setupView() {
+        title = UILabel()
+        title.backgroundColor = ColorUtil.foregroundColor
+        title.textAlignment = .center
+        
         title.numberOfLines = 0
         title.layer.cornerRadius = 15
         title.clipsToBounds = true

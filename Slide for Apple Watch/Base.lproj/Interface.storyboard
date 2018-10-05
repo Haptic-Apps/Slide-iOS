@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14313.18" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+    <device id="watch38" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14238.10"/>
+    </dependencies>
+    <scenes>
+        <!--DetailView-->
+        <scene sceneID="Nxq-cl-i3Z">
+            <objects>
+                <controller identifier="DetailView" alwaysBounce="YES" fullScreen="YES" id="lXM-Ia-ysh" customClass="PostActionMenuController" customModule="Slide_for_Apple_Watch_Extension">
+                    <items>
+                        <group width="1" alignment="left" id="UZW-Un-KSZ">
+                            <items>
+                                <imageView width="1" alignment="left" contentMode="scaleAspectFill" id="NpS-dD-jG4"/>
+                            </items>
+                        </group>
+                        <label alignment="left" text="Label" numberOfLines="0" id="e1k-XM-k2I">
+                            <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
+                        </label>
+                        <group width="1" alignment="left" alpha="0.69999999999999996" id="MtM-lO-Hti">
+                            <items>
+                                <imageView width="15" height="15" alignment="left" image="upvote" contentMode="scaleAspectFit" id="1r3-Z8-r8L">
+                                    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                </imageView>
+                                <label alignment="left" verticalAlignment="center" text="2.5k  " textAlignment="left" id="TtZ-h5-zAT">
+                                    <fontDescription key="font" type="boldSystem" pointSize="12"/>
+                                </label>
+                                <imageView width="15" height="15" alignment="left" image="comments" contentMode="scaleAspectFit" id="f6k-im-y8q">
+                                    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                </imageView>
+                                <label alignment="left" verticalAlignment="center" text="300" textAlignment="left" id="DKi-23-d26">
+                                    <fontDescription key="font" type="boldSystem" pointSize="12"/>
+                                </label>
+                            </items>
+                        </group>
+                        <button width="1" alignment="left" title="Comments" id="2PX-VI-Mpg">
+                            <connections>
+                                <action selector="openComments" destination="lXM-Ia-ysh" id="d2m-5c-uez"/>
+                            </connections>
+                        </button>
+                        <button width="1" alignment="left" title="Read Later" id="zAt-DZ-GVK">
+                            <connections>
+                                <action selector="readLater" destination="lXM-Ia-ysh" id="qKx-3l-T58"/>
+                            </connections>
+                        </button>
+                        <button width="1" alignment="left" title="Upvote" id="gm8-5O-9wo">
+                            <color key="backgroundColor" red="1" green="0.59607843137254901" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <connections>
+                                <action selector="doUpvote" destination="lXM-Ia-ysh" id="X0R-kp-nte"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <connections>
+                        <outlet property="bannerImage" destination="NpS-dD-jG4" id="EDR-kd-qNu"/>
+                        <outlet property="commentLabel" destination="DKi-23-d26" id="Dsp-Vw-sDm"/>
+                        <outlet property="imageGroup" destination="UZW-Un-KSZ" id="pQL-zA-1E1"/>
+                        <outlet property="scoreLabel" destination="TtZ-h5-zAT" id="zQQ-Ug-haI"/>
+                        <outlet property="titleLabel" destination="e1k-XM-k2I" id="8T2-xw-IEf"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-70" y="74"/>
+        </scene>
+        <!--Pro-->
+        <scene sceneID="zns-tl-fhB">
+            <objects>
+                <controller identifier="Pro" id="xan-Ot-vAh">
+                    <items>
+                        <button width="1" alignment="left" title="Click here to Go Pro!" id="8Ga-zC-fRP">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" red="0.2274509804" green="0.7521325418068493" blue="0.25698655321232877" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        </button>
+                        <group width="1" height="0.0" alignment="left" id="WCO-fE-Uhp">
+                            <items>
+                                <label width="1" alignment="left" textAlignment="left" numberOfLines="0" id="4Ih-bL-HUR">
+                                    <string key="text">Upgrade to Slide Pro to support development of Slide, and enable some awesome features including the ability to vote and add to your Read Later list from your Apple Watch!</string>
+                                </label>
+                                <label width="1" height="1" alignment="left" textAlignment="left" numberOfLines="0" id="DyK-KD-bil">
+                                    <string key="text">Upgrade to Slide Pro to support development of Slide, and enable some awesome features including the ability to vote and add to your Read Later list from your Apple Watch!</string>
+                                </label>
+                            </items>
+                        </group>
+                    </items>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="247" y="-44"/>
+        </scene>
+        <!--Loading...-->
+        <scene sceneID="aou-V4-d1y">
+            <objects>
+                <controller title="Loading..." id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Slide_for_Apple_Watch" customModuleProvider="target">
+                    <items>
+                        <imageView width="1" height="1" alignment="left" hidden="YES" contentMode="center" id="HRU-tu-C7x"/>
+                        <table alignment="left" id="Pa7-Zw-cdM">
+                            <items>
+                                <tableRow identifier="SubmissionRowController" id="UNR-fY-Dh7" customClass="SubmissionRowController" customModule="Slide_for_Apple_Watch_Extension">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="W3d-Sw-uKV">
+                                        <items>
+                                            <button alignment="left" id="nER-Gs-p1E">
+                                                <group key="contentGroup" width="1" alignment="left" layout="vertical" spacing="8" id="LFH-vM-kmB">
+                                                    <items>
+                                                        <label alignment="left" textAlignment="left" numberOfLines="0" id="DLp-71-bfA">
+                                                            <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
+                                                        </label>
+                                                        <group width="1" alignment="left" spacing="8" id="hjo-gb-dkI">
+                                                            <items>
+                                                                <group width="45" height="45" alignment="left" id="YxL-zX-Lwp">
+                                                                    <items>
+                                                                        <imageView width="45" height="45" alignment="left" image="reddit" contentMode="scaleAspectFit" id="BKv-Le-LtF"/>
+                                                                    </items>
+                                                                    <color key="backgroundColor" red="0.046915479274611371" green="0.046915479274611371" blue="0.046915479274611371" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                                </group>
+                                                                <label alignment="left" verticalAlignment="center" textAlignment="left" numberOfLines="0" id="hPB-op-io3">
+                                                                    <fontDescription key="font" style="UICTFontTextStyleTitle3"/>
+                                                                </label>
+                                                            </items>
+                                                        </group>
+                                                        <group width="1" alignment="left" alpha="0.59999999999999998" id="Tn9-ge-fqX">
+                                                            <items>
+                                                                <imageView width="15" height="15" alignment="left" image="upvote" contentMode="scaleAspectFit" id="B3o-jh-jlx">
+                                                                    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                                                </imageView>
+                                                                <label alignment="left" verticalAlignment="center" textAlignment="left" id="1GD-eU-fvT">
+                                                                    <fontDescription key="font" type="boldSystem" pointSize="12"/>
+                                                                </label>
+                                                                <imageView width="15" height="15" alignment="left" image="comments" contentMode="scaleAspectFit" id="LKs-jG-M2D">
+                                                                    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                                                </imageView>
+                                                                <label alignment="left" verticalAlignment="center" textAlignment="left" id="Z3p-gy-LUK">
+                                                                    <fontDescription key="font" type="boldSystem" pointSize="12"/>
+                                                                </label>
+                                                            </items>
+                                                        </group>
+                                                    </items>
+                                                    <edgeInsets key="margins" left="3" right="3" top="3" bottom="3"/>
+                                                </group>
+                                                <connections>
+                                                    <action selector="didSelect" destination="UNR-fY-Dh7" id="rau-L9-0Jo"/>
+                                                </connections>
+                                            </button>
+                                        </items>
+                                        <edgeInsets key="margins" left="5" right="5" top="5" bottom="5"/>
+                                    </group>
+                                    <connections>
+                                        <outlet property="bannerImage" destination="BKv-Le-LtF" id="z0j-EJ-AyM"/>
+                                        <outlet property="commentsLabel" destination="Z3p-gy-LUK" id="iyj-Zh-CLu"/>
+                                        <outlet property="imageGroup" destination="YxL-zX-Lwp" id="wlp-bV-HEe"/>
+                                        <outlet property="infoLabel" destination="hPB-op-io3" id="DJb-4I-nix"/>
+                                        <outlet property="scoreLabel" destination="1GD-eU-fvT" id="8Sw-92-7hb"/>
+                                        <outlet property="titleLabel" destination="DLp-71-bfA" id="tt6-sB-dR4"/>
+                                    </connections>
+                                </tableRow>
+                                <tableRow identifier="MoreRowController" id="OWV-7z-UIY" customClass="MoreRowController" customModule="Slide_for_Apple_Watch_Extension">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="myc-i2-KeW">
+                                        <items>
+                                            <button width="1" alignment="left" title="Load page 2" id="zSe-k3-YVj">
+                                                <color key="backgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <connections>
+                                                    <action selector="doLoadMore" destination="OWV-7z-UIY" id="813-Ns-U24"/>
+                                                </connections>
+                                            </button>
+                                            <imageView width="1" alignment="left" contentMode="center" id="mry-DN-EXD"/>
+                                        </items>
+                                        <edgeInsets key="margins" left="5" right="5" top="5" bottom="5"/>
+                                    </group>
+                                    <connections>
+                                        <outlet property="loadButton" destination="zSe-k3-YVj" id="myC-KQ-JRH"/>
+                                        <outlet property="progressImage" destination="mry-DN-EXD" id="32h-uB-OAU"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
+                    </items>
+                    <menu key="menu" id="0rw-jP-R08">
+                        <items>
+                            <menuItem title="Go to subreddit" icon="play" id="VrF-CI-CIz">
+                                <connections>
+                                    <action selector="gotosub" destination="AgC-eL-Hgc" id="mKS-LU-duf"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                    <connections>
+                        <outlet property="loadingImage" destination="HRU-tu-C7x" id="y2B-rx-5f8"/>
+                        <outlet property="table" destination="Pa7-Zw-cdM" id="AGM-Hd-2aS"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="220" y="345"/>
+        </scene>
+    </scenes>
+</document>

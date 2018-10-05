@@ -42,6 +42,13 @@ class SingleSubredditViewController: MediaViewController {
 
     let margin: CGFloat = 10
     let cellsPerRow = 3
+    var readLaterArticles: Int {
+        return ReadLater.readLaterIDs.allKeys.filter { (value) -> Bool in
+                if sub == "all" || sub == "frontpage" { return true }
+                guard let valueStr = value as? String else { return false }
+                return valueStr.lowercased() == sub.lowercased()
+                }.count
+    }
     
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: LinkCellView?
@@ -241,9 +248,7 @@ class SingleSubredditViewController: MediaViewController {
                 navigationController?.setToolbarHidden(true, animated: false)
             }
         }
-        if loaded {
-            showUI()
-        }
+
         SingleSubredditViewController.nextSingle = self.single
         doHeadView()
         
@@ -660,6 +665,7 @@ class SingleSubredditViewController: MediaViewController {
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(LoadingCell.classForCoder(), forCellWithReuseIdentifier: "loading")
+        self.tableView.register(ReadLaterCell.classForCoder(), forCellWithReuseIdentifier: "readlater")
         self.tableView.register(PageCell.classForCoder(), forCellWithReuseIdentifier: "page")
         lastVersion = SingleSubredditViewController.cellVersion
 
@@ -1158,7 +1164,6 @@ class SingleSubredditViewController: MediaViewController {
                     indicator?.startAnimating()
                 }
             }
-            loaded = true
 
             do {
                 loading = true
@@ -1176,6 +1181,7 @@ class SingleSubredditViewController: MediaViewController {
                 }
 
                 try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
+                    self.loaded = true
                     switch result {
                     case .failure:
                         print(result.error!)
@@ -1994,8 +2000,16 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
             (cell as! LinkCellView).videoView!.player = nil
             (cell as! LinkCellView).updater?.invalidate()
         }
-        if SettingValues.markReadOnScroll && indexPath.row < links.count {
-            History.addSeen(s: links[indexPath.row], skipDuplicates: true)
+        if !tableView.indexPathsForVisibleItems.contains(indexPath) {
+            if SettingValues.markReadOnScroll && indexPath.row < links.count {
+                History.addSeen(s: links[indexPath.row], skipDuplicates: true)
+            }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
+            VCPresenter.showVC(viewController: ReadLaterViewController(subreddit: sub) , popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         }
     }
 }
@@ -2004,11 +2018,18 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count + ((links.count != 0 && loaded) ? 1 : 0)
+        return links.count + ((links.count != 0 && loaded) ? 1 : 0) + (readLaterArticles > 0 && loaded ? 1 : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.row >= self.links.count {
+        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "readlater", for: indexPath) as! ReadLaterCell
+            cell.setArticles(articles: self.readLaterArticles)
+            return cell
+        }
+        
+        let row = indexPath.row - (readLaterArticles > 0 && loaded ? 1 : 0)
+        if row >= self.links.count {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
             cell.loader.color = ColorUtil.fontColor
             cell.loader.startAnimating()
@@ -2018,7 +2039,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             return cell
         }
 
-        let submission = self.links[(indexPath as NSIndexPath).row]
+        let submission = self.links[row]
 
         if submission.author == "PAGE_SEPARATOR" {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "page", for: indexPath) as! PageCell
@@ -2136,8 +2157,12 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
 // MARK: - Wrapping Flow Layout Delegate
 extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        if indexPath.row < links.count {
-            let submission = links[indexPath.row]
+        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
+            return CGSize(width: width, height: 60)
+        }
+        let row = indexPath.row - (readLaterArticles > 0 && loaded ? 1 : 0)
+        if row < links.count {
+            let submission = links[row]
             if submission.author == "PAGE_SEPARATOR" {
                 return CGSize(width: width, height: 80)
             }
@@ -2369,6 +2394,52 @@ public class LoadingCell: UICollectionViewCell {
     }
 }
 
+public class ReadLaterCell: UICollectionViewCell {
+    let title = UILabel()
+
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setArticles(articles: Int) {
+        let text = " articles to Read Later"
+        let numberText = "\(articles)"
+        let number = NSMutableAttributedString.init(string: numberText, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)])
+        let finalText = number
+        finalText.append(NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.systemFont(ofSize: 15)]))
+
+        title.attributedText = finalText
+    }
+    
+    func setupView() {
+        title.backgroundColor = ColorUtil.foregroundColor
+        title.textAlignment = .center
+        
+        title.numberOfLines = 0
+        
+        let titleView: UIView
+        if SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER {
+            if !SettingValues.flatMode {
+                title.layer.cornerRadius = 15
+            }
+            titleView = title.withPadding(padding: UIEdgeInsets(top: 8, left: 5, bottom: 0, right: 5))
+        } else {
+            titleView = title.withPadding(padding: UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0))
+        }
+        title.clipsToBounds = true
+        self.contentView.addSubview(titleView)
+        
+        titleView.heightAnchor == 60
+        titleView.horizontalAnchors == self.contentView.horizontalAnchors
+        titleView.topAnchor == self.contentView.topAnchor
+    }
+}
+
 public class PageCell: UICollectionViewCell {
     var title = UILabel()
     var time = UILabel()
@@ -2392,6 +2463,7 @@ public class PageCell: UICollectionViewCell {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textAlignment = .center
+        title.textColor = ColorUtil.fontColor
         
         time.heightAnchor == 60
         time.leftAnchor == self.contentView.leftAnchor

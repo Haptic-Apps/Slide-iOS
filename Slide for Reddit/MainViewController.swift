@@ -12,6 +12,7 @@ import RealmSwift
 import reddift
 import StoreKit
 import UIKit
+import WatchConnectivity
 
 class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate {
 
@@ -63,8 +64,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
-        
-        self.navigationController?.delegate = self
         
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         
@@ -167,6 +166,17 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                         print(error)
                     case .success(let profile):
                         SettingValues.nsfwEnabled = profile.over18
+                        if let nsfw = UserDefaults.standard.object(forKey: SettingValues.pref_hideNSFWCollection + AccountController.currentName) {
+                            SettingValues.hideNSFWCollection = nsfw as! Bool
+                        } else {
+                            SettingValues.hideNSFWCollection = UserDefaults.standard.bool(forKey: SettingValues.pref_hideNSFWCollection)
+                        }
+                        if let nsfw = UserDefaults.standard.object(forKey: SettingValues.pref_nsfwPreviews + AccountController.currentName) {
+                            SettingValues.nsfwPreviews = nsfw as! Bool
+                        } else {
+                            SettingValues.nsfwPreviews = UserDefaults.standard.bool(forKey: SettingValues.pref_nsfwPreviews)
+                        }
+
                         let unread = profile.inboxCount
                         let diff = unread - lastMail
                         if profile.isMod && AccountController.modSubs.isEmpty {
@@ -205,6 +215,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
         }
+        self.navigationController?.delegate = self
     }
 
     func addAccount() {
@@ -436,6 +447,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                     subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
                 }
             }
+            
             subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" ]))
             subs.reverse()
             UIApplication.shared.shortcutItems = subs
@@ -734,7 +746,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
     
         checkForUpdate()
-
+    
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
             self.edgesForExtendedLayout = UIRectEdge.all
             self.extendedLayoutIncludesOpaqueBars = true
@@ -940,6 +952,18 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         UIApplication.shared.statusBarView?.backgroundColor = .clear
         
         menuNav?.view.isHidden = true
+        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+            if AccountController.isLoggedIn && AccountController.isGold {
+                do {
+                    try session.setVisited(names: History.currentSeen) { (_) in
+                        
+                    }
+                } catch {
+                    
+                }
+            }
+            History.currentSeen.removeAll()
+        }
     }
 
     func showSortMenu(_ sender: UIButton?) {

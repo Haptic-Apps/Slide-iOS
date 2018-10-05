@@ -12,6 +12,8 @@ import reddift
 import SDWebImage
 import UIKit
 import UserNotifications
+import WatchConnectivity
+import WatchKit
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")
@@ -31,6 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var login: MainViewController?
     var seenFile: String?
     var commentsFile: String?
+    var readLaterFile: String?
     var totalBackground = true
     var isPro = false
     
@@ -61,6 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let documentDirectory = paths[0] as! String
         seenFile = documentDirectory.appending("/seen.plist")
         commentsFile = documentDirectory.appending("/comments.plist")
+        readLaterFile = documentDirectory.appending("/readlater.plist")
 
         let config = Realm.Configuration(
                 schemaVersion: 11,
@@ -86,6 +90,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("file myData.plist already exits at path.")
         }
 
+        if !fileManager.fileExists(atPath: readLaterFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "readlater", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: readLaterFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
+        
         if !fileManager.fileExists(atPath: commentsFile!) {
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist") {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
@@ -104,6 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         session = Session()
         History.seenTimes = NSMutableDictionary.init(contentsOfFile: seenFile!)!
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
+        ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
 
         UIApplication.shared.statusBarStyle = .lightContent
         SettingValues.initialize()
@@ -153,6 +173,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.makeKeyAndVisible()
         }
 
+        WatchSessionManager.sharedManager.doInit()
+        
+        #if DEBUG
+        SettingValues.isPro = true
+        UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
+        UserDefaults.standard.synchronize()
+        #endif
+        
         return true
     }
     
@@ -470,6 +498,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
+        ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
@@ -514,7 +543,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
     }
-
 }
 
 extension UIApplication {

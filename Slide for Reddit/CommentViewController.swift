@@ -1129,6 +1129,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !loaded {
             refreshControl?.beginRefreshing()
         }
+        
+        if !(parent is PagingCommentViewController) {
+            if SettingValues.commentGesturesMode == .SWIPE_ANYWHERE && !(self.navigationController?.delegate is SloppySwiper) {
+                swiper = SloppySwiper.init(navigationController: self.navigationController!)
+                self.navigationController!.delegate = swiper!
+            }
+        }
     }
 
     var originalPosition: CGPoint?
@@ -1962,18 +1969,17 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
     }
 
 override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UITableViewCell! = nil
+    var cell: UITableViewCell! = nil
 
-        let datasetPosition = (indexPath as NSIndexPath).row
+    let datasetPosition = (indexPath as NSIndexPath).row
 
-        let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
-        let parentOP = parents[thing]
-
-        cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
-    if content.isEmpty || text.isEmpty || cDepth.isEmpty {
+    cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
+    if content.isEmpty || text.isEmpty || cDepth.isEmpty || dataArray.isEmpty {
         self.refresh(self)
         return cell
     }
+    let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
+    let parentOP = parents[thing]
         if let cell = cell as? CommentDepthCell {
             if content[thing] is RComment {
                 var count = 0
@@ -2362,7 +2368,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer == panGesture {
-            if !SettingValues.commentGesturesEnabled {
+            if SettingValues.commentGesturesMode != .GESTURES {
                 return false
             }
             
@@ -2383,7 +2389,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         // Limit angle of pan gesture recognizer to avoid interfering with scrolling
         if gestureRecognizer == panGesture {
-            if !SettingValues.commentGesturesEnabled {
+            if SettingValues.commentGesturesMode != .GESTURES {
                 return false
             }
             
