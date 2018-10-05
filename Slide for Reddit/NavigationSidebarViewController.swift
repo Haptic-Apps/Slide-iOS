@@ -51,6 +51,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view = UITouchCapturingView()
 
         configureViews()
         configureLayout()
@@ -615,5 +616,24 @@ extension NavigationSidebarViewController: UIScrollViewDelegate {
             }
         }
         lastY = scrollView.contentOffset.y
+    }
+}
+
+class UITouchCapturingView: UIView {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        print("Hit test")
+        if isHidden || alpha == 0 {
+            return nil
+        }
+
+        for subview in subviews.reversed() {
+            print(subview)
+            let subPoint = subview.convert(point, from: self)
+            if let result = subview.hitTest(subPoint, with: event) {
+                return result
+            }
+        }
+        
+        return nil
     }
 }

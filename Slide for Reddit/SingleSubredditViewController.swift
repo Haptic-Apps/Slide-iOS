@@ -569,9 +569,7 @@ class SingleSubredditViewController: MediaViewController {
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.fab!.transform = CGAffineTransform.identity
             }, completion: { (_)  in
-                let tap = UITapGestureRecognizer(target: self, action: #selector(self.doFabActions))
-                self.fab!.addGestureRecognizer(tap)
-                
+                self.fab!.addTarget(self, action: #selector(self.doFabActions), for: .touchUpInside)
                 self.fab!.addLongTapGestureRecognizer {
                     self.changeFab()
                 }
@@ -1607,7 +1605,7 @@ class SingleSubredditViewController: MediaViewController {
         let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
         return CGSize(width: itemWidth, height: totalHeight)
     }
-
+    
     // TODO: This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
     static func cellType(forSubmission submission: RSubmission, _ isCollection: Bool) -> CurrentType {
         var target: CurrentType = .none

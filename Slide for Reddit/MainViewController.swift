@@ -352,7 +352,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             menuNav = nil
         }
         menuNav = NavigationSidebarViewController(controller: self)
-        toolbar = UIView()
+        toolbar = UITouchCapturingView()
         toolbar!.layer.cornerRadius = 15
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)

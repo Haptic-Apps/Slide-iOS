@@ -950,7 +950,6 @@
 				BE6EA6E51E1DA5CE00E9E709 /* ProfileContributionLoader.swift */,
 				BE6EA6E71E1DA86100E9E709 /* ProfileViewController.swift */,
 				BE2F3F571EF886D9003C1B28 /* Reachability.swift */,
-				BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */,
 				BE8592C11E0EE72800836C1D /* reddift_config.json */,
 				BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */,
 				BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */,
@@ -1012,6 +1011,7 @@
 			isa = PBXGroup;
 			children = (
 				BEB81A5D214315D1007E326B /* AutoplayBannerLinkCellView.swift */,
+				BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */,
 				BEEA03D020E2C8DC007A8928 /* LinkCellImageCache.swift */,
 				BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */,
 				BE97422B1F00116D00BF48E0 /* BannerLinkCellView.swift */,
