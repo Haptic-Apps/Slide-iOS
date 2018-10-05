@@ -75,6 +75,11 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
         
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        
+        if SettingValues.commentGesturesMode == .SWIPE_ANYWHERE && !(self.navigationController?.delegate is SloppySwiper) {
+            swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            self.navigationController!.delegate = swiper!
+        }
     }
     
     override func viewDidLoad() {
@@ -83,11 +88,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
         let firstViewController = vCs[0]
-
-        if SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
-            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
-        }
         
         for view in view.subviews {
             if view is UIScrollView {

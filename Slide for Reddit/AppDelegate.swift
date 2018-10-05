@@ -175,6 +175,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         WatchSessionManager.sharedManager.doInit()
         
+        #if DEBUG
+        SettingValues.isPro = true
+        UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
+        UserDefaults.standard.synchronize()
+        #endif
+        
         return true
     }
     
