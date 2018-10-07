@@ -621,13 +621,11 @@ extension NavigationSidebarViewController: UIScrollViewDelegate {
 
 class UITouchCapturingView: UIView {
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        print("Hit test")
         if isHidden || alpha == 0 {
             return nil
         }
 
         for subview in subviews.reversed() {
-            print(subview)
             let subPoint = subview.convert(point, from: self)
             if let result = subview.hitTest(subPoint, with: event) {
                 return result

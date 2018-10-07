@@ -23,26 +23,26 @@ PODS:
     - DTFoundation/Core
   - Embassy (4.0.8)
   - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (65.0.0):
+  - MaterialComponents/ActivityIndicator (66.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (65.0.0)
-  - MaterialComponents/Ink (65.0.0):
+  - MaterialComponents/AnimationTiming (66.0.0)
+  - MaterialComponents/Ink (66.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (65.0.0)
-  - MaterialComponents/private/Application (65.0.0)
-  - MaterialComponents/private/Math (65.0.0)
-  - MaterialComponents/ProgressView (65.0.0):
+  - MaterialComponents/Palettes (66.0.0)
+  - MaterialComponents/private/Application (66.0.0)
+  - MaterialComponents/private/Math (66.0.0)
+  - MaterialComponents/ProgressView (66.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (65.0.0)
-  - MaterialComponents/ShadowLayer (65.0.0):
+  - MaterialComponents/ShadowElevations (66.0.0)
+  - MaterialComponents/ShadowLayer (66.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (65.0.0):
+  - MaterialComponents/Tabs (66.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -50,7 +50,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (65.0.0):
+  - MaterialComponents/Typography (66.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (1.1.0)
@@ -59,11 +59,11 @@ PODS:
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
   - MTColorDistance (0.0.3)
-  - Realm (3.10.0):
-    - Realm/Headers (= 3.10.0)
-  - Realm/Headers (3.10.0)
-  - RealmSwift (3.10.0):
-    - Realm (= 3.10.0)
+  - Realm (3.11.0):
+    - Realm/Headers (= 3.11.0)
+  - Realm/Headers (3.11.0)
+  - RealmSwift (3.11.0):
+    - Realm (= 3.11.0)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -133,7 +133,7 @@ CHECKOUT OPTIONS:
     :commit: 04d0c7d878284632d79ced139b3f128c2b33c94c
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: 981eb2a59dec9fdf5dd86bf895b1c47bd22e0bbb
+    :commit: 1b0730e3e735791566ea7349065b56df49128d21
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -155,14 +155,14 @@ SPEC CHECKSUMS:
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: ea21a99bd4da688f9becf8c3e9416016343cbe32
+  MaterialComponents: 2b92bfea789f775ddb5a7060aec9edb8f7bb971b
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
-  Realm: 85ab9e4f779d66f6e9ffeb118dc25b7f130c96ac
-  RealmSwift: 69121c8b86d0ae005fb779efdb10e606732e1c74
+  Realm: 92f09a102692b96a9a10e9617f214f15c5ab85fc
+  RealmSwift: 5f0481cd658bb751c509314b964a35eaa264d2cf
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774

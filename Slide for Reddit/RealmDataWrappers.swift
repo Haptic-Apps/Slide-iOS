@@ -177,16 +177,15 @@ class RealmDataWrapper {
 
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
         let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-
+        
         var videoPreview = (((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
-
         if videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil {
             videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }
         if (videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil) && json?["crosspost_parent_list"] != nil {
             videoPreview = (((((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }
-
+        
         if preview != nil && !(preview?.isEmpty())! {
             burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
             w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
@@ -197,7 +196,7 @@ class RealmDataWrapper {
                 big = true
             }
         }
-
+        
         let thumbnailType = ContentType.getThumbnailType(submission: submission)
         switch thumbnailType {
         case .NSFW:
@@ -210,9 +209,9 @@ class RealmDataWrapper {
             thumb = false
         case .URL:
             thumb = true
-            turl = submission.thumbnail
+            turl = submission.thumbnail.removingPercentEncoding ?? submission.thumbnail
         }
-
+        
         if big { //check for low quality image
             if previews != nil && !(previews?.isEmpty)! {
                 if submission.url != nil && ContentType.isImgurImage(uri: submission.url!) {
@@ -232,7 +231,7 @@ class RealmDataWrapper {
                     lowq = true
                 }
             }
-
+            
         }
         rSubmission.author = submission.author
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
