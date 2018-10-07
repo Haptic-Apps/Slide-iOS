@@ -208,6 +208,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.isTranslucent = true
         navigationBar.tintColor = .white
         navItem = UINavigationItem(title: "Loading album...")
+        navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage.init(named: "close")?.navIcon(true), for: UIControlState.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)

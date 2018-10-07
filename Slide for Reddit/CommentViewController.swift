@@ -333,7 +333,19 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             }
         }
     }
-
+    
+    var oldPosition: CGPoint = CGPoint.zero
+    override func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        if scrollView.contentOffset.y > oldPosition.y {
+            oldPosition = scrollView.contentOffset
+            return true
+        } else {
+            tableView.setContentOffset(oldPosition, animated: true)
+            oldPosition = CGPoint.zero
+        }
+        return false
+    }
+    
     func downvote(_ cell: LinkCellView) {
         do {
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.id)!, completion: { (_) in
@@ -1063,7 +1075,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        self.isHiding = true
         doHeadView(self.view.frame.size)
         
         if navigationController != nil {
@@ -1103,7 +1115,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             UIApplication.shared.statusBarStyle = .lightContent
         }
-        if navigationController != nil || didDisappearCompletely {
+        if navigationController != nil && didDisappearCompletely {
             self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
             self.updateToolbar()
         }
@@ -1146,6 +1158,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }
+        self.isHiding = false
         didDisappearCompletely = false
     }
 
@@ -1655,7 +1668,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+        self.isHiding = true
         if popup != nil {
             UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.popup.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
