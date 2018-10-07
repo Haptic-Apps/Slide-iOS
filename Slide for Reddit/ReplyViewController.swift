@@ -1131,7 +1131,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
     
     func checkReplies(_ comment: Comment) {
         DispatchQueue.main.async {
-            if self.replies != nil && self.replies!.isSelected {
+            if self.replies != nil && !self.replies!.isSelected {
                 do {
                     try self.session?.setReplies(false, name: comment.getId(), completion: { (_) in
                         self.commentReplyCallback(comment, nil)

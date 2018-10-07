@@ -211,9 +211,9 @@ class SingleSubredditViewController: MediaViewController {
 
         if single {
             setupBaseBarColors()
-            if !loaded {
-                showUI()
-            }
+        }
+        if !loaded {
+            showUI()
         }
         self.view.backgroundColor = ColorUtil.backgroundColor
         
