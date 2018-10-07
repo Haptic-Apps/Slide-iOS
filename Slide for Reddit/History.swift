@@ -50,11 +50,11 @@ class History {
     
     public static var currentSeen: [String] = [String]()
     public static func addSeen(s: RSubmission, skipDuplicates: Bool = false) {
-        currentSeen.append(s.getId())
         if !SettingValues.saveNSFWHistory && s.nsfw {
             
         } else if SettingValues.saveHistory {
             let fullname = s.getId()
+            currentSeen.append(fullname)
             if !skipDuplicates || (skipDuplicates && commentCounts.object(forKey: s.getId()) != nil) {
                 seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
             }

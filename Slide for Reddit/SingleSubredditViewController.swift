@@ -290,15 +290,16 @@ class SingleSubredditViewController: MediaViewController {
         }
         
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
-            if AccountController.isLoggedIn && AccountController.isGold {
+            if AccountController.isLoggedIn && AccountController.isGold && !History.currentSeen.isEmpty {
                 do {
-                    try session.setVisited(names: History.currentSeen) { (_) in
+                    try session.setVisited(names: History.currentSeen) { (result) in
+                        print(result)
+                        History.currentSeen.removeAll()
                     }
-                } catch {
-                    
+                } catch let error {
+                    print(error)
                 }
             }
-            History.currentSeen.removeAll()
         }
     }
 
