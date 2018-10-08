@@ -523,7 +523,6 @@ extension ContentListingViewController: LinkCellViewDelegate {
         }
 
         ReadLater.toggleReadLater(link: link)
-        History.addSeen(s: link)
         cell.refresh()
     }
 
