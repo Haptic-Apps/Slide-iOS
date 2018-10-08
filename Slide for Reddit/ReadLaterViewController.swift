@@ -17,7 +17,12 @@ class ReadLaterViewController: ContentListingViewController {
         let dataSource = ReadLaterContributionLoader(sub: subreddit)
         super.init(dataSource: dataSource)
         baseData.delegate = self
-        self.title = "Read Later" + (subreddit == "all" ? "" : " - r/" + subreddit) // TODO: Consider using a title/subtitle layout
+
+        if subreddit == "all" {
+            self.title = "Read Later"
+        } else {
+            self.navigationItem.titleView = setTitle(title: "Read Later", subtitle: "r/\(subreddit)")
+        }
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
         sub = subreddit
         if subreddit != "all" {
@@ -55,4 +60,40 @@ class ReadLaterViewController: ContentListingViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+private extension ReadLaterViewController {
+
+    // https://gist.github.com/migueltg/7779fe93aec48394a39cfdf6cbcfd99b
+    // Function to set title and subtitle in navigation bar
+    func setTitle(title: String, subtitle: String) -> UIView {
+
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        titleLabel.textColor = ColorUtil.fontColor
+        titleLabel.textAlignment = .center
+        titleLabel.sizeToFit()
+
+        let subTitleLabel = UILabel()
+        subTitleLabel.text = subtitle
+        subTitleLabel.font = UIFont.systemFont(ofSize: 11)
+        subTitleLabel.textColor = ColorUtil.fontColor
+        subTitleLabel.textAlignment = .center
+        subTitleLabel.lineBreakMode = .byTruncatingTail
+        subTitleLabel.sizeToFit()
+
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel])
+        stackView.distribution = .equalCentering
+        stackView.axis = .vertical
+
+        let width = max(titleLabel.frame.size.width, subTitleLabel.frame.size.width)
+        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
+
+        titleLabel.sizeToFit()
+        subTitleLabel.sizeToFit()
+
+        return stackView
+    }
+
 }
