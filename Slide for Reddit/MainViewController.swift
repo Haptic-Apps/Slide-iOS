@@ -124,7 +124,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-       // navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
+        // Fixes bug with corrupt nav stack
+        // https://stackoverflow.com/a/39457751/7138792
+        navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
     }
 
     var checkedClipboardOnce = false
