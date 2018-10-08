@@ -55,6 +55,7 @@ class SettingValues {
     public static let pref_leftThumbnail = "LEFT_THUMB"
     public static let pref_hideButton = "HIDE_BUTTON"
     public static let pref_saveButton = "SAVE_BUTTON"
+    public static let pref_readLaterButton = "READ_LATER_BUTTON"
     public static let pref_internalYouTube = "INTERNAL_YOUTUBE"
     public static let pref_multiColumn = "MULTI_COLUMN"
     public static let pref_showFirstParagraph = "FIRST_P"
@@ -190,6 +191,7 @@ class SettingValues {
     public static var leftThumbnail = false
     public static var hideButton = false
     public static var saveButton = false
+    public static var readLaterButton = true
     public static var internalYouTube = true
     public static var multiColumn = false
     public static var showFirstParagraph = true
@@ -415,6 +417,7 @@ class SettingValues {
         SettingValues.noImages = settings.bool(forKey: SettingValues.pref_noImg)
         SettingValues.lqLow = settings.bool(forKey: SettingValues.pref_lqLow)
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
+        SettingValues.readLaterButton = settings.object(forKey: SettingValues.pref_readLaterButton) == nil ? true : settings.bool(forKey: SettingValues.pref_readLaterButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
         SettingValues.nightModeEnabled = settings.bool(forKey: SettingValues.pref_nightMode)
         SettingValues.nightStart = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 9 : settings.integer(forKey: SettingValues.pref_nightStartH)

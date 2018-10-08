@@ -28,6 +28,7 @@ protocol LinkCellViewDelegate: class {
     func openComments(id: String, subreddit: String?)
     func deleteSelf(_ cell: LinkCellView)
     func mod(_ cell: LinkCellView)
+    func readLater(_ cell: LinkCellView)
 }
 
 enum CurrentType {
@@ -64,6 +65,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func save(sender: UITapGestureRecognizer? = nil) {
         del?.save(self)
     }
+
+    func readLater(sender: UITapGestureRecognizer? = nil) {
+        del?.readLater(self)
+    }
     
     var bannerImage: UIImageView!
     var thumbImageContainer: UIView!
@@ -83,6 +88,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var reply: UIButton!
     var downvote: UIButton!
     var mod: UIButton!
+    var readLater: UIButton!
     var commenticon: UIImageView!
     var submissionicon: UIImageView!
     var del: LinkCellViewDelegate?
@@ -275,6 +281,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
         }
+
+        self.readLater = UIButton(type: .custom).then {
+            $0.accessibilityIdentifier = "Read Later Button"
+            $0.setImage(LinkCellImageCache.readLater, for: .normal)
+            $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
+        }
         
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Comment Count Icon"
@@ -417,7 +431,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.distribution = .fill
                 $0.spacing = 16
             }
-            buttons.addArrangedSubviews(edit, reply, save, hide, upvote, downvote, mod)
+            buttons.addArrangedSubviews(edit, reply, readLater, save, hide, upvote, downvote, mod)
             self.contentView.addSubview(buttons)
         } else {
             buttons = UIStackView()
@@ -449,6 +463,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             reply.addTarget(self, action: #selector(LinkCellView.reply(sender:)), for: .touchUpInside)
             downvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
             mod.addTarget(self, action: #selector(LinkCellView.mod(sender:)), for: .touchUpInside)
+            readLater.addTarget(self, action: #selector(readLater(sender:)), for: .touchUpInside)
             edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
             hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
             sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)

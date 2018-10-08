@@ -2257,6 +2257,10 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self)
     }
 
+    func readLater(_ cell: LinkCellView) {
+        // TODO
+    }
+
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: self)
     }

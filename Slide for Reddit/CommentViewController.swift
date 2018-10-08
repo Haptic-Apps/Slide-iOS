@@ -365,6 +365,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
     }
 
+    func readLater(_ cell: LinkCellView) {
+        // TODO
+    }
+
+
     var submission: RSubmission?
     var session: Session?
     var cDepth: Dictionary = [String: Int]()

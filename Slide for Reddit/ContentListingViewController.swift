@@ -516,6 +516,11 @@ extension ContentListingViewController: LinkCellViewDelegate {
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: self)
     }
+
+    func readLater(_ cell: LinkCellView) {
+        // TODO
+    }
+
 }
 
 public class NoContentCell: UICollectionViewCell {
