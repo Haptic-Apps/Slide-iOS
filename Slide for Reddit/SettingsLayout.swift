@@ -164,8 +164,6 @@ class SettingsLayout: UITableViewController {
         fakesub.isEdited = false
         fakesub.commentCount = 42
         fakesub.saved = false
-        // TODO: Add this property
-        //fakesub.readLater = false
         fakesub.stickied = false
         fakesub.visited = false
         fakesub.isSelf = false

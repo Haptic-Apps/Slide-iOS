@@ -834,6 +834,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             upvote,
             downvote,
             mod,
+            readLater,
             save,
             hide,
             reply,
@@ -981,7 +982,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let profile = ProfileViewController.init(name: self.link!.author)
             VCPresenter.showVC(viewController: profile, popupIfPossible: false, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
         case .READ_LATER:
-            ReadLater.addReadLater(id: self.link!.getId(), subreddit: self.link!.subreddit)
+            self.readLater()
         case .EXTERNAL:
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: [:], completionHandler: nil)
@@ -1038,18 +1039,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
         
         reply.isHidden = true
-        
-        if !SettingValues.hideButton {
-            hide.isHidden = true
-        } else {
-            hide.isHidden = false
-        }
+
+        hide.isHidden = !SettingValues.hideButton
         mod.isHidden = true
-        if !SettingValues.saveButton {
-            save.isHidden = true
-        } else {
-            save.isHidden = false
-        }
+        save.isHidden = !SettingValues.saveButton
+        readLater.isHidden = !SettingValues.readLaterButton
+
         if submission.archived || !AccountController.isLoggedIn || !LinkCellView.checkInternet() {
             upvote.isHidden = true
             downvote.isHidden = true
@@ -1733,6 +1728,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let link = self.link!
         upvote.setImage(LinkCellImageCache.upvote, for: .normal)
         save.setImage(LinkCellImageCache.save, for: .normal)
+        readLater.setImage(LinkCellImageCache.readLater, for: .normal)
         downvote.setImage(LinkCellImageCache.downvote, for: .normal)
         sideUpvote.setImage(LinkCellImageCache.upvoteSmall, for: .normal)
         sideDownvote.setImage(LinkCellImageCache.downvoteSmall, for: .normal)
@@ -1800,6 +1796,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.title.alpha = 0.7
         } else {
             self.title.alpha = 1
+        }
+
+        if ReadLater.isReadLater(link: link) {
+            readLater.setImage(LinkCellImageCache.readLaterTinted, for: .normal)
         }
     }
     

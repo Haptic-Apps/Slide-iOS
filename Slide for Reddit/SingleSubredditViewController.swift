@@ -2258,7 +2258,13 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
     }
 
     func readLater(_ cell: LinkCellView) {
-        // TODO
+        guard let link = cell.link else {
+            fatalError("Cell must have a link!")
+        }
+
+        ReadLater.toggleReadLater(link: link)
+        History.addSeen(s: link)
+        cell.refresh()
     }
 
     func mod(_ cell: LinkCellView) {
@@ -2409,7 +2415,7 @@ public class ReadLaterCell: UICollectionViewCell {
     }
     
     func setArticles(articles: Int) {
-        let text = " articles to Read Later"
+        let text = " article\(articles != 1 ? "s" : "") to read later"
         let numberText = "\(articles)"
         let number = NSMutableAttributedString.init(string: numberText, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)])
         let finalText = number

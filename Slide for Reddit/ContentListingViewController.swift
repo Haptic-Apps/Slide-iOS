@@ -518,7 +518,13 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
 
     func readLater(_ cell: LinkCellView) {
-        // TODO
+        guard let link = cell.link else {
+            fatalError("Cell must have a link!")
+        }
+
+        ReadLater.toggleReadLater(link: link)
+        History.addSeen(s: link)
+        cell.refresh()
     }
 
 }
