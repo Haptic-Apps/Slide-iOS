@@ -17,7 +17,7 @@ class ReadLaterViewController: ContentListingViewController {
         let dataSource = ReadLaterContributionLoader(sub: subreddit)
         super.init(dataSource: dataSource)
         baseData.delegate = self
-        self.title = "Read Later" + (subreddit == "all" ? "" : " r/" + subreddit)
+        self.title = "Read Later" + (subreddit == "all" ? "" : " - r/" + subreddit) // TODO: Consider using a title/subtitle layout
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
         sub = subreddit
         if subreddit != "all" {
