@@ -441,7 +441,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             finalSubs = Subscriptions.subreddits
             MainViewController.isOffline = false
             var subs = [UIMutableApplicationShortcutItem]()
-            var split = true
+            var split = UIDevice.current.userInterfaceIdiom == .pad && false
             for subname in finalSubs {
                 if split {
                     let split = SubmissionCommentDualViewController()

@@ -389,31 +389,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var sort: CommentSort = SettingValues.defaultCommentSorting
 
-    override func loadView() {
-        super.loadView()
-        self.automaticallyAdjustsScrollViewInsets = false
-
-        self.tableView.allowsSelection = false
-        self.tableView.layer.speed = 1.5
-
-        tableView.backgroundColor = ColorUtil.backgroundColor
-        refreshControl = UIRefreshControl()
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl!.frame.size.height)
-        refreshControl?.tintColor = ColorUtil.fontColor
-        refreshControl?.attributedTitle = NSAttributedString(string: "")
-        refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControlEvents.valueChanged)
-        var top = CGFloat(64)
-        let bottom = CGFloat(45)
-        if #available(iOS 11.0, *) {
-            top = 0
-        }
-        tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        if #available(iOS 10.0, *) {
-        } else {
-            tableView.addSubview(refreshControl!)
-        }
-    }
-
     func getSelf() -> CommentViewController {
         return self
     }
@@ -894,6 +869,27 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        self.tableView.allowsSelection = false
+        self.tableView.layer.speed = 1.5
+        
+        tableView.backgroundColor = ColorUtil.backgroundColor
+        refreshControl = UIRefreshControl()
+        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl!.frame.size.height)
+        refreshControl?.tintColor = ColorUtil.fontColor
+        refreshControl?.attributedTitle = NSAttributedString(string: "")
+        refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControlEvents.valueChanged)
+        var top = CGFloat(64)
+        let bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            top = 0
+        }
+        tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
+        if #available(iOS 10.0, *) {
+        } else {
+            tableView.addSubview(refreshControl!)
+        }
 
         //Disabled for now, need to figure out why this breaks inbox and profile views
 //        if false && (self.navigationController != nil && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.commentGesturesEnabled {
@@ -1115,7 +1111,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             UIApplication.shared.statusBarStyle = .lightContent
         }
-        if navigationController != nil && didDisappearCompletely {
+        if navigationController != nil && (didDisappearCompletely || !loaded) {
             self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
             self.updateToolbar()
         }

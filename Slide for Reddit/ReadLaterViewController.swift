@@ -14,11 +14,19 @@ class ReadLaterViewController: ContentListingViewController {
     
     var sub = ""
     init(subreddit: String) {
-        super.init(dataSource: ReadLaterContributionLoader(sub: subreddit))
+        let dataSource = ReadLaterContributionLoader(sub: subreddit)
+        super.init(dataSource: dataSource)
         baseData.delegate = self
         self.title = "Read Later" + (subreddit == "all" ? "" : " r/" + subreddit)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
         sub = subreddit
+        if subreddit != "all" {
+            BannerUtil.makeBanner(text: "Click to see all Read Later items", color: ColorUtil.baseAccent, seconds: 0, context: self, top: false) {
+                self.sub = "all"
+                dataSource.sub = "all"
+                self.refresh()
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -32,7 +40,7 @@ class ReadLaterViewController: ContentListingViewController {
         self.navigationItem.rightBarButtonItem = doneallB
     }
     
-    func doneAll(){
+    func doneAll() {
         let alert = UIAlertController(title: "Really mark all as read?", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
             for item in self.baseData.content {
