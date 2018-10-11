@@ -2122,10 +2122,9 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             newLinks.append(links[i])
         }
 
-        if self.splitViewController != nil && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !SettingValues.multiColumn {
+        if self.parent is SubmissionCommentDualViewController {
             let comment = CommentViewController.init(submission: newLinks[0])
-            let nav = UINavigationController.init(rootViewController: comment)
-            self.splitViewController?.showDetailViewController(nav, sender: self)
+            (self.parent as! SubmissionCommentDualViewController).commentsViewController = UINavigationController(rootViewController: comment)
         } else {
             let comment = PagingCommentViewController.init(submissions: newLinks)
             VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)

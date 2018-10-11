@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var seenFile: String?
     var commentsFile: String?
     var readLaterFile: String?
-    var totalBackground = true
+    var totalBackground = false
     var isPro = false
     
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
