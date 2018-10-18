@@ -208,11 +208,14 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
     func showLongMenu() {
         timer!.invalidate()
-        AudioServicesPlaySystemSound(1519)
         if !self.cancelled {
             //todo show menu
             //read reply full thread
-
+            if #available(iOS 10.0, *) {
+                HapticUtility.hapticActionStrong()
+            } else if SettingValues.hapticFeedback {
+                AudioServicesPlaySystemSound(1519)
+            }
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.headerData = "Message from u/\(self.message!.author)"
 

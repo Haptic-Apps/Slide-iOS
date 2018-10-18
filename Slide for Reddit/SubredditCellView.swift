@@ -98,7 +98,11 @@ class SubredditCellView: UITableViewCell {
     func openFull(_ sender: AnyObject) {
         timer!.invalidate()
         if navController != nil {
-            AudioServicesPlaySystemSound(1519)
+            if #available(iOS 10.0, *) {
+                HapticUtility.hapticActionStrong()
+            } else if SettingValues.hapticFeedback {
+                AudioServicesPlaySystemSound(1519)
+            }
             if !self.cancelled {
                 if profile.isEmpty() {
                     let vc = SingleSubredditViewController.init(subName: self.subreddit, single: true)

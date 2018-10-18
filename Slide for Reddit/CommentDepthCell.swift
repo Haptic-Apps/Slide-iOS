@@ -163,7 +163,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func doLongClick() {
         timer!.invalidate()
-        AudioServicesPlaySystemSound(1519)
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
         if !self.cancelled {
             if SettingValues.swapLongPress {
                 //todo this is probably wrong

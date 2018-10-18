@@ -1485,7 +1485,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func showMore() {
         timer!.invalidate()
-        AudioServicesPlaySystemSound(1519)
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
         if !self.cancelled && LinkCellView.checkInternet() {
             self.more()
         }
