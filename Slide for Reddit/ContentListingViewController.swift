@@ -516,6 +516,16 @@ extension ContentListingViewController: LinkCellViewDelegate {
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: self)
     }
+
+    func readLater(_ cell: LinkCellView) {
+        guard let link = cell.link else {
+            fatalError("Cell must have a link!")
+        }
+
+        ReadLater.toggleReadLater(link: link)
+        cell.refresh()
+    }
+
 }
 
 public class NoContentCell: UICollectionViewCell {

@@ -50,6 +50,9 @@ class SettingsLayout: UITableViewController {
     
     var saveCell: UITableViewCell = UITableViewCell()
     var save = UISwitch()
+
+    var readLaterCell: UITableViewCell = UITableViewCell()
+    var readLater = UISwitch()
     
     var selftextCell: UITableViewCell = UITableViewCell()
     var selftext = UISwitch()
@@ -115,6 +118,9 @@ class SettingsLayout: UITableViewController {
         } else if changed == save {
             SettingValues.saveButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveButton)
+        } else if changed == readLater {
+            SettingValues.readLaterButton = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_readLaterButton)
         } else if changed == flatMode {
             SettingValues.flatMode = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
@@ -412,6 +418,7 @@ class SettingsLayout: UITableViewController {
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Show hide post button")
         createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Show save button")
+        createCell(readLaterCell, readLater, isOn: SettingValues.readLaterButton, text: "Show read later button")
         createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Always show thumbnail on link posts")
         createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
         flatModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -426,9 +433,11 @@ class SettingsLayout: UITableViewController {
         if SettingValues.actionBarMode != .FULL {
             hide.isEnabled = false
             save.isEnabled = false
+            readLater.isEnabled = false
         } else {
             hide.isEnabled = true
             save.isEnabled = true
+            readLater.isEnabled = true
         }
         if SettingValues.postImageMode == .THUMBNAIL {
             thumbLink.isEnabled = false
@@ -513,6 +522,7 @@ class SettingsLayout: UITableViewController {
             case 1: return self.smalltagCell
             case 2: return self.hideCell
             case 3: return self.saveCell
+            case 4: return self.readLaterCell
                 
             default: fatalError("Unknown row in section 4")
             }
@@ -526,7 +536,7 @@ class SettingsLayout: UITableViewController {
         case 1: return 4
         case 2: return 5
         case 3: return 3
-        case 4: return 4
+        case 4: return 5
         default: fatalError("Unknown number of sections")
         }
     }

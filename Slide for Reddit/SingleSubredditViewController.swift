@@ -2257,6 +2257,15 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self)
     }
 
+    func readLater(_ cell: LinkCellView) {
+        guard let link = cell.link else {
+            fatalError("Cell must have a link!")
+        }
+
+        ReadLater.toggleReadLater(link: link)
+        cell.refresh()
+    }
+
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: self)
     }
@@ -2405,7 +2414,7 @@ public class ReadLaterCell: UICollectionViewCell {
     }
     
     func setArticles(articles: Int) {
-        let text = " articles to Read Later"
+        let text = " article\(articles != 1 ? "s" : "") to read later"
         let numberText = "\(articles)"
         let number = NSMutableAttributedString.init(string: numberText, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)])
         let finalText = number

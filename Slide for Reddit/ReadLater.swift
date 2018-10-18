@@ -25,6 +25,32 @@ class ReadLater {
         }
         return toReturn
     }
+
+    public static func isReadLater(link: RSubmission) -> Bool {
+        return isReadLater(id: link.getId(), subreddit: link.subreddit)
+    }
+
+    public static func isReadLater(id: String, subreddit: String) -> Bool {
+        return ReadLater.getReadLaterIDs(sub: subreddit).contains(where: { (link) -> Bool in
+            return link.getId() == id
+        })
+    }
+
+    @discardableResult
+    public static func toggleReadLater(link: RSubmission) -> Bool {
+        let isMarkedReadLater = isReadLater(link: link)
+        if isMarkedReadLater {
+            ReadLater.removeReadLater(link: link)
+            return false
+        } else {
+            ReadLater.addReadLater(link: link)
+            return true
+        }
+    }
+
+    public static func addReadLater(link: RSubmission) {
+        addReadLater(id: link.getId(), subreddit: link.subreddit)
+    }
     
     public static func isReadLater(id: String) -> Bool {
         return readLaterIDs[id] != nil
@@ -32,6 +58,10 @@ class ReadLater {
     
     public static func addReadLater(id: String, subreddit: String) {
         readLaterIDs.setValue(subreddit, forKey: id)
+    }
+
+    public static func removeReadLater(link: RSubmission) {
+        removeReadLater(id: link.getId())
     }
     
     public static func removeReadLater(id: String) {
