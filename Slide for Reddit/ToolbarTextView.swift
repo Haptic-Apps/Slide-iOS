@@ -112,7 +112,7 @@ public class ToolbarTextView: NSObject {
         let alert = UIAlertController.init(style: .actionSheet)
         alert.addPhotoLibraryPicker(
                 flow: .vertical,
-                paging: true,
+                paging: false,
                 selection: .multiple(action: { images in
                     if !images.isEmpty {
                         let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)

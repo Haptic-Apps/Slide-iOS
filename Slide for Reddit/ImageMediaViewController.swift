@@ -256,7 +256,7 @@ extension ImageMediaViewController {
             scrollView.zoom(to: zoomRect, animated: true)
 //            scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
         } else {
-            let zoomRect = zoomRectForScale(scale: scrollView.maximumZoomScale, center: recognizer.location(in: recognizer.view))
+            let zoomRect = zoomRectForScale(scale: min(1, scrollView.maximumZoomScale), center: recognizer.location(in: recognizer.view))
             scrollView.zoom(to: zoomRect, animated: true)
         }
     }
