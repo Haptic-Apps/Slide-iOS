@@ -143,7 +143,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                             animated: true,
                                             completion: nil)
                     self.navItem?.title = "\(self.urlStringKeys.index(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
-                    let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon().withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(self.overview(_:)))
+                    let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon(true).withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(self.overview(_:)))
                     
                     self.navItem?.rightBarButtonItem = gridB
                 }
@@ -186,6 +186,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.view.backgroundColor = UIColor.clear
+        UIApplication.shared.statusBarStyle = .lightContent
     }
     
     var navItem: UINavigationItem?
@@ -275,6 +276,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                         direction: .forward,
                                         animated: true,
                                         completion: nil)
+                self.navItem?.title = "\((image ?? 0) + 1)/\(self.urlStringKeys.count)"
                 alert.dismiss(animated: true, completion: nil)
             }))
         alert.addAction(title: "Close", style: .cancel)

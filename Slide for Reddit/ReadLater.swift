@@ -52,6 +52,10 @@ class ReadLater {
         addReadLater(id: link.getId(), subreddit: link.subreddit)
     }
     
+    public static func isReadLater(id: String) -> Bool {
+        return readLaterIDs[id] != nil
+    }
+    
     public static func addReadLater(id: String, subreddit: String) {
         readLaterIDs.setValue(subreddit, forKey: id)
     }
