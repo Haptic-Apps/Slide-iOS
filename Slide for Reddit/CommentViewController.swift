@@ -1431,6 +1431,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 topCell = top[0].row
             }
         }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionWeak()
+        }
         var contents = content[dataArray[topCell]]
 
         while (contents is RComment ?  !matches(comment: contents as! RComment, sort: currentSort) : true ) && dataArray.count > topCell && topCell - 1 >= 0 {
@@ -1452,6 +1455,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if top.count > 0 {
                 topCell = top[0].row
             }
+        }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionWeak()
         }
         if topCell <= 0 && lastMoved < 0 {
             goToCellTop(i: 0)

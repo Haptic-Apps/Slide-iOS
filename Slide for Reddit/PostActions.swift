@@ -93,11 +93,18 @@ class PostActions: NSObject {
             }))
         }
         
-        alertController.addAction(Action(ActionData(title: "Add to Read Later", image: UIImage(named: "restore")!.menuIcon()), style: .default, handler: { _ in
-            ReadLater.addReadLater(id: cell.link!.getId(), subreddit: cell.link!.subreddit)
-            BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
-        }))
-
+        if ReadLater.isReadLater(id: cell.link!.getIdentifier()) {
+            alertController.addAction(Action(ActionData(title: "Remove from Read Later", image: UIImage(named: "restore")!.menuIcon()), style: .default, handler: { _ in
+                ReadLater.removeReadLater(id: cell.link!.getIdentifier())
+                BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
+            }))
+        } else {
+            alertController.addAction(Action(ActionData(title: "Add to Read Later", image: UIImage(named: "restore")!.menuIcon()), style: .default, handler: { _ in
+                ReadLater.addReadLater(id: cell.link!.getIdentifier(), subreddit: cell.link!.subreddit)
+                BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
+            }))
+        }
+        
         alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
