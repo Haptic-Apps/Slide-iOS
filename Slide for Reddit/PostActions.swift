@@ -99,7 +99,7 @@ class PostActions: NSObject {
                 BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
             }))
         } else {
-            alertController.addAction(Action(ActionData(title: "Add to Read Later", image: UIImage(named: "restore")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(Action(ActionData(title: "Add to Read Later", image: UIImage(named: "readLater")!.menuIcon()), style: .default, handler: { _ in
                 ReadLater.addReadLater(id: cell.link!.getIdentifier(), subreddit: cell.link!.subreddit)
                 BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
             }))

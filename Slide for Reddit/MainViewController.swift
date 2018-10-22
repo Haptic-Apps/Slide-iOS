@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import BadgeSwift
 import MaterialComponents.MaterialTabs
 import RealmSwift
 import reddift
@@ -14,16 +15,79 @@ import StoreKit
 import UIKit
 import WatchConnectivity
 
-class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate {
+class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate, ReadLaterDelegate {
+    
+    func didUpdate() {
+        if let count = (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.readLaterCount {
+            if count > 0 {
+                
+                let readLater = UIButton.init(type: .custom)
+                readLater.setImage(UIImage.init(named: "readLater")?.navIcon(), for: UIControlState.normal)
+                readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControlEvents.touchUpInside)
+                readLater.frame = CGRect.init(x: 0, y: 0, width: 45, height: 45)
+
+                readLaterBadge?.removeFromSuperview()
+                readLaterBadge = nil
+
+                readLaterBadge = BadgeSwift()
+                readLater.addSubview(readLaterBadge!)
+                
+                readLaterBadge!.text = "\(count)"
+                readLaterBadge!.insets = CGSize(width: 3, height: 3)
+                readLaterBadge!.font = UIFont.systemFont(ofSize: 11)
+                readLaterBadge!.textColor = UIColor.white
+                readLaterBadge!.badgeColor = UIColor.red
+                readLaterBadge!.shadowOpacityBadge = 0
+                positionBadge(readLaterBadge!)
+
+                readLaterB = UIBarButtonItem.init(customView: readLater)
+
+                navigationItem.rightBarButtonItems = [sortB, readLaterB]
+            } else {
+                navigationItem.rightBarButtonItems = [sortB]
+            }
+        }
+    }
+    
+    private func positionBadge(_ badge: UIView) {
+        badge.translatesAutoresizingMaskIntoConstraints = false
+        var constraints = [NSLayoutConstraint]()
+        
+        // Center the badge vertically in its container
+        constraints.append(NSLayoutConstraint(
+            item: badge,
+            attribute: NSLayoutAttribute.centerY,
+            relatedBy: NSLayoutRelation.equal,
+            toItem: readLater,
+            attribute: NSLayoutAttribute.centerY,
+            multiplier: 1, constant: -20)
+        )
+        
+        // Center the badge horizontally in its container
+        constraints.append(NSLayoutConstraint(
+            item: badge,
+            attribute: NSLayoutAttribute.centerX,
+            relatedBy: NSLayoutRelation.equal,
+            toItem: readLater,
+            attribute: NSLayoutAttribute.centerX,
+            multiplier: 1, constant: 25)
+        )
+        
+        readLater.addConstraints(constraints)
+    }
 
     var isReload = false
+    var readLaterBadge: BadgeSwift?
     public static var vCs: [UIViewController] = []
     public static var current: String = ""
     public static var needsRestart = false
     public var toolbar: UIView?
     var more = UIButton()
     var menu = UIButton()
-
+    var readLaterB = UIBarButtonItem()
+    var sortB = UIBarButtonItem()
+    var readLater = UIButton()
+    
     var menuPresentationController: BottomMenuPresentationController?
     
     override func viewWillAppear(_ animated: Bool) {
@@ -31,6 +95,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.navigationController?.setToolbarHidden(true, animated: false)
+        ReadLater.delegate = self
     }
     
     public func viewWillAppearActions() {
@@ -67,9 +132,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         
-        if SettingValues.viewType {
-            navigationController?.setNavigationBarHidden(true, animated: true)
-        }
         
         menuNav?.header.doColors()
         if menuNav?.tableView != nil {
@@ -124,7 +186,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-       // navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
+        // Fixes bug with corrupt nav stack
+        // https://stackoverflow.com/a/39457751/7138792
+        navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
     }
 
     var checkedClipboardOnce = false
@@ -492,7 +556,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         if SettingValues.viewType {
             setupTabBar(finalSubs)
         }
-        
     }
 
     var tabBar = MDCTabBar()
@@ -515,7 +578,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0])
         tabBar.sizeToFit()
         tabBar.frame.size.height = 48
-        
+        self.viewToMux = self.tabBar
+
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
         tabBar.horizontalAnchors == self.view.horizontalAnchors
@@ -580,7 +644,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
             
             let label = UILabel()
-            label.text = "   \(SettingValues.reduceColor ? "    " : "")\(self.currentTitle)"
+            label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.viewType ? "Slide" : self.currentTitle)"
             label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
             label.adjustsFontSizeToFitWidth = true
             label.font = UIFont.boldSystemFont(ofSize: 20)
@@ -598,11 +662,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             label.sizeToFit()
             let leftItem = UIBarButtonItem(customView: label)
             
-            if SettingValues.bottomBarHidden && !SettingValues.viewType {
-                self.navigationItem.leftBarButtonItems = [menuB, leftItem]
-            } else {
-                self.navigationItem.leftBarButtonItems = [leftItem]
-            }
+            self.navigationItem.leftBarButtonItems = [leftItem]
             
             self.navigationController?.navigationBar.shadowImage = UIImage()
             self.navigationController?.navigationBar.layoutIfNeeded()
@@ -658,8 +718,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as? SingleSubredditViewController ?? (pendingViewControllers[0] as! SubmissionCommentDualViewController).submissionsViewController!).sub)
-        color1 = ColorUtil.getColorForSub(sub: getSubredditVC()!.sub)
+        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as? SingleSubredditViewController ?? (pendingViewControllers[0] as! SubmissionCommentDualViewController).submissionsViewController!).sub, true)
+        color1 = ColorUtil.getColorForSub(sub: getSubredditVC()!.sub, true)
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -771,9 +831,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             if menuNav?.tableView != nil {
                 menuNav?.tableView.reloadData()
             }
-            if SettingValues.viewType {
-                navigationController?.setNavigationBarHidden(true, animated: false)
-            }
         }
         
         let formatter = DateFormatter()
@@ -828,7 +885,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let sortB = UIBarButtonItem.init(customView: sort)
+        sortB = UIBarButtonItem.init(customView: sort)
 
         let settings = UIButton.init(type: .custom)
         settings.setImage(UIImage.init(named: "settings")?.toolbarIcon(), for: UIControlState.normal)
@@ -847,55 +904,34 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         if !MainViewController.isOffline {
-            if SettingValues.bottomBarHidden && !SettingValues.viewType {
-                more = UIButton.init(type: .custom)
-                more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                let moreB = UIBarButtonItem.init(customView: more)
-                
-                menu = UIButton.init(type: .custom)
-                menu.setImage(UIImage.init(named: "menu")?.navIcon(), for: UIControlState.normal)
-                menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
-                menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-                menuB = UIBarButtonItem.init(customView: menu)
-                
-                navigationItem.leftBarButtonItem = menuB
-                navigationItem.rightBarButtonItems = [moreB, sortB]
-            } else {
-                more = UIButton.init(type: .custom)
-                more.accessibilityIdentifier = "more"
-                more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                
-                menu = UIButton.init(type: .custom)
-                menu.accessibilityIdentifier = "menu"
-                menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
-                menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
-                menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-                toolbar?.addSubview(menu)
-                toolbar?.addSubview(more)
-                
-                menu.heightAnchor == 56
-                menu.widthAnchor == 56
-                menu.leftAnchor == toolbar!.leftAnchor
-                menu.topAnchor == toolbar!.topAnchor
-                
-                more.heightAnchor == 56
-                more.widthAnchor == 56
-                more.rightAnchor == toolbar!.rightAnchor
-                more.topAnchor == toolbar!.topAnchor
+            more = UIButton.init(type: .custom)
+            more.accessibilityIdentifier = "more"
+            more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
+            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            
+            menu = UIButton.init(type: .custom)
+            menu.accessibilityIdentifier = "menu"
+            menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
+            menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+            menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            toolbar?.addSubview(menu)
+            toolbar?.addSubview(more)
+            
+            menu.heightAnchor == 56
+            menu.widthAnchor == 56
+            menu.leftAnchor == toolbar!.leftAnchor
+            menu.topAnchor == toolbar!.topAnchor
+            
+            more.heightAnchor == 56
+            more.widthAnchor == 56
+            more.rightAnchor == toolbar!.rightAnchor
+            more.topAnchor == toolbar!.topAnchor
 
-                navigationItem.rightBarButtonItem = sortB
-            }
         } else {
-            if SettingValues.bottomBarHidden && !SettingValues.viewType {
-                navigationItem.rightBarButtonItems = [settingsB, offlineB]
-            } else {
-                toolbarItems = [settingsB, flexButton, offlineB]
-            }
+            toolbarItems = [settingsB, flexButton, offlineB]
         }
+        didUpdate()
     }
 
     func checkForUpdate() {
@@ -965,6 +1001,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func showSortMenu(_ sender: UIButton?) {
         getSubredditVC()?.showSortMenu(sender)
+    }
+    
+    func showReadLater(_ sender: UIButton?) {
+        VCPresenter.showVC(viewController: ReadLaterViewController(subreddit: currentTitle), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {

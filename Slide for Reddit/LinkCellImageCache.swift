@@ -30,6 +30,8 @@ public class LinkCellImageCache {
     static var reply = UIImage()
     static var mod = UIImage()
     static var modTinted = UIImage()
+    static var readLater = UIImage()
+    static var readLaterTinted = UIImage()
     static var hide = UIImage()
     static var edit = UIImage()
     
@@ -69,6 +71,9 @@ public class LinkCellImageCache {
 
         mod = UIImage(named: "mod")!.menuIcon()
         modTinted = mod.getCopy(withColor: GMColor.red500Color())
+
+        readLater = UIImage(named: "readLater")!.menuIcon()
+        readLaterTinted = readLater.getCopy(withColor: GMColor.green500Color())
         
         var topColor = ColorUtil.fontColor.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.9))
         var nextColor = ColorUtil.fontColor.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.8))

@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import RLBAlertsPickers
 import SDWebImage
 import UIKit
@@ -226,6 +227,10 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
+        
+        navigationBar.topAnchor == self.view.safeTopAnchor
+        navigationBar.horizontalAnchors == self.view.horizontalAnchors
+        navigationBar.heightAnchor == 56
         
         var url = baseURL!.absoluteString
         if url.contains("/layout/") {

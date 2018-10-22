@@ -17,7 +17,7 @@ class SearchViewController: ContentListingViewController {
     init(subreddit: String, searchFor: String) {
         super.init(dataSource: SearchContributionLoader.init(query: searchFor, sub: subreddit))
         baseData.delegate = self
-        self.title = searchFor
+        self.navigationItem.titleView = setTitle(title: searchFor, subtitle: "r/\(subreddit)")
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
         search = searchFor
         sub = subreddit

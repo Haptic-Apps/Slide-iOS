@@ -29,11 +29,11 @@ class SingleSubredditViewController: MediaViewController {
     static var nextSingle = false
     
     var navbarEnabled: Bool {
-        return single || !SettingValues.viewType
+        return true
     }
 
     var toolbarEnabled: Bool {
-        return !SettingValues.bottomBarHidden || SettingValues.viewType
+        return true
     }
 
     let maxHeaderHeight: CGFloat = 120
@@ -42,8 +42,8 @@ class SingleSubredditViewController: MediaViewController {
 
     let margin: CGFloat = 10
     let cellsPerRow = 3
-    var readLaterArticles: Int {
-        return ReadLater.readLaterIDs.allKeys.filter { (value) -> Bool in
+    var readLaterCount: Int {
+        return ReadLater.readLaterIDs.allValues.filter { (value) -> Bool in
                 if sub == "all" || sub == "frontpage" { return true }
                 guard let valueStr = value as? String else { return false }
                 return valueStr.lowercased() == sub.lowercased()
@@ -217,13 +217,14 @@ class SingleSubredditViewController: MediaViewController {
         }
         self.view.backgroundColor = ColorUtil.backgroundColor
         
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
         navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
         
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+        if single {
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -252,13 +253,14 @@ class SingleSubredditViewController: MediaViewController {
         SingleSubredditViewController.nextSingle = self.single
         doHeadView()
         
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
         navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
         
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+        if single {
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+        }
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         navigationController?.toolbar.tintColor = ColorUtil.fontColor
     }
@@ -350,7 +352,6 @@ class SingleSubredditViewController: MediaViewController {
                 self.isHiding = false
             })
         
-        if !SettingValues.bottomBarHidden || SettingValues.viewType {
             if single {
                 navigationController?.setToolbarHidden(true, animated: true)
             } else {
@@ -372,7 +373,6 @@ class SingleSubredditViewController: MediaViewController {
                     self.parentController?.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
                     self.parentController?.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
                 }
-            }
 //            if !single && parentController != nil {
 //                parentController!.drawerButton.isHidden = false
 //            }
@@ -406,7 +406,6 @@ class SingleSubredditViewController: MediaViewController {
                     }, completion: { _ in
                     })
 
-                    if !SettingValues.bottomBarHidden || SettingValues.viewType {
                         if self.single {
                             self.navigationController?.setToolbarHidden(false, animated: true)
                         } else if !disableBottom {
@@ -430,7 +429,6 @@ class SingleSubredditViewController: MediaViewController {
                                 self.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
                             }
                         }
-                    }
                     self.isToolbarHidden = false
                 })
         } else {
@@ -446,7 +444,6 @@ class SingleSubredditViewController: MediaViewController {
                 })
             }
 
-            if !SettingValues.bottomBarHidden || SettingValues.viewType {
                 if single {
                     navigationController?.setToolbarHidden(false, animated: true)
                 } else if !disableBottom {
@@ -468,7 +465,6 @@ class SingleSubredditViewController: MediaViewController {
                         self.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
                         self.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
                     }
-                }
 //                if !single && parentController != nil {
 //                    self.parentController!.drawerButton.isHidden = true
 //                }
@@ -514,9 +510,7 @@ class SingleSubredditViewController: MediaViewController {
     }
 
     func setupFab(_ size: CGSize) {
-        if !SettingValues.bottomBarHidden || SettingValues.viewType {
-            addNewFab(size)
-        }
+        addNewFab(size)
     }
     
     func addNewFab(_ size: CGSize) {
@@ -708,26 +702,16 @@ class SingleSubredditViewController: MediaViewController {
             info.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let infoB = UIBarButtonItem.init(customView: info)
 
-            if false && (SettingValues.bottomBarHidden || SettingValues.viewType) {
-                more = UIButton.init(type: .custom)
-                more.setImage(UIImage.init(named: "moreh")?.navIcon(), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
-                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                let moreB = UIBarButtonItem.init(customView: more)
-                
-                navigationItem.rightBarButtonItems = [moreB, sortB, subbB]
-            } else {
-                more = UIButton.init(type: .custom)
-                more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
-                more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
-                more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                let moreB = UIBarButtonItem.init(customView: more)
-                
-                navigationItem.rightBarButtonItems = [sortB, subbB]
-                let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
-                
-                toolbarItems = [infoB, flexButton, moreB]
-            }
+            more = UIButton.init(type: .custom)
+            more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
+            more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
+            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let moreB = UIBarButtonItem.init(customView: more)
+            
+            navigationItem.rightBarButtonItems = [sortB, subbB]
+            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+            
+            toolbarItems = [infoB, flexButton, moreB]
             title = sub
 
             do {
@@ -1929,11 +1913,9 @@ extension SingleSubredditViewController {
             self.search()
         }))
 
-        if !single && SettingValues.viewType {
-            alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
-                self.showSortMenu(self.more)
-            }))
-        }
+        alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
+            self.showSortMenu(self.more)
+        }))
 
         if sub.contains("/m/") {
             alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
@@ -2005,29 +1987,17 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
             }
         }
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
-            VCPresenter.showVC(viewController: ReadLaterViewController(subreddit: sub) , popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
-        }
-    }
 }
 
 // MARK: - Collection View Data Source
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count + ((links.count != 0 && loaded) ? 1 : 0) + (readLaterArticles > 0 && loaded ? 1 : 0)
+        return links.count + ((links.count != 0 && loaded) ? 1 : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
-            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "readlater", for: indexPath) as! ReadLaterCell
-            cell.setArticles(articles: self.readLaterArticles)
-            return cell
-        }
-        
-        let row = indexPath.row - (readLaterArticles > 0 && loaded ? 1 : 0)
+        let row = indexPath.row
         if row >= self.links.count {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
             cell.loader.color = ColorUtil.fontColor
@@ -2155,10 +2125,7 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
 // MARK: - Wrapping Flow Layout Delegate
 extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        if indexPath.row == 0 && readLaterArticles > 0 && loaded {
-            return CGSize(width: width, height: 60)
-        }
-        let row = indexPath.row - (readLaterArticles > 0 && loaded ? 1 : 0)
+        let row = indexPath.row
         if row < links.count {
             let submission = links[row]
             if submission.author == "PAGE_SEPARATOR" {
@@ -2255,6 +2222,15 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func more(_ cell: LinkCellView) {
         PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self)
+    }
+
+    func readLater(_ cell: LinkCellView) {
+        guard let link = cell.link else {
+            fatalError("Cell must have a link!")
+        }
+
+        ReadLater.toggleReadLater(link: link)
+        cell.refresh()
     }
 
     func mod(_ cell: LinkCellView) {
@@ -2405,11 +2381,12 @@ public class ReadLaterCell: UICollectionViewCell {
     }
     
     func setArticles(articles: Int) {
-        let text = " articles to Read Later"
-        let numberText = "\(articles)"
+        let text = "Read Later "
+        let numberText = "(\(articles))"
         let number = NSMutableAttributedString.init(string: numberText, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)])
-        let finalText = number
-        finalText.append(NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.systemFont(ofSize: 15)]))
+        let readLater = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.systemFont(ofSize: 15)])
+        let finalText = readLater
+        finalText.append(number)
 
         title.attributedText = finalText
     }

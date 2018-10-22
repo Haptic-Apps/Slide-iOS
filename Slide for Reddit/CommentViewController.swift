@@ -365,6 +365,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
     }
 
+    func readLater(_ cell: LinkCellView) {
+        guard let link = cell.link else {
+            fatalError("Cell must have a link!")
+        }
+
+        ReadLater.toggleReadLater(link: link)
+        cell.refresh()
+    }
+
     var submission: RSubmission?
     var session: Session?
     var cDepth: Dictionary = [String: Int]()
