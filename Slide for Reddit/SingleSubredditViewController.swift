@@ -1301,7 +1301,7 @@ class SingleSubredditViewController: MediaViewController {
                             } else {
                                 var paths = [IndexPath]()
                                 for i in before..<self.links.count {
-                                    paths.append(IndexPath.init(item: i, section: 0))
+                                    paths.append(IndexPath.init(item: i + (self.readLaterArticles > 0 ? 1 : 0), section: 0))
                                 }
 
                                 if before == 0 {

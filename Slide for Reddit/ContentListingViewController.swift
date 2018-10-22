@@ -166,8 +166,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c?.layer.rasterizationScale = UIScreen.main.scale
             
             if self is ReadLaterViewController {
-                c?.hide.isHidden = false
-                c?.hide.setImage(UIImage(named: "done")?.menuIcon().getCopy(withColor: GMColor.red500Color()), for: .normal)
+                c?.readLater.isHidden = false
             }
 
             cell = c
@@ -496,6 +495,17 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
 
     func hide(_ cell: LinkCellView) {
+    }
+
+    func mod(_ cell: LinkCellView) {
+        PostActions.showModMenu(cell, parent: self)
+    }
+
+    func readLater(_ cell: LinkCellView) {
+        guard let link = cell.link else {
+            fatalError("Cell must have a link!")
+        }
+
         if self is ReadLaterViewController {
             ReadLater.removeReadLater(id: cell.link!.getId())
             let savedIndex = tableView.indexPath(for: cell)?.row ?? 0
@@ -511,18 +521,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
                 self.tableView.insertItems(at: [IndexPath.init(row: savedIndex, section: 0)])
             }
         }
-    }
 
-    func mod(_ cell: LinkCellView) {
-        PostActions.showModMenu(cell, parent: self)
-    }
-
-    func readLater(_ cell: LinkCellView) {
-        guard let link = cell.link else {
-            fatalError("Cell must have a link!")
-        }
-
-        ReadLater.toggleReadLater(link: link)
         cell.refresh()
     }
 
