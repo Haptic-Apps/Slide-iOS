@@ -30,6 +30,7 @@ class ReadLaterViewController: ContentListingViewController {
                 self.sub = "all"
                 dataSource.sub = "all"
                 self.refresh()
+                self.title = "Read Later"
             }
         }
     }
@@ -62,7 +63,7 @@ class ReadLaterViewController: ContentListingViewController {
     }
 }
 
-private extension ReadLaterViewController {
+public extension UIViewController {
 
     // https://gist.github.com/migueltg/7779fe93aec48394a39cfdf6cbcfd99b
     // Function to set title and subtitle in navigation bar

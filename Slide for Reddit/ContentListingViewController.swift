@@ -502,7 +502,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
 
     func readLater(_ cell: LinkCellView) {
-        guard let link = cell.link else {
+        guard cell.link != nil else {
             fatalError("Cell must have a link!")
         }
 
@@ -515,10 +515,14 @@ extension ContentListingViewController: LinkCellViewDelegate {
             } else {
                 self.tableView.deleteItems(at: [IndexPath.init(row: savedIndex, section: 0)])
             }
-            BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.red500Color(), seconds: 3, context: self, top: false) {
+            BannerUtil.makeBanner(text: "Removed from Read Later\nTap to undo", color: GMColor.red500Color(), seconds: 3, context: self, top: false) {
                 ReadLater.addReadLater(id: cell.link!.getId(), subreddit: cell.link!.subreddit)
                 self.baseData.content.insert(cell.link!, at: savedIndex)
-                self.tableView.insertItems(at: [IndexPath.init(row: savedIndex, section: 0)])
+                if ReadLater.readLaterIDs.count == 1 {
+                    self.tableView.reloadData()
+                } else {
+                    self.tableView.insertItems(at: [IndexPath.init(row: savedIndex, section: 0)])
+                }
             }
         }
 

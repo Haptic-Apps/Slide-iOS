@@ -9,8 +9,18 @@
 import reddift
 import UIKit
 
+protocol ReadLaterDelegate: class {
+    func didUpdate()
+}
+
 class ReadLater {
-    public static var readLaterIDs = NSMutableDictionary()
+    public static var readLaterIDs: NSMutableDictionary  = NSMutableDictionary() {
+        didSet {
+            delegate?.didUpdate()
+        }
+    }
+    
+    public static weak var delegate: ReadLaterDelegate?
     
     public static func getReadLaterIDs(sub: String = "all") -> [Link] {
         var toReturn = [Link]()
