@@ -14,7 +14,7 @@ protocol ReadLaterDelegate: class {
 }
 
 class ReadLater {
-    public static var readLaterIDs: NSMutableDictionary  = NSMutableDictionary() {
+    public static var readLaterIDs: NSMutableDictionary = NSMutableDictionary() {
         didSet {
             delegate?.didUpdate()
         }
@@ -68,10 +68,12 @@ class ReadLater {
     
     public static func addReadLater(id: String, subreddit: String) {
         readLaterIDs.setValue(subreddit, forKey: id)
+        delegate?.didUpdate()
     }
 
     public static func removeReadLater(link: RSubmission) {
         removeReadLater(id: link.getId())
+        delegate?.didUpdate()
     }
     
     public static func removeReadLater(id: String) {

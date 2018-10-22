@@ -24,7 +24,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 let readLater = UIButton.init(type: .custom)
                 readLater.setImage(UIImage.init(named: "readLater")?.navIcon(), for: UIControlState.normal)
                 readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControlEvents.touchUpInside)
-                readLater.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                readLater.frame = CGRect.init(x: 0, y: 0, width: 45, height: 45)
 
                 readLaterBadge?.removeFromSuperview()
                 readLaterBadge = nil
