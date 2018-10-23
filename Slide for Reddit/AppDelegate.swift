@@ -133,22 +133,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Drafts.initialize()
         RemovalReasons.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
-        /* enable this when we implement it
+
         if #available(iOS 10.0, *) {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
-                if (error) != nil {
-                    print(error!.localizedDescription)
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                } else {
+                    print("User has chosen to \(granted ? "allow" : "deny") notifications.")
                 }
             }
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, error) in
-                if (error) != nil {
-                    print(error!.localizedDescription)
-                }
-            }
-            UIApplication.shared.registerForRemoteNotifications()
         } else {
             // Fallback on earlier versions
-        }*/
+        }
+
         if !UserDefaults.standard.bool(forKey: "sc" + name) {
             syncColors(subredditController: nil)
         }
@@ -174,7 +171,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         WatchSessionManager.sharedManager.doInit()
-        
+
+        UIApplication.shared.setMinimumBackgroundFetchInterval(60 * 10) // 10 minute interval
+        print("Application background refresh minimum interval: \(60 * 10) seconds")
+        print("Application background refresh status: \(UIApplication.shared.backgroundRefreshStatus.rawValue)")
+
         #if DEBUG
         SettingValues.isPro = true
         UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
@@ -185,7 +186,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
-        print("Recived: \(userInfo)")
+        print("Received: \(userInfo)")
     }
 
     var statusBar = UIView()
@@ -216,69 +217,108 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         }
     }
-    
-    /* Disable this for now
+
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         getData(completionHandler)
     }
-    
+
+    var backgroundTaskId: UIBackgroundTaskIdentifier?
+
     func getData(_ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        if let session = session {
+
+        self.backgroundTaskId = UIApplication.shared.beginBackgroundTask (withName: "Download New Messages") {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
+            self.backgroundTaskId = UIBackgroundTaskInvalid
+        }
+
+        func cleanup() {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
+            self.backgroundTaskId = UIBackgroundTaskInvalid
+        }
+
+        print("GetData running...")
+        guard let session = session,
+            let request = try? session.getMessageRequest(.unread) else {
+            completionHandler(.failed)
+            cleanup()
+            return
+        }
+
+        func handler (_ response: HTTPURLResponse?, _ dataURL: URL?, _ error: NSError?) {
+            guard error == nil else {
+                print(String(describing: error?.localizedDescription))
+                completionHandler(.failed)
+                cleanup()
+                return
+            }
+
+            guard let response = response,
+                let dataURL = dataURL,
+                response.statusCode == HttpStatus.ok.rawValue else {
+                    completionHandler(.failed)
+                    cleanup()
+                    return
+            }
+
+            let data: Data
             do {
-                let request = try session.getMessageRequest(.unread)
-                let fetcher = BackgroundFetch(current: session,
-                        request: request,
-                        taskHandler: { (response, dataURL, error) -> Void in
-                            if let response = response, let dataURL = dataURL {
-                                if response.statusCode == HttpStatus.ok.rawValue {
-                                    do {
-                                        let data = try Data(contentsOf: dataURL)
-                                        
-                                        let result = messagesInResult(from: data, response: response)
-                                        switch result {
-                                        case .success(let listing):
-                                            var new: [Message] = []
-                                            var children = listing.children
-                                            children.reverse()
-                                            for m in children.flatMap({ $0 }) {
-                                                let message = (m as! Message)
-                                                if Double(message.createdUtc) > (UserDefaults.standard.object(forKey: "lastMessageUpdate") == nil ? NSDate().timeIntervalSince1970 : UserDefaults.standard.double(forKey: "lastMessageUpdate")) {
-                                                    new.append(message)
-                                                    self.postLocalNotification(message.body, message.author, message.id)
-                                                }
-                                            }
-                                            
-                                            UserDefaults.standard.set(NSDate().timeIntervalSince1970, forKey: "lastMessageUpdate")
-                                            UserDefaults.standard.synchronize()
-
-                                            DispatchQueue.main.async {
-                                                UIApplication.shared.applicationIconBadgeNumber = new.count
-                                                completionHandler(.newData)
-                                            }
-                                            return
-                                        case .failure(let error):
-                                            print(error)
-                                            completionHandler(.failed)
-                                        }
-                                    } catch {
-
-                                    }
-                                } else {
-                                    completionHandler(.failed)
-                                }
-                            } else {
-                                completionHandler(.failed)
-                            }
-                        })
-                self.fetcher = fetcher
-                fetcher.resume()
+                data = try Data(contentsOf: dataURL)
             } catch {
                 print(error.localizedDescription)
                 completionHandler(.failed)
+                cleanup()
+                return
             }
-        } else {
-            completionHandler(.failed)
+
+            switch messagesInResult(from: data, response: response) {
+
+            case .success(let listing):
+                var newCount: Int = 0
+                let lastMessageUpdateTime = UserDefaults.standard.object(forKey: "lastMessageUpdate") as? TimeInterval ?? Date().timeIntervalSince1970
+
+                for case let message as Message in listing.children.reversed() {
+                    if Double(message.createdUtc) > lastMessageUpdateTime {
+                        newCount += 1
+                        // TODO: If there's more than one new notification, maybe just post
+                        // a message saying "You have new unread messages."
+                        postLocalNotification(message.body, message.author, message.id)
+                    }
+                }
+
+                UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastMessageUpdate")
+
+                print("Unread count: \(newCount)")
+
+                DispatchQueue.main.sync {
+                    UIApplication.shared.applicationIconBadgeNumber = newCount
+                }
+
+                if newCount > 0 {
+                    print("Completed with new data.")
+                    completionHandler(.newData)
+                } else {
+                    print("Completed with no data.")
+                    completionHandler(.noData)
+                }
+                cleanup()
+                return
+
+            case .failure(let error):
+                print(error.localizedDescription)
+                completionHandler(.failed)
+                cleanup()
+                return
+            }
+
         }
+
+        if self.fetcher == nil {
+            self.fetcher = BackgroundFetch(current: session,
+                                           request: request,
+                                           taskHandler: handler)
+        }
+        self.fetcher?.resume()
+
     }
 
     func postLocalNotification(_ message: String, _ author: String = "", _ id: String = "") {
@@ -307,7 +347,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             // Fallback on earlier versions
         }
-    }*/
+    }
 
     func syncColors(subredditController: MainViewController?) {
         let defaults = UserDefaults.standard
@@ -485,7 +525,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         totalBackground = true
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
-        //disable this for now application.setMinimumBackgroundFetchInterval(900)
 
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
