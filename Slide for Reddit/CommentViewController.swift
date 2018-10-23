@@ -1150,15 +1150,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !(parent is PagingCommentViewController) {
             if SettingValues.commentGesturesMode == .SWIPE_ANYWHERE && !(self.navigationController?.delegate is SloppySwiper) {
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
-                if !(self.navigationController?.delegate is SloppySwiper) {
-                    oldDelegate = self.navigationController?.delegate
-                }
                 self.navigationController!.delegate = swiper!
             }
         }
     }
 
-    weak var oldDelegate: UINavigationControllerDelegate?
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
 
@@ -1679,8 +1675,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         inHeadView.removeFromSuperview()
         headerCell.videoView?.player?.pause()
         self.didDisappearCompletely = true
-        self.navigationController?.delegate = oldDelegate
-        
     }
 
     override func viewWillDisappear(_ animated: Bool) {
