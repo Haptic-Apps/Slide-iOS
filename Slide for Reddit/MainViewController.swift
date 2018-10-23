@@ -18,62 +18,34 @@ import WatchConnectivity
 class MainViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UINavigationControllerDelegate, ReadLaterDelegate {
     
     func didUpdate() {
-        if let count = (MainViewController.vCs[currentPage] as? SingleSubredditViewController)?.readLaterCount {
-            if count > 0 {
-                
-                let readLater = UIButton.init(type: .custom)
-                readLater.setImage(UIImage.init(named: "readLater")?.navIcon(), for: UIControlState.normal)
-                readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControlEvents.touchUpInside)
-                readLater.frame = CGRect.init(x: 0, y: 0, width: 45, height: 45)
+        let count = ReadLater.readLaterIDs.count
+        if count > 0 {
+            let readLater = UIButton.init(type: .custom)
+            readLater.setImage(UIImage.init(named: "readLater")?.navIcon(), for: UIControlState.normal)
+            readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControlEvents.touchUpInside)
 
-                readLaterBadge?.removeFromSuperview()
-                readLaterBadge = nil
+            readLaterBadge?.removeFromSuperview()
+            readLaterBadge = nil
 
-                readLaterBadge = BadgeSwift()
-                readLater.addSubview(readLaterBadge!)
-                
-                readLaterBadge!.text = "\(count)"
-                readLaterBadge!.insets = CGSize(width: 3, height: 3)
-                readLaterBadge!.font = UIFont.systemFont(ofSize: 11)
-                readLaterBadge!.textColor = UIColor.white
-                readLaterBadge!.badgeColor = UIColor.red
-                readLaterBadge!.shadowOpacityBadge = 0
-                positionBadge(readLaterBadge!)
+            readLaterBadge = BadgeSwift()
+            readLater.addSubview(readLaterBadge!)
+            readLaterBadge!.rightAnchor == readLater.leftAnchor + 17
+            readLaterBadge!.centerYAnchor == readLater.centerYAnchor - 7
 
-                readLaterB = UIBarButtonItem.init(customView: readLater)
+            readLaterBadge!.text = "\(count)"
+            readLaterBadge!.insets = CGSize(width: 2, height: 2)
+            readLaterBadge!.font = UIFont.systemFont(ofSize: 12)
+            readLaterBadge!.textColor = UIColor.white
+            readLaterBadge!.badgeColor = UIColor.red
+            readLaterBadge!.shadowOpacityBadge = 0
 
-                navigationItem.rightBarButtonItems = [sortB, readLaterB]
-            } else {
-                navigationItem.rightBarButtonItems = [sortB]
-            }
+            readLaterB = UIBarButtonItem.init(customView: readLater)
+            readLater.widthAnchor == 35
+            
+            navigationItem.rightBarButtonItems = [sortB, readLaterB]
+        } else {
+            navigationItem.rightBarButtonItems = [sortB]
         }
-    }
-    
-    private func positionBadge(_ badge: UIView) {
-        badge.translatesAutoresizingMaskIntoConstraints = false
-        var constraints = [NSLayoutConstraint]()
-        
-        // Center the badge vertically in its container
-        constraints.append(NSLayoutConstraint(
-            item: badge,
-            attribute: NSLayoutAttribute.centerY,
-            relatedBy: NSLayoutRelation.equal,
-            toItem: readLater,
-            attribute: NSLayoutAttribute.centerY,
-            multiplier: 1, constant: -20)
-        )
-        
-        // Center the badge horizontally in its container
-        constraints.append(NSLayoutConstraint(
-            item: badge,
-            attribute: NSLayoutAttribute.centerX,
-            relatedBy: NSLayoutRelation.equal,
-            toItem: readLater,
-            attribute: NSLayoutAttribute.centerX,
-            multiplier: 1, constant: 25)
-        )
-        
-        readLater.addConstraints(constraints)
     }
 
     var isReload = false
@@ -132,7 +104,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         
-        
+        self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         menuNav?.header.doColors()
         if menuNav?.tableView != nil {
             menuNav?.tableView.reloadData()
