@@ -236,7 +236,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.backgroundTaskId = UIBackgroundTaskInvalid
         }
 
-        print("GetData running...")
+        print("getData running...")
         guard let session = session,
             let request = try? session.getMessageRequest(.unread) else {
             completionHandler(.failed)
@@ -294,10 +294,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
 
                 if newCount > 0 {
-                    print("Completed with new data.")
+                    print("getData completed with new data.")
                     completionHandler(.newData)
                 } else {
-                    print("Completed with no data.")
+                    print("getData completed with no new data.")
                     completionHandler(.noData)
                 }
                 cleanup()
