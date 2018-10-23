@@ -14,25 +14,25 @@ class ReadLaterViewController: ContentListingViewController {
     
     var sub = ""
     init(subreddit: String) {
-        let dataSource = ReadLaterContributionLoader(sub: subreddit)
+        let dataSource = ReadLaterContributionLoader(sub: "all")
         super.init(dataSource: dataSource)
         baseData.delegate = self
 
-        if subreddit == "all" {
+//        if subreddit == "all" {
             self.title = "Read Later"
-        } else {
-            self.navigationItem.titleView = setTitle(title: "Read Later", subtitle: "r/\(subreddit)")
-        }
+//        } else {
+//            self.navigationItem.titleView = setTitle(title: "Read Later", subtitle: "r/\(subreddit)")
+//        }
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
         sub = subreddit
-        if subreddit != "all" {
-            BannerUtil.makeBanner(text: "Click to see all Read Later items", color: ColorUtil.baseAccent, seconds: 0, context: self, top: false) {
-                self.sub = "all"
-                dataSource.sub = "all"
-                self.refresh()
-                self.title = "Read Later"
-            }
-        }
+//        if subreddit != "all" {
+//            BannerUtil.makeBanner(text: "Click to see all Read Later items", color: ColorUtil.baseAccent, seconds: 0, context: self, top: false) {
+//                self.sub = "all"
+//                dataSource.sub = "all"
+//                self.refresh()
+//                self.title = "Read Later"
+//            }
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

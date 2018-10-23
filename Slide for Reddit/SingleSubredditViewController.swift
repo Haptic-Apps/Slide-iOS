@@ -2230,6 +2230,9 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         }
 
         ReadLater.toggleReadLater(link: link)
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionComplete()
+        }
         cell.refresh()
     }
 

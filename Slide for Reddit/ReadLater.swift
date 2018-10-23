@@ -48,7 +48,7 @@ class ReadLater {
 
     @discardableResult
     public static func toggleReadLater(link: RSubmission) -> Bool {
-        let isMarkedReadLater = isReadLater(link: link)
+        let isMarkedReadLater = isReadLater(id: link.getId())
         if isMarkedReadLater {
             ReadLater.removeReadLater(link: link)
             return false
@@ -77,8 +77,6 @@ class ReadLater {
     }
     
     public static func removeReadLater(id: String) {
-        print(readLaterIDs)
-        print(id)
         var shortId = id
         if shortId.contains("_") {
             shortId = shortId.substring(3, length: id.length - 3)

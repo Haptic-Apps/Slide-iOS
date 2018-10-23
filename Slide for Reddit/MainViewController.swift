@@ -21,7 +21,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         let count = ReadLater.readLaterIDs.count
         if count > 0 {
             let readLater = UIButton.init(type: .custom)
-            readLater.setImage(UIImage.init(named: "readLater")?.navIcon(), for: UIControlState.normal)
+            readLater.setImage(UIImage.init(named: "bin")?.navIcon(), for: UIControlState.normal)
             readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControlEvents.touchUpInside)
 
             readLaterBadge?.removeFromSuperview()
@@ -29,18 +29,17 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
             readLaterBadge = BadgeSwift()
             readLater.addSubview(readLaterBadge!)
-            readLaterBadge!.rightAnchor == readLater.leftAnchor + 17
-            readLaterBadge!.centerYAnchor == readLater.centerYAnchor - 7
+            readLaterBadge!.centerXAnchor == readLater.centerXAnchor
+            readLaterBadge!.centerYAnchor == readLater.centerYAnchor - 2
 
             readLaterBadge!.text = "\(count)"
-            readLaterBadge!.insets = CGSize(width: 2, height: 2)
+            readLaterBadge!.insets = CGSize.zero
             readLaterBadge!.font = UIFont.systemFont(ofSize: 12)
-            readLaterBadge!.textColor = UIColor.white
-            readLaterBadge!.badgeColor = UIColor.red
+            readLaterBadge!.textColor = ColorUtil.fontColor
+            readLaterBadge!.badgeColor = .clear
             readLaterBadge!.shadowOpacityBadge = 0
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
-            readLater.widthAnchor == 35
             
             navigationItem.rightBarButtonItems = [sortB, readLaterB]
         } else {
@@ -68,6 +67,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.viewWillAppearActions()
         self.navigationController?.setToolbarHidden(true, animated: false)
         ReadLater.delegate = self
+        didUpdate()
     }
     
     public func viewWillAppearActions() {

@@ -1802,7 +1802,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.title.alpha = 1
         }
 
-        if ReadLater.isReadLater(link: link) {
+        if ReadLater.isReadLater(id: link.getId()) {
             readLater.setImage(LinkCellImageCache.readLaterTinted, for: .normal)
         }
     }
