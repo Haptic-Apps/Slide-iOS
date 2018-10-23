@@ -61,6 +61,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.submission = RSubmission()
         self.np = np
         self.submission!.name = submission
+        self.submission!.id = submission.startsWith("t3") ? submission : ("t3_" + submission)
 
         hasSubmission = false
         if subreddit != nil {
@@ -321,10 +322,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             do {
                 try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (_) in
                     DispatchQueue.main.async {
-                        if self.navigationController!.modalPresentationStyle == .formSheet {
-                            self.navigationController!.dismiss(animated: true)
+                        if (self.navigationController?.modalPresentationStyle ?? .formSheet) == .formSheet {
+                            self.navigationController?.dismiss(animated: true)
                         } else {
-                            self.navigationController!.popViewController(animated: true)
+                            self.navigationController?.popViewController(animated: true)
                         }
                     }
                 })
