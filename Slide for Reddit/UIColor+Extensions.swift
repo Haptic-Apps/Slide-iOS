@@ -80,7 +80,7 @@ public extension UIColor {
     }
     
     public var blueValue: CGFloat {
-        if cgColor.components != nil && cgColor.components!.count >= 3{
+        if cgColor.components != nil && cgColor.components!.count >= 3 {
             return cgColor.components! [2]
         }
         return 0

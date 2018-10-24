@@ -57,6 +57,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        if let _ = launchOptions?[UIApplicationLaunchOptionsKey.localNotification] {
+            print("Was notif")
+        }
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
 
@@ -281,7 +285,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         newCount += 1
                         // TODO: If there's more than one new notification, maybe just post
                         // a message saying "You have new unread messages."
-                        postLocalNotification(message.body, message.author, message.id)
+                        postLocalNotification(message.body, message.author, message.id, message.wasComment)
                     }
                 }
 
@@ -320,19 +324,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.fetcher?.resume()
 
     }
-
-    func postLocalNotification(_ message: String, _ author: String = "", _ id: String = "") {
+    
+    func postLocalNotification(_ message: String, _ author: String = "", _ id: String = "", _ wasComment: Bool = false) {
         if #available(iOS 10.0, *) {
             let center = UNUserNotificationCenter.current()
 
             let content = UNMutableNotificationContent()
             content.categoryIdentifier = "SlideMail"
             if author.isEmpty() {
-                content.title = "New messages!"
+                content.title = "New message!"
             } else {
                 content.title = "New message from \(author)"
             }
             content.body = message
+            content.userInfo = ["isComment": wasComment, "id":id]
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2,
                     repeats: false)
             let identifier = "SlideNewMessage" + id
