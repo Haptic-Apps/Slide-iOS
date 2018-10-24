@@ -549,7 +549,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.sizeToFit()
         self.viewToMux = self.tabBar
 
-        tabBar.heightAnchor == 44
         self.navigationItem.titleView = tabBar
     }
     
@@ -747,7 +746,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
         }
 
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait && (self.navigationController)?.splitViewController != nil && !SettingValues.multiColumn {
+        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && self.splitViewController != nil {
             self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
         }
         
