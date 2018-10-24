@@ -55,6 +55,9 @@ class AnyModalViewController: UIViewController {
     
     var forcedFullscreen = false
     var oldOrientation: UIInterfaceOrientation?
+
+    var fastForwardImageView = UIImageView()
+    var rewindImageView = UIImageView()
     
     var scrubber = VideoScrubberView()
     
@@ -302,6 +305,22 @@ class AnyModalViewController: UIViewController {
         
         view.addSubview(scrubber)
         scrubber.delegate = self
+
+        rewindImageView = UIImageView(image: UIImage(named: "rewind")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
+            $0.alpha = 0
+            $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+            $0.layer.cornerRadius = 10
+            $0.clipsToBounds = true
+        }
+        view.addSubview(rewindImageView)
+
+        fastForwardImageView = UIImageView(image: UIImage(named: "fast_forward")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
+            $0.alpha = 0
+            $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+            $0.layer.cornerRadius = 10
+            $0.clipsToBounds = true
+        }
+        view.addSubview(fastForwardImageView)
         
         bottomButtons = UIStackView().then {
             $0.accessibilityIdentifier = "Bottom Buttons"
@@ -361,6 +380,11 @@ class AnyModalViewController: UIViewController {
         scrubber.bottomAnchor == bottomButtons.topAnchor - 4
 
         scrubber.playButton.centerAnchors == self.videoView.centerAnchors
+
+        rewindImageView.centerYAnchor == view.centerYAnchor
+        fastForwardImageView.centerYAnchor == view.centerYAnchor
+        rewindImageView.leadingAnchor == view.safeLeadingAnchor + 30
+        fastForwardImageView.trailingAnchor == view.safeTrailingAnchor - 30
 
         if #available(iOS 11, *) {
             self.navigationBar.topAnchor == self.view.safeTopAnchor
@@ -591,6 +615,22 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
     func seekAhead(bySeconds seconds: Float) {
         let playerCurrentTime = scrubber.slider.value
         let maxTime = scrubber.slider.maximumValue
+
+
+        // Animate the indicator for fast_forward or rewind
+        let indicatorViewToAnimate = seconds > 0 ? fastForwardImageView : rewindImageView
+        indicatorViewToAnimate.isHidden = false
+        indicatorViewToAnimate.alpha = 0.0
+        UIView.animateKeyframes(withDuration: 0.4, delay: 0, options: [.calculationModeCubic], animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.3) {
+                indicatorViewToAnimate.alpha = 1.0
+            }
+            UIView.addKeyframe(withRelativeStartTime: 0.7, relativeDuration: 0.3) {
+                indicatorViewToAnimate.alpha = 0.0
+            }
+        }, completion: { _ in
+            indicatorViewToAnimate.isHidden = true
+        })
         
         var newTime = (playerCurrentTime + seconds)
         newTime = min(newTime, maxTime) // Prevent seeking beyond end

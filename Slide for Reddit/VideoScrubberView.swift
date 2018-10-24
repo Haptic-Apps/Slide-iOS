@@ -56,10 +56,10 @@ class VideoScrubberView: UIView {
 
     var playButton = UIButton(type: .system)
 
-    let playButtonImage = UIImage(named: "play")?.getCopy(withSize: CGSize.square(size: 45))
-    let pauseButtonImage = UIImage(named: "pause")?.getCopy(withSize: CGSize.square(size: 45))
-    let largeThumbImage = UIImage(named: "circle")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
-    let smallThumbImage = UIImage(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white)
+    let playButtonImage = UIImage(named: "play")?.getCopy(withSize: .square(size: 45))
+    let pauseButtonImage = UIImage(named: "pause")?.getCopy(withSize: .square(size: 45))
+    let largeThumbImage = UIImage(named: "circle")?.getCopy(withSize: .square(size: 30), withColor: .white)
+    let smallThumbImage = UIImage(named: "circle")?.getCopy(withSize: .square(size: 20), withColor: .white)
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
