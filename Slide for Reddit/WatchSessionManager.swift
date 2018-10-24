@@ -6,10 +6,10 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import reddift
 import Foundation
-import WatchKit
+import reddift
 import WatchConnectivity
+import WatchKit
 
 public class WatchSessionManager: NSObject, WCSessionDelegate {
     public func sessionDidBecomeInactive(_ session: WCSession) {

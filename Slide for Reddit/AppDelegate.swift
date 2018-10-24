@@ -58,7 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        if let _ = launchOptions?[UIApplicationLaunchOptionsKey.localNotification] {
+        if let notifData = launchOptions?[UIApplicationLaunchOptionsKey.localNotification] {
             print("Was notif")
         }
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
@@ -337,7 +337,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 content.title = "New message from \(author)"
             }
             content.body = message
-            content.userInfo = ["isComment": wasComment, "id":id]
+            content.userInfo = ["isComment": wasComment, "id": id]
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2,
                     repeats: false)
             let identifier = "SlideNewMessage" + id

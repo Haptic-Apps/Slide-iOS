@@ -542,7 +542,7 @@ public class NoContentCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func doText(controller: ContentListingViewController){
+    func doText(controller: ContentListingViewController) {
         let text: String
         if controller is ReadLaterViewController {
             text = "Nothing to see here!\nNo more posts to Read Later"
