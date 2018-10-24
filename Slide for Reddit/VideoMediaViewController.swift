@@ -691,6 +691,7 @@ extension VideoMediaViewController {
                 "fs": 0, // Turn off fullscreen button
                 "rel": 0, // Turn off suggested content at end (restricts to same channel as video)
                 "loop": 1,
+                "iv_load_policy": 3, // Hide annotations
                 "modestbranding": 0, // Remove youtube logo on bottom right
                 "origin": "https://ccrama.me",
                 "hl": Locale.current.languageCode ?? "en",
