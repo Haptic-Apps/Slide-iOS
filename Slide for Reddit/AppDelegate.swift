@@ -193,7 +193,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
-            VCPresenter.openRedditLink("/r/\(url)", nil, window?.rootViewController)
+            VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)
         } else if shortcutItem.userInfo?["clipboard"] != nil {
             var clipUrl: URL?
             if let url = UIPasteboard.general.url {
@@ -212,7 +212,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             if clipUrl != nil {
-                VCPresenter.openRedditLink(clipUrl!.absoluteString, nil, window?.rootViewController)
+                VCPresenter.openRedditLink(clipUrl!.absoluteString, window?.rootViewController as? UINavigationController, window?.rootViewController)
             }
 
         }
@@ -443,10 +443,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         if url.absoluteString.contains("/r/") {
-            VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), nil, window?.rootViewController)
+            VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)
             return true
         } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("redd.it") {
-                VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), nil, window?.rootViewController)
+                VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)
                 return true
         } else if url.query?.components(separatedBy: "&").count ?? 0 < 0 {
             print("Returning \(url.absoluteString)")

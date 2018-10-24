@@ -957,6 +957,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         UIApplication.shared.statusBarView?.backgroundColor = .clear
         
         menuNav?.view.isHidden = true
+        tabBar.backgroundColor = .clear
     }
 
     func showSortMenu(_ sender: UIButton?) {

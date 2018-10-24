@@ -1681,6 +1681,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.isHiding = true
+        self.inHeadView.removeFromSuperview()
         if popup != nil {
             UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.popup.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
