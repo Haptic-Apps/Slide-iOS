@@ -1082,7 +1082,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.isHiding = true
-        doHeadView(self.view.frame.size)
         
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
@@ -1161,6 +1160,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }
@@ -1526,7 +1526,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func updateToolbar() {
-        doHeadView(self.view.frame.size)
         navigationController?.setToolbarHidden(false, animated: false)
         self.isToolbarHidden = false
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -1978,6 +1977,9 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
     func hideUI(inHeader: Bool) {
         isHiding = true
         //self.tableView.endEditing(true)
+        if inHeadView.superview == nil {
+            doHeadView(self.view.frame.size)
+        }
         (navigationController)?.setNavigationBarHidden(true, animated: true)
         
         if popup == nil {
