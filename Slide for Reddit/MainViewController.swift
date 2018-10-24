@@ -41,7 +41,12 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
-            navigationItem.rightBarButtonItems = [sortB, readLaterB]
+            if SettingValues.viewType {
+                navigationItem.rightBarButtonItems = [sortB]
+                navigationItem.leftBarButtonItems = [readLaterB]
+            } else {
+                navigationItem.rightBarButtonItems = [sortB, readLaterB]
+            }
         } else {
             navigationItem.rightBarButtonItems = [sortB]
         }
@@ -534,7 +539,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var subs: UIView?
 
     func setupTabBar(_ subs: [String]) {
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -4 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 76))
+        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 44))
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
         tabBar.itemAppearance = .titles
 
@@ -549,17 +554,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.selectedItem = tabBar.items[0]
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0])
         tabBar.sizeToFit()
-        tabBar.frame.size.height = 48
         self.viewToMux = self.tabBar
 
-        self.view.addSubview(tabBar)
-        tabBar.heightAnchor == 48
-        tabBar.horizontalAnchors == self.view.horizontalAnchors
-        if #available(iOS 11, *) {
-            tabBar.topAnchor == self.view.safeTopAnchor
-        } else {
-            tabBar.topAnchor == self.view.topAnchor + 20
-        }
+        tabBar.heightAnchor == 44
+        self.navigationItem.titleView = tabBar
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
@@ -567,6 +565,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         goToSubreddit(index: sub)
     }
 
+    var statusbarHeight: CGFloat {
+        return UIApplication.shared.statusBarFrame.size.height
+    }
+    
     func doLogin(token: OAuth2Token?) {
         (UIApplication.shared.delegate as! AppDelegate).login = self
         if token == nil {
@@ -616,7 +618,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
             
             let label = UILabel()
-            label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.viewType ? "Slide" : self.currentTitle)"
+            label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.viewType ? "" : self.currentTitle)"
             label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
             label.adjustsFontSizeToFitWidth = true
             label.font = UIFont.boldSystemFont(ofSize: 20)
@@ -634,7 +636,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             label.sizeToFit()
             let leftItem = UIBarButtonItem(customView: label)
             
-            self.navigationItem.leftBarButtonItems = [leftItem]
+            if !SettingValues.viewType {
+                self.navigationItem.leftBarButtonItems = [leftItem]
+            }
             
             self.navigationController?.navigationBar.shadowImage = UIImage()
             self.navigationController?.navigationBar.layoutIfNeeded()
@@ -656,22 +660,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
         inHeadView.removeFromSuperview()
-
-        if SettingValues.viewType {
-            if size.width > size.height && UIDevice.current.userInterfaceIdiom != .pad {
-                if #available(iOS 11, *) {
-                    tabBar.topAnchor == self.view.safeTopAnchor
-                } else {
-                    tabBar.topAnchor == self.view.topAnchor
-                }
-            } else {
-                if #available(iOS 11, *) {
-                    tabBar.topAnchor == self.view.safeTopAnchor
-                } else {
-                    tabBar.topAnchor == self.view.topAnchor + 20
-                }
-            }
-        }
         
         doButtons()
         var wasntHidden = false
@@ -1037,7 +1025,7 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
         let bounds = context.bounds
         let attributes = MDCTabBarIndicatorAttributes()
         let underlineFrame = CGRect.init(x: bounds.minX,
-                y: bounds.height - 3,
+                y: bounds.height - 7,
                 width: bounds.width,
                 height: 3.0)
         attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))

@@ -212,6 +212,7 @@ class SingleSubredditViewController: MediaViewController {
         if single {
             setupBaseBarColors()
         }
+        
         if !loaded {
             showUI()
         }
@@ -668,8 +669,6 @@ class SingleSubredditViewController: MediaViewController {
         } else {
             top = 64
         }
-
-        top += ((SettingValues.viewType && !single) ? 52 : 0)
  
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
 
@@ -1197,7 +1196,7 @@ class SingleSubredditViewController: MediaViewController {
                                         self.loading = false
                                         self.nomore = true
                                         
-                                        self.tableView.contentOffset = CGPoint.init(x: 0, y: -64 + ((SettingValues.viewType && !self.single) ? -20 : 0))
+                                        self.tableView.contentOffset = CGPoint.init(x: 0, y: -64)
                                         
                                         if self.links.isEmpty {
                                             BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
@@ -1299,7 +1298,7 @@ class SingleSubredditViewController: MediaViewController {
                                         }
                                     }
                                 
-                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ((SettingValues.viewType && !self.single) ? 52 : (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
                                 } else {
                                     self.flowLayout.invalidateLayout()
                                     self.tableView.insertItems(at: paths)

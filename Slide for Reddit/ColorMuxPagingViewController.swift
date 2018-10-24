@@ -36,7 +36,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
 
         if navToMux != nil {
             let color = ColorMuxPagingViewController.fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
-            if !color.cgColor.__equalTo(color1!.cgColor) {
+            if percentComplete > 0 {
                 navToMux!.barTintColor = color
             }
         }
