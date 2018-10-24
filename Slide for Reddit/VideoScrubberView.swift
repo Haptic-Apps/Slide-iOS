@@ -55,6 +55,11 @@ class VideoScrubberView: UIView {
     var timeElapsedRightConstraint: NSLayoutConstraint?
 
     var playButton = UIButton(type: .system)
+
+    let playButtonImage = UIImage(named: "play")?.getCopy(withSize: .square(size: 45))
+    let pauseButtonImage = UIImage(named: "pause")?.getCopy(withSize: .square(size: 45))
+    let largeThumbImage = UIImage(named: "circle")?.getCopy(withSize: .square(size: 30), withColor: .white)
+    let smallThumbImage = UIImage(named: "circle")?.getCopy(withSize: .square(size: 20), withColor: .white)
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -111,7 +116,7 @@ class VideoScrubberView: UIView {
 
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderDidBeginDragging(_:)), for: .touchDown)
-        slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: [.touchUpInside, .touchUpOutside])
+        slider.addTarget(self, action: #selector(sliderDidEndDragging(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
@@ -151,11 +156,11 @@ class VideoScrubberView: UIView {
     }
 
     func setPlayButton() {
-        playButton.setImage(UIImage.init(named: "play")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
+        playButton.setImage(playButtonImage, for: .normal)
     }
 
     func setPauseButton() {
-        playButton.setImage(UIImage.init(named: "pause")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
+        playButton.setImage(pauseButtonImage, for: .normal)
     }
 }
 
@@ -167,12 +172,18 @@ extension VideoScrubberView {
 
     func sliderDidBeginDragging(_ sender: ThickSlider) {
         delegate?.sliderDidBeginDragging()
-        slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white), for: .normal)
+        slider.setThumbImage(largeThumbImage, for: .normal)
+        UIView.animate(withDuration: 0.3) {
+            self.playButton.isHidden = true
+        }
     }
 
     func sliderDidEndDragging(_ sender: ThickSlider) {
         delegate?.sliderDidEndDragging()
-        slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white), for: .normal)
+        slider.setThumbImage(smallThumbImage, for: .normal)
+        UIView.animate(withDuration: 0.3) {
+            self.playButton.isHidden = false
+        }
     }
 
     func playButtonTapped(_ sender: UIButton) {
