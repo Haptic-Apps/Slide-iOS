@@ -616,11 +616,9 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         let playerCurrentTime = scrubber.slider.value
         let maxTime = scrubber.slider.maximumValue
 
-
         // Animate the indicator for fast_forward or rewind
         let indicatorViewToAnimate = seconds > 0 ? fastForwardImageView : rewindImageView
         indicatorViewToAnimate.isHidden = false
-        indicatorViewToAnimate.alpha = 0.0
         UIView.animateKeyframes(withDuration: 0.4, delay: 0, options: [.calculationModeCubic], animations: {
             UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.3) {
                 indicatorViewToAnimate.alpha = 1.0
