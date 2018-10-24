@@ -148,6 +148,10 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         // Recalculate youtube frame size
         self.youtubeView.frame = AVMakeRect(aspectRatio: youtubeResolution, insideRect: self.view.bounds)
+
+        // Recalculate player size
+        let size = videoView.player?.currentItem?.presentationSize ?? self.view.bounds.size
+        self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds)
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -274,8 +278,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func configureLayout() {
-        videoView.edgeAnchors == view.edgeAnchors
-
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
 

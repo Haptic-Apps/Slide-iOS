@@ -133,6 +133,14 @@ class AnyModalViewController: UIViewController {
         
         NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
     }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+
+        // Recalculate video frame size
+        let size = videoView.player?.currentItem?.presentationSize ?? self.view.bounds.size
+        self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds)
+    }
     
     override func viewDidLayoutSubviews() {
         layoutVolume()
@@ -367,11 +375,6 @@ class AnyModalViewController: UIViewController {
     }
     
     func configureLayout() {
-        let size = embeddedPlayer.currentItem?.presentationSize ?? CGSize.zero
-        videoView.horizontalAnchors == self.view.horizontalAnchors
-        videoView.centerYAnchor == self.view.centerYAnchor
-        videoView.heightAnchor == self.view.widthAnchor * (size.height / size.width)
-        
         bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
         
