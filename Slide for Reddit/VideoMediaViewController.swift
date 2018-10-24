@@ -305,8 +305,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func handleHideUI() {
         if !self.scrubber.isHidden {
-            if parent is ModalMediaViewController {
-                (parent as! ModalMediaViewController).fullscreen(self)
+            if let parent = parent as? ModalMediaViewController {
+                parent.fullscreen(self)
             }
 
             UIView.animate(withDuration: 0.2, animations: {
@@ -320,8 +320,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     func handleShowUI() {
         timer?.invalidate()
         if self.scrubber.isHidden {
-            if parent is ModalMediaViewController {
-                (parent as! ModalMediaViewController).unFullscreen(self)
+            if let parent = parent as? ModalMediaViewController {
+                parent.unFullscreen(self)
             }
             self.scrubber.isHidden = false
             UIView.animate(withDuration: 0.2, animations: {
@@ -682,16 +682,18 @@ extension VideoMediaViewController {
             
             strongSelf.youtubeResolution = resolution
             strongSelf.view.setNeedsLayout()
-            let vars = [
+            // https://developers.google.com/youtube/player_parameters
+            let vars: [String: Any] = [
                 "controls": 0, // Disable controls
                 "playsinline": 1,
+                "autoplay": 0,
                 "start": seconds,
                 "fs": 0, // Turn off fullscreen button
-                "rel": 0, // Turn off suggested content at end
-                "showinfo": 0, // Hide video title uploader
+                "rel": 0, // Turn off suggested content at end (restricts to same channel as video)
                 "loop": 1,
-                "modestbranding": 1, // Remove youtube logo on bottom right
-                "autohide": 1,
+                "modestbranding": 0, // Remove youtube logo on bottom right
+                "origin": "https://ccrama.me",
+                "hl": Locale.current.languageCode ?? "en",
                 ]
             
             strongSelf.youtubeURL = URL(string: "youtube://\(playlist.isEmpty() ? video : playlist)")!
@@ -728,6 +730,11 @@ extension VideoMediaViewController {
         }
     }
 
+    /*
+     Retrieves the resolution of the given YouTube video from their oembed API. Unfortunately, this
+     information is rarely correct for nonstandard video sizes, but if YouTube ever gets around to
+     fixing it then this will work.
+     */
     func getYoutubeVideoResolution(videoId: String, completion: @escaping (CGSize) -> Void) {
         let metaURL = URL(string: "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=\(videoId)&format=json")!
 
@@ -784,7 +791,7 @@ extension VideoMediaViewController {
         if !sliderBeingUsed {
             if isYoutubeView {
                 if !sliderBeingUsed {
-                    self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000000))
+                    self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000))
                 }
             } else {
                 if let player = videoView.player {
@@ -806,22 +813,35 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         youtubeView.playVideo()
-        scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000000)
+        scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000)
         
         hideSpinner()
     }
     
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
 //        if !sliderBeingUsed {
-//            self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(playTime), preferredTimescale: 1000000))
+//            self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(playTime), preferredTimescale: 1000))
 //        }
     }
 
     func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
-        if state == YTPlayerState.ended {
+        switch state {
+        case .buffering:
+            break
+        case .ended:
             // "Seek" scrubber to end (scrubber doesn't get all the way there)
 //            self.scrubber.updateWithTime(elapsedTime: scrubber.totalDuration)
             scrubber.setPlayButton()
+        case .paused:
+            break
+        case .playing:
+            break
+        case .queued:
+            break
+        case .unstarted:
+            break
+        case .unknown:
+            break
         }
     }
 
@@ -830,7 +850,19 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     }
 
     func playerView(_ playerView: YTPlayerView, receivedError error: YTPlayerError) {
-
+        switch error {
+        case .html5Error:
+            break
+        case .invalidParam:
+            break
+        case .notEmbeddable:
+            // TODO: Redirect user to YouTube app or web view
+            print("Video is not embeddable!")
+        case .videoNotFound:
+            break
+        case .unknown:
+            break
+        }
     }
 
     func playerViewPreferredWebViewBackgroundColor(_ playerView: YTPlayerView) -> UIColor {
