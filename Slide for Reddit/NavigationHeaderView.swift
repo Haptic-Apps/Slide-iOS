@@ -15,7 +15,7 @@ import Then
 import UIKit
 import XLActionController
 
-class NavigationHeaderView: UIView {
+class NavigationHeaderView: UIView, UISearchBarDelegate {
 
     var profileString: String?
     var parentController: UIViewController?
@@ -37,7 +37,7 @@ class NavigationHeaderView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -48,6 +48,13 @@ class NavigationHeaderView: UIView {
         doColors()
     }
 
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+        if let text = searchBar.text {
+          VCPresenter.openRedditLink("/r/\(text)", parentController?.navigationController, parentController)
+        }
+    }
+    
     func configureViews() {
         self.clipsToBounds = true
 
@@ -58,6 +65,8 @@ class NavigationHeaderView: UIView {
         search.autocorrectionType = .no
         search.autocapitalizationType = .none
         search.spellCheckingType = .no
+        search.returnKeyType = .search
+        search.delegate = self
         if ColorUtil.theme != .LIGHT {
             search.keyboardAppearance = .dark
         }

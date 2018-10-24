@@ -31,15 +31,79 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "size")?.getCopy(withSize: .square(size: 25)), for: UIControlState.normal)
+            sort.setImage(UIImage.init(named: "size")?.navIcon(), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)
-            navigationItem.rightBarButtonItems = [sortB]
+            
+            let nav = UIButton.init(type: .custom)
+            nav.setImage(UIImage.init(named: "nav")?.navIcon(), for: UIControlState.normal)
+            nav.addTarget(self, action: #selector(self.openExternally(_:)), for: UIControlEvents.touchUpInside)
+            nav.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            let navB = UIBarButtonItem.init(customView: nav)
+
+            navigationItem.rightBarButtonItems = [sortB, navB]
         }
 
     }
     
+    func openExternally(_ sender: UIButton) {
+        guard let baseURL = self.webView.url else {
+            return
+        }
+        let alert = UIAlertController.init(title: baseURL.absoluteString, message: "", preferredStyle: .actionSheet)
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alert.addAction(
+                UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
+                    open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
+                }
+            )
+        }
+        alert.addAction(
+            UIAlertAction(title: "Open in Safari", style: .default) { (_) in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(baseURL)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Share URL", style: .default) { (_) in
+                let shareItems: Array = [baseURL]
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = sender
+                    presenter.sourceRect = sender.bounds
+                }
+                let window = UIApplication.shared.keyWindow!
+                if let modalVC = window.rootViewController?.presentedViewController {
+                    modalVC.present(activityViewController, animated: true, completion: nil)
+                } else {
+                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                }
+            }
+        )
+        alert.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+            }
+        )
+        let window = UIApplication.shared.keyWindow!
+        alert.modalPresentationStyle = .popover
+        
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        
+        if let modalVC = window.rootViewController?.presentedViewController {
+            modalVC.present(alert, animated: true, completion: nil)
+        } else {
+            window.rootViewController!.present(alert, animated: true, completion: nil)
+        }
+    }
+
     func exit() {
         self.navigationController?.popViewController(animated: true)
         if navigationController!.modalPresentationStyle == .pageSheet {
@@ -60,6 +124,8 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         if setObserver {
             webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
         }
+        let myURLRequest: URLRequest = URLRequest(url: URL(string: "about://blank")!)
+        webView.load(myURLRequest)
     }
     
     override func viewDidLoad() {

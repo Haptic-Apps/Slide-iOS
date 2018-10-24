@@ -426,7 +426,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         // 3- Adjust bottomSheet frame and initial position.
         let height = view.frame.height
-        let width = view.frame.width
+        let width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
         menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * 0.9)
     }
 
@@ -482,15 +482,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             finalSubs = Subscriptions.subreddits
             MainViewController.isOffline = false
             var subs = [UIMutableApplicationShortcutItem]()
-            var split = UIDevice.current.userInterfaceIdiom == .pad && false
             for subname in finalSubs {
-                if split {
-                    let split = SubmissionCommentDualViewController()
-                    split.submissionsViewController = SingleSubredditViewController(subName: subname, parent: self)
-                    MainViewController.vCs.append(split)
-                } else {
-                    MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
-                }
+                MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
                 if subs.count < 2 && !subname.contains("/") {
                     subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
                 }
@@ -678,7 +671,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as? SingleSubredditViewController ?? (pendingViewControllers[0] as! SubmissionCommentDualViewController).submissionsViewController!).sub, true)
+        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as! SingleSubredditViewController).sub, true)
         color1 = ColorUtil.getColorForSub(sub: getSubredditVC()!.sub, true)
     }
 
@@ -969,11 +962,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {
-        if MainViewController.vCs[0] is SubmissionCommentDualViewController {
-            return (MainViewController.vCs[currentPage] as? SubmissionCommentDualViewController)?.submissionsViewController
-        } else {
-            return (MainViewController.vCs[currentPage] as? SingleSubredditViewController)
-        }
+        return (MainViewController.vCs[currentPage] as? SingleSubredditViewController)
     }
 
     var currentPage = 0

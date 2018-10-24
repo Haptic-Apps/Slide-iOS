@@ -240,7 +240,7 @@ class SingleSubredditViewController: MediaViewController {
             self.isToolbarHidden = false
             if fab == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.setupFab(UIScreen.main.bounds.size)
+                    self.setupFab(self.view.bounds.size)
                 }
             } else {
                 show(true)
@@ -587,7 +587,7 @@ class SingleSubredditViewController: MediaViewController {
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_hiddenFAB)
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
                 UserDefaults.standard.synchronize()
-                self.setupFab(UIScreen.main.bounds.size)
+                self.setupFab(self.view.bounds.size)
             }))
             a.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
@@ -633,7 +633,7 @@ class SingleSubredditViewController: MediaViewController {
             let saveActionButton: UIAlertAction = UIAlertAction(title: t.getTitle(), style: .default) { _ -> Void in
                 UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_fabType)
                 SettingValues.fabType = t
-                self.setupFab(UIScreen.main.bounds.size)
+                self.setupFab(self.view.bounds.size)
             }
             actionSheetController.addAction(saveActionButton)
         }
@@ -2092,13 +2092,8 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             newLinks.append(links[i])
         }
 
-        if self.parent is SubmissionCommentDualViewController {
-            let comment = CommentViewController.init(submission: newLinks[0])
-            (self.parent as! SubmissionCommentDualViewController).commentsViewController = UINavigationController(rootViewController: comment)
-        } else {
-            let comment = PagingCommentViewController.init(submissions: newLinks)
-            VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-        }
+        let comment = PagingCommentViewController.init(submissions: newLinks)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 

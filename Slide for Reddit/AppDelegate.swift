@@ -163,11 +163,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
         if let window = self.window {
-            let rootController: UINavigationController!
+            let rootController: UIViewController!
             if !UserDefaults.standard.bool(forKey: "firstOpen") {
                 rootController = UINavigationController(rootViewController: SettingsWelcome())
             } else {
-                rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    rootController = UISplitViewController()
+                    (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
+                } else {
+                    rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
+                }
             }
             
             window.rootViewController = rootController

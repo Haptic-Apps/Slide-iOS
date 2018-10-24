@@ -59,7 +59,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         }
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
+        button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControlState.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
@@ -69,7 +69,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     }
     
     @objc public func handleBackButton() {
-        self.navigationController?.popViewController(animated: true)
+        if self.navigationController?.viewControllers.count == 1 {
+            self.dismiss(animated: true, completion: nil)
+        } else {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -333,7 +337,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             setupBaseBarColors()
             let button = UIButtonWithContext.init(type: .custom)
             button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
+            button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControlState.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
             

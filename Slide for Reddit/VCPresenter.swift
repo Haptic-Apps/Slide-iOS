@@ -17,11 +17,16 @@ public class VCPresenter {
             parentViewController?.present(viewController, animated: true)
             return
         }
-        if ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil {
+        
+        if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil {
+            (parentViewController!.splitViewController)?.showDetailViewController(UINavigationController(rootViewController: viewController), sender: nil)
+            return
+        } else if (parentViewController?.splitViewController != nil) || ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil {
+            
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true
             }
-            
+
             let newParent = TapBehindModalViewController.init(rootViewController: viewController)
 
             newParent.navigationBar.shadowImage = UIImage()
