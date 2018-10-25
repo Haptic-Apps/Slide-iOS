@@ -12,6 +12,11 @@ class Drafts {
     public static var drafts: [NSString] = []
     
     public static func addDraft(s: String) {
+        for draft in drafts {
+            if String(draft).trimmed() == s.trimmed() {
+                return
+            }
+        }
         drafts.append(s as NSString)
         saveAndUpdate()
     }
