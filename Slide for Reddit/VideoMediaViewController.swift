@@ -150,8 +150,12 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.youtubeView.frame = AVMakeRect(aspectRatio: youtubeResolution, insideRect: self.view.bounds)
 
         // Recalculate player size
-        let size = videoView.player?.currentItem?.presentationSize ?? self.view.bounds.size
-        self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds)
+        var size = videoView.player?.currentItem?.presentationSize ?? self.view.bounds.size
+        if size == CGSize.zero {
+            size = self.view.bounds.size
+        }
+
+        self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds) // CALayer position contains NaN: [nan nan]
     }
 
 //    override func didReceiveMemoryWarning() {
