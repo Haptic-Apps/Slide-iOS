@@ -27,6 +27,8 @@ class SettingsFont: UITableViewController {
     var commentSystem: UITableViewCell = UITableViewCell()
     var commentPapyrus: UITableViewCell = UITableViewCell()
     var commentChalkboard: UITableViewCell = UITableViewCell()
+    var commentAvenir: UITableViewCell = UITableViewCell()
+    var commentAvenirMedium: UITableViewCell = UITableViewCell()
 
     var submissionHelvetica: UITableViewCell = UITableViewCell()
     var submissionRCR: UITableViewCell = UITableViewCell()
@@ -37,6 +39,8 @@ class SettingsFont: UITableViewController {
     var submissionSystem: UITableViewCell = UITableViewCell()
     var submissionPapyrus: UITableViewCell = UITableViewCell()
     var submissionChalkboard: UITableViewCell = UITableViewCell()
+    var submissionAvenir: UITableViewCell = UITableViewCell()
+    var submissionAvenirMedium: UITableViewCell = UITableViewCell()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -333,6 +337,16 @@ class SettingsFont: UITableViewController {
         self.commentRL.backgroundColor = ColorUtil.foregroundColor
         self.commentRL.textLabel?.textColor = ColorUtil.fontColor
 
+        self.commentAvenir.textLabel?.text = "Avenir"
+        self.commentAvenir.textLabel?.font = FontGenerator.Font.AVENIR.font
+        self.commentAvenir.backgroundColor = ColorUtil.foregroundColor
+        self.commentAvenir.textLabel?.textColor = ColorUtil.fontColor
+
+        self.commentAvenirMedium.textLabel?.text = "Avenir Medium"
+        self.commentAvenirMedium.textLabel?.font = FontGenerator.Font.AVENIR_MEDIUM.font
+        self.commentAvenirMedium.backgroundColor = ColorUtil.foregroundColor
+        self.commentAvenirMedium.textLabel?.textColor = ColorUtil.fontColor
+
         self.commentRB.textLabel?.text = "Roboto Bold"
         self.commentRB.textLabel?.font = FontGenerator.Font.ROBOTO_BOLD.font
         self.commentRB.backgroundColor = ColorUtil.foregroundColor
@@ -373,6 +387,16 @@ class SettingsFont: UITableViewController {
         self.submissionRB.backgroundColor = ColorUtil.foregroundColor
         self.submissionRB.textLabel?.textColor = ColorUtil.fontColor
         
+        self.submissionAvenir.textLabel?.text = "Avenir"
+        self.submissionAvenir.textLabel?.font = FontGenerator.Font.AVENIR.font
+        self.submissionAvenir.backgroundColor = ColorUtil.foregroundColor
+        self.submissionAvenir.textLabel?.textColor = ColorUtil.fontColor
+
+        self.submissionAvenirMedium.textLabel?.text = "Avenir Medium"
+        self.submissionAvenirMedium.textLabel?.font = FontGenerator.Font.AVENIR_MEDIUM.font
+        self.submissionAvenirMedium.backgroundColor = ColorUtil.foregroundColor
+        self.submissionAvenirMedium.textLabel?.textColor = ColorUtil.fontColor
+
         self.submissionRM.textLabel?.text = "Roboto Medium"
         self.submissionRM.textLabel?.font = FontGenerator.Font.ROBOTO_MEDIUM.font
         self.submissionRM.backgroundColor = ColorUtil.foregroundColor
@@ -475,10 +499,16 @@ class SettingsFont: UITableViewController {
         submissionRM.accessoryType = .none
         submissionSystem.accessoryType = .none
         submissionPapyrus.accessoryType = .none
+        submissionAvenirMedium.accessoryType = .none
+        submissionAvenir.accessoryType = .none
         submissionChalkboard.accessoryType = .none
         switch FontGenerator.postFont {
         case .HELVETICA:
             submissionHelvetica.accessoryType = .checkmark
+        case .AVENIR:
+            submissionAvenir.accessoryType = .checkmark
+        case .AVENIR_MEDIUM:
+            submissionAvenirMedium.accessoryType = .checkmark
         case .ROBOTOCONDENSED_REGULAR:
             submissionRCR.accessoryType = .checkmark
         case .ROBOTOCONDENSED_BOLD:
@@ -501,6 +531,8 @@ class SettingsFont: UITableViewController {
         commentRCR.accessoryType = .none
         commentRCB.accessoryType = .none
         commentRL.accessoryType = .none
+        commentAvenir.accessoryType = .none
+        commentAvenirMedium.accessoryType = .none
         commentRB.accessoryType = .none
         commentRM.accessoryType = .none
         commentSystem.accessoryType = .none
@@ -511,6 +543,10 @@ class SettingsFont: UITableViewController {
             commentHelvetica.accessoryType = .checkmark
         case .ROBOTOCONDENSED_REGULAR:
             commentRCR.accessoryType = .checkmark
+        case .AVENIR:
+            commentAvenir.accessoryType = .checkmark
+        case .AVENIR_MEDIUM:
+            commentAvenirMedium.accessoryType = .checkmark
         case .ROBOTOCONDENSED_BOLD:
             commentRCB.accessoryType = .checkmark
         case .ROBOTO_LIGHT:
@@ -556,27 +592,31 @@ class SettingsFont: UITableViewController {
         case 1:
             switch indexPath.row {
             case 0: return self.submissionHelvetica
-            case 1: return self.submissionRCR
-            case 2: return self.submissionRCB
-            case 3: return self.submissionRL
-            case 4: return self.submissionRB
-            case 5: return self.submissionRM
-            case 6: return self.submissionSystem
-            case 7: return self.submissionPapyrus
-            case 8: return self.submissionChalkboard
+            case 1: return self.submissionAvenir
+            case 2: return self.submissionAvenirMedium
+            case 3: return self.submissionRCR
+            case 4: return self.submissionRCB
+            case 5: return self.submissionRL
+            case 6: return self.submissionRB
+            case 7: return self.submissionRM
+            case 8: return self.submissionSystem
+            case 9: return self.submissionPapyrus
+            case 10: return self.submissionChalkboard
             default: fatalError("Unknown row in section 1")
             }
         case 2:
             switch indexPath.row {
             case 0: return self.commentHelvetica
-            case 1: return self.commentRCR
-            case 2: return self.commentRCB
-            case 3: return self.commentRL
-            case 4: return self.commentRB
-            case 5: return self.commentRM
-            case 6: return self.commentSystem
-            case 7: return self.commentPapyrus
-            case 8: return self.commentChalkboard
+            case 1: return self.commentAvenir
+            case 2: return self.commentAvenirMedium
+            case 3: return self.commentRCR
+            case 4: return self.commentRCB
+            case 5: return self.commentRL
+            case 6: return self.commentRB
+            case 7: return self.commentRM
+            case 8: return self.commentSystem
+            case 9: return self.commentPapyrus
+            case 10: return self.commentChalkboard
             default: fatalError("Unknown row in section 1")
             }
         default: fatalError("Unknown section")
@@ -591,21 +631,24 @@ class SettingsFont: UITableViewController {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "postfont")
             case 1:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_REGULAR.rawValue, forKey: "postfont")
+                UserDefaults.standard.set(FontGenerator.Font.AVENIR.rawValue, forKey: "postfont")
             case 2:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_BOLD.rawValue, forKey: "postfont")
-                UserDefaults.standard.synchronize()
+                UserDefaults.standard.set(FontGenerator.Font.AVENIR_MEDIUM.rawValue, forKey: "postfont")
             case 3:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_LIGHT.rawValue, forKey: "postfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_REGULAR.rawValue, forKey: "postfont")
             case 4:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "postfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_BOLD.rawValue, forKey: "postfont")
             case 5:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "postfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_LIGHT.rawValue, forKey: "postfont")
             case 6:
-                UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "postfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "postfont")
             case 7:
-                UserDefaults.standard.set(FontGenerator.Font.PAPYRUS.rawValue, forKey: "postfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "postfont")
             case 8:
+                UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "postfont")
+            case 9:
+                UserDefaults.standard.set(FontGenerator.Font.PAPYRUS.rawValue, forKey: "postfont")
+            case 10:
                 UserDefaults.standard.set(FontGenerator.Font.CHALKBOARD.rawValue, forKey: "postfont")
             default: fatalError("Unknown row in section 1")
             }
@@ -614,20 +657,24 @@ class SettingsFont: UITableViewController {
             case 0:
                 UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
             case 1:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_REGULAR.rawValue, forKey: "commentfont")
+                UserDefaults.standard.set(FontGenerator.Font.AVENIR.rawValue, forKey: "commentfont")
             case 2:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_BOLD.rawValue, forKey: "commentfont")
+                UserDefaults.standard.set(FontGenerator.Font.AVENIR_MEDIUM.rawValue, forKey: "commentfont")
             case 3:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_LIGHT.rawValue, forKey: "commentfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_REGULAR.rawValue, forKey: "commentfont")
             case 4:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "commentfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTOCONDENSED_BOLD.rawValue, forKey: "commentfont")
             case 5:
-                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "commentfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_LIGHT.rawValue, forKey: "commentfont")
             case 6:
-                UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "commentfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_BOLD.rawValue, forKey: "commentfont")
             case 7:
-                UserDefaults.standard.set(FontGenerator.Font.PAPYRUS.rawValue, forKey: "commentfont")
+                UserDefaults.standard.set(FontGenerator.Font.ROBOTO_MEDIUM.rawValue, forKey: "commentfont")
             case 8:
+                UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "commentfont")
+            case 9:
+                UserDefaults.standard.set(FontGenerator.Font.PAPYRUS.rawValue, forKey: "commentfont")
+            case 10:
                 UserDefaults.standard.set(FontGenerator.Font.CHALKBOARD.rawValue, forKey: "commentfont")
             default: fatalError("Unknown row in section 1")
             }
@@ -644,8 +691,8 @@ class SettingsFont: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 4    // section 0 has 2 rows
-        case 1: return 9    // section 1 has 1 row
-        case 2: return 9    // section 1 has 1 row
+        case 1: return 11    // section 1 has 1 row
+        case 2: return 11    // section 1 has 1 row
         default: fatalError("Unknown number of sections")
         }
     }

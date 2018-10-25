@@ -173,7 +173,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         rewindImageView = UIImageView(image: UIImage(named: "rewind")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
             $0.alpha = 0
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
         }
         view.addSubview(rewindImageView)
@@ -181,7 +181,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         fastForwardImageView = UIImageView(image: UIImage(named: "fast_forward")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
             $0.alpha = 0
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-            $0.layer.cornerRadius = 10
+            $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
         }
         view.addSubview(fastForwardImageView)

@@ -50,6 +50,8 @@ class FontGenerator {
     
     enum Font: String {
         case HELVETICA = "helvetica"
+        case AVENIR = "avenirnext-regular"
+        case AVENIR_MEDIUM = "avenirnext-medium"
         case ROBOTOCONDENSED_REGULAR = "rcreg"
         case ROBOTOCONDENSED_BOLD = "rcbold"
         case ROBOTO_LIGHT = "rlight"
@@ -60,13 +62,17 @@ class FontGenerator {
         case CHALKBOARD = "chalkboard"
 
         public static var cases: [Font] {
-            return [.HELVETICA, .ROBOTOCONDENSED_REGULAR, .ROBOTOCONDENSED_BOLD, .ROBOTO_LIGHT, .ROBOTO_BOLD, .ROBOTO_MEDIUM, .SYSTEM]
+            return [.HELVETICA, .AVENIR, .AVENIR_MEDIUM, .ROBOTOCONDENSED_REGULAR, .ROBOTOCONDENSED_BOLD, .ROBOTO_LIGHT, .ROBOTO_BOLD, .ROBOTO_MEDIUM, .SYSTEM]
         }
         
         public func bold() -> UIFont {
             switch self {
             case .HELVETICA:
                 return UIFont.init(name: "HelveticaNeue-Bold", size: 16)!
+            case .AVENIR:
+                return UIFont.init(name: "AvenirNext-DemiBold", size: 16)!
+            case .AVENIR_MEDIUM:
+                return UIFont.init(name: "AvenirNext-Bold", size: 16)!
             case .ROBOTOCONDENSED_REGULAR:
                 return UIFont.init(name: "RobotoCondensed-Bold", size: 16)!
             case .ROBOTOCONDENSED_BOLD:
@@ -90,6 +96,10 @@ class FontGenerator {
             switch self {
             case .HELVETICA:
                 return UIFont.init(name: "HelveticaNeue", size: 16)!
+            case .AVENIR:
+                return UIFont.init(name: "AvenirNext-Regular", size: 16)!
+            case .AVENIR_MEDIUM:
+                return UIFont.init(name: "AvenirNext-DemiBold", size: 16)!
             case .ROBOTOCONDENSED_REGULAR:
                 return UIFont.init(name: "RobotoCondensed-Regular", size: 16)!
             case .ROBOTOCONDENSED_BOLD:

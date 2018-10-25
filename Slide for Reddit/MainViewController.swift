@@ -783,6 +783,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             if menuNav?.tableView != nil {
                 menuNav?.tableView.reloadData()
             }
+            
+            if let split = splitViewController {
+                
+            }
         }
         
         let formatter = DateFormatter()

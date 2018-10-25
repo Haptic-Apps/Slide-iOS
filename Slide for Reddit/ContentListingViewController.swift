@@ -48,7 +48,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.automaticallyAdjustsScrollViewInsets = false
-        self.edgesForExtendedLayout = []
+        self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.setToolbarHidden(true, animated: false)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
@@ -88,10 +88,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl)
         tableView.alwaysBounceVertical = true
-
-        self.tableView.setContentOffset(CGPoint(x: 0, y: -refreshControl.frame.size.height), animated: true)
-        
-        self.automaticallyAdjustsScrollViewInsets = false
 
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
         self.tableView.register(AutoplayBannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "autoplay")
