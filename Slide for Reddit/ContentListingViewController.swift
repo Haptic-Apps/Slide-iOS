@@ -58,6 +58,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 refreshControl.beginRefreshing()
             }
         }
+        if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
+            self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {

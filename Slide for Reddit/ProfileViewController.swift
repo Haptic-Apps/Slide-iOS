@@ -190,7 +190,6 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             navigationItem.rightBarButtonItems = [ moreB!, sortB!]
             self.navigationController?.navigationBar.shadowImage = UIImage()
         }
-
     }
     
     func showMenu(sender: AnyObject, user: Account) {

@@ -55,7 +55,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         let readB = UIBarButtonItem.init(customView: read)
 
         navigationItem.rightBarButtonItems = [editB, readB]
-
     }
 
     func new(_ sender: AnyObject) {

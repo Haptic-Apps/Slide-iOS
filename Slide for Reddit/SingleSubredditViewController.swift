@@ -225,6 +225,9 @@ class SingleSubredditViewController: MediaViewController {
         
         if single {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+            if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
+                self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
+            }
         }
     }
 

@@ -1153,6 +1153,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.navigationController!.delegate = swiper!
             }
         }
+        
+        if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
+            self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
+        }
     }
 
     var originalPosition: CGPoint?
