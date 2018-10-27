@@ -867,7 +867,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         if (parentViewController) != nil {
-            parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+            let textClicked = label.attributedText.attributedSubstring(from: result.range).string
+            if textClicked.contains("[[s[") {
+                parentViewController?.showSpoiler(textClicked)
+            } else {
+                let urlClicked = result.url!
+                parentViewController?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
+            }
         }
     }
     
@@ -1994,6 +2000,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     videoView?.player?.pause()
                 }
                 delegate.openComments(id: link!.getId(), subreddit: link!.subreddit)
+                if History.getSeen(s: link!) {
+                    self.title.alpha = 0.7
+                } else {
+                    self.title.alpha = 1
+                }
             }
         }
     }

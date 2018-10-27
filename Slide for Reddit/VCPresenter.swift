@@ -18,7 +18,7 @@ public class VCPresenter {
             return
         }
         
-        if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil && !(parentViewController is CommentViewController) {
             (parentViewController!.splitViewController)?.showDetailViewController(UINavigationController(rootViewController: viewController), sender: nil)
             return
         } else if (parentViewController?.splitViewController != nil) || ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && !(parentViewController is SubSidebarViewController) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil {
@@ -130,7 +130,7 @@ public class VCPresenter {
 
     public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {
         let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: link)!)
-        showVC(viewController: vc, popupIfPossible: false, parentNavigationController: parentNav, parentViewController: parentVC)
+        showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
 
     }
 }

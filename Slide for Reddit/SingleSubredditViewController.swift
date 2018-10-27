@@ -229,6 +229,17 @@ class SingleSubredditViewController: MediaViewController {
                 self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
             }
         }
+        
+        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
+        
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = false
+        
+        if single {
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+        }
+        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+        navigationController?.toolbar.tintColor = ColorUtil.fontColor
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -256,17 +267,6 @@ class SingleSubredditViewController: MediaViewController {
 
         SingleSubredditViewController.nextSingle = self.single
         doHeadView()
-        
-        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
-        
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = false
-        
-        if single {
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
-        }
-        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.fontColor
     }
 
     override func viewWillLayoutSubviews() {
@@ -2083,6 +2083,11 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 extension SingleSubredditViewController: LinkCellViewDelegate {
 
     func openComments(id: String, subreddit: String?) {
+        if let nav = ((self.splitViewController?.viewControllers.count > 1) ? self.splitViewController?.viewControllers[1] : nil) as? UINavigationController, let detail = nav.viewControllers[0] as? PagingCommentViewController {
+            if detail.submissions[0].getId() == id {
+                return
+            }
+        }
         var index = 0
         for s in links {
             if s.getId() == id {

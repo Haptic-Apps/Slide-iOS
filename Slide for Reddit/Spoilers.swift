@@ -12,8 +12,8 @@ import UIKit
 public class WrapSpoilers: NSObject {
     
     public static func addSpoilers(_ text: String) -> String {
+        //Appears to currently not work, instead TextStackEstimator is used. Need to fix this
         var base = text
-        
         for match in base.capturedGroups(withRegex: "<a[^>]*title=\"([^\"]*)\"[^>]*>([^<]*)</a>") {
             let tag = match[0]
             let spoilerText = match[1]

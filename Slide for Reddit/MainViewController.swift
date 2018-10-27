@@ -741,10 +741,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
 
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
-        if SettingValues.multiColumn {
-            self.splitViewController?.maximumPrimaryColumnWidth = 10000
-            self.splitViewController?.preferredPrimaryColumnWidthFraction = 1
-        }
+        self.splitViewController?.maximumPrimaryColumnWidth = 10000
+        self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.33
 
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && self.splitViewController != nil {
             self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
@@ -782,10 +780,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             menuNav?.header.doColors()
             if menuNav?.tableView != nil {
                 menuNav?.tableView.reloadData()
-            }
-            
-            if let split = splitViewController {
-                
             }
         }
         
