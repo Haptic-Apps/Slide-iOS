@@ -865,7 +865,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         layoutForContent()
     }
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
         if (parentViewController) != nil {
             let textClicked = label.attributedText.attributedSubstring(from: result.range).string
             if textClicked.contains("[[s[") {
