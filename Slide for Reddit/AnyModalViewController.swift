@@ -138,7 +138,11 @@ class AnyModalViewController: UIViewController {
         super.viewWillLayoutSubviews()
 
         // Recalculate video frame size
-        let size = videoView.player?.currentItem?.presentationSize ?? self.view.bounds.size
+        var size = videoView.player?.currentItem?.presentationSize ?? self.view.bounds.size
+        if size == CGSize.zero {
+            size = self.view.bounds.size
+        }
+
         self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds)
     }
     
