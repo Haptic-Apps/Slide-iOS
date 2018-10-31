@@ -79,17 +79,19 @@ class SettingsGeneral: UITableViewController {
                     if let error = error {
                         print(error.localizedDescription)
                     } else {
-                        self.notificationsSwitch.isOn = granted
-                        SettingValues.notifications = granted
-                        UserDefaults.standard.set(granted, forKey: SettingValues.pref_notifications)
-                        
-                        if SettingValues.notifications {
-                            UIApplication.shared.setMinimumBackgroundFetchInterval(60 * 10) // 10 minute interval
-                            print("Application background refresh minimum interval: \(60 * 10) seconds")
-                            print("Application background refresh status: \(UIApplication.shared.backgroundRefreshStatus.rawValue)")
-                        } else {
-                            UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
-                            print("Application background refresh minimum set to never")
+                        DispatchQueue.main.async {
+                            self.notificationsSwitch.isOn = granted
+                            SettingValues.notifications = granted
+                            UserDefaults.standard.set(granted, forKey: SettingValues.pref_notifications)
+                            
+                            if SettingValues.notifications {
+                                UIApplication.shared.setMinimumBackgroundFetchInterval(60 * 10) // 10 minute interval
+                                print("Application background refresh minimum interval: \(60 * 10) seconds")
+                                print("Application background refresh status: \(UIApplication.shared.backgroundRefreshStatus.rawValue)")
+                            } else {
+                                UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
+                                print("Application background refresh minimum set to never")
+                            }
                         }
                     }
                 }
@@ -168,7 +170,9 @@ class SettingsGeneral: UITableViewController {
 
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { (settings) in
-                self.createCell(self.notifications, self.notificationsSwitch, isOn: SettingValues.notifications && settings.authorizationStatus == .authorized, text: "New message notifications")
+                DispatchQueue.main.async {
+                    self.createCell(self.notifications, self.notificationsSwitch, isOn: SettingValues.notifications && settings.authorizationStatus == .authorized, text: "New message notifications")
+                }
             })
         } else {
             self.notifications.textLabel?.text = "New message notifications"

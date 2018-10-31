@@ -55,12 +55,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
         }
     }
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
-        if let notifData = launchOptions?[UIApplicationLaunchOptionsKey.localNotification] {
-            print("Was notif")
+    
+    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+        if let url = notification.userInfo?["permalink"] as? String {
+            VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+        } else {
+            VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
         }
+    }
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
 
@@ -165,6 +169,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             window.rootViewController = rootController
             window.makeKeyAndVisible()
+        }
+        
+        let remoteNotif = launchOptions?[UIApplicationLaunchOptionsKey.localNotification] as? UILocalNotification
+        
+        if remoteNotif != nil {
+            if let url = remoteNotif!.userInfo?["permalink"] as? String {
+                VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+            } else {
+                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+            }
         }
 
         WatchSessionManager.sharedManager.doInit()
@@ -283,7 +297,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         newCount += 1
                         // TODO: If there's more than one new notification, maybe just post
                         // a message saying "You have new unread messages."
-                        postLocalNotification(message.body, message.author, message.id, message.wasComment)
+                        postLocalNotification(message.body, message.author, message.wasComment ? message.context : nil, message.id)
                     }
                 }
 
@@ -323,7 +337,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
     
-    func postLocalNotification(_ message: String, _ author: String = "", _ id: String = "", _ wasComment: Bool = false) {
+    func postLocalNotification(_ message: String, _ author: String = "", _ permalink: String? = nil, _ id: String) {
         if #available(iOS 10.0, *) {
             let center = UNUserNotificationCenter.current()
 
@@ -335,7 +349,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 content.title = "New message from \(author)"
             }
             content.body = message
-            content.userInfo = ["isComment": wasComment, "id": id]
+            if permalink != nil {
+                content.userInfo = ["permalink": "https://www.reddit.com" + permalink!]
+            }
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2,
                     repeats: false)
             let identifier = "SlideNewMessage" + id
