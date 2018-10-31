@@ -138,18 +138,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         RemovalReasons.initialize()
         Subscriptions.sync(name: AccountController.currentName, completion: nil)
 
-        if #available(iOS 10.0, *) {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
-                if let error = error {
-                    print(error.localizedDescription)
-                } else {
-                    print("User has chosen to \(granted ? "allow" : "deny") notifications.")
-                }
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-
         if !UserDefaults.standard.bool(forKey: "sc" + name) {
             syncColors(subredditController: nil)
         }
@@ -181,9 +169,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         WatchSessionManager.sharedManager.doInit()
 
-        UIApplication.shared.setMinimumBackgroundFetchInterval(60 * 10) // 10 minute interval
-        print("Application background refresh minimum interval: \(60 * 10) seconds")
-        print("Application background refresh status: \(UIApplication.shared.backgroundRefreshStatus.rawValue)")
+        if SettingValues.notifications {
+            UIApplication.shared.setMinimumBackgroundFetchInterval(60 * 10) // 10 minute interval
+            print("Application background refresh minimum interval: \(60 * 10) seconds")
+            print("Application background refresh status: \(UIApplication.shared.backgroundRefreshStatus.rawValue)")
+        } else {
+            UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
+            print("Application background refresh minimum set to never")
+        }
 
         #if DEBUG
         SettingValues.isPro = true

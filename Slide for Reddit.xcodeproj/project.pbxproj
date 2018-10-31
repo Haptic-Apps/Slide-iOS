@@ -62,6 +62,7 @@
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
 		BE0958DD2188C0850076966C /* DTCoreTextFontOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE0958DC2188C0840076966C /* DTCoreTextFontOverrides.plist */; };
+		BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0958DE218A08620076966C /* SettingsViewMode.swift */; };
 		BE0D639D215983260006A2DD /* PostActionMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D639C215983260006A2DD /* PostActionMenuController.swift */; };
 		BE0D63A3215AA5CD0006A2DD /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D63A2215AA5CD0006A2DD /* ContentType.swift */; };
 		BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */; };
@@ -365,6 +366,7 @@
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
 		BA9177B1039FF29FE7BFC503 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BE0958DC2188C0840076966C /* DTCoreTextFontOverrides.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTCoreTextFontOverrides.plist; sourceTree = "<group>"; };
+		BE0958DE218A08620076966C /* SettingsViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewMode.swift; sourceTree = "<group>"; };
 		BE0D639C215983260006A2DD /* PostActionMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostActionMenuController.swift; sourceTree = "<group>"; };
 		BE0D63A2215AA5CD0006A2DD /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWelcome.swift; sourceTree = "<group>"; };
@@ -761,6 +763,7 @@
 				B776BBAC46362B38981E24E0 /* SettingsBackup.swift */,
 				BEF7483120DD894100B6236B /* SettingsGestures.swift */,
 				BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */,
+				BE0958DE218A08620076966C /* SettingsViewMode.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1723,6 +1726,7 @@
 				BE77638A211B732B002F2969 /* SubredditFindReturnViewController.swift in Sources */,
 				09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */,
 				BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */,
+				BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */,
 				0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */,
 				B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */,
 				B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */,

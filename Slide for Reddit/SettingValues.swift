@@ -106,6 +106,7 @@ class SettingValues {
     public static let pref_submissionActionLeft = "SUBMISSION_LEFT"
     public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
     public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE"
+    public static let pref_notifications = "NOTIFICATIONS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -198,6 +199,7 @@ class SettingValues {
     public static var swapLongPress = false
     public static var collapseFully = true
     public static var highlightOp = true
+    public static var notifications = true
     public static var smallerTag = true
     public static var biometrics = true
     public static var nightStart = 1
@@ -208,7 +210,6 @@ class SettingValues {
     public static var nightTheme = ColorUtil.Theme.DARK
     public static var commentFullScreen = true
     public static var linkAlwaysThumbnail = false
-    public static var bottomBarHidden = true
     public static var lockCommentBars = true
     public static var autoKeyboard = true
 
@@ -387,6 +388,7 @@ class SettingValues {
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
+        SettingValues.notifications = settings.bool(forKey: SettingValues.pref_notifications)
         SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)
         SettingValues.disableNavigationBar = settings.bool(forKey: SettingValues.pref_disableNavigationBar)
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
@@ -408,7 +410,6 @@ class SettingValues {
         SettingValues.pinToolbar = settings.bool(forKey: SettingValues.pref_pinToolbar)
         SettingValues.autoKeyboard = settings.object(forKey: SettingValues.pref_autoKeyboard) == nil ? true : settings.bool(forKey: SettingValues.pref_autoKeyboard)
         SettingValues.linkAlwaysThumbnail = settings.object(forKey: SettingValues.pref_linkAlwaysThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
-        SettingValues.bottomBarHidden = false // disable for now settings.bool(forKey: SettingValues.pref_bottomBarHidden)
         SettingValues.showPages = settings.bool(forKey: SettingValues.pref_showPages)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
