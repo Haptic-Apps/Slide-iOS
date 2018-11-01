@@ -236,7 +236,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         parentController!.navigationController?.view.addSubviews(backgroundView, self.view)
         parentController!.navigationController?.view.bringSubview(toFront: backgroundView)
         parentController!.navigationController?.view.bringSubview(toFront: self.view)
-        
+        backgroundView.edgeAnchors == parentController!.navigationController!.view.edgeAnchors
+
         let y = UIScreen.main.bounds.height - self.view.frame.size.height
         if let parent = self.parentController, parent.menu.superview != nil {
             parent.menu.deactivateImmediateConstraints()

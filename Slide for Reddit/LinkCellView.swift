@@ -148,6 +148,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
                 UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             }))
+            
             alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -506,6 +507,27 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if full {
                     textView.parentLongPress = longPress!
                 }
+                
+                let long = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.linkMenu(sender:)))
+                long.delegate = self
+                bannerImage.addGestureRecognizer(long)
+                
+                let long2 = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.linkMenu(sender:)))
+                long2.delegate = self
+                thumbImageContainer.addGestureRecognizer(long2)
+
+                let long3 = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.linkMenu(sender:)))
+                long3.delegate = self
+                topVideoView?.addGestureRecognizer(long3)
+
+                let long4 = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.linkMenu(sender:)))
+                long4.delegate = self
+                infoContainer.addGestureRecognizer(long4)
+
+                longPress!.require(toFail: long)
+                longPress!.require(toFail: long2)
+                longPress!.require(toFail: long3)
+                longPress!.require(toFail: long4)
                 self.contentView.addGestureRecognizer(longPress!)
             }
             addTouch = true
@@ -522,6 +544,50 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var previousProgress: Float!
     var dragCancelled = false
     var direction = 0
+    
+    func linkMenu(sender: AnyObject) {
+        if self.parentViewController != nil {
+            let url = self.link!.url!
+            let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.headerData = url.host
+            alertController.addAction(Action(ActionData(title: url.host ?? url.absoluteString, image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+                let shareItems: Array = [url]
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = self.contentView
+                self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+            }))
+            
+            if ContentType.isImage(uri: url) && !bannerImage.isHidden {
+                let imageToShare = [bannerImage.image!]
+                let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = self.contentView
+
+                alertController.addAction(Action(ActionData(title: "Share image", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { _ in
+                    self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+                }))
+            }
+
+            alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+            }))
+
+            alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(url)
+                }
+            }))
+            let open = OpenInChromeController.init()
+            if open.isChromeInstalled() {
+                alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                }))
+            }
+            self.parentViewController?.present(alertController, animated: true, completion: nil)
+        }
+    }
     
     func handlePan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began || progressBar == nil {
