@@ -106,13 +106,14 @@ class SubredditCellView: UITableViewCell {
             if !self.cancelled {
                 if profile.isEmpty() {
                     let vc = SingleSubredditViewController.init(subName: self.subreddit, single: true)
+                    print("Dismissing")
                     navController!.dismiss(animated: true) {
-                        VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)
+                        VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.parent?.navigationController, parentViewController: self.navController!)
                     }
                 } else {
                     let vc = ProfileViewController.init(name: self.profile)
                     navController!.dismiss(animated: true) {
-                        VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.navigationController, parentViewController: self.navController!)
+                        VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navController!.parent?.navigationController, parentViewController: self.navController!)
                     }
                 }
             }

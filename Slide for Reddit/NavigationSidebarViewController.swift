@@ -486,17 +486,17 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             if indexPath.row == filteredContent.count && isSearching {
                 let thing = searchBar!.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-                c.setSubreddit(subreddit: thing, nav: parentController!, exists: false)
+                c.setSubreddit(subreddit: thing, nav: self, exists: false)
                 cell = c
             } else if isSearching && indexPath.row == filteredContent.count + 1 {
                 let thing = searchBar!.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "profile", for: indexPath) as! SubredditCellView
-                c.setProfile(profile: thing, nav: parentController!)
+                c.setProfile(profile: thing, nav: self)
                 cell = c
             } else if isSearching && indexPath.row == filteredContent.count + 2 {
                 let thing = searchBar!.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
-                c.setSearch(string: thing, nav: parentController!)
+                c.setSearch(string: thing, nav: self)
                 cell = c
             } else {
                 var thing = ""
@@ -506,13 +506,13 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                     thing = Subscriptions.subreddits[indexPath.row]
                 }
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-                c.setSubreddit(subreddit: thing, nav: parentController!, exists: true)
+                c.setSubreddit(subreddit: thing, nav: self, exists: true)
                 cell = c
             }
         } else {
             let thing = suggestions[indexPath.row]
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-            c.setSubreddit(subreddit: thing, nav: parentController!, exists: false)
+            c.setSubreddit(subreddit: thing, nav: self, exists: false)
             cell = c
         }
 
