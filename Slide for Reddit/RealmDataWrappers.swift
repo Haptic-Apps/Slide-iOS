@@ -135,7 +135,7 @@ class RealmDataWrapper {
         rSubmission.removed = !rSubmission.removedBy.isEmpty()
 
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
-            let array = item as! [Int]
+            let array = item as! [String]
             rSubmission.reports.append("\(array[0]): \(array[1])")
         }
         for item in submission.baseJson["user_reports"] as? [AnyObject] ?? [] {
