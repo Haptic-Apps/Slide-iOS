@@ -13,6 +13,7 @@ import MaterialComponents
 import reddift
 import RLBAlertsPickers
 import SafariServices
+import SDWebImage
 import Then
 import TTTAttributedLabel
 import UIKit
@@ -1269,10 +1270,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     thumbImage.image = LinkCellImageCache.web
                 }
             } else {
-                let thumbURL = submission.thumbnailUrl
-                DispatchQueue.global(qos: .userInteractive).async {
-                    self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: LinkCellImageCache.web, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages])
-                }
+                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.thumbnailUrl), withPlaceHolderImage: nil)
             }
         } else {
             thumbImage.sd_setImage(with: URL.init(string: ""))
@@ -1329,37 +1327,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 submissionHeight = test ? 150 : 200
             }
             bannerImage.isUserInteractionEnabled = true
-            if shouldShowLq {
-                lq = true
-                loadedImage = URL.init(string: submission.lqUrl)
-                
-                let lqURL = submission.lqUrl
-                DispatchQueue.global(qos: .userInteractive).async {
-                    self.bannerImage.sd_setImage(with: URL.init(string: lqURL), placeholderImage: nil, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], completed: { (_, _, cache, _) in
-                        if cache == .none {
-                            UIView.animate(withDuration: 0.3, animations: {
-                                self.bannerImage.alpha = 1
-                            })
-                        } else {
-                            self.bannerImage.alpha = 1
-                        }
-                    })
-                }
-            } else {
-                loadedImage = URL.init(string: submission.bannerUrl)
-                let bannerURL = submission.bannerUrl
-                DispatchQueue.global(qos: .userInteractive).async {
-                    self.bannerImage.sd_setImage(with: URL.init(string: bannerURL), placeholderImage: nil, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], completed: { (_, _, cache, _) in
-                        if cache == .none {
-                            UIView.animate(withDuration: 0.3, animations: {
-                                self.bannerImage.alpha = 1
-                            })
-                        } else {
-                            self.bannerImage.alpha = 1
-                        }
-                    })
-                }
-            }
+
+            // Pulse the background color of the banner image until it loads
+            let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
+            bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil)
             
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
             self.bannerHeightConstraint = batch {
@@ -2141,5 +2112,34 @@ extension UIGestureRecognizer {
     func cancel() {
         isEnabled = false
         isEnabled = true
+    }
+}
+
+private extension UIImageView {
+    func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?) {
+        let oldBackgroundColor: UIColor? = self.backgroundColor
+        self.backgroundColor = ColorUtil.fontColor
+        self.alpha = 0.025
+        UIView.animateKeyframes(withDuration: 1.6, delay: 0, options: [.allowUserInteraction, .repeat, .calculationModeCubicPaced], animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.5) {
+                self.alpha = 0.09
+            }
+            UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5) {
+                self.alpha = 0.025
+            }
+        })
+
+        self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, cacheType, _) in
+            self.layer.removeAllAnimations() // Stop the pulsing animation
+            self.backgroundColor = oldBackgroundColor
+
+            if cacheType == .none {
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.alpha = 1
+                })
+            } else {
+                self.alpha = 1
+            }
+        }
     }
 }
