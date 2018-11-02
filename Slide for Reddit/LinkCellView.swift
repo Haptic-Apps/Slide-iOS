@@ -1888,7 +1888,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             History.addSeen(s: link!)
             if History.getSeen(s: link!) {
-                self.title.alpha = 0.7
+                self.title.alpha = 0.3
             } else {
                 self.title.alpha = 1
             }
@@ -2007,7 +2007,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if let link = link {
             (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController) //todo check this
             if History.getSeen(s: link) && !full {
-                self.title.alpha = 0.7
+                self.title.alpha = 0.3
             } else {
                 self.title.alpha = 1
             }
@@ -2038,7 +2038,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 delegate.openComments(id: link!.getId(), subreddit: link!.subreddit)
                 if History.getSeen(s: link!) {
-                    self.title.alpha = 0.7
+                    self.title.alpha = 0.3
                 } else {
                     self.title.alpha = 1
                 }
