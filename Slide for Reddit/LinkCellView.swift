@@ -1840,7 +1840,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             save.setImage(LinkCellImageCache.saveTinted, for: .normal)
         }
         if History.getSeen(s: link) && !full {
-            self.title.alpha = 0.7
+            self.title.alpha = 0.3
         } else {
             self.title.alpha = 1
         }
