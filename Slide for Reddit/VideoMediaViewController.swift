@@ -1031,7 +1031,6 @@ extension VideoMediaViewController {
             UIApplication.shared.openURL(url)
         }
     }
-    
 }
 
 extension VideoMediaViewController: VideoScrubberViewDelegate {

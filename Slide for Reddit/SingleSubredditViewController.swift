@@ -289,11 +289,11 @@ class SingleSubredditViewController: MediaViewController {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
         }
         if fab != nil {
-                UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                    self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-                }, completion: { _ in
-                    self.fab?.removeFromSuperview()
-                })
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+            }, completion: { _ in
+                self.fab?.removeFromSuperview()
+            })
         }
         
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
@@ -326,6 +326,15 @@ class SingleSubredditViewController: MediaViewController {
     static func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
         let ratio = imageHeight / imageWidth
         return viewWidth * ratio
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if fab != nil {
+            fab?.removeFromSuperview()
+            fab = nil
+        }
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -906,7 +915,9 @@ class SingleSubredditViewController: MediaViewController {
     }
     
     func resetColors() {
-        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+        if single {
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
+        }
         setupFab(UIScreen.main.bounds.size)
         if parentController != nil {
             parentController?.colorChanged(ColorUtil.getColorForSub(sub: sub))

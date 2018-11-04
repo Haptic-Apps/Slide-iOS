@@ -440,10 +440,6 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if !populated {
-            populateContent()
-            populated = true
-        }
         doBackground()
         //self.baseView.backgroundColor = .clear
     }
@@ -453,6 +449,10 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if !populated {
+            populateContent()
+            populated = true
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {

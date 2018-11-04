@@ -231,7 +231,10 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                         }
                     }
                 }
-                self.updateProgress(CGFloat(average), "")
+                
+                DispatchQueue.main.async {
+                    self.updateProgress(CGFloat(average), "")
+                }
 
                 }, completed: { (image, data, _, _) in
                     SDImageCache.shared().store(image, imageData: data, forKey: imageURL.absoluteString, toDisk: true, completion: nil)

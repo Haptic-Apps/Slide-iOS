@@ -15,7 +15,7 @@ class CachedTitle {
     static var approved: [String] = []
 
     static func addTitle(s: RSubmission) {
-
+        titles[s.getId()] = titleForSubmission(submission: s, full: false, white: false)
     }
 
     static var titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
