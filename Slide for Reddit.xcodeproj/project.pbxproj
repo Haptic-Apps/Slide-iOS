@@ -67,6 +67,7 @@
 		BE0D63A3215AA5CD0006A2DD /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D63A2215AA5CD0006A2DD /* ContentType.swift */; };
 		BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */; };
 		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
+		BE0F4434218F6BBD00D98279 /* ProInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0F4433218F6BBD00D98279 /* ProInterfaceController.swift */; };
 		BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11351B2159390700502C5B /* WatchSessionManager.swift */; };
 		BE13C2CC21655A40002687F2 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2CB21655A40002687F2 /* UIImage+Extensions.swift */; };
 		BE13C2CE21655A9A002687F2 /* DateFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE13C2CD21655A9A002687F2 /* DateFormatter+Extensions.swift */; };
@@ -371,6 +372,7 @@
 		BE0D63A2215AA5CD0006A2DD /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWelcome.swift; sourceTree = "<group>"; };
 		BE0EF7C31F43C9510058D572 /* Spoilers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spoilers.swift; sourceTree = "<group>"; };
+		BE0F4433218F6BBD00D98279 /* ProInterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProInterfaceController.swift; sourceTree = "<group>"; };
 		BE11351B2159390700502C5B /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
 		BE13C2CB21655A40002687F2 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		BE13C2CD21655A9A002687F2 /* DateFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extensions.swift"; sourceTree = "<group>"; };
@@ -734,6 +736,7 @@
 				BE17A249215FE878002C6CE6 /* MoreRowController.swift */,
 				BE0D639C215983260006A2DD /* PostActionMenuController.swift */,
 				BE0D63A2215AA5CD0006A2DD /* ContentType.swift */,
+				BE0F4433218F6BBD00D98279 /* ProInterfaceController.swift */,
 			);
 			path = "Slide for Apple Watch Extension";
 			sourceTree = "<group>";
@@ -1551,6 +1554,7 @@
 				BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */,
 				BE13C2CC21655A40002687F2 /* UIImage+Extensions.swift in Sources */,
 				BE20852721588F3B00D8F33C /* NotificationController.swift in Sources */,
+				BE0F4434218F6BBD00D98279 /* ProInterfaceController.swift in Sources */,
 				BE20852521588F3B00D8F33C /* ExtensionDelegate.swift in Sources */,
 				BE13C2CE21655A9A002687F2 /* DateFormatter+Extensions.swift in Sources */,
 				BE0D639D215983260006A2DD /* PostActionMenuController.swift in Sources */,

@@ -101,7 +101,27 @@ class InterfaceController: WKInterfaceController {
             }
         }
     }
+    
+    func loadData(_ session: WCSession) {
+        if session.isReachable {
+            checkTimer?.invalidate()
+            checkTimer = nil
+        } else {
+            return
+        }
+        session.sendMessage(["sublist": true], replyHandler: { (message) in
+            self.subs = message["subs"] as? [String: String] ?? [String: String]()
+            self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
+            self.isPro = message["pro"] as? Bool ?? false
+            if self.subsOrdered.count > 0 {
+                self.getSubmissions(self.subsOrdered[0], reset: true)
+            }
+        }, errorHandler: { (error) in
+            print(error)
+        })
+    }
 
+    var checkTimer: Timer?
 }
 
 extension InterfaceController: WCSessionDelegate {
@@ -118,16 +138,13 @@ extension InterfaceController: WCSessionDelegate {
             loadingImage.setHidden(false)
             loadingImage.setImageNamed("Activity")
             loadingImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
-            session.sendMessage(["sublist": true], replyHandler: { (message) in
-                self.subs = message["subs"] as? [String: String] ?? [String: String]()
-                self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
-                self.isPro = message["pro"] as? Bool ?? false
-                if self.subsOrdered.count > 0 {
-                    self.getSubmissions(self.subsOrdered[0], reset: true)
-                }
-            }, errorHandler: { (error) in
-                print(error)
-            })
+            if activationState == .activated && session.isReachable {
+                loadData(session)
+            } else {
+                checkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
+                    self.loadData(WCSession.default)
+                })
+            }
         }
     }
 }

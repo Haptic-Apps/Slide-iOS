@@ -17,19 +17,29 @@ class PostActionMenuController: WKInterfaceController {
     @IBOutlet weak var commentLabel: WKInterfaceLabel!
     @IBOutlet weak var imageGroup: WKInterfaceGroup!
     public var modelContext: SubmissionRowController?
+    public var parent: InterfaceController?
 
     @IBAction func openComments() {
-        WCSession.default.sendMessage(["comments": modelContext!.id!], replyHandler: { (_) in
-        }, errorHandler: { (error) in
-            print(error)
-        })
+//        if !(self.parent?.isPro ?? true) {
+//            self.parent?.presentController(withName: "Pro", context: parent!)
+//        } else {
+            WCSession.default.sendMessage(["comments": modelContext!.id!], replyHandler: { (_) in
+            }, errorHandler: { (error) in
+                print(error)
+            })
+//        }
     }
+    
     @IBAction func readLater() {
-        WCSession.default.sendMessage(["readlater": modelContext!.id!, "sub": modelContext!.sub!], replyHandler: { (_) in
-            self.dismiss()
-        }, errorHandler: { (error) in
-            print(error)
-        })
+//        if !(self.parent?.isPro ?? true) {
+//            self.parent?.presentController(withName: "Pro", context: parent!)
+//        } else {
+            WCSession.default.sendMessage(["readlater": modelContext!.id!, "sub": modelContext!.sub!], replyHandler: { (_) in
+                self.dismiss()
+            }, errorHandler: { (error) in
+                print(error)
+            })
+//        }
     }
     @IBAction func doUpvote() {
         WCSession.default.sendMessage(["upvote": modelContext!.id!], replyHandler: { (result) in
@@ -50,6 +60,7 @@ class PostActionMenuController: WKInterfaceController {
         super.awake(withContext: context)
         let myModel = context as! SubmissionRowController //make the model
         self.modelContext = myModel
+        self.parent = (context as? SubmissionRowController)?.parent
         titleLabel.setAttributedText(myModel.titleText)
         bannerImage.setImage(myModel.thumbnail)
         imageGroup.setCornerRadius(5)

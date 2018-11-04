@@ -37,12 +37,12 @@
                                 </label>
                             </items>
                         </group>
-                        <button width="1" alignment="left" title="Comments" id="2PX-VI-Mpg">
+                        <button width="1" alignment="left" title="Open comments on iPhone" id="2PX-VI-Mpg">
                             <connections>
                                 <action selector="openComments" destination="lXM-Ia-ysh" id="d2m-5c-uez"/>
                             </connections>
                         </button>
-                        <button width="1" alignment="left" title="Read Later" id="zAt-DZ-GVK">
+                        <button width="1" alignment="left" title="Add to Read Later" id="zAt-DZ-GVK">
                             <connections>
                                 <action selector="readLater" destination="lXM-Ia-ysh" id="qKx-3l-T58"/>
                             </connections>
@@ -68,11 +68,14 @@
         <!--Pro-->
         <scene sceneID="zns-tl-fhB">
             <objects>
-                <controller identifier="Pro" id="xan-Ot-vAh">
+                <controller identifier="Pro" id="xan-Ot-vAh" customClass="ProInterfaceController" customModule="Slide_for_Apple_Watch" customModuleProvider="target">
                     <items>
                         <button width="1" alignment="left" title="Click here to Go Pro!" id="8Ga-zC-fRP">
                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <color key="backgroundColor" red="0.2274509804" green="0.7521325418068493" blue="0.25698655321232877" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <connections>
+                                <action selector="openPro" destination="xan-Ot-vAh" id="S9x-I4-Ubt"/>
+                            </connections>
                         </button>
                         <group width="1" height="0.0" alignment="left" id="WCO-fE-Uhp">
                             <items>

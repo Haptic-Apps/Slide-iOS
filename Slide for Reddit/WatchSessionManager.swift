@@ -27,7 +27,11 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
     public var paginator = Paginator()
     
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
-        if message["comments"] != nil {
+        if message["pro"] != nil {
+            DispatchQueue.main.async {
+                VCPresenter.showVC(viewController: SettingsPro(), popupIfPossible: false, parentNavigationController: nil, parentViewController: (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController)
+            }
+        } else if message["comments"] != nil {
             DispatchQueue.main.async {
                VCPresenter.openRedditLink("https://redd.it/\((message["comments"] as! String))", nil, (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController)
             }
