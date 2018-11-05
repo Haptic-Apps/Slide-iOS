@@ -757,6 +757,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             
             progressDot.layer.add(pulseAnimation, forKey: "scale")
             progressDot.layer.add(fadeAnimation, forKey: "fade")
+
+            timeView.isHidden = true
         } else if !buffering {
             timeView.isHidden = false
         }
@@ -1329,7 +1331,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.isUserInteractionEnabled = true
 
             // Pulse the background color of the banner image until it loads
+            lq = shouldShowLq
             let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
+            loadedImage = bannerImageUrl
             bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil)
             
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
@@ -2115,10 +2119,9 @@ extension UIGestureRecognizer {
     }
 }
 
-private extension UIImageView {
-    func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?) {
-        let oldBackgroundColor: UIColor? = self.backgroundColor
-        self.backgroundColor = ColorUtil.fontColor
+private extension UIView {
+
+    func startPulsingAnimation() {
         self.alpha = 0.025
         UIView.animateKeyframes(withDuration: 1.6, delay: 0, options: [.allowUserInteraction, .repeat, .calculationModeCubicPaced], animations: {
             UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.5) {
@@ -2128,17 +2131,29 @@ private extension UIImageView {
                 self.alpha = 0.025
             }
         })
+    }
 
-        self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, cacheType, _) in
-            self.layer.removeAllAnimations() // Stop the pulsing animation
-            self.backgroundColor = oldBackgroundColor
+}
 
-            if cacheType == .none {
-                UIView.animate(withDuration: 0.3, animations: {
+private extension UIImageView {
+    func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?) {
+        let oldBackgroundColor: UIColor? = self.backgroundColor
+        self.backgroundColor = ColorUtil.fontColor
+
+        startPulsingAnimation()
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, cacheType, _) in
+                self.layer.removeAllAnimations() // Stop the pulsing animation
+                self.backgroundColor = oldBackgroundColor
+
+                if cacheType == .none {
+                    UIView.animate(withDuration: 0.3, delay: 0, options: .allowUserInteraction, animations: {
+                        self.alpha = 1
+                    })
+                } else {
                     self.alpha = 1
-                })
-            } else {
-                self.alpha = 1
+                }
             }
         }
     }
