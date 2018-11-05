@@ -532,7 +532,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     var subs: UIView?
 
     func setupTabBar(_ subs: [String]) {
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 44))
+        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 48))
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
         tabBar.itemAppearance = .titles
 
