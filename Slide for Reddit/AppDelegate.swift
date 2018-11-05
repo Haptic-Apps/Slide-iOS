@@ -159,7 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if !UserDefaults.standard.bool(forKey: "firstOpen") {
                 rootController = UINavigationController(rootViewController: SettingsWelcome())
             } else {
-                if UIDevice.current.userInterfaceIdiom == .pad {
+                if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
                     rootController = UISplitViewController()
                     (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
                 } else {

@@ -57,7 +57,6 @@ class SettingValues {
     public static let pref_saveButton = "SAVE_BUTTON"
     public static let pref_readLaterButton = "READ_LATER_BUTTON"
     public static let pref_internalYouTube = "INTERNAL_YOUTUBE"
-    public static let pref_multiColumn = "MULTI_COLUMN"
     public static let pref_showFirstParagraph = "FIRST_P"
     public static let pref_swapLongPress = "SWAP_LONG_PRESS"
     public static let pref_collapseFully = "COLLAPSE_FULLY"
@@ -107,6 +106,8 @@ class SettingValues {
     public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
     public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE"
     public static let pref_notifications = "NOTIFICATIONS"
+    public static let pref_subBar = "SUB_BAR"
+    public static let pref_appMode = "APP_MODE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -129,6 +130,7 @@ class SettingValues {
 
     public static var browser = "firefox"
     public static var viewType = true
+    public static var subredditBar = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true
     public static var defaultSorting = LinkSortType.hot
@@ -194,7 +196,6 @@ class SettingValues {
     public static var saveButton = false
     public static var readLaterButton = true
     public static var internalYouTube = true
-    public static var multiColumn = false
     public static var showFirstParagraph = true
     public static var swapLongPress = false
     public static var collapseFully = true
@@ -212,6 +213,7 @@ class SettingValues {
     public static var linkAlwaysThumbnail = false
     public static var lockCommentBars = true
     public static var autoKeyboard = true
+    public static var appMode = AppMode.SINGLE
 
     enum PostViewType: String {
         case LIST = "list"
@@ -325,7 +327,6 @@ class SettingValues {
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.reduceColor = settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
-        SettingValues.multiColumn = settings.object(forKey: SettingValues.pref_multiColumn) == nil ? false : settings.bool(forKey: SettingValues.pref_multiColumn)
         
         var columns = Int(round(UIApplication.shared.statusBarView!.frame.size.width / CGFloat(320)))
         if columns == 0 {
@@ -433,11 +434,14 @@ class SettingValues {
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
         SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
+        SettingValues.subredditBar = settings.bool(forKey: SettingValues.pref_subBar)
         SettingValues.matchSilence = settings.object(forKey: SettingValues.pref_matchSilence) == nil ? true : settings.bool(forKey: SettingValues.pref_matchSilence)
         SettingValues.infoBelowTitle = settings.bool(forKey: SettingValues.pref_infoBelowTitle)
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
+        SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? "single") ?? .SINGLE
+
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
         SettingValues.autoPlayMode = AutoPlay.init(rawValue: settings.string(forKey: SettingValues.pref_autoPlayMode) ?? "always") ?? .ALWAYS
@@ -713,6 +717,38 @@ class SettingValues {
                  return "Gallery"
             case .SEARCH:
                 return "Search"
+            }
+        }
+
+    }
+
+    public enum AppMode: String {
+        
+        public static let cases: [AppMode] = [.SPLIT, .SINGLE, .MULTI_COLUMN]
+        
+        case SPLIT = "split"
+        case SINGLE = "single"
+        case MULTI_COLUMN = "multi"
+        
+        func getTitle() -> String {
+            switch self {
+            case .SPLIT:
+                return "Split view mode"
+            case .SINGLE:
+                return "Single list"
+            case .MULTI_COLUMN:
+                return "Multi-column mode"
+            }
+        }
+        
+        func getDescription() -> String {
+            switch self {
+            case .SPLIT:
+                return "Displays submissions on the left and comments on the right (requires an iPad)"
+            case .SINGLE:
+                return "Single column display of submissions"
+            case .MULTI_COLUMN:
+                return "Multiple column display of submissions (requires Pro and an iPad)"
             }
         }
 

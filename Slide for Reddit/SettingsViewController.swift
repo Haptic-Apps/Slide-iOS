@@ -43,8 +43,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var gestureCell: UITableViewCell = UITableViewCell()
     var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
 
-    var multiColumnCell: UITableViewCell = UITableViewCell()
-    var multiColumn = UISwitch()
+    var viewModeCell: UITableViewCell = UITableViewCell()
     var lock = UISwitch()
     
     var reduceColorCell: UITableViewCell = UITableViewCell()
@@ -293,12 +292,12 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.autoPlayCell.detailTextLabel?.numberOfLines = 0
         self.autoPlayCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
-        multiColumnCell.textLabel?.text = "Multi-Column mode settings"
-        multiColumnCell.backgroundColor = ColorUtil.foregroundColor
-        multiColumnCell.textLabel?.textColor = ColorUtil.fontColor
-        multiColumnCell.selectionStyle = UITableViewCellSelectionStyle.none
-        self.multiColumnCell.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
-        self.multiColumnCell.imageView?.tintColor = ColorUtil.fontColor
+        viewModeCell.textLabel?.text = "Submission layout settings"
+        viewModeCell.backgroundColor = ColorUtil.foregroundColor
+        viewModeCell.textLabel?.textColor = ColorUtil.fontColor
+        viewModeCell.selectionStyle = UITableViewCellSelectionStyle.none
+        self.viewModeCell.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
+        self.viewModeCell.imageView?.tintColor = ColorUtil.fontColor
 
         lock = UISwitch()
         lock.isOn = SettingValues.biometrics
@@ -344,9 +343,6 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             let barButton = UIBarButtonItem.init(customView: button)
             
             navigationItem.leftBarButtonItem = barButton
-        } else if changed == multiColumn {
-            SettingValues.multiColumn = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_multiColumn)
         } else if changed == lock {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 SettingValues.biometrics = changed.isOn
@@ -384,7 +380,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             switch indexPath.row {
             case 0: return self.general
             case 1: return self.manageSubs
-            case 2: return self.multiColumnCell
+            case 2: return self.viewModeCell
             case 3: return self.lockCell
             case 4: return self.gestureCell
 
@@ -395,7 +391,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 0: return self.general
             case 1: return self.manageSubs
             case 2: return self.goPro
-            case 3: return self.multiColumnCell
+            case 3: return self.viewModeCell
             case 4: return self.lockCell
             case 5: return self.gestureCell
                 
@@ -439,37 +435,37 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
     }
     
-    func showMultiColumn() {
-        if !VCPresenter.proDialogShown(feature: true, self) {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
-            
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-            }
-            actionSheetController.addAction(cancelActionButton)
-            
-            multiColumn = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
-            multiColumn.isOn = SettingValues.multiColumn
-            multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-            actionSheetController.view.addSubview(multiColumn)
-            
-            let values = [["1", "2", "3", "4", "5"]]
-            actionSheetController.addPickerView(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)]) { (_, _, chosen, _) in
-                SettingValues.multiColumnCount = chosen.row + 1
-                UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
-                UserDefaults.standard.synchronize()
-                SubredditReorderViewController.changed = true
-            }
-            
-            actionSheetController.modalPresentationStyle = .popover
-            
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = multiColumnCell
-                presenter.sourceRect = multiColumnCell.bounds
-            }
-            
-            self.present(actionSheetController, animated: true, completion: nil)
-        }
-    }
+//    func showMultiColumn() {
+//        if !VCPresenter.proDialogShown(feature: true, self) {
+//            let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
+//            
+//            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
+//            }
+//            actionSheetController.addAction(cancelActionButton)
+//            
+//            multiColumn = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
+//            multiColumn.isOn = SettingValues.multiColumn
+//            multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+//            actionSheetController.view.addSubview(multiColumn)
+//            
+//            let values = [["1", "2", "3", "4", "5"]]
+//            actionSheetController.addPickerView(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)]) { (_, _, chosen, _) in
+//                SettingValues.multiColumnCount = chosen.row + 1
+//                UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
+//                UserDefaults.standard.synchronize()
+//                SubredditReorderViewController.changed = true
+//            }
+//            
+//            actionSheetController.modalPresentationStyle = .popover
+//            
+//            if let presenter = actionSheetController.popoverPresentationController {
+//                presenter.sourceView = multiColumnCell
+//                presenter.sourceRect = multiColumnCell.bounds
+//            }
+//            
+//            self.present(actionSheetController, animated: true, completion: nil)
+//        }
+//    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -486,11 +482,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 if !SettingValues.isPro {
                     ch = SettingsPro()
                 } else {
-                    showMultiColumn()
+                    ch = SettingsViewMode()
                 }
             case 3:
                 if !SettingValues.isPro {
-                    showMultiColumn()
+                    ch = SettingsViewMode()
                 }
             case 4:
                 if SettingValues.isPro {

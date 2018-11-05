@@ -11,36 +11,14 @@ import UIKit
 
 class SettingsViewMode: UITableViewController {
     
-    var viewType: UITableViewCell = UITableViewCell()
-    var hideFAB: UITableViewCell = UITableViewCell()
-    var scrubUsername: UITableViewCell = UITableViewCell()
-    var pinToolbar: UITableViewCell = UITableViewCell()
-    var hapticFeedback: UITableViewCell = UITableViewCell()
-    var autoKeyboard: UITableViewCell = UITableViewCell()
-    var matchSilence: UITableViewCell = UITableViewCell()
-    var showPages: UITableViewCell = UITableViewCell()
+    var singleMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "single")
+    var splitMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "split")
+    var multicolumnMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "multi")
     
-    var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
-    var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
-    var notifications: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "notif")
-    var viewTypeSwitch = UISwitch()
-    var hideFABSwitch = UISwitch()
-    var scrubUsernameSwitch = UISwitch()
-    var pinToolbarSwitch = UISwitch()
-    var hapticFeedbackSwitch = UISwitch()
-    var autoKeyboardSwitch = UISwitch()
-    var matchSilenceSwitch = UISwitch()
-    var showPagesSwitch = UISwitch()
+    var numberColumns: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "number")
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+    var subredditBar = UITableViewCell()
+    var subredditBarSwitch = UISwitch()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -48,41 +26,10 @@ class SettingsViewMode: UITableViewController {
     }
     
     func switchIsChanged(_ changed: UISwitch) {
-        if changed == viewTypeSwitch {
+        if changed == subredditBarSwitch {
             MainViewController.needsRestart = true
-            SettingValues.viewType = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
-        } else if changed == showPagesSwitch {
-            MainViewController.needsRestart = true
-            SettingValues.showPages = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showPages)
-        } else if changed == autoKeyboardSwitch {
-            SettingValues.autoKeyboard = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_autoKeyboard)
-        } else if changed == hapticFeedbackSwitch {
-            SettingValues.hapticFeedback = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hapticFeedback)
-        } else if changed == hideFABSwitch {
-            SettingValues.hiddenFAB = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
-            SubredditReorderViewController.changed = true
-        } else if changed == hapticFeedback {
-            SettingValues.hapticFeedback = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hapticFeedback)
-        } else if changed == pinToolbarSwitch {
-            SettingValues.pinToolbar = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_pinToolbar)
-            SubredditReorderViewController.changed = true
-        } else if changed == matchSilenceSwitch {
-            SettingValues.matchSilence = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_matchSilence)
-        } else if changed == scrubUsernameSwitch {
-            if !VCPresenter.proDialogShown(feature: false, self) {
-                SettingValues.nameScrubbing = changed.isOn
-                UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nameScrubbing)
-            } else {
-                changed.isOn = false
-            }
+            SettingValues.subredditBar = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subBar)
         }
         UserDefaults.standard.synchronize()
     }
@@ -95,10 +42,8 @@ class SettingsViewMode: UITableViewController {
         toReturn.backgroundColor = ColorUtil.backgroundColor
         
         switch section {
-        case 0: label.text = "Display"
-        case 1: label.text = "Interaction"
-        case 2: label.text = "Notifications"
-        case 3: label.text = "Sorting"
+        case 0: label.text = "Subreddit display mode"
+        case 1: label.text = "Other settings"
         default: label.text = ""
         }
         return toReturn
@@ -123,41 +68,64 @@ class SettingsViewMode: UITableViewController {
         
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
-        self.title = "General"
+        self.title = "Display"
         self.tableView.separatorStyle = .none
         
-        createCell(viewType, viewTypeSwitch, isOn: SettingValues.viewType, text: "Swiping subreddit tabs mode")
-        createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
-        createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
-        createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
-        createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.pinToolbar, text: "Autohide navigation bars")
-        createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Mute videos if silent mode is on (will also pause background audio)")
-        createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
-        createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators when loading more content")
+        createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
+        createCell(singleMode, isOn: false, text: "Single-column posts")
+        createCell(multicolumnMode, isOn: false, text: "Multi-column posts (requires Pro and iPad)")
+        createCell(singleMode, isOn: false, text: "Split-content (requires iPad)")
+
+        self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
+        self.singleMode.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.singleMode.backgroundColor = ColorUtil.foregroundColor
+        self.singleMode.textLabel?.textColor = ColorUtil.fontColor
         
-        self.postSorting.textLabel?.text = "Default post sorting"
-        self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
-        self.postSorting.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.postSorting.backgroundColor = ColorUtil.foregroundColor
-        self.postSorting.textLabel?.textColor = ColorUtil.fontColor
+        self.splitMode.detailTextLabel?.text = SettingValues.AppMode.SPLIT.getDescription()
+        self.splitMode.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.splitMode.backgroundColor = ColorUtil.foregroundColor
+        self.splitMode.textLabel?.textColor = ColorUtil.fontColor
+
+        self.multicolumnMode.detailTextLabel?.text = SettingValues.AppMode.MULTI_COLUMN.getDescription()
+        self.multicolumnMode.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.multicolumnMode.backgroundColor = ColorUtil.foregroundColor
+        self.multicolumnMode.textLabel?.textColor = ColorUtil.fontColor
         
-        self.notifications.textLabel?.text = "Notification check interval"
-        self.notifications.detailTextLabel?.text = "Notification settings coming soon!"
-        self.notifications.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.notifications.backgroundColor = ColorUtil.foregroundColor
-        self.notifications.textLabel?.textColor = ColorUtil.fontColor
-        
-        self.commentSorting.textLabel?.text = "Default comment sorting"
-        self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
-        self.commentSorting.backgroundColor = ColorUtil.foregroundColor
-        self.commentSorting.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.commentSorting.textLabel?.textColor = ColorUtil.fontColor
-        
+        self.setSelected()
+
         self.tableView.tableFooterView = UIView()
     }
     
+    func setSelected() {
+        self.singleMode.accessoryType = .none
+        self.splitMode.accessoryType = .none
+        self.multicolumnMode.accessoryType = .none
+        
+        switch SettingValues.appMode {
+        case .SINGLE:
+            self.singleMode.accessoryType = .checkmark
+        case .SPLIT:
+            self.splitMode.accessoryType = .checkmark
+        case .MULTI_COLUMN:
+            self.multicolumnMode.accessoryType = .checkmark
+        }
+        
+        if !SettingValues.isPro {
+            multicolumnMode.isUserInteractionEnabled = false
+            multicolumnMode.textLabel!.isEnabled = false
+            multicolumnMode.detailTextLabel!.isEnabled = false
+        }
+        
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            self.splitMode.isUserInteractionEnabled = false
+            self.splitMode.textLabel!.isEnabled = false
+            self.splitMode.detailTextLabel!.isEnabled = false
+        }
+
+    }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return 2
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -175,159 +143,46 @@ class SettingsViewMode: UITableViewController {
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.viewType
-            case 1: return self.hideFAB
-            case 2: return self.showPages
-            case 3: return self.autoKeyboard
-            case 4: return self.pinToolbar
-            case 5: return self.scrubUsername
+            case 0: return self.singleMode
+            case 1: return self.splitMode
+            case 2: return self.multicolumnMode
             default: fatalError("Unknown row in section 0")
             }
         case 1:
             switch indexPath.row {
-            case 0: return self.hapticFeedback
-            case 1: return self.matchSilence
+            case 0: return self.subredditBar
             default: fatalError("Unknown row in section 0")
-            }
-        case 2:
-            switch indexPath.row {
-            case 0: return self.notifications
-            default: fatalError("Unknown row in section 1")
-            }
-        case 3:
-            switch indexPath.row {
-            case 0: return self.postSorting
-            case 1: return self.commentSorting
-            default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
         }
         
     }
     
-    func showMenuComments(_ selector: UIView?) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Comment sorting", message: "", preferredStyle: .actionSheet)
-        
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-        
-        for link in CommentSort.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
-                SettingValues.defaultCommentSorting = link
-                UserDefaults.standard.set(link.path, forKey: SettingValues.pref_defaultCommentSorting)
-                UserDefaults.standard.synchronize()
-                self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
-            }
-            if SettingValues.defaultCommentSorting == link {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(saveActionButton)
-        }
-        
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selector!
-            presenter.sourceRect = selector!.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
-    }
-    
-    func showMenu(_ selector: UIView?) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
-        
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-        
-        for link in LinkSortType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
-                self.showTimeMenu(s: link, selector: selector)
-            }
-            if SettingValues.defaultSorting == link {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(saveActionButton)
-        }
-        
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selector!
-            presenter.sourceRect = selector!.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
-    }
-    
-    func showTimeMenu(s: LinkSortType, selector: UIView?) {
-        if s == .hot || s == .new || s == .rising || s == .best {
-            SettingValues.defaultSorting = s
-            UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
-            UserDefaults.standard.synchronize()
-            self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
-            return
-        } else {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
-            
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-            }
-            actionSheetController.addAction(cancelActionButton)
-            
-            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-            
-            for t in TimeFilterWithin.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
-                    print("Sort is \(s) and time is \(t)")
-                    SettingValues.defaultSorting = s
-                    UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
-                    SettingValues.defaultTimePeriod = t
-                    UserDefaults.standard.set(t.param, forKey: SettingValues.pref_defaultTimePeriod)
-                    UserDefaults.standard.synchronize()
-                    self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
-                }
-                if SettingValues.defaultTimePeriod == t {
-                    saveActionButton.setValue(selected, forKey: "image")
-                }
-                
-                actionSheetController.addAction(saveActionButton)
-            }
-            
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = selector!
-                presenter.sourceRect = selector!.bounds
-            }
-            
-            self.present(actionSheetController, animated: true, completion: nil)
-        }
-    }
-    
-    var timeMenuView: UIView = UIView()
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
-        
-        if indexPath.section == 3 && indexPath.row == 0 {
-            showMenu(tableView.cellForRow(at: indexPath))
-        } else if indexPath.section == 3 && indexPath.row == 1 {
-            showMenuComments(tableView.cellForRow(at: indexPath))
+        if indexPath.section == 0 {
+            switch indexPath.row {
+            case 0:
+                SettingValues.appMode = .SINGLE
+                UserDefaults.standard.set(SettingValues.AppMode.SINGLE.rawValue, forKey: SettingValues.pref_appMode)
+            case 1:
+                SettingValues.appMode = .SPLIT
+                UserDefaults.standard.set(SettingValues.AppMode.SPLIT.rawValue, forKey: SettingValues.pref_appMode)
+            case 2:
+                SettingValues.appMode = .MULTI_COLUMN
+                UserDefaults.standard.set(SettingValues.AppMode.MULTI_COLUMN.rawValue, forKey: SettingValues.pref_appMode)
+            default:
+                break
+            }
         }
-        
+        UserDefaults.standard.synchronize()
+        setSelected()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 6
-        case 1: return 2
-        case 2: return 1
-        case 3: return 2
+        case 0: return 3
+        case 1: return 1
         default: fatalError("Unknown number of sections")
         }
     }

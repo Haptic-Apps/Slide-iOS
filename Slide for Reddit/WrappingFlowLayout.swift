@@ -50,7 +50,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
             portraitCount = 2
         }
         
-        if SettingValues.multiColumn {
+        if SettingValues.appMode == .MULTI_COLUMN {
             if UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isPro {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isPro {
                     numberOfColumns = 1
