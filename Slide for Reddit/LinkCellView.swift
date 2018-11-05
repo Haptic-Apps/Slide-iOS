@@ -1329,7 +1329,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             bannerImage.isUserInteractionEnabled = true
 
             // Pulse the background color of the banner image until it loads
+            lq = shouldShowLq
             let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
+            loadedImage = bannerImageUrl
             bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil)
             
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
@@ -2129,16 +2131,18 @@ private extension UIImageView {
             }
         })
 
-        self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, cacheType, _) in
-            self.layer.removeAllAnimations() // Stop the pulsing animation
-            self.backgroundColor = oldBackgroundColor
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, cacheType, _) in
+                self.layer.removeAllAnimations() // Stop the pulsing animation
+                self.backgroundColor = oldBackgroundColor
 
-            if cacheType == .none {
-                UIView.animate(withDuration: 0.3, animations: {
+                if cacheType == .none {
+                    UIView.animate(withDuration: 0.3, delay: 0, options: .allowUserInteraction, animations: {
+                        self.alpha = 1
+                    })
+                } else {
                     self.alpha = 1
-                })
-            } else {
-                self.alpha = 1
+                }
             }
         }
     }
