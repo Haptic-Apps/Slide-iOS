@@ -67,6 +67,7 @@ class SettingsGestures: UITableViewController {
     
     func showCommentGesturesMenu() {
         let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Select a comment gesture"
         for item in SettingValues.CommentGesturesMode.cases {
             alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
                 UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_commentGesturesMode)
@@ -116,6 +117,7 @@ class SettingsGestures: UITableViewController {
     
     func showAction(cell: UITableViewCell) {
         let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Select a comment gesture"
         for action in SettingValues.CommentAction.cases {
             alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
                 if cell == self.leftRightActionCell {
@@ -144,6 +146,7 @@ class SettingsGestures: UITableViewController {
     
     func showActionSub(cell: UITableViewCell) {
         let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Select a submission gesture"
         for action in SettingValues.SubmissionAction.cases {
             alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
                 if cell == self.doubleTapSubActionCell {

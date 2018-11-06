@@ -128,7 +128,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     
     func showDepthChooser() {
         let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Comment depths"
+        alertController.headerData = "Comment depth colors"
 
         alertController.addAction(Action(ActionData(title: "Default", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.red500Color())), style: .default, handler: { _ in
             //choose color

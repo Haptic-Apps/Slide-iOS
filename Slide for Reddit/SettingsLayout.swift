@@ -226,6 +226,7 @@ class SettingsLayout: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 1 && indexPath.row == 0 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.headerData = "Submission view mode"
             alertController.addAction(Action(ActionData(title: "List view", image: UIImage(named: "list")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("list", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .LIST
@@ -278,6 +279,7 @@ class SettingsLayout: UITableViewController {
             
         } else if indexPath.section == 1 && indexPath.row == 1 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.headerData = "Submission image mode"
             alertController.addAction(Action(ActionData(title: "Full image", image: UIImage(named: "full")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_postImageMode)
                 SettingValues.postImageMode = .FULL_IMAGE
@@ -314,6 +316,7 @@ class SettingsLayout: UITableViewController {
             VCPresenter.presentAlert(alertController, parentVC: self)
         } else if indexPath.section == 1 && indexPath.row == 2 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
+            alertController.headerData = "Action bar mode"
             alertController.addAction(Action(ActionData(title: "Full action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL

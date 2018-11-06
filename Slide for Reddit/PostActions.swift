@@ -23,7 +23,7 @@ class PostActions: NSObject {
     
     public static func showPostMenu(_ parent: UIViewController, sub: String) {
         let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "New post"
+        alertController.headerData = "New submission"
         
         alertController.addAction(Action(ActionData(title: "Image", image: UIImage(named: "camera")!.menuIcon()), style: .default, handler: { _ in
             VCPresenter.showVC(viewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
@@ -50,7 +50,7 @@ class PostActions: NSObject {
         let link = cell.link!
         
         let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Post by \(AccountController.formatUsername(input: link.author, small: true))"
+        alertController.headerData = "Submission by \(AccountController.formatUsername(input: link.author, small: true))"
         
         alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: link.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
             

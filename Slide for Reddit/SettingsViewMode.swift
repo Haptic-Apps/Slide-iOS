@@ -68,13 +68,13 @@ class SettingsViewMode: UITableViewController {
         
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
-        self.title = "Display"
+        self.title = "App Mode"
         self.tableView.separatorStyle = .none
         
         createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
         createCell(singleMode, isOn: false, text: "Single-column posts")
-        createCell(multicolumnMode, isOn: false, text: "Multi-column posts (requires Pro and iPad)")
-        createCell(singleMode, isOn: false, text: "Split-content (requires iPad)")
+        createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
+        createCell(splitMode, isOn: false, text: "Split-content")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
         self.singleMode.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -129,7 +129,7 @@ class SettingsViewMode: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
+        return section == 0 ? 0 : 70
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

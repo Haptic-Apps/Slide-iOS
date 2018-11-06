@@ -551,7 +551,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             let url = self.link!.url!
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.headerData = url.host
-            alertController.addAction(Action(ActionData(title: url.host ?? url.absoluteString, image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
                 let shareItems: Array = [url]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 activityViewController.popoverPresentationController?.sourceView = self.contentView

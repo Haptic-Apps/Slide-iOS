@@ -58,29 +58,31 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
             if message["reset"] as? Bool ?? true {
                 paginator = Paginator()
             }
-            let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
-            do {
-                try redditSession.getList(paginator, subreddit: Subreddit.init(subreddit: message["links"] as! String), sort: .hot, timeFilterWithin: .day, limit: 10) { (result) in
-                    switch result {
-                    case .failure(let error):
-                        print(error)
-                    case .success(let listing):
-                        self.paginator = listing.paginator
-                        var results = [NSDictionary]()
-                        for link in listing.children {
-                            let dict = NSMutableDictionary()
-                            for item in ((link as! Link).baseJson) {
-                                if (item.key == "subreddit" || item.key == "author" || item.key == "title" || item.key == "thumbnail" || item.key == "is_self" || item.key == "over_18" || item.key == "score" || item.key == "num_comments" || item.key == "spoiler" || item.key == "locked" || item.key == "author" || item.key == "id" || item.key == "domain" || item.key == "permalink" || item.key == "url" || item.key == "created"  || item.key == "stickied" || item.key == "link_flair_text") && (item.value is String || item.value is Int || item.value is Double) {
-                                    dict[item.key] = item.value
+            DispatchQueue.main.async {
+                let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
+                do {
+                    try redditSession.getList(self.paginator, subreddit: Subreddit.init(subreddit: message["links"] as! String), sort: .hot, timeFilterWithin: .day, limit: 10) { (result) in
+                        switch result {
+                        case .failure(let error):
+                            print(error)
+                        case .success(let listing):
+                            self.paginator = listing.paginator
+                            var results = [NSDictionary]()
+                            for link in listing.children {
+                                let dict = NSMutableDictionary()
+                                for item in ((link as! Link).baseJson) {
+                                    if (item.key == "subreddit" || item.key == "author" || item.key == "title" || item.key == "thumbnail" || item.key == "is_self" || item.key == "over_18" || item.key == "score" || item.key == "num_comments" || item.key == "spoiler" || item.key == "locked" || item.key == "author" || item.key == "id" || item.key == "domain" || item.key == "permalink" || item.key == "url" || item.key == "created"  || item.key == "stickied" || item.key == "link_flair_text") && (item.value is String || item.value is Int || item.value is Double) {
+                                        dict[item.key] = item.value
+                                    }
                                 }
+                                results.append(dict)
                             }
-                            results.append(dict)
+                            replyHandler(["links": results])
                         }
-                        replyHandler(["links": results])
                     }
+                } catch {
+                    
                 }
-            } catch {
-                
             }
         }
     }

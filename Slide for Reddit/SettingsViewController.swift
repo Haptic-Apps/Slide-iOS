@@ -510,12 +510,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 ch = SubredditThemeViewController()
             case 3:
                 let alertController: BottomSheetActionController = BottomSheetActionController()
+                alertController.headerData = "AutoPlay settings"
                 for item in SettingValues.AutoPlay.cases {
                     alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
                         UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_autoPlayMode)
                         SettingValues.autoPlayMode = item
                         UserDefaults.standard.synchronize()
-                        self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoplaying videos can lead to more data use"
+                        self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoPlaying videos can lead to more data use"
                         SingleSubredditViewController.cellVersion += 1
                         SubredditReorderViewController.changed = true
                     }))
