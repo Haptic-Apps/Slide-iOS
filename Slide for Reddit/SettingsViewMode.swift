@@ -14,7 +14,8 @@ class SettingsViewMode: UITableViewController {
     var singleMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "single")
     var splitMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "split")
     var multicolumnMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "multi")
-    
+    var multicolumnCount: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "multicount")
+
     var numberColumns: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "number")
     
     var subredditBar = UITableViewCell()
@@ -75,6 +76,7 @@ class SettingsViewMode: UITableViewController {
         createCell(singleMode, isOn: false, text: "Single-column posts")
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
         createCell(splitMode, isOn: false, text: "Split-content")
+        createCell(multicolumnCount, isOn: false, text: "Multi-column count")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
         self.singleMode.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -93,6 +95,12 @@ class SettingsViewMode: UITableViewController {
         self.multicolumnMode.backgroundColor = ColorUtil.foregroundColor
         self.multicolumnMode.textLabel?.textColor = ColorUtil.fontColor
         self.multicolumnMode.detailTextLabel?.numberOfLines = 0
+
+        self.multicolumnCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
+        self.multicolumnCount.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.multicolumnCount.backgroundColor = ColorUtil.foregroundColor
+        self.multicolumnCount.textLabel?.textColor = ColorUtil.fontColor
+        self.multicolumnCount.detailTextLabel?.numberOfLines = 0
 
         self.setSelected()
 
@@ -124,6 +132,28 @@ class SettingsViewMode: UITableViewController {
             self.splitMode.textLabel!.isEnabled = false
             self.splitMode.detailTextLabel!.isEnabled = false
         }
+        
+        if SettingValues.appMode != .MULTI_COLUMN {
+            self.multicolumnCount.isUserInteractionEnabled = false
+            self.multicolumnCount.textLabel!.isEnabled = false
+            self.multicolumnCount.detailTextLabel!.isEnabled = false
+        } else {
+            self.multicolumnCount.isUserInteractionEnabled = true
+            self.multicolumnCount.textLabel!.isEnabled = true
+            self.multicolumnCount.detailTextLabel!.isEnabled = true
+        }
+        
+        var portraitCount = SettingValues.multiColumnCount / 2
+        if portraitCount == 0 {
+            portraitCount = 1
+        }
+        
+        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        if portraitCount == 1 && pad {
+            portraitCount = 2
+        }
+
+        self.multicolumnCount.detailTextLabel?.text = "\(SettingValues.multiColumnCount) landscape, \(portraitCount) portrait"
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -152,7 +182,8 @@ class SettingsViewMode: UITableViewController {
             }
         case 1:
             switch indexPath.row {
-            case 0: return self.subredditBar
+            case 0: return self.multicolumnCount
+            case 1: return self.subredditBar
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -176,15 +207,45 @@ class SettingsViewMode: UITableViewController {
             default:
                 break
             }
+        } else if indexPath.section == 1 && indexPath.row == 0 {
+            showMultiColumn()
         }
+        
         UserDefaults.standard.synchronize()
         setSelected()
     }
     
+    func showMultiColumn() {
+        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let actionSheetController: UIAlertController = UIAlertController(title: "Column count", message: "", preferredStyle: .actionSheet)
+
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
+        }
+        actionSheetController.addAction(cancelActionButton)
+
+        let values = pad ? [["1", "2", "3", "4", "5"]] : [["1", "2", "3"]]
+        actionSheetController.addPickerView(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)]) { (_, _, chosen, _) in
+            SettingValues.multiColumnCount = chosen.row + 1
+            UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
+            UserDefaults.standard.synchronize()
+            SubredditReorderViewController.changed = true
+        }
+
+        actionSheetController.modalPresentationStyle = .popover
+
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = self.multicolumnCount.contentView
+            presenter.sourceRect = self.multicolumnCount.contentView.bounds
+        }
+
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
+
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 3
-        case 1: return 1
+        case 1: return 2
         default: fatalError("Unknown number of sections")
         }
     }
