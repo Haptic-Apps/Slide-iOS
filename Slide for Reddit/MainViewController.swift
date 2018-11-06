@@ -425,7 +425,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         menuNav!.didMove(toParentViewController: self)
         
         // 3- Adjust bottomSheet frame and initial position.
-        resizeMenuNav()
+        let height = view.frame.height
+        let width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
+        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * 0.9)
     }
 
     func restartVC() {
@@ -584,15 +586,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.height = statusbarHeight
         tabBar.sizeToFit()
 
-        resizeMenuNav()
-    }
-
-    func resizeMenuNav() {
-        if let menuNav = menuNav {
-            let height = view.frame.height
-            let width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
-            menuNav.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav.bottomOffset), width: width, height: height * 0.9)
-        }
+        menuNav?.view.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
