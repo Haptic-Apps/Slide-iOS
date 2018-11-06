@@ -97,12 +97,28 @@ extension UIView {
             return leadingAnchor
         }
     }
+
+    var safeLeftAnchor: NSLayoutXAxisAnchor {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide.leftAnchor
+        } else {
+            return leftAnchor
+        }
+    }
     
     var safeTrailingAnchor: NSLayoutXAxisAnchor {
         if #available(iOS 11.0, *) {
             return safeAreaLayoutGuide.trailingAnchor
         } else {
             return trailingAnchor
+        }
+    }
+
+    var safeRightAnchor: NSLayoutXAxisAnchor {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide.rightAnchor
+        } else {
+            return rightAnchor
         }
     }
     
@@ -137,6 +153,15 @@ extension UIView {
             return horizontalAnchors
         }
     }
+
+    var safeVerticalAnchors: AnchorPair<NSLayoutYAxisAnchor, NSLayoutYAxisAnchor> {
+        if #available(iOS 11.0, *) {
+            return AnchorPair(first: safeAreaLayoutGuide.topAnchor, second: safeAreaLayoutGuide.bottomAnchor)
+        } else {
+            return verticalAnchors
+        }
+    }
+
     enum Border {
         case left
         case right
