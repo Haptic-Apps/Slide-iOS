@@ -574,12 +574,12 @@ class SingleSubredditViewController: MediaViewController {
                 }
             }
 
-            self.fab!.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
+            self.fab?.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.fab!.transform = CGAffineTransform.identity
+                self.fab?.transform = CGAffineTransform.identity
             }, completion: { (_)  in
-                self.fab!.addTarget(self, action: #selector(self.doFabActions), for: .touchUpInside)
-                self.fab!.addLongTapGestureRecognizer {
+                self.fab?.addTarget(self, action: #selector(self.doFabActions), for: .touchUpInside)
+                self.fab?.addLongTapGestureRecognizer {
                     self.changeFab()
                 }
             })
