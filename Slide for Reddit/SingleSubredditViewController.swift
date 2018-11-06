@@ -272,7 +272,11 @@ class SingleSubredditViewController: MediaViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        tableView.frame = self.view.bounds
+        if #available(iOS 11.0, *) {
+            tableView.frame = UIEdgeInsetsInsetRect(view.bounds, view.safeAreaInsets)
+        } else {
+            tableView.frame = view.bounds
+        }
 
         if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
