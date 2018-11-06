@@ -265,8 +265,10 @@ extension ImageMediaViewController {
     }
 
     func downloadImageToLibrary(_ sender: AnyObject) {
-        if let image = imageView.image {
-            CustomAlbum.shared.save(image: image, parent: self)
+        if let image = self.imageView.image {
+            DispatchQueue.global(qos: .userInteractive).async {
+                CustomAlbum.shared.save(image: image, parent: self)
+            }
         } else {
             print("No image exists to be downloaded!")
         }
