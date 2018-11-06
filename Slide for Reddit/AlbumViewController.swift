@@ -18,6 +18,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     var baseURL: URL?
     var bottomScroll = UIScrollView()
     var failureCallback: ((_ url: URL) -> Void)?
+    var albumHash: String = ""
     
     public init(urlB: URL) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
@@ -102,11 +103,11 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         if(NSString(data: data, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))! {
             //single album image
             DispatchQueue.main.async {
-                let urlStringkey = "https://imgur.com/\(self.hash).png"
+                let urlStringkey = "https://imgur.com/\(self.albumHash).png"
                 self.urlStringKeys.append(urlStringkey)
                 self.embeddableMediaDataCache[urlStringkey] = EmbeddableMediaDataModel(
                     baseURL: URL.init(string: urlStringkey)!,
-                    lqURL: URL.init(string: "https://imgur.com/\(self.hash)m.png"),
+                    lqURL: URL.init(string: "https://imgur.com/\(self.albumHash)m.png"),
                     text: nil,
                     inAlbum: false
                 )
@@ -253,8 +254,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             let split = rawDat.substring(index + 1, length: rawDat.length - index - 1)
             splitHashes(split)
         } else {
-            let hash = getHash(sS: rawDat)
-            getAlbum(hash: hash)
+            albumHash = getHash(sS: rawDat)
+            getAlbum(hash: albumHash)
         }
     }
     
