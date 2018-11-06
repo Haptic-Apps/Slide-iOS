@@ -107,6 +107,9 @@ class InterfaceController: WKInterfaceController {
             checkTimer?.invalidate()
             checkTimer = nil
         } else {
+            checkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (_) in
+                self.loadData(WCSession.default)
+            })
             return
         }
         session.sendMessage(["sublist": true], replyHandler: { (message) in
@@ -138,13 +141,7 @@ extension InterfaceController: WCSessionDelegate {
             loadingImage.setHidden(false)
             loadingImage.setImageNamed("Activity")
             loadingImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
-            if activationState == .activated && session.isReachable {
-                loadData(session)
-            } else {
-                checkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
-                    self.loadData(WCSession.default)
-                })
-            }
+            loadData(session)
         }
     }
 }
