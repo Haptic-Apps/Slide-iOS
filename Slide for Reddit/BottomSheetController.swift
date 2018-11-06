@@ -93,13 +93,14 @@ open class ActionControllerHeader: UICollectionReusableView {
         label.backgroundColor = ColorUtil.foregroundColor
         label.font = UIFont.boldSystemFont(ofSize: 17)
         label.textColor = ColorUtil.fontColor
+        label.textAlignment = .center
         return label
     }()
     
     lazy var bottomLine: UIView = {
         let bottomLine = UIView()
         bottomLine.translatesAutoresizingMaskIntoConstraints = false
-        bottomLine.backgroundColor = ColorUtil.backgroundColor
+        bottomLine.backgroundColor = ColorUtil.foregroundColor
         return bottomLine
     }()
     
@@ -189,10 +190,10 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         }
         
         cellSpec = .nibFile(nibName: "BSCell", bundle: Bundle(for: BottomSheetCell.self), height: { _ in 52 })
-        headerSpec = .cellClass(height: { _ -> CGFloat in return 0 })
+        headerSpec = .cellClass(height: { _ -> CGFloat in return 52 })
         
         onConfigureHeader = { header, title in
-            header.label.text = "  " + title
+            header.label.text = title
         }
         
         //todo this self.header = ButtonsHeader.init(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width - 24, height: 52))
