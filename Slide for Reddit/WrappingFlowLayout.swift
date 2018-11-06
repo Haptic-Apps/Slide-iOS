@@ -51,8 +51,8 @@ class WrappingFlowLayout: UICollectionViewLayout {
         }
         
         if SettingValues.appMode == .MULTI_COLUMN {
-            if UIApplication.shared.statusBarOrientation.isPortrait || !SettingValues.isPro {
-                if UIScreen.main.traitCollection.userInterfaceIdiom != .pad || !SettingValues.isPro {
+            if UIApplication.shared.statusBarOrientation.isPortrait {
+                if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
                     numberOfColumns = 1
                 } else {
                     numberOfColumns = portraitCount
@@ -62,10 +62,6 @@ class WrappingFlowLayout: UICollectionViewLayout {
             }
         } else {
             numberOfColumns = 1
-        }
-        
-        if pad && !UIApplication.shared.statusBarOrientation.isPortrait && !SettingValues.isPro {
-            numberOfColumns = 2
         }
         
         if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds {

@@ -292,7 +292,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.autoPlayCell.detailTextLabel?.numberOfLines = 0
         self.autoPlayCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
-        viewModeCell.textLabel?.text = "Submission layout settings"
+        viewModeCell.textLabel?.text = "App mode"
+        viewModeCell.accessoryType = .disclosureIndicator
         viewModeCell.backgroundColor = ColorUtil.foregroundColor
         viewModeCell.textLabel?.textColor = ColorUtil.fontColor
         viewModeCell.selectionStyle = UITableViewCellSelectionStyle.none

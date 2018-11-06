@@ -80,17 +80,20 @@ class SettingsViewMode: UITableViewController {
         self.singleMode.detailTextLabel?.textColor = ColorUtil.fontColor
         self.singleMode.backgroundColor = ColorUtil.foregroundColor
         self.singleMode.textLabel?.textColor = ColorUtil.fontColor
+        self.singleMode.detailTextLabel?.numberOfLines = 0
         
         self.splitMode.detailTextLabel?.text = SettingValues.AppMode.SPLIT.getDescription()
         self.splitMode.detailTextLabel?.textColor = ColorUtil.fontColor
         self.splitMode.backgroundColor = ColorUtil.foregroundColor
         self.splitMode.textLabel?.textColor = ColorUtil.fontColor
+        self.splitMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnMode.detailTextLabel?.text = SettingValues.AppMode.MULTI_COLUMN.getDescription()
         self.multicolumnMode.detailTextLabel?.textColor = ColorUtil.fontColor
         self.multicolumnMode.backgroundColor = ColorUtil.foregroundColor
         self.multicolumnMode.textLabel?.textColor = ColorUtil.fontColor
-        
+        self.multicolumnMode.detailTextLabel?.numberOfLines = 0
+
         self.setSelected()
 
         self.tableView.tableFooterView = UIView()
@@ -121,7 +124,6 @@ class SettingsViewMode: UITableViewController {
             self.splitMode.textLabel!.isEnabled = false
             self.splitMode.detailTextLabel!.isEnabled = false
         }
-
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {

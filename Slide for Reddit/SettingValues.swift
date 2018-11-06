@@ -323,6 +323,7 @@ class SettingValues {
     }
 
     public static func initialize() {
+        let pad = UIDevice.current.userInterfaceIdiom == .pad
         let settings = UserDefaults.standard
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.reduceColor = settings.bool(forKey: SettingValues.pref_reduceColor)
@@ -440,7 +441,7 @@ class SettingValues {
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
-        SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? "single") ?? .SINGLE
+        SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (pad ? "split" : "single")) ?? (pad ? .SPLIT : .SINGLE)
 
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
@@ -748,7 +749,7 @@ class SettingValues {
             case .SINGLE:
                 return "Single column display of submissions"
             case .MULTI_COLUMN:
-                return "Multiple column display of submissions (requires Pro and an iPad)"
+                return "Multiple column display of submissions (requires Pro)"
             }
         }
 
