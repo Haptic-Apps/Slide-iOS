@@ -229,6 +229,7 @@ class SettingsViewMode: UITableViewController {
             UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
             UserDefaults.standard.synchronize()
             SubredditReorderViewController.changed = true
+            self.setSelected()
         }
 
         actionSheetController.modalPresentationStyle = .popover

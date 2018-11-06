@@ -20,7 +20,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var goPro: UITableViewCell = UITableViewCell()
 
     var general: UITableViewCell = UITableViewCell()
-    var manageSubs: UITableViewCell = UITableViewCell()
+    var manageSubs: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "managesubs")
     var mainTheme: UITableViewCell = UITableViewCell()
     var postLayout: UITableViewCell = UITableViewCell()
     var subThemes: UITableViewCell = UITableViewCell()
@@ -40,10 +40,10 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var clearCell: UITableViewCell = UITableViewCell()
     var cacheCell: UITableViewCell = UITableViewCell()
     var backupCell: UITableViewCell = UITableViewCell()
-    var gestureCell: UITableViewCell = UITableViewCell()
+    var gestureCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "gestures")
     var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
 
-    var viewModeCell: UITableViewCell = UITableViewCell()
+    var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch()
     
     var reduceColorCell: UITableViewCell = UITableViewCell()
@@ -133,12 +133,15 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.general.imageView?.image = UIImage.init(named: "settings")?.toolbarIcon()
         self.general.imageView?.tintColor = ColorUtil.fontColor
 
-        self.manageSubs.textLabel?.text = "Manage your subreddits"
+        self.manageSubs.textLabel?.text = "Subscriptions"
         self.manageSubs.accessoryType = .disclosureIndicator
         self.manageSubs.backgroundColor = ColorUtil.foregroundColor
         self.manageSubs.textLabel?.textColor = ColorUtil.fontColor
         self.manageSubs.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon()
         self.manageSubs.imageView?.tintColor = ColorUtil.fontColor
+        self.manageSubs.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange your subreddits"
+        self.manageSubs.detailTextLabel?.numberOfLines = 0
 
         self.mainTheme.textLabel?.text = "Main theme"
         self.mainTheme.accessoryType = .disclosureIndicator
@@ -174,6 +177,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.gestureCell.textLabel?.textColor = ColorUtil.fontColor
         self.gestureCell.imageView?.image = UIImage.init(named: "gestures")?.toolbarIcon()
         self.gestureCell.imageView?.tintColor = ColorUtil.fontColor
+        self.gestureCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.gestureCell.detailTextLabel?.text = "Swipe and tap gestures for submissions and comments"
+        self.gestureCell.detailTextLabel?.numberOfLines = 0
 
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
@@ -299,6 +305,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         viewModeCell.selectionStyle = UITableViewCellSelectionStyle.none
         self.viewModeCell.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
         self.viewModeCell.imageView?.tintColor = ColorUtil.fontColor
+        self.viewModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.viewModeCell.detailTextLabel?.text = "Multi-Column mode, Split UI, and subreddit bar settings"
+        self.viewModeCell.detailTextLabel?.numberOfLines = 0
 
         lock = UISwitch()
         lock.isOn = SettingValues.biometrics

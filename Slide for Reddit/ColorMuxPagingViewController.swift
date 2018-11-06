@@ -26,6 +26,9 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
 
         var percentComplete: CGFloat
         percentComplete = fabs(point.x - self.view.frame.size.width) / self.view.frame.size.width
+        if color1 == nil || color2 == nil {
+            return
+        }
         let color = ColorMuxPagingViewController.fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
 
         if viewToMux != nil && color1 != nil && color2 != nil {
