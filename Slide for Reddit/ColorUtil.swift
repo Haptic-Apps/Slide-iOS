@@ -33,6 +33,7 @@ extension UIColor {
 class ColorUtil {
     static var theme = Theme.DARK
     static var setOnce = false
+    static var defaultTheme = Theme.DARK
 
     static func shouldBeNight() -> Bool {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -41,7 +42,6 @@ class ColorUtil {
     }
 
     static func doInit() -> Bool {
-        var defaultTheme = Theme.DARK
         if let name = UserDefaults.standard.string(forKey: "theme") {
             if let t = Theme(rawValue: name) {
                 defaultTheme = t

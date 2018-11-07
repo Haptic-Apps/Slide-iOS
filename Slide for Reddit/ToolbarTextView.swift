@@ -89,8 +89,14 @@ public class ToolbarTextView: NSObject {
         if Drafts.drafts.isEmpty {
             parent.view.makeToast("No drafts found", duration: 4, position: .top)
         } else {
-            picker = ActionSheetStringPicker(title: "Choose a draft", rows: Drafts.drafts.reversed(), initialSelection: 0, doneBlock: { (_, index, _) in
-                self.text!.insertText(Drafts.drafts[index] as String)
+            var drafts = [NSString]()
+            
+            for arrayIndex in stride(from: Drafts.drafts.count - 1, through: 0, by: -1) {
+                drafts.append(Drafts.drafts[arrayIndex])
+            }
+
+            picker = ActionSheetStringPicker(title: "Choose a draft", rows: drafts, initialSelection: 0, doneBlock: { (_, index, _) in
+                self.text!.insertText(drafts[index] as String)
             }, cancel: { (_) in
                 return
             }, origin: text!)

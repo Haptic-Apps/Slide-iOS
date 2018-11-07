@@ -29,9 +29,14 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         if color1 == nil || color2 == nil {
             return
         }
+        
         let color = ColorMuxPagingViewController.fadeFromColor(fromColor: color1!, toColor: color2!, withPercentage: percentComplete)
 
-        if viewToMux != nil && color1 != nil && color2 != nil {
+        if color == .white {
+            return
+        }
+        print(percentComplete)
+        if viewToMux != nil {
             if percentComplete > 0.1 && percentComplete < 1 {
                 viewToMux!.backgroundColor = color
             } else if percentComplete <= 0.1 {
@@ -41,7 +46,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
             }
         }
 
-        if navToMux != nil && color1 != nil && color2 != nil {
+        if navToMux != nil {
             if percentComplete > 0.1 && percentComplete < 1 {
                 navToMux!.barTintColor = color
             } else if percentComplete <= 0.1 {

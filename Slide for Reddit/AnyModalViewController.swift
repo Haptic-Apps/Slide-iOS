@@ -208,7 +208,7 @@ class AnyModalViewController: UIViewController {
             UIAlertAction(title: "Share Video", style: .default) { (_) in
                 VideoMediaDownloader.init(urlToLoad: baseURL).getVideoWithCompletion(completion: { (fileURL) in
                     DispatchQueue.main.async {
-                        let shareItems: Array = [fileURL]
+                        let shareItems: [Any] = [fileURL]
                         let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                         if let presenter = activityViewController.popoverPresentationController {
                             presenter.sourceView = sender

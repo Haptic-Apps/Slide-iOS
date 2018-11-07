@@ -499,7 +499,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                         self.text = [:]
                         self.content = [:]
                         self.loaded = true
-                        if self.submission == nil {
+                        if self.submission == nil || self.submission!.id.isEmpty() {
                             self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
                         } else {
                             self.submission = RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)

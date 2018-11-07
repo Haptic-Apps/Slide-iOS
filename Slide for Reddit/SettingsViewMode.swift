@@ -211,6 +211,7 @@ class SettingsViewMode: UITableViewController {
             showMultiColumn()
         }
         
+        SubredditReorderViewController.changed = true
         UserDefaults.standard.synchronize()
         setSelected()
     }
