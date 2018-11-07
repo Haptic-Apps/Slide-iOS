@@ -205,6 +205,26 @@ class AnyModalViewController: UIViewController {
             }
         )
         alert.addAction(
+            UIAlertAction(title: "Share Video", style: .default) { (_) in
+                VideoMediaDownloader.init(urlToLoad: baseURL).getVideoWithCompletion(completion: { (fileURL) in
+                    DispatchQueue.main.async {
+                        let shareItems: Array = [fileURL]
+                        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                        if let presenter = activityViewController.popoverPresentationController {
+                            presenter.sourceView = sender
+                            presenter.sourceRect = sender.bounds
+                        }
+                        let window = UIApplication.shared.keyWindow!
+                        if let modalVC = window.rootViewController?.presentedViewController {
+                            modalVC.present(activityViewController, animated: true, completion: nil)
+                        } else {
+                            window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                        }
+                    }
+                }, parent: self)
+            }
+        )
+        alert.addAction(
             UIAlertAction(title: "Share URL", style: .default) { (_) in
                 let shareItems: Array = [baseURL]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
