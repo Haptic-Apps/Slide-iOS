@@ -664,7 +664,7 @@ class SettingValues {
             case .SHARE:
                 return GMColor.lightGreen500Color()
             case .READ_LATER:
-                return GMColor.orange400Color()
+                return GMColor.green500Color()
             }
         }
     }

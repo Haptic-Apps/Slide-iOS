@@ -48,7 +48,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 navigationItem.rightBarButtonItems = [sortB, readLaterB]
             }
         } else {
-            navigationItem.leftBarButtonItems = []
+            if SettingValues.subredditBar {
+                navigationItem.leftBarButtonItems = []
+            }
             navigationItem.rightBarButtonItems = [sortB]
         }
     }
