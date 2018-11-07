@@ -12,7 +12,6 @@ import UserNotifications
 
 class SettingsGeneral: UITableViewController {
 
-    var viewType: UITableViewCell = UITableViewCell()
     var hideFAB: UITableViewCell = UITableViewCell()
     var scrubUsername: UITableViewCell = UITableViewCell()
     var pinToolbar: UITableViewCell = UITableViewCell()
@@ -24,7 +23,6 @@ class SettingsGeneral: UITableViewController {
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
     var notifications: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "notif")
-    var viewTypeSwitch = UISwitch()
     var hideFABSwitch = UISwitch()
     var scrubUsernameSwitch = UISwitch()
     var pinToolbarSwitch = UISwitch()
@@ -50,11 +48,7 @@ class SettingsGeneral: UITableViewController {
     }
 
     func switchIsChanged(_ changed: UISwitch) {
-        if changed == viewTypeSwitch {
-            MainViewController.needsRestart = true
-            SettingValues.viewType = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
-        } else if changed == showPagesSwitch {
+        if changed == showPagesSwitch {
             MainViewController.needsRestart = true
             SettingValues.showPages = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showPages)
@@ -153,7 +147,6 @@ class SettingsGeneral: UITableViewController {
         self.title = "General"
         self.tableView.separatorStyle = .none
         
-        createCell(viewType, viewTypeSwitch, isOn: SettingValues.viewType, text: "Swiping subreddit tabs mode")
         createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
@@ -215,12 +208,11 @@ class SettingsGeneral: UITableViewController {
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.viewType
-            case 1: return self.hideFAB
-            case 2: return self.showPages
-            case 3: return self.autoKeyboard
-            case 4: return self.pinToolbar
-            case 5: return self.scrubUsername
+            case 0: return self.hideFAB
+            case 1: return self.showPages
+            case 2: return self.autoKeyboard
+            case 3: return self.pinToolbar
+            case 4: return self.scrubUsername
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -364,7 +356,7 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 6
+        case 0: return 5
         case 1: return 2
         case 2: return 1
         case 3: return 2

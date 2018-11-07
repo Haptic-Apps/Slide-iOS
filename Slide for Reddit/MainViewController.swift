@@ -41,13 +41,14 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
-            if SettingValues.viewType {
+            if SettingValues.subredditBar {
                 navigationItem.rightBarButtonItems = [sortB]
                 navigationItem.leftBarButtonItems = [readLaterB]
             } else {
                 navigationItem.rightBarButtonItems = [sortB, readLaterB]
             }
         } else {
+            navigationItem.leftBarButtonItems = []
             navigationItem.rightBarButtonItems = [sortB]
         }
     }
@@ -278,7 +279,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 
                 self.setViewControllers([firstViewController],
                                         direction: index! > self.currentPage ? .forward : .reverse,
-                                        animated: SettingValues.viewType ? true : false,
+                                        animated: SettingValues.subredditBar ? true : false,
                                    completion: nil)
 
                 self.doCurrentPage(index!)
@@ -432,6 +433,25 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func restartVC() {
+        if (splitViewController != nil && SettingValues.appMode != .SPLIT) || (splitViewController == nil && SettingValues.appMode == .SPLIT) {
+            if let window = UIApplication.shared.keyWindow {
+                let rootController: UIViewController!
+                if !UserDefaults.standard.bool(forKey: "firstOpen") {
+                    rootController = UINavigationController(rootViewController: SettingsWelcome())
+                } else {
+                    if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
+                        rootController = UISplitViewController()
+                        (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
+                    } else {
+                        rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
+                    }
+                }
+                
+                window.rootViewController = rootController
+                window.makeKeyAndVisible()
+            }
+            return
+        }
         let saved = getSubredditVC()
         let savedPage = saved?.sub ?? ""
         
@@ -440,7 +460,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         self.menuNav = nil
         self.makeMenuNav()
         
-        if SettingValues.viewType {
+        if SettingValues.subredditBar {
             self.dataSource = self
         } else {
             self.dataSource = nil
@@ -637,7 +657,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             }
             
             let label = UILabel()
-            label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.viewType ? "" : self.currentTitle)"
+            label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
             label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
             label.adjustsFontSizeToFitWidth = true
             label.font = UIFont.boldSystemFont(ofSize: 20)
@@ -655,7 +675,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             label.sizeToFit()
             let leftItem = UIBarButtonItem(customView: label)
             
-            if !SettingValues.viewType {
+            if !SettingValues.subredditBar {
                 self.navigationItem.leftBarButtonItems = [leftItem]
             }
             
@@ -783,7 +803,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
-        if SettingValues.viewType {
+        if SettingValues.subredditBar {
             self.view.addSubview(inHeadView)
         }
     

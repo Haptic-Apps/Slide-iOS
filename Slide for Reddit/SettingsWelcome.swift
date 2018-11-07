@@ -355,9 +355,9 @@ class SettingsWelcomeTheme: UIViewController {
         UserDefaults.standard.setColor(color: GMColor.lightBlueA400Color(), forKey: "accentcolor")
         UserDefaults.standard.set(FontGenerator.Font.SYSTEM.rawValue, forKey: "postfont")
         UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
-        SettingValues.viewType = false
+        SettingValues.subredditBar = true
         UserDefaults.standard.set(true, forKey: "firstOpen")
-        UserDefaults.standard.set(false, forKey: SettingValues.pref_viewType)
+        UserDefaults.standard.set(true, forKey: SettingValues.pref_viewType)
         UserDefaults.standard.synchronize()
         _ = ColorUtil.doInit()
         doCells()
@@ -368,7 +368,7 @@ class SettingsWelcomeTheme: UIViewController {
         UserDefaults.standard.set(ColorUtil.Theme.DARK.rawValue, forKey: "theme")
         UserDefaults.standard.setColor(color: GMColor.blueA400Color(), forKey: "accentcolor")
         UserDefaults.standard.set(true, forKey: "firstOpen")
-        SettingValues.viewType = true
+        SettingValues.subredditBar = true
         UserDefaults.standard.set(true, forKey: SettingValues.pref_viewType)
         UserDefaults.standard.synchronize()
         _ = ColorUtil.doInit()
@@ -382,9 +382,9 @@ class SettingsWelcomeTheme: UIViewController {
         UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
         UserDefaults.standard.setColor(color: GMColor.blueGrey800Color(), forKey: "basecolor")
         UserDefaults.standard.setColor(color: GMColor.lightBlueA400Color(), forKey: "accentcolor")
-        SettingValues.viewType = false
+        SettingValues.subredditBar = true
         UserDefaults.standard.set(true, forKey: "firstOpen")
-        UserDefaults.standard.set(false, forKey: SettingValues.pref_viewType)
+        UserDefaults.standard.set(true, forKey: SettingValues.pref_viewType)
         UserDefaults.standard.synchronize()
         _ = ColorUtil.doInit()
         doCells()
@@ -397,9 +397,9 @@ class SettingsWelcomeTheme: UIViewController {
         UserDefaults.standard.set(FontGenerator.Font.HELVETICA.rawValue, forKey: "commentfont")
         UserDefaults.standard.setColor(color: GMColor.deepPurple600Color(), forKey: "basecolor")
         UserDefaults.standard.setColor(color: GMColor.pinkA400Color(), forKey: "accentcolor")
-        SettingValues.viewType = false
+        SettingValues.subredditBar = true
         UserDefaults.standard.set(true, forKey: "firstOpen")
-        UserDefaults.standard.set(false, forKey: SettingValues.pref_viewType)
+        UserDefaults.standard.set(true, forKey: SettingValues.pref_viewType)
         UserDefaults.standard.synchronize()
         _ = ColorUtil.doInit()
         doCells()
@@ -729,7 +729,7 @@ class SettingsWelcomeMisc: UIViewController {
             $0.numberOfLines = 0
         }
         tabs = UISwitch().then {
-            $0.isOn = SettingValues.viewType
+            $0.isOn = SettingValues.subredditBar
             $0.onTintColor = ColorUtil.baseAccent
             $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         }
@@ -814,7 +814,7 @@ class SettingsWelcomeMisc: UIViewController {
     
     func switchIsChanged(_ changed: UISwitch) {
         if changed == tabs {
-            SettingValues.viewType = changed.isOn
+            SettingValues.subredditBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
         } else if changed == fab {
             SettingValues.hiddenFAB = !changed.isOn

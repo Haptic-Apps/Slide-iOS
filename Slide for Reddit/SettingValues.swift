@@ -129,7 +129,6 @@ class SettingValues {
     public static var commentGesturesMode = CommentGesturesMode.NONE
 
     public static var browser = "firefox"
-    public static var viewType = true
     public static var subredditBar = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true
@@ -434,7 +433,6 @@ class SettingValues {
         }
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
-        SettingValues.viewType = settings.bool(forKey: SettingValues.pref_viewType)
         SettingValues.subredditBar = settings.bool(forKey: SettingValues.pref_subBar)
         SettingValues.matchSilence = settings.object(forKey: SettingValues.pref_matchSilence) == nil ? true : settings.bool(forKey: SettingValues.pref_matchSilence)
         SettingValues.infoBelowTitle = settings.bool(forKey: SettingValues.pref_infoBelowTitle)

@@ -691,7 +691,7 @@ class SingleSubredditViewController: MediaViewController {
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
-        if (SingleSubredditViewController.firstPresented && !single) || (self.links.count == 0 && !single && !SettingValues.viewType) {
+        if (SingleSubredditViewController.firstPresented && !single) || (self.links.count == 0 && !single && !SettingValues.subredditBar) {
             load(reset: true)
             SingleSubredditViewController.firstPresented = false
         }
@@ -1312,7 +1312,7 @@ class SingleSubredditViewController: MediaViewController {
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {
                                         top += 22
-                                        if !SettingValues.viewType {
+                                        if !SettingValues.subredditBar {
                                             top += 4
                                         }
                                     }
