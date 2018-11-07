@@ -541,7 +541,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.items = subs.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }
-        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
+        tabBar.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
         tabBar.selectedItem = tabBar.items[0]
@@ -577,6 +577,16 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         menuNav?.dismiss(animated: true)
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+
+        tabBar.width = self.view.frame.size.width
+        tabBar.height = statusbarHeight
+        tabBar.sizeToFit()
+
+        menuNav?.view.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
