@@ -1477,6 +1477,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
+    var videoURL: URL?
+    
     func doLoadVideo() {
         let baseUrl: URL
         if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!) {
@@ -1488,8 +1490,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let videoType = VideoMediaViewController.VideoType.fromPath(url)
         videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
             guard let strongSelf = self else { return }
+            strongSelf.videoURL = URL(string: urlString)!
             DispatchQueue.main.async {
-                strongSelf.avPlayerItem = AVPlayerItem(url: URL(string: urlString)!)
+                strongSelf.avPlayerItem = AVPlayerItem(url: strongSelf.videoURL!)
                 strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
                 strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
                 do {

@@ -72,7 +72,10 @@ class AnyModalViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.embeddedPlayer = cellView.videoView.player
         self.toReturnTo = cellView
-        self.baseURL = cellView.link?.url
+        self.baseURL = cellView.videoURL ?? cellView.link?.url
+        if VideoMediaViewController.VideoType.fromPath(self.baseURL!.absoluteString) == .REDDIT {
+            self.baseURL = URL(string: cellView.link!.videoPreview)
+        }
     }
     
     override func prefersHomeIndicatorAutoHidden() -> Bool {

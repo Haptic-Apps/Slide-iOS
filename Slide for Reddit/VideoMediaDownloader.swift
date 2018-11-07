@@ -21,6 +21,7 @@ class VideoMediaDownloader {
     init(urlToLoad: URL) {
         self.baseURL = urlToLoad.absoluteString
         self.videoType = VideoMediaViewController.VideoType.fromPath(baseURL)
+        print(baseURL)
     }
     
     func getVideoWithCompletion(completion: @escaping (_ fileURL: URL?) -> Void, parent: UIViewController) {
@@ -60,6 +61,7 @@ class VideoMediaDownloader {
                             BannerUtil.makeBanner(text: "Error downloading video", color: GMColor.red500Color(), seconds: 5, context: parent, top: false, callback: nil)
                         })
                     case .success:
+                        
                         if self.videoType == .REDDIT {
                             self.downloadRedditAudio(completion: completion, parent: parent)
                         } else {
@@ -183,8 +185,9 @@ class VideoMediaDownloader {
     }
     
     func formatUrl(sS: String, _ vreddit: Bool = false) -> String {
-        return VideoMediaViewController.format(sS: sS, false)
+        return format(sS: sS, false)
     }
+    
     func getLastPathSegment(_ path: String) -> String {
         var inv = path
         if inv.endsWith("/") {
