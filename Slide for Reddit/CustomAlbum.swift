@@ -99,21 +99,16 @@ class CustomAlbum: NSObject {
     }
 
     func saveMovieToLibrary(movieURL: URL, parent: UIViewController?) {
-
         self.checkAuthorizationWithHandler { (success) in
             if success, self.assetCollection != nil {
-
                 PHPhotoLibrary.shared().performChanges({
-
                     if let assetChangeRequest = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: movieURL) {
                         let assetPlaceHolder = assetChangeRequest.placeholderForCreatedAsset
                         if let albumChangeRequest = PHAssetCollectionChangeRequest(for: self.assetCollection) {
                             let enumeration: NSArray = [assetPlaceHolder!]
                             albumChangeRequest.addAssets(enumeration)
                         }
-
                     }
-
                 }, completionHandler: { (success, error) in
                     DispatchQueue.main.async {
                         if success {

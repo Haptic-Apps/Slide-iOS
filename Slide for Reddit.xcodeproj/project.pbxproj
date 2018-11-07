@@ -179,6 +179,7 @@
 		BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AF5791F3655F50003B24B /* SwipeDownModalVC.swift */; };
 		BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */; };
 		BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7BFB471F1997BA009CA2E1 /* MapKit.framework */; };
+		BE8264E721934221002A540E /* VideoMediaDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8264E621934221002A540E /* VideoMediaDownloader.swift */; };
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
 		BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */; };
@@ -487,6 +488,7 @@
 		BE7AF5791F3655F50003B24B /* SwipeDownModalVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeDownModalVC.swift; sourceTree = "<group>"; };
 		BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		BE7BFB471F1997BA009CA2E1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		BE8264E621934221002A540E /* VideoMediaDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaDownloader.swift; sourceTree = "<group>"; };
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
 		BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
@@ -606,6 +608,7 @@
 				09F48EBA20F652AE00BAC8AC /* Video */,
 				09F411D220F3F20200D23A42 /* EmbeddableMediaViewController.swift */,
 				BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */,
+				BE8264E621934221002A540E /* VideoMediaDownloader.swift */,
 			);
 			name = Media;
 			sourceTree = "<group>";
@@ -1650,6 +1653,7 @@
 				BEE206F61F1CF7D3008BB5F1 /* SettingsLinkHandling.swift in Sources */,
 				323EFB2821434781005157FA /* ProgressBarView.swift in Sources */,
 				BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */,
+				BE8264E721934221002A540E /* VideoMediaDownloader.swift in Sources */,
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,

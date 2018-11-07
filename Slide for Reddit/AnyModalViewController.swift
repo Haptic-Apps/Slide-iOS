@@ -242,7 +242,13 @@ class AnyModalViewController: UIViewController {
     }
     
     func downloadVideoToLibrary(_ sender: AnyObject) {
-        //todo implement this!
+        VideoMediaDownloader(urlToLoad: baseURL!).getVideoWithCompletion(completion: { (fileURL) in
+            if fileURL != nil {
+                CustomAlbum.shared.saveMovieToLibrary(movieURL: fileURL!, parent: self)
+            } else {
+                BannerUtil.makeBanner(text: "Error downloading video", color: GMColor.red500Color(), seconds: 5, context: self, top: false, callback: nil)
+            }
+        }, parent: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -351,7 +357,6 @@ class AnyModalViewController: UIViewController {
         downloadButton = UIButton().then {
             $0.accessibilityIdentifier = "Download Button"
             $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
-            $0.isHidden = true // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
