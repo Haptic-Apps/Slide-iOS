@@ -237,6 +237,9 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         if url.contains("/layout/") {
             url = url.substring(0, length: (url.indexOf("/layout")!))
         }
+        if url.contains("/new") {
+            url = url.substring(0, length: (url.indexOf("/new")!))
+        }
         var rawDat = cutEnds(s: url)
         
         if rawDat.endsWith("/") {

@@ -194,13 +194,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     func doRotate(_ animated: Bool = false) {
         let y = UIScreen.main.bounds.height - bottomOffset
-        self.view.frame = CGRect(x: 0, y: self.view.frame.height, width: self.view.frame.width, height: (self.parentController?.view.frame.size.height ?? self.view.frame.size.height) * 0.9)
+        self.view.frame = CGRect(x: 0, y: self.view.frame.height, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: (self.parentController?.view.frame.size.height ?? self.view.frame.size.height) * 0.9)
         if animated {
             let animateBlock = { [weak self] in
                 guard let strongSelf = self else { return }
                 strongSelf.backgroundView.alpha = 0
                 strongSelf.topView?.alpha = 1
-                strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: (strongSelf.parentController?.view.frame.size.height ?? strongSelf.view.frame.size.height) * 0.9)
+                strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.parentController?.view.frame.width ?? strongSelf.view.frame.size.width, height: (strongSelf.parentController?.view.frame.size.height ?? strongSelf.view.frame.size.height) * 0.9)
                 strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
                 strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             }
@@ -223,7 +223,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         } else {
             self.backgroundView.alpha = 0
             self.topView?.alpha = 1
-            self.view.frame = CGRect(x: 0, y: y, width: self.view.frame.width, height: (self.parentController?.view.frame.size.height ?? self.view.frame.size.height) * 0.9)
+            self.view.frame = CGRect(x: 0, y: y, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: (self.parentController?.view.frame.size.height ?? self.view.frame.size.height) * 0.9)
             self.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             self.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
         }

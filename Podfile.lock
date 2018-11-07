@@ -22,27 +22,27 @@ PODS:
   - DTFoundation/UIKit (1.7.13):
     - DTFoundation/Core
   - Embassy (4.0.8)
-  - LicensesViewController (0.6.5)
-  - MaterialComponents/ActivityIndicator (66.0.0):
+  - LicensesViewController (0.6.6)
+  - MaterialComponents/ActivityIndicator (68.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (66.0.0)
-  - MaterialComponents/Ink (66.0.0):
+  - MaterialComponents/AnimationTiming (68.1.0)
+  - MaterialComponents/Ink (68.1.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (66.0.0)
-  - MaterialComponents/private/Application (66.0.0)
-  - MaterialComponents/private/Math (66.0.0)
-  - MaterialComponents/ProgressView (66.0.0):
+  - MaterialComponents/Palettes (68.1.0)
+  - MaterialComponents/private/Application (68.1.0)
+  - MaterialComponents/private/Math (68.1.0)
+  - MaterialComponents/ProgressView (68.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (66.0.0)
-  - MaterialComponents/ShadowLayer (66.0.0):
+  - MaterialComponents/ShadowElevations (68.1.0)
+  - MaterialComponents/ShadowLayer (68.1.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (66.0.0):
+  - MaterialComponents/Tabs (68.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -50,7 +50,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (66.0.0):
+  - MaterialComponents/Typography (68.1.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (1.1.0)
@@ -59,11 +59,11 @@ PODS:
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
   - MTColorDistance (0.0.3)
-  - Realm (3.11.0):
-    - Realm/Headers (= 3.11.0)
-  - Realm/Headers (3.11.0)
-  - RealmSwift (3.11.0):
-    - Realm (= 3.11.0)
+  - Realm (3.11.1):
+    - Realm/Headers (= 3.11.1)
+  - Realm/Headers (3.11.1)
+  - RealmSwift (3.11.1):
+    - Realm (= 3.11.1)
   - reddift (2.0.0):
     - reddift/MiniKeychain (= 2.0.0)
   - reddift/MiniKeychain (2.0.0)
@@ -72,8 +72,8 @@ PODS:
     - SDWebImage/Core (= 4.1.2)
   - SDWebImage/Core (4.1.2)
   - SloppySwiper (0.6)
-  - Starscream (3.0.5)
-  - SubtleVolume (1.0.0)
+  - Starscream (3.0.6)
+  - SubtleVolume (1.0.2)
   - SwiftLint (0.27.0)
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.2.0)
@@ -130,7 +130,7 @@ CHECKOUT OPTIONS:
     :commit: 752459578d8162c11f6311987bd3463e6d85712b
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   DTCoreText:
-    :commit: 04d0c7d878284632d79ced139b3f128c2b33c94c
+    :commit: c171d6f7fd7c96585a138742baa35116c4d1884c
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
     :commit: 1b0730e3e735791566ea7349065b56df49128d21
@@ -154,21 +154,21 @@ SPEC CHECKSUMS:
   DTCoreText: c07f9d7109a1dd637d7190032261b7c8aff23c92
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
-  LicensesViewController: 1f2982b1bab8402d3f88e23197957038e8abb907
-  MaterialComponents: 2b92bfea789f775ddb5a7060aec9edb8f7bb971b
+  LicensesViewController: 8ab8cbf1e169577343b20ee804e357f0d08dfad0
+  MaterialComponents: 9090ac82784a9c031ff62a44d3d9880143029d63
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
-  Realm: 92f09a102692b96a9a10e9617f214f15c5ab85fc
-  RealmSwift: 5f0481cd658bb751c509314b964a35eaa264d2cf
+  Realm: 037c5919b9ceb59d6beed5d3b031096856b119b3
+  RealmSwift: c9580133e73ef40ed340401af2dbc9a5790dfea7
   reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
-  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
-  SubtleVolume: e5320af68833521f22e73529737c3d320f565148
+  Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
+  SubtleVolume: 88618f8304a0e605d1adca14b95376dcbf9e03ce
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96

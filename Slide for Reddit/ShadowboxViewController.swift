@@ -21,13 +21,13 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         color1 = (currentVc as! ShadowboxLinkViewController).backgroundColor
     }
     
-    func getURLToLoad(_ submission: RSubmission) -> URL {
-        let url = submission.url!
-        if ContentType.isGif(uri: url) {
-            if !submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
+    func getURLToLoad(_ submission: RSubmission) -> URL? {
+        let url = submission.url
+        if url != nil && ContentType.isGif(uri: url!) {
+            if !submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url!) {
                 return URL.init(string: submission.videoPreview)!
             } else {
-                return url
+                return url!
             }
         } else {
             return url

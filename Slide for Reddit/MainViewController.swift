@@ -426,7 +426,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         // 3- Adjust bottomSheet frame and initial position.
         let height = view.frame.height
-        let width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
+        let width = view.frame.width
         menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * 0.9)
     }
 
