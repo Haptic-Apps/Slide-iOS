@@ -26,8 +26,6 @@ class SingleSubredditViewController: MediaViewController {
         return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
     }
     
-    static var nextSingle = false
-    
     var navbarEnabled: Bool {
         return true
     }
@@ -134,7 +132,6 @@ class SingleSubredditViewController: MediaViewController {
     init(subName: String, single: Bool) {
         sub = subName
         self.single = true
-        SingleSubredditViewController.nextSingle = true
         super.init(nibName: nil, bundle: nil)
         self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
         self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
@@ -265,18 +262,13 @@ class SingleSubredditViewController: MediaViewController {
             }
         }
 
-        SingleSubredditViewController.nextSingle = self.single
         doHeadView()
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        if #available(iOS 11.0, *) {
-            tableView.frame = UIEdgeInsetsInsetRect(view.bounds, view.safeAreaInsets)
-        } else {
-            tableView.frame = view.bounds
-        }
+        tableView.frame = view.bounds
 
         if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
@@ -343,7 +335,7 @@ class SingleSubredditViewController: MediaViewController {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
-        
+
         if !SettingValues.pinToolbar {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {

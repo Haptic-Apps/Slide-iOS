@@ -96,12 +96,6 @@ class ColorUtil {
         }
     }
 
-    public static func setBackgroundToolbar(toolbar: UINavigationBar?) {
-        if toolbar != nil {
-            toolbar?.barTintColor = backgroundColor
-        }
-    }
-
     private static func image(fromLayer layer: CALayer) -> UIImage {
         UIGraphicsBeginImageContext(layer.frame.size)
         layer.render(in: UIGraphicsGetCurrentContext()!)

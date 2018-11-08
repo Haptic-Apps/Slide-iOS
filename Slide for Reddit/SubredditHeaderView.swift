@@ -13,7 +13,6 @@ import UIKit
 
 class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
-    var back: UILabel = UILabel()
     var subscribers: UILabel = UILabel()
     var here: UILabel = UILabel()
     var info = TextDisplayStackView()
@@ -21,8 +20,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     var submit = UITableViewCell()
     var sorting = UITableViewCell()
     var mods = UITableViewCell()
-
-    var subbed = UISwitch()
 
     func mods(_ sender: UITableViewCell) {
         var list: [User] = []
@@ -137,15 +134,9 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         here.font = UIFont.systemFont(ofSize: 16)
         here.textColor = UIColor.white
 
-        self.back = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 56))
-
-        addSubviews(submit, back, info, subscribers, here, sorting, mods)
+        addSubviews(submit, info, subscribers, here, sorting, mods)
 
         self.clipsToBounds = true
-
-        back.addSubview(subbed)
-        subbed.leftAnchor == back.leftAnchor + CGFloat(24)
-        subbed.centerYAnchor == back.centerYAnchor
         
         setupAnchors()
 
@@ -163,41 +154,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
     }
     
-    func doSub(_ changed: UISwitch) {
-        if !changed.isOn {
-            Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-            BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: parentController, top: true)
-
-        } else {
-            let alrController = UIAlertController.init(title: "Follow \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
-            if AccountController.isLoggedIn {
-                let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
-                    Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-                    BannerUtil.makeBanner(text: "Subscribed to r/\(self.subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
-                })
-                alrController.addAction(somethingAction)
-            }
-            
-            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
-                Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-                BannerUtil.makeBanner(text: "r/\(self.subreddit!.displayName) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self.parentController, top: true)
-            })
-            alrController.addAction(somethingAction)
-            
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
-            
-            alrController.addAction(cancelAction)
-            
-            alrController.modalPresentationStyle = .fullScreen
-            if let presenter = alrController.popoverPresentationController {
-                presenter.sourceView = changed
-                presenter.sourceRect = changed.bounds
-            }
-            
-            parentController?.present(alrController, animated: true, completion: {})
-        }
-    }
-
     func new(_ selector: UITableViewCell) {
         PostActions.showPostMenu(parentController!, sub: self.subreddit!.displayName)
     }
@@ -298,18 +254,6 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         self.subreddit = subreddit
         self.setWidth = width
         self.parentController = parent
-        back.backgroundColor = ColorUtil.getColorForSub(sub: subreddit.displayName)
-        back.text = subreddit.displayName
-        back.textColor = .white
-        back.font = FontGenerator.boldFontOfSize(size: 24, submission: true)
-        back.textAlignment = .center
-        
-        subbed.isOn = Subscriptions.isSubscriber(subreddit.displayName)
-        subbed.onTintColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
-        subbed.addTarget(self, action: #selector(doSub(_:)), for: .valueChanged)
-        subbed.isUserInteractionEnabled = true
-        
-        back.isUserInteractionEnabled = true
         
         here.numberOfLines = 0
         subscribers.numberOfLines = 0
@@ -331,10 +275,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         attributedString.append(subt)
         here.attributedText = attributedString
 
-        var width = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .pad ? 0.75 : 0.95)
-        if width < 250 {
-            width = UIScreen.main.bounds.width * 0.95
-        }
+        var width = UIScreen.main.bounds.width
 
         info.estimatedWidth = width - 24
         if !subreddit.descriptionHtml.isEmpty() {
@@ -348,13 +289,9 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     var setWidth: CGFloat = 0
 
     func setupAnchors() {
-        var width = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .pad ? 0.75 : 0.95)
-        if width < 250 {
-            width = UIScreen.main.bounds.width * 0.95
-        }
-        self.widthAnchor == width
+    
+        self.widthAnchor == UIScreen.main.bounds.width
 
-        back.horizontalAnchors == horizontalAnchors
         submit.horizontalAnchors == horizontalAnchors + CGFloat(12)
         sorting.horizontalAnchors == horizontalAnchors + CGFloat(12)
         mods.horizontalAnchors == horizontalAnchors + CGFloat(12)
@@ -366,9 +303,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         here.rightAnchor == rightAnchor - CGFloat(12)
         here.centerYAnchor == subscribers.centerYAnchor
         
-        back.heightAnchor == CGFloat(86)
-        back.topAnchor == topAnchor
-        subscribers.topAnchor == back.bottomAnchor + CGFloat(6)
+        subscribers.topAnchor == topAnchor + CGFloat(16)
         submit.topAnchor == subscribers.bottomAnchor + CGFloat(8)
         mods.topAnchor == submit.bottomAnchor + CGFloat(2)
         sorting.topAnchor == mods.bottomAnchor + CGFloat(2)
@@ -381,7 +316,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     }
 
     func getEstHeight() -> CGFloat {
-        return CGFloat(320) + (descHeight)
+        return CGFloat(290) + (descHeight)
     }
     
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {

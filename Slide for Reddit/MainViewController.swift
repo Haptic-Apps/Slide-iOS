@@ -514,6 +514,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             for subname in finalSubs {
                 if subname == savedPage {
                     MainViewController.vCs.append(saved!)
+                    saved!.reloadNeedingColor()
+                    saved!.parentController = self
                 } else {
                     MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
                 }
@@ -629,9 +631,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        guard completed else {
-            return
-        }
         let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
         doCurrentPage(page!)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -719,8 +718,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        color2 = ColorUtil.getColorForSub(sub: (pendingViewControllers[0] as! SingleSubredditViewController).sub, true)
-        color1 = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
+        let pendingSub = (pendingViewControllers[0] as! SingleSubredditViewController).sub
+        let prevSub = getSubredditVC()?.sub ?? ""
+        color2 = ColorUtil.getColorForSub(sub: pendingSub, true)
+        color1 = ColorUtil.getColorForSub(sub: prevSub, true)
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -818,7 +819,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             self.navigationController?.navigationBar.shadowImage = UIImage()
             navigationController?.navigationBar.isTranslucent = false
 
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
+            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
             tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
             self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
 

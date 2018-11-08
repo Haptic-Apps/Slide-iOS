@@ -95,13 +95,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
     func doDisplaySidebar(_ sub: Subreddit) {
         guard let parent = parent else { return }
         inner = SubSidebarViewController(sub: sub, parent: parent)
-
-        menuPresentationController = BottomMenuPresentationController(presentedViewController: inner!, presenting: parent)
-        menuPresentationController?.scrollView = inner!.scrollView
-        inner!.transitioningDelegate = menuPresentationController!
-        inner!.modalPresentationStyle = .custom
-
-        parent.present(inner!, animated: true, completion: nil)
+        VCPresenter.showVC(viewController: inner!, popupIfPossible: false, parentNavigationController: parent.navigationController, parentViewController: parent)
     }
 
     func subscribe(_ sub: Subreddit) {
