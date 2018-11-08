@@ -690,8 +690,10 @@ class SingleSubredditViewController: MediaViewController {
 
         self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
         self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
+        
+        let offline = MainViewController.isOffline
 
-        if single {
+        if single && !offline {
             let sort = UIButton.init(type: .custom)
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
@@ -774,6 +776,10 @@ class SingleSubredditViewController: MediaViewController {
                 })
             } catch {
             }
+        } else if offline && single {
+            title = sub
+            self.navigationController?.setToolbarHidden(true, animated: false)
+            self.load(reset: true)
         }
     }
 
@@ -1827,6 +1833,9 @@ extension SingleSubredditViewController {
         alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
             ColorUtil.setColorForSub(sub: self.sub, color: self.primaryChosen ?? ColorUtil.baseColor)
             self.pickAccent(sender: sender, parent: parent)
+            if self.parentController != nil {
+                self.parentController?.colorChanged(ColorUtil.getColorForSub(sub: self.sub))
+            }
             self.reloadDataReset()
         }
 

@@ -507,6 +507,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             for subname in finalSubs {
                 MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
             }
+            
+            let offlineVC = OfflineOverviewViewController(subs: finalSubs)
+            VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
         } else {
             finalSubs = Subscriptions.subreddits
             MainViewController.isOffline = false
@@ -986,6 +989,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         tabBar.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
+        menuNav?.setColors(finalSubs[currentPage])
     }
 
     override func viewWillDisappear(_ animated: Bool) {

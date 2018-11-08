@@ -19,7 +19,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
     var goPro: UITableViewCell = UITableViewCell()
 
-    var general: UITableViewCell = UITableViewCell()
+    var general: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "general")
     var manageSubs: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "managesubs")
     var mainTheme: UITableViewCell = UITableViewCell()
     var postLayout: UITableViewCell = UITableViewCell()
@@ -132,6 +132,15 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.general.textLabel?.textColor = ColorUtil.fontColor
         self.general.imageView?.image = UIImage.init(named: "settings")?.toolbarIcon()
         self.general.imageView?.tintColor = ColorUtil.fontColor
+        if !UserDefaults.standard.bool(forKey: "2notifs") {
+            self.general.detailTextLabel?.textColor = ColorUtil.baseAccent
+            self.general.detailTextLabel?.text = "New in 2.0, setup notifications here!"
+        } else {
+            self.general.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
+        }
+        self.general.detailTextLabel?.numberOfLines = 0
+        self.general.detailTextLabel?.lineBreakMode = .byWordWrapping
 
         self.manageSubs.textLabel?.text = "Subscriptions"
         self.manageSubs.accessoryType = .disclosureIndicator

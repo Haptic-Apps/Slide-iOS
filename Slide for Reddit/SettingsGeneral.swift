@@ -35,6 +35,8 @@ class SettingsGeneral: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        UserDefaults.standard.set(true, forKey: "2notifs")
+        UserDefaults.standard.synchronize()
     }
 
     override func didReceiveMemoryWarning() {
