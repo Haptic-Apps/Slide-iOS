@@ -36,7 +36,7 @@ class SingleSubredditViewController: MediaViewController {
 
     let maxHeaderHeight: CGFloat = 120
     let minHeaderHeight: CGFloat = 56
-    public var inHeadView = UIView()
+    public var inHeadView: UIView?
 
     let margin: CGFloat = 10
     let cellsPerRow = 3
@@ -90,7 +90,6 @@ class SingleSubredditViewController: MediaViewController {
     }
     var swiper: SloppySwiper?
 
-    var headerView = UIView()
     var more = UIButton()
 
     var lastY: CGFloat = CGFloat(0)
@@ -153,6 +152,9 @@ class SingleSubredditViewController: MediaViewController {
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
 
+        tableView.verticalAnchors == view.verticalAnchors
+        tableView.horizontalAnchors == view.safeHorizontalAnchors
+
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
@@ -165,7 +167,21 @@ class SingleSubredditViewController: MediaViewController {
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
 
+        if !(navigationController is TapBehindModalViewController) {
+            inHeadView = UIView().then {
+                $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
+            }
+            self.view.addSubview(inHeadView!)
+            inHeadView!.isHidden = UIDevice.current.orientation.isLandscape
+
+            inHeadView!.topAnchor == view.topAnchor
+            inHeadView!.horizontalAnchors == view.horizontalAnchors
+            inHeadView!.heightAnchor == (UIApplication.shared.statusBarView?.frame.size.height ?? 0)
+        }
+
         reloadNeedingColor()
+        flowLayout.reset()
+        tableView.reloadData()
         
 //        if false && single && !isModal { //todo reimplement soon?
 //            swiper = SloppySwiper.init(navigationController: self.navigationController!)
@@ -235,8 +251,10 @@ class SingleSubredditViewController: MediaViewController {
         if single {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
-        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.fontColor
+        navigationController?.toolbar.barTintColor = .green
+        navigationController?.toolbar.tintColor = .red
+
+        inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -262,13 +280,10 @@ class SingleSubredditViewController: MediaViewController {
             }
         }
 
-        doHeadView()
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-
-        tableView.frame = view.bounds
 
         if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
@@ -280,7 +295,6 @@ class SingleSubredditViewController: MediaViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        self.inHeadView.removeFromSuperview()
         if single {
             UIApplication.shared.statusBarView?.backgroundColor = .clear
         }
@@ -314,9 +328,14 @@ class SingleSubredditViewController: MediaViewController {
         
         self.setupFab(size)
 
-        if self.viewIfLoaded?.window != nil {
-            tableView.reloadData()
-        }
+        inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
+
+        flowLayout.reset()
+        tableView.reloadData()
+
+//        if self.viewIfLoaded?.window != nil {
+//            tableView.reloadData()
+//        }
     }
     
     static func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
@@ -906,16 +925,6 @@ class SingleSubredditViewController: MediaViewController {
         }
     }
 
-    func doHeadView() {
-        inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
-        
-        if !(navigationController is TapBehindModalViewController) {
-            self.view.addSubview(inHeadView)
-        }
-    }
-    
     func resetColors() {
         if single {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
@@ -2133,7 +2142,7 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
             self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
             sideView.backgroundColor = c
             sideView.backgroundColor = c
-            inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
+            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
             if parentController != nil {
                 parentController?.colorChanged(c)
             }

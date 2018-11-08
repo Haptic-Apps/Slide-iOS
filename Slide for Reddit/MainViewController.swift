@@ -603,7 +603,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     var statusbarHeight: CGFloat {
-        return UIApplication.shared.statusBarFrame.size.height
+        return self.navigationController?.navigationBar.frame.height ?? 0.0
     }
     
     func doLogin(token: OAuth2Token?) {
@@ -623,12 +623,11 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         menuNav?.dismiss(animated: true)
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
 
         tabBar.width = self.view.frame.size.width
         tabBar.height = statusbarHeight
-        tabBar.sizeToFit()
 
         menuNav?.view.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
@@ -642,7 +641,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     func doCurrentPage(_ page: Int) {
         self.currentPage = page
         if let vc = getSubredditVC() {
-            vc.doHeadView()
             MainViewController.current = vc.sub
             self.menuNav?.setSubreddit(subreddit: MainViewController.current)
             self.currentTitle = MainViewController.current
