@@ -251,8 +251,8 @@ class SingleSubredditViewController: MediaViewController {
         if single {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
-        navigationController?.toolbar.barTintColor = .green
-        navigationController?.toolbar.tintColor = .red
+        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+        navigationController?.toolbar.tintColor = ColorUtil.fontColor
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
     }
