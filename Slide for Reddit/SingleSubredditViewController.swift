@@ -2182,7 +2182,6 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
-            History.addSeen(s: cell.link!)
             cell.refresh()
         } catch {
 
