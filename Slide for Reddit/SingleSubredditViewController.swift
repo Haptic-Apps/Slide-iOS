@@ -330,8 +330,13 @@ class SingleSubredditViewController: MediaViewController {
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
 
-        flowLayout.reset()
-        tableView.reloadData()
+        oldsize = self.view.bounds.width
+        coordinator.animate(
+            alongsideTransition: { [unowned self] _ in
+                self.flowLayout.reset()
+                self.view.setNeedsLayout()
+            }, completion: nil
+        )
 
 //        if self.viewIfLoaded?.window != nil {
 //            tableView.reloadData()

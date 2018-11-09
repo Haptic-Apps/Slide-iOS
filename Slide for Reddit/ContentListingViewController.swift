@@ -128,6 +128,18 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         }
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        oldsize = self.view.bounds.width
+        coordinator.animate(
+            alongsideTransition: { [unowned self] _ in
+                self.flowLayout.reset()
+                self.view.setNeedsLayout()
+            }, completion: nil
+        )
+    }
+
     var tC: UIViewController?
 
     override func didReceiveMemoryWarning() {
