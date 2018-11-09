@@ -590,7 +590,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
         tabBar.selectedItem = tabBar.items[0]
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0])
+        // TODO: Get actual subreddit color, not accent color
+        tabBar.tintColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0]) : ColorUtil.fontColor
         tabBar.sizeToFit()
         self.viewToMux = self.tabBar
 
@@ -689,7 +690,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             
             tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
             
-            tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
+            tabBar.tintColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: vc.sub) : ColorUtil.fontColor
             if !selected {
                 let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
                 if !tabBar.items.isEmpty {
@@ -987,7 +988,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func colorChanged(_ color: UIColor) {
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
+        tabBar.tintColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: MainViewController.current) : ColorUtil.fontColor
         tabBar.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
         menuNav?.setColors(finalSubs[currentPage])

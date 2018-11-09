@@ -113,11 +113,10 @@ class ColorUtil {
         if header && SettingValues.reduceColor {
             return ColorUtil.backgroundColor
         }
-        let color = UserDefaults.standard.colorForKey(key: "color+" + sub)
-        if color == nil {
-            return baseColor
+        if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
+            return color
         } else {
-            return color!
+            return baseColor
         }
     }
 
