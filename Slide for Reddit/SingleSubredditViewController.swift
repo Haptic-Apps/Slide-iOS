@@ -260,7 +260,7 @@ class SingleSubredditViewController: MediaViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if toolbarEnabled {
+        if toolbarEnabled && !MainViewController.isOffline {
             if single {
                 navigationController?.setToolbarHidden(false, animated: false)
             } else {
@@ -440,7 +440,7 @@ class SingleSubredditViewController: MediaViewController {
                     }, completion: { _ in
                     })
 
-                        if self.single {
+                        if self.single && !MainViewController.isOffline {
                             self.navigationController?.setToolbarHidden(false, animated: true)
                         } else if !disableBottom {
                             if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView {
@@ -478,7 +478,7 @@ class SingleSubredditViewController: MediaViewController {
                 })
             }
 
-                if single {
+                if single && !MainViewController.isOffline {
                     navigationController?.setToolbarHidden(false, animated: true)
                 } else if !disableBottom {
                     UIView.animate(withDuration: 0.25) {
@@ -499,9 +499,6 @@ class SingleSubredditViewController: MediaViewController {
                         self.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
                         self.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
                     }
-//                if !single && parentController != nil {
-//                    self.parentController!.drawerButton.isHidden = true
-//                }
             }
             self.isToolbarHidden = false
         }

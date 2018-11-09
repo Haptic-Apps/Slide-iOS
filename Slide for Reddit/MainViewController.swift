@@ -917,13 +917,15 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             
             menu.heightAnchor == 56
             menu.widthAnchor == 56
-            menu.leftAnchor == toolbar!.leftAnchor
-            menu.topAnchor == toolbar!.topAnchor
+            if let tool = toolbar {
+                menu.leftAnchor == tool.leftAnchor
+                menu.topAnchor == tool.topAnchor
+                more.rightAnchor == tool.rightAnchor
+                more.topAnchor == tool.topAnchor
+            }
             
             more.heightAnchor == 56
             more.widthAnchor == 56
-            more.rightAnchor == toolbar!.rightAnchor
-            more.topAnchor == toolbar!.topAnchor
 
         } else {
             toolbarItems = [settingsB, flexButton, offlineB]
