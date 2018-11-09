@@ -156,16 +156,16 @@ class SubredditCellView: UITableViewCell {
         selectedBackgroundView = selectedView
     }
 
-    func setSearch(string: String, nav: UIViewController?) {
+    func setSearch(string: String, sub: String?, nav: UIViewController?) {
         title.textColor = ColorUtil.fontColor
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         self.search = string
-        self.subreddit = ""
+        self.subreddit = sub ?? "all"
         self.profile = ""
         self.icon.isHidden = false
         self.sideView.isHidden = true
         self.navController = nav
-        title.text = "Search for \(string)"
+        title.text = "Search " + (sub == nil ? "Reddit" : "r/\(self.subreddit)")
         self.icon.image = UIImage.init(named: "search")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()

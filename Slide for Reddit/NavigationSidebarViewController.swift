@@ -422,7 +422,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             let user = cell.profile
             parentController?.goToUser(profile: user)
         } else if !cell.search.isEmpty() {
-            VCPresenter.showVC(viewController: SearchViewController(subreddit: "all", searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+            VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
         } else {
             let sub = cell.subreddit
             parentController?.goToSubreddit(subreddit: sub)
@@ -449,7 +449,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             if isSearching {
-                return filteredContent.count + (filteredContent.contains(searchBar!.text!) ? 0 : 1) + 2
+                return filteredContent.count + (filteredContent.contains(searchBar!.text!) ? 0 : 1) + 3
             } else {
                 return Subscriptions.subreddits.count
             }
@@ -494,9 +494,16 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 c.setProfile(profile: thing, nav: self)
                 cell = c
             } else if isSearching && indexPath.row == filteredContent.count + 2 {
+                // "Search Reddit for <text>" cell
                 let thing = searchBar!.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
-                c.setSearch(string: thing, nav: self)
+                c.setSearch(string: thing, sub: nil, nav: self)
+                cell = c
+            } else if isSearching && indexPath.row == filteredContent.count + 3 {
+                // "Search r/subreddit for <text>" cell
+                let thing = searchBar!.text!
+                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                c.setSearch(string: thing, sub: MainViewController.current, nav: self)
                 cell = c
             } else {
                 var thing = ""
@@ -536,7 +543,7 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
         }
         
         tableView.reloadData()
-        if searchBar.text!.count >= 3 {
+        if searchBar.text!.count >= 2 {
             timer = Timer.scheduledTimer(timeInterval: 0.35,
                                          target: self,
                                          selector: #selector(self.getSuggestions),

@@ -683,6 +683,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             
             self.navigationController?.navigationBar.shadowImage = UIImage()
             self.navigationController?.navigationBar.layoutIfNeeded()
+
+            // Clear the menuNav's searchBar to refresh the menuNav
+            self.menuNav?.searchBar?.text = nil
             
             tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
             
