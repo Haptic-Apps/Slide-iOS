@@ -80,6 +80,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
+        tableView.verticalAnchors == view.verticalAnchors
+        tableView.horizontalAnchors == view.safeHorizontalAnchors
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -109,18 +111,33 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
         
         session = (UIApplication.shared.delegate as! AppDelegate).session
+
+        flowLayout.reset()
+        tableView.reloadData()
     }
     
     var oldsize = CGFloat(0)
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        tableView.frame = self.view.bounds
+
         if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
             flowLayout.reset()
             tableView.reloadData()
         }
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        oldsize = self.view.bounds.width
+        coordinator.animate(
+            alongsideTransition: { [unowned self] _ in
+                self.flowLayout.reset()
+                self.view.setNeedsLayout()
+            }, completion: nil
+        )
     }
 
     var tC: UIViewController?
