@@ -1930,29 +1930,34 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        if let header = self.tableView.tableHeaderView {
-            var frame = header.frame
-            var leftInset: CGFloat = 0
-            var rightInset: CGFloat = 0
-            
-            if #available(iOS 11.0, *) {
-                leftInset = self.tableView.safeAreaInsets.left
-                rightInset = self.tableView.safeAreaInsets.right
-                frame.origin.x = leftInset
-            } else {
-                // Fallback on earlier versions
-            }
-            
-            self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
-            
-            frame.size.width = size.width - (leftInset + rightInset)
-            frame.size.height = self.headerCell!.estimateHeight(true, true)
-            
-            self.headerCell!.contentView.frame = frame
-            self.tableView.tableHeaderView!.frame = frame
-            tableView.reloadData(with: .none)
-            doHeadView(size)
-        }
+
+        coordinator.animate(
+            alongsideTransition: { [unowned self] _ in
+                if let header = self.tableView.tableHeaderView {
+                    var frame = header.frame
+                    var leftInset: CGFloat = 0
+                    var rightInset: CGFloat = 0
+
+                    if #available(iOS 11.0, *) {
+                        leftInset = self.tableView.safeAreaInsets.left
+                        rightInset = self.tableView.safeAreaInsets.right
+                        frame.origin.x = leftInset
+                    } else {
+                        // Fallback on earlier versions
+                    }
+
+                    self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
+
+                    frame.size.width = size.width - (leftInset + rightInset)
+                    frame.size.height = self.headerCell!.estimateHeight(true, true)
+
+                    self.headerCell!.contentView.frame = frame
+                    self.tableView.tableHeaderView!.frame = frame
+                    self.tableView.reloadData(with: .none)
+                    self.doHeadView(size)
+                    self.view.setNeedsLayout()
+                }
+            }, completion: nil)
     }
     
     var lastYUsed = CGFloat(0)
