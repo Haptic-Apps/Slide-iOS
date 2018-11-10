@@ -812,24 +812,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         }
     
         checkForUpdate()
-    
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
-            self.edgesForExtendedLayout = UIRectEdge.all
-            self.extendedLayoutIncludesOpaqueBars = true
-
-            self.navigationController?.navigationBar.shadowImage = UIImage()
-            navigationController?.navigationBar.isTranslucent = false
-
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
-            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
-            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
-
-            menuNav?.header.doColors()
-            if menuNav?.tableView != nil {
-                menuNav?.tableView.reloadData()
-            }
-        }
-        
+            
         let formatter = DateFormatter()
         formatter.dateFormat = "MM/dd/yyyy"
         let today = formatter.string(from: Date())

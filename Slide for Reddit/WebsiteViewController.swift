@@ -201,14 +201,16 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                         }
                     })
                 }
-            } else if (url?.absoluteString ?? "").contains("reddit.com") {
-                self.title = "Log in"
-                self.navigationItem.rightBarButtonItems = []
-                let dataStore = WKWebsiteDataStore.default()
-                dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
-                    dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
-                                         for: records.filter { $0.displayName.contains("reddit") },
-                                         completionHandler: {})
+            } else if (url?.absoluteString ?? "").contains("reddit.com/api/v1/authorize") {
+                if self.title != "Log in" {
+                    self.title = "Log in"
+                    self.navigationItem.rightBarButtonItems = []
+                    let dataStore = WKWebsiteDataStore.default()
+                    dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+                        dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
+                                             for: records.filter { $0.displayName.contains("reddit") },
+                                             completionHandler: {})
+                    }
                 }
             }
         }
