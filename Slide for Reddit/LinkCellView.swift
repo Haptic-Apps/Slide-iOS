@@ -935,8 +935,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
+        let textClicked = label.attributedText.attributedSubstring(from: result.range).string
+        // TODO: This doesn't seem needed to handle user links
+//        if textClicked.contains("/u/") {
+//            VCPresenter.openRedditLink(textClicked, nil, nil)
+//            return
+//        }
         if (parentViewController) != nil {
-            let textClicked = label.attributedText.attributedSubstring(from: result.range).string
             if textClicked.contains("[[s[") {
                 parentViewController?.showSpoiler(textClicked)
             } else {
@@ -975,6 +980,29 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, true, false))
         title.delegate = self
+
+        title.linkAttributes = [
+            NSForegroundColorAttributeName: ColorUtil.fontColor,
+            NSUnderlineStyleAttributeName: NSNumber(value: false),
+        ]
+        title.activeLinkAttributes = [
+            NSForegroundColorAttributeName: ColorUtil.fontColor,
+            NSUnderlineStyleAttributeName: NSNumber(value: false),
+        ]
+
+        if let titleText = title.text as? NSString {
+            // Add link to author profile
+            let authorRange = titleText.range(of: "u/\(submission.author)")
+            let authorURL = URL(string: "/u/\(submission.author)")!
+            title.addLink(to: authorURL, with: authorRange)
+
+            // Add link to subreddit
+            let subredditRange = titleText.range(of: "r/\(submission.subreddit)")
+            let subredditURL = URL(string: "/r/\(submission.subreddit)")!
+            title.addLink(to: subredditURL, with: subredditRange)
+        } else {
+            NSLog("Could not cast title.text as NSString!")
+        }
         
         if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))

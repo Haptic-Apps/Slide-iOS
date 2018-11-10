@@ -251,8 +251,8 @@ class SingleSubredditViewController: MediaViewController {
         if single {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
-        navigationController?.toolbar.barTintColor = .green
-        navigationController?.toolbar.tintColor = .red
+        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+        navigationController?.toolbar.tintColor = ColorUtil.fontColor
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
     }
@@ -2179,7 +2179,6 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
-            History.addSeen(s: cell.link!)
             cell.refresh()
         } catch {
 
