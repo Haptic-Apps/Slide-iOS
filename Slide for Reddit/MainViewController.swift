@@ -591,7 +591,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.delegate = self
         tabBar.selectedItem = tabBar.items[0]
         // TODO: Get actual subreddit color, not accent color
-        tabBar.tintColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0]) : ColorUtil.fontColor
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0])
         tabBar.sizeToFit()
         self.viewToMux = self.tabBar
 
@@ -604,7 +604,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     var statusbarHeight: CGFloat {
-        return self.navigationController?.navigationBar.frame.height ?? 0.0
+        return UIApplication.shared.statusBarFrame.size.height
     }
     
     func doLogin(token: OAuth2Token?) {
@@ -690,7 +690,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             
             tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
             
-            tabBar.tintColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: vc.sub) : ColorUtil.fontColor
+            tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
             if !selected {
                 let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
                 if !tabBar.items.isEmpty {
@@ -973,7 +973,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
     }
 
     func colorChanged(_ color: UIColor) {
-        tabBar.tintColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: MainViewController.current) : ColorUtil.fontColor
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         tabBar.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
         menuNav?.setColors(finalSubs[currentPage])

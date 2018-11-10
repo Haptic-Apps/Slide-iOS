@@ -979,31 +979,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.link = submission
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, true, false))
-        title.delegate = self
-
-        title.linkAttributes = [
-            NSForegroundColorAttributeName: ColorUtil.fontColor,
-            NSUnderlineStyleAttributeName: NSNumber(value: false),
-        ]
-        title.activeLinkAttributes = [
-            NSForegroundColorAttributeName: ColorUtil.fontColor,
-            NSUnderlineStyleAttributeName: NSNumber(value: false),
-        ]
-
-        if let titleText = title.text as? NSString {
-            // Add link to author profile
-            let authorRange = titleText.range(of: "u/\(submission.author)")
-            let authorURL = URL(string: "/u/\(submission.author)")!
-            title.addLink(to: authorURL, with: authorRange)
-
-            // Add link to subreddit
-            let subredditRange = titleText.range(of: "r/\(submission.subreddit)")
-            let subredditURL = URL(string: "/r/\(submission.subreddit)")!
-            title.addLink(to: subredditURL, with: subredditRange)
-        } else {
-            NSLog("Could not cast title.text as NSString!")
-        }
-        
         if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
             dtap!.numberOfTapsRequired = 2
@@ -1026,6 +1001,30 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func refreshTitle() {
         title.setText(CachedTitle.getTitle(submission: self.link!, full: full, true, false))
+        title.delegate = self
+        
+        title.linkAttributes = [
+            NSForegroundColorAttributeName: ColorUtil.fontColor,
+            NSUnderlineStyleAttributeName: NSNumber(value: false),
+        ]
+        title.activeLinkAttributes = [
+            NSForegroundColorAttributeName: ColorUtil.fontColor,
+            NSUnderlineStyleAttributeName: NSNumber(value: false),
+        ]
+        
+        if let titleText = title.text as? NSString {
+            // Add link to author profile
+            let authorRange = titleText.range(of: "u/\(self.link!.author)")
+            let authorURL = URL(string: "/u/\(self.link!.author)")!
+            title.addLink(to: authorURL, with: authorRange)
+            
+            // Add link to subreddit
+            let subredditRange = titleText.range(of: "r/\(self.link!.subreddit)")
+            let subredditURL = URL(string: "/r/\(self.link!.subreddit)")!
+            title.addLink(to: subredditURL, with: subredditRange)
+        } else {
+            NSLog("Could not cast title.text as NSString!")
+        }
     }
     
     func doDTap(_ sender: AnyObject) {
@@ -1140,6 +1139,30 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         activeSet = true
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
+        title.delegate = self
+        
+        title.linkAttributes = [
+            NSForegroundColorAttributeName: ColorUtil.fontColor,
+            NSUnderlineStyleAttributeName: NSNumber(value: false),
+        ]
+        title.activeLinkAttributes = [
+            NSForegroundColorAttributeName: ColorUtil.fontColor,
+            NSUnderlineStyleAttributeName: NSNumber(value: false),
+        ]
+        
+        if let titleText = title.text as? NSString {
+            // Add link to author profile
+            let authorRange = titleText.range(of: "u/\(submission.author)")
+            let authorURL = URL(string: "/u/\(submission.author)")!
+            title.addLink(to: authorURL, with: authorRange)
+            
+            // Add link to subreddit
+            let subredditRange = titleText.range(of: "r/\(submission.subreddit)")
+            let subredditURL = URL(string: "/r/\(submission.subreddit)")!
+            title.addLink(to: subredditURL, with: subredditRange)
+        } else {
+            NSLog("Could not cast title.text as NSString!")
+        }
         
         reply.isHidden = true
 
