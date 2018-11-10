@@ -13,7 +13,7 @@ import UIKit
 class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     var tochange: SettingsViewController?
-    var primary: UITableViewCell = UITableViewCell()
+    var primary: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "primary")
     var accent: UITableViewCell = UITableViewCell()
     var base: UITableViewCell = UITableViewCell()
     var night: UITableViewCell = UITableViewCell()
@@ -209,14 +209,14 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.accent.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.accent.imageView?.tintColor = ColorUtil.fontColor
 
-        self.base.textLabel?.text = "Base theme"
+        self.base.textLabel?.text = "App theme"
         self.base.accessoryType = .none
         self.base.backgroundColor = ColorUtil.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.fontColor
         self.base.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.base.imageView?.tintColor = ColorUtil.fontColor
 
-        self.night.textLabel?.text = "Night theme"
+        self.night.textLabel?.text = "Automatic night theme"
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.fontColor
@@ -237,6 +237,16 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.tintingMode.backgroundColor = ColorUtil.foregroundColor
         self.tintingMode.textLabel?.textColor = ColorUtil.fontColor
         self.tintingMode.detailTextLabel?.textColor = ColorUtil.fontColor
+        
+        if SettingValues.reduceColor {
+            self.primary.isUserInteractionEnabled = false
+            self.primary.textLabel?.isEnabled = false
+            self.primary.detailTextLabel?.isEnabled
+            
+            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.numberOfLines = 0
+            self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
+        }
         
         createCell(reduceColor, reduceColorSwitch, isOn: SettingValues.reduceColor, text: "Reduce color throughout app (affects all navigation bars)")
 

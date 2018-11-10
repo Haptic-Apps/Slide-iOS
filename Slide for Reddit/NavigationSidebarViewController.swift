@@ -63,6 +63,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         self.header.inbox.isUserInteractionEnabled = false
         self.header.mod.isUserInteractionEnabled = false
         self.header.settings.isUserInteractionEnabled = false
+        self.header.title.isUserInteractionEnabled = false
     }
     
     struct Callbacks {
@@ -159,6 +160,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         self.header.inbox.isUserInteractionEnabled = false
         self.header.mod.isUserInteractionEnabled = false
         self.header.settings.isUserInteractionEnabled = false
+        self.header.title.isUserInteractionEnabled = false
 
         let y = UIScreen.main.bounds.height - bottomOffset
         if let parent = self.parentController, parent.menu.superview != nil {
@@ -276,6 +278,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             guard let strongSelf = self else { return }
             if SettingValues.autoKeyboard {
                 strongSelf.header.search.becomeFirstResponder()
+                strongSelf.header.title.isUserInteractionEnabled = true
                 strongSelf.header.account.isUserInteractionEnabled = true
                 strongSelf.header.inbox.isUserInteractionEnabled = true
                 strongSelf.header.mod.isUserInteractionEnabled = true

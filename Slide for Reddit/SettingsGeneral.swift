@@ -17,7 +17,7 @@ class SettingsGeneral: UITableViewController {
     var pinToolbar: UITableViewCell = UITableViewCell()
     var hapticFeedback: UITableViewCell = UITableViewCell()
     var autoKeyboard: UITableViewCell = UITableViewCell()
-    var matchSilence: UITableViewCell = UITableViewCell()
+    var matchSilence: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mute")
     var showPages: UITableViewCell = UITableViewCell()
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
@@ -93,8 +93,8 @@ class SettingsGeneral: UITableViewController {
                 }
             }
         } else if changed == pinToolbarSwitch {
-            SettingValues.pinToolbar = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_pinToolbar)
+            SettingValues.pinToolbar = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_pinToolbar)
             SubredditReorderViewController.changed = true
         } else if changed == matchSilenceSwitch {
             SettingValues.matchSilence = changed.isOn
@@ -152,10 +152,10 @@ class SettingsGeneral: UITableViewController {
         createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
-        createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.pinToolbar, text: "Autohide navigation bars")
-        createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Mute videos if silent mode is on (will also pause background audio)")
+        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin toolbar and navigation bar in subreddit views")
+        createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Let iOS handle audio focus")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
-        createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators when loading more content")
+        createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators between loads of new submissions")
 
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
@@ -181,6 +181,11 @@ class SettingsGeneral: UITableViewController {
         self.notifications.detailTextLabel?.textColor = ColorUtil.fontColor
         self.notifications.backgroundColor = ColorUtil.foregroundColor
         self.notifications.textLabel?.textColor = ColorUtil.fontColor
+
+        self.matchSilence.detailTextLabel?.text = "Follows mute switch and silent mode"
+        self.matchSilence.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.matchSilence.backgroundColor = ColorUtil.foregroundColor
+        self.matchSilence.textLabel?.textColor = ColorUtil.fontColor
 
         self.commentSorting.textLabel?.text = "Default comment sorting"
         self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
