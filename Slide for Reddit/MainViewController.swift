@@ -279,15 +279,16 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 let index = Subscriptions.subreddits.index(of: subreddit)
                 let firstViewController = MainViewController.vCs[index!]
                 
+                if SettingValues.subredditBar {
+                    self.color1 = ColorUtil.baseColor
+                    self.color2 = ColorUtil.getColorForSub(sub: (firstViewController as! SingleSubredditViewController).sub)
+                }
+                
                 self.setViewControllers([firstViewController],
                                         direction: index! > self.currentPage ? .forward : .reverse,
                                         animated: SettingValues.subredditBar ? true : false,
                                    completion: nil)
-
                 self.doCurrentPage(index!)
-                self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: subreddit, true)
-                self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit, true)
-                self.tabBar.backgroundColor = ColorUtil.getColorForSub(sub: subreddit, true)
             } else {
                 //todo better sanitation
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
@@ -641,64 +642,64 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func doCurrentPage(_ page: Int) {
         self.currentPage = page
-        if let vc = getSubredditVC() {
-            MainViewController.current = vc.sub
-            self.menuNav?.setSubreddit(subreddit: MainViewController.current)
-            self.currentTitle = MainViewController.current
-            menuNav!.setColors(MainViewController.current)
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
-            self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub, true)
-            
-            if !(vc).loaded || !SettingValues.subredditBar {
-                if vc.loaded {
-                    vc.indicator?.isHidden = false
-                    vc.indicator?.startAnimating()
-                    vc.refresh(false)
-                } else {
-                    (vc).load(reset: true)
-                }
-            }
-            
-            let label = UILabel()
-            label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
-            label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
-            label.adjustsFontSizeToFitWidth = true
-            label.font = UIFont.boldSystemFont(ofSize: 20)
-            
-            if SettingValues.reduceColor {
-                var sideView = UIView()
-                sideView = UIView(frame: CGRect(x: 5, y: 5, width: 15, height: 15))
-                sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-                sideView.translatesAutoresizingMaskIntoConstraints = false
-                label.addSubview(sideView)
-                sideView.layer.cornerRadius = 7.5
-                sideView.clipsToBounds = true
-            }
-            
-            label.sizeToFit()
-            let leftItem = UIBarButtonItem(customView: label)
-            
-            if !SettingValues.subredditBar {
-                self.navigationItem.leftBarButtonItems = [leftItem]
-            }
-            
-            self.navigationController?.navigationBar.shadowImage = UIImage()
-            self.navigationController?.navigationBar.layoutIfNeeded()
-
-            // Clear the menuNav's searchBar to refresh the menuNav
-            self.menuNav?.searchBar?.text = nil
-            
-            tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
-            
-            tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
-            if !selected {
-                let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
-                if !tabBar.items.isEmpty {
-                    tabBar.setSelectedItem(tabBar.items[page!], animated: true)
-                }
+        guard page < MainViewController.vCs.count else {return}
+        let vc = MainViewController.vCs[page] as! SingleSubredditViewController
+        MainViewController.current = vc.sub
+        self.menuNav?.setSubreddit(subreddit: MainViewController.current)
+        self.currentTitle = MainViewController.current
+        menuNav!.setColors(MainViewController.current)
+        navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
+        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub, true)
+        
+        if !(vc).loaded || !SettingValues.subredditBar {
+            if vc.loaded {
+                vc.indicator?.isHidden = false
+                vc.indicator?.startAnimating()
+                vc.refresh(false)
             } else {
-                selected = false
+                (vc).load(reset: true)
             }
+        }
+        
+        let label = UILabel()
+        label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
+        label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
+        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        
+        if SettingValues.reduceColor {
+            var sideView = UIView()
+            sideView = UIView(frame: CGRect(x: 5, y: 5, width: 15, height: 15))
+            sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            sideView.translatesAutoresizingMaskIntoConstraints = false
+            label.addSubview(sideView)
+            sideView.layer.cornerRadius = 7.5
+            sideView.clipsToBounds = true
+        }
+        
+        label.sizeToFit()
+        let leftItem = UIBarButtonItem(customView: label)
+        
+        if !SettingValues.subredditBar {
+            self.navigationItem.leftBarButtonItems = [leftItem]
+        }
+        
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.layoutIfNeeded()
+
+        // Clear the menuNav's searchBar to refresh the menuNav
+        self.menuNav?.searchBar?.text = nil
+        
+        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
+        
+        tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
+        if !selected {
+            let page = MainViewController.vCs.index(of: self.viewControllers!.first!)
+            if !tabBar.items.isEmpty {
+                tabBar.setSelectedItem(tabBar.items[page!], animated: true)
+            }
+        } else {
+            selected = false
         }
     }
     
@@ -708,16 +709,16 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         
         doButtons()
         var wasntHidden = false
-        if !menuNav!.view.isHidden {
+        if !(menuNav?.view.isHidden ?? true) {
             wasntHidden = true
-            menuNav!.view.isHidden = true
+            menuNav?.view.isHidden = true
         }
         super.viewWillTransition(to: size, with: coordinator)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             if wasntHidden {
-                self.menuNav!.view.isHidden = false
+                self.menuNav?.view.isHidden = false
             }
-            self.menuNav!.doRotate(false)
+            self.menuNav?.doRotate(false)
             self.getSubredditVC()?.showUI(false)
         }
     }
@@ -1054,7 +1055,7 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
         let underlineFrame = CGRect.init(x: bounds.minX,
                 y: bounds.height - 7,
                 width: bounds.width,
-                height: 3.0)
+                height: 8.0)
         attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
         return attributes
     }

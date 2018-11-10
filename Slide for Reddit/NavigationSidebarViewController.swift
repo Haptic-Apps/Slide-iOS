@@ -58,6 +58,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         configureGestures()
         
         configureBackground()
+        
+        self.header.account.isUserInteractionEnabled = false
+        self.header.inbox.isUserInteractionEnabled = false
+        self.header.mod.isUserInteractionEnabled = false
+        self.header.settings.isUserInteractionEnabled = false
     }
     
     struct Callbacks {
@@ -150,6 +155,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     func collapse() {
+        self.header.account.isUserInteractionEnabled = false
+        self.header.inbox.isUserInteractionEnabled = false
+        self.header.mod.isUserInteractionEnabled = false
+        self.header.settings.isUserInteractionEnabled = false
+
         let y = UIScreen.main.bounds.height - bottomOffset
         if let parent = self.parentController, parent.menu.superview != nil {
             parent.menu.deactivateImmediateConstraints()
@@ -266,6 +276,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             guard let strongSelf = self else { return }
             if SettingValues.autoKeyboard {
                 strongSelf.header.search.becomeFirstResponder()
+                strongSelf.header.account.isUserInteractionEnabled = true
+                strongSelf.header.inbox.isUserInteractionEnabled = true
+                strongSelf.header.mod.isUserInteractionEnabled = true
+                strongSelf.header.settings.isUserInteractionEnabled = true
             }
         }
 

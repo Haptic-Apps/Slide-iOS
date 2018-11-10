@@ -41,7 +41,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         loading = false
         DispatchQueue.main.async {
             self.emptyStateView.isHidden = false
-            self.refreshControl.endRefreshing()
+            self.endAndResetRefresh()
         }
     }
 
@@ -59,6 +59,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         
         if !loaded && !loading {
             defer {
+                self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
                 refreshControl.beginRefreshing()
             }
         }
@@ -433,6 +434,17 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             }
         }
     }
+    
+    func endAndResetRefresh() {
+        self.refreshControl.endRefreshing()
+        self.refreshControl.removeFromSuperview()
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl.tintColor = ColorUtil.fontColor
+        
+        self.refreshControl.attributedTitle = NSAttributedString(string: "")
+        self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
+        self.tableView.addSubview(self.refreshControl)
+    }
 
     var loading: Bool = false
 
@@ -464,7 +476,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 self.flowLayout.reset()
                 self.tableView.insertItems(at: paths)
             }
-            self.refreshControl.endRefreshing()
+            self.endAndResetRefresh()
         }
         self.loading = false
     }

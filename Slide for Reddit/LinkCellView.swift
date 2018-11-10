@@ -985,6 +985,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.addGestureRecognizer(dtap!)
         }
         
+        title.delegate = self
+        
+        title.linkAttributes = [
+            NSForegroundColorAttributeName: ColorUtil.fontColor,
+            NSUnderlineStyleAttributeName: NSNumber(value: false),
+        ]
+        title.activeLinkAttributes = [
+            NSForegroundColorAttributeName: ColorUtil.fontColor,
+            NSUnderlineStyleAttributeName: NSNumber(value: false),
+        ]
+        
+        if let titleText = title.text as? NSString {
+            // Add link to author profile
+            let authorRange = titleText.range(of: "u/\(self.link!.author)")
+            let authorURL = URL(string: "/u/\(self.link!.author)")!
+            title.addLink(to: authorURL, with: authorRange)
+            
+            // Add link to subreddit
+            let subredditRange = titleText.range(of: "r/\(self.link!.subreddit)")
+            let subredditURL = URL(string: "/r/\(self.link!.subreddit)")!
+            title.addLink(to: subredditURL, with: subredditRange)
+        } else {
+            NSLog("Could not cast title.text as NSString!")
+        }
+
         if !full {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
             comment.delegate = self
@@ -1514,18 +1539,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     var currentType: CurrentType = .none
+    static var checkedWifi = false
+    static var cachedCheckWifi = false
     
     public static func checkWiFi() -> Bool {
-        
-        let networkStatus = Reachability().connectionStatus()
-        switch networkStatus {
-        case .Unknown, .Offline:
-            return false
-        case .Online(.WWAN):
-            return false
-        case .Online(.WiFi):
-            return true
+        if !checkedWifi {
+            checkedWifi = true
+            let networkStatus = Reachability().connectionStatus()
+            switch networkStatus {
+            case .Unknown, .Offline:
+                cachedCheckWifi = false
+            case .Online(.WWAN):
+                cachedCheckWifi = false
+            case .Online(.WiFi):
+                cachedCheckWifi = true
+            }
         }
+        return cachedCheckWifi
     }
     
     var videoURL: URL?
