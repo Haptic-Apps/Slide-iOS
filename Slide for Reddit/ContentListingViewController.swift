@@ -36,9 +36,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func failed(error: Error) {
-        print(error)
+        print(error.localizedDescription)
         loaded = true
         loading = false
+        DispatchQueue.main.async {
+            self.emptyStateView.isHidden = false
+            self.refreshControl.endRefreshing()
+        }
     }
 
     func drefresh(_ sender: AnyObject) {
@@ -71,6 +75,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
+    var emptyStateView = EmptyStateView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,6 +97,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl)
+        refreshControl.centerAnchors == tableView.centerAnchors
+
         tableView.alwaysBounceVertical = true
 
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
@@ -100,7 +107,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
         self.tableView.register(CommentCellView.classForCoder(), forCellWithReuseIdentifier: "comment")
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
-        self.tableView.register(NoContentCell.classForCoder(), forCellWithReuseIdentifier: "nocontent")
         self.tableView.register(FriendCellView.classForCoder(), forCellWithReuseIdentifier: "friend")
         tableView.backgroundColor = ColorUtil.backgroundColor
 
@@ -109,7 +115,17 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         top += ((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) ? 45 : 0)
         
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
-        
+
+        self.view.addSubview(emptyStateView)
+        if self is ReadLaterViewController {
+            emptyStateView.setText(title: "No Saved Posts", message: "Go add posts to Read Later to see them here.")
+        } else {
+            emptyStateView.setText(title: "Nothing to see here!", message: "No content was found.")
+        }
+        emptyStateView.isHidden = true
+        emptyStateView.edgeAnchors == self.tableView.edgeAnchors
+        self.view.bringSubview(toFront: emptyStateView)
+
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
         flowLayout.reset()
@@ -148,15 +164,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return baseData.content.count == 0 && loaded && !loading ? 1 : baseData.content.count
+        return baseData.content.count
     }
 
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if baseData.content.count == 0 {
-            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nocontent", for: indexPath) as! NoContentCell
-            cell.doText(controller: self)
-            return cell
-        }
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
         if thing is RSubmission {
@@ -395,6 +406,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     func refresh() {
         loading = true
+        emptyStateView.isHidden = true
         baseData.reset()
         refreshControl.beginRefreshing()
         flowLayout.reset()
@@ -428,6 +440,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         loading = false
         loaded = true
         DispatchQueue.main.async {
+            // If there is no data after loading, show the empty state view.
+            if self.baseData.content.count == 0 {
+                self.emptyStateView.isHidden = false
+            }
+
             if before == 0 || before > self.baseData.content.count {
                 self.flowLayout.reset()
                 self.tableView.reloadData()
@@ -547,51 +564,46 @@ extension ContentListingViewController: LinkCellViewDelegate {
 
 }
 
-public class NoContentCell: UICollectionViewCell {
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        setupView()
+class EmptyStateView: UIView {
+
+    var titleLabel = UILabel().then {
+        $0.textAlignment = .center
+        $0.numberOfLines = 0
     }
-    var title = UILabel()
-    
+
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+
+    convenience init() {
+        self.init(frame: .zero)
+
+        addSubview(titleLabel)
+        titleLabel.centerAnchors == centerAnchors
+
+        setText(title: "Title Placeholder", message: "Message Placeholder")
+    }
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func doText(controller: ContentListingViewController) {
-        let text: String
-        if controller is ReadLaterViewController {
-            text = "Nothing to see here!\nNo more posts to Read Later"
-        } else {
-            text = "Nothing to see here!\nNo content was found"
-        }
-        let textParts = text.components(separatedBy: "\n")
-        
+
+    func setText(title: String, message: String?) {
         let finalText: NSMutableAttributedString!
-        if textParts.count > 1 {
-            let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor.withAlphaComponent(0.8), NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
-            let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor.withAlphaComponent(0.5), NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+        if let message = message {
+            let firstPart = NSMutableAttributedString.init(string: title, attributes: [
+                NSForegroundColorAttributeName: ColorUtil.fontColor.withAlphaComponent(0.8),
+                NSFontAttributeName: UIFont.boldSystemFont(ofSize: 16),
+                ])
+            let secondPart = NSMutableAttributedString.init(string: "\n" + message, attributes: [
+                NSForegroundColorAttributeName: ColorUtil.fontColor.withAlphaComponent(0.5),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 14),
+                ])
             firstPart.append(secondPart)
             finalText = firstPart
         } else {
-            finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+            finalText = NSMutableAttributedString.init(string: title, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
         }
-        title.attributedText = finalText
-    }
-    
-    func setupView() {
-        title = UILabel()
-        title.backgroundColor = ColorUtil.foregroundColor
-        title.textAlignment = .center
-        
-        title.numberOfLines = 0
-        title.layer.cornerRadius = 15
-        title.clipsToBounds = true
-        let titleView = title.withPadding(padding: UIEdgeInsets(top: 8, left: 12, bottom: 0, right: 12))
-        self.contentView.addSubview(titleView)
-        
-        titleView.heightAnchor == 90
-        titleView.horizontalAnchors == self.contentView.horizontalAnchors
-        titleView.topAnchor == self.contentView.topAnchor
+        titleLabel.attributedText = finalText
     }
 }
