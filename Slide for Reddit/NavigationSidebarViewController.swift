@@ -375,6 +375,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         searchBar?.barStyle = .blackTranslucent
         searchBar?.delegate = self
         self.navigationController?.setNavigationBarHidden(true, animated: false)
+
+        self.header.doColors(MainViewController.current)
     }
 
     func configureLayout() {
