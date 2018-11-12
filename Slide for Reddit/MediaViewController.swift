@@ -253,12 +253,18 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     }
 
     func setNavColors() {
-        if navigationController != nil {
-            self.navigationController?.navigationBar.shadowImage = UIImage()
-            navigationController?.navigationBar.barTintColor = color
-            navigationController?.navigationBar.titleTextAttributes = [
+        if let navigationController = navigationController {
+            navigationController.navigationBar.shadowImage = UIImage()
+            navigationController.navigationBar.barTintColor = color
+            navigationController.navigationBar.titleTextAttributes = [
                 NSForegroundColorAttributeName: ColorUtil.fontColor as Any,
             ]
+            // If no color was specified but the color muxer is doing its thing,
+            // grab the "from" color so that we don't get a white flash.
+            if color == nil,
+                let muxer = navigationController.delegate as? ColorMuxPagingViewController {
+                    navigationController.navigationBar.barTintColor = muxer.color1
+            }
         }
     }
 
