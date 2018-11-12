@@ -1169,8 +1169,8 @@ class SingleSubredditViewController: MediaViewController {
                     indicator?.radius = 15
                     indicator?.indicatorMode = .indeterminate
                     indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
-                    self.tableView.addSubview(indicator!)
-                    indicator!.centerAnchors == self.tableView.centerAnchors
+                    self.view.addSubview(indicator!)
+                    indicator!.centerAnchors == self.view.centerAnchors
                     indicator?.startAnimating()
                 }
             }
@@ -2393,7 +2393,7 @@ public class LoadingCell: UICollectionViewCell {
         loader.startAnimating()
         
         self.contentView.addSubview(loader)
-        
+
         loader.topAnchor == self.contentView.topAnchor + 10
         loader.bottomAnchor == self.contentView.bottomAnchor - 10
         loader.centerXAnchor == self.contentView.centerXAnchor
