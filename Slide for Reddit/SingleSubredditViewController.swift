@@ -1112,9 +1112,9 @@ class SingleSubredditViewController: MediaViewController {
         }
         
         links = []
-        flowLayout.reset()
-        flowLayout.invalidateLayout()
-        tableView.reloadData()
+//        flowLayout.reset()
+//        flowLayout.invalidateLayout()
+//        tableView.reloadData()
         load(reset: true)
     }
 
@@ -2394,8 +2394,6 @@ public class LoadingCell: UICollectionViewCell {
         
         self.contentView.addSubview(loader)
         
-        loader.heightAnchor == 60
-        loader.widthAnchor == 60
         loader.topAnchor == self.contentView.topAnchor + 10
         loader.bottomAnchor == self.contentView.bottomAnchor - 10
         loader.centerXAnchor == self.contentView.centerXAnchor
