@@ -40,7 +40,10 @@ class AnyModalViewController: UIViewController {
     var menuButton = UIButton()
     var downloadButton = UIButton()
     var bottomButtons = UIStackView()
-    var closeButton = UIButton()
+    var closeButton = UIButton().then {
+        $0.accessibilityIdentifier = "Close Button"
+        $0.accessibilityHint = "Closes the media modal"
+    }
     
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
