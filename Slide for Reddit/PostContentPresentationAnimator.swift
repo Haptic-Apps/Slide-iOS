@@ -136,13 +136,13 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
             let embed = vc.embeddedVC {
             vc.background?.alpha = initialAlpha
             vc.blurView?.alpha = initialAlpha
+            vc.closeButton.alpha = initialAlpha
             embed.bottomButtons.alpha = initialAlpha
-            embed.navigationBar.alpha = initialAlpha
             UIView.animate(withDuration: animationDuration, animations: {
                 vc.background?.alpha = finalAlpha
                 vc.blurView?.alpha = 1
+                vc.closeButton.alpha = 1
                 embed.bottomButtons.alpha = 1
-                embed.navigationBar.alpha = 1
             }, completion: { finished in
                 transitionContext.completeTransition(finished)
             })
