@@ -76,8 +76,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let config = Realm.Configuration(
                 schemaVersion: 12,
-                migrationBlock: { _, oldSchemaVersion in
+                migrationBlock: { migration, oldSchemaVersion in
                     if oldSchemaVersion < 12 {
+                        migration.enumerateObjects(ofType: RSubmission.className()) { _, newSubmission in
+                            newSubmission?["oc"] = false
+                        }
                     }
                 })
 
