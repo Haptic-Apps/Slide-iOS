@@ -71,6 +71,7 @@ class SettingValues {
     public static let pref_nightEndM = "NIGHTEM"
     public static let pref_nightTheme = "NIGHTTHEME"
     public static let pref_nightMode = "NIGHT_ENABLED"
+    public static let pref_nightModeFilter = "NIGHT_FILTER"
     public static let pref_multiColumnCount = "MULTICOLUMN_COUNT"
     public static let pref_nameScrubbing = "NAME_SCRUBBING"
     public static let pref_autoCache = "AUTO_CACHE"
@@ -207,6 +208,7 @@ class SettingValues {
     public static var nightEnd = 5
     public static var nightEndMin = 0
     public static var nightModeEnabled = false
+    public static var nightModeFilter = false
     public static var nightTheme = ColorUtil.Theme.DARK
     public static var commentFullScreen = true
     public static var linkAlwaysThumbnail = false
@@ -417,7 +419,7 @@ class SettingValues {
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
         SettingValues.loadContentHQ = settings.bool(forKey: SettingValues.pref_loadContentHQ)
         SettingValues.noImages = settings.bool(forKey: SettingValues.pref_noImg)
-        SettingValues.lqLow = settings.bool(forKey: SettingValues.pref_lqLow)
+        SettingValues.lqLow = false //deprecate this settings.bool(forKey: SettingValues.pref_lqLow)
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
         SettingValues.readLaterButton = settings.object(forKey: SettingValues.pref_readLaterButton) == nil ? true : settings.bool(forKey: SettingValues.pref_readLaterButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)

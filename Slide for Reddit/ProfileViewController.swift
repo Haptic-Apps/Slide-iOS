@@ -131,7 +131,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             }) as String? {
             if name == n {
                 friends = true
-                self.content = UserContent.cases
+                self.content = [.overview, .submitted, .comments, .liked, .saved, .disliked, .hidden,  .gilded]
             } else {
                 self.content = ProfileViewController.doDefault()
             }

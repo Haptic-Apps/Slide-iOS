@@ -102,7 +102,7 @@ class SettingsData: UITableViewController {
         self.title = "Data Saving"
         self.tableView.separatorStyle = .none
 
-        createCell(enableDataSavingCell, enableDataSaving, isOn: SettingValues.dataSavingEnabled, text: "Data saving mode")
+        createCell(enableDataSavingCell, enableDataSaving, isOn: SettingValues.dataSavingEnabled, text: "Data saving enabled")
         createCell(disableOnWifiCell, disableOnWifi, isOn: SettingValues.dataSavingDisableWiFi, text: "Disable data saving on WiFi")
         createCell(loadHQViewerCell, loadHQViewer, isOn: SettingValues.loadContentHQ, text: "Load images in high quality automatically when opened")
         createCell(lowerQualityModeCell, lowerQualityMode, isOn: SettingValues.lqLow, text: "Load lowest image quality")
@@ -117,17 +117,13 @@ class SettingsData: UITableViewController {
             disableOnWifi.isEnabled = true
             loadHQViewer.isEnabled = true
             lowerQualityMode.isEnabled = true
-            dontLoadImagePreviews.isEnabled = false
+            dontLoadImagePreviews.isEnabled = true
         } else {
             loadHQViewer.isEnabled = false
             disableOnWifi.isEnabled = false
             loadHQViewer.isEnabled = false
             lowerQualityMode.isEnabled = false
-            dontLoadImagePreviews.isEnabled = true
-        }
-        if SettingValues.noImages {
-            enableDataSaving.isEnabled = false
-            dontLoadImagePreviews.isEnabled = true
+            dontLoadImagePreviews.isEnabled = false
         }
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -148,9 +144,9 @@ class SettingsData: UITableViewController {
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.dontLoadImagePreviewsCell
-            case 1: return self.enableDataSavingCell
-            case 2: return self.disableOnWifiCell
+            case 2: return self.dontLoadImagePreviewsCell
+            case 0: return self.enableDataSavingCell
+            case 1: return self.disableOnWifiCell
             case 3: return self.loadHQViewerCell
             case 4: return self.lowerQualityModeCell
             default: fatalError("Unknown row in section 0")
@@ -161,7 +157,7 @@ class SettingsData: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 5    // section 0 has 2 rows
+        case 0: return 4    // disable the last cell
         default: fatalError("Unknown number of sections")
         }
     }

@@ -43,7 +43,7 @@ class OfflineOverviewViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "sub")
-        cell.textLabel?.text = subs[indexPath.row]
+        
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.textLabel?.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         cell.backgroundColor = ColorUtil.foregroundColor
@@ -52,6 +52,16 @@ class OfflineOverviewViewController: UITableViewController {
         cell.accessoryType = .disclosureIndicator
         cell.detailTextLabel?.textColor = ColorUtil.fontColor
         cell.detailTextLabel?.numberOfLines = 0
+        
+        if indexPath.row == 0 {
+            cell.textLabel?.text = "Read later articles"
+            cell.detailTextLabel?.text = "\(ReadLater.readLaterIDs.count)"
+        } else {
+            var row = indexPath.row
+            row -= 1
+            cell.textLabel?.text = subs[row]
+        }
+
         return cell
     }
     
@@ -62,7 +72,7 @@ class OfflineOverviewViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return self.subs.count
+        case 0: return self.subs.count + 1
         default: fatalError("Unknown number of sections")
         }
     }
