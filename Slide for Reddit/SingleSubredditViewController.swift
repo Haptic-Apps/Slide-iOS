@@ -1113,9 +1113,9 @@ class SingleSubredditViewController: MediaViewController {
         }
         
         links = []
-//        flowLayout.reset()
-//        flowLayout.invalidateLayout()
-//        tableView.reloadData()
+        flowLayout.reset()
+        flowLayout.invalidateLayout()
+        tableView.reloadData()
         load(reset: true)
     }
 
