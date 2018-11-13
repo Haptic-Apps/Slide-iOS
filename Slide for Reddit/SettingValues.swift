@@ -443,7 +443,7 @@ class SettingValues {
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
         SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (pad ? "split" : "single")) ?? (pad ? .SPLIT : .SINGLE)
 
-        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CENTER
+        SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
         SettingValues.autoPlayMode = AutoPlay.init(rawValue: settings.string(forKey: SettingValues.pref_autoPlayMode) ?? "always") ?? .ALWAYS
         SettingValues.browser = settings.string(forKey: SettingValues.pref_browser) ?? SettingValues.BROWSER_INTERNAL
