@@ -620,7 +620,7 @@ class SettingsWelcomeLayout: UIViewController {
     
     func setCard() {
         UserDefaults.standard.set("card", forKey: SettingValues.pref_postViewMode)
-        SettingValues.postViewMode = .CARD
+        SettingValues.postViewMode = .CENTER
         UserDefaults.standard.synchronize()
         SingleSubredditViewController.cellVersion += 1
         doCells()
