@@ -9,7 +9,6 @@
 import Anchorage
 import AudioToolbox
 import reddift
-import reddift
 import SDWebImage
 import UIKit
 
@@ -299,16 +298,16 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         backgroundView = UIView()
         backgroundView.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
         
-        if #available(iOS 11, *) {
-            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-            let blurView = UIVisualEffectView(frame: backgroundView.frame)
-            blurEffect.setValue(3, forKeyPath: "blurRadius")
-            blurView.effect = blurEffect
-            backgroundView.insertSubview(blurView, at: 0)
-            blurView.horizontalAnchors == backgroundView.horizontalAnchors
-            blurView.verticalAnchors == backgroundView.verticalAnchors
-        }
-        
+//        if #available(iOS 11, *) {
+//            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+//            let blurView = UIVisualEffectView(frame: backgroundView.frame)
+//            blurEffect.setValue(3, forKeyPath: "blurRadius")
+//            blurView.effect = blurEffect
+//            backgroundView.insertSubview(blurView, at: 0)
+//            blurView.horizontalAnchors == backgroundView.horizontalAnchors
+//            blurView.verticalAnchors == backgroundView.verticalAnchors
+//        }
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collapse))
         backgroundView.addGestureRecognizer(tapGesture)
         
