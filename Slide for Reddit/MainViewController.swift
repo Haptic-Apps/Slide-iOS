@@ -279,7 +279,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
                 let index = Subscriptions.subreddits.index(of: subreddit)
                 let firstViewController = MainViewController.vCs[index!]
                 
-                if SettingValues.subredditBar {
+                if SettingValues.subredditBar && !SettingValues.reduceColor {
                     self.color1 = ColorUtil.baseColor
                     self.color2 = ColorUtil.getColorForSub(sub: (firstViewController as! SingleSubredditViewController).sub)
                 }
@@ -642,7 +642,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func doCurrentPage(_ page: Int) {
         self.currentPage = page
-        guard page < MainViewController.vCs.count else {return}
+        guard page < MainViewController.vCs.count else { return }
         let vc = MainViewController.vCs[page] as! SingleSubredditViewController
         MainViewController.current = vc.sub
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)

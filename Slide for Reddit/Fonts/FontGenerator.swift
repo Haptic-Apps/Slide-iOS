@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import DTCoreText
 import UIKit
 
 class FontGenerator {
@@ -45,7 +46,6 @@ class FontGenerator {
                 commentFont = t
             }
         }
-
     }
     
     enum Font: String {

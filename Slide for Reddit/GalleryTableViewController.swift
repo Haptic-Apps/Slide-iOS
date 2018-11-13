@@ -32,38 +32,35 @@ class GalleryTableViewController: MediaTableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !done {
-            done = true
-            if let view = self.view.superview {
-                view.addSubview(exit)
-                view.bringSubview(toFront: exit)
-                exit.bottomAnchor == view.bottomAnchor - 8
-                exit.rightAnchor == view.rightAnchor - 8
-                exit.widthAnchor == 50
-                exit.heightAnchor == 50
-                exit.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-                
-                blurView = UIVisualEffectView(frame: exit.bounds)
-                blurEffect.setValue(3, forKeyPath: "blurRadius")
-                blurView!.effect = blurEffect
-                exit.insertSubview(blurView!, at: 0)
-                blurView!.edgeAnchors == exit.edgeAnchors
-                
-                let image = UIImageView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
-                    $0.image = UIImage(named: "close")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
-                    $0.contentMode = .center
-                }
-                exit.addSubview(image)
-                image.edgeAnchors == exit.edgeAnchors
-                exit.addTapGestureRecognizer {
-                    self.exit.removeFromSuperview()
-                    self.doExit()
-                }
-                
-                UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
-                    self.exit.transform = .identity
-                }, completion: nil)
+        if let view = self.view.superview {
+            view.addSubview(exit)
+            view.bringSubview(toFront: exit)
+            exit.bottomAnchor == view.bottomAnchor - 8
+            exit.rightAnchor == view.rightAnchor - 8
+            exit.widthAnchor == 50
+            exit.heightAnchor == 50
+            exit.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+            
+            blurView = UIVisualEffectView(frame: exit.bounds)
+            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurView!.effect = blurEffect
+            exit.insertSubview(blurView!, at: 0)
+            blurView!.edgeAnchors == exit.edgeAnchors
+            
+            let image = UIImageView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
+                $0.image = UIImage(named: "close")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                $0.contentMode = .center
             }
+            exit.addSubview(image)
+            image.edgeAnchors == exit.edgeAnchors
+            exit.addTapGestureRecognizer {
+                self.exit.removeFromSuperview()
+                self.doExit()
+            }
+            
+            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
+                self.exit.transform = .identity
+            }, completion: nil)
         }
     }
     

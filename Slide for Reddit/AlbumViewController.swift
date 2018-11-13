@@ -163,6 +163,11 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         if s.contains("/comment/") {
             s = s.substring(0, length: s.indexOf("/comment")!)
         }
+        print(s)
+        if s.endsWith("?") {
+            s = s.substring(0, length: s.length - 1)
+        }
+        print(s)
         var next = s.substring(s.lastIndexOf("/")!, length: s.length - s.lastIndexOf("/")!)
         if next.contains(".") {
             next = next.substring(0, length: next.indexOf(".")!)
@@ -241,15 +246,17 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             url = url.substring(0, length: (url.indexOf("/new")!))
         }
         var rawDat = cutEnds(s: url)
-        
+
         if rawDat.endsWith("/") {
             rawDat = rawDat.substring(0, length: rawDat.length - 1)
         }
+        
         if rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4 {
             rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "")
         }
+
         if rawDat.contains("?") {
-            rawDat = rawDat.substring(0, length: rawDat.length - rawDat.indexOf("?")!)
+            rawDat = rawDat.substring(0, length: rawDat.indexOf("?")!)
         }
         
         if rawDat.contains(",") {
