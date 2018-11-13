@@ -1369,50 +1369,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         return true
     }
 
-//    func showNavTypes(_ sender: UIView) {
-//        if !loaded {
-//            return
-//        }
-//        let actionSheetController: UIAlertController = UIAlertController(title: "Navigation type", message: "", preferredStyle: .actionSheet)
-//
-//        let link = getCount(sort: .LINK)
-//        let parents = getCount(sort: .PARENTS)
-//        let op = getCount(sort: .OP)
-//        let gilded = getCount(sort: .GILDED)
-//        let you = getCount(sort: .YOU)
-//
-//        actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-//            print("Cancel")
-//        })
-//
-//        actionSheetController.addAction(UIAlertAction(title: "Parent comment (\(parents))", style: .default) { _ -> Void in
-//            self.currentSort = .PARENTS
-//        })
-//
-//        actionSheetController.addAction(UIAlertAction(title: "OP (\(op))", style: .default) { _ -> Void in
-//            self.currentSort = .OP
-//        })
-//
-//        actionSheetController.addAction(UIAlertAction(title: "Link (\(link))", style: .default) { _ -> Void in
-//            self.currentSort = .LINK
-//        })
-//
-//        actionSheetController.addAction(UIAlertAction(title: "You (\(you))", style: .default) { _ -> Void in
-//            self.currentSort = .YOU
-//        })
-//
-//        actionSheetController.addAction(UIAlertAction(title: "Gilded (\(gilded))", style: .default) { _ -> Void in
-//            self.currentSort = .GILDED
-//        })
-//
-//        if let presenter = actionSheetController.popoverPresentationController {
-//            presenter.sourceView = sender
-//            presenter.sourceRect = sender.bounds
-//        }
-//
-//        self.present(actionSheetController, animated: true, completion: nil)
-//    }
-
     func showNavTypes(_ sender: UIView) {
         if !loaded {
             return
