@@ -440,29 +440,30 @@ class SingleSubredditViewController: MediaViewController {
                     }, completion: { _ in
                     })
 
-                        if self.single && !MainViewController.isOffline {
-                            self.navigationController?.setToolbarHidden(false, animated: true)
-                        } else if !disableBottom {
-                            if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView {
-                                parent.menu.deactivateImmediateConstraints()
-                                parent.menu.topAnchor == topView.topAnchor
-                                parent.menu.widthAnchor == 56
-                                parent.menu.heightAnchor == 56
-                                parent.menu.leftAnchor == topView.leftAnchor
-                                
-                                parent.more.deactivateImmediateConstraints()
-                                parent.more.topAnchor == topView.topAnchor
-                                parent.more.widthAnchor == 56
-                                parent.more.heightAnchor == 56
-                                parent.more.rightAnchor == topView.rightAnchor
-                            }
+                    if self.single && !MainViewController.isOffline {
+                        self.navigationController?.setToolbarHidden(false, animated: true)
+                    } else if !disableBottom {
+                        if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView,
+                            parent.menu.isDescendant(of: topView) {
+                            parent.menu.deactivateImmediateConstraints()
+                            parent.menu.topAnchor == topView.topAnchor
+                            parent.menu.widthAnchor == 56
+                            parent.menu.heightAnchor == 56
+                            parent.menu.leftAnchor == topView.leftAnchor
 
-                            UIView.animate(withDuration: 0.25) {
-                                self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
-                                self.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-                                self.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
-                            }
+                            parent.more.deactivateImmediateConstraints()
+                            parent.more.topAnchor == topView.topAnchor
+                            parent.more.widthAnchor == 56
+                            parent.more.heightAnchor == 56
+                            parent.more.rightAnchor == topView.rightAnchor
                         }
+
+                        UIView.animate(withDuration: 0.25) {
+                            self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                            self.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+                            self.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
+                        }
+                    }
                     self.isToolbarHidden = false
                 })
         } else {
@@ -1169,8 +1170,8 @@ class SingleSubredditViewController: MediaViewController {
                     indicator?.radius = 15
                     indicator?.indicatorMode = .indeterminate
                     indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
-                    self.tableView.addSubview(indicator!)
-                    indicator!.centerAnchors == self.tableView.centerAnchors
+                    self.view.addSubview(indicator!)
+                    indicator!.centerAnchors == self.view.centerAnchors
                     indicator?.startAnimating()
                 }
             }
@@ -2231,6 +2232,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
             self.flowLayout.reset()
 
+            tableView.isUserInteractionEnabled = false
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
                 BannerUtil.makeBanner(text: "Submission hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
@@ -2239,10 +2241,11 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     do {
                         try self.session?.setHide(true, name: cell.link!.getId(), completion: { (_) in })
                     } catch {
-
                     }
                 })
-            }, completion: nil)
+            }, completion: { _ in
+                self.tableView.isUserInteractionEnabled = true
+            })
 
         } catch {
 
@@ -2391,9 +2394,7 @@ public class LoadingCell: UICollectionViewCell {
         loader.startAnimating()
         
         self.contentView.addSubview(loader)
-        
-        loader.heightAnchor == 60
-        loader.widthAnchor == 60
+
         loader.topAnchor == self.contentView.topAnchor + 10
         loader.bottomAnchor == self.contentView.bottomAnchor - 10
         loader.centerXAnchor == self.contentView.centerXAnchor

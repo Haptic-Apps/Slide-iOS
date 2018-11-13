@@ -19,6 +19,11 @@ class ModalMediaViewController: UIViewController {
     var panGestureRecognizer: UIPanGestureRecognizer?
     public var background: UIView?
     public var blurView: UIVisualEffectView?
+
+    var closeButton = UIButton().then {
+        $0.accessibilityIdentifier = "Close Button"
+        $0.accessibilityHint = "Closes the media modal"
+    }
     
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
@@ -240,7 +245,7 @@ class ModalMediaViewController: UIViewController {
         super.viewWillAppear(animated)
         
         if parent is AlbumViewController || parent is ShadowboxLinkViewController {
-            self.embeddedVC.navigationBar.isHidden = true
+            self.closeButton.isHidden = true
         }
         UIApplication.shared.statusBarStyle = .lightContent
     }
@@ -277,27 +282,9 @@ class ModalMediaViewController: UIViewController {
         embeddedVC.didMove(toParentViewController: self)
         self.view.addSubview(embeddedVC.view)
 
-        embeddedVC.navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
-        embeddedVC.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        embeddedVC.navigationBar.shadowImage = UIImage()
-        embeddedVC.navigationBar.isTranslucent = true
-        let navItem = UINavigationItem(title: "")
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.navIcon(true), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-        navItem.leftBarButtonItem = closeB
-        
-        embeddedVC.navigationBar.setItems([navItem], animated: false)
-        self.view.addSubview(embeddedVC.navigationBar)
-        
-        if #available(iOS 11, *) {
-            embeddedVC.navigationBar.topAnchor == self.view.safeTopAnchor
-        } else {
-            embeddedVC.navigationBar.topAnchor == self.view.topAnchor + 20
-        }
-        embeddedVC.navigationBar.horizontalAnchors == self.view.horizontalAnchors
+        closeButton.setImage(UIImage(named: "close")?.navIcon(true), for: .normal)
+        closeButton.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        self.view.addSubview(closeButton)
     }
     
     func exit() {
@@ -306,6 +293,10 @@ class ModalMediaViewController: UIViewController {
 
     func configureLayout() {
         embeddedVC.view.edgeAnchors == self.view.edgeAnchors
+
+        closeButton.sizeAnchors == .square(size: 26)
+        closeButton.topAnchor == self.view.safeTopAnchor + 8
+        closeButton.leftAnchor == self.view.safeLeftAnchor + 12
     }
 
     func connectGestures() {
@@ -340,8 +331,8 @@ extension ModalMediaViewController {
             statusBar.isHidden = true
 
             self.background?.alpha = 1
+            self.closeButton.alpha = 0
             self.embeddedVC.bottomButtons.alpha = 0
-            self.embeddedVC.navigationBar.alpha = 0.2
         }, completion: {_ in
             self.embeddedVC.bottomButtons.isHidden = true
         })
@@ -353,7 +344,7 @@ extension ModalMediaViewController {
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
             statusBar.isHidden = false
-            self.embeddedVC.navigationBar.alpha = 1
+            self.closeButton.alpha = 1
 
             self.background?.alpha = 0.6
             self.embeddedVC.bottomButtons.alpha = 1

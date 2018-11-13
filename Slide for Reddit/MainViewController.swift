@@ -579,7 +579,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func setupTabBar(_ subs: [String]) {
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 48))
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
         tabBar.itemAppearance = .titles
 
         tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
@@ -591,10 +590,10 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
         tabBar.selectedItem = tabBar.items[0]
-        // TODO: Get actual subreddit color, not accent color
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0])
+        tabBar.backgroundColor = .clear
         tabBar.sizeToFit()
-        self.viewToMux = self.tabBar
+        //self.viewToMux = self.tabBar
 
         self.navigationItem.titleView = tabBar
     }
@@ -689,8 +688,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
         // Clear the menuNav's searchBar to refresh the menuNav
         self.menuNav?.searchBar?.text = nil
-        
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: MainViewController.current, true)
         
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
         if !selected {
@@ -975,7 +972,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func colorChanged(_ color: UIColor) {
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
-        tabBar.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
         menuNav?.setColors(finalSubs[currentPage])
     }
@@ -985,7 +981,6 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         UIApplication.shared.statusBarView?.backgroundColor = .clear
         
         menuNav?.view.isHidden = true
-        tabBar.backgroundColor = .clear
     }
 
     func showSortMenu(_ sender: UIButton?) {
@@ -1073,7 +1068,6 @@ extension MainViewController: MDCTabBarDelegate {
                 completion: nil)
 
         self.doCurrentPage(tabBar.items.index(of: item)!)
-        tabBar.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
     }
 }
 

@@ -1373,7 +1373,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !loaded {
             return
         }
-        let actionSheetController: UIAlertController = UIAlertController(title: "Navigation type", message: "", preferredStyle: .actionSheet)
+        let alertController = BottomSheetActionController()
+        alertController.headerData = "Navigation Type"
+        alertController.settings.cancelView.hideCollectionViewBehindCancelView = false
 
         let link = getCount(sort: .LINK)
         let parents = getCount(sort: .PARENTS)
@@ -1381,57 +1383,40 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         let gilded = getCount(sort: .GILDED)
         let you = getCount(sort: .YOU)
 
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Parent comment (\(parents))", style: .default) { _ -> Void in
+        alertController.addAction(Action(ActionData(title: "Parent comment (\(parents))"), style: .default, handler: { _ in
             self.currentSort = .PARENTS
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "OP (\(op))", style: .default) { _ -> Void in
+        alertController.addAction(Action(ActionData(title: "OP (\(op))"), style: .default, handler: { _ in
             self.currentSort = .OP
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "Link (\(link))", style: .default) { _ -> Void in
+        alertController.addAction(Action(ActionData(title: "Link (\(link))"), style: .default, handler: { _ in
             self.currentSort = .LINK
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "You (\(you))", style: .default) { _ -> Void in
+        alertController.addAction(Action(ActionData(title: "You (\(you))"), style: .default, handler: { _ in
             self.currentSort = .YOU
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        cancelActionButton = UIAlertAction(title: "Gilded (\(gilded))", style: .default) { _ -> Void in
+        alertController.addAction(Action(ActionData(title: "Gilded (\(gilded))"), style: .default, handler: { _ in
             self.currentSort = .GILDED
-        }
-        actionSheetController.addAction(cancelActionButton)
+        }))
 
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = sender
-            presenter.sourceRect = sender.bounds
-        }
-
-        self.present(actionSheetController, animated: true, completion: nil)
+        self.present(alertController, animated: true, completion: nil)
     }
 
     func goToCell(i: Int) {
-        let indexPath = IndexPath.init(row: i, section: 0)
-        self.tableView.scrollToRow(at: indexPath,
-                at: UITableViewScrollPosition.none, animated: true)
+        let indexPath = IndexPath(row: i, section: 0)
+        self.tableView.scrollToRow(at: indexPath, at: .none, animated: true)
 
     }
     
     var goingToCell = false
     
     func goToCellTop(i: Int) {
-        let indexPath = IndexPath.init(row: i, section: 0)
-        self.tableView.scrollToRow(at: indexPath,
-                                   at: UITableViewScrollPosition.top, animated: true)
+        let indexPath = IndexPath(row: i, section: 0)
+        self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
         goingToCell = true
     }
 
@@ -1539,36 +1524,35 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             items.append(UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:))))
             items.append(space)
         } else {
-
-            let up = UIButton.init(type: .custom)
-            up.setImage(UIImage.init(named: "up")?.toolbarIcon(), for: UIControlState.normal)
+            let up = UIButton(type: .custom)
+            up.setImage(UIImage(named: "up")?.toolbarIcon(), for: UIControlState.normal)
             up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControlEvents.touchUpInside)
-            up.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let upB = UIBarButtonItem.init(customView: up)
+            up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+            let upB = UIBarButtonItem(customView: up)
 
-            let nav = UIButton.init(type: .custom)
-            nav.setImage(UIImage.init(named: "nav")?.toolbarIcon(), for: UIControlState.normal)
+            let nav = UIButton(type: .custom)
+            nav.setImage(UIImage(named: "nav")?.toolbarIcon(), for: UIControlState.normal)
             nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControlEvents.touchUpInside)
-            nav.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let navB = UIBarButtonItem.init(customView: nav)
+            nav.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+            let navB = UIBarButtonItem(customView: nav)
 
-            let down = UIButton.init(type: .custom)
-            down.setImage(UIImage.init(named: "down")?.toolbarIcon(), for: UIControlState.normal)
+            let down = UIButton(type: .custom)
+            down.setImage(UIImage(named: "down")?.toolbarIcon(), for: UIControlState.normal)
             down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControlEvents.touchUpInside)
-            down.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let downB = UIBarButtonItem.init(customView: down)
+            down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+            let downB = UIBarButtonItem(customView: down)
 
-            let more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
+            let more = UIButton(type: .custom)
+            more.setImage(UIImage(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            moreB = UIBarButtonItem.init(customView: more)
+            more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+            moreB = UIBarButtonItem(customView: more)
             
-            let mod = UIButton.init(type: .custom)
-            mod.setImage(UIImage.init(named: "mod")?.toolbarIcon(), for: UIControlState.normal)
+            let mod = UIButton(type: .custom)
+            mod.setImage(UIImage(named: "mod")?.toolbarIcon(), for: UIControlState.normal)
             mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControlEvents.touchUpInside)
-            mod.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            modB = UIBarButtonItem.init(customView: mod)
+            mod.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+            modB = UIBarButtonItem(customView: mod)
             if modLink.isEmpty() && modB.customView != nil {
                 modB.customView? = UIView(frame: modB.customView!.frame)
             }
