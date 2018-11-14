@@ -255,6 +255,7 @@ class SingleSubredditViewController: MediaViewController {
         navigationController?.toolbar.tintColor = ColorUtil.fontColor
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
     override func viewDidAppear(_ animated: Bool) {

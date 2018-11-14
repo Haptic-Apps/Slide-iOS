@@ -593,12 +593,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var direction = 0
     
     func linkMenu(sender: AnyObject) {
-        if #available(iOS 10.0, *) {
-            HapticUtility.hapticActionStrong()
-        } else if SettingValues.hapticFeedback {
-            AudioServicesPlaySystemSound(1519)
-        }
-        if self.parentViewController != nil {
+        if parentViewController != nil && parentViewController?.presentedViewController == nil {
             let url = self.link!.url!
             let alertController: BottomSheetActionController = BottomSheetActionController()
             alertController.headerData = url.host
@@ -636,6 +631,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
                     _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
                 }))
+            }
+            if #available(iOS 10.0, *) {
+                HapticUtility.hapticActionStrong()
+            } else if SettingValues.hapticFeedback {
+                AudioServicesPlaySystemSound(1519)
             }
             self.parentViewController?.present(alertController, animated: true, completion: nil)
         }
@@ -1672,12 +1672,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func showMore() {
         timer!.invalidate()
-        if #available(iOS 10.0, *) {
-            HapticUtility.hapticActionStrong()
-        } else if SettingValues.hapticFeedback {
-            AudioServicesPlaySystemSound(1519)
-        }
-        if !self.cancelled && LinkCellView.checkInternet() {
+        if !self.cancelled && LinkCellView.checkInternet() && parentViewController?.presentedViewController == nil {
+            if #available(iOS 10.0, *) {
+                HapticUtility.hapticActionStrong()
+            } else if SettingValues.hapticFeedback {
+                AudioServicesPlaySystemSound(1519)
+            }
             self.more()
         }
     }
@@ -2048,7 +2048,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             
             let actionbar = CGFloat(!full && SettingValues.actionBarMode != .FULL ? 0 : 24)
-            
+
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             

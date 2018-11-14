@@ -594,8 +594,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             } else {
 
                                 self.headerCell?.refreshLink(self.submission!)
+                                self.headerCell?.aspectWidth = self.tableView.bounds.size.width
                                 self.headerCell?.showBody(width: self.view.frame.size.width - 24)
-                                
+
                                 var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true))
                                 // Add safe area insets to left and right if available
                                 if #available(iOS 11.0, *) {
@@ -901,19 +902,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             tableView.addSubview(refreshControl!)
         }
 
-        //Disabled for now, need to figure out why this breaks inbox and profile views
-//        if false && (self.navigationController != nil && (parent == nil || (parent != nil && !(parent! is PagingCommentViewController)))) && SettingValues.commentGesturesEnabled {
-//            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-//            self.navigationController!.delegate = swiper!
-//            for view in view.subviews {
-//                if view is UIScrollView {
-//                    let scrollView = view as! UIScrollView
-//                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
-//                    break
-//                }
-//            }
-//        }
-
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
 
         searchBar.delegate = self
@@ -945,7 +933,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         headerCell!.del = self
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
-        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.view.frame.size.width)
+
+        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width)
         headerCell!.showBody(width: self.view.frame.size.width - 24)
 
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
