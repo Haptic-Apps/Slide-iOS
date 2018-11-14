@@ -170,7 +170,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func configureView() {
         
         self.accessibilityIdentifier = "Link Cell View"
-        self.contentView.isAccessibilityElement = true
         self.contentView.accessibilityTraits = UIAccessibilityTraitButton
         self.contentView.accessibilityIdentifier = "Link Cell Content View"
         
@@ -211,7 +210,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
-            $0.accessibilityIdentifier = "Title"
+            $0.accessibilityIdentifier = "Post Title"
+            $0.accessibilityLabel = "Post Title"
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
             $0.isOpaque = false
@@ -221,6 +221,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.hide = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Hide Button"
+            $0.accessibilityLabel = "Hide"
             $0.accessibilityHint = "Hides the post from the list"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -232,6 +233,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.reply = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Reply Button"
+            $0.accessibilityLabel = "Reply"
             $0.accessibilityHint = "Opens the post view and begins composing a reply"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -243,6 +245,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.edit = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Edit Button"
+            $0.accessibilityLabel = "Edit"
             $0.accessibilityHint = "Opens the post view and begins editing its content"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -254,6 +257,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.save = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Save Button"
+            $0.accessibilityLabel = "Save"
             $0.accessibilityHint = "Saves the post"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -264,6 +268,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.upvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
+            $0.accessibilityLabel = "Up vote"
             $0.accessibilityHint = "Up votes the post"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -274,6 +279,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.downvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
+            $0.accessibilityLabel = "Down vote"
             $0.accessibilityHint = "Down votes the post"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -284,6 +290,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.sideUpvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
+            $0.accessibilityLabel = "Up vote"
             $0.accessibilityHint = "Up votes the post"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -294,6 +301,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.sideDownvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
+            $0.accessibilityLabel = "Down vote"
             $0.accessibilityHint = "Down votes the post"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -304,6 +312,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.mod = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Mod Button"
+            $0.accessibilityLabel = "Moderate"
             $0.accessibilityHint = "Opens the moderation menu for the post"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -315,6 +324,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         self.readLater = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Read Later Button"
+            $0.accessibilityLabel = "Read later"
             $0.accessibilityHint = "Adds the post to the Read Later list"
             $0.isAccessibilityElement = true
             $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -342,6 +352,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
+            $0.accessibilityLabel = "Score"
             $0.numberOfLines = 1
             $0.textColor = ColorUtil.fontColor
             $0.isOpaque = false
@@ -358,6 +369,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.comments = UILabel().then {
             $0.accessibilityIdentifier = "Comment Count Label"
+            $0.accessibilityLabel = "Comment Count"
             $0.numberOfLines = 1
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
@@ -569,6 +581,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
         buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
+
+        accessibilityElements = [
+            title, score, upvote, downvote, edit, reply, readLater, save, hide, mod
+        ]
     }
     
     var progressBar: ProgressBarView!
@@ -1197,19 +1213,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
         title.delegate = self
-        var accessibilityValueString = """
-        \(submission.title).
-        
-        """
-        if full {
-            // TODO: Body is the raw markdown-formatted text. We need to get the body text without any of that.
-            accessibilityValueString += "Text: " + submission.body
+
+        defer {
+            updateAccessibility(submission: submission)
         }
-        accessibilityValueString += """
-        Post type is \(submission.type.rawValue). Sub reddit is \(submission.subreddit). Score is \(submission.score). There are \(submission.commentCount) comments. 
-        """
-        accessibilityValueString += "\n" + (submission.type != .SELF ? "Links to \(submission.domain)" : "")
-        contentView.accessibilityValue = accessibilityValueString
 
         title.linkAttributes = [
             NSForegroundColorAttributeName: ColorUtil.fontColor,
@@ -1584,6 +1591,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         self.contentView.accessibilityHint = full ? "Opens the link for this post" : "Opens the post view for this post"
 
+    }
+
+    private func updateAccessibility(submission: RSubmission) {
+
+        let strings: [String] = [
+            "\(submission.title).",
+            full ? "Text: \(submission.body)" : nil,
+            "Post type is \(submission.type.rawValue).",
+            submission.type != .SELF ? "Links to \(submission.domain)" : "",
+        ].compactMap { $0 }
+        title.accessibilityValue = strings.joined(separator: "\n")
+
+        score.accessibilityValue = "\(submission.score)"
+        comments.accessibilityValue = "\(submission.commentCount)"
     }
     
     var currentType: CurrentType = .none
