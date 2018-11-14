@@ -42,7 +42,9 @@ class AnyModalViewController: UIViewController {
     var bottomButtons = UIStackView()
     var closeButton = UIButton().then {
         $0.accessibilityIdentifier = "Close Button"
-        $0.accessibilityHint = "Closes the media modal"
+        $0.accessibilityTraits = UIAccessibilityTraitButton
+        $0.accessibilityLabel = "Close button"
+        $0.accessibilityHint = "Closes the media view"
     }
     
     var originalPosition: CGPoint?
@@ -288,6 +290,8 @@ class AnyModalViewController: UIViewController {
         displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
         displayLink?.isPaused = false
         videoView.player?.play()
+
+        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -705,6 +709,11 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
             }
         }
         return false
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        exit()
+        return true
     }
     
 }

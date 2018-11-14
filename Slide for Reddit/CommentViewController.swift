@@ -1085,12 +1085,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
+            sort.accessibilityLabel = "Change sort type"
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
             sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
             
             let search = UIButton.init(type: .custom)
+            search.accessibilityLabel = "Search"
             search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControlState.normal)
             search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
             search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -1521,34 +1523,41 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         var items: [UIBarButtonItem] = []
         if !context.isEmpty() {
             items.append(space)
-            items.append(UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:))))
+            let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:)))
+            loadFullThreadButton.accessibilityLabel = "Load full thread"
+            items.append(loadFullThreadButton)
             items.append(space)
         } else {
             let up = UIButton(type: .custom)
+            up.accessibilityLabel = "Navigate up one comment thread"
             up.setImage(UIImage(named: "up")?.toolbarIcon(), for: UIControlState.normal)
             up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControlEvents.touchUpInside)
             up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let upB = UIBarButtonItem(customView: up)
 
             let nav = UIButton(type: .custom)
+            nav.accessibilityLabel = "Change criteria for comment thread navigation"
             nav.setImage(UIImage(named: "nav")?.toolbarIcon(), for: UIControlState.normal)
             nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControlEvents.touchUpInside)
             nav.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let navB = UIBarButtonItem(customView: nav)
 
             let down = UIButton(type: .custom)
+            down.accessibilityLabel = "Navigate down one comment thread"
             down.setImage(UIImage(named: "down")?.toolbarIcon(), for: UIControlState.normal)
             down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControlEvents.touchUpInside)
             down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let downB = UIBarButtonItem(customView: down)
 
             let more = UIButton(type: .custom)
+            more.accessibilityLabel = "Post options"
             more.setImage(UIImage(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
             more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)
+            mod.accessibilityLabel = "Moderator options"
             mod.setImage(UIImage(named: "mod")?.toolbarIcon(), for: UIControlState.normal)
             mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControlEvents.touchUpInside)
             mod.frame = CGRect(x: 0, y: 0, width: 40, height: 40)

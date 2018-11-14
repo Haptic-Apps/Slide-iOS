@@ -132,6 +132,7 @@ class RealmDataWrapper {
         rSubmission.permalink = submission.permalink
         rSubmission.canMod = submission.canMod
         rSubmission.spoiler = submission.baseJson["spoiler"] as? Bool ?? false
+        rSubmission.oc = submission.baseJson["is_original_content"] as? Bool ?? false
         rSubmission.removedBy = submission.baseJson["banned_by"] as? String ?? ""
         rSubmission.removalReason = submission.baseJson["ban_note"] as? String ?? ""
         rSubmission.removalNote = submission.baseJson["mod_note"] as? String ?? ""
@@ -255,6 +256,7 @@ class RealmDataWrapper {
         rSubmission.saved = submission.saved
         rSubmission.stickied = submission.stickied
         rSubmission.spoiler = submission.baseJson["spoiler"] as? Bool ?? false
+        rSubmission.oc = submission.baseJson["is_original_content"] as? Bool ?? false
         rSubmission.visited = submission.visited
         rSubmission.bannerUrl = burl
         rSubmission.thumbnailUrl = turl
@@ -441,6 +443,7 @@ class RSubmission: Object {
     dynamic var videoPreview = ""
     dynamic var isCrosspost = false
     dynamic var spoiler = false
+    dynamic var oc = false
     dynamic var canMod = false
     dynamic var crosspostAuthor = ""
     dynamic var crosspostSubreddit = ""

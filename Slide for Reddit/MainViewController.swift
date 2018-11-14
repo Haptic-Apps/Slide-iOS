@@ -586,7 +586,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.items = subs.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }
-        tabBar.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
         tabBar.selectedItem = tabBar.items[0]
@@ -644,6 +644,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         guard page < MainViewController.vCs.count else { return }
         let vc = MainViewController.vCs[page] as! SingleSubredditViewController
         MainViewController.current = vc.sub
+        UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, "Viewing \(vc.sub)")
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         self.currentTitle = MainViewController.current
         menuNav!.setColors(MainViewController.current)
