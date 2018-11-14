@@ -715,5 +715,11 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         exit()
         return true
     }
-    
+
+    override var accessibilityViewIsModal: Bool {
+        get {
+            return true
+        }
+        set {}
+    }
 }
