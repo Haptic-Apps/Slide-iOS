@@ -1572,7 +1572,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 title.accessibilityHint = "Opens the media modal with this link. Link is from \(submission.domain)"
             }
         } else {
-//            contentView.isAccessibilityElement = true
+            contentView.isAccessibilityElement = true
             contentView.accessibilityHint = "Opens the post view for this post"
         }
 
