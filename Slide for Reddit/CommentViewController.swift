@@ -1487,7 +1487,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 return false
             }
         case .GILDED:
-            if comment.gilded > 0 {
+            if comment.gilded {
                 return true
             } else {
                 return false

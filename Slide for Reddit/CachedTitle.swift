@@ -47,7 +47,9 @@ class CachedTitle {
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: [NSFontAttributeName: titleFont, NSForegroundColorAttributeName: colorF])
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gilded) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+        let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.platinum) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+        let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.silver) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
 
         let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
 
@@ -72,13 +74,33 @@ class CachedTitle {
             attributedTitle.append(spoiler)
         }
 
-        if submission.gilded > 0 {
-            attributedTitle.append(spacer)
-            attributedTitle.append(spacer)
-            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            attributedTitle.append(gild)
-            if submission.gilded > 1 {
-                attributedTitle.append(gilded)
+        if submission.gilded {
+            if submission.platinum > 0 {
+                attributedTitle.append(spacer)
+                attributedTitle.append(spacer)
+                let gild = NSMutableAttributedString.init(string: "P", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.lightBlue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                attributedTitle.append(gild)
+                if submission.platinum > 1 {
+                    attributedTitle.append(platinumed)
+                }
+            }
+            if submission.gold > 0 {
+                attributedTitle.append(spacer)
+                attributedTitle.append(spacer)
+                let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                attributedTitle.append(gild)
+                if submission.gold > 1 {
+                    attributedTitle.append(gilded)
+                }
+            }
+            if submission.silver > 0 {
+                attributedTitle.append(spacer)
+                attributedTitle.append(spacer)
+                let gild = NSMutableAttributedString.init(string: "S", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.grey500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                attributedTitle.append(gild)
+                if submission.silver > 1 {
+                    attributedTitle.append(silvered)
+                }
             }
         }
 

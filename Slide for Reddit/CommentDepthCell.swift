@@ -1379,7 +1379,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gilded) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gold) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.platinum) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.silver) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
@@ -1430,15 +1432,35 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(spacer)
             infoString.append(pinned)
         }
-        if comment.gilded > 0 {
-            infoString.append(spacer)
-            let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-            infoString.append(gild)
-            if comment.gilded > 1 {
-                infoString.append(gilded)
+        
+        if comment.gilded {
+            if comment.platinum > 0 {
+                infoString.append(spacer)
+                let gild = NSMutableAttributedString.init(string: "P", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.lightBlue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                infoString.append(gild)
+                if comment.platinum > 1 {
+                    infoString.append(platinumed)
+                }
+            }
+            if comment.gold > 0 {
+                infoString.append(spacer)
+                let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                infoString.append(gild)
+                if comment.gold > 1 {
+                    infoString.append(gilded)
+                }
+            }
+            if comment.silver > 0 {
+                infoString.append(spacer)
+                let gild = NSMutableAttributedString.init(string: "S", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.grey500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                infoString.append(gild)
+                if comment.silver > 1 {
+                    infoString.append(silvered)
+                }
             }
         }
         
+
         if parent!.removed.contains(comment.id) || (!comment.removedBy.isEmpty() && !parent!.approved.contains(comment.id)) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
             infoString.append(spacer)

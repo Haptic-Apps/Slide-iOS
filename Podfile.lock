@@ -23,26 +23,26 @@ PODS:
     - DTFoundation/Core
   - Embassy (4.0.8)
   - LicensesViewController (0.6.6)
-  - MaterialComponents/ActivityIndicator (68.1.0):
+  - MaterialComponents/ActivityIndicator (68.2.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (68.1.0)
-  - MaterialComponents/Ink (68.1.0):
+  - MaterialComponents/AnimationTiming (68.2.0)
+  - MaterialComponents/Ink (68.2.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (68.1.0)
-  - MaterialComponents/private/Application (68.1.0)
-  - MaterialComponents/private/Math (68.1.0)
-  - MaterialComponents/ProgressView (68.1.0):
+  - MaterialComponents/Palettes (68.2.0)
+  - MaterialComponents/private/Application (68.2.0)
+  - MaterialComponents/private/Math (68.2.0)
+  - MaterialComponents/ProgressView (68.2.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (68.1.0)
-  - MaterialComponents/ShadowLayer (68.1.0):
+  - MaterialComponents/ShadowElevations (68.2.0)
+  - MaterialComponents/ShadowLayer (68.2.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (68.1.0):
+  - MaterialComponents/Tabs (68.2.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -50,7 +50,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (68.1.0):
+  - MaterialComponents/Typography (68.2.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (1.1.0)
@@ -155,7 +155,7 @@ SPEC CHECKSUMS:
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   LicensesViewController: 8ab8cbf1e169577343b20ee804e357f0d08dfad0
-  MaterialComponents: 9090ac82784a9c031ff62a44d3d9880143029d63
+  MaterialComponents: 0a6202cdfab416518d065eaea869efea2126b605
   MDFInternationalization: b5b8626628abf026e630e5ebaeee563037712cbb
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a

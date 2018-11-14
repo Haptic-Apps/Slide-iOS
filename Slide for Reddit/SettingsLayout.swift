@@ -152,7 +152,7 @@ class SettingsLayout: UITableViewController {
         fakesub.author = "ccrama"
         fakesub.created = date0 as NSDate
         fakesub.edited = NSDate(timeIntervalSince1970: 1)
-        fakesub.gilded = 0
+        fakesub.gilded = false
         fakesub.htmlBody = ""
         fakesub.body = ""
         fakesub.title = "Chameleons are cool!"
