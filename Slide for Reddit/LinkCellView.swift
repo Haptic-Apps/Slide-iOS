@@ -173,7 +173,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.contentView.isAccessibilityElement = true
         self.contentView.accessibilityTraits = UIAccessibilityTraitButton
         self.contentView.accessibilityIdentifier = "Link Cell Content View"
-        self.contentView.accessibilityHint = "Opens the post view for this post"
         
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
@@ -1198,11 +1197,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
         title.delegate = self
-        contentView.accessibilityValue = """
+        var accessibilityValueString = """
         \(submission.title).
-        Post type is \(submission.type.rawValue). Sub reddit is \(submission.subreddit). Score is \(submission.score). There are \(submission.commentCount) comments.
+        Post type is \(submission.type.rawValue). Sub reddit is \(submission.subreddit). Score is \(submission.score). There are \(submission.commentCount) comments. 
         """
-        
+        accessibilityValueString += "\n" + (submission.type != .SELF ? "Links to \(submission.domain)" : "")
+        contentView.accessibilityValue = accessibilityValueString
+
         title.linkAttributes = [
             NSForegroundColorAttributeName: ColorUtil.fontColor,
             NSUnderlineStyleAttributeName: NSNumber(value: false),
@@ -1573,6 +1574,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.setNeedsLayout()
             self.layoutForType()
         }
+
+        self.contentView.accessibilityHint = full ? "Opens the link for this post" : "Opens the post view for this post"
+
     }
     
     var currentType: CurrentType = .none
