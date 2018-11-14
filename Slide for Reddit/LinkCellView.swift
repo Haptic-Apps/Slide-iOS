@@ -170,8 +170,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func configureView() {
         
         self.accessibilityIdentifier = "Link Cell View"
-        self.contentView.accessibilityTraits = UIAccessibilityTraitButton
         self.contentView.accessibilityIdentifier = "Link Cell Content View"
+        self.contentView.isAccessibilityElement = true
         
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
@@ -212,6 +212,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Post Title"
             $0.accessibilityLabel = "Post Title"
+            $0.accessibilityHint = "Opens the post view with this post"
+            $0.accessibilityTraits = UIAccessibilityTraitLink
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
             $0.isOpaque = false
@@ -581,10 +583,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
         buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
         buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
-
-        accessibilityElements = [
-            title, score, upvote, downvote, edit, reply, readLater, save, hide, mod
-        ]
     }
     
     var progressBar: ProgressBarView!
@@ -1589,14 +1587,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.layoutForType()
         }
 
-        self.contentView.accessibilityHint = full ? "Opens the link for this post" : "Opens the post view for this post"
-
     }
 
     private func updateAccessibility(submission: RSubmission) {
 
+        let postTimeAgo = (submission.created as Date).timeAgoString
         let strings: [String] = [
             "\(submission.title).",
+            postTimeAgo != nil ? "Posted \(postTimeAgo!)" : nil,
             full ? "Text: \(submission.body)" : nil,
             "Post type is \(submission.type.rawValue).",
             submission.type != .SELF ? "Links to \(submission.domain)" : "",
@@ -1605,6 +1603,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         score.accessibilityValue = "\(submission.score)"
         comments.accessibilityValue = "\(submission.commentCount)"
+
+        if full {
+            switch submission.type {
+            case .SELF:
+                contentView.accessibilityHint = nil
+            case .LINK, .UNKNOWN:
+                contentView.accessibilityHint = "Opens the link for this post. Link goes to \(submission.domain)"
+            default:
+                contentView.accessibilityHint = "Opens the media modal with this link. Link is from \(submission.domain)"
+            }
+        } else {
+            contentView.accessibilityHint = "Opens the post view for this post"
+        }
+
+        accessibilityElements =  [
+            title, score, upvote, downvote,
+            edit, reply, readLater, save, hide, mod,
+            ].filter { !($0.isHidden) }
     }
     
     var currentType: CurrentType = .none

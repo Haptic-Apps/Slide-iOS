@@ -427,4 +427,11 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
         exit()
         return true
     }
+
+    override var accessibilityViewIsModal: Bool {
+        get {
+            return true
+        }
+        set {}
+    }
 }
