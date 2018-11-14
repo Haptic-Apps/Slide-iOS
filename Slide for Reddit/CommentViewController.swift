@@ -688,6 +688,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         titleView.font = UIFont.boldSystemFont(ofSize: 17)
         let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
         titleView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: 500))
+        titleView.accessibilityTraits = UIAccessibilityTraitHeader | UIAccessibilityTraitLink
+        titleView.accessibilityHint = "Opens the sub red it r \(sub)"
+        titleView.accessibilityLabel = "Sub red it: r \(sub)"
         self.navigationItem.titleView = titleView
         
         titleView.addTapGestureRecognizer(action: {

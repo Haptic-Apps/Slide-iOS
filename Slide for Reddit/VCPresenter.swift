@@ -63,6 +63,8 @@ public class VCPresenter {
             }
         } else {
             let button = UIButtonWithContext.init(type: .custom)
+            button.accessibilityLabel = "Back"
+            button.accessibilityTraits = UIAccessibilityTraitButton
             button.parentController = parentNavigationController!
             button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
             button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
