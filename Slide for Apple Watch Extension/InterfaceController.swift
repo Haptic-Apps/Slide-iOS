@@ -51,7 +51,7 @@ class InterfaceController: WKInterfaceController {
             self.loadingImage.setHidden(false)
             self.links.removeAll()
             DispatchQueue.main.async {
-                self.setTitle("r/\(subreddit)")
+                self.setTitle("\(subreddit)")
                 self.table.setNumberOfRows(0, withRowType: "SubmissionRowController")
             }
         }
@@ -103,13 +103,15 @@ class InterfaceController: WKInterfaceController {
     }
     
     func loadData(_ session: WCSession) {
-        if session.isReachable {
+        if session.isReachable && session.activationState == .activated {
             checkTimer?.invalidate()
             checkTimer = nil
-        } else {
+        } else if checkTimer == nil {
             checkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (_) in
                 self.loadData(WCSession.default)
             })
+            return
+        } else {
             return
         }
         session.sendMessage(["sublist": true], replyHandler: { (message) in
