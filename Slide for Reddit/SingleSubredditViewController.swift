@@ -1226,12 +1226,13 @@ class SingleSubredditViewController: MediaViewController {
                                         self.nomore = true
                                         
                                         self.tableView.contentOffset = CGPoint.init(x: 0, y: -64)
-                                        
+
                                         if self.links.isEmpty {
                                             BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
                                         } else {
                                             BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
                                         }
+                                        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.tableView)
                                     } catch {
                                         
                                     }
@@ -1343,6 +1344,7 @@ class SingleSubredditViewController: MediaViewController {
                                 }
                                 
                             }
+                            UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.tableView)
                         }
                     }
                 })

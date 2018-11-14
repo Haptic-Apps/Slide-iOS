@@ -170,7 +170,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func configureView() {
         
         self.accessibilityIdentifier = "Link Cell View"
+        self.contentView.isAccessibilityElement = true
+        self.contentView.accessibilityTraits = UIAccessibilityTraitButton
         self.contentView.accessibilityIdentifier = "Link Cell Content View"
+        self.contentView.accessibilityHint = "Opens the post view for this post"
         
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
@@ -219,6 +222,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.hide = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Hide Button"
+            $0.accessibilityHint = "Hides the post from the list"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.hide, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -227,6 +233,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.reply = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Reply Button"
+            $0.accessibilityHint = "Opens the post view and begins composing a reply"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.reply, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -235,6 +244,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.edit = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Edit Button"
+            $0.accessibilityHint = "Opens the post view and begins editing its content"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.edit, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -243,6 +255,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.save = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Save Button"
+            $0.accessibilityHint = "Saves the post"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -250,6 +265,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.upvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
+            $0.accessibilityHint = "Up votes the post"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -257,6 +275,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.downvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
+            $0.accessibilityHint = "Down votes the post"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -264,6 +285,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.sideUpvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
+            $0.accessibilityHint = "Up votes the post"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -271,6 +295,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.sideDownvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
+            $0.accessibilityHint = "Down votes the post"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -278,6 +305,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.mod = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Mod Button"
+            $0.accessibilityHint = "Opens the moderation menu for the post"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.mod, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -286,6 +316,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         self.readLater = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Read Later Button"
+            $0.accessibilityHint = "Adds the post to the Read Later list"
+            $0.isAccessibilityElement = true
+            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.readLater, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -1165,6 +1198,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
         title.delegate = self
+        contentView.accessibilityValue = """
+        \(submission.title).
+        Post type is \(submission.type.rawValue). Sub reddit is \(submission.subreddit). Score is \(submission.score). There are \(submission.commentCount) comments.
+        """
         
         title.linkAttributes = [
             NSForegroundColorAttributeName: ColorUtil.fontColor,

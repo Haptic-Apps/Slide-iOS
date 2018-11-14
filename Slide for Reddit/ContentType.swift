@@ -321,26 +321,26 @@ class ContentType {
      * @param submission Submission to get the description for
      * @return the String identifier
      */
-    enum CType {
-        case UNKNOWN
-        case ALBUM
-        case DEVIANTART
-        case EMBEDDED
-        case EXTERNAL
-        case GIF
-        case IMAGE
-        case IMGUR
-        case LINK
-        case NONE
-        case SPOILER
-        case REDDIT
-        case SELF
-        case STREAMABLE
-        case VIDEO
-        case XKCD
-        case TUMBLR
-        case VID_ME
-        case TABLE
+    enum CType: String {
+        case UNKNOWN = "Unknown"
+        case ALBUM = "Album"
+        case DEVIANTART = "DeviantArt"
+        case EMBEDDED = "Embedded"
+        case EXTERNAL = "External"
+        case GIF = "Gif"
+        case IMAGE = "Image"
+        case IMGUR = "Imgur"
+        case LINK = "Link"
+        case NONE = "None"
+        case SPOILER = "Spoiler"
+        case REDDIT = "Reddit video"
+        case SELF = "Self post"
+        case STREAMABLE = "Streamable video"
+        case VIDEO = "Video"
+        case XKCD = "XKCD"
+        case TUMBLR = "Tumblr"
+        case VID_ME = "Vid.me"
+        case TABLE = "Table"
     }
     
     static func getThumbnailType(submission: Link) -> ThumbnailType {
