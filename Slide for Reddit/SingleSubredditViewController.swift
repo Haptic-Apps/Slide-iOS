@@ -1323,9 +1323,7 @@ class SingleSubredditViewController: MediaViewController {
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {
                                         top += 22
-                                        if !SettingValues.subredditBar {
-                                            top += 4
-                                        }
+                                        top += 4
                                     }
                                 
                                     self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)

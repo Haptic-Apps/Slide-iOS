@@ -74,8 +74,8 @@ class CachedTitle {
         }
 
         if submission.gilded {
+            attributedTitle.append(spacer)
             if submission.platinum > 0 {
-                attributedTitle.append(spacer)
                 attributedTitle.append(spacer)
                 let gild = NSMutableAttributedString.init(string: "P", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.lightBlue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
                 attributedTitle.append(gild)
@@ -86,7 +86,6 @@ class CachedTitle {
             }
             if submission.gold > 0 {
                 attributedTitle.append(spacer)
-                attributedTitle.append(spacer)
                 let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
                 attributedTitle.append(gild)
                 if submission.gold > 1 {
@@ -95,7 +94,6 @@ class CachedTitle {
                 }
             }
             if submission.silver > 0 {
-                attributedTitle.append(spacer)
                 attributedTitle.append(spacer)
                 let gild = NSMutableAttributedString.init(string: "S", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.grey500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
                 attributedTitle.append(gild)

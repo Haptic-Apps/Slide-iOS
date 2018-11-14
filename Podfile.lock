@@ -74,7 +74,7 @@ PODS:
   - SloppySwiper (0.6)
   - Starscream (3.0.6)
   - SubtleVolume (1.0.2)
-  - SwiftLint (0.27.0)
+  - SwiftLint (0.28.0)
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.2.0)
   - Then (2.4.0)
@@ -142,7 +142,7 @@ CHECKOUT OPTIONS:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
     :git: https://github.com/fastred/sloppySwiper
   XLActionController:
-    :commit: d3361823f2359da959a752d36965aaeb3a3fd475
+    :commit: 29949b8fa6763cdefd0f4214f72438004e90b85e
     :git: https://github.com/ccrama/XLActionController
 
 SPEC CHECKSUMS:
@@ -169,7 +169,7 @@ SPEC CHECKSUMS:
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SubtleVolume: 88618f8304a0e605d1adca14b95376dcbf9e03ce
-  SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
+  SwiftLint: 088cfacb75b45970017e62b7524d506776d60148
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
   Then: 71866660c7af35a7343831f7668e7cd2b62ee0f2

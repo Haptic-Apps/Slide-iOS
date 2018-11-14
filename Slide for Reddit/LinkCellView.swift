@@ -579,6 +579,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var direction = 0
     
     func linkMenu(sender: AnyObject) {
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
         if self.parentViewController != nil {
             let url = self.link!.url!
             let alertController: BottomSheetActionController = BottomSheetActionController()
