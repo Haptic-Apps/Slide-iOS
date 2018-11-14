@@ -392,6 +392,8 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func makeMenuNav() {
         if menuNav != nil {
+            more.removeFromSuperview()
+            menu.removeFromSuperview()
             menuNav?.view.removeFromSuperview()
             menuNav?.backgroundView.removeFromSuperview()
             menuNav?.removeFromParentViewController()
@@ -458,11 +460,9 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         let saved = getSubredditVC()
         let savedPage = saved?.sub ?? ""
         
-        self.menuNav?.view.removeFromSuperview()
-        self.menuNav?.removeFromParentViewController()
-        self.menuNav = nil
         self.makeMenuNav()
-        
+        self.doButtons()
+
         if SettingValues.subredditBar {
             self.dataSource = self
         } else {

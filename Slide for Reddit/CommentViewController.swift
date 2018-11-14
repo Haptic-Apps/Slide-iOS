@@ -1147,7 +1147,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             refreshControl?.beginRefreshing()
         }
         
-        if !(parent is PagingCommentViewController) {
+        if !(parent is PagingCommentViewController) && self.navigationController != nil {
             if SettingValues.commentGesturesMode == .SWIPE_ANYWHERE && !(self.navigationController?.delegate is SloppySwiper) {
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
                 self.navigationController!.delegate = swiper!
