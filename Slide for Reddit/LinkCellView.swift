@@ -213,7 +213,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.accessibilityIdentifier = "Post Title"
             $0.accessibilityLabel = "Post Title"
             $0.accessibilityHint = "Opens the post view with this post"
-            $0.accessibilityTraits = UIAccessibilityTraitLink
+            $0.accessibilityTraits = UIAccessibilityTraitLink | UIAccessibilityTraitHeader
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
             $0.isOpaque = false
@@ -1023,38 +1023,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     func refreshLink(_ submission: RSubmission) {
         self.link = submission
-        
-        title.setText(CachedTitle.getTitle(submission: submission, full: full, true, false))
+
         if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
             dtap!.numberOfTapsRequired = 2
             self.addGestureRecognizer(dtap!)
         }
         
-        title.delegate = self
-        
-        title.linkAttributes = [
-            NSForegroundColorAttributeName: ColorUtil.fontColor,
-            NSUnderlineStyleAttributeName: NSNumber(value: false),
-        ]
-        title.activeLinkAttributes = [
-            NSForegroundColorAttributeName: ColorUtil.fontColor,
-            NSUnderlineStyleAttributeName: NSNumber(value: false),
-        ]
-        
-        if let titleText = title.text as? NSString {
-            // Add link to author profile
-            let authorRange = titleText.range(of: "u/\(self.link!.author)")
-            let authorURL = URL(string: "/u/\(self.link!.author)")!
-            title.addLink(to: authorURL, with: authorRange)
-            
-            // Add link to subreddit
-            let subredditRange = titleText.range(of: "r/\(self.link!.subreddit)")
-            let subredditURL = URL(string: "/r/\(self.link!.subreddit)")!
-            title.addLink(to: subredditURL, with: subredditRange)
-        } else {
-            NSLog("Could not cast title.text as NSString!")
-        }
+        refreshTitle()
 
         if !full {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -1071,7 +1047,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func refreshTitle() {
-        title.setText(CachedTitle.getTitle(submission: self.link!, full: full, true, false))
+        guard let link = self.link else {
+            return
+        }
+
+        title.setText(CachedTitle.getTitle(submission: link, full: full, true, false))
         title.delegate = self
         
         title.linkAttributes = [
@@ -1084,15 +1064,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         ]
         
         if let titleText = title.text as? NSString {
-            // Add link to author profile
-            let authorRange = titleText.range(of: "u/\(self.link!.author)")
-            let authorURL = URL(string: "/u/\(self.link!.author)")!
-            title.addLink(to: authorURL, with: authorRange)
-            
             // Add link to subreddit
-            let subredditRange = titleText.range(of: "r/\(self.link!.subreddit)")
-            let subredditURL = URL(string: "/r/\(self.link!.subreddit)")!
+            let subredditRange = titleText.range(of: "r/\(link.subreddit)")
+            let subredditURL = URL(string: "/r/\(link.subreddit)")!
             title.addLink(to: subredditURL, with: subredditRange)
+
+            // Add link to author profile
+            let authorRange = titleText.range(of: "u/\(link.author)")
+            let authorURL = URL(string: "/u/\(link.author)")!
+            title.addLink(to: authorURL, with: authorRange)
         } else {
             NSLog("Could not cast title.text as NSString!")
         }
@@ -1202,41 +1182,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if navViewController == nil && nav != nil {
             navViewController = nav
         }
-        
+
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
         activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
         title.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
         title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
         activeSet = true
         
-        title.setText(CachedTitle.getTitle(submission: submission, full: full, false, false))
-        title.delegate = self
+        refreshTitle()
 
         defer {
             updateAccessibility(submission: submission)
-        }
-
-        title.linkAttributes = [
-            NSForegroundColorAttributeName: ColorUtil.fontColor,
-            NSUnderlineStyleAttributeName: NSNumber(value: false),
-        ]
-        title.activeLinkAttributes = [
-            NSForegroundColorAttributeName: ColorUtil.fontColor,
-            NSUnderlineStyleAttributeName: NSNumber(value: false),
-        ]
-        
-        if let titleText = title.text as? NSString {
-            // Add link to author profile
-            let authorRange = titleText.range(of: "u/\(submission.author)")
-            let authorURL = URL(string: "/u/\(submission.author)")!
-            title.addLink(to: authorURL, with: authorRange)
-            
-            // Add link to subreddit
-            let subredditRange = titleText.range(of: "r/\(submission.subreddit)")
-            let subredditURL = URL(string: "/r/\(submission.subreddit)")!
-            title.addLink(to: subredditURL, with: subredditRange)
-        } else {
-            NSLog("Could not cast title.text as NSString!")
         }
         
         reply.isHidden = true
@@ -1618,7 +1574,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         accessibilityElements =  [
-            title, score, upvote, downvote,
+            title, score, comments, upvote, downvote,
             edit, reply, readLater, save, hide, mod,
             ].filter { !($0.isHidden) }
     }
