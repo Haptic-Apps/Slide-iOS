@@ -39,6 +39,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
 
+    let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
+        if oldSchemaVersion < 13 {
+            /*
+             - Property 'RComment.gilded' has been changed from 'int' to 'bool'.
+             - Property 'RComment.gold' has been added.
+             - Property 'RComment.silver' has been added.
+             - Property 'RComment.platinum' has been added.
+             - Property 'RSubmission.gilded' has been changed from 'int' to 'bool'.
+             - Property 'RSubmission.gold' has been added.
+             - Property 'RSubmission.silver' has been added.
+             */
+            migration.enumerateObjects(ofType: RSubmission.className()) { (old, new) in
+                // Change gilded from Int to Bool
+                guard let gildedCount = old?["gilded"] as? Int else {
+                    fatalError("Old gilded value should Int, but is not.")
+                }
+                new?["gilded"] = gildedCount > 0
+
+                // Set new properties
+                new?["gold"] = gildedCount
+                new?["silver"] = 0
+                new?["platinum"] = 0
+                new?["oc"] = false
+            }
+            migration.enumerateObjects(ofType: RComment.className(), { (old, new) in
+                // Change gilded from Int to Bool
+                guard let gildedCount = old?["gilded"] as? Int else {
+                    fatalError("Old gilded value should Int, but is not.")
+                }
+                new?["gilded"] = gildedCount > 0
+
+                // Set new properties
+                new?["gold"] = gildedCount
+                new?["silver"] = 0
+                new?["platinum"] = 0
+
+            })
+        }
+    }
+
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return self.orientationLock
     }
@@ -75,14 +115,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         readLaterFile = documentDirectory.appending("/readlater.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 12,
-                migrationBlock: { migration, oldSchemaVersion in
-                    if oldSchemaVersion < 12 {
-                        migration.enumerateObjects(ofType: RSubmission.className()) { _, newSubmission in
-                            newSubmission?["oc"] = false
-                        }
-                    }
-                })
+                schemaVersion: 13,
+                migrationBlock: migrationBlock)
 
         Realm.Configuration.defaultConfiguration = config
         let fileManager = FileManager.default
