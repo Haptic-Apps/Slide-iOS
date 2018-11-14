@@ -1199,6 +1199,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         title.delegate = self
         var accessibilityValueString = """
         \(submission.title).
+        """
+        if full {
+            // TODO: Body is the raw markdown-formatted text. We need to get the body text without any of that.
+            accessibilityValueString += submission.body
+        }
+        accessibilityValueString += """
         Post type is \(submission.type.rawValue). Sub reddit is \(submission.subreddit). Score is \(submission.score). There are \(submission.commentCount) comments. 
         """
         accessibilityValueString += "\n" + (submission.type != .SELF ? "Links to \(submission.domain)" : "")

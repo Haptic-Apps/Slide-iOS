@@ -1269,6 +1269,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var dtap: UIShortTapGestureRecognizer?
 
     func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath) {
+
+        self.accessibilityValue = """
+        "\(text.string)"
+        Written by user \(comment.author).
+        """
+
         self.comment = comment
         self.cellContent = text
         self.isMore = false
