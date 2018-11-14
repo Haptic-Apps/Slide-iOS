@@ -586,7 +586,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
         tabBar.items = subs.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }
-        tabBar.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
         tabBar.selectedItem = tabBar.items[0]
