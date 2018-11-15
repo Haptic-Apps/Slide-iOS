@@ -321,6 +321,14 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
+        } else {
+            self.primary.isUserInteractionEnabled = true
+            self.primary.textLabel?.isEnabled = true
+            self.primary.detailTextLabel?.isEnabled = true
+            
+            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.numberOfLines = 0
+            self.primary.detailTextLabel?.text = ""
         }
     }
 
