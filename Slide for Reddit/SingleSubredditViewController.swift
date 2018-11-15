@@ -1141,6 +1141,7 @@ class SingleSubredditViewController: MediaViewController {
 
     func load(reset: Bool) {
         PagingCommentViewController.savedComment = nil
+        LinkCellView.checkedWifi = false
         if sub.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
             DispatchQueue.main.async {
                 let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
@@ -1357,7 +1358,7 @@ class SingleSubredditViewController: MediaViewController {
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
-        if !SettingValues.noImages {
+        if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
         for submission in values {
             var thumb = submission.thumbnail
             var big = submission.banner
@@ -1492,7 +1493,7 @@ class SingleSubredditViewController: MediaViewController {
             thumb = true
         }
         
-        if SettingValues.noImages {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }
@@ -1666,7 +1667,7 @@ class SingleSubredditViewController: MediaViewController {
             thumb = false
         }
         
-        if SettingValues.noImages {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }

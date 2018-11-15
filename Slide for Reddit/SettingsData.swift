@@ -104,7 +104,7 @@ class SettingsData: UITableViewController {
 
         createCell(enableDataSavingCell, enableDataSaving, isOn: SettingValues.dataSavingEnabled, text: "Data saving enabled")
         createCell(disableOnWifiCell, disableOnWifi, isOn: SettingValues.dataSavingDisableWiFi, text: "Disable data saving on WiFi")
-        createCell(loadHQViewerCell, loadHQViewer, isOn: SettingValues.loadContentHQ, text: "Load images in high quality automatically when opened")
+        createCell(loadHQViewerCell, loadHQViewer, isOn: SettingValues.loadContentHQ, text: "Always load images in highest quality when opened (same as when Data Saving is off)")
         createCell(lowerQualityModeCell, lowerQualityMode, isOn: SettingValues.lqLow, text: "Load lowest image quality")
         createCell(dontLoadImagePreviewsCell, dontLoadImagePreviews, isOn: SettingValues.noImages, text: "Don't load any images")
         

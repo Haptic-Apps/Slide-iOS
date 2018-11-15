@@ -21,8 +21,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     var tintOutside: UITableViewCell = UITableViewCell()
     var tintOutsideSwitch: UISwitch = UISwitch()
     
-    var reduceColor: UITableViewCell = UITableViewCell()
-    var reduceColorSwitch: UISwitch = UISwitch()
+    var reduceColorCell: UITableViewCell = UITableViewCell()
+    var reduceColor: UISwitch = UISwitch()
 
     var isAccent = false
     
@@ -199,7 +199,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.primary.accessoryType = .none
         self.primary.backgroundColor = ColorUtil.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.fontColor
-        self.primary.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.primary.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.primary.imageView?.tintColor = ColorUtil.fontColor
 
         self.accent.textLabel?.text = "Accent color"
@@ -213,7 +213,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.base.accessoryType = .none
         self.base.backgroundColor = ColorUtil.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.fontColor
-        self.base.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.base.imageView?.tintColor = ColorUtil.fontColor
 
         self.night.textLabel?.text = "Automatic night theme"
@@ -238,17 +238,29 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.tintingMode.textLabel?.textColor = ColorUtil.fontColor
         self.tintingMode.detailTextLabel?.textColor = ColorUtil.fontColor
         
+        reduceColor = UISwitch()
+        reduceColor.isOn = SettingValues.reduceColor
+        reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
+        reduceColorCell.textLabel?.numberOfLines = 0
+        reduceColorCell.accessoryView = reduceColor
+        reduceColorCell.backgroundColor = ColorUtil.foregroundColor
+        reduceColorCell.textLabel?.textColor = ColorUtil.fontColor
+        reduceColorCell.selectionStyle = UITableViewCellSelectionStyle.none
+        self.reduceColorCell.imageView?.image = UIImage.init(named: "nocolors")?.toolbarIcon()
+        self.reduceColorCell.imageView?.tintColor = ColorUtil.fontColor
+
         if SettingValues.reduceColor {
             self.primary.isUserInteractionEnabled = false
             self.primary.textLabel?.isEnabled = false
-            self.primary.detailTextLabel?.isEnabled
+            self.primary.detailTextLabel?.isEnabled = false
             
             self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
         }
         
-        createCell(reduceColor, reduceColorSwitch, isOn: SettingValues.reduceColor, text: "Reduce color throughout app (affects all navigation bars)")
+        createCell(reduceColorCell, reduceColor, isOn: SettingValues.reduceColor, text: "Reduce color throughout app (affects all navigation bars)")
 
         self.tableView.tableFooterView = UIView()
         
@@ -268,13 +280,27 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     }
 
     func switchIsChanged(_ changed: UISwitch) {
-        if changed == reduceColorSwitch {
+        if changed == reduceColor {
             MainViewController.needsRestart = true
             SettingValues.reduceColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
         } else if changed == tintOutsideSwitch {
             SettingValues.onlyTintOutside = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_onlyTintOutside)
+        } else if changed == reduceColor {
+            MainViewController.needsRestart = true
+            SettingValues.reduceColor = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
+            setupBaseBarColors()
+            let button = UIButtonWithContext.init(type: .custom)
+            button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+            button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControlState.normal)
+            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
+            
+            let barButton = UIBarButtonItem.init(customView: button)
+            
+            navigationItem.leftBarButtonItem = barButton
         } else {
             SettingValues.nightModeEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
@@ -287,6 +313,15 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         loadView()
         tableView.reloadData()
         UserDefaults.standard.synchronize()
+        if SettingValues.reduceColor {
+            self.primary.isUserInteractionEnabled = false
+            self.primary.textLabel?.isEnabled = false
+            self.primary.detailTextLabel?.isEnabled = false
+            
+            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.numberOfLines = 0
+            self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
+        }
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -316,7 +351,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             case 1: return self.accent
             case 2: return self.base
             case 3: return self.night
-            case 4: return self.reduceColor
+            case 4: return self.reduceColorCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -542,7 +577,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 4
+        case 0: return 5
         case 1: return 2
         default: fatalError("Unknown number of sections")
         }

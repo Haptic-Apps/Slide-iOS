@@ -97,7 +97,7 @@ class SettingsHistory: UITableViewController {
 
         createCell(saveHistoryCell, saveHistory, isOn: SettingValues.saveHistory, text: "Save submission and subreddit history")
         createCell(saveNSFWHistoryCell, saveNSFWHistory, isOn: SettingValues.saveNSFWHistory, text: "Save NSFW submission and subreddit history")
-        createCell(readOnScrollCell, readOnScroll, isOn: SettingValues.markReadOnScroll, text: "Mark submissions as read when scrolled past")
+        createCell(readOnScrollCell, readOnScroll, isOn: SettingValues.markReadOnScroll, text: "Mark submissions as read when scrolled off screen")
 
         clearHistory.textLabel?.text = "Clear submission history"
         clearHistory.backgroundColor = ColorUtil.foregroundColor

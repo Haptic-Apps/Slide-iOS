@@ -1242,7 +1242,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             big = false
         }
         
-        if SettingValues.noImages {
+        if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && checkWifi) {
             big = false
             thumb = false
         }

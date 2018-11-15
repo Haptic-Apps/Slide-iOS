@@ -1954,7 +1954,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         //self.tableView.endEditing(true)
         let currentY = scrollView.contentOffset.y
-        if !SettingValues.lockCommentBars {
+        if !SettingValues.pinToolbar {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !goingToCell && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)

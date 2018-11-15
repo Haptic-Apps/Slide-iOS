@@ -19,9 +19,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
 
     var themeColorCell: UITableViewCell = UITableViewCell()
     
-    var lockBottomCell: UITableViewCell = UITableViewCell()
-    var lockBottom = UISwitch()
-    
     var wideIndicatorCell: UITableViewCell = UITableViewCell()
     var wideIndicator = UISwitch()
     
@@ -63,9 +60,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         if changed == disableNavigationBar {
             SettingValues.disableNavigationBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableNavigationBar)
-        } else if changed == lockBottom {
-            SettingValues.lockCommentBars = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lockCommentBottomBar)
         } else if changed == wideIndicator {
             SettingValues.wideIndicators = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_widerIndicators)
@@ -82,8 +76,8 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             SettingValues.collapseFully = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseFully)
         } else if changed == fullscreenImage {
-            SettingValues.commentFullScreen = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentFullScreen)
+            SettingValues.commentFullScreen = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_commentFullScreen)
         } else if changed == highlightOp {
             SettingValues.highlightOp = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_highlightOp)
@@ -291,13 +285,12 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         self.tableView.separatorStyle = .none
 
         createCell(disableNavigationBarCell, disableNavigationBar, isOn: SettingValues.disableNavigationBar, text: "Disable comment navigation toolbar")
-        createCell(fullscreenImageCell, fullscreenImage, isOn: SettingValues.commentFullScreen, text: "Show full height submission image in commment view")
+        createCell(fullscreenImageCell, fullscreenImage, isOn: !SettingValues.commentFullScreen, text: "Crop the submission image in commment view")
         createCell(collapseDefaultCell, collapseDefault, isOn: SettingValues.collapseDefault, text: "Collapse all comments automatically")
         createCell(swapLongPressCell, swapLongPress, isOn: SettingValues.swapLongPress, text: "Swap tap and long press actions")
         createCell(collapseFullyCell, collapseFully, isOn: SettingValues.collapseFully, text: "Collapse comments fully")
-        createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments")
+        createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments with a purple depth indicator")
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
-        createCell(lockBottomCell, lockBottom, isOn: SettingValues.lockCommentBars, text: "Don't autohide toolbars in comments")
         createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Move top AutoModerator comment to a button (if it is not your submission)")
 
         updateThemeCell()
@@ -383,7 +376,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             case 1: return self.collapseFullyCell
             case 2: return self.swapLongPressCell
             case 3: return self.highlightOpCell
-            case 4: return self.lockBottomCell
             default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
@@ -395,7 +387,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         switch section {
         case 0: return 2
         case 1: return 3
-        case 2: return 5
+        case 2: return 4
         default: fatalError("Unknown number of sections")
         }
     }

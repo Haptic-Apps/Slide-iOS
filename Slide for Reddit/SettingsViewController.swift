@@ -45,9 +45,6 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch()
-    
-    var reduceColorCell: UITableViewCell = UITableViewCell()
-    var reduceColor = UISwitch()
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -330,39 +327,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
-        reduceColor = UISwitch()
-        reduceColor.isOn = SettingValues.reduceColor
-        reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
-        reduceColorCell.textLabel?.numberOfLines = 0
-        reduceColorCell.accessoryView = reduceColor
-        reduceColorCell.backgroundColor = ColorUtil.foregroundColor
-        reduceColorCell.textLabel?.textColor = ColorUtil.fontColor
-        reduceColorCell.selectionStyle = UITableViewCellSelectionStyle.none
-        self.reduceColorCell.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon()
-        self.reduceColorCell.imageView?.tintColor = ColorUtil.fontColor
-
         if reset {
             self.tableView.reloadData()
         }
     }
 
     func switchIsChanged(_ changed: UISwitch) {
-        if changed == reduceColor {
-            MainViewController.needsRestart = true
-            SettingValues.reduceColor = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
-            setupBaseBarColors()
-            let button = UIButtonWithContext.init(type: .custom)
-            button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControlState.normal)
-            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
-            
-            let barButton = UIBarButtonItem.init(customView: button)
-            
-            navigationItem.leftBarButtonItem = barButton
-        } else if changed == lock {
+        if changed == lock {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 SettingValues.biometrics = changed.isOn
                 UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_biometrics)
@@ -424,12 +395,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         case 1:
             switch indexPath.row {
             case 0: return self.mainTheme
-            case 1: return self.reduceColorCell
-            case 2: return self.postLayout
-            case 3: return self.autoPlayCell
-            case 4: return self.subThemes
-            case 5: return self.font
-            case 6: return self.comments
+            case 1: return self.postLayout
+            case 2: return self.autoPlayCell
+            case 3: return self.subThemes
+            case 4: return self.font
+            case 5: return self.comments
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -656,7 +626,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return (SettingValues.isPro) ? 5 : 6
-        case 1: return 7
+        case 1: return 6
         case 2: return 8
         case 3: return 5
         default: fatalError("Unknown number of sections")

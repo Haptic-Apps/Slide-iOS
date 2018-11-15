@@ -285,8 +285,9 @@ class SettingsFont: UITableViewController {
         enlarge = UISwitch()
         enlarge.isOn = SettingValues.enlargeLinks
         enlarge.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.enlargeCell.textLabel?.text = "Enlarge links"
+        self.enlargeCell.textLabel?.text = "Make links larger and easier to select"
         self.enlargeCell.accessoryView = enlarge
+        self.enlargeCell.textLabel?.numberOfLines = 0
         self.enlargeCell.backgroundColor = ColorUtil.foregroundColor
         self.enlargeCell.textLabel?.textColor = ColorUtil.fontColor
         enlargeCell.selectionStyle = UITableViewCellSelectionStyle.none
@@ -294,7 +295,7 @@ class SettingsFont: UITableViewController {
         type = UISwitch()
         type.isOn = SettingValues.showLinkContentType
         type.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
-        self.typeCell.textLabel?.text = "Show content type next to links"
+        self.typeCell.textLabel?.text = "Show content type preview next to links"
         self.typeCell.textLabel?.numberOfLines = 0
         self.typeCell.textLabel?.lineBreakMode = .byWordWrapping
         self.typeCell.accessoryView = type

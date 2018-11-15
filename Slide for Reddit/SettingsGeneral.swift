@@ -152,7 +152,7 @@ class SettingsGeneral: UITableViewController {
         createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
-        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin toolbar and navigation bar in subreddit views")
+        createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin toolbar and navigation bar in subreddit and comment views")
         createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Let iOS handle audio focus")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
         createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators between loads of new submissions")
