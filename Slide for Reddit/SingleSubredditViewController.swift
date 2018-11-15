@@ -705,7 +705,7 @@ class SingleSubredditViewController: MediaViewController {
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
-        if (SingleSubredditViewController.firstPresented && !single) || (self.links.count == 0 && !single && !SettingValues.subredditBar) {
+        if (SingleSubredditViewController.firstPresented && !single && self.links.count == 0) || (self.links.count == 0 && !single && !SettingValues.subredditBar) {
             load(reset: true)
             SingleSubredditViewController.firstPresented = false
         }

@@ -439,22 +439,7 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
 
     func restartVC() {
         if (splitViewController != nil && SettingValues.appMode != .SPLIT) || (splitViewController == nil && SettingValues.appMode == .SPLIT) {
-            if let window = UIApplication.shared.keyWindow {
-                let rootController: UIViewController!
-                if !UserDefaults.standard.bool(forKey: "firstOpen") {
-                    rootController = UINavigationController(rootViewController: SettingsWelcome())
-                } else {
-                    if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
-                        rootController = UISplitViewController()
-                        (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
-                    } else {
-                        rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
-                    }
-                }
-                
-                window.rootViewController = rootController
-                window.makeKeyAndVisible()
-            }
+            (UIApplication.shared.delegate as! AppDelegate).resetStack()
             return
         }
         let saved = getSubredditVC()
@@ -490,21 +475,22 @@ class MainViewController: ColorMuxPagingViewController, UIPageViewControllerData
             more.removeFromSuperview()
             let baseSubs = Subscriptions.subreddits
             do {
-            let realm = try Realm()
-            for subname in baseSubs {
-                var hasLinks = false
-                if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
-                    return item.subreddit == subname
-                }).first {
-                    hasLinks = !listing.links.isEmpty
+                let realm = try Realm()
+                for subname in baseSubs {
+                    var hasLinks = false
+                    if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
+                        return item.subreddit == subname
+                    }).first {
+                        hasLinks = !listing.links.isEmpty
+                    }
+                    if hasLinks {
+                        finalSubs.append(subname)
+                    }
                 }
-                if hasLinks {
-                    finalSubs.append(subname)
-                }
-            }
             } catch {
-                
             }
+
+            // TODO: We don't need to do all this in advance. Load these on demand when the page changes.
             for subname in finalSubs {
                 MainViewController.vCs.append(SingleSubredditViewController(subName: subname, parent: self))
             }
