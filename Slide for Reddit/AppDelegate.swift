@@ -189,24 +189,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SDWebImageManager.shared().imageCache?.config.maxCacheSize = 250 * 1024 * 1024
         
         UIApplication.shared.applicationIconBadgeNumber = 0
-        
+
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        if let window = self.window {
-            let rootController: UIViewController!
-            if !UserDefaults.standard.bool(forKey: "firstOpen") {
-                rootController = UINavigationController(rootViewController: SettingsWelcome())
-            } else {
-                if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
-                    rootController = UISplitViewController()
-                    (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
-                } else {
-                    rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
-                }
-            }
-            
-            window.rootViewController = rootController
-            window.makeKeyAndVisible()
-        }
+        resetStack()
+        window?.makeKeyAndVisible()
         
         let remoteNotif = launchOptions?[UIApplicationLaunchOptionsKey.localNotification] as? UILocalNotification
         
@@ -243,6 +229,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     var statusBar = UIView()
+    var splitVC = UISplitViewController()
+
+    /**
+     Rebuilds the nav stack for the currently selected App Mode (split, multi column, etc.)
+     */
+    func resetStack() {
+        guard let window = self.window else {
+            fatalError("Window must exist when resetting the stack!")
+        }
+        let rootController: UIViewController!
+        if !UserDefaults.standard.bool(forKey: "firstOpen") {
+            rootController = UINavigationController(rootViewController: SettingsWelcome())
+        } else {
+            if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
+                rootController = splitVC
+                (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
+            } else {
+                rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
+            }
+        }
+
+        window.rootViewController = rootController
+    }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
