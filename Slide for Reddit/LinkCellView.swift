@@ -1566,15 +1566,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         comments.accessibilityValue = "\(submission.commentCount)"
 
         if full {
+            contentView.isAccessibilityElement = false
+            contentView.accessibilityHint = nil
             switch submission.type {
             case .SELF:
-                contentView.accessibilityHint = nil
+                title.accessibilityHint = nil
             case .LINK, .UNKNOWN:
-                contentView.accessibilityHint = "Opens the link for this post. Link goes to \(submission.domain)"
+                title.accessibilityHint = "Opens the link for this post. Link goes to \(submission.domain)"
             default:
-                contentView.accessibilityHint = "Opens the media modal with this link. Link is from \(submission.domain)"
+                title.accessibilityHint = "Opens the media modal with this link. Link is from \(submission.domain)"
             }
         } else {
+            contentView.isAccessibilityElement = true
             contentView.accessibilityHint = "Opens the post view for this post"
         }
 
