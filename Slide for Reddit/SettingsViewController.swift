@@ -134,7 +134,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.general.imageView?.tintColor = ColorUtil.fontColor
         if !UserDefaults.standard.bool(forKey: "2notifs") {
             self.general.detailTextLabel?.textColor = ColorUtil.baseAccent
-            self.general.detailTextLabel?.text = "New in 2.0, setup notifications here!"
+            self.general.detailTextLabel?.text = "New in 2.0: set up notifications here!"
         } else {
             self.general.detailTextLabel?.textColor = ColorUtil.fontColor
             self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
@@ -159,7 +159,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.mainTheme.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon()
         self.mainTheme.imageView?.tintColor = ColorUtil.fontColor
 
-        self.goPro.textLabel?.text = "Support Slide, Go Pro!"
+        self.goPro.textLabel?.text = "Support Slide, go Pro!"
         self.goPro.accessoryType = .disclosureIndicator
         self.goPro.backgroundColor = ColorUtil.foregroundColor
         self.goPro.textLabel?.textColor = ColorUtil.fontColor
