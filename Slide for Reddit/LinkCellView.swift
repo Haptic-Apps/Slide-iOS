@@ -133,6 +133,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var constraintsForType: [NSLayoutConstraint] = []
     var constraintsForContent: [NSLayoutConstraint] = []
     var bannerHeightConstraint: [NSLayoutConstraint] = []
+
+    var accessibilityView: UIView {
+        return full ? contentView : self
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -169,9 +173,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func configureView() {
 
-        self.accessibilityIdentifier = "Link Cell View"
-        self.accessibilityHint = "Opens the post view for this post"
-        self.isAccessibilityElement = true
+        accessibilityView.accessibilityIdentifier = "Link Cell View"
+        accessibilityView.accessibilityHint = "Opens the post view for this post"
+        accessibilityView.isAccessibilityElement = true
         
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
@@ -1472,7 +1476,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     private func refreshAccessibility(submission: RSubmission) {
         let postTimeAgo = (submission.created as Date).timeAgoString
-        self.accessibilityValue = """
+        accessibilityView.accessibilityValue = """
             \(submission.title).
             Post type is \(submission.type.rawValue).
             Posted \(postTimeAgo ?? "") in \(submission.subreddit) by \(submission.author).
@@ -1482,14 +1486,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if full {
             switch submission.type {
             case .SELF:
-                self.accessibilityHint = nil
+                accessibilityView.accessibilityHint = nil
             case .LINK, .UNKNOWN:
-                self.accessibilityHint = "Opens the link for this post. Link goes to \(submission.domain)"
+                accessibilityView.accessibilityHint = "Opens the link for this post. Link goes to \(submission.domain)"
             default:
-                self.accessibilityHint = "Opens the media modal with this link. Link is from \(submission.domain)"
+                accessibilityView.accessibilityHint = "Opens the media modal with this link. Link is from \(submission.domain)"
             }
         } else {
-            self.accessibilityHint = "Opens the post view for this post."
+            accessibilityView.accessibilityHint = "Opens the post view for this post."
         }
 
         let actionManager = PostActionsManager(submission: submission)
@@ -1538,7 +1542,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             actions.append(UIAccessibilityCustomAction(name: "Moderate", target: self, selector: #selector(mod(sender:))))
         }
 
-        self.accessibilityCustomActions = actions
+        accessibilityView.accessibilityCustomActions = actions
 
     }
 
@@ -1874,12 +1878,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func refresh() {
         let link = self.link!
+
         upvote.setImage(LinkCellImageCache.upvote, for: .normal)
-        save.setImage(LinkCellImageCache.save, for: .normal)
-        readLater.setImage(LinkCellImageCache.readLater, for: .normal)
         downvote.setImage(LinkCellImageCache.downvote, for: .normal)
         sideUpvote.setImage(LinkCellImageCache.upvoteSmall, for: .normal)
         sideDownvote.setImage(LinkCellImageCache.downvoteSmall, for: .normal)
+
+        save.setImage(ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save, for: .normal)
+        mod.setImage(link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted, for: .normal)
+        readLater.setImage(ReadLater.isReadLater(id: link.getId()) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater, for: .normal)
         
         var attrs: [String: Any] = [:]
         switch ActionStates.getVoteDirection(s: link) {
@@ -1937,17 +1944,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
 
-        save.setImage(ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save, for: .normal)
-        mod.setImage(link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted, for: .normal)
         if History.getSeen(s: link) && !full {
             self.title.alpha = 0.3
         } else {
             self.title.alpha = 1
         }
 
-        if ReadLater.isReadLater(id: link.getId()) {
-            readLater.setImage(LinkCellImageCache.readLaterTinted, for: .normal)
-        }
+        refreshAccessibility(submission: link)
     }
     
     override func layoutSubviews() {
