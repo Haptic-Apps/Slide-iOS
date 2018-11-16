@@ -168,10 +168,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func configureView() {
-        
+
         self.accessibilityIdentifier = "Link Cell View"
-        self.contentView.accessibilityIdentifier = "Link Cell Content View"
-        self.contentView.isAccessibilityElement = true
+        self.accessibilityHint = "Opens the post view for this post"
+        self.isAccessibilityElement = true
         
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
@@ -211,9 +211,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.accessibilityLabel = "Post Title"
-            $0.accessibilityHint = "Opens the post view with this post"
-            $0.accessibilityTraits = UIAccessibilityTraitLink | UIAccessibilityTraitHeader
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
             $0.isOpaque = false
@@ -223,10 +220,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.hide = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Hide Button"
-            $0.accessibilityLabel = "Hide"
-            $0.accessibilityHint = "Hides the post from the list"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.hide, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -235,10 +228,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.reply = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Reply Button"
-            $0.accessibilityLabel = "Reply"
-            $0.accessibilityHint = "Opens the post view and begins composing a reply"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.reply, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -247,10 +236,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.edit = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Edit Button"
-            $0.accessibilityLabel = "Edit"
-            $0.accessibilityHint = "Opens the post view and begins editing its content"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.edit, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -259,10 +244,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.save = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Save Button"
-            $0.accessibilityLabel = "Save"
-            $0.accessibilityHint = "Saves the post"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -270,10 +251,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.upvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
-            $0.accessibilityLabel = "Up vote"
-            $0.accessibilityHint = "Up votes the post"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -281,10 +258,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.downvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
-            $0.accessibilityLabel = "Down vote"
-            $0.accessibilityHint = "Down votes the post"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -292,10 +265,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.sideUpvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
-            $0.accessibilityLabel = "Up vote"
-            $0.accessibilityHint = "Up votes the post"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -303,10 +272,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.sideDownvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
-            $0.accessibilityLabel = "Down vote"
-            $0.accessibilityHint = "Down votes the post"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -314,10 +279,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.mod = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Mod Button"
-            $0.accessibilityLabel = "Moderate"
-            $0.accessibilityHint = "Opens the moderation menu for the post"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.mod, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -326,10 +287,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         self.readLater = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Read Later Button"
-            $0.accessibilityLabel = "Read later"
-            $0.accessibilityHint = "Adds the post to the Read Later list"
-            $0.isAccessibilityElement = true
-            $0.accessibilityTraits = UIAccessibilityTraitButton
             $0.setImage(LinkCellImageCache.readLater, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
@@ -354,7 +311,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
-            $0.accessibilityLabel = "Score"
             $0.numberOfLines = 1
             $0.textColor = ColorUtil.fontColor
             $0.isOpaque = false
@@ -371,7 +327,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.comments = UILabel().then {
             $0.accessibilityIdentifier = "Comment Count Label"
-            $0.accessibilityLabel = "Comment Count"
             $0.numberOfLines = 1
             $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
@@ -1169,24 +1124,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0) {
-        loadedImage = nil
-        full = parent is CommentViewController
-        lq = false
-        if true || full { //todo logic for this
-            self.contentView.backgroundColor = ColorUtil.foregroundColor
-            comments.textColor = ColorUtil.fontColor
-            title.textColor = ColorUtil.fontColor
-        } else {
-            self.contentView.backgroundColor = ColorUtil.getColorForSubBackground(sub: submission.subreddit)
-            comments.textColor = .white
-            title.textColor = .white
-        }
-        
-        parentViewController = parent
+
+        self.full = self is FullLinkCellView
+        self.parentViewController = parent
         self.link = submission
         if navViewController == nil && nav != nil {
             navViewController = nav
         }
+
+        self.loadedImage = nil
+        lq = false
+
+        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        comments.textColor = ColorUtil.fontColor
+        title.textColor = ColorUtil.fontColor
 
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
         activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
@@ -1197,56 +1148,25 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         refreshTitle()
 
         defer {
-            updateAccessibility(submission: submission)
+            refreshAccessibility(submission: submission)
         }
-        
-        reply.isHidden = true
 
-        hide.isHidden = !SettingValues.hideButton
-        mod.isHidden = true
-        save.isHidden = !SettingValues.saveButton
-        readLater.isHidden = !SettingValues.readLaterButton
+        let actions = PostActionsManager(submission: submission)
 
-        if submission.archived || !AccountController.isLoggedIn || !LinkCellView.checkInternet() {
-            upvote.isHidden = true
-            downvote.isHidden = true
-            if submission.archived && AccountController.isLoggedIn && LinkCellView.checkInternet() {
-                save.isHidden = false
-            } else {
-                save.isHidden = true
-            }
-            reply.isHidden = true
-            edit.isHidden = true
-            sideUpvote.isHidden = true
-            sideDownvote.isHidden = true
-        } else {
-            upvote.isHidden = false
-            downvote.isHidden = false
-            sideUpvote.isHidden = false
-            sideDownvote.isHidden = false
-            
-            if submission.canMod {
-                mod.isHidden = false
-                if !submission.reports.isEmpty {
-                    mod.setImage(LinkCellImageCache.modTinted, for: .normal)
-                } else {
-                    mod.setImage(LinkCellImageCache.mod, for: .normal)
-                }
-            }
-            
-            if full {
-                reply.isHidden = false
-                hide.isHidden = true
-            }
-            edit.isHidden = true
+        func setVisibility(_ view: UIView, _ visible: Bool) {
+            view.isHidden = !visible
+            view.isUserInteractionEnabled = visible
         }
-        
-        full = parent is CommentViewController
-        
-        if !submission.archived && AccountController.isLoggedIn && AccountController.currentName == submission.author && full {
-            edit.isHidden = false
-        }
-        
+
+        setVisibility(upvote, actions.isVotingPossible)
+        setVisibility(downvote, actions.isVotingPossible)
+        setVisibility(hide, actions.isHideEnabled)
+        setVisibility(readLater, actions.isReadLaterEnabled)
+        setVisibility(save, actions.isSaveEnabled && actions.isSavePossible)
+        setVisibility(reply, actions.isReplyPossible && full)
+        setVisibility(edit, actions.isEditPossible && full)
+        setVisibility(mod, actions.isModPossible)
+
         thumb = submission.thumbnail
         big = submission.banner
         
@@ -1550,41 +1470,85 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
     }
 
-    private func updateAccessibility(submission: RSubmission) {
-
+    private func refreshAccessibility(submission: RSubmission) {
         let postTimeAgo = (submission.created as Date).timeAgoString
-        let strings: [String] = [
-            "\(submission.title).",
-            postTimeAgo != nil ? "Posted \(postTimeAgo!)" : nil,
-            full ? "Text: \(submission.body)" : nil,
-            "Post type is \(submission.type.rawValue).",
-            submission.type != .SELF ? "Links to \(submission.domain)" : "",
-        ].compactMap { $0 }
-        title.accessibilityValue = strings.joined(separator: "\n")
-
-        score.accessibilityValue = "\(submission.score)"
-        comments.accessibilityValue = "\(submission.commentCount)"
-
+        self.accessibilityValue = """
+            \(submission.title).
+            Post type is \(submission.type.rawValue).
+            Posted \(postTimeAgo ?? "") in \(submission.subreddit) by \(submission.author).
+            The score is \(submission.score) and there are \(submission.commentCount) comments.
+            \(full ? "Post body: \(submission.body)" : "")
+        """
         if full {
-            contentView.isAccessibilityElement = false
-            contentView.accessibilityHint = nil
             switch submission.type {
             case .SELF:
-                title.accessibilityHint = nil
+                self.accessibilityHint = nil
             case .LINK, .UNKNOWN:
-                title.accessibilityHint = "Opens the link for this post. Link goes to \(submission.domain)"
+                self.accessibilityHint = "Opens the link for this post. Link goes to \(submission.domain)"
             default:
-                title.accessibilityHint = "Opens the media modal with this link. Link is from \(submission.domain)"
+                self.accessibilityHint = "Opens the media modal with this link. Link is from \(submission.domain)"
             }
         } else {
-            contentView.isAccessibilityElement = true
-            contentView.accessibilityHint = "Opens the post view for this post"
+            self.accessibilityHint = "Opens the post view for this post."
         }
 
-        accessibilityElements =  [
-            title, score, comments, upvote, downvote,
-            edit, reply, readLater, save, hide, mod,
-            ].filter { !($0.isHidden) }
+        let actionManager = PostActionsManager(submission: submission)
+
+        let isReadLater = ReadLater.isReadLater(id: submission.getId())
+        let isSaved = ActionStates.isSaved(s: submission)
+
+        var actions: [UIAccessibilityCustomAction] = [
+            UIAccessibilityCustomAction(name: isReadLater ? "Remove from Read Later list" : "Read Later", target: self, selector: #selector(readLater(sender:))),
+            UIAccessibilityCustomAction(name: "Hide", target: self, selector: #selector(hide(sender:))),
+            ]
+
+        if actionManager.isSavePossible {
+            actions.append(UIAccessibilityCustomAction(name: isSaved ? "Unsave" : "Save", target: self, selector: #selector(save(sender:))))
+        }
+
+        if actionManager.isVotingPossible {
+            let downvoteActionString: String
+            let upvoteActionString: String
+
+            switch ActionStates.getVoteDirection(s: submission) {
+            case .down:
+                downvoteActionString = "Remove Downvote"
+                upvoteActionString = "Upvote"
+            case .up:
+                downvoteActionString = "Downvote"
+                upvoteActionString = "Remove Upvote"
+            default:
+                downvoteActionString = "Downvote"
+                upvoteActionString = "Upvote"
+            }
+            
+            actions.append(UIAccessibilityCustomAction(name: upvoteActionString, target: self, selector: #selector(upvote(sender:))))
+            actions.append(UIAccessibilityCustomAction(name: downvoteActionString, target: self, selector: #selector(downvote(sender:))))
+        }
+
+        if actionManager.isEditPossible && full {
+            actions.append(UIAccessibilityCustomAction(name: "Edit", target: self, selector: #selector(edit(sender:))))
+        }
+
+        if actionManager.isReplyPossible && full {
+            actions.append(UIAccessibilityCustomAction(name: "Reply", target: self, selector: #selector(reply(sender:))))
+        }
+
+        if actionManager.isModPossible {
+            actions.append(UIAccessibilityCustomAction(name: "Moderate", target: self, selector: #selector(mod(sender:))))
+        }
+
+        self.accessibilityCustomActions = actions
+
+    }
+
+    override func accessibilityActivate() -> Bool {
+        if full {
+            openLink()
+        } else {
+            openComment()
+        }
+        return true
     }
     
     var currentType: CurrentType = .none
@@ -1972,10 +1936,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 sideScore.attributedText = scoreString
             }
         }
-        
-        if ActionStates.isSaved(s: link) {
-            save.setImage(LinkCellImageCache.saveTinted, for: .normal)
-        }
+
+        save.setImage(ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save, for: .normal)
+        mod.setImage(link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted, for: .normal)
         if History.getSeen(s: link) && !full {
             self.title.alpha = 0.3
         } else {
@@ -2289,5 +2252,49 @@ private extension UIImageView {
                 }
             }
         }
+    }
+}
+
+class PostActionsManager {
+    var submission: RSubmission
+
+    private lazy var networkActionsArePossible: Bool = {
+        return AccountController.isLoggedIn && LinkCellView.checkInternet()
+    }()
+
+    var isSaveEnabled: Bool {
+        return SettingValues.saveButton
+    }
+
+    var isHideEnabled: Bool {
+        return SettingValues.hideButton
+    }
+
+    var isReadLaterEnabled: Bool {
+        return SettingValues.readLaterButton
+    }
+
+    var isVotingPossible: Bool {
+        return networkActionsArePossible && !submission.archived
+    }
+
+    var isSavePossible: Bool {
+        return networkActionsArePossible
+    }
+
+    var isEditPossible: Bool {
+        return networkActionsArePossible && !submission.archived && AccountController.currentName == submission.author
+    }
+
+    var isReplyPossible: Bool {
+        return networkActionsArePossible && !submission.archived
+    }
+
+    var isModPossible: Bool {
+        return networkActionsArePossible && submission.canMod
+    }
+
+    init(submission: RSubmission) {
+        self.submission = submission
     }
 }
