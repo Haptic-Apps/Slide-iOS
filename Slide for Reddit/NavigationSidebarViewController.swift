@@ -84,10 +84,14 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         case .began:
             lastPercentY = CGFloat(0)
             callbacks.didBeginPanning?()
-            parentController!.navigationController?.view.addSubviews(backgroundView, self.view)
-            parentController!.navigationController?.view.bringSubview(toFront: backgroundView)
-            backgroundView.edgeAnchors == parentController!.navigationController!.view.edgeAnchors
-            parentController!.navigationController?.view.bringSubview(toFront: self.view)
+            if let navVC = parentController!.navigationController {
+                navVC.view.addSubviews(backgroundView, self.view)
+                navVC.view.bringSubview(toFront: backgroundView)
+                backgroundView.edgeAnchors == navVC.view.edgeAnchors
+                navVC.view.bringSubview(toFront: self.view)
+            } else {
+                NSLog("Warning: No parentController!.navigationController. Background behind drawer probably won't show up.")
+            }
         case .changed:
             update(sender)
         case .ended:
@@ -245,10 +249,15 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         if self.view.isHidden {
             return
         }
-        parentController!.navigationController?.view.addSubviews(backgroundView, self.view)
-        parentController!.navigationController?.view.bringSubview(toFront: backgroundView)
-        parentController!.navigationController?.view.bringSubview(toFront: self.view)
-        backgroundView.edgeAnchors == parentController!.navigationController!.view.edgeAnchors
+
+        if let navVC = parentController!.navigationController {
+            navVC.view.addSubviews(backgroundView, self.view)
+            navVC.view.bringSubview(toFront: backgroundView)
+            backgroundView.edgeAnchors == navVC.view.edgeAnchors
+            navVC.view.bringSubview(toFront: self.view)
+        } else {
+            NSLog("Warning: No parentController!.navigationController. Background behind drawer probably won't show up.")
+        }
 
         let y = UIScreen.main.bounds.height - self.view.frame.size.height
         if let parent = self.parentController, parent.menu.superview != nil {
