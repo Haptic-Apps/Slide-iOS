@@ -250,7 +250,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        window.rootViewController = rootController
+        window.setRootViewController(rootController, animated: false)
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {

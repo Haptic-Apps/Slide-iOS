@@ -304,6 +304,7 @@ class SingleSubredditViewController: MediaViewController {
                 self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             }, completion: { _ in
                 self.fab?.removeFromSuperview()
+                self.fab = nil
             })
         }
         

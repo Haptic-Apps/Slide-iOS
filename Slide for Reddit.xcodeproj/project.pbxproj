@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0924E525219C8EA700C31D5E /* NSDate+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0924E524219C8EA700C31D5E /* NSDate+Extensions.swift */; };
+		0924E527219E088800C31D5E /* UIWindow+RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0924E526219E088800C31D5E /* UIWindow+RootViewController.swift */; };
 		09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09328D7720F9547B00A48983 /* VideoScrubberView.swift */; };
 		09526EF8214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09526EF7214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift */; };
 		09526EFA214C39F0005A3F6B /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09526EF9214C39F0005A3F6B /* CGPoint+Extensions.swift */; };
@@ -312,6 +313,7 @@
 
 /* Begin PBXFileReference section */
 		0924E524219C8EA700C31D5E /* NSDate+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSDate+Extensions.swift"; sourceTree = "<group>"; };
+		0924E526219E088800C31D5E /* UIWindow+RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+RootViewController.swift"; sourceTree = "<group>"; };
 		09328D7720F9547B00A48983 /* VideoScrubberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoScrubberView.swift; sourceTree = "<group>"; };
 		09526EF7214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPanGestureRecognizer+Utilities.swift"; sourceTree = "<group>"; };
 		09526EF9214C39F0005A3F6B /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
@@ -639,6 +641,7 @@
 				09526EF7214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift */,
 				09526EF9214C39F0005A3F6B /* CGPoint+Extensions.swift */,
 				0924E524219C8EA700C31D5E /* NSDate+Extensions.swift */,
+				0924E526219E088800C31D5E /* UIWindow+RootViewController.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -1665,6 +1668,7 @@
 				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
+				0924E527219E088800C31D5E /* UIWindow+RootViewController.swift in Sources */,
 				0924E525219C8EA700C31D5E /* NSDate+Extensions.swift in Sources */,
 				BE780B5E1E32B41300DAA1EB /* SubredditThemeViewController.swift in Sources */,
 				BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */,

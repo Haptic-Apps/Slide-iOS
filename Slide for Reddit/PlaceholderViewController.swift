@@ -6,28 +6,37 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
+import Then
 import UIKit
 
 class PlaceholderViewController: UIViewController {
-    override func viewDidAppear(_ animated: Bool) {
-        
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
         self.view.backgroundColor = ColorUtil.backgroundColor
-        
-        let imageView = UIImageView(frame: CGRect(x: (self.view.frame.size.width / 2) - 62.5, y: (self.view.frame.size.height / 2) - 62.5, width: 125, height: 125))
-        imageView.contentMode = .scaleAspectFit
-        
-        let label = UILabel.init(frame: CGRect(x: (self.view.frame.size.width / 2) - 75, y: (self.view.frame.size.height / 2) + 8, width: 150, height: 150))
-        label.text = "SELECT A POST"
-        label.textColor = ColorUtil.fontColor
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.textAlignment = .center
-        
+
         let image = UIImage(named: "roundicon")!.convertToGrayScale()
-        imageView.image = image
-        
+
+        let imageView = UIImageView().then {
+            $0.image = image
+            $0.contentMode = .scaleAspectFit
+        }
+
+        let label = UILabel().then {
+            $0.text = "SELECT A POST"
+            $0.textColor = ColorUtil.fontColor
+            $0.font = UIFont.boldSystemFont(ofSize: 12)
+            $0.textAlignment = .center
+        }
+
         self.view.addSubview(imageView)
         self.view.addSubview(label)
 
+        imageView.centerAnchors == view.centerAnchors
+        imageView.sizeAnchors == .square(size: 125)
+        label.centerXAnchor == view.centerXAnchor
+        label.topAnchor == imageView.bottomAnchor + 12
     }
 }
 extension UIImage {
