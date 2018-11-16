@@ -382,7 +382,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        if indexPath.section == 0 {
+            return 74
+        } else {
+            return 64
+        }
     }
 
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
