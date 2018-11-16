@@ -831,6 +831,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         send.setImage(UIImage.init(named: "send")!.navIcon(), for: UIControlState.normal)
         send.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)
         send.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        send.accessibilityLabel = "Send"
         let sendB = UIBarButtonItem.init(customView: send)
         navigationItem.rightBarButtonItem = sendB
 
@@ -838,6 +839,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControlState.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        button.accessibilityLabel = "Close"
         button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
 
         let barButton = UIBarButtonItem.init(customView: button)

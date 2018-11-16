@@ -176,6 +176,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
         accessibilityView.isAccessibilityElement = true
+        accessibilityView.accessibilityTraits = UIAccessibilityTraitLink
         
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
@@ -1164,7 +1165,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
         setVisibility(upvote, actions.isVotingPossible)
         setVisibility(downvote, actions.isVotingPossible)
-        setVisibility(hide, actions.isHideEnabled)
+        setVisibility(hide, actions.isHideEnabled && !full)
         setVisibility(readLater, actions.isReadLaterEnabled)
         setVisibility(save, actions.isSaveEnabled && actions.isSavePossible)
         setVisibility(reply, actions.isReplyPossible && full)
