@@ -669,14 +669,18 @@ extension VideoMediaViewController {
         var playlist = ""
         
         var url = urlS
+        if let unencoded = url.removingPercentEncoding {
+            url = unencoded
+        }
+        url = url.stringByDecodingHTMLEntities
+
         if url.contains("#t=") {
             url = url.replacingOccurrences(of: "#t=", with: url.contains("?") ? "&t=" : "?t=")
         }
-        
-        url = url.replacingOccurrences(of: "&amp;", with: "&")
 
         let i = URL(string: url)
         if let dictionary = i?.queryDictionary {
+            print(dictionary)
             if let t = dictionary["t"] {
                 seconds = getTimeFromString(t)
             } else if let start = dictionary["start"] {
@@ -696,8 +700,8 @@ extension VideoMediaViewController {
             }
 
             if let u = dictionary["u"] {
-                let param = u
-                video = param.substring(param.indexOf("=")! + 1, length: param.contains("&") ? param.indexOf("&")! : param.length)
+                let param = u[u.indexOf("=")! + 1 ..< u.length]
+                video = param[0 ..< (param.contains("&") ? param.indexOf("&")! : param.length)]
             }
         }
         
