@@ -435,6 +435,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let height = view.frame.height
         let width = view.frame.width
         menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * 0.9)
+        menuNav!.expand()
+        menuNav!.view.endEditing(true)
         menuNav!.collapse()
     }
 
