@@ -3,7 +3,7 @@
     {
       "size" : "24x24",
       "idiom" : "watch",
-      "filename" : "slide_ios_1024-48_x_48.png",
+      "filename" : "slide_ios_small-5.png",
       "scale" : "2x",
       "role" : "notificationCenter",
       "subtype" : "38mm"
@@ -11,7 +11,7 @@
     {
       "size" : "27.5x27.5",
       "idiom" : "watch",
-      "filename" : "slide_ios_1024-55_x_55.png",
+      "filename" : "slide_ios_small-4.png",
       "scale" : "2x",
       "role" : "notificationCenter",
       "subtype" : "42mm"
@@ -26,14 +26,14 @@
     {
       "size" : "29x29",
       "idiom" : "watch",
-      "filename" : "slide_ios_1024-87_x_87.png",
+      "filename" : "slide_ios_small-2.png",
       "role" : "companionSettings",
       "scale" : "3x"
     },
     {
       "size" : "40x40",
       "idiom" : "watch",
-      "filename" : "40pt@2x-1.png",
+      "filename" : "slide_ios_small-3.png",
       "scale" : "2x",
       "role" : "appLauncher",
       "subtype" : "38mm"
@@ -49,7 +49,7 @@
     {
       "size" : "50x50",
       "idiom" : "watch",
-      "filename" : "slide_ios_1024-100_x_100.png",
+      "filename" : "slide_ios_small-1.png",
       "scale" : "2x",
       "role" : "appLauncher",
       "subtype" : "44mm"
@@ -65,7 +65,7 @@
     {
       "size" : "98x98",
       "idiom" : "watch",
-      "filename" : "slide_ios_1024-196_x_196.png",
+      "filename" : "slide_ios_small.png",
       "scale" : "2x",
       "role" : "quickLook",
       "subtype" : "42mm"
