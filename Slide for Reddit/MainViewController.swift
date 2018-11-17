@@ -434,10 +434,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         // 3- Adjust bottomSheet frame and initial position.
         let height = view.frame.height
         let width = view.frame.width
-        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset), width: width, height: height * 0.9)
-        menuNav!.expand()
-        menuNav!.view.endEditing(true)
-        menuNav!.collapse()
+        var nextOffset = CGFloat(0)
+        if self.splitViewController != nil && UIDevice.current.orientation == .portrait {
+            nextOffset = 64
+        }
+        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: height * 0.9)
     }
 
     func restartVC() {
