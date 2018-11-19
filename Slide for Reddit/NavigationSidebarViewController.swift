@@ -287,12 +287,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             guard let strongSelf = self else { return }
             if SettingValues.autoKeyboard {
                 strongSelf.header.search.becomeFirstResponder()
-                strongSelf.header.title.isUserInteractionEnabled = true
-                strongSelf.header.account.isUserInteractionEnabled = true
-                strongSelf.header.inbox.isUserInteractionEnabled = true
-                strongSelf.header.mod.isUserInteractionEnabled = true
-                strongSelf.header.settings.isUserInteractionEnabled = true
             }
+            strongSelf.header.title.isUserInteractionEnabled = true
+            strongSelf.header.account.isUserInteractionEnabled = true
+            strongSelf.header.inbox.isUserInteractionEnabled = true
+            strongSelf.header.mod.isUserInteractionEnabled = true
+            strongSelf.header.settings.isUserInteractionEnabled = true
         }
 
         UIView.animate(withDuration: 0.4,

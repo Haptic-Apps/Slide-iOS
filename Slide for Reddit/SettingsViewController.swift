@@ -497,11 +497,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 0:
                 ch = SettingsTheme()
                 (ch as! SettingsTheme).tochange = self
-            case 2:
+            case 1:
                 ch = SettingsLayout()
-            case 4:
-                ch = SubredditThemeViewController()
             case 3:
+                ch = SubredditThemeViewController()
+            case 2:
                 let alertController: BottomSheetActionController = BottomSheetActionController()
                 alertController.headerData = "AutoPlay settings"
                 for item in SettingValues.AutoPlay.cases {
@@ -515,9 +515,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                     }))
                 }
                 VCPresenter.presentAlert(alertController, parentVC: self)
-            case 5:
+            case 4:
                 ch = SettingsFont()
-            case 6:
+            case 5:
                 ch = SettingsComments()
             default:
                 break
