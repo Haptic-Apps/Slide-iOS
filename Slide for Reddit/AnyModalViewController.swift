@@ -83,6 +83,40 @@ class AnyModalViewController: UIViewController {
         }
     }
     
+    init(baseUrl: URL) {
+        super.init(nibName: nil, bundle: nil)
+        
+        let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
+        let videoType = VideoMediaViewController.VideoType.fromPath(url)
+        videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
+            guard let strongSelf = self else { return }
+            strongSelf.baseURL = URL(string: urlString)!
+            
+            DispatchQueue.main.async {
+                let avPlayerItem = AVPlayerItem(url: strongSelf.baseURL!)
+                strongSelf.videoView?.player = AVPlayer(playerItem: avPlayerItem)
+                strongSelf.embeddedPlayer = strongSelf.videoView!.player
+                strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+                do {
+                    if SettingValues.matchSilence {
+                        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                    } else {
+                        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                    }
+                } catch {
+                    
+                }
+                strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
+                strongSelf.doDisplayLink()
+
+                strongSelf.videoView?.player?.play()
+                strongSelf.videoView?.player?.isMuted = false
+            }
+            }, failure: {
+                
+        })
+    }
+
     override func prefersHomeIndicatorAutoHidden() -> Bool {
         return true
     }
@@ -284,14 +318,20 @@ class AnyModalViewController: UIViewController {
         UIApplication.shared.statusBarView?.backgroundColor = .clear
         super.viewWillAppear(animated)
         if self.videoView.player == nil {
-            videoView.player = self.embeddedPlayer
+            if self.embeddedPlayer != nil {
+                videoView.player = self.embeddedPlayer
+                doDisplayLink()
+            }
         }
+
+        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)
+    }
+    
+    func doDisplayLink() {
         displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
         displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
         displayLink?.isPaused = false
         videoView.player?.play()
-
-        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -299,7 +339,9 @@ class AnyModalViewController: UIViewController {
         if #available(iOS 11.0, *) {
             self.setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
-        self.embeddedPlayer.isMuted = false
+        if self.embeddedPlayer != nil {
+            self.embeddedPlayer.isMuted = false
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -331,8 +373,10 @@ class AnyModalViewController: UIViewController {
         view.addSubview(videoView)
         videoView.player = self.embeddedPlayer
         
-        scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
-        self.embeddedPlayer.isMuted = false
+        if videoView.player?.currentItem != nil {
+            scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
+            self.embeddedPlayer.isMuted = false
+        }
         
         // Prevent video from stopping system background audio
         do {

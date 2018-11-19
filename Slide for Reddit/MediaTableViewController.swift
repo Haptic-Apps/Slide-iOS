@@ -90,7 +90,9 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         if type == ContentType.CType.ALBUM && SettingValues.internalAlbumView {
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
-        } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == .GIF && SettingValues.internalGifView) || type == .STREAMABLE || type == .VID_ME || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
+        } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
+        } else if type == .GIF && SettingValues.internalGifView || type == .STREAMABLE || type == .VID_ME {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
                 if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                     let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
@@ -104,7 +106,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 }
                 return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
             }
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
+            return AnyModalViewController(baseUrl: contentUrl!)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
@@ -211,7 +213,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 if controller is AlbumViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
-                } else if controller is ModalMediaViewController {
+                } else if controller is ModalMediaViewController || controller is AnyModalViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
                 } else {

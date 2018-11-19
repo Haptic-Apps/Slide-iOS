@@ -76,7 +76,7 @@ class SettingsGeneral: UITableViewController {
                         print(error.localizedDescription)
                     } else {
                         DispatchQueue.main.async {
-                            self.notificationsSwitch.isOn = granted
+                            self.notificationsSwitch.isOn = granted && SettingValues.notifications
                             SettingValues.notifications = granted
                             UserDefaults.standard.set(granted, forKey: SettingValues.pref_notifications)
                             

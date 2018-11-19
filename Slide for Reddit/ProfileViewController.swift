@@ -187,7 +187,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
          moreB = UIBarButtonItem.init(customView: more)
         
         if navigationController != nil {
-            navigationItem.rightBarButtonItems = [ moreB!, sortB!]
+            navigationItem.rightBarButtonItems = [ moreB!/*, sortB!*/]
             self.navigationController?.navigationBar.shadowImage = UIImage()
         }
     }
@@ -395,8 +395,10 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     var currentVc = UIViewController()
     
     func showSortMenu(_ sender: UIButton?) {
-        (self.currentVc as? SingleSubredditViewController)?.showSortMenu(sender)
+        (self.currentVc as? ProfileViewController)?.showSortMenu(sender)
+        //TODO implement this!
     }
+    
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = vCs.index(of: viewController) else {
