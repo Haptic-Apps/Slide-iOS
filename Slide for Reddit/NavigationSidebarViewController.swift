@@ -327,6 +327,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         backgroundView.alpha = 0
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.view.endEditing(true)
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
