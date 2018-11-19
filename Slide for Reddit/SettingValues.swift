@@ -262,12 +262,11 @@ class SettingValues {
     }
     
     enum CommentGesturesMode: String {
-        static let cases: [CommentGesturesMode] = [.GESTURES, .NONE, .SWIPE_ANYWHERE, .SWIPE_BOTTOM_BAR]
+        static let cases: [CommentGesturesMode] = [.GESTURES, .NONE, .SWIPE_ANYWHERE]
         
         case GESTURES = "gestures"
         case NONE = "none"
         case SWIPE_ANYWHERE = "swipe_anywhere"
-        case SWIPE_BOTTOM_BAR = "bottom_bar"
 
         func description() -> String {
             switch self {
@@ -277,8 +276,6 @@ class SettingValues {
                 return "Slide between posts"
             case .SWIPE_ANYWHERE:
                 return "Swipe anywhere to exit"
-            case .SWIPE_BOTTOM_BAR:
-                return "Swipe bottom bar to exit"
             }
         }
     }

@@ -533,6 +533,19 @@ class AnyModalViewController: UIViewController {
         }
     }
     
+    var handlingPlayerItemDidreachEnd = false
+    
+    func playerItemDidreachEnd() {
+        self.videoView?.player?.seek(to: CMTimeMake(1, 1000), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { [weak self] (_) in
+            guard let strongSelf = self else { return }
+            // NOTE: the following is not needed since `strongSelf.videoView.player?.actionAtItemEnd` is set to `AVPlayerActionAtItemEnd.none`
+            //            if finished {
+            //                strongSelf.videoView?.player?.play()
+            //            }
+            strongSelf.handlingPlayerItemDidreachEnd = false
+        })
+    }
+
     // TODO: Also fade background to black?
     func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
@@ -678,8 +691,20 @@ extension AnyModalViewController {
             if let player = videoView.player {
                 scrubber.updateWithTime(elapsedTime: player.currentTime())
             }
+            if toReturnTo == nil {
+                let elapsedTime = embeddedPlayer.currentTime()
+                if CMTIME_IS_INVALID(elapsedTime) {
+                    return
+                }
+                let duration = Float(CMTimeGetSeconds(embeddedPlayer.currentItem!.duration))
+                let time = Float(CMTimeGetSeconds(elapsedTime))
+                
+                if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+                    handlingPlayerItemDidreachEnd = true
+                    self.playerItemDidreachEnd()
+                }
+            }
         }
-        
     }
 }
 
