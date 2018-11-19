@@ -1142,7 +1142,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         
         if !(parent is PagingCommentViewController) && self.navigationController != nil {
-            if SettingValues.commentGesturesMode == .SWIPE_ANYWHERE && !(self.navigationController?.delegate is SloppySwiper) {
+            if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .SWIPE_BOTTOM_BAR) && !(self.navigationController?.delegate is SloppySwiper) {
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
                 self.navigationController!.delegate = swiper!
             }
@@ -2390,7 +2390,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer == panGesture {
-            if SettingValues.commentGesturesMode != .GESTURES {
+            if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
                 return false
             }
             
@@ -2411,7 +2411,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         // Limit angle of pan gesture recognizer to avoid interfering with scrolling
         if gestureRecognizer == panGesture {
-            if SettingValues.commentGesturesMode != .GESTURES {
+            if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
                 return false
             }
             

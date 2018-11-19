@@ -383,7 +383,7 @@ class SettingsGestures: UITableViewController {
         self.rightSubActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
         self.rightSubActionCell.imageView?.layer.cornerRadius = 5
 
-        if SettingValues.commentGesturesMode != .GESTURES {
+        if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
             self.rightRightActionCell.isUserInteractionEnabled = false
             self.rightRightActionCell.contentView.alpha = 0.5
             self.rightLeftActionCell.isUserInteractionEnabled = false
