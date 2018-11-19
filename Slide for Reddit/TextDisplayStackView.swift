@@ -382,7 +382,7 @@ public class TextDisplayStackView: UIStackView {
         createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
-        let options = [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName] as [String : Any]
+        let options = [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName] as [String: Any]
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: options, documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
         while html.mutableString.contains("\t•\t") {

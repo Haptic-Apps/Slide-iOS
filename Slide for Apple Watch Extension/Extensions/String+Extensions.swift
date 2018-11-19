@@ -227,7 +227,7 @@ public extension String {
     }
     
     func times(_ n: Int) -> String {
-        return (0..<n).reduce("") { (str1, str2) in str1 + self }
+        return (0..<n).reduce("") { (str1, _) in str1 + self }
     }
     
     func toFloat() -> Float? {

@@ -58,10 +58,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         
         if !loaded && !loading {
-            defer {
-                self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
-                refreshControl.beginRefreshing()
-            }
+            self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
+            refreshControl.beginRefreshing()
         }
         if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
             self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)

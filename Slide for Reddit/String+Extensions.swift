@@ -38,16 +38,16 @@ extension String {
 // Mapping from XML/HTML character entity reference to character
 // From http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
 // From https://stackoverflow.com/a/30141700/7138792
-private let characterEntities : [ String : Character ] = [
+private let characterEntities: [String: Character] = [
     // XML predefined entities:
-    "&quot;"    : "\"",
-    "&amp;"     : "&",
-    "&apos;"    : "'",
-    "&lt;"      : "<",
-    "&gt;"      : ">",
+    "&quot;": "\"",
+    "&amp;": "&",
+    "&apos;": "'",
+    "&lt;": "<",
+    "&gt;": ">",
 
     // HTML character entity references:
-    "&nbsp;"    : "\u{00a0}",
+    "&nbsp;": "\u{00a0}",
 ]
 
 extension String {
@@ -55,7 +55,7 @@ extension String {
     /// Returns a new string made by replacing in the `String`
     /// all HTML character entity references with the corresponding
     /// character.
-    var stringByDecodingHTMLEntities : String {
+    var stringByDecodingHTMLEntities: String {
 
         // ===== Utility functions =====
 
@@ -63,7 +63,7 @@ extension String {
         // Unicode character, e.g.
         //    decodeNumeric("64", 10)   --> "@"
         //    decodeNumeric("20ac", 16) --> "€"
-        func decodeNumeric(_ string : String, base : Int) -> Character? {
+        func decodeNumeric(_ string: String, base: Int) -> Character? {
             guard let code = UInt32(string, radix: base),
                 let uniScalar = UnicodeScalar(code) else { return nil }
             return Character(uniScalar)
@@ -75,9 +75,9 @@ extension String {
         //     decode("&#x20ac;") --> "€"
         //     decode("&lt;")     --> "<"
         //     decode("&foo;")    --> nil
-        func decode(_ entity : String) -> Character? {
+        func decode(_ entity: String) -> Character? {
 
-            if entity.hasPrefix("&#x") || entity.hasPrefix("&#X"){
+            if entity.hasPrefix("&#x") || entity.hasPrefix("&#X") {
                 return decodeNumeric(entity.substring(with: entity.index(entity.startIndex, offsetBy: 3) ..< entity.index(entity.endIndex, offsetBy: -1)), base: 16)
             } else if entity.hasPrefix("&#") {
                 return decodeNumeric(entity.substring(with: entity.index(entity.startIndex, offsetBy: 2) ..< entity.index(entity.endIndex, offsetBy: -1)), base: 10)

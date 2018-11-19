@@ -1465,7 +1465,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }
             }
         }
-        
 
         if parent!.removed.contains(comment.id) || (!comment.removedBy.isEmpty() && !parent!.approved.contains(comment.id)) {
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
