@@ -107,7 +107,6 @@ class AnyModalViewController: UIViewController {
                     
                 }
                 strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
-                strongSelf.doDisplayLink()
 
                 strongSelf.videoView?.player?.play()
                 strongSelf.videoView?.player?.isMuted = false
@@ -322,19 +321,14 @@ class AnyModalViewController: UIViewController {
                 videoView.player = self.embeddedPlayer
             }
         }
-        
-        if self.videoView.player != nil {
-            doDisplayLink()
-        }
 
-        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)
-    }
-    
-    func doDisplayLink() {
         displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
         displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
         displayLink?.isPaused = false
+
         videoView.player?.play()
+
+        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)
     }
     
     override func viewDidAppear(_ animated: Bool) {
