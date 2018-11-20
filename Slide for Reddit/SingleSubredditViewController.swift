@@ -946,6 +946,8 @@ class SingleSubredditViewController: MediaViewController {
         tableView.layoutIfNeeded()
         setupFab(UIScreen.main.bounds.size)
     }
+    
+    var oldPosition: CGPoint = CGPoint.zero
 
     func search() {
         let alert = UIAlertController(title: "Search", message: "", preferredStyle: .alert)
@@ -2020,6 +2022,19 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
                 History.addSeen(s: links[indexPath.row], skipDuplicates: true)
             }
         }
+    }
+}
+
+extension SingleSubredditViewController: UIScrollViewDelegate {
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        if scrollView.contentOffset.y > oldPosition.y {
+            oldPosition = scrollView.contentOffset
+            return true
+        } else {
+            tableView.setContentOffset(oldPosition, animated: true)
+            oldPosition = CGPoint.zero
+        }
+        return false
     }
 }
 

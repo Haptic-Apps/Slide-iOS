@@ -70,13 +70,13 @@ class SettingsGeneral: UITableViewController {
         } else if changed == notificationsSwitch {
             SettingValues.notifications = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_notifications)
-            if #available(iOS 10.0, *) {
+            if changed.isOn, #available(iOS 10.0, *) {
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
                     if let error = error {
                         print(error.localizedDescription)
                     } else {
                         DispatchQueue.main.async {
-                            self.notificationsSwitch.isOn = granted && SettingValues.notifications
+                            self.notificationsSwitch.isOn = granted
                             SettingValues.notifications = granted
                             UserDefaults.standard.set(granted, forKey: SettingValues.pref_notifications)
                             
