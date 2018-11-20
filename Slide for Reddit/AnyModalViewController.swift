@@ -24,7 +24,7 @@ class AnyModalViewController: UIViewController {
         }
     }
 
-    var embeddedPlayer: AVPlayer!
+    var embeddedPlayer: AVPlayer?
     var videoView: VideoView!
     weak var toReturnTo: LinkCellView?
     var fullscreen = false
@@ -104,7 +104,7 @@ class AnyModalViewController: UIViewController {
                         try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
                     }
                 } catch {
-                    
+                    NSLog(error.localizedDescription)
                 }
                 strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
 
@@ -336,9 +336,7 @@ class AnyModalViewController: UIViewController {
         if #available(iOS 11.0, *) {
             self.setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
-        if self.embeddedPlayer != nil {
-            self.embeddedPlayer.isMuted = false
-        }
+        self.embeddedPlayer?.isMuted = false
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -351,7 +349,7 @@ class AnyModalViewController: UIViewController {
         }
         videoView.player?.play()
         
-        self.embeddedPlayer.isMuted = true
+        self.embeddedPlayer?.isMuted = true
         toReturnTo?.videoView.player = self.embeddedPlayer
         stopDisplayLink()
     }
@@ -372,7 +370,7 @@ class AnyModalViewController: UIViewController {
         
         if videoView.player?.currentItem != nil {
             scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
-            self.embeddedPlayer.isMuted = false
+            self.embeddedPlayer?.isMuted = false
         }
         
         // Prevent video from stopping system background audio
@@ -689,6 +687,9 @@ extension AnyModalViewController {
                 scrubber.updateWithTime(elapsedTime: player.currentTime())
             }
             if toReturnTo == nil {
+                guard let embeddedPlayer = embeddedPlayer else {
+                    return
+                }
                 let elapsedTime = embeddedPlayer.currentTime()
                 if CMTIME_IS_INVALID(elapsedTime) {
                     return
