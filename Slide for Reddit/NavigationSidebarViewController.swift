@@ -26,6 +26,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var muxColor = ColorUtil.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
+    
+    var expanded = false
 
     var header: NavigationHeaderView = NavigationHeaderView()
 
@@ -63,7 +65,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         self.header.inbox.isUserInteractionEnabled = false
         self.header.mod.isUserInteractionEnabled = false
         self.header.settings.isUserInteractionEnabled = false
-        self.header.title.isUserInteractionEnabled = false
     }
     
     struct Callbacks {
@@ -164,7 +165,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         self.header.inbox.isUserInteractionEnabled = false
         self.header.mod.isUserInteractionEnabled = false
         self.header.settings.isUserInteractionEnabled = false
-        self.header.title.isUserInteractionEnabled = false
 
         let y = UIScreen.main.bounds.height - bottomOffset
         if let parent = self.parentController, parent.menu.superview != nil {
@@ -191,12 +191,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
         
-        self.callbacks.didCollapse?()
         self.view.endEditing(true)
         
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
+            strongSelf.callbacks.didCollapse?()
         }
 
         UIView.animate(withDuration: 0.4,
@@ -288,7 +288,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             if SettingValues.autoKeyboard {
                 strongSelf.header.search.becomeFirstResponder()
             }
-            strongSelf.header.title.isUserInteractionEnabled = true
             strongSelf.header.account.isUserInteractionEnabled = true
             strongSelf.header.inbox.isUserInteractionEnabled = true
             strongSelf.header.mod.isUserInteractionEnabled = true

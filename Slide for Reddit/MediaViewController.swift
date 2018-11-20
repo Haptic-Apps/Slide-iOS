@@ -259,7 +259,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
             navigationController.navigationBar.shadowImage = UIImage()
             navigationController.navigationBar.barTintColor = color
             navigationController.navigationBar.titleTextAttributes = [
-                NSForegroundColorAttributeName: ColorUtil.fontColor as Any,
+                NSForegroundColorAttributeName: SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white as Any,
             ]
             // If no color was specified but the color muxer is doing its thing,
             // grab the "from" color so that we don't get a white flash.

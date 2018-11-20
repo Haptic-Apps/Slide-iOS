@@ -285,14 +285,18 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
 // MARK: Actions
 extension NavigationHeaderView {
     func you(_ sender: AnyObject) {
-        if AccountController.isLoggedIn {
-            self.parentController?.dismiss(animated: true) {
-                let profile = ProfileViewController.init(name: AccountController.currentName)
-                VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
-                
-            }
+        if !account.isUserInteractionEnabled {
+            (self.parentController as? NavigationSidebarViewController)?.expand()
         } else {
-            self.switchAccounts(sender)
+            if AccountController.isLoggedIn {
+                self.parentController?.dismiss(animated: true) {
+                    let profile = ProfileViewController.init(name: AccountController.currentName)
+                    VCPresenter.showVC(viewController: profile, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
+                    
+                }
+            } else {
+                self.switchAccounts(sender)
+            }
         }
     }
 
