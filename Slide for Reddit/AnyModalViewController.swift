@@ -320,8 +320,11 @@ class AnyModalViewController: UIViewController {
         if self.videoView.player == nil {
             if self.embeddedPlayer != nil {
                 videoView.player = self.embeddedPlayer
-                doDisplayLink()
             }
+        }
+        
+        if self.videoView.player != nil {
+            doDisplayLink()
         }
 
         UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)

@@ -90,6 +90,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         doCells()
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
     }
     
     func didPro(_ sender: AnyObject) {
