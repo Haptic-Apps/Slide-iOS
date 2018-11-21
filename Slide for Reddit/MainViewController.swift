@@ -1037,7 +1037,7 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
         let underlineFrame = CGRect.init(x: bounds.minX,
                 y: bounds.height - 7,
                 width: bounds.width,
-                height: 8.0)
+                height: 5)
         attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
         return attributes
     }
