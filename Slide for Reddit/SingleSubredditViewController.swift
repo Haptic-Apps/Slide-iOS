@@ -476,32 +476,33 @@ class SingleSubredditViewController: MediaViewController {
                 
                 UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                     self.fab?.transform = CGAffineTransform.identity
-                }, completion: { _ in
-                    
                 })
             }
 
-                if single && !MainViewController.isOffline {
-                    navigationController?.setToolbarHidden(false, animated: true)
-                } else if !disableBottom {
-                    UIView.animate(withDuration: 0.25) {
-                        if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView {
+            if single && !MainViewController.isOffline {
+                navigationController?.setToolbarHidden(false, animated: true)
+            } else if !disableBottom {
+                UIView.animate(withDuration: 0.25) {
+                    if let parent = self.parentController {
+                        if parent.menu.superview != nil, let topView = parent.menuNav?.topView {
                             parent.menu.deactivateImmediateConstraints()
                             parent.menu.topAnchor == topView.topAnchor
                             parent.menu.widthAnchor == 56
                             parent.menu.heightAnchor == 56
                             parent.menu.leftAnchor == topView.leftAnchor
-                            
+
                             parent.more.deactivateImmediateConstraints()
                             parent.more.topAnchor == topView.topAnchor
                             parent.more.widthAnchor == 56
                             parent.more.heightAnchor == 56
                             parent.more.rightAnchor == topView.rightAnchor
                         }
-                        self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
-                        self.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-                        self.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
+
+                        parent.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (parent.menuNav?.bottomOffset ?? 0)), width: parent.menuNav?.view.frame.width ?? 0, height: parent.menuNav?.view.frame.height ?? 0)
+                        parent.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+                        parent.more.transform = CGAffineTransform(scaleX: 1, y: 1)
                     }
+                }
             }
             self.isToolbarHidden = false
         }

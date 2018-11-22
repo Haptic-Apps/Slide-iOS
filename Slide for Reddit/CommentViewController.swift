@@ -793,7 +793,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.tableView.contentInset = normalInsets
     }
     
-    var savedBack = UIBarButtonItem()
+    var savedBack: UIBarButtonItem?
 
     func showSearchBar() {
         searchBar.alpha = 0
@@ -801,7 +801,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.tableHeaderView = UIView()
         savedTitleView = navigationItem.titleView
         navigationItem.titleView = searchBar
-        savedBack = navigationItem.leftBarButtonItem!
+        savedBack = navigationItem.leftBarButtonItem
         navigationItem.setRightBarButtonItems(nil, animated: true)
         navigationItem.setLeftBarButtonItems(nil, animated: true)
         self.navigationItem.setHidesBackButton(true, animated: false)

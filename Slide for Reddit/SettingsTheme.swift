@@ -305,13 +305,10 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             SettingValues.nightModeEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
             _ = ColorUtil.doInit()
-            self.loadView()
-            self.tableView.reloadData(with: .automatic)
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
         loadView()
-        tableView.reloadData()
         UserDefaults.standard.synchronize()
         if SettingValues.reduceColor {
             self.primary.isUserInteractionEnabled = false
@@ -330,6 +327,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = ""
         }
+        self.tableView.reloadData(with: .automatic)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {

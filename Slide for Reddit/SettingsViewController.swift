@@ -62,6 +62,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
+        if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
+            self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
+        }
     }
     
     @objc public func handleBackButton() {
@@ -91,6 +94,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         super.viewDidLoad()
         doCells()
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     func didPro(_ sender: AnyObject) {

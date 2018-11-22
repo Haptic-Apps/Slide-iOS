@@ -106,6 +106,7 @@ class RealmDataWrapper {
         rSubmission.archived = submission.archived
         rSubmission.locked = submission.locked
         rSubmission.urlString = try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        rSubmission.urlString = rSubmission.urlString.removingPercentEncoding ?? rSubmission.urlString
         rSubmission.title = submission.title
         rSubmission.commentCount = submission.numComments
         rSubmission.saved = submission.saved
@@ -257,6 +258,7 @@ class RealmDataWrapper {
         rSubmission.locked = submission.locked
         rSubmission.canMod = submission.canMod
         rSubmission.urlString = try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        rSubmission.urlString = rSubmission.urlString.removingPercentEncoding ?? rSubmission.urlString
         rSubmission.title = submission.title
         rSubmission.commentCount = submission.numComments
         rSubmission.saved = submission.saved
