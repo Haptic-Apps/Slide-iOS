@@ -109,7 +109,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         
         self.pages.append(SettingsWelcomeStart())
         self.pages.append(SettingsWelcomeTheme(parent: self))
-        self.pages.append(SettingsWelcomeLayout(parent: self))
+        //self.pages.append(SettingsWelcomeLayout(parent: self))
 
         setViewControllers([pages[0]], direction: .forward, animated: true, completion: nil)
         // pageControl
@@ -219,7 +219,7 @@ class SettingsWelcomeTheme: UIViewController {
         }
         
         //iOS theme
-        let about = UILabel.init(frame: CGRect.init(x: 48, y: 70, width: self.view.frame.size.width - 96, height: 100))
+        let about = UILabel.init(frame: CGRect.init(x: 48, y: 70, width: self.view.frame.size.width - 96, height: 150))
         about.textColor = ColorUtil.fontColor
         about.font = UIFont.boldSystemFont(ofSize: 26)
         let attributedTitle = NSMutableAttributedString(string: "Choose a theme to get started!", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 26), NSForegroundColorAttributeName: ColorUtil.fontColor])
