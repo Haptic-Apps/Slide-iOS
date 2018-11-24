@@ -322,6 +322,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             }
         }
     }
+    
+    func openComments(_ sender: AnyObject) {
+        if commentCallback != nil {
+            self.dismiss(animated: true) {
+                self.commentCallback!()
+            }
+        }
+    }
 
     func startTimerToHide(_ duration: Double = 5) {
         cancelled = false

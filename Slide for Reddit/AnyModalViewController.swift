@@ -40,6 +40,8 @@ class AnyModalViewController: UIViewController {
     var menuButton = UIButton()
     var downloadButton = UIButton()
     var bottomButtons = UIStackView()
+    var goToCommentsButton = UIButton()
+
     var closeButton = UIButton().then {
         $0.accessibilityIdentifier = "Close Button"
         $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -73,8 +75,9 @@ class AnyModalViewController: UIViewController {
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
     
-    init(cellView: LinkCellView) {
+    init(cellView: LinkCellView, _ commentCallback: (() -> Void)?) {
         super.init(nibName: nil, bundle: nil)
+        self.commentCallback = commentCallback
         self.embeddedPlayer = cellView.videoView.player
         self.toReturnTo = cellView
         self.baseURL = cellView.videoURL ?? cellView.link?.url
@@ -83,9 +86,9 @@ class AnyModalViewController: UIViewController {
         }
     }
     
-    init(baseUrl: URL) {
+    init(baseUrl: URL, _ commentCallback: (() -> Void)?) {
         super.init(nibName: nil, bundle: nil)
-        
+        self.commentCallback = commentCallback
         let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
         let videoType = VideoMediaViewController.VideoType.fromPath(url)
         videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
@@ -206,7 +209,8 @@ class AnyModalViewController: UIViewController {
     func connectActions() {
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
-        
+        goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
+
         dTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         dTap?.numberOfTapsRequired = 2
         dTap?.delegate = self
@@ -429,11 +433,18 @@ class AnyModalViewController: UIViewController {
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
+        goToCommentsButton = UIButton().then {
+            $0.accessibilityIdentifier = "Go to Comments Button"
+            $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
+            $0.isHidden = commentCallback == nil
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+
         closeButton.setImage(UIImage(named: "close")?.navIcon(true), for: .normal)
         closeButton.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
         self.view.addSubview(closeButton)
 
-        bottomButtons.addArrangedSubviews(UIView.flexSpace(), downloadButton, menuButton)
+        bottomButtons.addArrangedSubviews(goToCommentsButton, UIView.flexSpace(), downloadButton, menuButton)
     }
     
     func exit() {
