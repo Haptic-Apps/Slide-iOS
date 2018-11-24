@@ -259,7 +259,10 @@ extension ImageMediaViewController {
             scrollView.zoom(to: zoomRect, animated: true)
 //            scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
         } else {
-            let zoomRect = zoomRectForScale(scale: min(1, scrollView.maximumZoomScale), center: recognizer.location(in: recognizer.view))
+            let height = view.bounds.size.height
+            let width = view.bounds.size.width
+            let size = CGSize(width: width, height: height - bottomButtons.bounds.size.height)
+            let zoomRect = zoomRectForScale(scale: getFitZoomScale(size), center: recognizer.location(in: recognizer.view))
             scrollView.zoom(to: zoomRect, animated: true)
         }
     }
@@ -372,6 +375,13 @@ extension ImageMediaViewController: UIScrollViewDelegate {
         let minScale = min(widthScale, heightScale)
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale
+    }
+
+    func getFitZoomScale(_ size: CGSize) -> CGFloat {
+        let widthScale = (size.width / (imageView.image?.size.width ?? imageView.bounds.width))
+        let heightScale = (size.height / (imageView.image?.size.height ?? imageView.bounds.height))
+        let maxScale = max(widthScale, heightScale)
+        return maxScale
     }
 
     func scrollViewDidZoom(_ scrollView: UIScrollView) {

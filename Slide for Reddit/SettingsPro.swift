@@ -143,7 +143,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         six.textAlignment = .center
         
         self.shadowbox.textLabel?.text = "Shadowbox mode"
-        self.shadowbox.detailTextLabel?.text = "View your favorite subreddits distraction free"
+        self.shadowbox.detailTextLabel?.text = "View your favorite content in a full-screen distraction free shadowbox"
         self.shadowbox.detailTextLabel?.numberOfLines = 0
         self.shadowbox.backgroundColor = ColorUtil.foregroundColor
         self.shadowbox.textLabel?.textColor = ColorUtil.fontColor
@@ -170,7 +170,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.biometric.detailTextLabel?.textColor = ColorUtil.fontColor
         
         self.multicolumn.textLabel?.text = "Multicolumn mode"
-        self.multicolumn.detailTextLabel?.text = "A must-have for iPads! Set as many columns of content as you would like"
+        self.multicolumn.detailTextLabel?.text = "A must-have for iPads! This option allows you to display posts side-by-side in a configurable number of columns"
         self.multicolumn.detailTextLabel?.numberOfLines = 0
         self.multicolumn.backgroundColor = ColorUtil.foregroundColor
         self.multicolumn.textLabel?.textColor = ColorUtil.fontColor
@@ -433,7 +433,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true, completion: nil)
     }
-
+    
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
