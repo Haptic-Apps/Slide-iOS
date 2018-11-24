@@ -1280,20 +1280,22 @@ class SingleSubredditViewController: MediaViewController {
                         self.links += values
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty
-                        do {
-                            let realm = try! Realm()
-                            //todo insert
-                            realm.beginWrite()
-                            for submission in self.links {
-                                if submission.author != "PAGE_SEPARATOR" {
-                                    realm.create(type(of: submission), value: submission, update: true)
-                                    self.realmListing!.links.append(submission)
+                        DispatchQueue.main.async {
+                            do {
+                                let realm = try! Realm()
+                                //todo insert
+                                realm.beginWrite()
+                                for submission in self.links {
+                                    if submission.author != "PAGE_SEPARATOR" {
+                                        realm.create(type(of: submission), value: submission, update: true)
+                                        self.realmListing!.links.append(submission)
+                                    }
                                 }
+                                realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
+                                try realm.commitWrite()
+                            } catch {
+                                
                             }
-                            realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
-                            try realm.commitWrite()
-                        } catch {
-
                         }
                         
                         self.preloadImages(values)
