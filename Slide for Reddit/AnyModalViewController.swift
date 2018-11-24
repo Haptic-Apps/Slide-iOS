@@ -36,7 +36,9 @@ class AnyModalViewController: UIViewController {
     var wasPlayingWhenPaused: Bool = false
     
     var baseURL: URL?
-    
+    var urlToLoad: URL?
+    var spinnerIndicator = UIActivityIndicatorView()
+
     var menuButton = UIButton()
     var downloadButton = UIButton()
     var bottomButtons = UIStackView()
@@ -51,7 +53,6 @@ class AnyModalViewController: UIViewController {
     
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
-    var spinnerIndicator = UIActivityIndicatorView()
     var tap: UITapGestureRecognizer?
     var dTap: UITapGestureRecognizer?
 
@@ -75,9 +76,10 @@ class AnyModalViewController: UIViewController {
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
     
-    init(cellView: LinkCellView, _ commentCallback: (() -> Void)?) {
+    init(cellView: LinkCellView, _ commentCallback: (() -> Void)?, failure: ((_ url: URL) -> Void)?) {
         super.init(nibName: nil, bundle: nil)
         self.commentCallback = commentCallback
+        self.failureCallback = failure
         self.embeddedPlayer = cellView.videoView.player
         self.toReturnTo = cellView
         self.baseURL = cellView.videoURL ?? cellView.link?.url
@@ -86,37 +88,11 @@ class AnyModalViewController: UIViewController {
         }
     }
     
-    init(baseUrl: URL, _ commentCallback: (() -> Void)?) {
+    init(baseUrl: URL, _ commentCallback: (() -> Void)?, failure: ((_ url: URL) -> Void)?) {
         super.init(nibName: nil, bundle: nil)
         self.commentCallback = commentCallback
-        let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
-        let videoType = VideoMediaViewController.VideoType.fromPath(url)
-        videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
-            guard let strongSelf = self else { return }
-            strongSelf.baseURL = URL(string: urlString)!
-            
-            DispatchQueue.main.async {
-                let avPlayerItem = AVPlayerItem(url: strongSelf.baseURL!)
-                strongSelf.videoView?.player = AVPlayer(playerItem: avPlayerItem)
-                strongSelf.embeddedPlayer = strongSelf.videoView!.player
-                strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
-                do {
-                    if SettingValues.matchSilence {
-                        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-                    } else {
-                        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-                    }
-                } catch {
-                    NSLog(error.localizedDescription)
-                }
-                strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
-
-                strongSelf.videoView?.player?.play()
-                strongSelf.videoView?.player?.isMuted = false
-            }
-            }, failure: {
-                
-        })
+        self.failureCallback = failure
+        self.urlToLoad = baseUrl
     }
 
     override func prefersHomeIndicatorAutoHidden() -> Bool {
@@ -176,6 +152,45 @@ class AnyModalViewController: UIViewController {
         view.addSubview(volume)
         
         NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        
+        if urlToLoad != nil && self.embeddedPlayer == nil {
+            let url = VideoMediaViewController.format(sS: urlToLoad!.absoluteString, true)
+            let videoType = VideoMediaViewController.VideoType.fromPath(url)
+            
+            if videoType != .DIRECT && videoType != .REDDIT && videoType != .IMGUR {
+                showSpinner()
+            }
+            
+            videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
+                guard let strongSelf = self else { return }
+                strongSelf.baseURL = URL(string: urlString)!
+                
+                DispatchQueue.main.async {
+                    let avPlayerItem = AVPlayerItem(url: strongSelf.baseURL!)
+                    strongSelf.videoView?.player = AVPlayer(playerItem: avPlayerItem)
+                    strongSelf.embeddedPlayer = strongSelf.videoView!.player
+                    strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+                    do {
+                        if SettingValues.matchSilence {
+                            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                        } else {
+                            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                        }
+                    } catch {
+                        NSLog(error.localizedDescription)
+                    }
+                    strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
+                    strongSelf.hideSpinner()
+                    strongSelf.videoView?.player?.play()
+                    strongSelf.videoView?.player?.isMuted = false
+                }
+                }, failure: {
+                    self.dismiss(animated: true, completion: {
+                        self.failureCallback?(URL.init(string: url)!)
+                    })
+            })
+
+        }
     }
 
     override func viewWillLayoutSubviews() {
@@ -303,6 +318,14 @@ class AnyModalViewController: UIViewController {
             modalVC.present(alert, animated: true, completion: nil)
         } else {
             window.rootViewController!.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func openComments(_ sender: AnyObject) {
+        if commentCallback != nil {
+            self.dismiss(animated: true) {
+                self.commentCallback!()
+            }
         }
     }
     
@@ -498,6 +521,19 @@ class AnyModalViewController: UIViewController {
         }
     }
     
+    func showSpinner() {
+        spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator.center = self.view.center
+        spinnerIndicator.color = UIColor.white
+        self.view.addSubview(spinnerIndicator)
+        spinnerIndicator.startAnimating()
+    }
+    
+    func hideSpinner() {
+        self.spinnerIndicator.stopAnimating()
+        self.spinnerIndicator.isHidden = true
+    }
+
     func startTimerToHide(_ duration: Double = 5) {
         cancelled = false
         timer?.invalidate()
