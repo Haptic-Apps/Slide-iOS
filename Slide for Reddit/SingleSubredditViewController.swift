@@ -163,6 +163,16 @@ class SingleSubredditViewController: MediaViewController {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
 
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        if single {
+            self.edgesForExtendedLayout = UIRectEdge.all
+        } else {
+            self.edgesForExtendedLayout = []
+        }
+        
+        self.extendedLayoutIncludesOpaqueBars = true
+
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
@@ -208,10 +218,6 @@ class SingleSubredditViewController: MediaViewController {
             CachedTitle.titles.removeAll()
             self.tableView.reloadData()
         }
-
-        self.automaticallyAdjustsScrollViewInsets = false
-        self.edgesForExtendedLayout = UIRectEdge.all
-        self.extendedLayoutIncludesOpaqueBars = true
 
         first = false
         tableView.delegate = self
@@ -1280,22 +1286,20 @@ class SingleSubredditViewController: MediaViewController {
                         self.links += values
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty
-                        DispatchQueue.main.async {
-                            do {
-                                let realm = try! Realm()
-                                //todo insert
-                                realm.beginWrite()
-                                for submission in self.links {
-                                    if submission.author != "PAGE_SEPARATOR" {
-                                        realm.create(type(of: submission), value: submission, update: true)
-                                        self.realmListing!.links.append(submission)
-                                    }
+                        do {
+                            let realm = try! Realm()
+                            //todo insert
+                            realm.beginWrite()
+                            for submission in self.links {
+                                if submission.author != "PAGE_SEPARATOR" {
+                                    realm.create(type(of: submission), value: submission, update: true)
+                                    self.realmListing!.links.append(submission)
                                 }
-                                realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
-                                try realm.commitWrite()
-                            } catch {
-                                
                             }
+                            realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
+                            try realm.commitWrite()
+                        } catch {
+
                         }
                         
                         self.preloadImages(values)

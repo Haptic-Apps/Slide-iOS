@@ -605,9 +605,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        tabBar.width = self.view.frame.size.width
-        tabBar.height = statusbarHeight
-
         menuNav?.view.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
 
@@ -729,7 +726,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         doButtons()
 
         super.viewDidLoad()
-        self.edgesForExtendedLayout = []
         self.automaticallyAdjustsScrollViewInsets = false
 
         inHeadView.removeFromSuperview()

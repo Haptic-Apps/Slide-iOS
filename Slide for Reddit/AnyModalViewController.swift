@@ -161,35 +161,38 @@ class AnyModalViewController: UIViewController {
                 showSpinner()
             }
             
-            videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
-                guard let strongSelf = self else { return }
-                strongSelf.baseURL = URL(string: urlString)!
-                
-                DispatchQueue.main.async {
-                    let avPlayerItem = AVPlayerItem(url: strongSelf.baseURL!)
-                    strongSelf.videoView?.player = AVPlayer(playerItem: avPlayerItem)
-                    strongSelf.embeddedPlayer = strongSelf.videoView!.player
-                    strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
-                    do {
-                        if SettingValues.matchSilence {
-                            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-                        } else {
-                            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            DispatchQueue.global(qos: .userInteractive).async {
+                videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
+                    guard let strongSelf = self else { return }
+                    strongSelf.baseURL = URL(string: urlString)!
+                    DispatchQueue.main.async {
+                        if urlString.endsWith(".m3u8") {
+                            strongSelf.downloadButton.isHidden = true
                         }
-                    } catch {
-                        NSLog(error.localizedDescription)
+                        let avPlayerItem = AVPlayerItem(url: strongSelf.baseURL!)
+                        strongSelf.videoView?.player = AVPlayer(playerItem: avPlayerItem)
+                        strongSelf.embeddedPlayer = strongSelf.videoView!.player
+                        strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+                        do {
+                            if SettingValues.matchSilence {
+                                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                            } else {
+                                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                            }
+                        } catch {
+                            NSLog(error.localizedDescription)
+                        }
+                        strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
+                        strongSelf.hideSpinner()
+                        strongSelf.videoView?.player?.play()
+                        strongSelf.videoView?.player?.isMuted = false
                     }
-                    strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
-                    strongSelf.hideSpinner()
-                    strongSelf.videoView?.player?.play()
-                    strongSelf.videoView?.player?.isMuted = false
-                }
-                }, failure: {
-                    self.dismiss(animated: true, completion: {
-                        self.failureCallback?(URL.init(string: url)!)
-                    })
-            })
-
+                    }, failure: {
+                        self.dismiss(animated: true, completion: {
+                            self.failureCallback?(URL.init(string: url)!)
+                        })
+                })
+            }
         }
     }
 
@@ -835,5 +838,16 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
             return true
         }
         set {}
+    }
+}
+extension AVAsset {
+    var g_fileSize: Double {
+        var estimatedSize: Double = 0
+        for track in tracks {
+            let rate = Double(track.estimatedDataRate / 8)
+            let seconds = Double(CMTimeGetSeconds(track.timeRange.duration))
+            estimatedSize += seconds * rate
+        }
+        return estimatedSize
     }
 }

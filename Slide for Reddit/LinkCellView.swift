@@ -507,6 +507,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 self.addGestureRecognizer(comment)
             }
+            
             if longPress == nil {
                 longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
                 longPress?.minimumPressDuration = 0.25
@@ -945,6 +946,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         layoutForContent()
     }
     
+    var linkClicked = false
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
         let textClicked = label.attributedText.attributedSubstring(from: result.range).string
         // TODO: This doesn't seem needed to handle user links
@@ -959,6 +961,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 let urlClicked = result.url!
                 parentViewController?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
             }
+            linkClicked = true
         }
     }
     
@@ -1129,6 +1132,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0) {
+        self.linkClicked = false
 
         self.full = self is FullLinkCellView
         self.parentViewController = parent
@@ -2147,7 +2151,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func openComment(sender: UITapGestureRecognizer? = nil) {
-        if !full {
+        if !full && !linkClicked {
             if let delegate = self.del {
                 if videoView != nil {
                     videoView?.player?.pause()
@@ -2159,6 +2163,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     self.title.alpha = 1
                 }
             }
+        } else {
+            linkClicked = false
         }
     }
     
