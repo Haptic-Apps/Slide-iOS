@@ -15,7 +15,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var vCs: [UIViewController] = []
     var swiper: SloppySwiper?
 
-    public init(submissions: [RSubmission]) {
+    public init(submissions: [RSubmission], offline: Bool) {
         self.submissions = submissions
         var first = true
         
@@ -24,6 +24,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                 self.vCs.append(PagingCommentViewController.savedComment!)
             } else {
                 let comment = CommentViewController.init(submission: sub, single: false)
+                comment.offline = offline
                 self.vCs.append(comment)
             }
             first = false

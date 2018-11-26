@@ -59,6 +59,7 @@ class SingleSubredditViewController: MediaViewController {
     var primaryChosen: UIColor?
 
     var isModal = false
+    var offline = false
 
     var isAccent = false
 
@@ -1236,6 +1237,7 @@ class SingleSubredditViewController: MediaViewController {
                                         self.loading = false
                                         self.loading = false
                                         self.nomore = true
+                                        self.offline = true
                                         
                                         self.tableView.contentOffset = CGPoint.init(x: 0, y: -64)
 
@@ -1256,6 +1258,7 @@ class SingleSubredditViewController: MediaViewController {
                             self.links = []
                             self.page = 0
                         }
+                        self.offline = false
                         let before = self.links.count
                         if self.realmListing == nil {
                             self.realmListing = RListing()
@@ -2153,7 +2156,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             newLinks.append(links[i])
         }
 
-        let comment = PagingCommentViewController.init(submissions: newLinks)
+        let comment = PagingCommentViewController.init(submissions: newLinks, offline: self.offline)
         VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }

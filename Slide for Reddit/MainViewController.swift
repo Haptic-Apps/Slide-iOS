@@ -76,6 +76,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.navigationController?.setToolbarHidden(true, animated: false)
         ReadLater.delegate = self
         didUpdate()
+        if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
+            MainViewController.isOffline = true
+            let offlineVC = OfflineOverviewViewController(subs: finalSubs)
+            VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
+        }
     }
     
     public func viewWillAppearActions() {
@@ -460,9 +465,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         
         self.delegate = self
-        if subs != nil {
-            subs!.removeFromSuperview()
-            subs = nil
+        if self.subs != nil {
+            self.subs!.removeFromSuperview()
+            self.subs = nil
         }
 
         CachedTitle.titles.removeAll()
@@ -474,49 +479,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         finalSubs = []
         LinkCellView.cachedInternet = nil
         
-        if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
-            MainViewController.isOffline = true
-            menu.removeFromSuperview()
-            more.removeFromSuperview()
-            let baseSubs = Subscriptions.subreddits
-            do {
-                let realm = try Realm()
-                for subname in baseSubs {
-                    var hasLinks = false
-                    if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
-                        return item.subreddit == subname
-                    }).first {
-                        hasLinks = !listing.links.isEmpty
-                    }
-                    if hasLinks {
-                        finalSubs.append(subname)
-                    }
-                }
-            } catch {
+        finalSubs = Subscriptions.subreddits
+        MainViewController.isOffline = false
+        var subs = [UIMutableApplicationShortcutItem]()
+        for subname in finalSubs {
+            vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+            if subs.count < 2 && !subname.contains("/") {
+                subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
             }
-
-            // TODO: We don't need to do all this in advance. Load these on demand when the page changes.
-            for subname in finalSubs {
-                vCs.append(SingleSubredditViewController(subName: subname, parent: self))
-            }
-            
-            let offlineVC = OfflineOverviewViewController(subs: finalSubs)
-            VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
-        } else {
-            finalSubs = Subscriptions.subreddits
-            MainViewController.isOffline = false
-            var subs = [UIMutableApplicationShortcutItem]()
-            for subname in finalSubs {
-                vCs.append(SingleSubredditViewController(subName: subname, parent: self))
-                if subs.count < 2 && !subname.contains("/") {
-                    subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
-                }
-            }
-            
-            subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" ]))
-            subs.reverse()
-            UIApplication.shared.shortcutItems = subs
         }
+        
+        subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" ]))
+        subs.reverse()
+        UIApplication.shared.shortcutItems = subs
 
         if SettingValues.submissionGesturesEnabled {
             for view in view.subviews {
