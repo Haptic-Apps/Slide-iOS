@@ -355,7 +355,7 @@ public class ToolbarTextView: NSObject {
         let configT: TextField.Config = { textField in
             textField.becomeFirstResponder()
             textField.textColor = .black
-            textField.placeholder = "Caption"
+            textField.placeholder = "Caption (optional)"
             textField.left(image: UIImage.init(named: "size"), color: .black)
             textField.leftViewPadding = 12
             textField.borderWidth = 1
@@ -375,8 +375,11 @@ public class ToolbarTextView: NSObject {
         alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
             let text = self.insertText ?? ""
             let link = self.insertLink ?? ""
-            self.text!.insertText("[\(text)](\(link))")
-
+            if text.isEmpty() {
+                self.text!.insertText("\(link)")
+            } else {
+                self.text!.insertText("[\(text)](\(link))")
+            }
         }))
 
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
