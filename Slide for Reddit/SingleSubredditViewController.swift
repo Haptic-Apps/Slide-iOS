@@ -163,8 +163,6 @@ class SingleSubredditViewController: MediaViewController {
         if single && navigationController != nil {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
-
-        self.automaticallyAdjustsScrollViewInsets = false
         
         if single {
             self.edgesForExtendedLayout = UIRectEdge.all
@@ -193,6 +191,11 @@ class SingleSubredditViewController: MediaViewController {
         reloadNeedingColor()
         flowLayout.reset()
         tableView.reloadData()
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        if #available(iOS 11.0, *) {
+            self.tableView.contentInsetAdjustmentBehavior = .never
+        }
         
 //        if false && single && !isModal { //todo reimplement soon?
 //            swiper = SloppySwiper.init(navigationController: self.navigationController!)
@@ -242,7 +245,12 @@ class SingleSubredditViewController: MediaViewController {
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
-        
+        splitViewController?.navigationController?.navigationBar.isTranslucent = false
+        splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
+        if let bar = splitViewController?.navigationController?.navigationBar {
+            bar.heightAnchor == 0
+        }
+
         if single {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
             if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
@@ -253,11 +261,12 @@ class SingleSubredditViewController: MediaViewController {
         navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = false
-        
+        self.splitViewController?.navigationController?.navigationBar.shadowImage = UIImage()
+
         if single {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
+        
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         navigationController?.toolbar.tintColor = ColorUtil.fontColor
 
@@ -704,11 +713,9 @@ class SingleSubredditViewController: MediaViewController {
         self.tableView.register(PageCell.classForCoder(), forCellWithReuseIdentifier: "page")
         lastVersion = SingleSubredditViewController.cellVersion
 
-        var top = 20
+        var top = 68
         if #available(iOS 11.0, *) {
-            top = 0
-        } else {
-            top = 64
+            top += 20
         }
  
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
@@ -1337,8 +1344,10 @@ class SingleSubredditViewController: MediaViewController {
                                     self.tableView.reloadData()
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {
-                                        top += 22
-                                        top += 4
+                                        top += 26
+                                        if UIDevice.current.userInterfaceIdiom == .pad {
+                                            top -= 18
+                                        }
                                     }
                                 
                                     self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)

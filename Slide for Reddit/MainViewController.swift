@@ -86,6 +86,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     public func viewWillAppearActions() {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
+        self.splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
         
         if MainViewController.needsRestart {
             MainViewController.needsRestart = false

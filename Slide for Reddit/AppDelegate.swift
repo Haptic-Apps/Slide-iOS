@@ -244,6 +244,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
                 rootController = splitVC
+                splitVC.preferredDisplayMode = .allVisible
                 (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
             } else {
                 rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
