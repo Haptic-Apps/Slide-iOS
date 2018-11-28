@@ -154,12 +154,15 @@ class CachedTitle {
             endString.append(spacer)
             endString.append(tagString)
         }
-
-        let boldString = NSMutableAttributedString(string: "r/\(submission.subreddit)", attributes: attrs)
-
+        
+        var boldString: NSMutableAttributedString
         let color = ColorUtil.getColorForSub(sub: submission.subreddit)
         if color != ColorUtil.baseColor {
-            boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
+            let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: color])
+            boldString = preString
+            boldString.append(NSMutableAttributedString(string: "r/\(submission.subreddit)", attributes: attrs))
+        } else {
+            boldString = NSMutableAttributedString(string: "r/\(submission.subreddit)", attributes: attrs)
         }
 
         let infoString = NSMutableAttributedString()
