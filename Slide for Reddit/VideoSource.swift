@@ -26,9 +26,11 @@ class DirectVideoSource: VideoSource {
 
 class GfycatVideoSource: VideoSource {
     func load(url: String, completion: @escaping (String) -> Void, failure: @escaping () -> Void) {
-        let name = url.substring(url.lastIndexOf("/")!, length: url.length - url.lastIndexOf("/")!)
-
-        let finalURL = URL(string: "https://gfycat.com/cajax/get" + name)!
+        var name = url.substring(url.lastIndexOf("/")!, length: url.length - url.lastIndexOf("/")!)
+        if !(name.startsWith("/")) {
+            name = "/" + name
+        }
+        let finalURL = URL(string: "https://api.gfycat.com/v1/gfycats\(name)")!
         URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")

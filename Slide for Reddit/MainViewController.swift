@@ -507,7 +507,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
 
         let newIndex = 0
-        self.currentPage = 0
 
         let firstViewController = vCs[newIndex]
         
@@ -585,7 +584,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     func doCurrentPage(_ page: Int) {
-        self.currentPage = page
         guard page < vCs.count else { return }
         let vc = vCs[page] as! SingleSubredditViewController
         MainViewController.current = vc.sub
@@ -897,7 +895,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         return (vCs[currentPage] as? SingleSubredditViewController)
     }
 
-    var currentPage = 0
+    var currentPage: Int {
+        if let vc = viewControllers?[0] as? SingleSubredditViewController {
+            return finalSubs.firstIndex(of: vc.sub) ?? 0
+        } else {
+            return 0
+        }
+    }
 
     func showDrawer(_ sender: AnyObject) {
         if menuNav == nil {
@@ -944,7 +948,11 @@ extension MainViewController: UIPageViewControllerDataSource {
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = vCs.index(of: viewController) else {
+        var index = vCs.index(of: viewController)
+        if let vc = viewController as? SingleSubredditViewController {
+            index = finalSubs.firstIndex(of: vc.sub)
+        }
+        guard let viewControllerIndex = index else {
             return nil
         }
 
