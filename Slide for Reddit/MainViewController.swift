@@ -286,6 +286,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         menuNav?.dismiss(animated: true) {
             if Subscriptions.subreddits.contains(subreddit) {
                 let index = Subscriptions.subreddits.index(of: subreddit)
+                if index == nil {
+                    return
+                }
                 let firstViewController = self.vCs[index!]
                 
                 if SettingValues.subredditBar && !SettingValues.reduceColor {

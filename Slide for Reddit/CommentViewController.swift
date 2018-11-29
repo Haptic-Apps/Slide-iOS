@@ -2404,7 +2404,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 return false
             }
             
-            if SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionLeftRight == .NONE {
+            if (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightLeft == .NONE && translatingCell == nil) || (SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionLeftRight == .NONE && translatingCell == nil) {
                 return false
             }
         }
@@ -2425,7 +2425,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 return false
             }
             
-            if SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionLeftRight == .NONE {
+            if (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightLeft == .NONE && translatingCell == nil) || (SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionLeftRight == .NONE && translatingCell == nil) {
                 return false
             }
         }
@@ -2441,17 +2441,18 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!).x
-            if (velocity > 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE)) || (velocity < 0 && (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) {
+            if (velocity < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity > 0 && (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE) && translatingCell == nil) {
                 return
             }
         }
+
         if recognizer.state == .began || translatingCell == nil {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForRow(at: point)
             if indexpath == nil {
                 return
             }
-            
+
             guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else {
                 return
         }
