@@ -1345,7 +1345,7 @@ class SingleSubredditViewController: MediaViewController {
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {
                                         top += 26
-                                        if UIDevice.current.userInterfaceIdiom == .pad {
+                                        if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
                                             top -= 18
                                         }
                                     }
@@ -1375,6 +1375,13 @@ class SingleSubredditViewController: MediaViewController {
             }
 
         }
+    }
+    
+    var hasTopNotch: Bool {
+        if #available(iOS 11.0,  *) {
+            return UIApplication.shared.delegate?.window??.safeAreaInsets.top ?? 0 > 20
+        }
+        return false
     }
 
     func preloadImages(_ values: [RSubmission]) {

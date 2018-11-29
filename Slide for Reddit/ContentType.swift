@@ -223,9 +223,10 @@ class ContentType {
         if hostContains(host: host, bases: ["xkcd.com"]) && !(host == ("imgs.xkcd.com")) && !(host == ("what-if.xkcd.com")) {
             return CType.XKCD
         }
+        /* Currently doesn't work
         if hostContains(host: host, bases: ["tumblr.com"]) && (url?.path.contains("post"))! {
             return CType.TUMBLR
-        }
+        }*/
         if hostContains(host: host, bases: ["reddit.com", "redd.it"]) {
             return CType.REDDIT
         }
