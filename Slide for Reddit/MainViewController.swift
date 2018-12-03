@@ -23,22 +23,22 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             let readLater = UIButton.init(type: .custom)
             readLater.setImage(UIImage.init(named: "bin")?.navIcon(), for: UIControlState.normal)
             readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControlEvents.touchUpInside)
-
+            
             readLaterBadge?.removeFromSuperview()
             readLaterBadge = nil
-
+            
             readLaterBadge = BadgeSwift()
             readLater.addSubview(readLaterBadge!)
             readLaterBadge!.centerXAnchor == readLater.centerXAnchor
             readLaterBadge!.centerYAnchor == readLater.centerYAnchor - 2
-
+            
             readLaterBadge!.text = "\(count)"
             readLaterBadge!.insets = CGSize.zero
             readLaterBadge!.font = UIFont.systemFont(ofSize: 12)
             readLaterBadge!.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
             readLaterBadge!.badgeColor = .clear
             readLaterBadge!.shadowOpacityBadge = 0
-
+            
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
             if SettingValues.subredditBar {
@@ -54,7 +54,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             navigationItem.rightBarButtonItems = [sortB]
         }
     }
-
+    
     var isReload = false
     var readLaterBadge: BadgeSwift?
     var vCs: [UIViewController] = []
@@ -87,13 +87,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
-        
-        if MainViewController.needsRestart {
-            MainViewController.needsRestart = false
-            hardReset()
-            return
-        }
-        
+                
         let shouldBeNight = ColorUtil.shouldBeNight()
         if SubredditReorderViewController.changed || (shouldBeNight && ColorUtil.theme != SettingValues.nightTheme) || (!shouldBeNight && ColorUtil.theme != ColorUtil.defaultTheme) {
             var subChanged = false
@@ -132,9 +126,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
     }
     
-//    override func preferredScreenEdgesDeferringSystemGestures() -> UIRectEdge {
-//        return .bottom
-//    }
+    //    override func preferredScreenEdgesDeferringSystemGestures() -> UIRectEdge {
+    //        return .bottom
+    //    }
     
     override func prefersHomeIndicatorAutoHidden() -> Bool {
         return true
@@ -165,7 +159,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let build = dictionary["CFBundleVersion"] as! String
         return "\(version) build \(build)"
     }
-
+    
     func hardReset() {
         PagingCommentViewController.savedComment = nil
         navigationController?.popViewController(animated: false)
@@ -180,7 +174,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
         }
     }
-
+    
     var checkedClipboardOnce = false
     func checkForMail() {
         DispatchQueue.main.async {
@@ -209,7 +203,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                     })
                 }
             }
-
+            
             let lastMail = UserDefaults.standard.integer(forKey: "mail")
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             
@@ -230,7 +224,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         } else {
                             SettingValues.nsfwPreviews = UserDefaults.standard.bool(forKey: SettingValues.pref_nsfwPreviews)
                         }
-
+                        
                         let unread = profile.inboxCount
                         let diff = unread - lastMail
                         if profile.isMod && AccountController.modSubs.isEmpty {
@@ -257,13 +251,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         }
     }
-
+    
     func splitViewController(_ svc: UISplitViewController, shouldHide vc: UIViewController, in orientation: UIInterfaceOrientation) -> Bool {
         return false
     }
     
     public static var first = true
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if AccountController.isLoggedIn && !MainViewController.first {
@@ -271,17 +265,17 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         self.navigationController?.delegate = self
     }
-
+    
     func addAccount() {
         menuNav?.dismiss(animated: true)
         doLogin(token: nil)
     }
-
+    
     func addAccount(token: OAuth2Token) {
         menuNav?.dismiss(animated: true)
         doLogin(token: token)
     }
-
+    
     func goToSubreddit(subreddit: String) {
         menuNav?.dismiss(animated: true) {
             if Subscriptions.subreddits.contains(subreddit) {
@@ -299,7 +293,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 self.setViewControllers([firstViewController],
                                         direction: index! > self.currentPage ? .forward : .reverse,
                                         animated: SettingValues.subredditBar ? true : false,
-                                   completion: nil)
+                                        completion: nil)
                 self.doCurrentPage(index!)
             } else {
                 //todo better sanitation
@@ -313,20 +307,20 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             VCPresenter.openRedditLink("/u/" + profile.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         }
     }
-
+    
     func goToSubreddit(index: Int) {
         let firstViewController = vCs[index]
-
+        
         setViewControllers([firstViewController],
-                direction: .forward,
-                animated: false,
-                completion: nil)
+                           direction: .forward,
+                           animated: false,
+                           completion: nil)
         self.doCurrentPage(index)
     }
-
+    
     var alertController: UIAlertController?
     var tempToken: OAuth2Token?
-
+    
     func setToken(token: OAuth2Token) {
         print("Setting token")
         alertController?.dismiss(animated: false, completion: nil)
@@ -357,7 +351,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             (UIApplication.shared.delegate as! AppDelegate).syncColors(subredditController: self)
         }
     }
-
+    
     func complete(subs: [String]) {
         var finalSubs = subs
         if !subs.contains("slide_ios") {
@@ -401,7 +395,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     var finalSubs = [String]()
-
+    
     func makeMenuNav() {
         if menuNav != nil {
             more.removeFromSuperview()
@@ -423,22 +417,22 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         toolbar!.heightAnchor == 90
         //toolbar!.roundCorners([UIRectCorner.topLeft, UIRectCorner.topRight], radius: 15)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
-//        menuNav?.modalPresentationStyle = .overCurrentContext
-
-//        bottomSheetTransitioningDelegate.direction = .bottom
-//        bottomSheetTransitioningDelegate.coverageRatio = 0.85
-//        bottomSheetTransitioningDelegate.draggingView = menuNav?.view
-//        bottomSheetTransitioningDelegate.scrollView = menuNav?.tableView
-//        bottomSheetTransitioningDelegate.menuViewController = menuNav
-//        menuNav?.transitioningDelegate = bottomSheetTransitioningDelegate
-
-//        slideInTransitioningDelegate.coverageRatio = 0.85
-//        slideInTransitioningDelegate.direction = .bottom
-//        menuNav?.transitioningDelegate = slideInTransitioningDelegate
-
-//        self.coverPartiallyDelegate = CoverPartiallyPresentationController(presentedViewController: menuNav!, presenting: self, coverDirection: .down)
-//        menuNav?.transitioningDelegate = coverPartiallyDelegate
-
+        //        menuNav?.modalPresentationStyle = .overCurrentContext
+        
+        //        bottomSheetTransitioningDelegate.direction = .bottom
+        //        bottomSheetTransitioningDelegate.coverageRatio = 0.85
+        //        bottomSheetTransitioningDelegate.draggingView = menuNav?.view
+        //        bottomSheetTransitioningDelegate.scrollView = menuNav?.tableView
+        //        bottomSheetTransitioningDelegate.menuViewController = menuNav
+        //        menuNav?.transitioningDelegate = bottomSheetTransitioningDelegate
+        
+        //        slideInTransitioningDelegate.coverageRatio = 0.85
+        //        slideInTransitioningDelegate.direction = .bottom
+        //        menuNav?.transitioningDelegate = slideInTransitioningDelegate
+        
+        //        self.coverPartiallyDelegate = CoverPartiallyPresentationController(presentedViewController: menuNav!, presenting: self, coverDirection: .down)
+        //        menuNav?.transitioningDelegate = coverPartiallyDelegate
+        
         self.addChildViewController(menuNav!)
         self.view.addSubview(menuNav!.view)
         menuNav!.didMove(toParentViewController: self)
@@ -452,16 +446,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: height * 0.9)
     }
-
+    
     func restartVC() {
         if (splitViewController != nil && SettingValues.appMode != .SPLIT) || (splitViewController == nil && SettingValues.appMode == .SPLIT) {
             (UIApplication.shared.delegate as! AppDelegate).resetStack()
             //return
         }
         
+        let saved = getSubredditVC()
+        let savedPage = saved?.sub ?? ""
+        
         self.makeMenuNav()
         self.doButtons()
-
+        
         if SettingValues.subredditBar {
             self.dataSource = self
         } else {
@@ -473,12 +470,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             self.subs!.removeFromSuperview()
             self.subs = nil
         }
-
+        
         CachedTitle.titles.removeAll()
         view.backgroundColor = ColorUtil.backgroundColor
         splitViewController?.view.backgroundColor = ColorUtil.foregroundColor
         SubredditReorderViewController.changed = false
-
+        
         vCs = []
         finalSubs = []
         LinkCellView.cachedInternet = nil
@@ -487,7 +484,14 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         MainViewController.isOffline = false
         var subs = [UIMutableApplicationShortcutItem]()
         for subname in finalSubs {
-            vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+            if subname == savedPage {
+                vCs.append(saved!)
+                SingleSubredditViewController.firstPresented = false
+                saved!.reloadNeedingColor()
+                saved!.parentController = self
+            } else {
+                vCs.append(SingleSubredditViewController(subName: subname, parent: self))
+            }
             if subs.count < 2 && !subname.contains("/") {
                 subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
             }
@@ -496,7 +500,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" ]))
         subs.reverse()
         UIApplication.shared.shortcutItems = subs
-
+        
         if SettingValues.submissionGesturesEnabled {
             for view in view.subviews {
                 if view is UIScrollView {
@@ -508,20 +512,26 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 }
             }
         }
-
-        let newIndex = 0
-
+        
+        var newIndex = 0
+        
+        for sub in self.finalSubs {
+            if sub == savedPage {
+                newIndex = finalSubs.lastIndex(of: sub)!
+            }
+        }
+        
         let firstViewController = vCs[newIndex]
         
         setViewControllers([firstViewController],
-                direction: .forward,
-                animated: true,
-                completion: nil)
+                           direction: .forward,
+                           animated: true,
+                           completion: nil)
         
         self.doCurrentPage(newIndex)
-
+        
         self.makeMenuNav()
-
+        
         doButtons()
         
         tabBar.removeFromSuperview()
@@ -529,14 +539,14 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             setupTabBar(finalSubs)
         }
     }
-
+    
     var tabBar = MDCTabBar()
     var subs: UIView?
-
+    
     func setupTabBar(_ subs: [String]) {
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 48))
         tabBar.itemAppearance = .titles
-
+        
         tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         tabBar.unselectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor.withAlphaComponent(0.45) : UIColor.white.withAlphaComponent(0.45)
         tabBar.items = subs.enumerated().map { index, source in
@@ -550,7 +560,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         tabBar.backgroundColor = .clear
         tabBar.sizeToFit()
         //self.viewToMux = self.tabBar
-
+        
         self.navigationItem.titleView = tabBar
     }
     
@@ -558,7 +568,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let sub = gesture.view!.tag
         goToSubreddit(index: sub)
     }
-
+    
     var statusbarHeight: CGFloat {
         return UIApplication.shared.statusBarFrame.size.height
     }
@@ -571,21 +581,21 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             setToken(token: token!)
         }
     }
-
+    
     var menuNav: NavigationSidebarViewController?
     var currentTitle = "Slide"
-
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         menuNav?.dismiss(animated: true)
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        
         menuNav?.view.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
-
+    
     func doCurrentPage(_ page: Int) {
         guard page < vCs.count else { return }
         let vc = vCs[page] as! SingleSubredditViewController
@@ -632,7 +642,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
-
+        
         // Clear the menuNav's searchBar to refresh the menuNav
         self.menuNav?.searchBar?.text = nil
         
@@ -666,15 +676,15 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             self.getSubredditVC()?.showUI(false)
         }
     }
-
+    
     override func becomeFirstResponder() -> Bool {
         return true
     }
-
+    
     override var keyCommands: [UIKeyCommand]? {
         return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
     }
-
+    
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
             if let vc = self.getSubredditVC() {
@@ -682,9 +692,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         }, completion: nil)
     }
-
+    
     var inHeadView = UIView()
-
+    
     override func viewDidLoad() {
         self.navToMux = self.navigationController!.navigationBar
         self.color1 = ColorUtil.backgroundColor
@@ -693,18 +703,18 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
         self.splitViewController?.maximumPrimaryColumnWidth = 10000
         self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.33
-
+        
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && self.splitViewController != nil {
             self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
         }
         
         self.restartVC()
-
+        
         doButtons()
-
+        
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false
-
+        
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
@@ -712,13 +722,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if SettingValues.subredditBar {
             self.view.addSubview(inHeadView)
         }
-    
+        
         checkForUpdate()
-            
+        
         let formatter = DateFormatter()
         formatter.dateFormat = "MM/dd/yyyy"
         let today = formatter.string(from: Date())
-    
+        
         if SettingValues.autoCache {
             if UserDefaults.standard.string(forKey: "DAY_LAUNCH") != today {
                 _ = AutoCache.init(baseController: self)
@@ -727,17 +737,17 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         requestReviewIfAppropriate()
         
-//        drawerButton = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-//        drawerButton.backgroundColor = ColorUtil.foregroundColor
-//        drawerButton.clipsToBounds = true
-//        drawerButton.contentMode = .center
-//        drawerButton.layer.cornerRadius = 20
-//        drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
-//        self.view.addSubview(drawerButton)
-//        drawerButton.translatesAutoresizingMaskIntoConstraints = false
-//        drawerButton.addTapGestureRecognizer {
-//            self.showDrawer(self.drawerButton)
-//        }
+        //        drawerButton = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        //        drawerButton.backgroundColor = ColorUtil.foregroundColor
+        //        drawerButton.clipsToBounds = true
+        //        drawerButton.contentMode = .center
+        //        drawerButton.layer.cornerRadius = 20
+        //        drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
+        //        self.view.addSubview(drawerButton)
+        //        drawerButton.translatesAutoresizingMaskIntoConstraints = false
+        //        drawerButton.addTapGestureRecognizer {
+        //            self.showDrawer(self.drawerButton)
+        //        }
         
         toolbar?.addTapGestureRecognizer(action: {
             self.showDrawer(self.drawerButton)
@@ -746,19 +756,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
         swipe.direction = .up
         
-//        drawerButton.addGestureRecognizer(swipe)
-//        drawerButton.isHidden = true
-//
-//        drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
-//        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
-//        drawerButton.heightAnchor == 40
-//        drawerButton.widthAnchor == 40
+        //        drawerButton.addGestureRecognizer(swipe)
+        //        drawerButton.isHidden = true
+        //
+        //        drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
+        //        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
+        //        drawerButton.heightAnchor == 40
+        //        drawerButton.widthAnchor == 40
     }
     
     public static var isOffline = false
     var menuB = UIBarButtonItem()
     var drawerButton = UIImageView()
-
+    
     func doButtons() {
         if menu.superview != nil {
             return
@@ -768,21 +778,21 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         sortB = UIBarButtonItem.init(customView: sort)
-
+        
         let settings = UIButton.init(type: .custom)
         settings.setImage(UIImage.init(named: "settings")?.toolbarIcon(), for: UIControlState.normal)
         //todo this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         settings.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let settingsB = UIBarButtonItem.init(customView: settings)
-
+        
         let offline = UIButton.init(type: .custom)
         offline.setImage(UIImage.init(named: "offline")?.toolbarIcon(), for: UIControlState.normal)
         offline.addTarget(self, action: #selector(self.restartVC), for: UIControlEvents.touchUpInside)
         offline.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let offlineB = UIBarButtonItem.init(customView: offline)
-
+        
         let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
-
+        
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         if !MainViewController.isOffline {
@@ -811,13 +821,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             
             more.heightAnchor == 56
             more.widthAnchor == 56
-
+            
         } else {
             toolbarItems = [settingsB, flexButton, offlineB]
         }
         didUpdate()
     }
-
+    
     func checkForUpdate() {
         if !SettingValues.doneVersion() {
             let session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -842,7 +852,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         let g1 = first.title.capturedGroups(withRegex: "(\\d+(\\.\\d+)+)")
                         let g2 = second.title.capturedGroups(withRegex: "(\\d+(\\.\\d+)+)")
                         let lastUpdate = g1.isEmpty ? (g2.isEmpty ? "" : g2[0][0]) : g1[0][0]
-
+                        
                         if first.stickied && first.title.contains(Bundle.main.releaseVersionNumber!) {
                             storedTitle = first.title
                             storedLink = first.permalink
@@ -852,11 +862,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         } else if Bundle.main.releaseVersionNumber!.contains(lastUpdate) || Bundle.main.releaseVersionNumber!.contains(lastUpdate) {
                             storedTitle = g1.isEmpty ? second.title : first.title
                             storedLink = g1.isEmpty ? second.permalink : first.permalink
-
+                            
                             UserDefaults.standard.set(true, forKey: Bundle.main.releaseVersionNumber!)
                             UserDefaults.standard.synchronize()
                         }
-
+                        
                         if !storedTitle.isEmpty && !storedLink.isEmpty {
                             DispatchQueue.main.async {
                                 print("Showing")
@@ -869,20 +879,20 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         }
     }
-
+    
     func colorChanged(_ color: UIColor) {
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
         menuNav?.setColors(finalSubs[currentPage])
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         UIApplication.shared.statusBarView?.backgroundColor = .clear
         
         menuNav?.view.isHidden = true
     }
-
+    
     func showSortMenu(_ sender: UIButton?) {
         getSubredditVC()?.showSortMenu(sender)
     }
@@ -897,7 +907,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         return (vCs[currentPage] as? SingleSubredditViewController)
     }
-
+    
     var currentPage: Int {
         if let vc = viewControllers?[0] as? SingleSubredditViewController {
             return finalSubs.firstIndex(of: vc.sub) ?? 0
@@ -905,7 +915,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             return 0
         }
     }
-
+    
     func showDrawer(_ sender: AnyObject) {
         if menuNav == nil {
             makeMenuNav()
@@ -913,23 +923,23 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         menuNav!.setColors(MainViewController.current)
         menuNav!.expand()
     }
-
+    
     func shadowbox() {
         getSubredditVC()?.shadowboxMode()
     }
-
+    
     func showMenu(_ sender: AnyObject) {
         getSubredditVC()?.showMore(sender, parentVC: self)
     }
-
+    
     func showThemeMenu() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "", preferredStyle: .actionSheet)
-
+        
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
             print("Cancel")
         }
         actionSheetController.addAction(cancelActionButton)
-
+        
         for theme in ColorUtil.Theme.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
                 UserDefaults.standard.set(theme.rawValue, forKey: "theme")
@@ -939,16 +949,16 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
             actionSheetController.addAction(saveActionButton)
         }
-
+        
         //todo make this work on ipad, also maybe merge with current code in SettingsTheme?
         self.present(actionSheetController, animated: true, completion: nil)
     }
-
+    
     var selected = false
 }
 
 extension MainViewController: UIPageViewControllerDataSource {
-
+    
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
         var index = vCs.index(of: viewController)
@@ -958,40 +968,40 @@ extension MainViewController: UIPageViewControllerDataSource {
         guard let viewControllerIndex = index else {
             return nil
         }
-
+        
         let previousIndex = viewControllerIndex - 1
-
+        
         guard previousIndex >= 0 else {
             return nil
         }
-
+        
         guard vCs.count > previousIndex else {
             return nil
         }
-
+        
         return vCs[previousIndex]
     }
-
+    
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = vCs.index(of: viewController) else {
             return nil
         }
-
+        
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = vCs.count
-
+        
         guard orderedViewControllersCount != nextIndex else {
             return nil
         }
-
+        
         guard orderedViewControllersCount > nextIndex else {
             return nil
         }
-
+        
         return vCs[nextIndex]
     }
-
+    
 }
 
 extension MainViewController: UIPageViewControllerDelegate {
@@ -1002,7 +1012,7 @@ extension MainViewController: UIPageViewControllerDelegate {
         doCurrentPage(page!)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
-
+    
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         let pendingSub = (pendingViewControllers[0] as! SingleSubredditViewController).sub
         let prevSub = getSubredditVC()?.sub ?? ""
@@ -1013,30 +1023,30 @@ extension MainViewController: UIPageViewControllerDelegate {
 
 class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
     func indicatorAttributes(
-            for context: MDCTabBarIndicatorContext
-    ) -> MDCTabBarIndicatorAttributes {
+        for context: MDCTabBarIndicatorContext
+        ) -> MDCTabBarIndicatorAttributes {
         let bounds = context.bounds
         let attributes = MDCTabBarIndicatorAttributes()
         let underlineFrame = CGRect.init(x: bounds.minX,
-                y: bounds.height - 7,
-                width: bounds.width,
-                height: 5)
+                                         y: bounds.height - 7,
+                                         width: bounds.width,
+                                         height: 5)
         attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
         return attributes
     }
 }
 
 extension MainViewController: MDCTabBarDelegate {
-
+    
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
         let firstViewController = vCs[tabBar.items.index(of: item)!]
-
+        
         setViewControllers([firstViewController],
-                direction: .forward,
-                animated: false,
-                completion: nil)
-
+                           direction: .forward,
+                           animated: false,
+                           completion: nil)
+        
         self.doCurrentPage(tabBar.items.index(of: item)!)
     }
 }
