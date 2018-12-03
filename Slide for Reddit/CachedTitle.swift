@@ -13,6 +13,12 @@ class CachedTitle {
     static var titles: [String: NSAttributedString] = [:]
     static var removed: [String] = []
     static var approved: [String] = []
+    static var goldImage = UIImage(named: "gold")
+    static var platinumImage = UIImage(named: "platinum")
+    static var silverImage = UIImage(named: "silver")
+    static var goldAttachment: NSTextAttachment?
+    static var platinumAttachment: NSTextAttachment?
+    static var silverAttachment: NSTextAttachment?
 
     static func addTitle(s: RSubmission) {
         titles[s.getId()] = titleForSubmission(submission: s, full: false, white: false)
@@ -39,6 +45,15 @@ class CachedTitle {
 
     static func titleForSubmission(submission: RSubmission, full: Bool, white: Bool) -> NSAttributedString {
 
+        if goldAttachment == nil {
+            goldAttachment = NSTextAttachment()
+            goldAttachment!.image = goldImage!
+            silverAttachment = NSTextAttachment()
+            silverAttachment!.image = silverImage!
+            platinumAttachment = NSTextAttachment()
+            platinumAttachment!.image = platinumImage!
+        }
+        
         var colorF = ColorUtil.fontColor
         if white {
             colorF = .white
@@ -77,7 +92,7 @@ class CachedTitle {
             attributedTitle.append(spacer)
             if submission.platinum > 0 {
                 attributedTitle.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "P", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.lightBlue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                let gild = NSAttributedString(attachment: platinumAttachment!)
                 attributedTitle.append(gild)
                 if submission.platinum > 1 {
                     let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.platinum) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
@@ -86,7 +101,7 @@ class CachedTitle {
             }
             if submission.gold > 0 {
                 attributedTitle.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                let gild = NSAttributedString(attachment: goldAttachment!)
                 attributedTitle.append(gild)
                 if submission.gold > 1 {
                     let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
@@ -95,7 +110,7 @@ class CachedTitle {
             }
             if submission.silver > 0 {
                 attributedTitle.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "S", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.grey500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                let gild = NSAttributedString(attachment: silverAttachment!)
                 attributedTitle.append(gild)
                 if submission.silver > 1 {
                     let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.silver) ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
