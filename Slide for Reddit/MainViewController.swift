@@ -87,7 +87,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
-                
+        
         let shouldBeNight = ColorUtil.shouldBeNight()
         if SubredditReorderViewController.changed || (shouldBeNight && ColorUtil.theme != SettingValues.nightTheme) || (!shouldBeNight && ColorUtil.theme != ColorUtil.defaultTheme) {
             var subChanged = false
@@ -549,6 +549,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         tabBar.unselectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor.withAlphaComponent(0.45) : UIColor.white.withAlphaComponent(0.45)
+        
+        
         tabBar.items = subs.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }
@@ -562,6 +564,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         //self.viewToMux = self.tabBar
         
         self.navigationItem.titleView = tabBar
+        
+        for item in tabBar.items {
+            if item.title == currentTitle {
+                tabBar.setSelectedItem(item, animated: false)
+            }
+        }
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
@@ -1009,6 +1017,9 @@ extension MainViewController: UIPageViewControllerDelegate {
         let page = vCs.index(of: self.viewControllers!.first!)
         //        let page = tabBar.items.index(of: tabBar.selectedItem!)
         // TODO: Crashes here
+        guard page != nil else {
+            return
+        }
         doCurrentPage(page!)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
