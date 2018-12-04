@@ -84,7 +84,9 @@ class StreamableVideoSource: VideoSource {
                         var video = ""
                         if let url = gif?.files?.mp4mobile?.url {
                             video = url
-                        } else {
+                        }
+                        
+                        if video.isEmpty() {
                             video = (gif?.files?.mp4?.url!)!
                         }
                         if video.hasPrefix("//") {

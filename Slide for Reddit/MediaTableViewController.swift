@@ -202,7 +202,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             if urlString.startsWith("//") {
                 urlString = "https:" + urlString
             }
-            contentUrl = URL.init(string: String.init(htmlEncodedString: urlString))!
+            contentUrl = URL.init(string: urlString)!
             
             if ContentType.isSpoiler(uri: url) {
                 let controller = UIAlertController.init(title: "Spoiler", message: url.absoluteString, preferredStyle: .alert)
