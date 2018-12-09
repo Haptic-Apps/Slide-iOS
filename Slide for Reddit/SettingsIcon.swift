@@ -91,7 +91,7 @@ class SettingsIcon: UITableViewController {
         let title = indexPath.section == 0 ? premium[indexPath.row] : community[indexPath.row]
         let isDefault = indexPath.row == 0 && indexPath.section == 1
 
-        if indexPath.section == 1 || VCPresenter.proDialogShown(feature: true, self) {
+        if indexPath.section == 1 || !VCPresenter.proDialogShown(feature: true, self) {
             if #available(iOS 10.3, *) {
                 if isDefault {
                     UIApplication.shared.setAlternateIconName(nil) { (error) in
