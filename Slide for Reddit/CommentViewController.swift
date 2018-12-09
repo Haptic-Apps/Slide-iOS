@@ -2437,6 +2437,10 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         return true
     }
     
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE && translatingCell == nil
+    }
+    
     func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {

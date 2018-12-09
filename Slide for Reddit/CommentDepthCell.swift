@@ -313,14 +313,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             let progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
             
-            if progress > 0.2 && previousProgress <= 0.2 && isTwoForDirection(left: direction == 1) {
+            if progress > 0.2 && previousProgress <= 0.2 {
                 typeImage.isHidden = false
                 typeImage.alpha = 0
                 UIView.animate(withDuration: 0.2) {
                     self.typeImage.alpha = 1
                 }
                 progressBar.progressLayer.strokeColor = progressBar.progressTypeComment.getColor().cgColor
-            } else if progress < 0.2  && previousProgress >= 0.2 && isTwoForDirection(left: direction == 1) {
+            } else if progress < 0.2  && previousProgress >= 0.2 {
                 typeImage.alpha = 1
                 UIView.animate(withDuration: 0.2, animations: {
                     self.typeImage.alpha = 0
