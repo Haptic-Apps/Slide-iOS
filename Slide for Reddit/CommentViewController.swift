@@ -2403,10 +2403,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
                 return false
             }
-            
-            if (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightLeft == .NONE && translatingCell == nil) || (SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionLeftRight == .NONE && translatingCell == nil) {
-                return false
-            }
         }
         return true
     }
@@ -2424,10 +2420,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
                 return false
             }
-            
-            if (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionRightLeft == .NONE && translatingCell == nil) || (SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionLeftRight == .NONE && translatingCell == nil) {
-                return false
-            }
         }
         
         if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
@@ -2438,7 +2430,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE && translatingCell == nil
+        return SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && translatingCell == nil
     }
     
     func panCell(_ recognizer: UIPanGestureRecognizer) {
@@ -2457,11 +2449,10 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 return
             }
 
-            guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else {
-                return
-        }
+            guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
             translatingCell = cell
         }
+        
         translatingCell?.handlePan(recognizer)
         if recognizer.state == .ended {
             translatingCell = nil
