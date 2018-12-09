@@ -64,6 +64,29 @@
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
 		BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0958DE218A08620076966C /* SettingsViewMode.swift */; };
+		BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */; };
+		BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */; };
+		BE0C4F8521BCBE83006C54FF /* ic_retroapple@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6F21BCBE81006C54FF /* ic_retroapple@2x.png */; };
+		BE0C4F8621BCBE83006C54FF /* ic_green@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7021BCBE81006C54FF /* ic_green@2x.png */; };
+		BE0C4F8721BCBE83006C54FF /* ic_retroapple@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7121BCBE81006C54FF /* ic_retroapple@3x.png */; };
+		BE0C4F8821BCBE83006C54FF /* ic_tronteal@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7221BCBE81006C54FF /* ic_tronteal@3x.png */; };
+		BE0C4F8921BCBE83006C54FF /* ic_red@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7321BCBE81006C54FF /* ic_red@3x.png */; };
+		BE0C4F8A21BCBE83006C54FF /* ic_yellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7421BCBE81006C54FF /* ic_yellow@2x.png */; };
+		BE0C4F8B21BCBE83006C54FF /* ic_pink@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7521BCBE81006C54FF /* ic_pink@3x.png */; };
+		BE0C4F8C21BCBE83006C54FF /* ic_blue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7621BCBE81006C54FF /* ic_blue@2x.png */; };
+		BE0C4F8D21BCBE83006C54FF /* ic_black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7721BCBE81006C54FF /* ic_black@2x.png */; };
+		BE0C4F8E21BCBE83006C54FF /* ic_tronteal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7821BCBE82006C54FF /* ic_tronteal@2x.png */; };
+		BE0C4F8F21BCBE83006C54FF /* ic_tronblue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7921BCBE82006C54FF /* ic_tronblue@2x.png */; };
+		BE0C4F9021BCBE83006C54FF /* ic_green@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7A21BCBE82006C54FF /* ic_green@3x.png */; };
+		BE0C4F9121BCBE83006C54FF /* ic_lightblue@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7B21BCBE82006C54FF /* ic_lightblue@3x.png */; };
+		BE0C4F9221BCBE83006C54FF /* ic_purple@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7C21BCBE82006C54FF /* ic_purple@3x.png */; };
+		BE0C4F9321BCBE83006C54FF /* ic_tronblue@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7D21BCBE82006C54FF /* ic_tronblue@3x.png */; };
+		BE0C4F9421BCBE83006C54FF /* ic_yellow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7E21BCBE82006C54FF /* ic_yellow@3x.png */; };
+		BE0C4F9521BCBE83006C54FF /* ic_purple@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F7F21BCBE82006C54FF /* ic_purple@2x.png */; };
+		BE0C4F9621BCBE83006C54FF /* ic_black@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F8021BCBE83006C54FF /* ic_black@3x.png */; };
+		BE0C4F9721BCBE83006C54FF /* ic_pink@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F8121BCBE83006C54FF /* ic_pink@2x.png */; };
+		BE0C4F9821BCBE83006C54FF /* ic_blue@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F8221BCBE83006C54FF /* ic_blue@3x.png */; };
+		BE0C4F9A21BCC0B7006C54FF /* SettingsIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0C4F9921BCC0B7006C54FF /* SettingsIcon.swift */; };
 		BE0D639D215983260006A2DD /* PostActionMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D639C215983260006A2DD /* PostActionMenuController.swift */; };
 		BE0D63A3215AA5CD0006A2DD /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D63A2215AA5CD0006A2DD /* ContentType.swift */; };
 		BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */; };
@@ -372,6 +395,29 @@
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
 		BA9177B1039FF29FE7BFC503 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BE0958DE218A08620076966C /* SettingsViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewMode.swift; sourceTree = "<group>"; };
+		BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_lightblue@2x.png"; sourceTree = "<group>"; };
+		BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_red@2x.png"; sourceTree = "<group>"; };
+		BE0C4F6F21BCBE81006C54FF /* ic_retroapple@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_retroapple@2x.png"; sourceTree = "<group>"; };
+		BE0C4F7021BCBE81006C54FF /* ic_green@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_green@2x.png"; sourceTree = "<group>"; };
+		BE0C4F7121BCBE81006C54FF /* ic_retroapple@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_retroapple@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7221BCBE81006C54FF /* ic_tronteal@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_tronteal@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7321BCBE81006C54FF /* ic_red@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_red@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7421BCBE81006C54FF /* ic_yellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_yellow@2x.png"; sourceTree = "<group>"; };
+		BE0C4F7521BCBE81006C54FF /* ic_pink@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_pink@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7621BCBE81006C54FF /* ic_blue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_blue@2x.png"; sourceTree = "<group>"; };
+		BE0C4F7721BCBE81006C54FF /* ic_black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_black@2x.png"; sourceTree = "<group>"; };
+		BE0C4F7821BCBE82006C54FF /* ic_tronteal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_tronteal@2x.png"; sourceTree = "<group>"; };
+		BE0C4F7921BCBE82006C54FF /* ic_tronblue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_tronblue@2x.png"; sourceTree = "<group>"; };
+		BE0C4F7A21BCBE82006C54FF /* ic_green@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_green@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7B21BCBE82006C54FF /* ic_lightblue@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_lightblue@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7C21BCBE82006C54FF /* ic_purple@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_purple@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7D21BCBE82006C54FF /* ic_tronblue@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_tronblue@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7E21BCBE82006C54FF /* ic_yellow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_yellow@3x.png"; sourceTree = "<group>"; };
+		BE0C4F7F21BCBE82006C54FF /* ic_purple@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_purple@2x.png"; sourceTree = "<group>"; };
+		BE0C4F8021BCBE83006C54FF /* ic_black@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_black@3x.png"; sourceTree = "<group>"; };
+		BE0C4F8121BCBE83006C54FF /* ic_pink@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_pink@2x.png"; sourceTree = "<group>"; };
+		BE0C4F8221BCBE83006C54FF /* ic_blue@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_blue@3x.png"; sourceTree = "<group>"; };
+		BE0C4F9921BCC0B7006C54FF /* SettingsIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIcon.swift; sourceTree = "<group>"; };
 		BE0D639C215983260006A2DD /* PostActionMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostActionMenuController.swift; sourceTree = "<group>"; };
 		BE0D63A2215AA5CD0006A2DD /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWelcome.swift; sourceTree = "<group>"; };
@@ -776,6 +822,7 @@
 				BEF7483120DD894100B6236B /* SettingsGestures.swift */,
 				BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */,
 				BE0958DE218A08620076966C /* SettingsViewMode.swift */,
+				BE0C4F9921BCC0B7006C54FF /* SettingsIcon.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -818,6 +865,35 @@
 				BE3E5C121E16BA2200749C0C /* AlbumJSONBase.swift */,
 			);
 			name = Album;
+			sourceTree = "<group>";
+		};
+		BE4AB49C21BC4DAE001092C4 /* App Icons */ = {
+			isa = PBXGroup;
+			children = (
+				BE0C4F7721BCBE81006C54FF /* ic_black@2x.png */,
+				BE0C4F8021BCBE83006C54FF /* ic_black@3x.png */,
+				BE0C4F7621BCBE81006C54FF /* ic_blue@2x.png */,
+				BE0C4F8221BCBE83006C54FF /* ic_blue@3x.png */,
+				BE0C4F7021BCBE81006C54FF /* ic_green@2x.png */,
+				BE0C4F7A21BCBE82006C54FF /* ic_green@3x.png */,
+				BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */,
+				BE0C4F7B21BCBE82006C54FF /* ic_lightblue@3x.png */,
+				BE0C4F8121BCBE83006C54FF /* ic_pink@2x.png */,
+				BE0C4F7521BCBE81006C54FF /* ic_pink@3x.png */,
+				BE0C4F7F21BCBE82006C54FF /* ic_purple@2x.png */,
+				BE0C4F7C21BCBE82006C54FF /* ic_purple@3x.png */,
+				BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */,
+				BE0C4F7321BCBE81006C54FF /* ic_red@3x.png */,
+				BE0C4F6F21BCBE81006C54FF /* ic_retroapple@2x.png */,
+				BE0C4F7121BCBE81006C54FF /* ic_retroapple@3x.png */,
+				BE0C4F7921BCBE82006C54FF /* ic_tronblue@2x.png */,
+				BE0C4F7D21BCBE82006C54FF /* ic_tronblue@3x.png */,
+				BE0C4F7821BCBE82006C54FF /* ic_tronteal@2x.png */,
+				BE0C4F7221BCBE81006C54FF /* ic_tronteal@3x.png */,
+				BE0C4F7421BCBE81006C54FF /* ic_yellow@2x.png */,
+				BE0C4F7E21BCBE82006C54FF /* ic_yellow@3x.png */,
+			);
+			path = "App Icons";
 			sourceTree = "<group>";
 		};
 		BE6EA6C01E1C1DC200E9E709 /* Gfycat */ = {
@@ -913,6 +989,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BE4AB49C21BC4DAE001092C4 /* App Icons */,
 				BE3B7434210135BD00658DE9 /* html */,
 				090D6B7A20F3D8610052F3F6 /* Media */,
 				0965260320E1688400EA53BE /* Extensions */,
@@ -1265,15 +1342,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */,
+				BE0C4F8E21BCBE83006C54FF /* ic_tronteal@2x.png in Resources */,
 				BE77470820367D98006C72E8 /* Credits.plist in Resources */,
+				BE0C4F9621BCBE83006C54FF /* ic_black@3x.png in Resources */,
 				BE35217A1E3D2E3B00C30B8D /* Roboto-MediumItalic.ttf in Resources */,
 				BE35217C1E3D2E4000C30B8D /* RobotoCondensed-Italic.ttf in Resources */,
+				BE0C4F9021BCBE83006C54FF /* ic_green@3x.png in Resources */,
+				BE0C4F8821BCBE83006C54FF /* ic_tronteal@3x.png in Resources */,
+				BE0C4F9221BCBE83006C54FF /* ic_purple@3x.png in Resources */,
+				BE0C4F8521BCBE83006C54FF /* ic_retroapple@2x.png in Resources */,
+				BE0C4F8721BCBE83006C54FF /* ic_retroapple@3x.png in Resources */,
+				BE0C4F8F21BCBE83006C54FF /* ic_tronblue@2x.png in Resources */,
 				BE35217B1E3D2E3D00C30B8D /* RobotoCondensed-BoldItalic.ttf in Resources */,
+				BE0C4F8B21BCBE83006C54FF /* ic_pink@3x.png in Resources */,
+				BE0C4F9421BCBE83006C54FF /* ic_yellow@3x.png in Resources */,
+				BE0C4F8621BCBE83006C54FF /* ic_green@2x.png in Resources */,
+				BE0C4F9721BCBE83006C54FF /* ic_pink@2x.png in Resources */,
+				BE0C4F9321BCBE83006C54FF /* ic_tronblue@3x.png in Resources */,
 				BE8FCA121E0C46090063B8EF /* LaunchScreen.storyboard in Resources */,
 				BE3B7435210135BD00658DE9 /* html in Resources */,
+				BE0C4F8D21BCBE83006C54FF /* ic_black@2x.png in Resources */,
 				BE3521791E3D2E3900C30B8D /* Roboto-LightItalic.ttf in Resources */,
 				BE35216B1E3D22B000C30B8D /* Roboto-Light.ttf in Resources */,
+				BE0C4F9821BCBE83006C54FF /* ic_blue@3x.png in Resources */,
 				BEF6F5361E19B4A2002B03B6 /* adsources.txt in Resources */,
+				BE0C4F9521BCBE83006C54FF /* ic_purple@2x.png in Resources */,
+				BE0C4F8921BCBE83006C54FF /* ic_red@3x.png in Resources */,
 				BE44B5881FFAC66100D3F6D5 /* BSCell.xib in Resources */,
 				BE8FCA0F1E0C46090063B8EF /* Assets.xcassets in Resources */,
 				BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */,
@@ -1281,11 +1376,15 @@
 				BE3521781E3D2E3600C30B8D /* Roboto-Italic.ttf in Resources */,
 				BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */,
 				BEBF45DD1E23384500764BB8 /* comments.plist in Resources */,
+				BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */,
 				BE35216C1E3D22B000C30B8D /* Roboto-Medium.ttf in Resources */,
 				BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */,
 				BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */,
 				BE35216E1E3D22B000C30B8D /* RobotoCondensed-Regular.ttf in Resources */,
 				BE3521771E3D2E3300C30B8D /* Roboto-BoldItalic.ttf in Resources */,
+				BE0C4F8A21BCBE83006C54FF /* ic_yellow@2x.png in Resources */,
+				BE0C4F8C21BCBE83006C54FF /* ic_blue@2x.png in Resources */,
+				BE0C4F9121BCBE83006C54FF /* ic_lightblue@3x.png in Resources */,
 				B776B496CD1CCCF42B176B00 /* YTPlayer.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1723,6 +1822,7 @@
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
 				BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */,
 				BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */,
+				BE0C4F9A21BCC0B7006C54FF /* SettingsIcon.swift in Sources */,
 				B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */,
 				BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */,
 				098B5A4720EFC68100FE201B /* UITabBarController+Extensions.swift in Sources */,

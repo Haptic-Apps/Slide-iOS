@@ -23,6 +23,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var manageSubs: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "managesubs")
     var mainTheme: UITableViewCell = UITableViewCell()
     var postLayout: UITableViewCell = UITableViewCell()
+    var icon: UITableViewCell = UITableViewCell()
     var subThemes: UITableViewCell = UITableViewCell()
     var font: UITableViewCell = UITableViewCell()
     var comments: UITableViewCell = UITableViewCell()
@@ -80,6 +81,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         navigationController?.setNavigationBarHidden(false, animated: false)
         setupBaseBarColors()
         navigationController?.setToolbarHidden(true, animated: false)
+        self.icon.imageView?.image = Bundle.main.icon?.getCopy(withSize: CGSize(width: 25, height: 25))
     }
 
     override func loadView() {
@@ -160,6 +162,14 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.mainTheme.textLabel?.textColor = ColorUtil.fontColor
         self.mainTheme.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon()
         self.mainTheme.imageView?.tintColor = ColorUtil.fontColor
+
+        self.icon.textLabel?.text = "App icon"
+        self.icon.accessoryType = .disclosureIndicator
+        self.icon.backgroundColor = ColorUtil.foregroundColor
+        self.icon.textLabel?.textColor = ColorUtil.fontColor
+        self.icon.imageView?.image = Bundle.main.icon?.getCopy(withSize: CGSize(width: 25, height: 25))
+        self.icon.imageView?.layer.cornerRadius = 5
+        self.icon.imageView?.clipsToBounds = true
 
         self.goPro.textLabel?.text = "Support Slide, go Pro!"
         self.goPro.accessoryType = .disclosureIndicator
@@ -400,11 +410,12 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         case 1:
             switch indexPath.row {
             case 0: return self.mainTheme
-            case 1: return self.postLayout
-            case 2: return self.autoPlayCell
-            case 3: return self.subThemes
-            case 4: return self.font
-            case 5: return self.comments
+            case 1: return self.icon
+            case 2: return self.postLayout
+            case 3: return self.autoPlayCell
+            case 4: return self.subThemes
+            case 5: return self.font
+            case 6: return self.comments
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -503,10 +514,12 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 ch = SettingsTheme()
                 (ch as! SettingsTheme).tochange = self
             case 1:
-                ch = SettingsLayout()
-            case 3:
-                ch = SubredditThemeViewController()
+                ch = SettingsIcon()
             case 2:
+                ch = SettingsLayout()
+            case 4:
+                ch = SubredditThemeViewController()
+            case 3:
                 let alertController: BottomSheetActionController = BottomSheetActionController()
                 alertController.headerData = "AutoPlay settings"
                 for item in SettingValues.AutoPlay.cases {
@@ -520,9 +533,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                     }))
                 }
                 VCPresenter.presentAlert(alertController, parentVC: self)
-            case 4:
-                ch = SettingsFont()
             case 5:
+                ch = SettingsFont()
+            case 6:
                 ch = SettingsComments()
             default:
                 break
@@ -631,7 +644,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return (SettingValues.isPro) ? 5 : 6
-        case 1: return 6
+        case 1: return 7
         case 2: return 8
         case 3: return 5
         default: fatalError("Unknown number of sections")
@@ -645,4 +658,20 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         return "\(version) build \(build)"
     }
 
+}
+extension Bundle {
+    public var icon: UIImage? {
+        if #available(iOS 10.3, *) {
+            if let alt = UIApplication.shared.alternateIconName {
+                return UIImage(named: "ic_" + alt)
+            }
+        }
+        if let icons = infoDictionary?["CFBundleIcons"] as? [String: Any],
+            let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
+            let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
+            let lastIcon = iconFiles.last {
+            return UIImage(named: lastIcon)
+        }
+        return nil
+    }
 }
