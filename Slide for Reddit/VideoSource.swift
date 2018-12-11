@@ -30,6 +30,7 @@ class GfycatVideoSource: VideoSource {
         if !(name.startsWith("/")) {
             name = "/" + name
         }
+        name = name.split(".")[0]
         let finalURL = URL(string: "https://api.gfycat.com/v1/gfycats\(name)")!
         URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
@@ -40,6 +41,8 @@ class GfycatVideoSource: VideoSource {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
                         return
                     }
+                    
+                    print(json)
 
                     let gif = GfycatJSONBase.init(dictionary: json)
 

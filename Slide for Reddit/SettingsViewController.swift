@@ -514,7 +514,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 ch = SettingsTheme()
                 (ch as! SettingsTheme).tochange = self
             case 1:
-                ch = SettingsIcon()
+                if #available(iOS 10.3, *) {
+                    ch = SettingsIcon()
+                } else {
+                    let alert = UIAlertController(title: "Can't access alternate icons", message: "Alternate icons require iOS 10.3 or above", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
+                    VCPresenter.presentAlert(alert, parentVC: self)
+                }
             case 2:
                 ch = SettingsLayout()
             case 4:
