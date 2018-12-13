@@ -266,12 +266,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.navigationController?.delegate = self
     }
     
-    func addAccount() {
+    func addAccount(register: Bool) {
         menuNav?.dismiss(animated: true)
-        doLogin(token: nil)
+        doLogin(token: nil, register: register)
     }
     
-    static func doAddAccount() {
+    static func doAddAccount(register: Bool) {
         guard let window = UIApplication.shared.keyWindow else {
             fatalError("Window must exist when resetting the stack!")
         }
@@ -285,18 +285,18 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             
             (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: main)]
         } else {
-            rootController = UINavigationController(rootViewController:main)
+            rootController = UINavigationController(rootViewController: main)
         }
         
         window.setRootViewController(rootController, animated: false)
 
         (UIApplication.shared.delegate as! AppDelegate).login = main
-        AccountController.addAccount(context: main)
+        AccountController.addAccount(context: main, register: register)
     }
 
-    func addAccount(token: OAuth2Token) {
+    func addAccount(token: OAuth2Token, register: Bool) {
         menuNav?.dismiss(animated: true)
-        doLogin(token: token)
+        doLogin(token: token, register: register)
     }
     
     func goToSubreddit(subreddit: String) {
@@ -604,10 +604,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         return UIApplication.shared.statusBarFrame.size.height
     }
     
-    func doLogin(token: OAuth2Token?) {
+    func doLogin(token: OAuth2Token?, register: Bool) {
         (UIApplication.shared.delegate as! AppDelegate).login = self
         if token == nil {
-            AccountController.addAccount(context: self)
+            AccountController.addAccount(context: self, register: register)
         } else {
             setToken(token: token!)
         }

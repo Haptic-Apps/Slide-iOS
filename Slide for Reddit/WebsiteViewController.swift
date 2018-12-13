@@ -17,10 +17,12 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var webView: WKWebView = WKWebView()
     var myProgressView: UIProgressView = UIProgressView()
     var sub: String
+    var register: Bool
     
     init(url: URL, subreddit: String) {
         self.url = url
         self.sub = subreddit
+        self.register = false
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
     }
@@ -212,6 +214,15 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                                              completionHandler: {})
                     }
                 }
+            } else if register && (url?.absoluteString ?? "").contains("login.compact") {
+                if !(url?.absoluteString ?? "").contains("register") {
+                    var login = url?.absoluteString ?? ""
+                    login = login.replacingOccurrences(of: "login.compact", with: "register.compact")
+                    let myURLRequest: URLRequest = URLRequest(url: url!)
+                    webView.load(myURLRequest)
+                    self.register = false
+                }
+
             }
         }
 

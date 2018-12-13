@@ -410,9 +410,9 @@ extension NavigationHeaderView {
                     AccountController.switchAccount(name: s)
                     if !UserDefaults.standard.bool(forKey: "done" + s) {
                         do {
-                            try (self.parentController as! NavigationSidebarViewController).parentController?.addAccount(token: OAuth2TokenRepository.token(of: s))
+                            try (self.parentController as! NavigationSidebarViewController).parentController?.addAccount(token: OAuth2TokenRepository.token(of: s), register: false)
                         } catch {
-                            (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
+                            (self.parentController as! NavigationSidebarViewController).parentController?.addAccount(register: false)
                         }
                     } else {
                         Subscriptions.sync(name: s, completion: {
@@ -447,7 +447,7 @@ extension NavigationHeaderView {
         }
 
         optionMenu.addAction(Action(ActionData(title: "Add a new account", image: UIImage(named: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)), style: .default, handler: { _ in
-            (self.parentController as! NavigationSidebarViewController).parentController?.addAccount()
+            (self.parentController as! NavigationSidebarViewController).parentController?.addAccount(register: false)
         }))
         //todo better location checking
         parentController?.present(optionMenu, animated: true, completion: nil)

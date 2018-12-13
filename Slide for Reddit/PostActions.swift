@@ -666,19 +666,22 @@ class PostActions: NSObject {
         let alert = UIAlertController(title: "Report this content", message: "", preferredStyle: .alert)
         
         if !AccountController.isLoggedIn {
-            alert.addAction(UIAlertAction(title: "Log in to report this countent", style: .default, handler: { (_) in
-                MainViewController.doAddAccount()
+            alert.addAction(UIAlertAction(title: "Log in to report this content", style: .default, handler: { (_) in
+                MainViewController.doAddAccount(register: false)
             }))
-            alert.addAction(UIAlertAction(title: "Create an account", style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: "Create a Reddit account", style: .default, handler: { (_) in
                 let alert = UIAlertController(title: "Create a new Reddit account", message: "After finishing the process on the next screen, click the 'back' arrow to finish setting up your account!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
-                    //todo this
+                    MainViewController.doAddAccount(register: true)
                 }))
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
                     
                 }))
                 VCPresenter.presentAlert(alert, parentVC: parent)
             }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
+            }))
+            VCPresenter.presentAlert(alert, parentVC: parent)
         } else {
             let config: TextField.Config = { textField in
                 textField.becomeFirstResponder()

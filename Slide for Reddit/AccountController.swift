@@ -105,16 +105,16 @@ class AccountController {
 
     public static var names: [String] = []
 
-    static func addAccount(context: UIViewController) {
-        try! AccountController.challengeWithAllScopes(context)
+    static func addAccount(context: UIViewController, register: Bool) {
+        try! AccountController.challengeWithAllScopes(context, register: register)
     }
     
     /**
      Open OAuth2 page to try to authorize with all scopes in Safari.app.
      */
-    public static func challengeWithAllScopes(_ context: UIViewController) throws {
+    public static func challengeWithAllScopes(_ context: UIViewController, register: Bool) throws {
         do {
-            try self.challengeWithScopes(["identity", "edit", "flair", "history", "modconfig", "modflair", "modlog", "modposts", "modwiki", "mysubreddits", "privatemessages", "read", "report", "save", "submit", "subscribe", "vote", "wikiedit", "wikiread"], context)
+            try self.challengeWithScopes(["identity", "edit", "flair", "history", "modconfig", "modflair", "modlog", "modposts", "modwiki", "mysubreddits", "privatemessages", "read", "report", "save", "submit", "subscribe", "vote", "wikiedit", "wikiread"], context, register: register)
         } catch {
             throw error
         }
@@ -125,7 +125,7 @@ class AccountController {
      
      - parameter scopes: Scope you want to get authorizing. You can check all scopes at https://www.reddit.com/dev/api/oauth.
      */
-    public static func challengeWithScopes(_ scopes: [String], _ context: UIViewController) throws {
+    public static func challengeWithScopes(_ scopes: [String], _ context: UIViewController, register: Bool) throws {
         let commaSeparatedScopeString = scopes.joined(separator: ",")
         
         let length = 64
@@ -139,6 +139,7 @@ class AccountController {
                 else { throw ReddiftError.canNotCreateURLRequestForOAuth2Page as NSError }
             let vc: UIViewController
             let web = WebsiteViewController(url: authorizationURL, subreddit: "")
+            web.register = register
             vc = web
             VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: nil, parentViewController: context)
         } else {
