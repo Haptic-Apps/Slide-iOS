@@ -680,7 +680,7 @@ class PostActions: NSObject {
                 }))
                 VCPresenter.presentAlert(alert, parentVC: parent)
             }))
-            alert.addAction(UIAlertAction(title: "Remove post (log in later)", style: .cancel, handler: { (_) in
+            alert.addAction(UIAlertAction(title: "Remove post (log in later)", style: .default, handler: { (_) in
                 DispatchQueue.main.async {
                     delegate?.hide(index: index)
                 }
