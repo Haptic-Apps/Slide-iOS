@@ -374,7 +374,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func more(_ cell: LinkCellView) {
         if !offline {
-            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self, index: 0)
         }
     }
 

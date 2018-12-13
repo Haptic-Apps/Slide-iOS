@@ -453,7 +453,13 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             let user = cell.profile
             parentController?.goToUser(profile: user)
         } else if !cell.search.isEmpty() {
-            VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+            if !AccountController.isLoggedIn {
+                let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
+                VCPresenter.presentAlert(alert, parentVC: self)
+            } else {
+                VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+            }
         } else {
             let sub = cell.subreddit
             parentController?.goToSubreddit(subreddit: sub)
