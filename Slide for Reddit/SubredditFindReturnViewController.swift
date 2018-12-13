@@ -34,7 +34,7 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
             baseSubs.append(contentsOf: Subscriptions.subreddits)
         }
         if includeCollections {
-            baseSubs.append(contentsOf: ["all", "frontpage", "popular", "random", "myrandom", "randnsfw"])
+            baseSubs.append(contentsOf: ["all", "friends", "frontpage", "popular", "random", "myrandom", "randnsfw"])
         }
     }
     

@@ -17,6 +17,7 @@ protocol SubmissionMoreDelegate: class {
     func save(_ cell: LinkCellView)
     func hide(_ cell: LinkCellView)
     func showFilterMenu(_ cell: LinkCellView)
+    func applyFilters()
 }
 
 class PostActions: NSObject {
@@ -63,7 +64,15 @@ class PostActions: NSObject {
             VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
             
         }))
-        
+        alertController.addAction(Action(ActionData(title: "Report content", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+            PostActions.report(cell.link!, parent: parent)
+        }))
+        alertController.addAction(Action(ActionData(title: "Block user", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
+            PostActions.block(cell.link!.author, parent: parent) { () in
+                delegate.applyFilters()
+            }
+        }))
+
         if AccountController.isLoggedIn {
             if SettingValues.actionBarMode != .FULL && AccountController.modSubs.contains(link.subreddit) {
                 alertController.addAction(Action(ActionData(title: "Moderate", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
@@ -86,10 +95,6 @@ class PostActions: NSObject {
             
             alertController.addAction(Action(ActionData(title: "Crosspost", image: UIImage(named: "crosspost")!.menuIcon()), style: .default, handler: { _ in
                 PostActions.crosspost(cell.link!, parent)
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
-                PostActions.report(cell.link!, parent: parent)
             }))
         }
         
@@ -660,46 +665,77 @@ class PostActions: NSObject {
     static func report(_ thing: Object, parent: UIViewController) {
         let alert = UIAlertController(title: "Report this content", message: "", preferredStyle: .alert)
         
-        let config: TextField.Config = { textField in
-            textField.becomeFirstResponder()
-            textField.textColor = .black
-            textField.placeholder = "Reason (optional)"
-            textField.left(image: UIImage.init(named: "flag"), color: .black)
-            textField.leftViewPadding = 12
-            textField.borderWidth = 1
-            textField.cornerRadius = 8
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
-            textField.backgroundColor = .white
-            textField.keyboardAppearance = .default
-            textField.keyboardType = .default
-            textField.returnKeyType = .done
-            textField.action { textField in
-                self.reportText = textField.text
-            }
-        }
-        
-        alert.addOneTextField(configuration: config)
-        
-        alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { (_) in
-            let text = self.reportText ?? ""
-            do {
-                let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
-                try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (_) in
-                    DispatchQueue.main.async {
-                        BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)
-                    }
-                })
-            } catch {
-                DispatchQueue.main.async {
-                    BannerUtil.makeBanner(text: "Error sending report, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
+        if !AccountController.isLoggedIn {
+            alert.addAction(UIAlertAction(title: "Log in to report this countent", style: .default, handler: { (_) in
+                MainViewController.doAddAccount()
+            }))
+            alert.addAction(UIAlertAction(title: "Create an account", style: .default, handler: { (_) in
+                let alert = UIAlertController(title: "Create a new Reddit account", message: "After finishing the process on the next screen, click the 'back' arrow to finish setting up your account!", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
+                    //todo this
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
+                    
+                }))
+                VCPresenter.presentAlert(alert, parentVC: parent)
+            }))
+        } else {
+            let config: TextField.Config = { textField in
+                textField.becomeFirstResponder()
+                textField.textColor = .black
+                textField.placeholder = "Reason (optional)"
+                textField.left(image: UIImage.init(named: "flag"), color: .black)
+                textField.leftViewPadding = 12
+                textField.borderWidth = 1
+                textField.cornerRadius = 8
+                textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                textField.backgroundColor = .white
+                textField.keyboardAppearance = .default
+                textField.keyboardType = .default
+                textField.returnKeyType = .done
+                textField.action { textField in
+                    self.reportText = textField.text
                 }
             }
+            
+            alert.addOneTextField(configuration: config)
+            
+            alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { (_) in
+                let text = self.reportText ?? ""
+                do {
+                    let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (_) in
+                        DispatchQueue.main.async {
+                            BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)
+                        }
+                    })
+                } catch {
+                    DispatchQueue.main.async {
+                        BannerUtil.makeBanner(text: "Error sending report, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
+                    }
+                }
+            }))
+            
+            alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+            
+            VCPresenter.presentAlert(alert, parentVC: parent)
+
+        }
+    }
+    
+    static func block(_ username: String, parent: UIViewController, callback: @escaping () -> Void) {
+        let alert = UIAlertController(title: "Really block u/\(username)?", message: "", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
+            PostFilter.profiles.append(username as NSString)
+            PostFilter.saveAndUpdate()
+            callback()
         }))
-        
         alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
-        
+            
         VCPresenter.presentAlert(alert, parentVC: parent)
     }
+
     
     static func getIDString(_ json: JSONAny) -> reddift.Result<String> {
         if let json = json as? JSONDictionary {

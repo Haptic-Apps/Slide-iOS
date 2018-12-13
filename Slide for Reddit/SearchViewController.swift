@@ -44,7 +44,6 @@ class SearchViewController: ContentListingViewController {
         filterB = UIBarButtonItem.init(customView: filter)
 
         navigationItem.rightBarButtonItems = [editB, filterB, timeB]
-
     }
     
     var filterB = UIBarButtonItem.init()

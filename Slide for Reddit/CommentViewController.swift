@@ -18,7 +18,6 @@ import UIKit
 import XLActionController
 
 class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
-
     var menuCell: CommentDepthCell?
     var menuId: String?
     public var inHeadView = UIView()
@@ -40,6 +39,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
+    }
+    
+    func applyFilters() {
+        if PostFilter.filter([submission!], previous: nil, baseSubreddit: "all").isEmpty {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 
     init(submission: RSubmission, single: Bool) {

@@ -14,6 +14,10 @@ import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate {
     
+    func applyFilters() {
+        self.baseData.getData(reload: true)
+    }
+    
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
     }

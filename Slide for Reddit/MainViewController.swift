@@ -271,6 +271,29 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         doLogin(token: nil)
     }
     
+    static func doAddAccount() {
+        guard let window = UIApplication.shared.keyWindow else {
+            fatalError("Window must exist when resetting the stack!")
+        }
+
+        let main = MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        let rootController: UIViewController
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
+            let split = UISplitViewController()
+            rootController = split
+            split.preferredDisplayMode = .allVisible
+            
+            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: main)]
+        } else {
+            rootController = UINavigationController(rootViewController:main)
+        }
+        
+        window.setRootViewController(rootController, animated: false)
+
+        (UIApplication.shared.delegate as! AppDelegate).login = main
+        AccountController.addAccount(context: main)
+    }
+
     func addAccount(token: OAuth2Token) {
         menuNav?.dismiss(animated: true)
         doLogin(token: token)

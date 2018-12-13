@@ -67,10 +67,11 @@ class PostFilter {
         var contentMatch = false
 
         if (link.nsfw) {
-            if !SettingValues.nsfwEnabled {
+            if !AccountController.isLoggedIn {
                 contentMatch = true
-            }
-            if nsfw {
+            } else if !SettingValues.nsfwEnabled {
+                contentMatch = true
+            } else if nsfw {
                 contentMatch = true
             }
         }

@@ -769,7 +769,7 @@ class SingleSubredditViewController: MediaViewController {
                     case .failure:
                         print(result.error!.description)
                         DispatchQueue.main.async {
-                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
+                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
                                 self.load(reset: true)
                             } else {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -988,16 +988,28 @@ class SingleSubredditViewController: MediaViewController {
         alert.addOneTextField(configuration: config)
 
         alert.addAction(UIAlertAction(title: "Search All", style: .default, handler: { (_) in
-            let text = self.searchText ?? ""
-            let search = SearchViewController.init(subreddit: "all", searchFor: text)
-            VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            if !AccountController.isLoggedIn {
+                let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
+                VCPresenter.presentAlert(alert, parentVC: self)
+            } else {
+                let text = self.searchText ?? ""
+                let search = SearchViewController.init(subreddit: "all", searchFor: text)
+                VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            }
         }))
 
         if sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/") {
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { (_) in
                 let text = self.searchText ?? ""
-                let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
-                VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+                if !AccountController.isLoggedIn {
+                    let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
+                        VCPresenter.presentAlert(alert, parentVC: self)
+                } else {
+                    let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
+                    VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+                }
             }))
         }
 
@@ -2314,6 +2326,11 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: self)
+    }
+    
+    func applyFilters() {
+        self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub)
+        self.reloadDataReset()
     }
 
     func showFilterMenu(_ cell: LinkCellView) {
