@@ -173,6 +173,15 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        if register && (webView.url?.absoluteString ?? "").contains("login.compact") {
+            if !(webView.url?.absoluteString ?? "").contains("register") {
+                var login = webView.url?.absoluteString ?? ""
+                login = login.replacingOccurrences(of: "login.compact", with: "register.compact")
+                let myURLRequest: URLRequest = URLRequest(url: URL(string: login)!)
+                webView.load(myURLRequest)
+                self.register = false
+            }
+        }
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -214,15 +223,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                                              completionHandler: {})
                     }
                 }
-            } else if register && (url?.absoluteString ?? "").contains("login.compact") {
-                if !(url?.absoluteString ?? "").contains("register") {
-                    var login = url?.absoluteString ?? ""
-                    login = login.replacingOccurrences(of: "login.compact", with: "register.compact")
-                    let myURLRequest: URLRequest = URLRequest(url: url!)
-                    webView.load(myURLRequest)
-                    self.register = false
-                }
-
             }
         }
 

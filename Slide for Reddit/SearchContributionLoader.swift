@@ -19,7 +19,7 @@ class SearchContributionLoader: ContributionLoader {
     var sub: String
     var color: UIColor
     var canGetMore = true
-    var sorting: SearchSortBy = .relevance
+    var sorting: SearchSortBy = .top
     var time: SearchTimePeriod = .all
 
     init(query: String, sub: String) {

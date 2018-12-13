@@ -2226,6 +2226,12 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
 
 // MARK: - Submission More Delegate
 extension SingleSubredditViewController: SubmissionMoreDelegate {
+    func hide(index: Int) {
+        links.remove(at: index)
+        flowLayout.reset()
+        tableView.reloadData()
+    }
+
     func reply(_ cell: LinkCellView) {
 
     }
@@ -2309,7 +2315,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
     }
 
     func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self)
+        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
     }
 
     func readLater(_ cell: LinkCellView) {

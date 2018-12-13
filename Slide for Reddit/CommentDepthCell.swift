@@ -1003,8 +1003,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 par.saveComment(self.comment!)
             }))
         }
+        
         alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
-            PostActions.report(self.comment!, parent: par)
+            PostActions.report(self.comment!, parent: par, index: -1, delegate: self)
         }))
         
         alertController.addAction(Action(ActionData(title: "Tag user", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { _ in

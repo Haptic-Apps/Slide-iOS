@@ -13,6 +13,12 @@ import UIKit
 import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate {
+   
+    func hide(index: Int) {
+        baseData.content.remove(at: index)
+        flowLayout.reset()
+        tableView.reloadData()
+    }
     
     func applyFilters() {
         self.baseData.getData(reload: true)
@@ -495,7 +501,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
 
     func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self)
+        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
     }
 
     func upvote(_ cell: LinkCellView) {

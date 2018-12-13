@@ -18,6 +18,7 @@ protocol SubmissionMoreDelegate: class {
     func hide(_ cell: LinkCellView)
     func showFilterMenu(_ cell: LinkCellView)
     func applyFilters()
+    func hide(index: Int)
 }
 
 class PostActions: NSObject {
@@ -47,7 +48,7 @@ class PostActions: NSObject {
 
     }
     
-    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate) {
+    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
         
         let alertController: BottomSheetActionController = BottomSheetActionController()
@@ -65,7 +66,7 @@ class PostActions: NSObject {
             
         }))
         alertController.addAction(Action(ActionData(title: "Report content", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
-            PostActions.report(cell.link!, parent: parent)
+            PostActions.report(cell.link!, parent: parent, index: index, delegate: self)
         }))
         alertController.addAction(Action(ActionData(title: "Block user", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
             PostActions.block(cell.link!.author, parent: parent) { () in
@@ -335,7 +336,7 @@ class PostActions: NSObject {
             print(error)
         }
     }
-    
+
     static func modNSFW(_ cell: LinkCellView, _ set: Bool) {
         let id = cell.link!.id
         do {
@@ -662,7 +663,7 @@ class PostActions: NSObject {
     
     static var reportText: String?
     
-    static func report(_ thing: Object, parent: UIViewController) {
+    static func report(_ thing: Object, parent: UIViewController, index: Int, delegate: SubmissionMoreDelegate?) {
         let alert = UIAlertController(title: "Report this content", message: "", preferredStyle: .alert)
         
         if !AccountController.isLoggedIn {
@@ -678,6 +679,11 @@ class PostActions: NSObject {
                     
                 }))
                 VCPresenter.presentAlert(alert, parentVC: parent)
+            }))
+            alert.addAction(UIAlertAction(title: "Remove post (log in later)", style: .cancel, handler: { (_) in
+                DispatchQueue.main.async {
+                    delegate?.hide(index: index)
+                }
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
             }))
@@ -710,8 +716,10 @@ class PostActions: NSObject {
                     try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (_) in
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)
+                            delegate?.hide(index: index)
                         }
                     })
+                    
                 } catch {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Error sending report, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
