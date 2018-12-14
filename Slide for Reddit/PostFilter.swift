@@ -64,17 +64,7 @@ class PostFilter {
         let selftext = isSelftext(baseSubreddit)
         let videos = isVideo(baseSubreddit)
 
-        var contentMatch = false
-
-        if (link.nsfw) {
-            if !AccountController.isLoggedIn {
-                contentMatch = true
-            } else if !SettingValues.nsfwEnabled {
-                contentMatch = true
-            } else if nsfw {
-                contentMatch = true
-            }
-        }
+        var contentMatch = !AccountController.isLoggedIn || !SettingValues.nsfwEnabled || nsfw
 
         switch ContentType.getContentType(submission: link) {
         case .REDDIT, .EMBEDDED, .LINK:
