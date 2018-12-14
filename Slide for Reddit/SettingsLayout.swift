@@ -48,6 +48,9 @@ class SettingsLayout: UITableViewController {
     var hideCell: UITableViewCell = UITableViewCell()
     var hide = UISwitch()
     
+    var moreCell: UITableViewCell = UITableViewCell()
+    var more = UISwitch()
+
     var saveCell: UITableViewCell = UITableViewCell()
     var save = UISwitch()
 
@@ -90,6 +93,9 @@ class SettingsLayout: UITableViewController {
         } else if changed == largerThumbnail {
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
+        } else if changed == more {
+            SettingValues.menuButton = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_moreButton)
         } else if changed == infoBelowTitle {
             SettingValues.infoBelowTitle = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_infoBelowTitle)
@@ -424,6 +430,7 @@ class SettingsLayout: UITableViewController {
         createCell(readLaterCell, readLater, isOn: SettingValues.readLaterButton, text: "Show read later button")
         createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Always show thumbnail on link posts")
         createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
+        createCell(moreCell, more, isOn: SettingValues.menuButton, text: "Show menu button")
         flatModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
         flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows"
 
@@ -525,7 +532,8 @@ class SettingsLayout: UITableViewController {
             case 1: return self.smalltagCell
             case 2: return self.hideCell
             case 3: return self.saveCell
-            case 4: return self.readLaterCell
+            case 4: return self.moreCell
+            case 5: return self.readLaterCell
                 
             default: fatalError("Unknown row in section 4")
             }
@@ -539,7 +547,7 @@ class SettingsLayout: UITableViewController {
         case 1: return 4
         case 2: return 5
         case 3: return 3
-        case 4: return 5
+        case 4: return 6
         default: fatalError("Unknown number of sections")
         }
     }

@@ -83,6 +83,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var info: UILabel!
     var textView: TextDisplayStackView!
     var save: UIButton!
+    var menu: UIButton!
     var upvote: UIButton!
     var hide: UIButton!
     var edit: UIButton!
@@ -249,6 +250,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         self.save = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Save Button"
+            $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.foregroundColor
+        }
+        
+        self.menu = UIButton(type: .custom).then {
+            $0.accessibilityIdentifier = "Post menu"
             $0.contentMode = .center
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
@@ -439,7 +447,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.distribution = .fill
                 $0.spacing = 16
             }
-            buttons.addArrangedSubviews(edit, reply, readLater, save, hide, upvote, downvote, mod)
+            buttons.addArrangedSubviews(edit, reply, readLater, save, hide, upvote, downvote, mod, menu)
             self.contentView.addSubview(buttons)
         } else {
             buttons = UIStackView()
@@ -475,7 +483,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
             hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
             sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-            
+            menu.addTarget(self, action: #selector(LinkCellView.more(sender:)), for: .touchUpInside)
+
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap.delegate = self
@@ -912,6 +921,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
 
         var testedViews: [UIView] = [
+            menu,
             upvote,
             downvote,
             mod,
@@ -1173,6 +1183,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         setVisibility(readLater, actions.isReadLaterEnabled)
         setVisibility(save, actions.isSaveEnabled && actions.isSavePossible)
         setVisibility(reply, actions.isReplyPossible && full)
+        setVisibility(menu, actions.isMenuEnabled)
         setVisibility(edit, actions.isEditPossible && full)
         setVisibility(mod, actions.isModPossible)
 
@@ -1887,6 +1898,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         downvote.setImage(LinkCellImageCache.downvote, for: .normal)
         sideUpvote.setImage(LinkCellImageCache.upvoteSmall, for: .normal)
         sideDownvote.setImage(LinkCellImageCache.downvoteSmall, for: .normal)
+        menu.setImage(LinkCellImageCache.menu, for: .normal)
 
         save.setImage(ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save, for: .normal)
         mod.setImage(link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted, for: .normal)
@@ -2289,6 +2301,10 @@ class PostActionsManager {
 
     var isHideEnabled: Bool {
         return SettingValues.hideButton
+    }
+    
+    var isMenuEnabled: Bool {
+        return SettingValues.menuButton
     }
 
     var isReadLaterEnabled: Bool {

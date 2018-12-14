@@ -54,41 +54,44 @@ class PostFilter {
     }
 
     public static func matches(_ link: RSubmission, baseSubreddit: String) -> Bool {
-        let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) || PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) || PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) || contains(PostFilter.flairs, value: link.flair) || contains(PostFilter.selftext, value: link.htmlBody) || contains(PostFilter.titles, value: link.title) || (link.nsfw && !SettingValues.nsfwEnabled)
+        let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) ||
+            PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) ||
+            PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) ||
+            contains(PostFilter.flairs, value: link.flair) ||
+            contains(PostFilter.selftext, value: link.htmlBody) ||
+            contains(PostFilter.titles, value: link.title) ||
+            (link.nsfw && !SettingValues.nsfwEnabled)
 
-        let gifs = isGif(baseSubreddit)
-        let images = isImage(baseSubreddit)
-        let nsfw = isNsfw(baseSubreddit)
-        let albums = isAlbum(baseSubreddit)
-        let urls = isUrl(baseSubreddit)
-        let selftext = isSelftext(baseSubreddit)
-        let videos = isVideo(baseSubreddit)
-
-        var contentMatch = !AccountController.isLoggedIn || !SettingValues.nsfwEnabled || nsfw
+        var contentMatch = false
+        if link.nsfw {
+            // Hide NSFW if the user is not logged in, nsfw is not enabled (can only be done while authenticated),
+            // or the subreddit-specific nsfw filter is turned on
+            contentMatch = !AccountController.isLoggedIn || !SettingValues.nsfwEnabled || isNsfw(baseSubreddit)
+        }
 
         switch ContentType.getContentType(submission: link) {
         case .REDDIT, .EMBEDDED, .LINK:
-            if urls {
+            if isUrl(baseSubreddit) {
                 contentMatch = true
             }
         case .SELF, .NONE:
-            if selftext {
+            if isSelftext(baseSubreddit) {
                 contentMatch = true
             }
         case .ALBUM:
-            if albums {
+            if isAlbum(baseSubreddit) {
                 contentMatch = true
             }
         case .IMAGE, .DEVIANTART, .IMGUR, .XKCD:
-            if images {
+            if isImage(baseSubreddit) {
                 contentMatch = true
             }
         case .GIF:
-            if gifs {
+            if isGif(baseSubreddit) {
                 contentMatch = true
             }
         case .VID_ME, .VIDEO, .STREAMABLE:
-            if videos {
+            if isVideo(baseSubreddit) {
                 contentMatch = true
             }
         default:

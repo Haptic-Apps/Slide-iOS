@@ -15,6 +15,9 @@ class SettingsIcon: UITableViewController {
     var premium = ["retroapple", "tronteal", "pink", "black"]
     var community = ["default", "blue", "green", "lightblue", "purple", "red", "yellow"]
     
+    var premiumNames = ["Retro", "Tron", "Pink", "Black"]
+    var communityNames = ["Standard", "Blue", "Light Blue", "Purple", "Red", "Yellow"]
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(IconCell.classForCoder(), forCellReuseIdentifier: "icon")
@@ -76,12 +79,12 @@ class SettingsIcon: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "icon") as! IconCell
         
-        let title = indexPath.section == 0 ? premium[indexPath.row] : community[indexPath.row]
-        cell.title.text = title.capitalize()
+        let title = indexPath.section == 0 ? premiumNames[indexPath.row] : communityNames[indexPath.row]
+        cell.title.text = title
         
         let isDefault = indexPath.row == 0 && indexPath.section == 1
         
-        cell.iconView.image = isDefault ? UIImage(named: "AppIcon") : UIImage(named: "ic_" + title)
+        cell.iconView.image = isDefault ? UIImage(named: "AppIcon") : UIImage(named: "ic_" + (indexPath.section == 0 ? premium[indexPath.row] : community[indexPath.row]))
         return cell
     }
     

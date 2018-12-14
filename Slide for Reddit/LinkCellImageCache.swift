@@ -13,6 +13,7 @@ public class LinkCellImageCache {
     static var upvote = UIImage()
     static var downvote = UIImage()
     static var save = UIImage()
+    static var menu = UIImage()
 
     static var upvoteSmall = UIImage()
     static var downvoteSmall = UIImage()
@@ -64,6 +65,7 @@ public class LinkCellImageCache {
 
         votesIcon = UIImage(named: "upvote")!.smallIcon()
         commentsIcon = UIImage(named: "comments")!.smallIcon()
+        menu = UIImage(named: "ic_more_vert_white")!.menuIcon()
 
         reply = UIImage(named: "reply")!.menuIcon()
         hide = UIImage(named: "hide")!.menuIcon()

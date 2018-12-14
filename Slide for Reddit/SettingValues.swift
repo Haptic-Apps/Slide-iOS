@@ -108,6 +108,7 @@ class SettingValues {
     public static let pref_notifications = "NOTIFICATIONS"
     public static let pref_subBar = "SUB_BAR"
     public static let pref_appMode = "APP_MODE"
+    public static let pref_moreButton = "MORE_BUTTON"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -160,6 +161,7 @@ class SettingValues {
     public static var infoBelowTitle = false
     public static var matchSilence = true
     public static var showPages = true
+    public static var menuButton = true
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -345,6 +347,7 @@ class SettingValues {
 
         SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
         SettingValues.submissionGesturesEnabled = settings.object(forKey: SettingValues.pref_submissionGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_submissionGesturesEnabled)
+        SettingValues.menuButton = settings.object(forKey: SettingValues.pref_moreButton) == nil ? true : settings.bool(forKey: SettingValues.pref_moreButton)
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
         for time in TimeFilterWithin.cases {

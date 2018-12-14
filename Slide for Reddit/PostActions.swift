@@ -68,7 +68,7 @@ class PostActions: NSObject {
         alertController.addAction(Action(ActionData(title: "Report content", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
             PostActions.report(cell.link!, parent: parent, index: index, delegate: delegate)
         }))
-        alertController.addAction(Action(ActionData(title: "Block user", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(Action(ActionData(title: "Block user", image: UIImage(named: "block")!.menuIcon()), style: .default, handler: { _ in
             PostActions.block(cell.link!.author, parent: parent) { () in
                 delegate.applyFilters()
             }
