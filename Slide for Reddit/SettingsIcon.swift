@@ -16,7 +16,7 @@ class SettingsIcon: UITableViewController {
     var community = ["default", "blue", "green", "lightblue", "purple", "red", "yellow"]
     
     var premiumNames = ["Retro", "Tron", "Pink", "Black"]
-    var communityNames = ["Standard", "Blue", "Light Blue", "Purple", "Red", "Yellow"]
+    var communityNames = ["Standard", "Blue", "Green", "Light Blue", "Purple", "Red", "Yellow"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
