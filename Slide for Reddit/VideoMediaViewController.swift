@@ -16,7 +16,7 @@ import UIKit
 
 import AVFoundation
 
-class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecognizerDelegate {
+class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecognizerDelegate, SubtleVolumeDelegate {
 
     var isYoutubeView: Bool {
         return contentType == ContentType.CType.VIDEO
@@ -30,6 +30,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             return view.safeAreaInsets
         } else {
             return UIEdgeInsets.zero
+        }
+    }
+    
+    func subtleVolume(_ subtleVolume: SubtleVolume, willChange value: Double) {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+        } catch {
+            
         }
     }
     
@@ -86,7 +94,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
         volume.animation = .slideDown
         view.addSubview(volume)
-        
+        volume.delegate = self
+
         NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
     }
     
@@ -122,6 +131,11 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         videoView.player?.currentItem?.cancelPendingSeeks()
         videoView.player?.currentItem?.asset.cancelLoading()
         stopDisplayLink()
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+        } catch {
+            
+        }
         super.viewWillDisappear(animated)
     }
 
