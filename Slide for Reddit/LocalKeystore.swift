@@ -62,6 +62,9 @@ public class LocalKeystore {
 
             let data = try JSONSerialization.data(withJSONObject: JSONObject, options: [])
             UserDefaults.standard.set(data, forKey: "AUTH+\(token.name)")
+            var tokenArray = UserDefaults.standard.array(forKey: "SAVED_TOKENS") as? [String] ?? [String]()
+            tokenArray.append(token.name)
+            UserDefaults.standard.set(tokenArray, forKey: "SAVED_TOKENS")
             UserDefaults.standard.synchronize()
         } catch {
             throw error
