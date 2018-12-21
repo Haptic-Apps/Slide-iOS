@@ -39,7 +39,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: CommentDepthCell?
     var didDisappearCompletely = false
-
+    
     func isMenuShown() -> Bool {
         return menuCell != nil
     }
@@ -1166,17 +1166,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !loaded {
             refreshControl?.beginRefreshing()
         }
-        
-        if !(parent is PagingCommentViewController) && self.navigationController != nil {
-            if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
-                swiper = SloppySwiper.init(navigationController: self.navigationController!)
-                self.navigationController!.delegate = swiper!
-            }
-        }
-        
-        if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-            self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
-        }
     }
 
     var originalPosition: CGPoint?
@@ -1190,6 +1179,17 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         self.isHiding = false
         didDisappearCompletely = false
+        
+        if !(parent is PagingCommentViewController) && self.navigationController != nil {
+            if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
+                swiper = SloppySwiper.init(navigationController: self.navigationController!)
+                self.navigationController!.delegate = swiper!
+            }
+        }
+        
+        if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
+            self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
+        }
     }
 
     var duringAnimation = false
@@ -1708,7 +1708,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.isHiding = true
-        self.inHeadView.removeFromSuperview()
         if popup != nil {
             UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.popup.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
@@ -1716,6 +1715,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.popup.removeFromSuperview()
             })
         }
+        swiper = nil
     }
 
     func collapseAll() {
