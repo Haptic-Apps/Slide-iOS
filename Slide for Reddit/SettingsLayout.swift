@@ -394,7 +394,7 @@ class SettingsLayout: UITableViewController {
         doLink()
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
-        self.title = "General"
+        self.title = "Submission Layout"
         self.tableView.separatorStyle = .none
         
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
