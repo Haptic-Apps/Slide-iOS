@@ -140,14 +140,8 @@ class SettingsLayout: UITableViewController {
     }
     
     func doLink() {
-        link.contentView.removeFromSuperview()
-        if SettingValues.postImageMode == .THUMBNAIL || SettingValues.linkAlwaysThumbnail {
-            link = ThumbnailLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
-        } else {
-            link = BannerLinkCellView.init(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
-        }
         
-        let fakesub = RSubmission.init()
+        let fakesub = RSubmission()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
         let now: NSDate! = NSDate()
         
@@ -160,7 +154,7 @@ class SettingsLayout: UITableViewController {
         fakesub.edited = NSDate(timeIntervalSince1970: 1)
         fakesub.gilded = false
         fakesub.htmlBody = ""
-        fakesub.body = ""
+        fakesub.body = "This is where the selftext preview goes in a normal submission."
         fakesub.title = "Chameleons are cool!"
         fakesub.subreddit = "all"
         fakesub.archived = false
@@ -187,10 +181,18 @@ class SettingsLayout: UITableViewController {
         fakesub.height = 288
         fakesub.width = 636
         fakesub.vote = false
+
+        link.contentView.removeFromSuperview()
+        if SettingValues.postImageMode == .THUMBNAIL {
+            link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+        } else {
+            link = BannerLinkCellView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+        }
         
         link.aspectWidth = self.tableView.frame.size.width
         self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
         self.link.isUserInteractionEnabled = false
+        self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
         link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
         linkCell.contentView.addSubview(link.contentView)
