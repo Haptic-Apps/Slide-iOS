@@ -402,7 +402,7 @@ extension NavigationHeaderView {
 
     func switchAccounts(_ sender: AnyObject) {
         let optionMenu = BottomSheetActionController()
-        optionMenu.headerData = "Switch accounts"
+        optionMenu.headerData = "Accounts"
 
         for s in AccountController.names {
             if s != AccountController.currentName {
