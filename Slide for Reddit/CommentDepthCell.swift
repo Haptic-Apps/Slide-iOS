@@ -410,6 +410,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func showMenu(_ sender: AnyObject?) {
         checkReply { (completed) in
+            self.contentView.endEditing(true)
             if completed {
                 self.doShowMenu()
             }
@@ -439,6 +440,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         if parent!.menuCell != nil {
             parent!.menuCell?.checkReply { (finished) in
+                self.contentView.endEditing(true)
                 if finished {
                     self.parent!.menuCell!.hideCommentMenu()
                     self.parent!.reloadHeights()
@@ -577,9 +579,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func discard(_ sender: AnyObject) {
         checkReply { (completed) in
+            self.endEditing(true)
             if completed {
                 self.parent?.isReply = false
-                self.endEditing(true)
                 self.replyDelegate!.discard()
                 self.showCommentMenu()
                 self.parent!.reloadHeights()
@@ -1572,6 +1574,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func pushedSingleTap(_ sender: AnyObject?) {
         checkReply { (completed) in
+            self.contentView.endEditing(true)
             if completed {
                 self.parent?.pushedSingleTap(self)
             }

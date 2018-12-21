@@ -27,6 +27,7 @@ class InterfaceController: WKInterfaceController {
     var last = 0
     var currentSub = ""
     var isPro = false
+    var isNew = false
     
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
@@ -43,7 +44,16 @@ class InterfaceController: WKInterfaceController {
         }
     }
     
-    func getSubmissions(_ subreddit: String, reset: Bool) {
+    @IBAction func sortHot() {
+        self.getSubmissions(currentSub, reset: true)
+    }
+    
+    @IBAction func sortNew() {
+        self.getSubmissions(currentSub, reset: true, new: true)
+    }
+    
+    func getSubmissions(_ subreddit: String, reset: Bool, new: Bool = false) {
+        isNew = new
         currentSub = subreddit
         if reset {
             self.page = 1
@@ -55,7 +65,7 @@ class InterfaceController: WKInterfaceController {
                 self.table.setNumberOfRows(0, withRowType: "SubmissionRowController")
             }
         }
-        WCSession.default.sendMessage(["links": subreddit, "reset": reset], replyHandler: { (message) in
+        WCSession.default.sendMessage(["links": subreddit, "reset": reset, "new": isNew], replyHandler: { (message) in
             self.loadingImage.setHidden(true)
             if let newLinks = message["links"] as? [NSDictionary] {
                 self.links.append(contentsOf: newLinks)

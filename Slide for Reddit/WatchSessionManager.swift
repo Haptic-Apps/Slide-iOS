@@ -58,10 +58,17 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
             if message["reset"] as? Bool ?? true {
                 paginator = Paginator()
             }
+            let sort: LinkSortType
+            if message["new"] as? Bool ?? false {
+                sort = .new
+            } else {
+                sort = .hot
+            }
+            
             DispatchQueue.main.async {
                 let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
                 do {
-                    try redditSession.getList(self.paginator, subreddit: Subreddit.init(subreddit: message["links"] as! String), sort: .hot, timeFilterWithin: .day, limit: 10) { (result) in
+                    try redditSession.getList(self.paginator, subreddit: Subreddit.init(subreddit: message["links"] as! String), sort: sort, timeFilterWithin: .day, limit: 10) { (result) in
                         switch result {
                         case .failure(let error):
                             print(error)

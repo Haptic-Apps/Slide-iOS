@@ -4,6 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="watchOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14460.16"/>
     </dependencies>
@@ -183,6 +184,16 @@
                             <menuItem title="Go to subreddit" icon="play" id="VrF-CI-CIz">
                                 <connections>
                                     <action selector="gotosub" destination="AgC-eL-Hgc" id="mKS-LU-duf"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sort by Hot" image="hot" id="Qyz-jc-2ta">
+                                <connections>
+                                    <action selector="sortHot" destination="AgC-eL-Hgc" id="Mar-ZK-M0Z"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sort by New" image="new" id="Wdq-Gk-1st">
+                                <connections>
+                                    <action selector="sortNew" destination="AgC-eL-Hgc" id="Qgy-cn-R8W"/>
                                 </connections>
                             </menuItem>
                         </items>
