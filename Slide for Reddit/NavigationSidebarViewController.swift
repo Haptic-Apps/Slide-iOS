@@ -65,6 +65,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         self.header.inbox.isUserInteractionEnabled = false
         self.header.mod.isUserInteractionEnabled = false
         self.header.settings.isUserInteractionEnabled = false
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
+                                               name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
+                                               name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     struct Callbacks {
@@ -660,6 +665,39 @@ extension NavigationSidebarViewController: UIScrollViewDelegate {
             }
         }
         lastY = scrollView.contentOffset.y
+    }
+}
+
+extension NavigationSidebarViewController {
+    func keyboardWillBeShown(notification: NSNotification) {
+        //get the end position keyboard frame
+        let keyInfo: Dictionary = notification.userInfo!
+        var keyboardFrame: CGRect = keyInfo[UIKeyboardFrameEndUserInfoKey] as! CGRect
+        //convert it to the same view coords as the tableView it might be occluding
+        keyboardFrame = self.tableView.convert(keyboardFrame, to: self.tableView)
+        //calculate if the rects intersect
+        let intersect: CGRect = keyboardFrame.intersection(self.tableView.bounds)
+        if !intersect.isNull {
+            //yes they do - adjust the insets on tableview to handle it
+            //first get the duration of the keyboard appearance animation
+            let duration: TimeInterval = keyInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
+            // Change the table insets to match - animated to the same duration of the keyboard appearance
+            UIView.animate(withDuration: duration, animations: {
+                let edgeInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardFrame.size.height, right: 0)
+                self.tableView.contentInset = edgeInset
+                self.tableView.scrollIndicatorInsets = edgeInset
+            })
+        }
+    }
+
+    func keyboardWillBeHidden(notification: NSNotification) {
+        let keyInfo: Dictionary = notification.userInfo!
+        let duration: TimeInterval = keyInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
+        // Clear the table insets - animated to the same duration of the keyboard disappearance
+        UIView.animate(withDuration: duration) {
+            self.tableView.contentInset = UIEdgeInsets.zero
+            self.tableView.scrollIndicatorInsets = UIEdgeInsets.zero
+        }
     }
 }
 
