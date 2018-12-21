@@ -18,6 +18,8 @@ public class SubmissionRowController: NSObject {
     var thumbnail: UIImage?
     var id: String?
     var sub: String?
+    var scoreText: String!
+    var commentText: String!
 
     @IBOutlet weak var bannerImage: WKInterfaceImage!
     @IBOutlet weak var imageGroup: WKInterfaceGroup!
@@ -149,10 +151,11 @@ public class SubmissionRowController: NSObject {
         titleText = infoString
         
         let scoreNumber = dictionary["score"] as? Int ?? 0
-        let score = scoreNumber > 1000 ?
+        scoreText = scoreNumber > 1000 ?
             String(format: "%0.1fk   ", (Double(scoreNumber) / Double(1000))) : "\(scoreNumber)   "
-        scoreLabel.setText(score)
-        commentsLabel.setText("\(dictionary["num_comments"] as? Int ?? 0)")
+        scoreLabel.setText(scoreText)
+        commentText = "\(dictionary["num_comments"] as? Int ?? 0)"
+        commentsLabel.setText(commentText)
         if let thumburl = (dictionary["thumbnail"] as? String), !thumburl.isEmpty(), thumburl.startsWith("http") {
             DispatchQueue.global().async {
                 let imageUrl = URL(string: thumburl)!

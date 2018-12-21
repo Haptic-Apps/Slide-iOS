@@ -32,6 +32,10 @@ class SettingsGestures: UITableViewController {
     var leftSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "leftsub")
 
     var rightSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "rightsub")
+    
+    var forceTouchActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "3dsub")
+    
+    var canForceTouch = false
 
     var commentCell = UITableViewCell()
     override func viewWillAppear(_ animated: Bool) {
@@ -112,6 +116,8 @@ class SettingsGestures: UITableViewController {
             showAction(cell: leftRightActionCell)
         } else if indexPath.row == 5 {
             showAction(cell: doubleTapActionCell)
+        } else if indexPath.row == 6 {
+            showAction(cell: forceTouchActionCell)
         }
     }
     
@@ -132,6 +138,9 @@ class SettingsGestures: UITableViewController {
                 } else if cell == self.rightLeftActionCell {
                     SettingValues.commentActionRightLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightLeft)
+                } else if cell == self.forceTouchActionCell {
+                    SettingValues.commentActionForceTouch = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionForceTouch)
                 } else {
                     SettingValues.commentActionDoubleTap = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionDoubleTap)
@@ -183,6 +192,7 @@ class SettingsGestures: UITableViewController {
     }
     
     override func loadView() {
+        canForceTouch = (UIApplication.shared.keyWindow?.rootViewController?.traitCollection.forceTouchCapability ?? .unknown) == .available
         super.loadView()
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
@@ -330,6 +340,7 @@ class SettingsGestures: UITableViewController {
         createCell(leftLeftActionCell, nil, isOn: false, text: "First action swiping right to left")
         createCell(leftRightActionCell, nil, isOn: false, text: "Second action swiping right to left")
         createCell(doubleTapActionCell, nil, isOn: false, text: "Double tap comment action")
+        createCell(forceTouchActionCell, nil, isOn: false, text: "3D-Touch comment action")
         createCell(doubleTapSubActionCell, nil, isOn: false, text: "Double tap submission action")
         createCell(leftSubActionCell, nil, isOn: false, text: "Left submission swipe")
         createCell(rightSubActionCell, nil, isOn: false, text: "Right submission swipe")
@@ -369,6 +380,13 @@ class SettingsGestures: UITableViewController {
         self.doubleTapActionCell.detailTextLabel?.text = SettingValues.commentActionDoubleTap.getTitle()
         self.doubleTapActionCell.imageView?.layer.cornerRadius = 5
         
+        createLeftView(cell: forceTouchActionCell, image: SettingValues.commentActionForceTouch.getPhoto(), color: SettingValues.commentActionForceTouch.getColor())
+        self.forceTouchActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.forceTouchActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.forceTouchActionCell.detailTextLabel?.numberOfLines = 0
+        self.forceTouchActionCell.detailTextLabel?.text = SettingValues.commentActionForceTouch.getTitle()
+        self.forceTouchActionCell.imageView?.layer.cornerRadius = 5
+
         createLeftView(cell: leftSubActionCell, image: SettingValues.submissionActionLeft.getPhoto(), color: SettingValues.submissionActionLeft.getColor())
         self.leftSubActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.leftSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -453,6 +471,7 @@ class SettingsGestures: UITableViewController {
             case 3: return self.leftLeftActionCell
             case 4: return self.leftRightActionCell
             case 5: return self.doubleTapActionCell
+            case 6: return self.forceTouchActionCell
             default: fatalError("Unknown row in section 0")
             }
         case 0:
@@ -471,7 +490,7 @@ class SettingsGestures: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 4
-        case 1: return 6
+        case 1: return 6 + (canForceTouch ? 1 : 0)
         default: fatalError("Unknown number of sections")
         }
     }

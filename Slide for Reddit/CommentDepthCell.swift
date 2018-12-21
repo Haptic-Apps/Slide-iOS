@@ -394,6 +394,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent?.doAction(cell: self, action: SettingValues.commentActionDoubleTap, indexPath: currentPath)
     }
     
+    func do3dTouch(_ sender: AnyObject) {
+        if isMore {
+            return
+        }
+        parent?.doAction(cell: self, action: SettingValues.commentActionForceTouch, indexPath: currentPath)
+    }
+
     func doAction(item: SettingValues.CommentAction) {
         parent?.doAction(cell: self, action: item, indexPath: currentPath)
     }
@@ -983,6 +990,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func more(_ par: CommentViewController) {
+        if comment == nil {
+            return
+        }
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Comment by u/\(comment!.author)"
@@ -1190,6 +1200,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             long.delegate = self
             title.parentLongPress = long
             self.addGestureRecognizer(long)
+            
+            let force = ForceTouchGestureRecognizer()
+            force.addTarget(self, action: #selector(self.do3dTouch(_:)))
+            force.cancelsTouchesInView = false
+            self.contentView.addGestureRecognizer(force)
         }
 
     }

@@ -106,7 +106,7 @@ class InterfaceController: WKInterfaceController {
                 rowController.progressImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
                 rowController.loadButton.setTitle("Loading...")
                 if let strongSelf = self {
-                    strongSelf.getSubmissions(strongSelf.currentSub, reset: false)
+                    strongSelf.getSubmissions(strongSelf.currentSub, reset: false, new: strongSelf.isNew)
                 }
             }
         }

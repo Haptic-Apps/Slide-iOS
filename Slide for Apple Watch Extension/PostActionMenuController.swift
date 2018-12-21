@@ -64,5 +64,9 @@ class PostActionMenuController: WKInterfaceController {
         titleLabel.setAttributedText(myModel.titleText)
         bannerImage.setImage(myModel.thumbnail)
         imageGroup.setCornerRadius(5)
+        
+        scoreLabel.setText(myModel.scoreText)
+        commentLabel.setText(myModel.commentText)
+
     }
 }

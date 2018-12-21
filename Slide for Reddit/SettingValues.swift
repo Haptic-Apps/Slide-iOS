@@ -82,6 +82,7 @@ class SettingValues {
     public static let pref_commentActionLeftLeft = "COMMENT_LEFT_LEFT"
     public static let pref_commentActionLeftRight = "COMMENT_RIGHT_LEFT"
     public static let pref_commentActionDoubleTap = "COMMENT_DOUBLE_TAP"
+    public static let pref_commentActionForceTouch = "COMMENT_FORCE_TOUCH"
     public static let pref_submissionActionDoubleTap = "SUBMISSION_DOUBLE_TAP"
     public static let pref_commentFullScreen = "COMMENT_FULLSCREEN"
     public static let pref_hapticFeedback = "HAPTIC_FEEDBACK"
@@ -124,6 +125,7 @@ class SettingValues {
     public static var commentActionLeftRight = CommentAction.MENU
     public static var commentActionLeftLeft = CommentAction.COLLAPSE
     public static var commentActionDoubleTap = CommentAction.NONE
+    public static var commentActionForceTouch = CommentAction.MENU
     public static var submissionActionDoubleTap = SubmissionAction.NONE
     public static var submissionActionLeft = SubmissionAction.UPVOTE
     public static var submissionActionRight = SubmissionAction.SAVE
@@ -457,6 +459,8 @@ class SettingValues {
         SettingValues.commentActionLeftRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftRight) ?? "menu") ?? .MENU
 
         SettingValues.commentActionDoubleTap = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionDoubleTap) ?? "none") ?? .NONE
+        SettingValues.commentActionForceTouch = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionForceTouch) ?? "menu") ?? .MENU
+
         SettingValues.submissionActionDoubleTap = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionDoubleTap) ?? "none") ?? .NONE
         SettingValues.submissionActionRight = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionRight) ?? "upvote") ?? .UPVOTE
         SettingValues.submissionActionLeft = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionLeft) ?? "downvote") ?? .DOWNVOTE

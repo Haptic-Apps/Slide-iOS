@@ -118,6 +118,7 @@
 		BE20852921588F3B00D8F33C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE20852821588F3B00D8F33C /* Assets.xcassets */; };
 		BE20852E21588F3B00D8F33C /* Slide for Apple Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BE20851121588F3900D8F33C /* Slide for Apple Watch.app */; };
 		BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20853921589FD600D8F33C /* SubmissionRowController.swift */; };
+		BE25402621CCC03E003BD547 /* ForceTouchGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */; };
 		BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE292568213C5730006B5130 /* LocalKeystore.swift */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
@@ -452,6 +453,7 @@
 		BE20852A21588F3B00D8F33C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE20852B21588F3B00D8F33C /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
 		BE20853921589FD600D8F33C /* SubmissionRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionRowController.swift; sourceTree = "<group>"; };
+		BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceTouchGestureRecognizer.swift; sourceTree = "<group>"; };
 		BE292568213C5730006B5130 /* LocalKeystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalKeystore.swift; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
@@ -1080,6 +1082,7 @@
 				BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */,
 				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
 				BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */,
+				BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1694,6 +1697,7 @@
 				098B5A4920EFC6A200FE201B /* UINavigationController+Extensions.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
 				0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */,
+				BE25402621CCC03E003BD547 /* ForceTouchGestureRecognizer.swift in Sources */,
 				BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */,
 				BE3E5C131E16BA2200749C0C /* AlbumData.swift in Sources */,
 				09B51D052114E22C00BCB745 /* PostContentPresentationController.swift in Sources */,
