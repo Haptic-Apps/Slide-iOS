@@ -1215,6 +1215,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.reset = true
                 self.refresh(self)
             }))
+            
+            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
+                self.reply(self.headerCell)
+            }))
 
             alertController.addAction(Action(ActionData(title: "r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { _ in
                 VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
@@ -1428,18 +1432,23 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func goToCell(i: Int) {
         let indexPath = IndexPath(row: i, section: 0)
-        self.tableView.scrollToRow(at: indexPath, at: .none, animated: true)
+        self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
 
     }
     
     var goingToCell = false
     
     func goToCellTop(i: Int) {
+        isGoingDown = true
         let indexPath = IndexPath(row: i, section: 0)
-        self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
         goingToCell = true
+        self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
-
+    
+    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        self.goingToCell = false
+    }
+    
     func goUp(_ sender: AnyObject) {
         if !loaded {
             return
@@ -1464,7 +1473,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     var lastMoved = -1
-
+    var isGoingDown = false
+    
     func goDown(_ sender: AnyObject) {
         if !loaded {
             return
@@ -1487,7 +1497,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 topCell += 1
                 contents = content[dataArray[topCell]]
             }
-            for i in (topCell + 1)...(dataArray.count - 1) {
+            if (topCell + 1) > (dataArray.count - 1) {
+                return
+            }
+            for i in (topCell + 1)..<(dataArray.count - 1) {
                 contents = content[dataArray[i]]
                 if contents is RComment && matches(comment: contents as! RComment, sort: currentSort) && i > lastMoved {
                     goToCellTop(i: i)
@@ -1977,17 +1990,16 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var lastY = CGFloat(0)
     var oldY = CGFloat(0)
 
-override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        //self.tableView.endEditing(true)
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
+        
         if !SettingValues.pinToolbar {
             if currentY > lastYUsed && currentY > 60 {
-                if navigationController != nil && !isHiding && !goingToCell && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
+                if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
                 }
-            } else if (currentY < lastYUsed + 20) && !isHiding && navigationController != nil && (isToolbarHidden) {
+            } else if (currentY < lastYUsed - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
                 showUI()
-                goingToCell = false
             }
         }
         lastYUsed = currentY
@@ -2000,12 +2012,14 @@ override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if inHeadView.superview == nil {
             doHeadView(self.view.frame.size)
         }
-        (navigationController)?.setNavigationBarHidden(true, animated: true)
         
-        if popup == nil {
-            (self.navigationController)?.setToolbarHidden(true, animated: true)
+        if !isGoingDown {
+            (navigationController)?.setNavigationBarHidden(true, animated: true)
+            
+            if popup == nil {
+                (self.navigationController)?.setToolbarHidden(true, animated: true)
+            }
         }
-        
         self.isToolbarHidden = true
         isHiding = false
     }
