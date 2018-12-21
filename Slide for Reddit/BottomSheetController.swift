@@ -56,10 +56,11 @@ open class BottomSheetCell: ActionCell {
     
     func initialize() {
         actionTitleLabel?.textColor = UIColor(white: 0.098, alpha: 1.0)
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.0)
-        backgroundView.addSubview(animatableBackgroundView)
-        selectedBackgroundView = backgroundView
+
+        selectedBackgroundView = UIView().then {
+            $0.backgroundColor = UIColor.black.withAlphaComponent(0.0)
+            $0.addSubview(animatableBackgroundView)
+        }
     }
     
     open override var isHighlighted: Bool {
@@ -70,12 +71,12 @@ open class BottomSheetCell: ActionCell {
                 animatableBackgroundView.center = CGPoint(x: frame.width * 0.5, y: frame.height * 0.5)
                 
                 UIView.animate(withDuration: 0.5) { [weak self] in
-                    guard let me = self else {
+                    guard let strongSelf = self else {
                         return
                     }
                     
-                    me.animatableBackgroundView.frame = CGRect(x: 0, y: 0, width: me.frame.width, height: me.frame.height)
-                    me.animatableBackgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.08)
+                    strongSelf.animatableBackgroundView.frame = CGRect(x: 0, y: 0, width: strongSelf.frame.width, height: strongSelf.frame.height)
+                    strongSelf.animatableBackgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.08)
                 }
             } else {
                 animatableBackgroundView.backgroundColor = animatableBackgroundView.backgroundColor?.withAlphaComponent(0.0)
@@ -86,78 +87,36 @@ open class BottomSheetCell: ActionCell {
 
 open class ActionControllerHeader: UICollectionReusableView {
     
-    lazy var label: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .left
-        label.backgroundColor = ColorUtil.foregroundColor
-        label.font = UIFont.boldSystemFont(ofSize: 17)
-        label.textColor = ColorUtil.fontColor
-        label.textAlignment = .center
-        return label
-    }()
+    var label = UILabel().then {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundColor = ColorUtil.foregroundColor
+        $0.font = UIFont.boldSystemFont(ofSize: 17)
+        $0.textColor = ColorUtil.fontColor
+        $0.textAlignment = .center
+    }
     
-    lazy var bottomLine: UIView = {
-        let bottomLine = UIView()
-        bottomLine.translatesAutoresizingMaskIntoConstraints = false
-        bottomLine.backgroundColor = ColorUtil.foregroundColor
-        return bottomLine
-    }()
+    var bottomLine = UIView().then {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundColor = ColorUtil.backgroundColor
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(label)
+
         let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["label": label]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-(pad)-[label]-(pad)-|", options: NSLayoutFormatOptions(), metrics: ["pad": pad ? 250 : 0], views: ["label": label]))
+
+        addSubview(label)
+        label.verticalAnchors == verticalAnchors
+        label.horizontalAnchors == horizontalAnchors + (pad ? 250 : 0)
+
         addSubview(bottomLine)
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[line(1)]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["line": bottomLine]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-(pad)-[line]-(pad)-|", options: NSLayoutFormatOptions(), metrics: ["pad": pad ? 250 : 0], views: ["line": bottomLine]))
+        bottomLine.heightAnchor == 1
+        bottomLine.bottomAnchor == bottomAnchor
+        bottomLine.horizontalAnchors == horizontalAnchors + (pad ? 250 : 0)
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-    }
-}
-
-class ButtonsHeader: UIStackView {
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        self.accessibilityIdentifier = "Post menu quick actions"
-        self.axis = .horizontal
-        self.alignment = .center
-        self.backgroundColor = ColorUtil.backgroundColor
-        
-        let upvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
-            $0.contentMode = .center
-            $0.setImage(UIImage.init(named: "upvote")?.menuIcon(), for: .normal)
-            $0.backgroundColor = ColorUtil.upvoteColor
-        }
-        let downvote = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
-            $0.contentMode = .center
-            $0.setImage(UIImage.init(named: "downvote")?.menuIcon(), for: .normal)
-            $0.backgroundColor = ColorUtil.downvoteColor
-        }
-
-        let save = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 52)).then {
-            $0.contentMode = .center
-            $0.setImage(UIImage.init(named: "save")?.menuIcon(), for: .normal)
-            $0.backgroundColor = GMColor.yellow500Color()
-        }
-
-        self.addArrangedSubviews(save, downvote, upvote)
-        self.layer.cornerRadius = 15
-        self.clipsToBounds = true
-
-        self.heightAnchor == CGFloat(52)
-        self.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-
-    }
-    
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -202,7 +161,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             cell.setup(action.data?.title, detail: action.data?.subtitle, image: action.data?.image)
             cell.alpha = action.enabled ? 1.0 : 0.5
             cell.actionTitleLabel?.textColor = ColorUtil.fontColor
-            cell.actionTitleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+            cell.actionTitleLabel?.font = UIFont.systemFont(ofSize: 16)
             cell.backgroundColor = ColorUtil.foregroundColor
             
             self.collectionView.backgroundColor = ColorUtil.foregroundColor
