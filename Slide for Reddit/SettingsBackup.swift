@@ -17,8 +17,8 @@ class SettingsBackup: UITableViewController {
     
     static var changed = false
 
-    var restore: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "restore")
-    var backup: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "backup")
+    var restore: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+    var backup: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -63,19 +63,67 @@ class SettingsBackup: UITableViewController {
 
     }
 
+}
+
+extension SettingsBackup {
+    func doBackup() {
+        let alert = UIAlertController.init(title: "Really back up your data?", message: "This will overwrite any previous backups", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
+            self.backupSync()
+        }))
+        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: { (_) in
+        }))
+        present(alert, animated: true)
+    }
+
+    func doRestore() {
+        let alert = UIAlertController.init(title: "Really restore your data?", message: "This will overwrite all current Slide settings and you will have to restart Slide for the changes to take place", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
+            self.restoreSync()
+        }))
+        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: { (_) in
+        }))
+        present(alert, animated: true)
+    }
+
+    func backupSync() {
+        let icloud = NSUbiquitousKeyValueStore.default()
+        for item in icloud.dictionaryRepresentation {
+            icloud.removeObject(forKey: item.key)
+        }
+        for item in UserDefaults.standard.dictionaryRepresentation() {
+            icloud.set(item.value, forKey: item.key)
+        }
+        icloud.synchronize()
+        let alert = UIAlertController.init(title: "Your data has been synced!", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        present(alert, animated: true)
+    }
+
+    func restoreSync() {
+        let icloud = NSUbiquitousKeyValueStore.default()
+        for item in icloud.dictionaryRepresentation {
+            UserDefaults.standard.set(item.value, forKey: item.key)
+        }
+        UserDefaults.standard.synchronize()
+        let alert = UIAlertController.init(title: "Your data has been restored!", message: "Slide will now close to apply changes", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Close Slide", style: .cancel, handler: { (_) in
+            exit(0)
+        }))
+        present(alert, animated: true)
+    }
+}
+
+// MARK: - UITableView
+extension SettingsBackup {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 0 : 70
-    }
-
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
-    }
-
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -98,72 +146,6 @@ class SettingsBackup: UITableViewController {
             doRestore()
         }
     }
-    
-    func doBackup() {
-        let alert = UIAlertController.init(title: "Really back up your data?", message: "This will overwrite any previous backups", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
-            self.backupSync()
-        }))
-        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: { (_) in
-        }))
-        present(alert, animated: true)
-    }
-    
-    func doRestore() {
-        let alert = UIAlertController.init(title: "Really restore your data?", message: "This will overwrite all current Slide settings and you will have to restart Slide for the changes to take place", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
-            self.restoreSync()
-        }))
-        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: { (_) in
-        }))
-        present(alert, animated: true)
-    }
-    
-    func backupSync() {
-        let icloud = NSUbiquitousKeyValueStore.default()
-        for item in icloud.dictionaryRepresentation {
-            icloud.removeObject(forKey: item.key)
-        }
-        for item in UserDefaults.standard.dictionaryRepresentation() {
-            icloud.set(item.value, forKey: item.key)
-        }
-        icloud.synchronize()
-        let alert = UIAlertController.init(title: "Your data has been synced!", message: "", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
-            self.dismiss(animated: true, completion: nil)
-        }))
-        present(alert, animated: true)
-
-    }
-    
-    func restoreSync() {
-        let icloud = NSUbiquitousKeyValueStore.default()
-        for item in icloud.dictionaryRepresentation {
-            UserDefaults.standard.set(item.value, forKey: item.key)
-        }
-        UserDefaults.standard.synchronize()
-        let alert = UIAlertController.init(title: "Your data has been restored!", message: "Slide will now close to apply changes", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Close Slide", style: .cancel, handler: { (_) in
-            exit(0)
-        }))
-        present(alert, animated: true)
-
-    }
-   
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
-
-        switch section {
-        case 0: label.text = "General"
-        case 1: label.text = "Already a Slide supporter?"
-        default: label.text = ""
-        }
-        return toReturn
-    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
@@ -171,5 +153,4 @@ class SettingsBackup: UITableViewController {
         default: fatalError("Unknown number of sections")
         }
     }
-
 }

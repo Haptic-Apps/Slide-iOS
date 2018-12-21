@@ -442,7 +442,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
         switch section {
-        case 0: label.text = "General"
+        case 0: label.text = "Slide Pro"
         case 1: label.text = "Already a Slide supporter?"
         default: label.text = ""
         }
