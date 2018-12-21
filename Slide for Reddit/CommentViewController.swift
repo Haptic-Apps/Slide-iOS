@@ -1703,6 +1703,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         inHeadView.removeFromSuperview()
         headerCell.videoView?.player?.pause()
         self.didDisappearCompletely = true
+        swiper = nil
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -1715,7 +1716,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.popup.removeFromSuperview()
             })
         }
-        swiper = nil
     }
 
     func collapseAll() {

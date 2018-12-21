@@ -11,7 +11,7 @@ import MaterialComponents.MaterialTabs
 import reddift
 import UIKit
 
-class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     var content: [MessageWhere] = []
     var isReload = false
     var session: Session?
@@ -38,6 +38,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.delegate = self
         self.title = "Inbox"
         UIApplication.shared.applicationIconBadgeNumber = 0
         navigationController?.setNavigationBarHidden(false, animated: true)

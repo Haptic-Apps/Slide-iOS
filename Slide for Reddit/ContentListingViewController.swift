@@ -12,7 +12,7 @@ import SDWebImage
 import UIKit
 import XLActionController
 
-class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate {
+class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate, UINavigationControllerDelegate {
    
     func hide(index: Int) {
         baseData.content.remove(at: index)
@@ -66,7 +66,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.setToolbarHidden(true, animated: false)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
-        
+        self.navigationController?.delegate = self
+
         if !loaded && !loading {
             self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
             refreshControl.beginRefreshing()

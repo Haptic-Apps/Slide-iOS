@@ -20,7 +20,7 @@ import UIKit
 import XLActionController
 
 // MARK: - Base
-class SingleSubredditViewController: MediaViewController {
+class SingleSubredditViewController: MediaViewController, UINavigationControllerDelegate {
 
     override var keyCommands: [UIKeyCommand]? {
         return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
@@ -212,6 +212,7 @@ class SingleSubredditViewController: MediaViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.delegate = self
 
         server?.stop()
         loop?.stop()
