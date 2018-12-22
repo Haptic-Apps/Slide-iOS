@@ -103,6 +103,8 @@
 		BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE17A24D215FFE76002C6CE6 /* readlater.plist */; };
 		BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */; };
 		BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */; };
+		BE1B57DE21CE965000FF6F98 /* ic_cottoncandy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */; };
+		BE1B57DF21CE965000FF6F98 /* ic_cottoncandy@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */; };
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
@@ -435,6 +437,8 @@
 		BE17A24D215FFE76002C6CE6 /* readlater.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = readlater.plist; sourceTree = "<group>"; };
 		BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterContributionLoader.swift; sourceTree = "<group>"; };
 		BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterViewController.swift; sourceTree = "<group>"; };
+		BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_cottoncandy@2x.png"; sourceTree = "<group>"; };
+		BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_cottoncandy@3x.png"; sourceTree = "<group>"; };
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
@@ -872,6 +876,8 @@
 		BE4AB49C21BC4DAE001092C4 /* App Icons */ = {
 			isa = PBXGroup;
 			children = (
+				BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */,
+				BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */,
 				BE0C4F7721BCBE81006C54FF /* ic_black@2x.png */,
 				BE0C4F8021BCBE83006C54FF /* ic_black@3x.png */,
 				BE0C4F7621BCBE81006C54FF /* ic_blue@2x.png */,
@@ -1345,6 +1351,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE1B57DF21CE965000FF6F98 /* ic_cottoncandy@3x.png in Resources */,
 				BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */,
 				BE0C4F8E21BCBE83006C54FF /* ic_tronteal@2x.png in Resources */,
 				BE77470820367D98006C72E8 /* Credits.plist in Resources */,
@@ -1377,6 +1384,7 @@
 				BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */,
 				BE35216D1E3D22B000C30B8D /* RobotoCondensed-Bold.ttf in Resources */,
 				BE3521781E3D2E3600C30B8D /* Roboto-Italic.ttf in Resources */,
+				BE1B57DE21CE965000FF6F98 /* ic_cottoncandy@2x.png in Resources */,
 				BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */,
 				BEBF45DD1E23384500764BB8 /* comments.plist in Resources */,
 				BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */,
