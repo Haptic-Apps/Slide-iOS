@@ -30,6 +30,15 @@
                 <key>UIPrerenderedIcon</key>
                 <false/>
             </dict>
+            <key>outrun</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_outrun</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -140,6 +149,15 @@
                 <key>CFBundleIconFiles</key>
                 <array>
                     <string>ic_cottoncandy</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>outrun</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_outrun</string>
                 </array>
                 <key>UIPrerenderedIcon</key>
                 <false/>

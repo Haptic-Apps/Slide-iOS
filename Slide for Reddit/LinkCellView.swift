@@ -636,7 +636,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             return
         }
         let xVelocity = sender.velocity(in: contentView).x
-        if sender.state != .ended && sender.state != .began {
+        if sender.state != .ended && sender.state != .began && sender.state != .cancelled {
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: contentView).x
             
@@ -707,7 +707,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             })
         }
     
-        if dragCancelled {
+        if dragCancelled || sender.state == .cancelled {
             if self.progressBar.superview == nil {
                 return
             }

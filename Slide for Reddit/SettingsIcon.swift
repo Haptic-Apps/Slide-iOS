@@ -13,10 +13,10 @@ import UIKit
 class SettingsIcon: UITableViewController {
     
     var premium = ["retroapple", "tronteal", "pink", "black"]
-    var community = ["cottoncandy", "default", "blue", "green", "lightblue", "purple", "red", "yellow"]
+    var community = ["cottoncandy", "outrun", "default", "blue", "green", "lightblue", "purple", "red", "yellow"]
     
     var premiumNames = ["Retro", "Tron", "Pink", "Black"]
-    var communityNames = ["Cotton Candy", "Standard", "Blue", "Green", "Light Blue", "Purple", "Red", "Yellow"]
+    var communityNames = ["Cotton Candy", "Outrun", "Standard", "Blue", "Green", "Light Blue", "Purple", "Red", "Yellow"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,7 +82,7 @@ class SettingsIcon: UITableViewController {
         let title = indexPath.section == 0 ? premiumNames[indexPath.row] : communityNames[indexPath.row]
         cell.title.text = title
         
-        let isDefault = indexPath.row == 1 && indexPath.section == 1
+        let isDefault = indexPath.row == 2 && indexPath.section == 1
         
         cell.iconView.image = isDefault ? UIImage(named: "AppIcon") : UIImage(named: "ic_" + (indexPath.section == 0 ? premium[indexPath.row] : community[indexPath.row]))
         return cell
@@ -92,7 +92,7 @@ class SettingsIcon: UITableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
         let title = indexPath.section == 0 ? premium[indexPath.row] : community[indexPath.row]
-        let isDefault = indexPath.row == 1 && indexPath.section == 1
+        let isDefault = indexPath.row == 2 && indexPath.section == 1
 
         if indexPath.section == 1 || !VCPresenter.proDialogShown(feature: true, self) {
             if #available(iOS 10.3, *) {

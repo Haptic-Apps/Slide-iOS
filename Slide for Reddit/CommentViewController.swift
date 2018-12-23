@@ -1447,6 +1447,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.goingToCell = false
+        self.isGoingDown = false
     }
     
     func goUp(_ sender: AnyObject) {

@@ -62,7 +62,9 @@ class GfycatVideoSource: VideoSource {
 class RedditVideoSource: VideoSource {
     func load(url: String, completion: @escaping (String) -> Void, failure: @escaping () -> Void) {
         let muxedURL = url
-        completion(muxedURL)
+        DispatchQueue.main.async {
+            completion(muxedURL)
+        }
     }
 }
 

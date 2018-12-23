@@ -105,6 +105,8 @@
 		BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */; };
 		BE1B57DE21CE965000FF6F98 /* ic_cottoncandy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */; };
 		BE1B57DF21CE965000FF6F98 /* ic_cottoncandy@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */; };
+		BE1B57E221CEFA9800FF6F98 /* ic_outrun@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E021CEFA9800FF6F98 /* ic_outrun@3x.png */; };
+		BE1B57E321CEFA9800FF6F98 /* ic_outrun@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E121CEFA9800FF6F98 /* ic_outrun@2x.png */; };
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
@@ -439,6 +441,8 @@
 		BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterViewController.swift; sourceTree = "<group>"; };
 		BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_cottoncandy@2x.png"; sourceTree = "<group>"; };
 		BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_cottoncandy@3x.png"; sourceTree = "<group>"; };
+		BE1B57E021CEFA9800FF6F98 /* ic_outrun@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_outrun@3x.png"; sourceTree = "<group>"; };
+		BE1B57E121CEFA9800FF6F98 /* ic_outrun@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_outrun@2x.png"; sourceTree = "<group>"; };
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
@@ -876,6 +880,8 @@
 		BE4AB49C21BC4DAE001092C4 /* App Icons */ = {
 			isa = PBXGroup;
 			children = (
+				BE1B57E121CEFA9800FF6F98 /* ic_outrun@2x.png */,
+				BE1B57E021CEFA9800FF6F98 /* ic_outrun@3x.png */,
 				BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */,
 				BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */,
 				BE0C4F7721BCBE81006C54FF /* ic_black@2x.png */,
@@ -1372,6 +1378,7 @@
 				BE0C4F9321BCBE83006C54FF /* ic_tronblue@3x.png in Resources */,
 				BE8FCA121E0C46090063B8EF /* LaunchScreen.storyboard in Resources */,
 				BE3B7435210135BD00658DE9 /* html in Resources */,
+				BE1B57E321CEFA9800FF6F98 /* ic_outrun@2x.png in Resources */,
 				BE0C4F8D21BCBE83006C54FF /* ic_black@2x.png in Resources */,
 				BE3521791E3D2E3900C30B8D /* Roboto-LightItalic.ttf in Resources */,
 				BE35216B1E3D22B000C30B8D /* Roboto-Light.ttf in Resources */,
@@ -1391,6 +1398,7 @@
 				BE35216C1E3D22B000C30B8D /* Roboto-Medium.ttf in Resources */,
 				BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */,
 				BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */,
+				BE1B57E221CEFA9800FF6F98 /* ic_outrun@3x.png in Resources */,
 				BE35216E1E3D22B000C30B8D /* RobotoCondensed-Regular.ttf in Resources */,
 				BE3521771E3D2E3300C30B8D /* Roboto-BoldItalic.ttf in Resources */,
 				BE0C4F8A21BCBE83006C54FF /* ic_yellow@2x.png in Resources */,

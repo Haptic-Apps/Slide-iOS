@@ -329,7 +329,7 @@ class RealmDataWrapper {
     
     //Takes a Comment from reddift and turns it into a Realm model
     static func commentToRComment(comment: Comment, depth: Int) -> RComment {
-        let flair = comment.authorFlairCssClass.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText
+        let flair = comment.authorFlairText.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText
         var bodyHtml = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
         let rComment = RComment()

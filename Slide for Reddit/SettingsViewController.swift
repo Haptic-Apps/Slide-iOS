@@ -12,11 +12,12 @@ import MessageUI
 import RealmSwift
 import RLBAlertsPickers
 import SDWebImage
+import SloppySwiper
 import UIKit
 import XLActionController
 
 class SettingsViewController: UITableViewController, MFMailComposeViewControllerDelegate {
-
+    var swiper: SloppySwiper?
     var goPro: UITableViewCell = UITableViewCell()
 
     var general: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "general")
@@ -63,6 +64,14 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
+        
+        if self.navigationController != nil {
+            if !(self.navigationController?.delegate is SloppySwiper) {
+                swiper = SloppySwiper.init(navigationController: self.navigationController!)
+                self.navigationController!.delegate = swiper!
+            }
+        }
+        
         if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
             self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
         }

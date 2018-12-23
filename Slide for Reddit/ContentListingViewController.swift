@@ -9,11 +9,13 @@
 import Anchorage
 import reddift
 import SDWebImage
+import SloppySwiper
 import UIKit
 import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate, UINavigationControllerDelegate {
-   
+    var swiper: SloppySwiper?
+
     func hide(index: Int) {
         baseData.content.remove(at: index)
         flowLayout.reset()
@@ -81,6 +83,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         super.viewDidAppear(animated)
         if !loading && !loaded {
             refresh()
+        }
+        
+        if self.navigationController != nil && !((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader)){
+            if !(self.navigationController?.delegate is SloppySwiper) {
+                swiper = SloppySwiper.init(navigationController: self.navigationController!)
+                self.navigationController!.delegate = swiper!
+            }
         }
     }
 
