@@ -105,11 +105,13 @@ class SettingValues {
     public static let pref_showPages = "SHOW_PAGES"
     public static let pref_submissionActionLeft = "SUBMISSION_LEFT"
     public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
+    public static let pref_submissionActionForceTouch = "SUBMISSION_FORCE_TOUCH"
     public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE"
     public static let pref_notifications = "NOTIFICATIONS"
     public static let pref_subBar = "SUB_BAR"
     public static let pref_appMode = "APP_MODE"
     public static let pref_moreButton = "MORE_BUTTON"
+    public static let pref_disableBanner = "DISABLE_BANNER"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -130,6 +132,7 @@ class SettingValues {
     public static var submissionActionLeft = SubmissionAction.UPVOTE
     public static var submissionActionRight = SubmissionAction.SAVE
     public static var commentGesturesMode = CommentGesturesMode.NONE
+    public static var submissionActionForceTouch = SubmissionAction.NONE
 
     public static var browser = "firefox"
     public static var subredditBar = true
@@ -164,6 +167,7 @@ class SettingValues {
     public static var matchSilence = true
     public static var showPages = true
     public static var menuButton = true
+    public static var disableBanner = false
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -416,6 +420,7 @@ class SettingValues {
         SettingValues.autoKeyboard = settings.object(forKey: SettingValues.pref_autoKeyboard) == nil ? true : settings.bool(forKey: SettingValues.pref_autoKeyboard)
         SettingValues.linkAlwaysThumbnail = settings.object(forKey: SettingValues.pref_linkAlwaysThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
         SettingValues.showPages = settings.bool(forKey: SettingValues.pref_showPages)
+        SettingValues.disableBanner = settings.bool(forKey: SettingValues.pref_disableBanner)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
@@ -464,12 +469,12 @@ class SettingValues {
         SettingValues.submissionActionDoubleTap = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionDoubleTap) ?? "none") ?? .NONE
         SettingValues.submissionActionRight = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionRight) ?? "upvote") ?? .UPVOTE
         SettingValues.submissionActionLeft = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionLeft) ?? "downvote") ?? .DOWNVOTE
+        SettingValues.submissionActionForceTouch = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionForceTouch) ?? "none") ?? .NONE
 
         SettingValues.internalImageView = settings.object(forKey: SettingValues.pref_internalImageView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImageView)
         SettingValues.internalGifView = settings.object(forKey: SettingValues.pref_internalGifView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalGifView)
         SettingValues.internalAlbumView = settings.object(forKey: SettingValues.pref_internalAlbumView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalAlbumView)
         SettingValues.internalYouTube = settings.object(forKey: SettingValues.pref_internalYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_internalYouTube)
-
     }
 
     public static func doneVersion() -> Bool {

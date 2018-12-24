@@ -486,9 +486,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             menu.addTarget(self, action: #selector(LinkCellView.more(sender:)), for: .touchUpInside)
 
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
-            let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
-            tap.delegate = self
-            bannerImage.addGestureRecognizer(tap)
+            
+            if !SettingValues.disableBanner && !full {
+                let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
+                tap.delegate = self
+                bannerImage.addGestureRecognizer(tap)
+            }
             
             let tap2 = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
             tap2.delegate = self
@@ -1133,6 +1136,48 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
+    func do3dTouch(_ sender: AnyObject) {
+        switch SettingValues.submissionActionForceTouch {
+        case .UPVOTE:
+            self.upvote()
+        case .DOWNVOTE:
+            self.downvote()
+        case .SAVE:
+            self.save()
+        case .MENU:
+            self.more()
+        case .HIDE:
+            if !full {
+                self.hide()
+            }
+        case .SUBREDDIT:
+            let sub = SingleSubredditViewController.init(subName: self.link!.subreddit, single: true)
+            VCPresenter.showVC(viewController: sub, popupIfPossible: false, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+        case .AUTHOR:
+            let profile = ProfileViewController.init(name: self.link!.author)
+            VCPresenter.showVC(viewController: profile, popupIfPossible: false, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+        case .READ_LATER:
+            self.readLater()
+        case .EXTERNAL:
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(self.link!.url ?? URL(string: self.link!.permalink)!)
+            }
+        case .SHARE:
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [self.link!.url ?? URL(string: self.link!.permalink)!], applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = self.contentView
+                presenter.sourceRect = self.contentView.bounds
+            }
+            let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            currentViewController.present(activityViewController, animated: true, completion: nil)
+        default:
+            break
+        }
+    }
+
+    
     var aspect = CGFloat(1)
     var type: ContentType.CType = .NONE
     var activeSet = false
@@ -1383,9 +1428,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         let mo = History.commentsSince(s: submission)
         comments.text = " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : "")
         
-        if !registered && !full {
+        if !registered && !full && SettingValues.submissionActionForceTouch == .NONE {
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
             registered = true
+        } else {
+            let force = ForceTouchGestureRecognizer()
+            force.addTarget(self, action: #selector(self.do3dTouch(_:)))
+            force.cancelsTouchesInView = false
+            self.contentView.addGestureRecognizer(force)
         }
         
         refresh()

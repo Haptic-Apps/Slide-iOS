@@ -15,6 +15,11 @@ class SettingsGestures: UITableViewController {
     var submissionGesturesCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "subs")
     var submissionGestures = UISwitch()
     
+    var disableBannerCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "banner")
+    var disableBanner = UISwitch()
+
+    var forceTouchSubmissionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "3dsubmission")
+
     var commentGesturesCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "comments")
 
     var rightLeftActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "left")
@@ -33,7 +38,7 @@ class SettingsGestures: UITableViewController {
 
     var rightSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "rightsub")
     
-    var forceTouchActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "3dsub")
+    var forceTouchActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCellStyle.subtitle, reuseIdentifier: "3dcomment")
     
     var canForceTouch = false
 
@@ -48,6 +53,10 @@ class SettingsGestures: UITableViewController {
         if changed == submissionGestures {
             SettingValues.submissionGesturesEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_submissionGesturesEnabled)
+        } else if changed == disableBanner {
+            SettingValues.disableBanner = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableBanner)
+            SubredditReorderViewController.changed = true
         }
 
         UserDefaults.standard.synchronize()
@@ -92,17 +101,20 @@ class SettingsGestures: UITableViewController {
             return
         }
         
-        if indexPath.row == 1 && indexPath.section == 0 {
+        if indexPath.row == 2 && indexPath.section == 0 {
             showActionSub(cell: doubleTapSubActionCell)
             return
-        } else if indexPath.row == 2 && indexPath.section == 0 {
+        } else if indexPath.row == 3 && indexPath.section == 0 {
             showActionSub(cell: leftSubActionCell)
             return
-        } else if indexPath.row == 3 && indexPath.section == 0 {
+        } else if indexPath.row == 4 && indexPath.section == 0 {
             showActionSub(cell: rightSubActionCell)
             return
+        } else if indexPath.row == 5 && indexPath.section == 0 {
+            showActionSub(cell: forceTouchSubmissionCell)
+            return
         }
-
+        
         if indexPath.section != 1 {
             return
         }
@@ -167,8 +179,11 @@ class SettingsGestures: UITableViewController {
                 } else if cell == self.leftSubActionCell {
                     SettingValues.submissionActionLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionLeft)
+                } else if cell == self.forceTouchSubmissionCell {
+                    SettingValues.submissionActionForceTouch = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionForceTouch)
                 }
-                
+
                 SubredditReorderViewController.changed = true
                 UserDefaults.standard.synchronize()
                 self.updateCells()
@@ -206,6 +221,13 @@ class SettingsGestures: UITableViewController {
         self.submissionGesturesCell.detailTextLabel?.text = "Enabling submission gestures will require two fingers to swipe between subreddits in the main view"
         self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.foregroundColor
         
+        createCell(disableBannerCell, disableBanner, isOn: SettingValues.disableBanner, text: "Open comments from banner image")
+        self.disableBannerCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.disableBannerCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.disableBannerCell.detailTextLabel?.numberOfLines = 0
+        self.disableBannerCell.detailTextLabel?.text = "Enabling this will open comments when clicking on the submission banner image"
+        self.disableBannerCell.contentView.backgroundColor = ColorUtil.foregroundColor
+
         createCell(commentGesturesCell, nil, isOn: false, text: "Comment gestures mode")
         self.commentGesturesCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.commentGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -344,6 +366,14 @@ class SettingsGestures: UITableViewController {
         createCell(doubleTapSubActionCell, nil, isOn: false, text: "Double tap submission action")
         createCell(leftSubActionCell, nil, isOn: false, text: "Left submission swipe")
         createCell(rightSubActionCell, nil, isOn: false, text: "Right submission swipe")
+        createCell(forceTouchSubmissionCell, nil, isOn: false, text: "3D-Touch submission action")
+
+        createLeftView(cell: forceTouchSubmissionCell, image: SettingValues.submissionActionForceTouch.getPhoto(), color: SettingValues.submissionActionForceTouch.getColor())
+        self.forceTouchSubmissionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.forceTouchSubmissionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.forceTouchSubmissionCell.detailTextLabel?.numberOfLines = 0
+        self.forceTouchSubmissionCell.detailTextLabel?.text = SettingValues.submissionActionForceTouch == .NONE ? "Peek content" : SettingValues.submissionActionForceTouch.getTitle()
+        self.forceTouchSubmissionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: rightRightActionCell, image: SettingValues.commentActionRightRight.getPhoto(), color: SettingValues.commentActionRightRight.getColor())
         self.rightRightActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -477,9 +507,11 @@ class SettingsGestures: UITableViewController {
         case 0:
             switch indexPath.row {
             case 0: return self.submissionGesturesCell
-            case 1: return self.doubleTapSubActionCell
-            case 2: return self.leftSubActionCell
-            case 3: return self.rightSubActionCell
+            case 1: return self.disableBannerCell
+            case 2: return self.doubleTapSubActionCell
+            case 3: return self.leftSubActionCell
+            case 4: return self.rightSubActionCell
+            case 5: return self.forceTouchSubmissionCell
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -489,7 +521,7 @@ class SettingsGestures: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 4
+        case 0: return 5 + (canForceTouch ? 1 : 0)
         case 1: return 6 + (canForceTouch ? 1 : 0)
         default: fatalError("Unknown number of sections")
         }
