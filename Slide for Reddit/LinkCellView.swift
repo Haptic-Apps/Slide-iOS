@@ -487,7 +487,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             
-            if !SettingValues.disableBanner && !full {
+            if !SettingValues.disableBanner || full {
                 let tap = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openLink(sender:)))
                 tap.delegate = self
                 bannerImage.addGestureRecognizer(tap)
