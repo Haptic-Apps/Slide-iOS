@@ -169,7 +169,7 @@ class SettingsGestures: UITableViewController {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Select a submission gesture"
         for action in SettingValues.SubmissionAction.cases {
-            alertController.addAction(Action(ActionData(title: action == .NONE ? "Peek content" : action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(Action(ActionData(title: action == .NONE ? "Peek content" : action.getTitle(), image: action == .NONE ? UIImage(named: "fullscreen")!.menuIcon() : UIImage(named: action.getPhoto())!.menuIcon() ), style: .default, handler: { _ in
                 if cell == self.doubleTapSubActionCell {
                     SettingValues.submissionActionDoubleTap = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionDoubleTap)
@@ -368,7 +368,7 @@ class SettingsGestures: UITableViewController {
         createCell(rightSubActionCell, nil, isOn: false, text: "Right submission swipe")
         createCell(forceTouchSubmissionCell, nil, isOn: false, text: "3D-Touch submission action")
 
-        createLeftView(cell: forceTouchSubmissionCell, image: SettingValues.submissionActionForceTouch.getPhoto(), color: SettingValues.submissionActionForceTouch.getColor())
+        createLeftView(cell: forceTouchSubmissionCell, image: SettingValues.submissionActionForceTouch == .NONE ? UIImage(named: "fullscreen")!.menuIcon() : SettingValues.submissionActionForceTouch.getPhoto(), color: SettingValues.submissionActionForceTouch == .NONE ? GMColor.lightGreen500Color() :SettingValues.submissionActionForceTouch.getColor())
         self.forceTouchSubmissionCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.forceTouchSubmissionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.forceTouchSubmissionCell.detailTextLabel?.numberOfLines = 0
