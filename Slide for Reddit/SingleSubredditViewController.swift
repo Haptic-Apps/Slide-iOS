@@ -1051,7 +1051,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     func shadowboxMode() {
         if !VCPresenter.proDialogShown(feature: true, self) && !links.isEmpty {
-            let controller = ShadowboxViewController.init(submissions: links, subreddit: sub)
+            let visibleRect = CGRect(origin: tableView.contentOffset, size: tableView.bounds.size)
+            let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
+            let visibleIndexPath = tableView.indexPathForItem(at: visiblePoint)
+
+            let controller = ShadowboxViewController.init(submissions: links, subreddit: sub, index: visibleIndexPath?.row ?? 0)
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         }
@@ -2001,6 +2005,10 @@ extension SingleSubredditViewController {
                 self.doDisplaySidebar()
             }))
         }
+
+        alertController.addAction(Action(ActionData(title: "Hide read", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
+            self.hideReadPosts()
+        }))
 
         alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { _ in
             self.refresh()

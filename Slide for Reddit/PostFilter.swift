@@ -61,6 +61,11 @@ class PostFilter {
             contains(PostFilter.selftext, value: link.htmlBody) ||
             contains(PostFilter.titles, value: link.title) ||
             (link.nsfw && !SettingValues.nsfwEnabled)
+        
+        if mainMatch {
+            //No need to check further
+            return mainMatch
+        }
 
         var contentMatch = false
         if link.nsfw {

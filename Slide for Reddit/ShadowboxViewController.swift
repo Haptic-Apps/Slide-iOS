@@ -15,6 +15,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     var vCs: [UIViewController] = []
     var baseSubmissions: [RSubmission] = []
     var subreddit: String
+    var index: Int
 
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         color2 = (pendingViewControllers[0] as! ShadowboxLinkViewController).backgroundColor
@@ -34,8 +35,9 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
     }
     
-    public init(submissions: [RSubmission], subreddit: String) {
+    public init(submissions: [RSubmission], subreddit: String, index: Int) {
         self.subreddit = subreddit
+        self.index = index
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         self.baseSubmissions = submissions
@@ -46,7 +48,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             }
         }
         
-        let firstViewController = self.vCs[0]
+        let firstViewController = self.vCs[index]
         currentVc = firstViewController
         
         self.setViewControllers([firstViewController],

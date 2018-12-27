@@ -392,7 +392,7 @@ class SettingValues {
                 }
             }
         }
-
+        
         SettingValues.smallerTag = settings.object(forKey: SettingValues.pref_smallTag) == nil ? true : settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.blackShadowbox = settings.bool(forKey: SettingValues.pref_blackShadowbox)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
@@ -411,7 +411,7 @@ class SettingValues {
         SettingValues.hideAutomod = settings.bool(forKey: SettingValues.pref_hideAutomod)
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
-        SettingValues.commentFullScreen = settings.object(forKey: SettingValues.pref_commentFullScreen) == nil ? true : settings.bool(forKey: SettingValues.pref_commentFullScreen)
+        SettingValues.commentFullScreen = settings.object(forKey: SettingValues.pref_commentFullScreen) == nil ? !pad : settings.bool(forKey: SettingValues.pref_commentFullScreen)
         SettingValues.showLinkContentType = settings.object(forKey: SettingValues.pref_showLinkContentType) == nil ? true : settings.bool(forKey: SettingValues.pref_showLinkContentType)
         SettingValues.nameScrubbing = settings.bool(forKey: SettingValues.pref_nameScrubbing)
         SettingValues.hiddenFAB = settings.bool(forKey: SettingValues.pref_hiddenFAB)
@@ -562,7 +562,7 @@ class SettingValues {
         func getColor() -> UIColor {
             switch self {
             case .COLLAPSE :
-                return ColorUtil.baseAccent
+                return GMColor.grey500Color()
             case .UPVOTE:
                 return ColorUtil.upvoteColor
             case .DOWNVOTE:
@@ -570,15 +570,15 @@ class SettingValues {
             case .SAVE:
                 return GMColor.yellow500Color()
             case .MENU:
-                return ColorUtil.baseAccent
+                return GMColor.green500Color()
             case .NONE:
                 return GMColor.red500Color()
             case .REPLY:
                 return GMColor.green500Color()
             case .EXIT:
-                return ColorUtil.baseAccent
+                return GMColor.red500Color()
             case .NEXT:
-                return ColorUtil.baseAccent
+                return GMColor.lightGreen500Color()
             }
         }
     }
