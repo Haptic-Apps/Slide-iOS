@@ -212,7 +212,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.delegate = self
+        if single {
+            self.navigationController?.delegate = self
+        }
 
         server?.stop()
         loop?.stop()
@@ -241,8 +243,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             showUI()
         }
         self.view.backgroundColor = ColorUtil.backgroundColor
-        
-        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false

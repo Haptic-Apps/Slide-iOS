@@ -311,6 +311,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 if SettingValues.subredditBar && !SettingValues.reduceColor {
                     self.color1 = ColorUtil.baseColor
                     self.color2 = ColorUtil.getColorForSub(sub: (firstViewController as! SingleSubredditViewController).sub)
+                } else {
+                    self.color1 = ColorUtil.backgroundColor
+                    self.color2 = ColorUtil.backgroundColor
                 }
                 
                 self.setViewControllers([firstViewController],
