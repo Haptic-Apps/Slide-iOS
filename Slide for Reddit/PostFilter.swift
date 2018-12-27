@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import RealmSwift
 import reddift
 import UIKit
 
@@ -122,9 +123,9 @@ class PostFilter {
         return [isImage(sub), isAlbum(sub), isGif(sub), isVideo(sub), isUrl(sub), isSelftext(sub), isNsfw(sub)]
     }
 
-    public static func filter(_ input: [RSubmission], previous: [RSubmission]?, baseSubreddit: String) -> [RSubmission] {
+    public static func filter(_ input: [Object], previous: [RSubmission]?, baseSubreddit: String) -> [Object] {
         var ids: [String] = []
-        var toReturn: [RSubmission] = []
+        var toReturn: [Object] = []
         if previous != nil {
             for p in previous! {
                 ids.append(p.getId())
@@ -132,7 +133,25 @@ class PostFilter {
         }
 
         for link in input {
-            if !matches(link, baseSubreddit: baseSubreddit) && !ids.contains(link.getId()) {
+            if link is RSubmission {
+                if !matches(link as! RSubmission, baseSubreddit: baseSubreddit) && !ids.contains((link as! RSubmission).getId()) {
+                    toReturn.append(link)
+                }
+            } else if link is RComment {
+                let comment = link as! RComment
+                let mainMatch = PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(comment.author) == .orderedSame }) ||
+                    PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(comment.subreddit) == .orderedSame }) ||
+                    contains(PostFilter.flairs, value: comment.flair)
+                if !mainMatch {
+                    toReturn.append(link)
+                }
+            } else if link is RMessage {
+                let message = link as! RMessage
+                let mainMatch = PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(message.author) == .orderedSame })
+                if !mainMatch {
+                    toReturn.append(link)
+                }
+            } else {
                 toReturn.append(link)
             }
         }

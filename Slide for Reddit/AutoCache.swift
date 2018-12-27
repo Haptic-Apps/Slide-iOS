@@ -150,7 +150,7 @@ public class AutoCache: NSObject {
                         let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
                         converted.append(newRS)
                     }
-                    let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub)
+                    let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! RSubmission }
                     AutoCache.preloadImages(values)
                     DispatchQueue.main.async {
                         cacheComments(index, commentIndex: 0, currentLinks: values, realmListing: realmListing, done: 0, failed: 0, progress: progress, completion: completion)
