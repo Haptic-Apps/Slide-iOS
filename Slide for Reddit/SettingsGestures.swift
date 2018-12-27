@@ -368,7 +368,7 @@ class SettingsGestures: UITableViewController {
         createCell(rightSubActionCell, nil, isOn: false, text: "Right submission swipe")
         createCell(forceTouchSubmissionCell, nil, isOn: false, text: "3D-Touch submission action")
 
-        createLeftView(cell: forceTouchSubmissionCell, image: SettingValues.submissionActionForceTouch == .NONE ? UIImage(named: "fullscreen")!.menuIcon() : SettingValues.submissionActionForceTouch.getPhoto(), color: SettingValues.submissionActionForceTouch == .NONE ? GMColor.lightGreen500Color() :SettingValues.submissionActionForceTouch.getColor())
+        createLeftView(cell: forceTouchSubmissionCell, image: SettingValues.submissionActionForceTouch == .NONE ? "fullscreen" : SettingValues.submissionActionForceTouch.getPhoto(), color: SettingValues.submissionActionForceTouch == .NONE ? GMColor.lightGreen500Color() :SettingValues.submissionActionForceTouch.getColor())
         self.forceTouchSubmissionCell.detailTextLabel?.textColor = ColorUtil.fontColor
         self.forceTouchSubmissionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.forceTouchSubmissionCell.detailTextLabel?.numberOfLines = 0
