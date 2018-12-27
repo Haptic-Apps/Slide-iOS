@@ -110,6 +110,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         }
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
+        tabBar.inkColor = UIColor.clear
         tabBar.selectedItem = tabBar.items[0]
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
 

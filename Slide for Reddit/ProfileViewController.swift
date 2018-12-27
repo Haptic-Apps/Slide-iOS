@@ -354,6 +354,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         
         tabBar.selectedItem = tabBar.items[openTo]
         tabBar.delegate = self
+        tabBar.inkColor = UIColor.clear
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
         
         self.view.addSubview(tabBar)

@@ -79,7 +79,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
 
         tabBar.selectedItem = tabBar.items[0]
-        // 4
+        tabBar.inkColor = UIColor.clear
         tabBar.delegate = self
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
         // 5

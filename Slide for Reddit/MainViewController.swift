@@ -580,6 +580,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
         tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
+        tabBar.inkColor = UIColor.clear
         tabBar.selectedItem = tabBar.items[0]
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0])
         tabBar.backgroundColor = .clear
