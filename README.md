@@ -2,7 +2,7 @@
 
 <img src="/slide_ios_rounded.png" align="left" width="150" hspace="10" vspace="10">
 
-Slide is an open-source, ad-free Reddit browser for iOS and is available on the [App Store](https://itunes.apple.com/us/app/slide-for-reddit/id1260626828). Feel free to join us on [the official subreddit](https://www.reddit.com/r/slide_ios) for discussion or requests!
+Slide is an open-source, ad-free Reddit browser for iOS (now available on the [App Store](https://itunes.apple.com/us/app/slide-for-reddit/id1260626828)). Feel free to join us on [the official subreddit](https://www.reddit.com/r/slide_ios) for discussion or requests!
 
 <br>
 <br>
@@ -18,10 +18,10 @@ To get started with Slide iOS development, you need to set up Cocoapods integrat
 
 Below are the steps to getting started:
 
-    1. Clone this repo and open the Terminal
-    2. In Terminal, run `pod install`
-    5. Open "Slide for Reddit.xcworkspace" through Finder
-    6. Go to the _project_ build settings and change `USR_DOMAIN` to something else
+1. Clone this repo and open the Terminal
+2. In Terminal, run `pod install`
+3. Open "Slide for Reddit.xcworkspace" through Finder
+4. Go to the **project** build settings and change `USR_DOMAIN` to something else
 
 
 ### If you are having trouble building on XCode 10 or MacOS Mojave
@@ -38,7 +38,7 @@ If you still run into problems, feel free to shoot me a message on Reddit or Dis
 
 ### What needs to be done
 
-Any issues are fair game, but any issue with the "Help Wanted" tag is an issue that we would particulary love help with. If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to [/u/ccrama](https://www.reddit.com/u/ccrama), or join us on [Discord](https://discord.gg/hVWAY8A)!
+Any issues are fair game, but any issue with the "Help Wanted" or "Enhancement" tags are issues that we would particulary love help with. If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to [/u/ccrama](https://www.reddit.com/u/ccrama), or join us on [Discord](https://discord.gg/hVWAY8A)!
 
 
 ### Issues
