@@ -53,14 +53,23 @@ class PostFilter {
         }
         return false
     }
+    
+    public static func containedIn(_ array: [NSString], value: String) -> Bool {
+        for text in array {
+            if value.localizedCaseInsensitiveContains(String(text)) {
+                return true
+            }
+        }
+        return false
+    }
 
     public static func matches(_ link: RSubmission, baseSubreddit: String) -> Bool {
         let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) ||
             PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) ||
             PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) ||
             contains(PostFilter.flairs, value: link.flair) ||
-            contains(PostFilter.selftext, value: link.htmlBody) ||
-            contains(PostFilter.titles, value: link.title) ||
+            containedIn(PostFilter.selftext, value: link.htmlBody) ||
+            containedIn(PostFilter.titles, value: link.title) ||
             (link.nsfw && !SettingValues.nsfwEnabled)
         
         if mainMatch {
