@@ -294,6 +294,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
        // }
     }
     
+    func reloadHeightsNone() {
+        UIView.performWithoutAnimation {
+            tableView.beginUpdates()
+            tableView.endUpdates()
+        }
+    }
+
     func prepareReply() {
         tableView.beginUpdates()
         tableView.endUpdates()
@@ -1992,9 +1999,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var oldY = CGFloat(0)
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOffset.y
+        let currentY = scrollView.contentOf
+        fset.y
         
-        if !SettingValues.pinToolbar {
+        if !SettingValues.pinToolbar && !isReply {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)

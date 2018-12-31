@@ -30,16 +30,34 @@ protocol ReplyDelegate: class {
 
 class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegate, UITextViewDelegate {
     
-    var previousRect = CGRect.zero
+    var oldConstraints: [NSLayoutConstraint] = []
+    var oldLocation: CGPoint = CGPoint.zero
+    var oldHeight: CGFloat = -1
     func textViewDidChange(_ textView: UITextView) {
-        let pos = textView.endOfDocument
-        let currentRect = textView.caretRect(for: pos)
-        self.previousRect = self.previousRect.origin.y == 0.0 ? currentRect : previousRect
-        if currentRect.origin.y < 0 || currentRect.origin.y > previousRect.origin.y || textView.text.endsWith("\n") || textView.text.trimmed().isEmpty() {
-            textView.sizeToFitHeight()
-            parent!.reloadHeights()
+        let prevSize = textView.frame.size.height
+        let size = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+        if oldHeight == size.height {
+            return
         }
-        previousRect = currentRect
+        oldHeight = size.height
+        textView.removeConstraints(oldConstraints)
+        oldConstraints = batch {
+            if size.height < 40 {
+                textView.heightAnchor == 40
+            } else {
+                textView.heightAnchor == size.height
+            }
+        }
+        
+        parent!.reloadHeightsNone()
+        if oldLocation != CGPoint.zero {
+            var newLocation = oldLocation
+            newLocation.y += (size.height - prevSize)
+            UIView.performWithoutAnimation {
+                parent!.tableView.contentOffset = newLocation
+            }
+        }
+        oldLocation = parent!.tableView.contentOffset
     }
     
     var sideView: UIView!
@@ -416,6 +434,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
 
     func showMenu(_ sender: AnyObject?) {
+        self.oldLocation = CGPoint.zero
         checkReply { (completed) in
             self.contentView.endEditing(true)
             if completed {
