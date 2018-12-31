@@ -1999,8 +1999,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var oldY = CGFloat(0)
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOf
-        fset.y
+        let currentY = scrollView.contentOffset.y
         
         if !SettingValues.pinToolbar && !isReply {
             if currentY > lastYUsed && currentY > 60 {
