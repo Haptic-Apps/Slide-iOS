@@ -113,6 +113,7 @@ class Subscriptions {
 
     public static func subscribe(_ name: String, _ subscribe: Bool, session: Session) {
         var sub = Subscriptions.subreddits
+        SubredditReorderViewController.changed = true
         sub.append(name)
         set(name: AccountController.currentName, subs: sub) { () in }
         if subscribe && AccountController.isLoggedIn {
@@ -129,7 +130,7 @@ class Subscriptions {
     public static func unsubscribe(_ name: String, session: Session) {
         var subs = Subscriptions.subreddits
         subs = subs.filter { $0 != name }
-        
+        SubredditReorderViewController.changed = true
         set(name: AccountController.currentName, subs: subs) { () in }
         if AccountController.isLoggedIn {
             do {

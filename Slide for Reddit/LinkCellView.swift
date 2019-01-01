@@ -947,9 +947,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     deinit {
         if videoView != nil {
-            videoView?.player?.currentItem?.asset.cancelLoading()
-            videoView?.player?.currentItem?.cancelPendingSeeks()
-            updater?.invalidate()
+            self.videoView!.player?.pause()
+            self.videoView?.player?.currentItem?.asset.cancelLoading()
+            self.videoView?.player?.currentItem?.cancelPendingSeeks()
+            self.updater?.invalidate()
+            self.videoView!.player = nil
+            self.avPlayerItem = nil
         }
     }
     
@@ -1177,7 +1180,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
 
-    
     var aspect = CGFloat(1)
     var type: ContentType.CType = .NONE
     var activeSet = false
@@ -1187,6 +1189,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0) {
+        if self is AutoplayBannerLinkCellView {
+            self.videoView!.player?.pause()
+            self.videoView!.player?.currentItem?.asset.cancelLoading()
+            self.videoView!.player?.currentItem?.cancelPendingSeeks()
+            self.videoView!.player = nil
+            self.avPlayerItem = nil
+            self.updater?.invalidate()
+        }
+        
         self.linkClicked = false
 
         self.full = self is FullLinkCellView
