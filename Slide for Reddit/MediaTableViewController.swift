@@ -13,6 +13,12 @@ import SDWebImage
 import UIKit
 
 class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewControllerTransitioningDelegate {
+    
+    override var prefersStatusBarHidden: Bool {
+        get {
+            return false
+        }
+    }
 
     var subChanged = false
 

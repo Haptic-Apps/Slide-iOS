@@ -2488,6 +2488,15 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
 
             guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
+            let cellPoint = recognizer.location(in: cell.title.overflow)
+            print(cellPoint)
+            for view in cell.title.overflow.subviews {
+                print("\(view.classForCoder): \(view.bounds)")
+                if (view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
+                    recognizer.cancel()
+                    return
+                }
+            }
             translatingCell = cell
         }
         

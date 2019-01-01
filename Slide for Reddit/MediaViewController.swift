@@ -13,6 +13,12 @@ import SDWebImage
 import UIKit
 
 class MediaViewController: UIViewController, MediaVCDelegate {
+    
+    override var prefersStatusBarHidden: Bool {
+        get {
+            return false
+        }
+    }
 
     lazy var slideInTransitioningDelegate = SlideInPresentationManager()
     lazy var postContentTransitioningDelegate = PostContentPresentationManager()
