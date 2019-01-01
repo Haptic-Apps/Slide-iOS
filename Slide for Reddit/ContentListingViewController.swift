@@ -418,6 +418,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             (cell as! LinkCellView).videoView!.player?.currentItem?.cancelPendingSeeks()
             (cell as! LinkCellView).videoView!.player = nil
             (cell as! LinkCellView).updater?.invalidate()
+            (cell as! LinkCellView).avPlayerItem = nil
         }
     }
 

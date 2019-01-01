@@ -2063,6 +2063,7 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
             (cell as! LinkCellView).videoView!.player?.currentItem?.cancelPendingSeeks()
             (cell as! LinkCellView).videoView!.player = nil
             (cell as! LinkCellView).updater?.invalidate()
+            (cell as! LinkCellView).avPlayerItem = nil
         }
         if !tableView.indexPathsForVisibleItems.contains(indexPath) {
             if SettingValues.markReadOnScroll && indexPath.row < links.count {

@@ -618,44 +618,47 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var alertController: UIAlertController?
     
     func getCommentEdited(_ name: String) {
-        let session = (UIApplication.shared.delegate as! AppDelegate).session
-        do {
-            try session?.getInfo([name], completion: { (res) in
-                switch res {
-                case .failure:
-                    DispatchQueue.main.async {
-                        self.toolbar?.saveDraft(self)
-                        self.alertController?.dismiss(animated: false, completion: {
-                            let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-                            self.parent!.present(alert, animated: true, completion: nil)
-                        })
-                        self.replyDelegate!.editSent(cr: nil, cell: self)
-                    }
-                case .success(let listing):
-                    if listing.children.count == 1 {
-                        if let comment = listing.children[0] as? Comment {
-                            DispatchQueue.main.async {
-                                self.alertController?.dismiss(animated: false, completion: {
-                                    self.parent!.dismiss(animated: true, completion: nil)
-                                })
-                                self.replyDelegate!.editSent(cr: comment, cell: self)
+        DispatchQueue.main.async {
+            let session = (UIApplication.shared.delegate as! AppDelegate).session
+            do {
+                try session?.getInfo([name], completion: { (res) in
+                    switch res {
+                    case .failure:
+                        DispatchQueue.main.async {
+                            self.toolbar?.saveDraft(self)
+                            self.alertController?.dismiss(animated: false, completion: {
+                                let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                                self.parent!.present(alert, animated: true, completion: nil)
+                            })
+                            self.replyDelegate!.editSent(cr: nil, cell: self)
+                        }
+                    case .success(let listing):
+                        if listing.children.count == 1 {
+                            if let comment = listing.children[0] as? Comment {
+                                DispatchQueue.main.async {
+                                    self.alertController?.dismiss(animated: false, completion: {
+                                        self.parent!.dismiss(animated: true, completion: nil)
+                                    })
+                                    self.replyDelegate!.editSent(cr: comment, cell: self)
+                                }
                             }
                         }
                     }
-                }
-                
-            })
-        } catch {
-            DispatchQueue.main.async {
-                self.toolbar?.saveDraft(self)
-                self.alertController?.dismiss(animated: false, completion: {
-                    let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-                    self.parent!.present(alert, animated: true, completion: nil)
+                    
                 })
-                self.replyDelegate!.editSent(cr: nil, cell: self)
+            } catch {
+                DispatchQueue.main.async {
+                    self.toolbar?.saveDraft(self)
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your message has not been edited (but has been saved as a draft), please try again", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.parent!.present(alert, animated: true, completion: nil)
+                    })
+                    self.replyDelegate!.editSent(cr: nil, cell: self)
+                }
             }
+
         }
     }
     
@@ -815,7 +818,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.replyDelegate = parent!
 
         if edit {
-            body!.text = comment!.body
+            body!.text = comment!.body.decodeHTML()
         }
 
         body!.sizeToFitHeight()
