@@ -2021,7 +2021,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
 
-        if History.getSeen(s: link) && !full {
+        if History.getSeen(s: link) && !full && !SettingValues.newIndicator {
             self.title.alpha = 0.3
         } else {
             self.title.alpha = 1
@@ -2067,7 +2067,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         } else {
             History.addSeen(s: link!)
-            if History.getSeen(s: link!) {
+            if History.getSeen(s: link!) && !SettingValues.newIndicator {
                 self.title.alpha = 0.3
             } else {
                 self.title.alpha = 1
@@ -2198,7 +2198,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
             
             (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController) //todo check this
-            if History.getSeen(s: link) && !full {
+            if History.getSeen(s: link) && !full && !SettingValues.newIndicator {
                 self.title.alpha = 0.3
             } else {
                 self.title.alpha = 1
@@ -2229,7 +2229,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     videoView?.player?.pause()
                 }
                 delegate.openComments(id: link!.getId(), subreddit: link!.subreddit)
-                if History.getSeen(s: link!) {
+                if History.getSeen(s: link!) && !SettingValues.newIndicator {
                     self.title.alpha = 0.3
                 } else {
                     self.title.alpha = 1
