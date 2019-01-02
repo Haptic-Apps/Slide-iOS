@@ -163,7 +163,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         discardB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         
         self.sendB.setTitle("Send", for: .normal)
-        self.discardB.setTitle("Discard", for: .normal)
+        self.discardB.setTitle("Cancel", for: .normal)
         
         sendB.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)
         discardB.addTarget(self, action: #selector(self.discard(_:)), for: UIControlEvents.touchUpInside)
@@ -750,11 +750,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if let del = self.parent {
             if del.isReply && !(body?.text.isEmpty() ?? true) {
                 let alert = UIAlertController(title: "Discard your comment?", message: nil, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_) in
+                alert.addAction(UIAlertAction(title: "Save draft", style: .default, handler: { (_) in
+                    self.toolbar?.saveDraft(nil)
                     completion(true)
                 }))
-                alert.addAction(UIAlertAction(title: "Yes and save draft", style: .default, handler: { (_) in
-                    self.toolbar?.saveDraft(nil)
+                alert.addAction(UIAlertAction(title: "Delete draft", style: .destructive, handler: { (_) in
                     completion(true)
                 }))
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
