@@ -8,6 +8,7 @@
 
 import Anchorage
 import DTCoreText
+import Then
 import UIKit
 import YYText
 
@@ -57,9 +58,9 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = color
         self.baseFontColor = baseFontColor
         self.firstTextView = YYLabel(frame: CGRect.zero).then({
-            $0.displaysAsynchronously = false
             $0.accessibilityIdentifier = "Top title"
             $0.numberOfLines = 0
+            $0.lineBreakMode = .byWordWrapping
         })
         self.overflow = UIStackView().then({
             $0.accessibilityIdentifier = "Text overflow"
@@ -266,11 +267,11 @@ public class TextDisplayStackView: UIStackView {
                 body.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
             } else if block.startsWith("<cite>") {
                 let label = YYLabel(frame: .zero)
-                label.displaysAsynchronously = false
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</cite>", with: "").replacingOccurrences(of: "</p>", with: "").trimmed(), accent: tColor)
                 label.alpha = 0.7
                 label.numberOfLines = 0
+                label.lineBreakMode = .byWordWrapping
 
                 label.attributedText = text
                 
@@ -294,10 +295,10 @@ public class TextDisplayStackView: UIStackView {
                 baseView.heightAnchor == textSizeB.height
             } else {
                 let label = YYLabel(frame: CGRect.zero)
-                label.displaysAsynchronously = false
                 label.accessibilityIdentifier = "New text"
                 let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor)
                 label.numberOfLines = 0
+                label.lineBreakMode = .byWordWrapping
                 label.attributedText = text
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
