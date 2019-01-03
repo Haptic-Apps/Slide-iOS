@@ -60,7 +60,8 @@ public class TextDisplayStackView: UIStackView {
         self.firstTextView = YYLabel(frame: CGRect.zero).then({
             $0.accessibilityIdentifier = "Top title"
             $0.numberOfLines = 0
-            $0.lineBreakMode = .byWordWrapping
+//            $0.lineBreakMode = .byWordWrapping
+            $0.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         })
         self.overflow = UIStackView().then({
             $0.accessibilityIdentifier = "Text overflow"
@@ -68,12 +69,13 @@ public class TextDisplayStackView: UIStackView {
             $0.spacing = 8
         })
         super.init(frame: CGRect.zero)
+
         self.axis = .vertical
         self.addArrangedSubviews(firstTextView, overflow)
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
         firstTextView.horizontalAnchors == self.horizontalAnchors
         firstTextView.topAnchor == self.topAnchor
-        firstTextView.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         overflow.bottomAnchor == self.bottomAnchor
         overflow.horizontalAnchors == self.horizontalAnchors
     }
@@ -102,10 +104,18 @@ public class TextDisplayStackView: UIStackView {
         firstTextView.attributedText = string
         
         if !ignoreHeight {
-            let framesetterB = CTFramesetterCreateWithAttributedString(string)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
+//            let framesetterB = CTFramesetterCreateWithAttributedString(string)
+//            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//            estimatedHeight += textSizeB.height
+
+            let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: string)!
+            firstTextView.textLayout = layout
+            estimatedHeight += layout.textBoundingSize.height
+            firstTextView.horizontalAnchors == horizontalAnchors
+            firstTextView.heightAnchor == layout.textBoundingSize.height
         }
+
     }
     
     public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
@@ -138,9 +148,13 @@ public class TextDisplayStackView: UIStackView {
             firstTextView.attributedText = newTitle
 
             if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+//                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
+//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//                estimatedHeight += textSizeB.height
+
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: newTitle)!
+                estimatedHeight += layout.textBoundingSize.height
             }
             
             if blocks.count > 1 {
@@ -169,10 +183,18 @@ public class TextDisplayStackView: UIStackView {
             firstTextView.attributedText = newTitle
 
             if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+//                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
+//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//                estimatedHeight += textSizeB.height
+
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: newTitle)!
+                firstTextView.textLayout = layout
+                estimatedHeight += layout.textBoundingSize.height
+                firstTextView.heightAnchor == layout.textBoundingSize.height
+                firstTextView.horizontalAnchors == horizontalAnchors
             }
+
         }
         
     }
@@ -209,10 +231,15 @@ public class TextDisplayStackView: UIStackView {
             firstTextView.attributedText = text
 
             if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+//                let framesetterB = CTFramesetterCreateWithAttributedString(text)
+//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//                estimatedHeight += textSizeB.height
+
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
             }
+
             startIndex = 1
         }
         
@@ -279,34 +306,47 @@ public class TextDisplayStackView: UIStackView {
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+//                let framesetterB = CTFramesetterCreateWithAttributedString(text)
+//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude), nil)
+//                estimatedHeight += textSizeB.height
+
+                let size = CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
+
                 baseView.addSubview(label)
                 label.leftAnchor == baseView.leftAnchor + CGFloat(8)
                 label.rightAnchor == baseView.rightAnchor - CGFloat(4)
-                label.heightAnchor == textSizeB.height
+                label.heightAnchor == layout.textBoundingSize.height
                 label.topAnchor == baseView.topAnchor
                 label.bottomAnchor == baseView.bottomAnchor
                 label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
                 overflow.addArrangedSubview(baseView)
                             
                 baseView.horizontalAnchors == overflow.horizontalAnchors
-                baseView.heightAnchor == textSizeB.height
+                baseView.heightAnchor == layout.textBoundingSize.height
             } else {
-                let label = YYLabel(frame: CGRect.zero)
-                label.accessibilityIdentifier = "New text"
                 let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor)
-                label.numberOfLines = 0
-                label.lineBreakMode = .byWordWrapping
-                label.attributedText = text
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
-                label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                let label = YYLabel(frame: CGRect.zero).then {
+                    $0.accessibilityIdentifier = "Paragraph"
+                    $0.numberOfLines = 0
+                    $0.lineBreakMode = .byWordWrapping
+                    $0.attributedText = text
+                    $0.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                }
+
+//                let framesetterB = CTFramesetterCreateWithAttributedString(text)
+//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//                estimatedHeight += textSizeB.height
+
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
+
                 overflow.addArrangedSubview(label)
+
                 label.horizontalAnchors == overflow.horizontalAnchors
-                label.heightAnchor == textSizeB.height
+                label.heightAnchor == layout.textBoundingSize.height
             }
         }
         overflow.setNeedsLayout()

@@ -1409,13 +1409,22 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
         title.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 1, right: 0)
 
-        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: [NSForegroundColorAttributeName: color, NSFontAttributeName: boldFont])
+        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))")).then {
+            $0.yy_color = color
+            $0.yy_font = boldFont
+        }
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 2
         
-        let spacerString = NSMutableAttributedString(string: (comment.controversiality > 0 ? "†  •  " : "  •  "), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
+        let spacerString = NSMutableAttributedString(string: (comment.controversiality > 0 ? "†  •  " : "  •  ")).then {
+            $0.yy_color = ColorUtil.fontColor
+            $0.yy_font = boldFont
+        }
 
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : "")).then {
+            $0.yy_color = ColorUtil.fontColor
+            $0.yy_font = boldFont
+        }
 
         func addBorder(_ text: NSMutableAttributedString, foregroundColor: UIColor, backgroundColor: UIColor) {
             let border = YYTextBorder()
@@ -1433,20 +1442,19 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             addBorder(endString, foregroundColor: .white, backgroundColor: ColorUtil.getColorForSub(sub: comment.subreddit))
         }
 
-        let pinned = NSMutableAttributedString.init(string: "PINNED", attributes: [NSFontAttributeName: boldFont])
-        addBorder(pinned, foregroundColor: .white, backgroundColor: GMColor.green500Color())
-
-        let gilded = NSMutableAttributedString.init(string: "x\(comment.gold) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let platinumed = NSMutableAttributedString.init(string: "x\(comment.platinum) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let silvered = NSMutableAttributedString.init(string: "x\(comment.silver) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
-
-        let spacer = NSMutableAttributedString.init(string: "  ")
+        let spacer = NSMutableAttributedString.init(string: "  ").then {
+            $0.yy_font = boldFont
+        }
         let userColor = ColorUtil.getColorForUser(name: comment.author)
 
         paragraphStyle.lineSpacing = 0.5
 
         let infoString = NSMutableAttributedString(string: "")
-        let authorString = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
+        let authorString = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))").then {
+            $0.yy_paragraphStyle = paragraphStyle
+            $0.yy_font = boldFont
+            $0.yy_color = ColorUtil.fontColor
+        }
 
         if comment.distinguished == "admin" {
             addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#E57373"))
@@ -1467,71 +1475,111 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let tag = ColorUtil.getTagForUser(name: comment.author)
         if !tag.isEmpty {
-            let tagString = NSMutableAttributedString(string: "\(tag)", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
+            let tagString = NSMutableAttributedString(string: "\(tag)").then {
+                $0.yy_font = boldFont
+                $0.yy_color = ColorUtil.fontColor
+            }
             addBorder(tagString, foregroundColor: .white, backgroundColor: UIColor(rgb: 0x2196f3))
             infoString.append(spacer)
             infoString.append(tagString)
         }
 
-        infoString.append(NSAttributedString(string: "  •  ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor]))
+        let bulletSpacer = NSMutableAttributedString(string: "  •  ").then {
+            $0.yy_font = boldFont
+            $0.yy_color = ColorUtil.fontColor
+        }
+        infoString.append(bulletSpacer)
         infoString.append(scoreString)
         infoString.append(spacerString)
         infoString.append(endString)
 
         if !comment.flair.isEmpty {
-            infoString.append(spacer)
-            let flairTitle = NSMutableAttributedString.init(string: "\(comment.flair)", attributes: [NSFontAttributeName: boldFont])
+            let flairTitle = NSMutableAttributedString.init(string: "\(comment.flair)").then {
+                $0.yy_font = boldFont
+            }
             addBorder(flairTitle, foregroundColor: ColorUtil.fontColor, backgroundColor: ColorUtil.backgroundColor)
+            infoString.append(spacer)
             infoString.append(flairTitle)
         }
 
         if comment.sticky {
+            let pinned = NSMutableAttributedString(string: "PINNED").then {
+                $0.yy_font = boldFont
+            }
+            addBorder(pinned, foregroundColor: .white, backgroundColor: GMColor.green500Color())
             infoString.append(spacer)
             infoString.append(pinned)
         }
         
         if comment.gilded {
             if comment.platinum > 0 {
-                infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "P", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                let gild = NSMutableAttributedString(string: "P").then {
+                    $0.yy_font = FontGenerator.boldFontOfSize(size: 12, submission: true)
+                }
                 addBorder(gild, foregroundColor: .white, backgroundColor: GMColor.lightBlue500Color())
+                infoString.append(spacer)
                 infoString.append(gild)
                 if comment.platinum > 1 {
+                    let platinumed = NSMutableAttributedString(string: "x\(comment.platinum) ").then {
+                        $0.yy_font = boldFont
+                        $0.yy_color = ColorUtil.fontColor
+                    }
                     infoString.append(platinumed)
                 }
             }
             if comment.gold > 0 {
-                infoString.append(spacer)
                 let attachmentImage = UIImage(named: "gold")!.getCopy(withSize: .square(size: 12))
                 let gild = NSMutableAttributedString.yy_attachmentString(withContent: attachmentImage, contentMode: UIViewContentMode.center, attachmentSize: attachmentImage.size, alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: .center)
+                infoString.append(spacer)
                 infoString.append(gild)
                 if comment.gold > 1 {
+                    let gilded = NSMutableAttributedString(string: "x\(comment.gold) ").then {
+                        $0.yy_font = boldFont
+                        $0.yy_color = ColorUtil.fontColor
+                    }
                     infoString.append(gilded)
                 }
             }
             if comment.silver > 0 {
-                infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "S", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                let gild = NSMutableAttributedString(string: "S").then {
+                    $0.yy_font = FontGenerator.boldFontOfSize(size: 12, submission: true)
+                }
                 addBorder(gild, foregroundColor: .white, backgroundColor: GMColor.grey500Color())
+                infoString.append(spacer)
                 infoString.append(gild)
                 if comment.silver > 1 {
+                    let silvered = NSMutableAttributedString(string: "x\(comment.silver) ").then {
+                        $0.yy_font = boldFont
+                        $0.yy_color = ColorUtil.fontColor
+                    }
                     infoString.append(silvered)
                 }
             }
         }
 
         if parent!.removed.contains(comment.id) || (!comment.removedBy.isEmpty() && !parent!.approved.contains(comment.id)) {
-            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.red500Color()] as [String: Any]
-            infoString.append(spacer)
             if comment.removedBy == "true" {
-                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!comment.removalReason.isEmpty() ? ":\(comment.removalReason)" : "")", attributes: attrs))
+                let removalString = NSMutableAttributedString(string: "Removed by Reddit\(!comment.removalReason.isEmpty() ? ":\(comment.removalReason)" : "")").then {
+                    $0.yy_font = FontGenerator.boldFontOfSize(size: 12, submission: true)
+                    $0.yy_color = GMColor.red500Color()
+                }
+                infoString.append(spacer)
+                infoString.append(removalString)
             } else {
-                infoString.append(NSMutableAttributedString.init(string: "Removed\(!comment.removedBy.isEmpty() ? " by \(comment.removedBy)":"")\(!comment.removalReason.isEmpty() ? " for \(comment.removalReason)" : "")\(!comment.removalNote.isEmpty() ? " \(comment.removalNote)" : "")", attributes: attrs))
+                let removalString = NSMutableAttributedString(string: "Removed\(!comment.removedBy.isEmpty() ? " by \(comment.removedBy)":"")\(!comment.removalReason.isEmpty() ? " for \(comment.removalReason)" : "")\(!comment.removalNote.isEmpty() ? " \(comment.removalNote)" : "")").then {
+                    $0.yy_font = FontGenerator.boldFontOfSize(size: 12, submission: true)
+                    $0.yy_color = GMColor.red500Color()
+                }
+                infoString.append(spacer)
+                infoString.append(removalString)
             }
         } else if parent!.approved.contains(comment.id) || (!comment.approvedBy.isEmpty() && !parent!.removed.contains(comment.id)) {
-            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.green500Color()] as [String: Any]
+            let approvedString = NSMutableAttributedString(string: "Approved\(!comment.approvedBy.isEmpty() ? " by \(comment.approvedBy)":"")").then {
+                $0.yy_font = FontGenerator.boldFontOfSize(size: 12, submission: true)
+                $0.yy_color = GMColor.green500Color()
+            }
             infoString.append(spacer)
-            infoString.append(NSMutableAttributedString.init(string: "Approved\(!comment.approvedBy.isEmpty() ? " by \(comment.approvedBy)":"")", attributes: attrs))
+            infoString.append(approvedString)
         }
 
         if comment.saved {
@@ -1542,7 +1590,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         paragraphStyle.lineSpacing = 1.5
-        infoString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSRange(location: 0, length: infoString.length))
+        infoString.yy_paragraphStyle = paragraphStyle
 
         title.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
