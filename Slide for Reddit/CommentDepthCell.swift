@@ -1419,12 +1419,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         func addBorder(_ text: NSMutableAttributedString, foregroundColor: UIColor, backgroundColor: UIColor) {
             let border = YYTextBorder()
-            border.insets = UIEdgeInsets.init(top: 1, left: 3, bottom: 1, right: 3)
+            border.insets = UIEdgeInsets(top: 0, left: -2, bottom: 0, right: -2)
             border.cornerRadius = 3
             border.fillColor = backgroundColor
             border.strokeColor = foregroundColor
             text.yy_textBackgroundBorder = border
             text.yy_color = foregroundColor
+            text.insert(NSAttributedString(string: "\u{00a0}"), at: 0)
+            text.append(NSAttributedString(string: "\u{00a0}"))
         }
         
         if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
@@ -1508,8 +1510,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             if comment.gold > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "G", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-                addBorder(gild, foregroundColor: .white, backgroundColor: GMColor.amber500Color())
+                let starImage = UIImage(named: "gold")!.getCopy(withSize: .square(size: 12))
+                let gild = NSMutableAttributedString.yy_attachmentString(withContent: starImage, contentMode: UIViewContentMode.center, attachmentSize: starImage.size, alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: .center)
                 infoString.append(gild)
                 if comment.gold > 1 {
                     infoString.append(gilded)
@@ -1542,9 +1544,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         if comment.saved {
             let starImage = UIImage(named: "save")!.getCopy(withSize: .square(size: 16), withColor: GMColor.orange500Color())
-
             let attachment = NSMutableAttributedString.yy_attachmentString(withContent: starImage, contentMode: UIViewContentMode.center, attachmentSize: starImage.size, alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: .center)
-            //            let attachment = NSMutableAttributedString.yy_attachmentString(withContent: starImage, contentMode: .center, width: 16, ascent: 0, descent: 0)
             infoString.append(spacer)
             infoString.append(attachment)
         }
