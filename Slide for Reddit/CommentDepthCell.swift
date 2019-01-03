@@ -1448,7 +1448,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         var authorSmall = false
 
         if comment.distinguished == "admin" {
-
             addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#E57373"))
         } else if comment.distinguished == "special" {
             addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#F44336"))
