@@ -19,6 +19,9 @@ class SettingsHistory: UITableViewController {
     var readOnScrollCell: UITableViewCell = UITableViewCell()
     var readOnScroll = UISwitch()
 
+    var dotCell: UITableViewCell = UITableViewCell()
+    var dot = UISwitch()
+
     var clearHistory: UITableViewCell = UITableViewCell()
 
     var clearSubs: UITableViewCell = UITableViewCell()
@@ -49,6 +52,9 @@ class SettingsHistory: UITableViewController {
         } else if changed == saveNSFWHistory {
             SettingValues.saveNSFWHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveNSFWHistory)
+        } else if changed == dot {
+            SettingValues.newIndicator = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_newIndicator)
         } else if changed == readOnScroll {
             SettingValues.markReadOnScroll = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_markReadOnScroll)
@@ -98,6 +104,7 @@ class SettingsHistory: UITableViewController {
         createCell(saveHistoryCell, saveHistory, isOn: SettingValues.saveHistory, text: "Save submission and subreddit history")
         createCell(saveNSFWHistoryCell, saveNSFWHistory, isOn: SettingValues.saveNSFWHistory, text: "Save NSFW submission and subreddit history")
         createCell(readOnScrollCell, readOnScroll, isOn: SettingValues.markReadOnScroll, text: "Mark submissions as read when scrolled off screen")
+        createCell(dotCell, dot, isOn: SettingValues.newIndicator, text: "Show new posts with a dot instead of graying post titles")
 
         clearHistory.textLabel?.text = "Clear submission history"
         clearHistory.backgroundColor = ColorUtil.foregroundColor
@@ -159,6 +166,7 @@ class SettingsHistory: UITableViewController {
             case 0: return self.saveHistoryCell
             case 1: return self.saveNSFWHistoryCell
             case 2: return self.readOnScrollCell
+            case 3: return self.dotCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -174,7 +182,7 @@ class SettingsHistory: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 3   // section 0 has 2 rows
+        case 0: return 4   // section 0 has 2 rows
         case 1: return 2
         default: fatalError("Unknown number of sections")
         }

@@ -53,6 +53,7 @@ class CachedTitle {
             attributedTitle.append(spacer)
             attributedTitle.append(flairTitle)
         }
+        
         if submission.nsfw {
             let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.red500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
 
@@ -157,6 +158,14 @@ class CachedTitle {
         
         var boldString: NSMutableAttributedString
         let color = ColorUtil.getColorForSub(sub: submission.subreddit)
+        var readString: NSAttributedString
+        
+        if SettingValues.newIndicator && !History.getSeen(s: submission) {
+            readString = NSAttributedString(string: "•  ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: ColorUtil.accentColorForSub(sub: submission.subreddit)])
+        } else {
+            readString = NSAttributedString()
+        }
+        
         if color != ColorUtil.baseColor {
             let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: color])
             boldString = preString
@@ -167,11 +176,13 @@ class CachedTitle {
 
         let infoString = NSMutableAttributedString()
         if SettingValues.infoBelowTitle {
+            infoString.append(readString)
             infoString.append(attributedTitle)
             infoString.append(NSAttributedString.init(string: "\n\n"))
             infoString.append(boldString)
             infoString.append(endString)
         } else {
+            infoString.append(readString)
             infoString.append(boldString)
             infoString.append(endString)
             infoString.append(NSAttributedString.init(string: "\n"))

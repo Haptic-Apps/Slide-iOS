@@ -29,7 +29,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var font: UITableViewCell = UITableViewCell()
     var comments: UITableViewCell = UITableViewCell()
     var linkHandling: UITableViewCell = UITableViewCell()
-    var history: UITableViewCell = UITableViewCell()
+    var history: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "history")
     var dataSaving: UITableViewCell = UITableViewCell()
     var filters: UITableViewCell = UITableViewCell()
     var content: UITableViewCell = UITableViewCell()
@@ -39,7 +39,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var contributorsCell: UITableViewCell = UITableViewCell()
     var aboutCell: UITableViewCell = UITableViewCell()
     var githubCell: UITableViewCell = UITableViewCell()
-    var clearCell: UITableViewCell = UITableViewCell()
+    var clearCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "cache")
     var cacheCell: UITableViewCell = UITableViewCell()
     var backupCell: UITableViewCell = UITableViewCell()
     var gestureCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "gestures")
@@ -89,6 +89,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
         setupBaseBarColors()
+        self.history.detailTextLabel?.text = "\(History.seenTimes.allKeys.count) visited posts"
         navigationController?.setToolbarHidden(true, animated: false)
         self.icon.imageView?.image = Bundle.main.icon?.getCopy(withSize: CGSize(width: 25, height: 25))
     }
@@ -193,6 +194,15 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.clearCell.textLabel?.textColor = ColorUtil.fontColor
         self.clearCell.imageView?.image = UIImage.init(named: "multis")?.toolbarIcon()
         self.clearCell.imageView?.tintColor = ColorUtil.fontColor
+        self.clearCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        let countBytes = ByteCountFormatter()
+        countBytes.allowedUnits = [.useMB]
+        countBytes.countStyle = .file
+        let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared().getSize()))
+        
+        self.clearCell.detailTextLabel?.text = fileSize
+        self.clearCell.detailTextLabel?.numberOfLines = 0
+        
 
         self.backupCell.textLabel?.text = "Backup and Restore"
         self.backupCell.accessoryType = .disclosureIndicator
@@ -259,6 +269,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.history.textLabel?.textColor = ColorUtil.fontColor
         self.history.imageView?.image = UIImage.init(named: "history")?.toolbarIcon()
         self.history.imageView?.tintColor = ColorUtil.fontColor
+        self.history.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.history.detailTextLabel?.text = "\(History.seenTimes.allKeys.count) visited posts"
+        self.history.detailTextLabel?.numberOfLines = 0
 
         self.dataSaving.textLabel?.text = "Data saving"
         self.dataSaving.accessoryType = .disclosureIndicator
@@ -590,7 +603,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 } catch {
                     print(error)
                 }
+                let countBytes = ByteCountFormatter()
+                countBytes.allowedUnits = [.useMB]
+                countBytes.countStyle = .file
+                let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared().getSize()))
                 
+                self.clearCell.detailTextLabel?.text = fileSize
+
                 BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
             case 7:
                 if !SettingValues.isPro {

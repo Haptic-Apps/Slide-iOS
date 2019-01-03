@@ -75,12 +75,25 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.viewWillAppearActions()
         self.navigationController?.setToolbarHidden(true, animated: false)
         ReadLater.delegate = self
-        didUpdate()
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
             MainViewController.isOffline = true
             let offlineVC = OfflineOverviewViewController(subs: finalSubs)
             VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
         }
+        if MainViewController.needsRestart {
+            MainViewController.needsRestart = false
+            tabBar.removeFromSuperview()
+            self.navigationItem.leftBarButtonItems = []
+            self.navigationItem.rightBarButtonItems = []
+            if SettingValues.subredditBar {
+                setupTabBar(finalSubs)
+                self.dataSource = self
+            } else {
+                self.navigationItem.titleView = nil
+                self.dataSource = nil
+            }
+        }
+        didUpdate()
     }
     
     public func viewWillAppearActions() {
@@ -563,6 +576,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         tabBar.removeFromSuperview()
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
+        } else {
+            self.navigationItem.titleView = nil
         }
     }
     
@@ -575,7 +590,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         tabBar.unselectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor.withAlphaComponent(0.45) : UIColor.white.withAlphaComponent(0.45)
-        
         
         tabBar.items = subs.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)

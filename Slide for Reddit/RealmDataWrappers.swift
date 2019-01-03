@@ -255,10 +255,10 @@ class RealmDataWrapper {
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
         rSubmission.isEdited = submission.edited > 0
         rSubmission.edited = NSDate(timeIntervalSince1970: TimeInterval(submission.edited))
-        rSubmission.gilded = submission.gilded > 0
         rSubmission.silver = ((submission.baseJson["gildings"] as? [String: Any])?["gid_1"] as? Int) ?? 0
         rSubmission.gold = ((submission.baseJson["gildings"] as? [String: Any])?["gid_2"] as? Int) ?? 0
         rSubmission.platinum = ((submission.baseJson["gildings"] as? [String: Any])?["gid_3"] as? Int) ?? 0
+        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum > 0
         rSubmission.htmlBody = bodyHtml
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
@@ -339,10 +339,10 @@ class RealmDataWrapper {
         rComment.created = NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc))
         rComment.isEdited = comment.edited > 0
         rComment.edited = NSDate(timeIntervalSince1970: TimeInterval(comment.edited))
-        rComment.gilded = comment.gilded > 0
         rComment.silver = ((json["gildings"] as? [String: Any])?["gid_1"] as? Int) ?? 0
         rComment.gold = ((json["gildings"] as? [String: Any])?["gid_2"] as? Int) ?? 0
         rComment.platinum = ((json["gildings"] as? [String: Any])?["gid_3"] as? Int) ?? 0
+        rComment.gilded = rComment.silver + rComment.gold + rComment.platinum > 0
         rComment.htmlText = bodyHtml
         rComment.subreddit = comment.subreddit
         rComment.submissionTitle = comment.submissionTitle

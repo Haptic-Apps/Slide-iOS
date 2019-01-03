@@ -112,6 +112,7 @@ class SettingValues {
     public static let pref_appMode = "APP_MODE"
     public static let pref_moreButton = "MORE_BUTTON"
     public static let pref_disableBanner = "DISABLE_BANNER"
+    public static let pref_newIndicator = "NEW_INDICATOR"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -168,6 +169,7 @@ class SettingValues {
     public static var showPages = true
     public static var menuButton = true
     public static var disableBanner = false
+    public static var newIndicator = false
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -421,6 +423,7 @@ class SettingValues {
         SettingValues.linkAlwaysThumbnail = settings.object(forKey: SettingValues.pref_linkAlwaysThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
         SettingValues.showPages = settings.bool(forKey: SettingValues.pref_showPages)
         SettingValues.disableBanner = settings.bool(forKey: SettingValues.pref_disableBanner)
+        SettingValues.newIndicator = settings.bool(forKey: SettingValues.pref_newIndicator)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
