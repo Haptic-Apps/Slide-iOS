@@ -12,9 +12,9 @@ import reddift
 import SDWebImage
 import SwiftSpreadsheet
 import Then
-import TTTAttributedLabel
 import UIKit
 import XLActionController
+import YYText
 
 class TableDisplayView: UIScrollView {
 
@@ -25,13 +25,11 @@ class TableDisplayView: UIScrollView {
     var widths = [[CGFloat]]()
     var baseColor: UIColor
     var tColor: UIColor
-    var textDelegate: TTTAttributedLabelDelegate
 
-    init(baseHtml: String, color: UIColor, accentColor: UIColor, delegate: TTTAttributedLabelDelegate) {
+    init(baseHtml: String, color: UIColor, accentColor: UIColor) {
         let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
-        self.textDelegate = delegate
         super.init(frame: CGRect.zero)
 
         parseHtml(newData.removingPercentEncoding ?? newData)
@@ -153,13 +151,14 @@ class TableDisplayView: UIScrollView {
             globalHeight += 30
             globalWidth = 0
             for string in row {
-                let text = TTTAttributedLabel.init(frame: CGRect.zero).then({
+                let text = YYLabel(frame: CGRect.zero).then({
                     $0.heightAnchor == CGFloat(30)
-                    $0.delegate = self.textDelegate
-                    $0.linkAttributes = activeLinkAttributes
-                    $0.activeLinkAttributes = activeLinkAttributes
                 })
-                text.setText(string)
+                text.attributedText = string
+                text.highlightTapAction = {
+                    (containerView:UIView, text:NSAttributedString, range:NSRange, rect:CGRect) in
+                    print("Link was clicked: \(text)")
+                }
                 if odd {
                     text.backgroundColor = ColorUtil.foregroundColor
                 }

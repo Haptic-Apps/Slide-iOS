@@ -2158,9 +2158,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = textView.firstTextView.link(at: locationInTextView) {
-            return (attr.result.url!, attr.accessibilityFrame)
-        }
+//        if let attr = textView.firstTextView.link(at: locationInTextView) {
+//            return (attr.result.url!, attr.accessibilityFrame)
+//        }
         return nil
     }
     

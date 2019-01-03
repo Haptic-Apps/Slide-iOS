@@ -82,6 +82,7 @@ PODS:
   - XLActionController (4.0.1):
     - XLActionController/Core (= 4.0.1)
   - XLActionController/Core (4.0.1)
+  - YYText (1.0.7)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
@@ -110,6 +111,34 @@ DEPENDENCIES:
   - Then
   - TTTAttributedLabel
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
+  - YYText
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Alamofire
+    - Anchorage
+    - BadgeSwift
+    - BiometricAuthentication
+    - DTFoundation
+    - Embassy
+    - LicensesViewController
+    - MaterialComponents
+    - MDFInternationalization
+    - MKColorPicker
+    - MotionAnimator
+    - MotionInterchange
+    - MTColorDistance
+    - Realm
+    - RealmSwift
+    - SDWebImage
+    - Starscream
+    - SubtleVolume
+    - SwiftLint
+    - SwiftSpreadsheet
+    - SwiftyJSON
+    - Then
+    - TTTAttributedLabel
+    - YYText
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -175,7 +204,8 @@ SPEC CHECKSUMS:
   Then: 71866660c7af35a7343831f7668e7cd2b62ee0f2
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: 007868251c0eed70d649d06c1625259b73b3a600
+  YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 5bbd2b0b1d83f438b5954675d442f16de7abc270
+PODFILE CHECKSUM: 5a61367d2c473a94a64b80c970e3807e84aacfef
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

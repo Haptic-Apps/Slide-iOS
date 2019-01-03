@@ -32,6 +32,7 @@ target 'Slide for Reddit' do
   pod 'Anchorage'
   pod 'Then'
   pod 'SwiftLint'
+  pod 'YYText'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

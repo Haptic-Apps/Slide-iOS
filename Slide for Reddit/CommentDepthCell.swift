@@ -11,9 +11,10 @@ import AudioToolbox
 import RealmSwift
 import reddift
 import RLBAlertsPickers
-import TTTAttributedLabel
+//import TTTAttributedLabel
 import UIKit
 import XLActionController
+import YYText
 
 protocol TTTAttributedCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)
@@ -103,7 +104,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.backgroundColor = ColorUtil.backgroundColor
-        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, delegate: self, width: contentView.frame.size.width).then({
+        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, width: contentView.frame.size.width).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
             $0.ignoreHeight = true
@@ -235,16 +236,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
-        let textClicked = label.attributedText.attributedSubstring(from: result.range).string
-        if textClicked.contains("[[s[") {
-            parent?.showSpoiler(textClicked)
-        } else {
-            let urlClicked = result.url!
-            parent?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
-        }
-    }
-    
+//    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
+//        let textClicked = label.attributedText.attributedSubstring(from: result.range).string
+//        if textClicked.contains("[[s[") {
+//            parent?.showSpoiler(textClicked)
+//        } else {
+//            let urlClicked = result.url!
+//            parent?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
+//        }
+//    }
+
     var progressBar: ProgressBarView!
     var typeImage: UIImageView!
     var previousTranslation: CGFloat = 0
@@ -425,8 +426,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer.view == self.title {
-            let link = self.title.link(at: touch.location(in: self.title), withTouch: touch)
-            return link == nil
+            // TODO: Do we need this anymore after doing the YYText integration?
+//            let link = self.title.link(at: touch.location(in: self.title), withTouch: touch)
+//            return link == nil
         }
         return true
     }
@@ -1405,7 +1407,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
-        title.firstTextView.textInsets = UIEdgeInsets(top: 3, left: 0, bottom: 1, right: 0)
+        title.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 1, right: 0)
 
         let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: [NSForegroundColorAttributeName: color, NSFontAttributeName: boldFont])
         let paragraphStyle = NSMutableParagraphStyle()
@@ -1414,35 +1416,48 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let spacerString = NSMutableAttributedString(string: (comment.controversiality > 0 ? "†  •  " : "  •  "), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
 
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
+
+        func addBorder(_ text: NSMutableAttributedString, foregroundColor: UIColor, backgroundColor: UIColor) {
+            let border = YYTextBorder()
+            border.insets = UIEdgeInsets.init(top: 1, left: 3, bottom: 1, right: 3)
+            border.cornerRadius = 3
+            border.fillColor = backgroundColor
+            border.strokeColor = foregroundColor
+            text.yy_textBackgroundBorder = border
+            text.yy_color = foregroundColor
+        }
         
         if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
-            endString.addAttributes([kTTTBackgroundFillColorAttributeName: ColorUtil.getColorForSub(sub: comment.subreddit), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange(location: 0, length: endString.length))
+            addBorder(endString, foregroundColor: .white, backgroundColor: ColorUtil.getColorForSub(sub: comment.subreddit))
         }
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
-        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: parent?.authorColor ?? ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
+        let authorString = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
+        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: parent?.authorColor ?? ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
 
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gold) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.platinum) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
-        let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.silver) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let pinned = NSMutableAttributedString.init(string: "PINNED", attributes: [NSFontAttributeName: boldFont])
+        addBorder(pinned, foregroundColor: .white, backgroundColor: GMColor.green500Color())
+
+        let gilded = NSMutableAttributedString.init(string: "x\(comment.gold) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let platinumed = NSMutableAttributedString.init(string: "x\(comment.platinum) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let silvered = NSMutableAttributedString.init(string: "x\(comment.silver) ", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
         var authorSmall = false
+
         if comment.distinguished == "admin" {
-          authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+
+            addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#E57373"))
         } else if comment.distinguished == "special" {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#F44336"))
         } else if comment.distinguished == "moderator" {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#81C784"))
         } else if AccountController.currentName == comment.author {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#FFB74D"))
         } else if submissionAuthor != nil && comment.author == submissionAuthor {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#64B5F6"), NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#64B5F6"))
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: boldFont, NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 1, length: authorString.length - 1))
+            addBorder(authorString, foregroundColor: .white, backgroundColor: userColor)
         } else {
             authorSmall = true
         }
@@ -1458,7 +1473,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let tag = ColorUtil.getTagForUser(name: comment.author)
         if !tag.isEmpty {
             let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
-            tagString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: tagString.length))
+            addBorder(tagString, foregroundColor: .white, backgroundColor: UIColor(rgb: 0x2196f3))
             infoString.append(spacer)
             infoString.append(tagString)
         }
@@ -1470,6 +1485,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         if !comment.flair.isEmpty {
             infoString.append(spacer)
+
+            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [NSFontAttributeName: boldFont])
+            addBorder(flairTitle, foregroundColor: ColorUtil.fontColor, backgroundColor: ColorUtil.backgroundColor)
             infoString.append(flairTitle)
         }
 
@@ -1481,7 +1499,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if comment.gilded {
             if comment.platinum > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "P", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.lightBlue500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                let gild = NSMutableAttributedString.init(string: "P", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                addBorder(gild, foregroundColor: .white, backgroundColor: GMColor.lightBlue500Color())
                 infoString.append(gild)
                 if comment.platinum > 1 {
                     infoString.append(platinumed)
@@ -1489,7 +1508,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             if comment.gold > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "G", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                let gild = NSMutableAttributedString.init(string: "G", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                addBorder(gild, foregroundColor: .white, backgroundColor: GMColor.amber500Color())
                 infoString.append(gild)
                 if comment.gold > 1 {
                     infoString.append(gilded)
@@ -1497,7 +1517,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             if comment.silver > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "S", attributes: [kTTTBackgroundFillColorAttributeName: GMColor.grey500Color(), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3])
+                let gild = NSMutableAttributedString.init(string: "S", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                addBorder(gild, foregroundColor: .white, backgroundColor: GMColor.grey500Color())
                 infoString.append(gild)
                 if comment.silver > 1 {
                     infoString.append(silvered)
@@ -1517,6 +1538,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: GMColor.green500Color()] as [String: Any]
             infoString.append(spacer)
             infoString.append(NSMutableAttributedString.init(string: "Approved\(!comment.approvedBy.isEmpty() ? " by \(comment.approvedBy)":"")", attributes: attrs))
+        }
+
+        if comment.saved {
+            let starImage = UIImage(named: "save")!.getCopy(withSize: .square(size: 16), withColor: GMColor.orange500Color())
+
+            let attachment = NSMutableAttributedString.yy_attachmentString(withContent: starImage, contentMode: UIViewContentMode.center, attachmentSize: starImage.size, alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: .center)
+            //            let attachment = NSMutableAttributedString.yy_attachmentString(withContent: starImage, contentMode: .center, width: 16, ascent: 0, descent: 0)
+            infoString.append(spacer)
+            infoString.append(attachment)
         }
         
         paragraphStyle.lineSpacing = 1.5
@@ -1583,12 +1613,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
-        if let attr = title.firstTextView.link(at: locationInTextView) {
-            if let url = attr.result.url {
-                return (url, title.bounds)
-            }
-
-        }
+//        if let attr = title.firstTextView.link(at: locationInTextView) {
+//            if let url = attr.result.url {
+//                return (url, title.bounds)
+//            }
+//
+//        }
         return nil
     }
 
@@ -1623,32 +1653,32 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 }
 
-extension CommentDepthCell: TTTAttributedLabelDelegate {
-    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if parent != nil {
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = url.host
-            
-            alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-            }))
-            alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(url)
-                }
-            }))
-            let open = OpenInChromeController.init()
-            if open.isChromeInstalled() {
-                alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
-                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                }))
-            }
-            parent?.present(alertController, animated: true, completion: nil)
-        }
-    }
-}
+//extension CommentDepthCell: TTTAttributedLabelDelegate {
+//    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
+//        if parent != nil {
+//            let alertController: BottomSheetActionController = BottomSheetActionController()
+//            alertController.headerData = url.host
+//
+//            alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+//                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+//            }))
+//            alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+//                if #available(iOS 10.0, *) {
+//                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+//                } else {
+//                    UIApplication.shared.openURL(url)
+//                }
+//            }))
+//            let open = OpenInChromeController.init()
+//            if open.isChromeInstalled() {
+//                alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+//                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+//                }))
+//            }
+//            parent?.present(alertController, animated: true, completion: nil)
+//        }
+//    }
+//}
 
 extension UIColor {
     func add(overlay: UIColor) -> UIColor {

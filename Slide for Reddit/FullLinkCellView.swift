@@ -13,7 +13,7 @@ final class FullLinkCellView: LinkCellView {
     
     override func configureView() {
         full = true
-        self.textView = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
+        self.textView = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.baseAccent, width: 100).then {
             $0.accessibilityIdentifier = "Self Text View"
             $0.backgroundColor = ColorUtil.foregroundColor
             $0.isHidden = true
