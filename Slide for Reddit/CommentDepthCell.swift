@@ -1433,9 +1433,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             addBorder(endString, foregroundColor: .white, backgroundColor: ColorUtil.getColorForSub(sub: comment.subreddit))
         }
 
-        let authorString = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
-        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: parent?.authorColor ?? ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
-
         let pinned = NSMutableAttributedString.init(string: "PINNED", attributes: [NSFontAttributeName: boldFont])
         addBorder(pinned, foregroundColor: .white, backgroundColor: GMColor.green500Color())
 
@@ -1445,7 +1442,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
-        var authorSmall = false
+
+        paragraphStyle.lineSpacing = 0.5
+
+        let infoString = NSMutableAttributedString(string: "")
+        let authorString = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
 
         if comment.distinguished == "admin" {
             addBorder(authorString, foregroundColor: .white, backgroundColor: UIColor(hexString: "#E57373"))
@@ -1460,20 +1461,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         } else if userColor != ColorUtil.baseColor {
             addBorder(authorString, foregroundColor: .white, backgroundColor: userColor)
         } else {
-            authorSmall = true
+            authorString.yy_color = parent?.authorColor ?? ColorUtil.fontColor
         }
-
-        paragraphStyle.lineSpacing = 0.5
-        let infoString = NSMutableAttributedString(string: "")
-        if authorSmall {
-            infoString.append(authorStringNoFlair)
-        } else {
-            infoString.append(authorString)
-        }
+        infoString.append(authorString)
 
         let tag = ColorUtil.getTagForUser(name: comment.author)
         if !tag.isEmpty {
-            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
+            let tagString = NSMutableAttributedString(string: "\(tag)", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor])
             addBorder(tagString, foregroundColor: .white, backgroundColor: UIColor(rgb: 0x2196f3))
             infoString.append(spacer)
             infoString.append(tagString)
@@ -1486,8 +1480,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         if !comment.flair.isEmpty {
             infoString.append(spacer)
-
-            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [NSFontAttributeName: boldFont])
+            let flairTitle = NSMutableAttributedString.init(string: "\(comment.flair)", attributes: [NSFontAttributeName: boldFont])
             addBorder(flairTitle, foregroundColor: ColorUtil.fontColor, backgroundColor: ColorUtil.backgroundColor)
             infoString.append(flairTitle)
         }
@@ -1509,8 +1502,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             if comment.gold > 0 {
                 infoString.append(spacer)
-                let starImage = UIImage(named: "gold")!.getCopy(withSize: .square(size: 12))
-                let gild = NSMutableAttributedString.yy_attachmentString(withContent: starImage, contentMode: UIViewContentMode.center, attachmentSize: starImage.size, alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: .center)
+                let attachmentImage = UIImage(named: "gold")!.getCopy(withSize: .square(size: 12))
+                let gild = NSMutableAttributedString.yy_attachmentString(withContent: attachmentImage, contentMode: UIViewContentMode.center, attachmentSize: attachmentImage.size, alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: .center)
                 infoString.append(gild)
                 if comment.gold > 1 {
                     infoString.append(gilded)
@@ -1542,8 +1535,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         if comment.saved {
-            let starImage = UIImage(named: "save")!.getCopy(withSize: .square(size: 16), withColor: GMColor.orange500Color())
-            let attachment = NSMutableAttributedString.yy_attachmentString(withContent: starImage, contentMode: UIViewContentMode.center, attachmentSize: starImage.size, alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: .center)
+            let attachmentImage = UIImage(named: "save")!.getCopy(withSize: .square(size: 16), withColor: GMColor.orange500Color())
+            let attachment = NSMutableAttributedString.yy_attachmentString(withContent: attachmentImage, contentMode: UIViewContentMode.center, attachmentSize: attachmentImage.size, alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: .center)
             infoString.append(spacer)
             infoString.append(attachment)
         }
