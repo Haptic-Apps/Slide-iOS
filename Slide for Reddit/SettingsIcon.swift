@@ -13,10 +13,10 @@ import UIKit
 class SettingsIcon: UITableViewController {
     
     var premium = ["retroapple", "tronteal", "pink", "black"]
-    var community = ["cottoncandy", "outrun", "stars", "default", "blue", "mint", "green", "lightblue", "purple", "red", "yellow"]
+    var community = ["cottoncandy", "outrun", "default", "stars", "blue", "mint", "green", "lightblue", "purple", "red", "yellow"]
     
     var premiumNames = ["Retro", "Tron", "Pink", "Black"]
-    var communityNames = ["Cotton Candy", "Outrun", "Starry night u/TyShark", "Standard", "Blue", "Mint u/Baselt95", "Green", "Light Blue", "Purple", "Red", "Yellow"]
+    var communityNames = ["Cotton Candy", "Outrun", "Standard", "Starry night u/TyShark", "Blue", "Mint u/Baselt95", "Green", "Light Blue", "Purple", "Red", "Yellow"]
 
     override func viewDidLoad() {
         super.viewDidLoad()

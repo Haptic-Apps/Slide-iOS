@@ -21,47 +21,20 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-            <key>mint</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_mint</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
-            <key>stars</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_stars</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
-            <key>cottoncandy</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_cottoncandy</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
-            <key>outrun</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_outrun</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>ic_blue</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>cottoncandy</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_cottoncandy</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -80,6 +53,24 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>ic_lightblue</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>mint</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_mint</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>outrun</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_outrun</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -116,6 +107,15 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>ic_retroapple</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>stars</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_stars</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -162,47 +162,20 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-            <key>cottoncandy</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_cottoncandy</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
-            <key>mint</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_mint</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
-            <key>stars</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_stars</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
-            <key>outrun</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_outrun</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>ic_blue</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>cottoncandy</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_cottoncandy</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -221,6 +194,24 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>ic_lightblue</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>mint</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_mint</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>outrun</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_outrun</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -257,6 +248,15 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>ic_retroapple</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>stars</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_stars</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -299,7 +299,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0</string>
+	<string>2.1</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -314,7 +314,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>74</string>
+	<string>75</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
