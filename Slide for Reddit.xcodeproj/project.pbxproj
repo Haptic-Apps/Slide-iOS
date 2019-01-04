@@ -107,6 +107,10 @@
 		BE1B57DF21CE965000FF6F98 /* ic_cottoncandy@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */; };
 		BE1B57E221CEFA9800FF6F98 /* ic_outrun@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E021CEFA9800FF6F98 /* ic_outrun@3x.png */; };
 		BE1B57E321CEFA9800FF6F98 /* ic_outrun@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E121CEFA9800FF6F98 /* ic_outrun@2x.png */; };
+		BE1B57E621DEB5B600FF6F98 /* ic_mint@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E421DEB5B600FF6F98 /* ic_mint@3x.png */; };
+		BE1B57E721DEB5B600FF6F98 /* ic_mint@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E521DEB5B600FF6F98 /* ic_mint@2x.png */; };
+		BE1B57EA21DED23000FF6F98 /* ic_stars@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E821DED23000FF6F98 /* ic_stars@2x.png */; };
+		BE1B57EB21DED23000FF6F98 /* ic_stars@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E921DED23000FF6F98 /* ic_stars@3x.png */; };
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
@@ -194,7 +198,7 @@
 		BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EC1E201C22008BB63B /* SubredditCellView.swift */; };
 		BE7439F11E203D05008BB63B /* NavigationHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F01E203D05008BB63B /* NavigationHeaderView.swift */; };
 		BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F21E20C9BD008BB63B /* CommentCellView.swift */; };
-		BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F41E2162A8008BB63B /* AccountController.swift */; };
+		BE7439F51E2162A8008BB63B /* ion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F41E2162A8008BB63B /* ion.swift */; };
 		BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F81E21A59C008BB63B /* ActionStates.swift */; };
 		BE77470820367D98006C72E8 /* Credits.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE77470720367D98006C72E8 /* Credits.plist */; };
 		BE77638A211B732B002F2969 /* SubredditFindReturnViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */; };
@@ -443,6 +447,10 @@
 		BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_cottoncandy@3x.png"; sourceTree = "<group>"; };
 		BE1B57E021CEFA9800FF6F98 /* ic_outrun@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_outrun@3x.png"; sourceTree = "<group>"; };
 		BE1B57E121CEFA9800FF6F98 /* ic_outrun@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_outrun@2x.png"; sourceTree = "<group>"; };
+		BE1B57E421DEB5B600FF6F98 /* ic_mint@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_mint@3x.png"; sourceTree = "<group>"; };
+		BE1B57E521DEB5B600FF6F98 /* ic_mint@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_mint@2x.png"; sourceTree = "<group>"; };
+		BE1B57E821DED23000FF6F98 /* ic_stars@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_stars@2x.png"; sourceTree = "<group>"; };
+		BE1B57E921DED23000FF6F98 /* ic_stars@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_stars@3x.png"; sourceTree = "<group>"; };
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
@@ -533,7 +541,7 @@
 		BE7439EC1E201C22008BB63B /* SubredditCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditCellView.swift; sourceTree = "<group>"; };
 		BE7439F01E203D05008BB63B /* NavigationHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationHeaderView.swift; sourceTree = "<group>"; };
 		BE7439F21E20C9BD008BB63B /* CommentCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellView.swift; sourceTree = "<group>"; };
-		BE7439F41E2162A8008BB63B /* AccountController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
+		BE7439F41E2162A8008BB63B /* ion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ion.swift; sourceTree = "<group>"; };
 		BE7439F81E21A59C008BB63B /* ActionStates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionStates.swift; sourceTree = "<group>"; };
 		BE77470720367D98006C72E8 /* Credits.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Credits.plist; path = "Slide for Reddit/Credits.plist"; sourceTree = "<group>"; };
 		BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditFindReturnViewController.swift; sourceTree = "<group>"; };
@@ -880,6 +888,10 @@
 		BE4AB49C21BC4DAE001092C4 /* App Icons */ = {
 			isa = PBXGroup;
 			children = (
+				BE1B57E821DED23000FF6F98 /* ic_stars@2x.png */,
+				BE1B57E921DED23000FF6F98 /* ic_stars@3x.png */,
+				BE1B57E521DEB5B600FF6F98 /* ic_mint@2x.png */,
+				BE1B57E421DEB5B600FF6F98 /* ic_mint@3x.png */,
 				BE1B57E121CEFA9800FF6F98 /* ic_outrun@2x.png */,
 				BE1B57E021CEFA9800FF6F98 /* ic_outrun@3x.png */,
 				BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */,
@@ -1007,7 +1019,7 @@
 				BE3B7434210135BD00658DE9 /* html */,
 				090D6B7A20F3D8610052F3F6 /* Media */,
 				0965260320E1688400EA53BE /* Extensions */,
-				BE7439F41E2162A8008BB63B /* AccountController.swift */,
+				BE7439F41E2162A8008BB63B /* ion.swift */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
 				BEF6F5351E19B4A2002B03B6 /* adsources.txt */,
 				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
@@ -1372,6 +1384,7 @@
 				BE0C4F8F21BCBE83006C54FF /* ic_tronblue@2x.png in Resources */,
 				BE35217B1E3D2E3D00C30B8D /* RobotoCondensed-BoldItalic.ttf in Resources */,
 				BE0C4F8B21BCBE83006C54FF /* ic_pink@3x.png in Resources */,
+				BE1B57EA21DED23000FF6F98 /* ic_stars@2x.png in Resources */,
 				BE0C4F9421BCBE83006C54FF /* ic_yellow@3x.png in Resources */,
 				BE0C4F8621BCBE83006C54FF /* ic_green@2x.png in Resources */,
 				BE0C4F9721BCBE83006C54FF /* ic_pink@2x.png in Resources */,
@@ -1385,15 +1398,18 @@
 				BE0C4F9821BCBE83006C54FF /* ic_blue@3x.png in Resources */,
 				BEF6F5361E19B4A2002B03B6 /* adsources.txt in Resources */,
 				BE0C4F9521BCBE83006C54FF /* ic_purple@2x.png in Resources */,
+				BE1B57EB21DED23000FF6F98 /* ic_stars@3x.png in Resources */,
 				BE0C4F8921BCBE83006C54FF /* ic_red@3x.png in Resources */,
 				BE44B5881FFAC66100D3F6D5 /* BSCell.xib in Resources */,
 				BE8FCA0F1E0C46090063B8EF /* Assets.xcassets in Resources */,
 				BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */,
+				BE1B57E721DEB5B600FF6F98 /* ic_mint@2x.png in Resources */,
 				BE35216D1E3D22B000C30B8D /* RobotoCondensed-Bold.ttf in Resources */,
 				BE3521781E3D2E3600C30B8D /* Roboto-Italic.ttf in Resources */,
 				BE1B57DE21CE965000FF6F98 /* ic_cottoncandy@2x.png in Resources */,
 				BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */,
 				BEBF45DD1E23384500764BB8 /* comments.plist in Resources */,
+				BE1B57E621DEB5B600FF6F98 /* ic_mint@3x.png in Resources */,
 				BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */,
 				BE35216C1E3D22B000C30B8D /* Roboto-Medium.ttf in Resources */,
 				BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */,
@@ -1729,7 +1745,7 @@
 				BE2B8A091E25EEDF0053D493 /* SettingsViewController.swift in Sources */,
 				BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */,
 				09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */,
-				BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */,
+				BE7439F51E2162A8008BB63B /* ion.swift in Sources */,
 				BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */,
 				BE6EA6CB1E1C1E9400E9E709 /* StreamableJSONBase.swift in Sources */,
 				BE6EA6E21E1DA1A300E9E709 /* ContributionLoader.swift in Sources */,

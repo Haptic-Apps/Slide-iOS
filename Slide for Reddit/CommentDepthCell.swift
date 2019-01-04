@@ -1048,9 +1048,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
             let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
-            alert.addTextViewer(text: .text(self.comment!.body))
+            alert.addTextViewer(text: .text(self.comment!.body.decodeHTML()))
             alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (_) in
-                UIPasteboard.general.string = self.comment!.body
+                UIPasteboard.general.string = self.comment!.body.decodeHTML()
             }))
             alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
                 

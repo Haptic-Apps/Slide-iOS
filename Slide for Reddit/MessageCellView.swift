@@ -7,6 +7,7 @@
 //
 
 import AudioToolbox
+import Anchorage
 import reddift
 import TTTAttributedLabel
 import UIKit
@@ -14,9 +15,7 @@ import XLActionController
 
 class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
 
-    var title = UILabel()
-    var textView = TTTAttributedLabel.init(frame: CGRect.zero)
-    var info = UILabel()
+    var text = TextDisplayStackView()
     var single = false
 
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
@@ -39,51 +38,18 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     var hasText = false
 
     var full = false
-    var estimatedHeight = CGFloat(0)
-
-    func estimateHeight() -> CGFloat {
-        if estimatedHeight == 0 {
-            let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16 - (message!.subject.hasPrefix("re:") ? 22 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight = CGFloat(24) + CGFloat(!hasText ? 0 : textSizeB.height)
-        }
-        return estimatedHeight
-    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        title.numberOfLines = 0
-        title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = FontGenerator.fontOfSize(size: 18, submission: true)
-        title.textColor = ColorUtil.fontColor
-
-        self.textView = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        self.textView.delegate = self
-        self.textView.isUserInteractionEnabled = true
-        self.textView.numberOfLines = 0
-        self.textView.backgroundColor = .clear
-
-        self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-        info.numberOfLines = 0
-        info.font = FontGenerator.fontOfSize(size: 12, submission: true)
-        info.textColor = ColorUtil.fontColor
-        info.alpha = 0.87
-
-        title.translatesAutoresizingMaskIntoConstraints = false
-        info.translatesAutoresizingMaskIntoConstraints = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
-
-        self.contentView.addSubview(title)
-        self.contentView.addSubview(textView)
-        self.contentView.addSubview(info)
-
+        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), delegate: self, width: frame.width - 16)
+        self.contentView.addSubview(text)
+        
+        text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)
+        text.rightAnchor == contentView.rightAnchor - CGFloat(8)
+        
         self.contentView.backgroundColor = ColorUtil.foregroundColor
-
-        self.updateConstraints()
-
     }
     
     var lsC: [NSLayoutConstraint] = []
@@ -93,22 +59,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         if navViewController == nil && nav != nil {
             navViewController = nav
         }
-        if message.wasComment {
-            title.text = message.linkTitle
-        } else {
-            title.text = message.subject
-        }
         self.message = message
-        if !ActionStates.isRead(s: message) {
-            title.textColor = GMColor.red500Color()
-        } else {
-            title.textColor = ColorUtil.fontColor
-        }
-        title.sizeToFit()
-
-        if !lsC.isEmpty {
-            self.contentView.removeConstraints(lsC)
-        }
 
         let messageClick = UITapGestureRecognizer(target: self, action: #selector(MessageCellView.doReply(sender:)))
         let messageLongClick = UILongPressGestureRecognizer(target: self, action: #selector(MessageCellView.showMenu(_:)))
@@ -118,93 +69,47 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         self.addGestureRecognizer(messageClick)
         self.addGestureRecognizer(messageLongClick)
 
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
+        let titleText = getTitleText(message: message)
+        text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
 
-        let subString = NSMutableAttributedString(string: "r/\(message.subreddit)")
-        let color = ColorUtil.getColorForSub(sub: message.subreddit)
-        if color != ColorUtil.baseColor {
-            subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
-        }
-
-        let infoString = NSMutableAttributedString()
-        infoString.append(endString)
-        if !message.subreddit.isEmpty {
-            infoString.append(NSAttributedString.init(string: "  •  "))
-            infoString.append(subString)
-        }
-
-        info.attributedText = infoString
-
-        let accent = ColorUtil.accentColorForSub(sub: "")
-        let html = message.htmlBody
-        do {
-            let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-            let font = FontGenerator.fontOfSize(size: 16, submission: false)
-            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
-            content = LinkParser.parse(attr2, ColorUtil.accentColorForSub(sub: ""))
-            
-            let activeLinkAttributes = NSMutableDictionary(dictionary: textView.activeLinkAttributes)
-            activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
-            textView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-            textView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-
-            textView.setText(content)
-            let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-
-            textView.frame.size.height = textSizeB.height
-            hasText = true
-        } catch {
-        }
-
-        let metrics = ["height": textView.frame.size.height] as [String: Any]
-        let views = ["label": title, "body": textView, "info": info] as [String: Any]
-        if !lsC.isEmpty {
-            self.contentView.removeConstraints(lsC)
-        }
-        lsC = []
+        self.text.removeConstraints(lsC)
         if message.subject.hasPrefix("re:") {
-            lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[label]-8-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
-            lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[body]-8-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
-            lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-38-[info]-8-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
+            lsC = batch {
+                self.text.leftAnchor == self.contentView.leftAnchor + 38
+            }
         } else {
-            lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
-            lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[body]-8-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
-
-            lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[info]-8-|",
-                    options: NSLayoutFormatOptions(rawValue: 0),
-                    metrics: metrics,
-                    views: views))
+            lsC = batch {
+                self.text.leftAnchor == self.contentView.leftAnchor + 8
+            }
         }
-        lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-16-[label]-4-[info]-4-[body]-16-|",
-                options: NSLayoutFormatOptions(rawValue: 0),
-                metrics: metrics,
-                views: views))
-        self.contentView.addConstraints(lsC)
-
     }
 
     var timer: Timer?
     var cancelled = false
+    
+    func getTitleText(message: RMessage) -> NSAttributedString {
+        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 18, submission: false), NSForegroundColorAttributeName: !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.fontColor])
+        
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 16, submission: false)])
+        
+        var color = ColorUtil.getColorForSub(sub: message.subreddit)
+        if color == ColorUtil.baseColor {
+            color = ColorUtil.fontColor
+        }
+
+        let subString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 16, submission: false), NSForegroundColorAttributeName: color])
+        
+        let infoString = NSMutableAttributedString()
+        infoString.append(endString)
+        if !message.subreddit.isEmpty {
+            infoString.append(NSAttributedString.init(string: "  •  ", attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 16, submission: false)]))
+            infoString.append(subString)
+        }
+        
+        titleText.append(NSAttributedString(string: "\n"))
+        titleText.append(infoString)
+        return titleText
+    }
 
     func showLongMenu() {
         timer!.invalidate()
@@ -240,8 +145,9 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     } catch {
 
                     }
-                    self.title.textColor = GMColor.red500Color()
                     ActionStates.setRead(s: self.message!, read: false)
+                    let titleText = self.getTitleText(message: self.message!)
+                    self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
 
                 } else {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -254,9 +160,9 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     } catch {
 
                     }
-                    self.title.textColor = ColorUtil.fontColor
                     ActionStates.setRead(s: self.message!, read: true)
-
+                    let titleText = self.getTitleText(message: self.message!)
+                    self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
                 }
             }))
             if self.message!.wasComment {
@@ -307,10 +213,11 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     }
                 })
             } catch {
-
             }
-            title.textColor = ColorUtil.fontColor
             ActionStates.setRead(s: message!, read: true)
+            let titleText = self.getTitleText(message: self.message!)
+            self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
+
         } else {
             if (message?.wasComment)! {
                 let url = "https://www.reddit.com\(message!.context)"

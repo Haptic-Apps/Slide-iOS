@@ -21,6 +21,24 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
+            <key>mint</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_mint</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>stars</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_stars</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
             <key>cottoncandy</key>
             <dict>
                 <key>CFBundleIconFiles</key>
@@ -149,6 +167,24 @@
                 <key>CFBundleIconFiles</key>
                 <array>
                     <string>ic_cottoncandy</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>mint</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_mint</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>stars</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_stars</string>
                 </array>
                 <key>UIPrerenderedIcon</key>
                 <false/>

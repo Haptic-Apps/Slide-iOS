@@ -401,8 +401,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             progressDot.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
-            sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
-            
+            if SettingValues.matchSilence {
+                sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+            } else {
+                sound.isHidden = true
+            }
+
             timeView = UILabel().then {
                 $0.textColor = .white
                 $0.font = UIFont.monospacedDigitSystemFont(ofSize: 11, weight: 5)
@@ -1683,7 +1687,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
                 strongSelf.videoView?.player?.play()
-                strongSelf.videoView?.player?.isMuted = true
+                if SettingValues.matchSilence {
+                    strongSelf.videoView?.player?.isMuted = true
+                }
                 strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
                 strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
                 strongSelf.updater?.add(to: .current, forMode: .defaultRunLoopMode)
@@ -1922,6 +1928,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     func unmute() {
         self.videoView?.player?.isMuted = false
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+        } catch {
+        }
         UIView.animate(withDuration: 0.5, animations: {
             self.sound.alpha = 0
         }, completion: { (_) in
