@@ -38,7 +38,7 @@ class ModalMediaViewController: UIViewController {
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
 
-    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)?, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
+    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
         super.init(nibName: nil, bundle: nil)
 
         self.failureCallback = failureCallback
@@ -62,12 +62,16 @@ class ModalMediaViewController: UIViewController {
         spinnerIndicator.stopAnimating()
         let contentType = ContentType.getContentType(baseUrl: model.baseURL)
         embeddedVC = ModalMediaViewController.getVCForContent(ofType: contentType, withModel: model)
-        embeddedVC.commentCallback = { [weak self] in
-            guard let strongSelf = self else {
-                return
+        
+        if self.commentCallback != nil {
+            embeddedVC.commentCallback = { [weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                strongSelf.commentCallback!()
             }
-            strongSelf.commentCallback!()
         }
+        
         embeddedVC.failureCallback = { [weak self] (url) in
             guard let strongSelf = self else {
                 return
@@ -260,21 +264,30 @@ class ModalMediaViewController: UIViewController {
             self.setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
     }
+    
+    deinit {
+        if videoView != nil {
+            videoView!.player?.pause()
+            videoView!.player?.currentItem?.asset.cancelLoading()
+            videoView!.player?.currentItem?.cancelPendingSeeks()
+            displayLink?.invalidate()
+            videoView!.player = nil
+        }
+    }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
         UIApplication.shared.statusBarView?.isHidden = false
         if savedColor != nil {
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
         }
-        
-        if let embed = embeddedVC as? VideoMediaViewController {
-            embed.videoView.player?.pause()
-            embed.videoView.player?.currentItem?.asset.cancelLoading()
-            embed.videoView.player?.currentItem?.cancelPendingSeeks()
-            embed.displayLink?.invalidate()
-            embed.videoView.player = nil
+
+        if videoView != nil {
+            videoView!.player?.pause()
+            videoView!.player?.currentItem?.asset.cancelLoading()
+            videoView!.player?.currentItem?.cancelPendingSeeks()
+            displayLink?.invalidate()
+            videoView!.player = nil
         }
         
         if SettingValues.reduceColor && ColorUtil.theme.isLight() {
@@ -289,7 +302,13 @@ class ModalMediaViewController: UIViewController {
 //        // Dispose of any resources that can be recreated.
 //    }
 
+    var videoView: VideoView?
+    var displayLink: CADisplayLink?
     func configureViews() {
+        if let video = embeddedVC as? VideoMediaViewController {
+            videoView = video.videoView
+            displayLink = video.displayLink
+        }
         self.addChildViewController(embeddedVC)
         embeddedVC.didMove(toParentViewController: self)
         self.view.addSubview(embeddedVC.view)

@@ -50,7 +50,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         }
         let prefetcher = SDWebImagePrefetcher.shared()
         prefetcher.prefetchURLs(thumbs)
-        
+
         let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)
         
         self.setViewControllers([firstViewController],
