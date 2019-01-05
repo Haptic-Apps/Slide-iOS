@@ -33,7 +33,7 @@ class EmbeddableMediaViewController: UIViewController {
         self.data = model
         self.contentType = type
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -103,7 +103,7 @@ class EmbeddableMediaViewController: UIViewController {
             })
         }
     }
-
+    
 //    override func didReceiveMemoryWarning() {
 //        super.didReceiveMemoryWarning()
 //        // Dispose of any resources that can be recreated.

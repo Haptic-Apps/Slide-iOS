@@ -269,6 +269,14 @@ class ModalMediaViewController: UIViewController {
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
         }
         
+        if let embed = embeddedVC as? VideoMediaViewController {
+            embed.videoView.player?.pause()
+            embed.videoView.player?.currentItem?.asset.cancelLoading()
+            embed.videoView.player?.currentItem?.cancelPendingSeeks()
+            embed.displayLink?.invalidate()
+            embed.videoView.player = nil
+        }
+        
         if SettingValues.reduceColor && ColorUtil.theme.isLight() {
             UIApplication.shared.statusBarStyle = .default
         } else {

@@ -577,7 +577,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 2:
                 ch = SettingsData()
             case 3:
-                ch = SettingsContent()
+                if !SettingValues.nsfwEnabled && AccountController.isLoggedIn {
+                    let alert = UIAlertController(title: "Cannot access this content", message: "You must be logged in and enable NSFW content at Reddit.com", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
+                    VCPresenter.presentAlert(alert, parentVC: self)
+                } else {
+                    ch = SettingsContent()
+                }
             case 4:
                 ch = FiltersViewController()
             case 5:

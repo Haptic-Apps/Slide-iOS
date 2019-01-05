@@ -790,7 +790,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         DispatchQueue.main.async {
                             if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                    let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
+                                    let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
                                     alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
                                         self.navigationController?.popViewController(animated: true)
                                         self.dismiss(animated: true, completion: nil)
@@ -843,11 +843,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             alrController.addAction(somethingAction)
 
         }
-        var somethingAction = UIAlertAction(title: "Edit multireddit", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in print("something") })
-        alrController.addAction(somethingAction)
+        //var somethingAction = UIAlertAction(title: "Edit multireddit", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in print("something") })
+        //alrController.addAction(somethingAction)
 
-        somethingAction = UIAlertAction(title: "Delete multireddit", style: UIAlertActionStyle.destructive, handler: { (_: UIAlertAction!) in print("something") })
-        alrController.addAction(somethingAction)
+        //somethingAction = UIAlertAction(title: "Delete multireddit", style: UIAlertActionStyle.destructive, handler: { (_: UIAlertAction!) in print("something") })
+        //alrController.addAction(somethingAction)
 
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
 
@@ -1178,7 +1178,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         LinkCellView.checkedWifi = false
         if sub.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
             DispatchQueue.main.async {
-                let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "If you are 18 and willing to see adult content, enable NSFW content in Settings > Content", preferredStyle: .alert)
+                let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
                 alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
                     self.navigationController?.popViewController(animated: true)
                     self.dismiss(animated: true, completion: nil)
