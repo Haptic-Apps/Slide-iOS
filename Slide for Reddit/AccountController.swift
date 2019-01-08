@@ -54,6 +54,7 @@ class AccountController {
         names.removeAll(keepingCapacity: false)
         names += OAuth2TokenRepository.savedNames
         names += LocalKeystore.savedNames
+
         NotificationCenter.default.addObserver(self, selector: #selector(AccountController.didSaveToken(_:)), name: OAuth2TokenRepositoryDidSaveTokenName, object: nil)
         if let name = UserDefaults.standard.string(forKey: "name") {
             print("Name is \(name)")
@@ -107,6 +108,10 @@ class AccountController {
 
     static func addAccount(context: UIViewController, register: Bool) {
         try! AccountController.challengeWithAllScopes(context, register: register)
+    }
+
+    public static var canShowNSFW: Bool {
+        return AccountController.isLoggedIn && SettingValues.nsfwEnabled
     }
     
     /**

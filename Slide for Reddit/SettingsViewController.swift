@@ -89,7 +89,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
         setupBaseBarColors()
-        self.history.detailTextLabel?.text = "\(History.seenTimes.allKeys.count) visited posts"
+        self.history.detailTextLabel?.text = "\(History.seenTimes.allKeys.count) visited post" + (History.seenTimes.allKeys.count != 1 ? "s" : "")
         navigationController?.setToolbarHidden(true, animated: false)
         self.icon.imageView?.image = Bundle.main.icon?.getCopy(withSize: CGSize(width: 25, height: 25))
     }
@@ -202,7 +202,6 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         
         self.clearCell.detailTextLabel?.text = fileSize
         self.clearCell.detailTextLabel?.numberOfLines = 0
-        
 
         self.backupCell.textLabel?.text = "Backup and Restore"
         self.backupCell.accessoryType = .disclosureIndicator
@@ -393,6 +392,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         if indexPath.section == 0 {
             return 74
         } else {
+            // Hide content row if not logged in
+            if indexPath == IndexPath(row: 3, section: 2) &&
+                !AccountController.canShowNSFW {
+                return 0
+            }
             return 64
         }
     }
@@ -577,13 +581,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 2:
                 ch = SettingsData()
             case 3:
-                if !SettingValues.nsfwEnabled && AccountController.isLoggedIn {
-                    let alert = UIAlertController(title: "Cannot access this content", message: "You must be logged in and enable NSFW content at Reddit.com", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
-                    VCPresenter.presentAlert(alert, parentVC: self)
-                } else {
-                    ch = SettingsContent()
-                }
+                ch = SettingsContent()
             case 4:
                 ch = FiltersViewController()
             case 5:

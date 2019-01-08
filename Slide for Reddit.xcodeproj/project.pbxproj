@@ -198,7 +198,7 @@
 		BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EC1E201C22008BB63B /* SubredditCellView.swift */; };
 		BE7439F11E203D05008BB63B /* NavigationHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F01E203D05008BB63B /* NavigationHeaderView.swift */; };
 		BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F21E20C9BD008BB63B /* CommentCellView.swift */; };
-		BE7439F51E2162A8008BB63B /* ion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F41E2162A8008BB63B /* ion.swift */; };
+		BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F41E2162A8008BB63B /* AccountController.swift */; };
 		BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F81E21A59C008BB63B /* ActionStates.swift */; };
 		BE77470820367D98006C72E8 /* Credits.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE77470720367D98006C72E8 /* Credits.plist */; };
 		BE77638A211B732B002F2969 /* SubredditFindReturnViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */; };
@@ -541,7 +541,7 @@
 		BE7439EC1E201C22008BB63B /* SubredditCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditCellView.swift; sourceTree = "<group>"; };
 		BE7439F01E203D05008BB63B /* NavigationHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationHeaderView.swift; sourceTree = "<group>"; };
 		BE7439F21E20C9BD008BB63B /* CommentCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellView.swift; sourceTree = "<group>"; };
-		BE7439F41E2162A8008BB63B /* ion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ion.swift; sourceTree = "<group>"; };
+		BE7439F41E2162A8008BB63B /* AccountController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
 		BE7439F81E21A59C008BB63B /* ActionStates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionStates.swift; sourceTree = "<group>"; };
 		BE77470720367D98006C72E8 /* Credits.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Credits.plist; path = "Slide for Reddit/Credits.plist"; sourceTree = "<group>"; };
 		BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditFindReturnViewController.swift; sourceTree = "<group>"; };
@@ -1019,7 +1019,7 @@
 				BE3B7434210135BD00658DE9 /* html */,
 				090D6B7A20F3D8610052F3F6 /* Media */,
 				0965260320E1688400EA53BE /* Extensions */,
-				BE7439F41E2162A8008BB63B /* ion.swift */,
+				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
 				BEF6F5351E19B4A2002B03B6 /* adsources.txt */,
 				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
@@ -1745,7 +1745,7 @@
 				BE2B8A091E25EEDF0053D493 /* SettingsViewController.swift in Sources */,
 				BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */,
 				09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */,
-				BE7439F51E2162A8008BB63B /* ion.swift in Sources */,
+				BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */,
 				BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */,
 				BE6EA6CB1E1C1E9400E9E709 /* StreamableJSONBase.swift in Sources */,
 				BE6EA6E21E1DA1A300E9E709 /* ContributionLoader.swift in Sources */,

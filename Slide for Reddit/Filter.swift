@@ -30,6 +30,10 @@ class Filter: UITableViewController {
     var selftextSwitch = UISwitch()
     var nsfw: UITableViewCell = UITableViewCell()
     var nsfwSwitch = UISwitch()
+
+    var numberOfSections: Int {
+        return AccountController.canShowNSFW ? 7 : 6
+    }
     
     public init(subreddit: String, parent: SingleSubredditViewController) {
         self.sub = subreddit
@@ -60,7 +64,7 @@ class Filter: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        preferredContentSize = CGSize.init( width: 275, height: 350)
+        preferredContentSize = CGSize.init( width: 275, height: numberOfSections * 50)
         self.tableView.frame = CGRect.init(x: 30, y: 8, width: 275, height: 420)
     }
 
@@ -178,7 +182,7 @@ class Filter: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 7
+        case 0: return numberOfSections
         default: fatalError("Unknown number of sections")
         }
     }
