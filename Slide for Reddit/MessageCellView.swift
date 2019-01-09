@@ -166,7 +166,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                 }
             }))
             if self.message!.wasComment {
-                alertController.addAction(Action(ActionData(title: "Full thead", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
+                alertController.addAction(Action(ActionData(title: "Full thread", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
                     let url = "https://www.reddit.com\(self.message!.context)"
                     VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }))
