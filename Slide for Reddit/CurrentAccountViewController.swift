@@ -48,10 +48,25 @@ class CurrentAccountViewController: UIViewController {
         $0.contentMode = .scaleAspectFit
     }
 
+    var upperButtonStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 16
+    }
+
     var settingsButton = UIButton(type: .custom).then {
-        $0.imageView?.contentMode = .scaleAspectFit
         $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
-        $0.isUserInteractionEnabled = true
+    }
+
+    var modButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+    }
+
+    var mailButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+    }
+
+    var switchAccountsButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
     }
 
     override func viewDidLoad() {
@@ -64,10 +79,6 @@ class CurrentAccountViewController: UIViewController {
         configureForCurrentAccount()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        switchAccounts()
-    }
 }
 
 // MARK: - Setup
@@ -87,6 +98,9 @@ private extension CurrentAccountViewController {
 
         backgroundView.addSubview(settingsButton)
 
+        backgroundView.addSubview(upperButtonStack)
+        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton)
+
         view.addSubview(contentView)
         contentView.addSubview(accountImageView)
         contentView.addSubview(accountNameLabel)
@@ -97,6 +111,9 @@ private extension CurrentAccountViewController {
 
         settingsButton.topAnchor == backgroundView.safeTopAnchor + 4
         settingsButton.rightAnchor == backgroundView.safeRightAnchor - 16
+
+        upperButtonStack.leftAnchor == accountImageView.rightAnchor + 16
+        upperButtonStack.bottomAnchor == contentView.topAnchor - 8
 
         contentView.horizontalAnchors == view.horizontalAnchors
         contentView.bottomAnchor == view.bottomAnchor
@@ -115,15 +132,21 @@ private extension CurrentAccountViewController {
         let bgTap = UITapGestureRecognizer(target: self, action: #selector(didRequestClose))
         backgroundView.addGestureRecognizer(bgTap)
 
-        let sTap = UITapGestureRecognizer(target: self, action: #selector(settingsButtonPressed))
-        settingsButton.addGestureRecognizer(sTap)
+        settingsButton.addTarget(self, action: #selector(settingsButtonPressed), for: .touchUpInside)
+
+        mailButton.addTarget(self, action: #selector(mailButtonPressed), for: .touchUpInside)
+        modButton.addTarget(self, action: #selector(modButtonPressed), for: .touchUpInside)
+        switchAccountsButton.addTarget(self, action: #selector(switchAccountsButtonPressed), for: .touchUpInside)
     }
 
     func configureForCurrentAccount() {
 
         if !AccountController.isLoggedIn {
             // TODO: Show empty state
+            upperButtonStack.isHidden = true
             return
+        } else {
+            upperButtonStack.isHidden = false
         }
 
         // Populate configurable UI elements here.
@@ -154,15 +177,31 @@ extension CurrentAccountViewController {
             self.delegate?.currentAccountViewController(self, didRequestSettingsMenu: ())
         }
     }
+
+    @objc func mailButtonPressed(_ sender: UIButton) {
+        let vc = InboxViewController()
+        let navVC = UINavigationController(rootViewController: vc)
+        present(navVC, animated: true)
+    }
+
+    @objc func modButtonPressed(_ sender: UIButton) {
+        let vc = ModerationViewController()
+        let navVC = UINavigationController(rootViewController: vc)
+        present(navVC, animated: true)
+    }
+
+    @objc func switchAccountsButtonPressed(_ sender: UIButton) {
+        showSwitchAccountsMenu()
+    }
 }
 
 // MARK: - Account Switching
 extension CurrentAccountViewController {
-    func switchAccounts() {
+    func showSwitchAccountsMenu() {
         let optionMenu = BottomSheetActionController()
         optionMenu.headerData = "Accounts"
 
-        for accountName in AccountController.names {
+        for accountName in AccountController.names.unique().sorted() {
             if accountName != AccountController.currentName {
                 optionMenu.addAction(Action(ActionData(title: "\(accountName)", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
                     self.delegate?.currentAccountViewController(self, didRequestAccountChangeToName: accountName)
