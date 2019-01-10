@@ -1077,10 +1077,10 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
         VCPresenter.showVC(viewController: settings, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
     }
 
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChange: Void) {
-
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String) {
+        AccountController.switchAccount(name: accountName)
+        hardReset()
     }
-
 
 }
 
@@ -1100,7 +1100,6 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
 }
 
 extension MainViewController: MDCTabBarDelegate {
-    
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
         let firstViewController = vCs[tabBar.items.index(of: item)!]
