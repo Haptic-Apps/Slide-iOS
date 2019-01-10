@@ -13,7 +13,7 @@ import UIKit
 
 protocol CurrentAccountViewControllerDelegate: AnyObject {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void)
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChange: Void)
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String)
 }
 
 class CurrentAccountViewController: UIViewController {
@@ -84,5 +84,9 @@ extension CurrentAccountViewController {
         self.dismiss(animated: true) {
             self.delegate?.currentAccountViewController(self, didRequestSettingsMenu: ())
         }
+    }
+
+    func didRequestAccountChange() {
+        self.delegate?.currentAccountViewController(self, didRequestAccountChangeToName: "TODO")
     }
 }
