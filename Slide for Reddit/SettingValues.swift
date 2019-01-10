@@ -410,7 +410,7 @@ class SettingValues {
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
         SettingValues.autoCache = settings.bool(forKey: SettingValues.pref_autoCache)
-        SettingValues.muteAutoPlay = settings.bool(forKey: SettingValues.pref_muteAutoPlay)
+        SettingValues.muteAutoPlay = settings.object(forKey: SettingValues.pref_muteAutoPlay) == nil ? true : settings.bool(forKey: SettingValues.pref_muteAutoPlay)
         SettingValues.wideIndicators = settings.bool(forKey: SettingValues.pref_widerIndicators)
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
         SettingValues.hideAutomod = settings.bool(forKey: SettingValues.pref_hideAutomod)

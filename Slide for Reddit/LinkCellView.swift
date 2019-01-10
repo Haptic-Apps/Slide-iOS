@@ -1692,7 +1692,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
                 strongSelf.videoView?.player?.play()
-                if SettingValues.matchSilence {
+                if SettingValues.muteAutoPlay {
                     strongSelf.videoView?.player?.isMuted = true
                 }
                 strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
