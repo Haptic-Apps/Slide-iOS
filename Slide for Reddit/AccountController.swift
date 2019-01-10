@@ -54,6 +54,8 @@ class AccountController {
         names.removeAll(keepingCapacity: false)
         names += OAuth2TokenRepository.savedNames
         names += LocalKeystore.savedNames
+        
+        names = names.unique()
 
         NotificationCenter.default.addObserver(self, selector: #selector(AccountController.didSaveToken(_:)), name: OAuth2TokenRepositoryDidSaveTokenName, object: nil)
         if let name = UserDefaults.standard.string(forKey: "name") {
@@ -220,4 +222,10 @@ class AccountController {
         getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
     }
 
+}
+extension Sequence where Iterator.Element: Hashable {
+    func unique() -> [Iterator.Element] {
+        var seen: [Iterator.Element: Bool] = [:]
+        return self.filter { seen.updateValue(true, forKey: $0) == nil }
+    }
 }

@@ -102,7 +102,7 @@ class PostActions: NSObject {
         if ReadLater.isReadLater(id: cell.link!.getIdentifier()) {
             alertController.addAction(Action(ActionData(title: "Remove from Read Later", image: UIImage(named: "restore")!.menuIcon()), style: .default, handler: { _ in
                 ReadLater.removeReadLater(id: cell.link!.getIdentifier())
-                BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
+                BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
             }))
         } else {
             alertController.addAction(Action(ActionData(title: "Add to Read Later", image: UIImage(named: "readLater")!.menuIcon()), style: .default, handler: { _ in

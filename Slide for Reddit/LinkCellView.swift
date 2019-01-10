@@ -950,6 +950,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     deinit {
+        endVideos()
+    }
+    
+    func endVideos() {
         if videoView != nil {
             self.videoView!.player?.pause()
             self.videoView?.player?.currentItem?.asset.cancelLoading()
@@ -1446,7 +1450,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if !registered && !full && SettingValues.submissionActionForceTouch == .NONE {
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
             registered = true
-        } else {
+        } else if SettingValues.submissionActionForceTouch != .NONE {
             let force = ForceTouchGestureRecognizer()
             force.addTarget(self, action: #selector(self.do3dTouch(_:)))
             force.cancelsTouchesInView = false

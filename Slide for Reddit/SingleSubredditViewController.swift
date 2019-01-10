@@ -312,6 +312,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        for index in tableView.indexPathsForVisibleItems {
+            let cell = tableView.cellForItem(at: index) as! LinkCellView
+            cell.endVideos()
+        }
 
         if single {
             UIApplication.shared.statusBarView?.backgroundColor = .clear

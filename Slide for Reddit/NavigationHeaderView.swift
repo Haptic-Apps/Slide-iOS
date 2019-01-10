@@ -404,7 +404,7 @@ extension NavigationHeaderView {
         let optionMenu = BottomSheetActionController()
         optionMenu.headerData = "Accounts"
 
-        for s in AccountController.names {
+        for s in AccountController.names.unique() {
             if s != AccountController.currentName {
                 optionMenu.addAction(Action(ActionData(title: "\(s)", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
                     AccountController.switchAccount(name: s)

@@ -95,9 +95,18 @@ public class LocalKeystore {
                 "scope": token.scope as AnyObject,
                 "refresh_token": token.refreshToken as AnyObject,
                 ]
-            
             let data = try JSONSerialization.data(withJSONObject: JSONObject, options: [])
             UserDefaults.standard.set(data, forKey: "AUTH+\(name)")
+            var tokenArray = UserDefaults.standard.array(forKey: "SAVED_TOKENS") as? [String] ?? [String]()
+            for item in tokenArray {
+                if item == token.name {
+                    //Username is already saved
+                    UserDefaults.standard.synchronize()
+                    return
+                }
+            }
+            tokenArray.append(token.name)
+            UserDefaults.standard.set(tokenArray, forKey: "SAVED_TOKENS")
             UserDefaults.standard.synchronize()
         } catch {
             throw error

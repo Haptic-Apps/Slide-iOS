@@ -1918,9 +1918,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     @objc func spacePressed() {
-        UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            self.tableView.contentOffset.y += 350
-        }, completion: nil)
+        if !isEditing {
+            UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+                self.tableView.contentOffset.y += 350
+            }, completion: nil)
+        }
     }
 
     func unhideNumber(n: String, iB: Int) -> Int {
