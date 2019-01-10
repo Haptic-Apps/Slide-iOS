@@ -401,8 +401,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             progressDot.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
-            if SettingValues.matchSilence {
+            if SettingValues.muteAutoPlay {
                 sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+                sound.isHidden = false
             } else {
                 sound.isHidden = true
             }
@@ -950,6 +951,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     deinit {
+        endVideos()
+    }
+    
+    func endVideos() {
         if videoView != nil {
             self.videoView!.player?.pause()
             self.videoView?.player?.currentItem?.asset.cancelLoading()
@@ -1446,7 +1451,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if !registered && !full && SettingValues.submissionActionForceTouch == .NONE {
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
             registered = true
-        } else {
+        } else if SettingValues.submissionActionForceTouch != .NONE {
             let force = ForceTouchGestureRecognizer()
             force.addTarget(self, action: #selector(self.do3dTouch(_:)))
             force.cancelsTouchesInView = false
@@ -1687,7 +1692,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
                 strongSelf.videoView?.player?.play()
-                if SettingValues.matchSilence {
+                if SettingValues.muteAutoPlay {
                     strongSelf.videoView?.player?.isMuted = true
                 }
                 strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
