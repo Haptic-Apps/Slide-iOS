@@ -13,6 +13,16 @@ import Then
 import UIKit
 import XLActionController
 
+/**
+ TODO:
+ - Badging for inbox
+ - Empty state when logged out
+ - Hide mod queue button if current user isn't a mod (don't do a network request
+    for this -- we should already know when we receive the Account object)
+ - Cake day text under username
+ - Unbreak inbox/mod VCs when presented
+ */
+
 protocol CurrentAccountViewControllerDelegate: AnyObject {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String)
@@ -25,17 +35,30 @@ class CurrentAccountViewController: UIViewController {
 
     weak var delegate: CurrentAccountViewControllerDelegate?
 
+    var spinner = UIActivityIndicatorView().then {
+        $0.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge
+        $0.color = ColorUtil.fontColor
+        $0.hidesWhenStopped = true
+    }
+
     var backgroundView = UIView().then {
         $0.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
+        $0.isAccessibilityElement = false
     }
 
     var contentView = UIView().then {
-        $0.backgroundColor = ColorUtil.foregroundColor
+        $0.backgroundColor = ColorUtil.backgroundColor
         $0.clipsToBounds = false
+    }
+
+    var closeButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+        $0.accessibilityLabel = "Close"
     }
 
     var settingsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+        $0.accessibilityLabel = "App Settings"
     }
 
     // Outer button stack
@@ -46,53 +69,49 @@ class CurrentAccountViewController: UIViewController {
     }
     var modButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.accessibilityLabel = "Mod Queue"
     }
     var mailButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.accessibilityLabel = "Inbox"
     }
     var switchAccountsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.accessibilityLabel = "Switch Accounts"
     }
 
     // Content
 
     var accountNameLabel = UILabel().then {
-        $0.font = FontGenerator.fontOfSize(size: 36, submission: false)
+        $0.font = FontGenerator.fontOfSize(size: 24, submission: false)
         $0.textColor = ColorUtil.fontColor
         $0.numberOfLines = 1
-        $0.lineBreakMode = .byWordWrapping
         $0.adjustsFontSizeToFitWidth = true
         $0.minimumScaleFactor = 0.5
+        $0.baselineAdjustment = UIBaselineAdjustment.alignCenters
+    }
+
+    var accountAgeLabel = UILabel().then {
+        $0.font = FontGenerator.fontOfSize(size: 12, submission: false)
+        $0.textColor = ColorUtil.fontColor
+        $0.numberOfLines = 1
+        $0.text = "Created 01/10/2019"
     }
 
     var accountImageView = UIImageView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = ColorUtil.foregroundColor
         $0.contentMode = .scaleAspectFit
+        if #available(iOS 11.0, *) {
+            $0.accessibilityIgnoresInvertColors = true
+        }
+        if !SettingValues.flatMode {
+            $0.elevate(elevation: 2.0)
+            $0.layer.cornerRadius = 10
+            $0.clipsToBounds = true
+        }
     }
 
-    var viewAccountButton = UIButton().then {
-        let attributedTitle = NSAttributedString(
-            string: "View account details",
-            attributes: [
-                NSFontAttributeName: FontGenerator.fontOfSize(size: 24, submission: false),
-                NSForegroundColorAttributeName: ColorUtil.baseAccent,
-            ]
-        )
-        $0.setAttributedTitle(attributedTitle, for: .normal)
-
-    }
-
-    var viewSavedButton = UIButton().then {
-        $0.setTitle("View saved", for: .normal)
-    }
-
-    var statsStack = UIStackView().then {
-        $0.axis = .horizontal
-        $0.distribution = .equalCentering
-        $0.spacing = 16
-    }
-    var commentKarmaLabel = BigSmallLabel()
-    var postKarmaLabel = BigSmallLabel()
+    var header = AccountHeaderView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,26 +120,50 @@ class CurrentAccountViewController: UIViewController {
         setupConstraints()
         setupActions()
 
+        NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
+
         configureForCurrentAccount()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        // Hide the navigation bar on this view controller
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+
+        // Focus the account label
+        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, accountNameLabel)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        // Show the navigation bar on other view controllers
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
 }
 
 // MARK: - Setup
-private extension CurrentAccountViewController {
+extension CurrentAccountViewController {
     func setupViews() {
         view.addSubview(backgroundView)
 
         // Add blur
         if #available(iOS 11, *) {
             let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+            blurEffect.setValue(5, forKeyPath: "blurRadius")
+
+//            let blurEffect = UIBlurEffect(style: ColorUtil.theme.isLight() ? .light : .dark)
+
             let blurView = UIVisualEffectView(frame: .zero)
-            blurEffect.setValue(3, forKeyPath: "blurRadius")
             blurView.effect = blurEffect
             backgroundView.insertSubview(blurView, at: 0)
             blurView.edgeAnchors == backgroundView.edgeAnchors
         }
 
+        backgroundView.addSubview(closeButton)
         backgroundView.addSubview(settingsButton)
 
         backgroundView.addSubview(upperButtonStack)
@@ -129,14 +172,20 @@ private extension CurrentAccountViewController {
         view.addSubview(contentView)
         contentView.addSubview(accountImageView)
         contentView.addSubview(accountNameLabel)
-        contentView.addSubview(viewAccountButton)
+        contentView.addSubview(accountAgeLabel)
 
-        contentView.addSubview(statsStack)
-        statsStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
+        contentView.addSubview(header)
+        header.delegate = self
+
+        contentView.addSubview(spinner)
+
     }
 
     func setupConstraints() {
         backgroundView.edgeAnchors == view.edgeAnchors
+
+        closeButton.topAnchor == backgroundView.safeTopAnchor + 4
+        closeButton.leftAnchor == backgroundView.safeLeftAnchor + 16
 
         settingsButton.topAnchor == backgroundView.safeTopAnchor + 4
         settingsButton.rightAnchor == backgroundView.safeRightAnchor - 16
@@ -144,65 +193,96 @@ private extension CurrentAccountViewController {
         upperButtonStack.leftAnchor == accountImageView.rightAnchor + 16
         upperButtonStack.bottomAnchor == contentView.topAnchor - 8
 
+        contentView.topAnchor == view.safeTopAnchor + 250 // TODO: Switch this out for a height anchor at some point
         contentView.horizontalAnchors == view.horizontalAnchors
         contentView.bottomAnchor == view.bottomAnchor
-        contentView.topAnchor == view.safeTopAnchor + 250 // TODO: Switch this out for a height anchor at some point
 
         accountImageView.leftAnchor == contentView.leftAnchor + 20
         accountImageView.centerYAnchor == contentView.topAnchor
         accountImageView.sizeAnchors == CGSize.square(size: 100)
 
+        accountNameLabel.topAnchor == contentView.topAnchor + 8
         accountNameLabel.leftAnchor == accountImageView.rightAnchor + 20
         accountNameLabel.rightAnchor == contentView.rightAnchor - 20
-        accountNameLabel.topAnchor == contentView.topAnchor + 4
 
-        viewAccountButton.topAnchor == accountNameLabel.bottomAnchor + 16
-        viewAccountButton.centerXAnchor == contentView.centerXAnchor
+        accountAgeLabel.leftAnchor == accountNameLabel.leftAnchor
+        accountAgeLabel.topAnchor == accountNameLabel.bottomAnchor
 
-        statsStack.topAnchor == viewAccountButton.bottomAnchor + 16
-        statsStack.horizontalAnchors == contentView.horizontalAnchors + 20
+        header.topAnchor == accountAgeLabel.bottomAnchor + 22
+        header.horizontalAnchors == contentView.horizontalAnchors + 20
+
+        spinner.centerAnchors == header.centerAnchors
     }
 
     func setupActions() {
         let bgTap = UITapGestureRecognizer(target: self, action: #selector(didRequestClose))
         backgroundView.addGestureRecognizer(bgTap)
 
+        closeButton.addTarget(self, action: #selector(didRequestClose), for: .touchUpInside)
         settingsButton.addTarget(self, action: #selector(settingsButtonPressed), for: .touchUpInside)
 
         mailButton.addTarget(self, action: #selector(mailButtonPressed), for: .touchUpInside)
         modButton.addTarget(self, action: #selector(modButtonPressed), for: .touchUpInside)
         switchAccountsButton.addTarget(self, action: #selector(switchAccountsButtonPressed), for: .touchUpInside)
-
-        viewAccountButton.addTarget(self, action: #selector(viewAccountButtonPressed), for: .touchUpInside)
     }
 
     func configureForCurrentAccount() {
 
         if !AccountController.isLoggedIn {
             // TODO: Show empty state
-            upperButtonStack.isHidden = true
+            accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
             return
         } else {
-            upperButtonStack.isHidden = false
+            // TODO: Hide empty state
         }
+
+        let accountName = SettingValues.nameScrubbing ? "You" : AccountController.currentName.insertingZeroWidthSpacesBeforeCaptials()
 
         // Populate configurable UI elements here.
         accountNameLabel.attributedText = {
             let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineSpacing = 1.0
-            paragraphStyle.lineHeightMultiple = 0.7
+//            paragraphStyle.lineHeightMultiple = 0.8
             return NSAttributedString(
-                string: AccountController.currentName.insertingZeroWidthSpacesBeforeCaptials(),
+                string: accountName,
                 attributes: [
                     NSParagraphStyleAttributeName: paragraphStyle,
                 ]
             )
         }()
 
-        accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: .darkGray)
+        accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
 
-        commentKarmaLabel.setText(bigText: "42", smallText: "comment\nkarma")
-        postKarmaLabel.setText(bigText: "100k", smallText: "post\nkarma")
+        modButton.isHidden = !(AccountController.current?.isMod ?? false)
+
+        if let account = AccountController.current {
+            let creationDateString: String = {
+                let creationDate = NSDate(timeIntervalSince1970: Double(account.created))
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = NSLocale.current
+                dateFormatter.dateFormat = "MM/dd/yyyy"
+                return dateFormatter.string(from: creationDate as Date)
+            }()
+            accountAgeLabel.text = "Created \(creationDateString)"
+            header.setAccount(account)
+            setLoadingState(false)
+        } else {
+            print("No account to show!")
+        }
+    }
+
+    func setLoadingState(_ isOn: Bool) {
+        if isOn {
+            spinner.startAnimating()
+        } else {
+            spinner.stopAnimating()
+        }
+
+        UIView.animate(withDuration: 0.2) {
+            self.header.alpha = isOn ? 0 : 1
+            self.accountNameLabel.alpha = isOn ? 0 : 1
+            self.accountAgeLabel.alpha = isOn ? 0 : 1
+            self.upperButtonStack.isUserInteractionEnabled = !isOn
+        }
     }
 }
 
@@ -220,22 +300,47 @@ extension CurrentAccountViewController {
 
     @objc func mailButtonPressed(_ sender: UIButton) {
         let vc = InboxViewController()
-        let navVC = UINavigationController(rootViewController: vc)
-        present(navVC, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc func modButtonPressed(_ sender: UIButton) {
         let vc = ModerationViewController()
-        let navVC = UINavigationController(rootViewController: vc)
-        present(navVC, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc func switchAccountsButtonPressed(_ sender: UIButton) {
         showSwitchAccountsMenu()
     }
+}
 
-    @objc func viewAccountButtonPressed(_ sender: UIButton) {
+extension CurrentAccountViewController: AccountHeaderViewDelegate {
+    func accountHeaderView(_ view: AccountHeaderView, didRequestCommentsPage: Void) {
+        let vc = ProfileViewController(name: AccountController.currentName)
+        vc.openTo = 2
+        navigationController?.pushViewController(vc, animated: true)
+    }
 
+    func accountHeaderView(_ view: AccountHeaderView, didRequestPostsPage: Void) {
+        let vc = ProfileViewController(name: AccountController.currentName)
+        vc.openTo = 1
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    func accountHeaderView(_ view: AccountHeaderView, didRequestSavedPage: Void) {
+        let vc = ProfileViewController(name: AccountController.currentName)
+        vc.openTo = 4
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    func accountHeaderView(_ view: AccountHeaderView, didRequestLikedPage: Void) {
+        let vc = ProfileViewController(name: AccountController.currentName)
+        vc.openTo = 3
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    func accountHeaderView(_ view: AccountHeaderView, didRequestOverviewPage: Void) {
+        let vc = ProfileViewController(name: AccountController.currentName)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -248,8 +353,8 @@ extension CurrentAccountViewController {
         for accountName in AccountController.names.unique().sorted() {
             if accountName != AccountController.currentName {
                 optionMenu.addAction(Action(ActionData(title: "\(accountName)", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
+                    self.setLoadingState(true)
                     self.delegate?.currentAccountViewController(self, didRequestAccountChangeToName: accountName)
-                    self.configureForCurrentAccount()
                 }))
             } else {
                 var action = Action(ActionData(title: "\(accountName) (current)", image: UIImage(named: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())), style: .default, handler: nil)
@@ -261,64 +366,196 @@ extension CurrentAccountViewController {
         if AccountController.isLoggedIn {
             optionMenu.addAction(Action(ActionData(title: "Browse as guest", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
                 self.delegate?.currentAccountViewController(self, didRequestGuestAccount: ())
-                self.configureForCurrentAccount()
             }))
 
             optionMenu.addAction(Action(ActionData(title: "Log out", image: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())), style: .default, handler: { _ in
                 self.delegate?.currentAccountViewController(self, didRequestLogOut: ())
-                self.configureForCurrentAccount()
             }))
 
         }
 
         optionMenu.addAction(Action(ActionData(title: "Add a new account", image: UIImage(named: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)), style: .default, handler: { _ in
             self.delegate?.currentAccountViewController(self, didRequestNewAccount: ())
-            self.configureForCurrentAccount()
         }))
 
         present(optionMenu, animated: true, completion: nil)
     }
 }
 
-class BigSmallLabel: UILabel {
+extension CurrentAccountViewController {
+    // Called from AccountController when the account changes
+    @objc func onAccountChangedNotificationPosted(_ notification: NSNotification) {
+        DispatchQueue.main.async {
+            self.configureForCurrentAccount()
+        }
+    }
+
+    @objc func onAccountChangedToGuestNotificationPosted(_ notification: NSNotification) {
+        DispatchQueue.main.async {
+            self.configureForCurrentAccount()
+        }
+    }
+}
+
+// MARK: - Accessibility
+extension CurrentAccountViewController {
+
+    override func accessibilityPerformEscape() -> Bool {
+        super.accessibilityPerformEscape()
+        didRequestClose()
+        return true
+    }
+
+    override var accessibilityViewIsModal: Bool {
+        get {
+            return true
+        }
+        set {}
+    }
+}
+
+protocol AccountHeaderViewDelegate: AnyObject {
+    func accountHeaderView(_ view: AccountHeaderView, didRequestCommentsPage: Void)
+    func accountHeaderView(_ view: AccountHeaderView, didRequestPostsPage: Void)
+    func accountHeaderView(_ view: AccountHeaderView, didRequestSavedPage: Void)
+    func accountHeaderView(_ view: AccountHeaderView, didRequestLikedPage: Void)
+    func accountHeaderView(_ view: AccountHeaderView, didRequestOverviewPage: Void)
+}
+
+class AccountHeaderView: UIView {
+
+    weak var delegate: AccountHeaderViewDelegate?
+
+    var commentKarmaLabel: UILabel = UILabel().then {
+        $0.numberOfLines = 0
+        $0.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        $0.textAlignment = .center
+        $0.textColor = ColorUtil.fontColor
+        $0.accessibilityTraits = UIAccessibilityTraitButton
+    }
+    var postKarmaLabel: UILabel = UILabel().then {
+        $0.numberOfLines = 0
+        $0.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        $0.textAlignment = .center
+        $0.textColor = ColorUtil.fontColor
+        $0.accessibilityTraits = UIAccessibilityTraitButton
+    }
+
+    var savedCell = UITableViewCell().then {
+        $0.configure(text: "Saved Posts", imageName: "save", imageColor: GMColor.yellow500Color())
+    }
+
+    var likedCell = UITableViewCell().then {
+        $0.configure(text: "Liked Posts", imageName: "upvote", imageColor: GMColor.orange500Color())
+    }
+
+    var detailsCell = UITableViewCell().then {
+        $0.configure(text: "Account Details", imageName: "reddit", imageColor: ColorUtil.fontColor)
+    }
+
+    var infoStack = UIStackView().then {
+        $0.spacing = 8
+        $0.axis = .horizontal
+        $0.distribution = .equalSpacing
+    }
+
+    var cellStack = UIStackView().then {
+        $0.spacing = 2
+        $0.axis = .vertical
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        numberOfLines = 3
+
+        addSubviews(infoStack, cellStack)
+        infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
+        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell)
+
+        self.clipsToBounds = true
+
+        setupAnchors()
+        setupActions()
+
+        setAccount(nil)
+
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setText(bigText: String, smallText: String) {
-        let attributedString = NSMutableAttributedString(string: "")
-        
-        let bigString = NSAttributedString(
-            string: bigText + "\n",
-            attributes: [
-                NSFontAttributeName: FontGenerator.fontOfSize(size: 50, submission: false),
-                NSForegroundColorAttributeName: ColorUtil.fontColor,
-                NSParagraphStyleAttributeName: NSMutableParagraphStyle().then {
-                    $0.alignment = .center
-                },
-            ]
-        )
-        let smallString = NSAttributedString(
-            string: smallText,
-            attributes: [
-                NSFontAttributeName: FontGenerator.fontOfSize(size: 14, submission: false),
-                NSForegroundColorAttributeName: ColorUtil.baseAccent,
-                NSParagraphStyleAttributeName: NSMutableParagraphStyle().then {
-                    $0.alignment = .center
-                    $0.lineHeightMultiple = 0.7
-                },
-            ]
-        )
+    func setAccount(_ account: Account?) {
+        commentKarmaLabel.attributedText = {
+            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 20, submission: true)]
+            let attributedString = NSMutableAttributedString(string: "\(account?.commentKarma.delimiter ?? "0")", attributes: attrs)
+            let subt = NSMutableAttributedString(string: "\nCOMMENT KARMA")
+            attributedString.append(subt)
+            return attributedString
+        }()
 
-        attributedString.append(bigString)
-        attributedString.append(smallString)
+        postKarmaLabel.attributedText = {
+            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 20, submission: true)]
+            let attributedString = NSMutableAttributedString(string: "\(account?.linkKarma.delimiter ?? "0")", attributes: attrs)
+            let subt = NSMutableAttributedString(string: "\nPOST KARMA")
+            attributedString.append(subt)
+            return attributedString
+        }()
+    }
 
-        self.attributedText = attributedString
+    func setupAnchors() {
+        infoStack.topAnchor == topAnchor
+        infoStack.horizontalAnchors == horizontalAnchors
+
+        cellStack.topAnchor == infoStack.bottomAnchor + 26
+        cellStack.horizontalAnchors == horizontalAnchors
+
+        savedCell.heightAnchor == 50
+        detailsCell.heightAnchor == 50
+        likedCell.heightAnchor == 50
+
+        cellStack.bottomAnchor == bottomAnchor
+    }
+
+    func setupActions() {
+        savedCell.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestSavedPage: ())
+        }
+        likedCell.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestLikedPage: ())
+        }
+        detailsCell.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestOverviewPage: ())
+        }
+        commentKarmaLabel.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestCommentsPage: ())
+        }
+        postKarmaLabel.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestPostsPage: ())
+        }
+    }
+}
+
+// MARK: - Actions
+extension AccountHeaderView {
+
+}
+
+// Styling
+private extension UITableViewCell {
+    func configure(text: String, imageName: String, imageColor: UIColor) {
+        textLabel?.text = text
+        imageView?.image = UIImage.init(named: imageName)?.menuIcon()
+        imageView?.tintColor = imageColor
+
+        accessoryType = .none
+        backgroundColor = ColorUtil.foregroundColor
+        textLabel?.textColor = ColorUtil.fontColor
+        layer.cornerRadius = 5
+        clipsToBounds = true
     }
 }
