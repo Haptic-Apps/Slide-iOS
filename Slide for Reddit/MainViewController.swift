@@ -864,8 +864,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             
             menu = UIButton.init(type: .custom)
-            menu.accessibilityIdentifier = "menu"
-            menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
+            menu.accessibilityIdentifier = "search"
+            menu.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControlState.normal)
             menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
             menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             toolbar?.addSubview(menu)
