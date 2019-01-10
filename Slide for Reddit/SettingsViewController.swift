@@ -44,9 +44,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var backupCell: UITableViewCell = UITableViewCell()
     var gestureCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "gestures")
     var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
+    var muteCell: UITableViewCell = UITableViewCell()
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch()
+    var mute = UISwitch()
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -363,6 +365,18 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
+        
+        mute = UISwitch()
+        mute.isOn = SettingValues.muteAutoPlay
+        mute.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        muteCell.textLabel?.text = "Mute autoplaying videos"
+        muteCell.accessoryView = mute
+        muteCell.backgroundColor = ColorUtil.foregroundColor
+        muteCell.textLabel?.textColor = ColorUtil.fontColor
+        muteCell.selectionStyle = UITableViewCellSelectionStyle.none
+        self.muteCell.imageView?.image = UIImage.init(named: "mute")?.toolbarIcon()
+        self.muteCell.imageView?.tintColor = ColorUtil.fontColor
+
         if reset {
             self.tableView.reloadData()
         }
@@ -376,7 +390,11 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             } else {
                 changed.isOn = false
             }
+        } else if changed == mute {
+            SettingValues.muteAutoPlay = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_muteAutoPlay)
         }
+
         UserDefaults.standard.synchronize()
     }
 
@@ -439,9 +457,10 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 1: return self.icon
             case 2: return self.postLayout
             case 3: return self.autoPlayCell
-            case 4: return self.subThemes
-            case 5: return self.font
-            case 6: return self.comments
+            case 4: return self.muteCell
+            case 5: return self.subThemes
+            case 6: return self.font
+            case 7: return self.comments
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -549,7 +568,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 }
             case 2:
                 ch = SettingsLayout()
-            case 4:
+            case 5:
                 ch = SubredditThemeViewController()
             case 3:
                 let alertController: BottomSheetActionController = BottomSheetActionController()
@@ -565,9 +584,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                     }))
                 }
                 VCPresenter.presentAlert(alertController, parentVC: self)
-            case 5:
-                ch = SettingsFont()
             case 6:
+                ch = SettingsFont()
+            case 7:
                 ch = SettingsComments()
             default:
                 break

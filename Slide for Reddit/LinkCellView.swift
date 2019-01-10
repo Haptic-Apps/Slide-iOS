@@ -401,8 +401,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             progressDot.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
-            if SettingValues.matchSilence {
+            if SettingValues.muteAutoPlay {
                 sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+                sound.isHidden = false
             } else {
                 sound.isHidden = true
             }

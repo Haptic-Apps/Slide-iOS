@@ -113,6 +113,7 @@ class SettingValues {
     public static let pref_moreButton = "MORE_BUTTON"
     public static let pref_disableBanner = "DISABLE_BANNER"
     public static let pref_newIndicator = "NEW_INDICATOR"
+    public static let pref_muteAutoPlay = "MUTE_AUTO_PLAY"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -223,6 +224,7 @@ class SettingValues {
     public static var linkAlwaysThumbnail = false
     public static var autoKeyboard = true
     public static var appMode = AppMode.SINGLE
+    public static var muteAutoPlay = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -408,6 +410,7 @@ class SettingValues {
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
         SettingValues.autoCache = settings.bool(forKey: SettingValues.pref_autoCache)
+        SettingValues.muteAutoPlay = settings.bool(forKey: SettingValues.pref_muteAutoPlay)
         SettingValues.wideIndicators = settings.bool(forKey: SettingValues.pref_widerIndicators)
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
         SettingValues.hideAutomod = settings.bool(forKey: SettingValues.pref_hideAutomod)
