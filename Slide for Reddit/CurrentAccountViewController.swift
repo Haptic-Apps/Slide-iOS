@@ -34,6 +34,28 @@ class CurrentAccountViewController: UIViewController {
         $0.clipsToBounds = false
     }
 
+    var settingsButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+    }
+
+    // Outer button stack
+
+    var upperButtonStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 16
+    }
+    var modButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+    }
+    var mailButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+    }
+    var switchAccountsButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+    }
+
+    // Content
+
     var accountNameLabel = UILabel().then {
         $0.font = FontGenerator.fontOfSize(size: 36, submission: false)
         $0.textColor = ColorUtil.fontColor
@@ -48,26 +70,29 @@ class CurrentAccountViewController: UIViewController {
         $0.contentMode = .scaleAspectFit
     }
 
-    var upperButtonStack = UIStackView().then {
+    var viewAccountButton = UIButton().then {
+        let attributedTitle = NSAttributedString(
+            string: "View account details",
+            attributes: [
+                NSFontAttributeName: FontGenerator.fontOfSize(size: 24, submission: false),
+                NSForegroundColorAttributeName: ColorUtil.baseAccent,
+            ]
+        )
+        $0.setAttributedTitle(attributedTitle, for: .normal)
+
+    }
+
+    var viewSavedButton = UIButton().then {
+        $0.setTitle("View saved", for: .normal)
+    }
+
+    var statsStack = UIStackView().then {
         $0.axis = .horizontal
+        $0.distribution = .equalCentering
         $0.spacing = 16
     }
-
-    var settingsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
-    }
-
-    var modButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
-    }
-
-    var mailButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
-    }
-
-    var switchAccountsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
-    }
+    var commentKarmaLabel = BigSmallLabel()
+    var postKarmaLabel = BigSmallLabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,6 +129,10 @@ private extension CurrentAccountViewController {
         view.addSubview(contentView)
         contentView.addSubview(accountImageView)
         contentView.addSubview(accountNameLabel)
+        contentView.addSubview(viewAccountButton)
+
+        contentView.addSubview(statsStack)
+        statsStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
     }
 
     func setupConstraints() {
@@ -126,6 +155,12 @@ private extension CurrentAccountViewController {
         accountNameLabel.leftAnchor == accountImageView.rightAnchor + 20
         accountNameLabel.rightAnchor == contentView.rightAnchor - 20
         accountNameLabel.topAnchor == contentView.topAnchor + 4
+
+        viewAccountButton.topAnchor == accountNameLabel.bottomAnchor + 16
+        viewAccountButton.centerXAnchor == contentView.centerXAnchor
+
+        statsStack.topAnchor == viewAccountButton.bottomAnchor + 16
+        statsStack.horizontalAnchors == contentView.horizontalAnchors + 20
     }
 
     func setupActions() {
@@ -137,6 +172,8 @@ private extension CurrentAccountViewController {
         mailButton.addTarget(self, action: #selector(mailButtonPressed), for: .touchUpInside)
         modButton.addTarget(self, action: #selector(modButtonPressed), for: .touchUpInside)
         switchAccountsButton.addTarget(self, action: #selector(switchAccountsButtonPressed), for: .touchUpInside)
+
+        viewAccountButton.addTarget(self, action: #selector(viewAccountButtonPressed), for: .touchUpInside)
     }
 
     func configureForCurrentAccount() {
@@ -163,6 +200,9 @@ private extension CurrentAccountViewController {
         }()
 
         accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: .darkGray)
+
+        commentKarmaLabel.setText(bigText: "42", smallText: "comment\nkarma")
+        postKarmaLabel.setText(bigText: "100k", smallText: "post\nkarma")
     }
 }
 
@@ -192,6 +232,10 @@ extension CurrentAccountViewController {
 
     @objc func switchAccountsButtonPressed(_ sender: UIButton) {
         showSwitchAccountsMenu()
+    }
+
+    @objc func viewAccountButtonPressed(_ sender: UIButton) {
+
     }
 }
 
@@ -233,5 +277,48 @@ extension CurrentAccountViewController {
         }))
 
         present(optionMenu, animated: true, completion: nil)
+    }
+}
+
+class BigSmallLabel: UILabel {
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        numberOfLines = 3
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func setText(bigText: String, smallText: String) {
+        let attributedString = NSMutableAttributedString(string: "")
+        
+        let bigString = NSAttributedString(
+            string: bigText + "\n",
+            attributes: [
+                NSFontAttributeName: FontGenerator.fontOfSize(size: 50, submission: false),
+                NSForegroundColorAttributeName: ColorUtil.fontColor,
+                NSParagraphStyleAttributeName: NSMutableParagraphStyle().then {
+                    $0.alignment = .center
+                },
+            ]
+        )
+        let smallString = NSAttributedString(
+            string: smallText,
+            attributes: [
+                NSFontAttributeName: FontGenerator.fontOfSize(size: 14, submission: false),
+                NSForegroundColorAttributeName: ColorUtil.baseAccent,
+                NSParagraphStyleAttributeName: NSMutableParagraphStyle().then {
+                    $0.alignment = .center
+                    $0.lineHeightMultiple = 0.7
+                },
+            ]
+        )
+
+        attributedString.append(bigString)
+        attributedString.append(smallString)
+
+        self.attributedText = attributedString
     }
 }
