@@ -29,12 +29,26 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     var expanded = false
 
-    var header: NavigationHeaderView = NavigationHeaderView()
-
-    var searchBar: UISearchBar?
     var isSearching = false
 
     var task: URLSessionDataTask?
+
+    // Guaranteed amount of space between top edge of menu and top edge of screen
+    let minTopOffset: CGFloat = 42
+
+    var searchBar = UISearchBar().then {
+        $0.autocorrectionType = .no
+        $0.autocapitalizationType = .none
+        $0.spellCheckingType = .no
+        $0.returnKeyType = .search
+        if ColorUtil.theme != .LIGHT {
+            $0.keyboardAppearance = .dark
+        }
+        $0.searchBarStyle = UISearchBarStyle.minimal
+        $0.placeholder = " Go to subreddit or profile"
+        $0.isTranslucent = true
+        $0.barStyle = .blackTranslucent
+    }
     
     init(controller: MainViewController) {
         self.parentController = controller
@@ -60,11 +74,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         configureGestures()
         
         configureBackground()
-        
-        self.header.account.isUserInteractionEnabled = false
-        self.header.inbox.isUserInteractionEnabled = false
-        self.header.mod.isUserInteractionEnabled = false
-        self.header.settings.isUserInteractionEnabled = false
+
+        searchBar.isUserInteractionEnabled = false
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
                                                name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -144,16 +155,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         let percentMoved = percentCompleteForTranslation(recognizer)
         let normalizedPercentBar = min(1, percentMoved * 5)
         let normalizedAlphaBar = percentMoved < 0.5 ? 0 : ((percentMoved - 0.5) * 5)
-        
-        if percentMoved < 0.01 {
-            UIView.animate(withDuration: 0.1) {
-                self.topView?.backgroundColor = self.muxColor
-            }
-        } else {
-            UIView.animate(withDuration: 0.1) {
-                self.topView?.backgroundColor = self.header.back.backgroundColor
-            }
-        }
 
         backgroundView.alpha = percentMoved
         topView?.alpha = 1 - normalizedAlphaBar
@@ -166,10 +167,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     func collapse() {
-        self.header.account.isUserInteractionEnabled = false
-        self.header.inbox.isUserInteractionEnabled = false
-        self.header.mod.isUserInteractionEnabled = false
-        self.header.settings.isUserInteractionEnabled = false
+
+        searchBar.isUserInteractionEnabled = false
 
         let y = UIScreen.main.bounds.height - bottomOffset
         if let parent = self.parentController, parent.menu.superview != nil {
@@ -215,13 +214,17 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     func doRotate(_ animated: Bool = false) {
         let y = UIScreen.main.bounds.height - bottomOffset
-        self.view.frame = CGRect(x: 0, y: self.view.frame.height, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: (self.parentController?.view.frame.size.height ?? self.view.frame.size.height) * 0.9)
+        let desiredHeight: CGFloat = {
+            let height = self.parentController?.view.frame.size.height ?? self.view.frame.size.height
+            return min(height - minTopOffset, height * 0.9)
+        }()
+        self.view.frame = CGRect(x: 0, y: self.view.frame.height, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: desiredHeight)
         if animated {
             let animateBlock = { [weak self] in
                 guard let strongSelf = self else { return }
                 strongSelf.backgroundView.alpha = 0
                 strongSelf.topView?.alpha = 1
-                strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.parentController?.view.frame.width ?? strongSelf.view.frame.size.width, height: (strongSelf.parentController?.view.frame.size.height ?? strongSelf.view.frame.size.height) * 0.9)
+                strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.parentController?.view.frame.width ?? strongSelf.view.frame.size.width, height: desiredHeight)
                 strongSelf.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
                 strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             }
@@ -244,7 +247,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         } else {
             self.backgroundView.alpha = 0
             self.topView?.alpha = 1
-            self.view.frame = CGRect(x: 0, y: y, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: (self.parentController?.view.frame.size.height ?? self.view.frame.size.height) * 0.9)
+            self.view.frame = CGRect(x: 0, y: y, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: desiredHeight)
             self.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             self.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
         }
@@ -283,7 +286,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.backgroundView.alpha = 1
             strongSelf.topView?.alpha = 0
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
-            strongSelf.topView?.backgroundColor = strongSelf.header.back.backgroundColor
+            strongSelf.topView?.backgroundColor = strongSelf.searchBar.backgroundColor
             strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
             strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
@@ -291,12 +294,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
             if SettingValues.autoKeyboard {
-                strongSelf.header.search.becomeFirstResponder()
+                strongSelf.searchBar.becomeFirstResponder()
             }
-            strongSelf.header.account.isUserInteractionEnabled = true
-            strongSelf.header.inbox.isUserInteractionEnabled = true
-            strongSelf.header.mod.isUserInteractionEnabled = true
-            strongSelf.header.settings.isUserInteractionEnabled = true
+            strongSelf.searchBar.isUserInteractionEnabled = true
         }
 
         UIView.animate(withDuration: 0.4,
@@ -314,8 +314,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         if #available(iOS 11, *) {
             let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-            let blurView = UIVisualEffectView(frame: backgroundView.frame)
             blurEffect.setValue(3, forKeyPath: "blurRadius")
+
+            let blurView = UIVisualEffectView(frame: backgroundView.frame)
             blurView.effect = blurEffect
             backgroundView.insertSubview(blurView, at: 0)
             blurView.horizontalAnchors == backgroundView.horizontalAnchors
@@ -351,7 +352,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if SettingValues.autoKeyboard {
-            header.search.becomeFirstResponder()
+            searchBar.becomeFirstResponder()
         }
     }
 
@@ -359,15 +360,15 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         super.viewDidLayoutSubviews()
         
         if !SettingValues.flatMode {
-            header.roundCorners([.topLeft, .topRight], radius: 30)
+            view.roundCorners([.topLeft, .topRight], radius: 30)
         }
     }
 
     func configureViews() {
 
-        header.frame.size.height = header.getEstHeight()
-        header.parentController = self.parentController
-        view.addSubview(header)
+        searchBar.sizeToFit()
+        searchBar.delegate = self
+        view.addSubview(searchBar)
 
         tableView.bounces = false
         tableView.delegate = self
@@ -383,25 +384,16 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "profile")
 
         view.addSubview(tableView)
-
-        searchBar = header.search
-        searchBar?.searchBarStyle = UISearchBarStyle.minimal
-        searchBar?.placeholder = " Go to subreddit or profile"
-        searchBar?.sizeToFit()
-        searchBar?.isTranslucent = true
-        searchBar?.barStyle = .blackTranslucent
-        searchBar?.delegate = self
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-
-        self.header.doColors(MainViewController.current)
+        setColors(MainViewController.current)
     }
 
     func configureLayout() {
-        header.topAnchor == view.topAnchor
-        header.heightAnchor == header.getEstHeight()
-        header.horizontalAnchors == view.horizontalAnchors
+        searchBar.topAnchor == view.topAnchor
+        searchBar.horizontalAnchors == view.horizontalAnchors
+        searchBar.heightAnchor == 50
 
-        tableView.topAnchor == header.bottomAnchor
+        tableView.topAnchor == searchBar.bottomAnchor
         tableView.horizontalAnchors == view.horizontalAnchors
         tableView.bottomAnchor == view.bottomAnchor
     }
@@ -423,25 +415,18 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         parentController = controller
     }
 
-    func setMod(_ hasMail: Bool) {
-        header.setIsMod(hasMail)
-    }
-
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
-            self.header.doColors(sub)
+            self.searchBar.tintColor = ColorUtil.fontColor
+            self.searchBar.textColor = ColorUtil.fontColor
+            self.searchBar.backgroundColor = ColorUtil.foregroundColor
             self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         }
     }
     
     func setSubreddit(subreddit: String) {
-        header.setSubreddit(subreddit: subreddit, parent: self)
-        header.frame.size.height = header.getEstHeight()
+        setColors(subreddit)
         tableView.backgroundColor = ColorUtil.backgroundColor
-    }
-    
-    func setmail(mailcount: Int) {
-        header.setMail(mailcount)
     }
     
     func reloadData() {
@@ -463,7 +448,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             let sub = cell.subreddit
             parentController?.goToSubreddit(subreddit: sub)
         }
-        searchBar?.text = ""
+        searchBar.text = ""
         filteredContent = []
         isSearching = false
         tableView.reloadData()
@@ -485,7 +470,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             if isSearching {
-                return filteredContent.count + (filteredContent.contains(searchBar!.text!) ? 0 : 1) + 3
+                return filteredContent.count + (filteredContent.contains(searchBar.text!) ? 0 : 1) + 3
             } else {
                 return Subscriptions.subreddits.count
             }
@@ -520,24 +505,24 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         var cell: SubredditCellView
         if indexPath.section == 0 {
             if indexPath.row == filteredContent.count && isSearching {
-                let thing = searchBar!.text!
+                let thing = searchBar.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                 c.setSubreddit(subreddit: thing, nav: self, exists: false)
                 cell = c
             } else if isSearching && indexPath.row == filteredContent.count + 1 {
-                let thing = searchBar!.text!
+                let thing = searchBar.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "profile", for: indexPath) as! SubredditCellView
                 c.setProfile(profile: thing, nav: self)
                 cell = c
             } else if isSearching && indexPath.row == filteredContent.count + 2 {
                 // "Search Reddit for <text>" cell
-                let thing = searchBar!.text!
+                let thing = searchBar.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
                 c.setSearch(string: thing, sub: nil, nav: self)
                 cell = c
             } else if isSearching && indexPath.row == filteredContent.count + 3 {
                 // "Search r/subreddit for <text>" cell
-                let thing = searchBar!.text!
+                let thing = searchBar.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
                 c.setSearch(string: thing, sub: MainViewController.current, nav: self)
                 cell = c
@@ -597,7 +582,7 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
             task?.cancel()
         }
         do {
-            task = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchBar?.text ?? "", paginator: Paginator(), completion: { (result) in
+            task = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchBar.text ?? "", paginator: Paginator(), completion: { (result) in
                 switch result {
                 case .success(let subs):
                     for sub in subs.children {
@@ -620,7 +605,7 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
 
     func searchTableList() {
         var searchItems = [String]()
-        let searchString = searchBar?.text
+        let searchString = searchBar.text
         for s in Subscriptions.subreddits {
             if s.localizedCaseInsensitiveContains(searchString ?? "") {
                 searchItems.append(s)
@@ -652,9 +637,9 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
 extension NavigationSidebarViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
-        if self.searchBar?.text?.isEmpty() ?? false {
+        if self.searchBar.text?.isEmpty() ?? false {
             self.tableView.endEditing(true)
-            header.search.resignFirstResponder()
+            searchBar.resignFirstResponder()
         }
         let currentBottomY = scrollView.frame.size.height + currentY
         if currentY > lastY {

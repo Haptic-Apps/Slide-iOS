@@ -42,16 +42,21 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
             if SettingValues.subredditBar {
-                navigationItem.rightBarButtonItems = [sortB]
-                navigationItem.leftBarButtonItems = [readLaterB]
+                navigationItem.leftBarButtonItems = [accountB]
+                navigationItem.rightBarButtonItems = [readLaterB]
             } else {
-                navigationItem.rightBarButtonItems = [sortB, readLaterB]
+                navigationItem.leftBarButtonItems = []
+                navigationItem.rightBarButtonItems = [accountB, readLaterB]
             }
         } else {
             if SettingValues.subredditBar {
+                navigationItem.leftBarButtonItems = [accountB]
+                navigationItem.rightBarButtonItems = []
+            } else {
                 navigationItem.leftBarButtonItems = []
+                navigationItem.rightBarButtonItems = [accountB]
             }
-            navigationItem.rightBarButtonItems = [sortB]
+            navigationItem.rightBarButtonItems = []
         }
     }
     
@@ -66,8 +71,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var readLaterB = UIBarButtonItem()
     var sortB = UIBarButtonItem()
     var readLater = UIButton()
-    
-    var menuPresentationController: BottomMenuPresentationController?
+    var accountB = UIBarButtonItem()
     
     override func viewWillAppear(_ animated: Bool) {
         menuNav?.view.isHidden = false
@@ -127,7 +131,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
         
         self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
-        menuNav?.header.doColors()
         if menuNav?.tableView != nil {
             menuNav?.tableView.reloadData()
         }
@@ -241,12 +244,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         let unread = profile.inboxCount
                         let diff = unread - lastMail
                         if profile.isMod && AccountController.modSubs.isEmpty {
-                            self.menuNav?.setMod(profile.hasModMail)
                             print("Getting mod subs")
                             AccountController.doModOf()
                         }
                         DispatchQueue.main.async {
-                            self.menuNav?.setmail(mailcount: unread)
                             if diff > 0 {
                                 BannerUtil.makeBanner(text: "\(diff) new message\(diff > 1 ? "s" : "")!", seconds: 5, context: self, top: true, callback: {
                                     () in
@@ -445,15 +446,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             menuNav = nil
         }
         menuNav = NavigationSidebarViewController(controller: self)
+
         toolbar = UITouchCapturingView()
         toolbar!.layer.cornerRadius = 15
+
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)
         menuNav?.muxColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+
         toolbar!.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
         toolbar!.topAnchor == menuNav!.view.topAnchor
         toolbar!.heightAnchor == 90
+
         //toolbar!.roundCorners([UIRectCorner.topLeft, UIRectCorner.topRight], radius: 15)
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         //        menuNav?.modalPresentationStyle = .overCurrentContext
@@ -483,7 +488,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if self.splitViewController != nil && UIDevice.current.orientation == .portrait {
             nextOffset = 64
         }
-        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: height * 0.9)
+
+        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: min(height - menuNav!.minTopOffset, height * 0.9))
     }
     
     func restartVC() {
@@ -632,6 +638,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     var menuNav: NavigationSidebarViewController?
+
     var currentTitle = "Slide"
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -693,7 +700,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.navigationController?.navigationBar.layoutIfNeeded()
         
         // Clear the menuNav's searchBar to refresh the menuNav
-        self.menuNav?.searchBar?.text = nil
+        self.menuNav?.searchBar.text = nil
         
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
         if !selected {
@@ -827,9 +834,14 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         sortB = UIBarButtonItem.init(customView: sort)
+
+        let account = UIButton(type: .custom)
+        account.setImage(UIImage(named: "profile")?.navIcon(), for: UIControlState.normal)
+        account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControlEvents.touchUpInside)
+        accountB = UIBarButtonItem(customView: account)
         
         let settings = UIButton.init(type: .custom)
-        settings.setImage(UIImage.init(named: "settings")?.toolbarIcon(), for: UIControlState.normal)
+        settings.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControlState.normal)
         //todo this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         settings.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let settingsB = UIBarButtonItem.init(customView: settings)
@@ -872,7 +884,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             more.widthAnchor == 56
             
         } else {
-            toolbarItems = [settingsB, flexButton, offlineB]
+            toolbarItems = [settingsB, accountB, flexButton, offlineB]
         }
         didUpdate()
     }
@@ -949,6 +961,14 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func showReadLater(_ sender: UIButton?) {
         VCPresenter.showVC(viewController: ReadLaterViewController(subreddit: currentTitle), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
     }
+
+    func showCurrentAccountMenu(_ sender: UIButton?) {
+        let vc = CurrentAccountViewController()
+        vc.delegate = self
+        vc.modalPresentationStyle = .overCurrentContext
+        vc.modalTransitionStyle = .crossDissolve
+        present(vc, animated: true)
+    }
     
     func getSubredditVC() -> SingleSubredditViewController? {
         if vCs.isEmpty {
@@ -979,28 +999,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func showMenu(_ sender: AnyObject) {
         getSubredditVC()?.showMore(sender, parentVC: self)
-    }
-    
-    func showThemeMenu() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "", preferredStyle: .actionSheet)
-        
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        for theme in ColorUtil.Theme.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
-                UserDefaults.standard.set(theme.rawValue, forKey: "theme")
-                UserDefaults.standard.synchronize()
-                _ = ColorUtil.doInit()
-                self.restartVC()
-            }
-            actionSheetController.addAction(saveActionButton)
-        }
-        
-        //todo make this work on ipad, also maybe merge with current code in SettingsTheme?
-        self.present(actionSheetController, animated: true, completion: nil)
     }
     
     var selected = false
@@ -1071,6 +1069,19 @@ extension MainViewController: UIPageViewControllerDelegate {
         color2 = ColorUtil.getColorForSub(sub: pendingSub, true)
         color1 = ColorUtil.getColorForSub(sub: prevSub, true)
     }
+}
+
+extension MainViewController: CurrentAccountViewControllerDelegate {
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void) {
+        let settings = SettingsViewController()
+        VCPresenter.showVC(viewController: settings, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+    }
+
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChange: Void) {
+
+    }
+
+
 }
 
 class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
