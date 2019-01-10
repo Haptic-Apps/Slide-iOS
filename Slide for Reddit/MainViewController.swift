@@ -1078,8 +1078,38 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
     }
 
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String) {
+
         AccountController.switchAccount(name: accountName)
-        hardReset()
+        if !UserDefaults.standard.bool(forKey: "done" + accountName) {
+            do {
+                try addAccount(token: OAuth2TokenRepository.token(of: accountName), register: false)
+            } catch {
+                addAccount(register: false)
+            }
+        } else {
+            Subscriptions.sync(name: accountName, completion: {
+                self.hardReset()
+            })
+        }
+    }
+
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestGuestAccount: Void) {
+        AccountController.switchAccount(name: "GUEST")
+        Subscriptions.sync(name: "GUEST", completion: {
+            self.hardReset()
+        })
+    }
+
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestLogOut: Void) {
+        AccountController.delete(name: AccountController.currentName)
+        AccountController.switchAccount(name: "GUEST")
+        Subscriptions.sync(name: "GUEST", completion: {
+            self.hardReset()
+        })
+    }
+
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestNewAccount: Void) {
+        MainViewController.doAddAccount(register: false)
     }
 
 }
