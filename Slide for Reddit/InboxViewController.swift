@@ -94,6 +94,12 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let navigationController = navigationController {
+            if navigationController.viewControllers.count == 1 {
+                navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "Close", style: .done, target: self, action: #selector(closeButtonPressed))
+            }
+        }
+
         var items: [String] = []
         for i in content {
             items.append(i.description)
@@ -244,5 +250,12 @@ extension InboxViewController: MDCTabBarDelegate {
                            animated: false,
                            completion: nil)
         
+    }
+}
+
+// MARK: - Actions
+extension InboxViewController {
+    @objc func closeButtonPressed() {
+        dismiss(animated: true, completion: nil)
     }
 }

@@ -61,6 +61,12 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let navigationController = navigationController {
+            if navigationController.viewControllers.count == 1 {
+                navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "Close", style: .done, target: self, action: #selector(closeButtonPressed))
+            }
+        }
+
         var items: [String] = []
         for i in content {
             items.append(i.description)
@@ -208,4 +214,11 @@ extension ModerationViewController: MDCTabBarDelegate {
 
     }
 
+}
+
+// MARK: - Actions
+extension ModerationViewController {
+    @objc func closeButtonPressed() {
+        dismiss(animated: true, completion: nil)
+    }
 }
