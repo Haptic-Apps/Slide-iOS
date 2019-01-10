@@ -25,10 +25,31 @@ class CurrentAccountViewController: UIViewController {
 
     weak var delegate: CurrentAccountViewControllerDelegate?
 
-    var backgroundView: UIView!
+    var backgroundView = UIView().then {
+        $0.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
+    }
+
+    var contentView = UIView().then {
+        $0.backgroundColor = ColorUtil.foregroundColor
+        $0.clipsToBounds = false
+    }
+
+    var accountNameLabel = UILabel().then {
+        $0.font = FontGenerator.fontOfSize(size: 36, submission: false)
+        $0.textColor = ColorUtil.fontColor
+        $0.numberOfLines = 1
+        $0.lineBreakMode = .byWordWrapping
+        $0.adjustsFontSizeToFitWidth = true
+        $0.minimumScaleFactor = 0.5
+    }
+
+    var accountImageView = UIImageView().then {
+        $0.backgroundColor = .white
+        $0.contentMode = .scaleAspectFit
+    }
 
     var settingsButton = UIButton(type: .custom).then {
-        $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        $0.imageView?.contentMode = .scaleAspectFit
         $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
         $0.isUserInteractionEnabled = true
     }
@@ -52,9 +73,6 @@ class CurrentAccountViewController: UIViewController {
 // MARK: - Setup
 private extension CurrentAccountViewController {
     func setupViews() {
-        backgroundView = UIView().then {
-            $0.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
-        }
         view.addSubview(backgroundView)
 
         // Add blur
@@ -68,6 +86,10 @@ private extension CurrentAccountViewController {
         }
 
         backgroundView.addSubview(settingsButton)
+
+        view.addSubview(contentView)
+        contentView.addSubview(accountImageView)
+        contentView.addSubview(accountNameLabel)
     }
 
     func setupConstraints() {
@@ -75,6 +97,18 @@ private extension CurrentAccountViewController {
 
         settingsButton.topAnchor == backgroundView.safeTopAnchor + 4
         settingsButton.rightAnchor == backgroundView.safeRightAnchor - 16
+
+        contentView.horizontalAnchors == view.horizontalAnchors
+        contentView.bottomAnchor == view.bottomAnchor
+        contentView.topAnchor == view.safeTopAnchor + 250 // TODO: Switch this out for a height anchor at some point
+
+        accountImageView.leftAnchor == contentView.leftAnchor + 20
+        accountImageView.centerYAnchor == contentView.topAnchor
+        accountImageView.sizeAnchors == CGSize.square(size: 100)
+
+        accountNameLabel.leftAnchor == accountImageView.rightAnchor + 20
+        accountNameLabel.rightAnchor == contentView.rightAnchor - 20
+        accountNameLabel.topAnchor == contentView.topAnchor + 4
     }
 
     func setupActions() {
@@ -86,7 +120,26 @@ private extension CurrentAccountViewController {
     }
 
     func configureForCurrentAccount() {
+
+        if !AccountController.isLoggedIn {
+            // TODO: Show empty state
+            return
+        }
+
         // Populate configurable UI elements here.
+        accountNameLabel.attributedText = {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 1.0
+            paragraphStyle.lineHeightMultiple = 0.7
+            return NSAttributedString(
+                string: AccountController.currentName.insertingZeroWidthSpacesBeforeCaptials(),
+                attributes: [
+                    NSParagraphStyleAttributeName: paragraphStyle,
+                ]
+            )
+        }()
+
+        accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: .darkGray)
     }
 }
 

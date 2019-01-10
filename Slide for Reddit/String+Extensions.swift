@@ -118,3 +118,18 @@ extension String {
         return result
     }
 }
+
+extension String {
+    func insertingZeroWidthSpacesBeforeCaptials() -> String {
+        var str = ""
+        for (i, char) in self.enumerated() {
+            let charStr = String(char)
+            if i != 0 && charStr.lowercased() != charStr {
+                str += "\u{200B}"
+            }
+            str += charStr
+        }
+        return str
+    }
+}
+
