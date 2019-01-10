@@ -839,6 +839,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         account.setImage(UIImage(named: "profile")?.navIcon(), for: UIControlState.normal)
         account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControlEvents.touchUpInside)
         accountB = UIBarButtonItem(customView: account)
+        accountB.accessibilityLabel = "Account"
         
         let settings = UIButton.init(type: .custom)
         settings.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControlState.normal)
@@ -965,9 +966,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func showCurrentAccountMenu(_ sender: UIButton?) {
         let vc = CurrentAccountViewController()
         vc.delegate = self
-        vc.modalPresentationStyle = .overCurrentContext
-        vc.modalTransitionStyle = .crossDissolve
-        present(vc, animated: true)
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .overCurrentContext
+        navVC.modalTransitionStyle = .crossDissolve
+        present(navVC, animated: true)
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {
@@ -1087,24 +1089,24 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
                 addAccount(register: false)
             }
         } else {
-            Subscriptions.sync(name: accountName, completion: {
-                self.hardReset()
+            Subscriptions.sync(name: accountName, completion: { [weak self] in
+                self?.hardReset()
             })
         }
     }
 
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestGuestAccount: Void) {
         AccountController.switchAccount(name: "GUEST")
-        Subscriptions.sync(name: "GUEST", completion: {
-            self.hardReset()
+        Subscriptions.sync(name: "GUEST", completion: { [weak self] in
+            self?.hardReset()
         })
     }
 
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestLogOut: Void) {
         AccountController.delete(name: AccountController.currentName)
         AccountController.switchAccount(name: "GUEST")
-        Subscriptions.sync(name: "GUEST", completion: {
-            self.hardReset()
+        Subscriptions.sync(name: "GUEST", completion: { [weak self] in
+            self?.hardReset()
         })
     }
 
