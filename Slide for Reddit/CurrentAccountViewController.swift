@@ -51,11 +51,13 @@ class CurrentAccountViewController: UIViewController {
 
     var closeButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 24, right: 24)
         $0.accessibilityLabel = "Close"
     }
 
     var settingsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 0)
         $0.accessibilityLabel = "App Settings"
     }
 
@@ -63,18 +65,21 @@ class CurrentAccountViewController: UIViewController {
 
     var upperButtonStack = UIStackView().then {
         $0.axis = .horizontal
-        $0.spacing = 16
+        $0.spacing = 0
     }
     var modButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "Mod Queue"
     }
     var mailButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "Inbox"
     }
     var switchAccountsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 16)
         $0.accessibilityLabel = "Switch Accounts"
     }
 
@@ -128,6 +133,18 @@ class CurrentAccountViewController: UIViewController {
     }
 
     var header = AccountHeaderView()
+
+    var emptyStateLabel = UILabel().then {
+        $0.numberOfLines = 0
+        $0.textColor = ColorUtil.fontColor
+        $0.textAlignment = .center
+        $0.attributedText = {
+            var font = UIFont.boldSystemFont(ofSize: 20)
+            let attributedString = NSMutableAttributedString.init(string: "You are logged out.\n", attributes: [NSFontAttributeName: font])
+            attributedString.append(NSMutableAttributedString.init(string: "Tap here to sign in!", attributes: [NSFontAttributeName: font.bold()]))
+            return attributedString
+        }()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -201,6 +218,8 @@ extension CurrentAccountViewController {
         contentView.addSubview(header)
         header.delegate = self
 
+        contentView.addSubview(emptyStateLabel)
+
         contentView.addSubview(spinner)
 
     }
@@ -214,8 +233,8 @@ extension CurrentAccountViewController {
         settingsButton.topAnchor == backgroundView.safeTopAnchor + 4
         settingsButton.rightAnchor == backgroundView.safeRightAnchor - 16
 
-        upperButtonStack.leftAnchor == accountImageView.rightAnchor + 16
-        upperButtonStack.bottomAnchor == contentView.topAnchor - 8
+        upperButtonStack.leftAnchor == accountImageView.rightAnchor + 8
+        upperButtonStack.bottomAnchor == contentView.topAnchor
 
         contentView.topAnchor == view.safeTopAnchor + 250 // TODO: Switch this out for a height anchor at some point
         contentView.horizontalAnchors == view.horizontalAnchors
@@ -242,6 +261,8 @@ extension CurrentAccountViewController {
 
         modBadge.centerYAnchor == modButton.centerYAnchor - 10
         modBadge.centerXAnchor == modButton.centerXAnchor + 16
+
+        emptyStateLabel.edgeAnchors == header.edgeAnchors
     }
 
     func setupActions() {
@@ -254,6 +275,9 @@ extension CurrentAccountViewController {
         mailButton.addTarget(self, action: #selector(mailButtonPressed), for: .touchUpInside)
         modButton.addTarget(self, action: #selector(modButtonPressed), for: .touchUpInside)
         switchAccountsButton.addTarget(self, action: #selector(switchAccountsButtonPressed), for: .touchUpInside)
+
+        let emptyStateLabelTap = UITapGestureRecognizer(target: self, action: #selector(emptyStateLabelTapped))
+        emptyStateLabel.addGestureRecognizer(emptyStateLabelTap)
     }
 
     func configureForCurrentAccount() {
@@ -261,13 +285,8 @@ extension CurrentAccountViewController {
         updateMailBadge()
         updateModBadge()
 
-        if !AccountController.isLoggedIn {
-            // TODO: Show empty state
-            accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
-            return
-        } else {
-            // TODO: Hide empty state
-        }
+        accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
+        setEmptyState(!AccountController.isLoggedIn, animate: true)
 
         let accountName = SettingValues.nameScrubbing ? "You" : AccountController.currentName.insertingZeroWidthSpacesBeforeCaptials()
 
@@ -317,6 +336,29 @@ extension CurrentAccountViewController {
         }
     }
 
+    func setEmptyState(_ isOn: Bool, animate: Bool) {
+        func animationBlock() {
+            self.upperButtonStack.alpha = isOn ? 0 : 1
+            self.upperButtonStack.isUserInteractionEnabled = !isOn
+
+            self.accountNameLabel.alpha = isOn ? 0 : 1
+            self.accountAgeLabel.alpha = isOn ? 0 : 1
+
+            self.header.alpha = isOn ? 0 : 1
+            self.header.isUserInteractionEnabled = !isOn
+
+            self.emptyStateLabel.alpha = isOn ? 1 : 0
+            self.emptyStateLabel.isUserInteractionEnabled = isOn
+        }
+        if animate {
+            UIView.animate(withDuration: 0.2) {
+                animationBlock()
+            }
+        } else {
+            animationBlock()
+        }
+    }
+
     func updateMailBadge() {
         if let account = AccountController.current {
             mailBadge.isHidden = !account.hasMail
@@ -362,6 +404,10 @@ extension CurrentAccountViewController {
     }
 
     @objc func switchAccountsButtonPressed(_ sender: UIButton) {
+        showSwitchAccountsMenu()
+    }
+
+    @objc func emptyStateLabelTapped() {
         showSwitchAccountsMenu()
     }
 }
@@ -418,10 +464,12 @@ extension CurrentAccountViewController {
 
         if AccountController.isLoggedIn {
             optionMenu.addAction(Action(ActionData(title: "Browse as guest", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
+                self.setEmptyState(true, animate: false)
                 self.delegate?.currentAccountViewController(self, didRequestGuestAccount: ())
             }))
 
             optionMenu.addAction(Action(ActionData(title: "Log out", image: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())), style: .default, handler: { _ in
+                self.setEmptyState(true, animate: false)
                 self.delegate?.currentAccountViewController(self, didRequestLogOut: ())
             }))
 
