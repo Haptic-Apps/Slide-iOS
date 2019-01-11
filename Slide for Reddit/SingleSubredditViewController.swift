@@ -314,8 +314,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         super.viewWillDisappear(animated)
         
         for index in tableView.indexPathsForVisibleItems {
-            let cell = tableView.cellForItem(at: index) as! LinkCellView
-            cell.endVideos()
+            if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                cell.endVideos()
+            }
         }
 
         if single {
@@ -388,6 +389,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
+                } else if fab != nil && !fab!.isHidden && !isHiding {
+                    UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                        self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+                    }, completion: { _ in
+                        self.fab?.isHidden = true
+                        self.isHiding = false
+                    })
                 }
             } else if (currentY < lastYUsed - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
                 showUI()
@@ -2063,12 +2071,7 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
-            (cell as! LinkCellView).videoView!.player?.pause()
-            (cell as! LinkCellView).videoView!.player?.currentItem?.asset.cancelLoading()
-            (cell as! LinkCellView).videoView!.player?.currentItem?.cancelPendingSeeks()
-            (cell as! LinkCellView).videoView!.player = nil
-            (cell as! LinkCellView).updater?.invalidate()
-            (cell as! LinkCellView).avPlayerItem = nil
+            (cell as! LinkCellView).endVideos()
         }
         if !tableView.indexPathsForVisibleItems.contains(indexPath) {
             if SettingValues.markReadOnScroll && indexPath.row < links.count {

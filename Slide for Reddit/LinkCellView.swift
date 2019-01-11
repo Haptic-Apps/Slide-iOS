@@ -1678,15 +1678,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 strongSelf.avPlayerItem = AVPlayerItem(url: strongSelf.videoURL!)
                 strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
                 strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
-                do {
-                    if SettingValues.matchSilence {
-                        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-                    } else {
-                        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-                    }
-                } catch {
-                    
-                }
 //                Is currently causing issues with not resuming after buffering
 //                if #available(iOS 10.0, *) {
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
@@ -1765,9 +1756,28 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
-        if sound.isHidden && (self.videoView.player?.isMuted ?? false) && (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1 {
-            sound.isHidden = false
+        let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
+        if (self.videoView.player?.isMuted ?? false) && tracks {
+            do {
+                if SettingValues.matchSilence {
+                    try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                } else {
+                    try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                }
+            } catch {
+                
+            }
+            if sound.isHidden {
+                sound.isHidden = false
+            }
+        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient{
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            } catch {
+                
+            }
         }
+        
         if let player = videoView.player {
             let elapsedTime = player.currentTime()
             if CMTIME_IS_INVALID(elapsedTime) {

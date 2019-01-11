@@ -667,8 +667,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             case .VID_ME:
                 return VidMeVideoSource()
             case .OTHER:
-                //we should never get here
-                fatalError("Video type unrecognized and unimplemented!")
+                return DirectVideoSource()
             }
         }
     }
