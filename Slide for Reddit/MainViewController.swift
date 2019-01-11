@@ -1106,7 +1106,7 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
     }
 
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestLogOut: Void) {
-        AccountController.delete(name: AccountController.currentName)
+        AccountController.delete(name: AccountController.current!.name)
         AccountController.switchAccount(name: "GUEST")
         Subscriptions.sync(name: "GUEST", completion: { [weak self] in
             self?.hardReset()

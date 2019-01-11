@@ -374,7 +374,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = UITableViewCellSeparatorStyle.none
-        tableView.clipsToBounds = true
+        tableView.clipsToBounds = false
         tableView.estimatedRowHeight = 50
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.separatorInset = .zero
