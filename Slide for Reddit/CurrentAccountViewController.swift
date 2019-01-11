@@ -33,15 +33,17 @@ class CurrentAccountViewController: UIViewController {
 
     weak var delegate: CurrentAccountViewControllerDelegate?
 
+    var interactionController: CurrentAccountDismissInteraction?
+
+    /// Overall height of the content view, including its out-of-bounds elements.
+    var contentViewHeight: CGFloat {
+        return view.frame.maxY - accountImageView.frame.minY
+    }
+
     var spinner = UIActivityIndicatorView().then {
         $0.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge
         $0.color = ColorUtil.fontColor
         $0.hidesWhenStopped = true
-    }
-
-    var backgroundView = UIView().then {
-        $0.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
-        $0.isAccessibilityElement = false
     }
 
     var contentView = UIView().then {
@@ -51,13 +53,13 @@ class CurrentAccountViewController: UIViewController {
 
     var closeButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 24, right: 24)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Close"
     }
 
     var settingsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 0)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 24, bottom: 24, right: 16)
         $0.accessibilityLabel = "App Settings"
     }
 
@@ -69,12 +71,12 @@ class CurrentAccountViewController: UIViewController {
     }
     var modButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "Mod Queue"
     }
     var mailButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 8, right: 8)
         $0.accessibilityLabel = "Inbox"
     }
     var switchAccountsButton = UIButton(type: .custom).then {
@@ -157,15 +159,13 @@ class CurrentAccountViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountMailCountChanged), name: .onAccountMailCountChanged, object: nil)
 
+        interactionController = CurrentAccountDismissInteraction(viewController: self)
+
         configureForCurrentAccount()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        // Hide the navigation bar on this view controller
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
 
         // Focus the account label
         UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, accountNameLabel)
@@ -174,37 +174,16 @@ class CurrentAccountViewController: UIViewController {
         updateModBadge()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        // Show the navigation bar on other view controllers
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-
 }
 
 // MARK: - Setup
 extension CurrentAccountViewController {
     func setupViews() {
-        view.addSubview(backgroundView)
 
-        // Add blur
-        if #available(iOS 11, *) {
-            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-            blurEffect.setValue(5, forKeyPath: "blurRadius")
+        view.addSubview(closeButton)
+        view.addSubview(settingsButton)
 
-//            let blurEffect = UIBlurEffect(style: ColorUtil.theme.isLight() ? .light : .dark)
-
-            let blurView = UIVisualEffectView(frame: .zero)
-            blurView.effect = blurEffect
-            backgroundView.insertSubview(blurView, at: 0)
-            blurView.edgeAnchors == backgroundView.edgeAnchors
-        }
-
-        backgroundView.addSubview(closeButton)
-        backgroundView.addSubview(settingsButton)
-
-        backgroundView.addSubview(upperButtonStack)
+        view.addSubview(upperButtonStack)
         upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton)
 
         mailButton.addSubview(mailBadge)
@@ -225,15 +204,14 @@ extension CurrentAccountViewController {
     }
 
     func setupConstraints() {
-        backgroundView.edgeAnchors == view.edgeAnchors
 
-        closeButton.topAnchor == backgroundView.safeTopAnchor + 4
-        closeButton.leftAnchor == backgroundView.safeLeftAnchor + 16
+        closeButton.topAnchor == view.safeTopAnchor
+        closeButton.leftAnchor == view.safeLeftAnchor
 
-        settingsButton.topAnchor == backgroundView.safeTopAnchor + 4
-        settingsButton.rightAnchor == backgroundView.safeRightAnchor - 16
+        settingsButton.topAnchor == view.safeTopAnchor
+        settingsButton.rightAnchor == view.safeRightAnchor
 
-        upperButtonStack.leftAnchor == accountImageView.rightAnchor + 8
+        upperButtonStack.leftAnchor == accountImageView.rightAnchor
         upperButtonStack.bottomAnchor == contentView.topAnchor
 
         contentView.topAnchor == view.safeTopAnchor + 250 // TODO: Switch this out for a height anchor at some point
@@ -266,9 +244,6 @@ extension CurrentAccountViewController {
     }
 
     func setupActions() {
-        let bgTap = UITapGestureRecognizer(target: self, action: #selector(didRequestClose))
-        backgroundView.addGestureRecognizer(bgTap)
-
         closeButton.addTarget(self, action: #selector(didRequestClose), for: .touchUpInside)
         settingsButton.addTarget(self, action: #selector(settingsButtonPressed), for: .touchUpInside)
 
@@ -395,12 +370,16 @@ extension CurrentAccountViewController {
 
     @objc func mailButtonPressed(_ sender: UIButton) {
         let vc = InboxViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.navigationBar.isTranslucent = false
+        present(navVC, animated: true)
     }
 
     @objc func modButtonPressed(_ sender: UIButton) {
         let vc = ModerationViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.navigationBar.isTranslucent = false
+        present(navVC, animated: true)
     }
 
     @objc func switchAccountsButtonPressed(_ sender: UIButton) {
@@ -412,34 +391,14 @@ extension CurrentAccountViewController {
     }
 }
 
+// MARK: - AccountHeaderViewDelegate
 extension CurrentAccountViewController: AccountHeaderViewDelegate {
-    func accountHeaderView(_ view: AccountHeaderView, didRequestCommentsPage: Void) {
+    func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int) {
         let vc = ProfileViewController(name: AccountController.currentName)
-        vc.openTo = 2
-        navigationController?.pushViewController(vc, animated: true)
-    }
-
-    func accountHeaderView(_ view: AccountHeaderView, didRequestPostsPage: Void) {
-        let vc = ProfileViewController(name: AccountController.currentName)
-        vc.openTo = 1
-        navigationController?.pushViewController(vc, animated: true)
-    }
-
-    func accountHeaderView(_ view: AccountHeaderView, didRequestSavedPage: Void) {
-        let vc = ProfileViewController(name: AccountController.currentName)
-        vc.openTo = 4
-        navigationController?.pushViewController(vc, animated: true)
-    }
-
-    func accountHeaderView(_ view: AccountHeaderView, didRequestLikedPage: Void) {
-        let vc = ProfileViewController(name: AccountController.currentName)
-        vc.openTo = 3
-        navigationController?.pushViewController(vc, animated: true)
-    }
-
-    func accountHeaderView(_ view: AccountHeaderView, didRequestOverviewPage: Void) {
-        let vc = ProfileViewController(name: AccountController.currentName)
-        navigationController?.pushViewController(vc, animated: true)
+        vc.openTo = index
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.navigationBar.isTranslucent = false
+        present(navVC, animated: true)
     }
 }
 
@@ -522,11 +481,7 @@ extension CurrentAccountViewController {
 }
 
 protocol AccountHeaderViewDelegate: AnyObject {
-    func accountHeaderView(_ view: AccountHeaderView, didRequestCommentsPage: Void)
-    func accountHeaderView(_ view: AccountHeaderView, didRequestPostsPage: Void)
-    func accountHeaderView(_ view: AccountHeaderView, didRequestSavedPage: Void)
-    func accountHeaderView(_ view: AccountHeaderView, didRequestLikedPage: Void)
-    func accountHeaderView(_ view: AccountHeaderView, didRequestOverviewPage: Void)
+    func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int)
 }
 
 class AccountHeaderView: UIView {
@@ -626,23 +581,23 @@ class AccountHeaderView: UIView {
     func setupActions() {
         savedCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestSavedPage: ())
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 4)
         }
         likedCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestLikedPage: ())
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 3)
         }
         detailsCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestOverviewPage: ())
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 0)
         }
         commentKarmaLabel.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestCommentsPage: ())
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 2)
         }
         postKarmaLabel.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestPostsPage: ())
+            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 1)
         }
     }
 }

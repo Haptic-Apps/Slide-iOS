@@ -136,7 +136,7 @@ class AnyModalViewController: UIViewController {
         
         self.view.insertSubview(background!, at: 0)
         blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(3, forKeyPath: "blurRadius")
+        blurEffect.setValue(5, forKeyPath: "blurRadius")
         blurView!.effect = blurEffect
         view.insertSubview(blurView!, at: 0)
         

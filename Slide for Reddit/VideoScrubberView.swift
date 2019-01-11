@@ -122,7 +122,7 @@ class VideoScrubberView: UIView {
         self.clipsToBounds = true
         
         let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(3, forKeyPath: "blurRadius")
+        blurEffect.setValue(5, forKeyPath: "blurRadius")
         blurView.effect = blurEffect
         blurView.clipsToBounds = true
         blurView.layer.cornerRadius = 30
