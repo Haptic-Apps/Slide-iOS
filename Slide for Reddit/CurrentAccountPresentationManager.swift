@@ -9,7 +9,7 @@
 import UIKit
 
 class CurrentAccountPresentationManager: NSObject {
-    var coverageRatio: CGFloat = 1.0
+
 }
 
 extension CurrentAccountPresentationManager: UIViewControllerTransitioningDelegate {
@@ -17,8 +17,7 @@ extension CurrentAccountPresentationManager: UIViewControllerTransitioningDelega
                                 presenting: UIViewController?,
                                 source: UIViewController) -> UIPresentationController? {
         let presentationController = CurrentAccountPresentationController(presentedViewController: presented,
-                                                                          presenting: presenting,
-                                                                          coverageRatio: coverageRatio)
+                                                                          presenting: presenting)
         return presentationController
     }
 

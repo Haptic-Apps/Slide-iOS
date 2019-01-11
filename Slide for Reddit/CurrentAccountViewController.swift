@@ -17,8 +17,6 @@ import XLActionController
 /**
  TODO:
  - Inbox badging isn't being updated when messages are marked as read (this means the Account object isn't being updated by the cell)
- - Empty state when logged out
- - 
  */
 
 protocol CurrentAccountViewControllerDelegate: AnyObject {

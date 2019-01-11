@@ -15,13 +15,10 @@ class CurrentAccountPresentationController: UIPresentationController {
     fileprivate var dimmingView: UIVisualEffectView!
 
     // Mirror Manager params here
-    private var coverageRatio: CGFloat
 
-    init(presentedViewController: UIViewController,
-         presenting presentingViewController: UIViewController?,
-         coverageRatio: CGFloat) {
+    override init(presentedViewController: UIViewController,
+         presenting presentingViewController: UIViewController?) {
 
-        self.coverageRatio = coverageRatio
         super.init(presentedViewController: presentedViewController,
                    presenting: presentingViewController)
 
@@ -34,20 +31,8 @@ class CurrentAccountPresentationController: UIPresentationController {
 
     override func size(forChildContentContainer container: UIContentContainer,
                        withParentContainerSize parentSize: CGSize) -> CGSize {
-        return CGSize(width: parentSize.width, height: parentSize.height * coverageRatio)
+        return CGSize(width: parentSize.width, height: parentSize.height)
     }
-
-//    override var presentedView: UIView? {
-//        return dimmingView
-//    }
-
-//    override var frameOfPresentedViewInContainerView: CGRect {
-//
-//        var frame: CGRect = .zero
-//        frame.size = size(forChildContentContainer: presentedViewController,
-//                          withParentContainerSize: containerView!.bounds.size)
-//        return frame
-//    }
 
     override func presentationTransitionWillBegin() {
         let accountView = presentedViewController as! CurrentAccountViewController
@@ -68,12 +53,6 @@ class CurrentAccountPresentationController: UIPresentationController {
             self.dimmingView.effect = self.blurEffect
         })
     }
-
-//    override func presentationTransitionDidEnd(_ completed: Bool) {
-//        if !completed {
-//            dimmingView.removeFromSuperview()
-//        }
-//    }
 
     override func dismissalTransitionWillBegin() {
         guard let coordinator = presentedViewController.transitionCoordinator else {
