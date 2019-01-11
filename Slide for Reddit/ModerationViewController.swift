@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import MaterialComponents.MaterialTabs
 import reddift
 import UIKit
@@ -89,9 +90,12 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         tabBar.delegate = self
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
         // 5
-        tabBar.sizeToFit()
 
         self.view.addSubview(tabBar)
+        tabBar.heightAnchor == 48
+        tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.topAnchor == self.view.safeTopAnchor
+        tabBar.sizeToFit()
 
         time = History.getInboxSeen()
         History.inboxSeen()
