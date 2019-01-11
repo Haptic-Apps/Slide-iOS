@@ -314,7 +314,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         if #available(iOS 11, *) {
             let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurEffect.setValue(5, forKeyPath: "blurRadius")
 
             let blurView = UIVisualEffectView(frame: backgroundView.frame)
             blurView.effect = blurEffect

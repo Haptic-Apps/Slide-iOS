@@ -72,6 +72,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var sortB = UIBarButtonItem()
     var readLater = UIButton()
     var accountB = UIBarButtonItem()
+
+    lazy var currentAccountTransitioningDelegate = CurrentAccountPresentationManager()
     
     override func viewWillAppear(_ animated: Bool) {
         menuNav?.view.isHidden = false
@@ -969,10 +971,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func showCurrentAccountMenu(_ sender: UIButton?) {
         let vc = CurrentAccountViewController()
         vc.delegate = self
-        let navVC = UINavigationController(rootViewController: vc)
-        navVC.modalPresentationStyle = .overCurrentContext
-        navVC.modalTransitionStyle = .crossDissolve
-        present(navVC, animated: true)
+        vc.modalPresentationStyle = .custom
+        vc.transitioningDelegate = currentAccountTransitioningDelegate
+        present(vc, animated: true)
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {
