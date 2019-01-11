@@ -314,8 +314,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         super.viewWillDisappear(animated)
         
         for index in tableView.indexPathsForVisibleItems {
-            let cell = tableView.cellForItem(at: index) as! LinkCellView
-            cell.endVideos()
+            if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                cell.endVideos()
+            }
         }
 
         if single {
