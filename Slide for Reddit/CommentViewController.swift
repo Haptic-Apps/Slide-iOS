@@ -462,7 +462,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     if !self.comments.isEmpty {
                         self.updateStringsSingle(temp)
                         self.doArrays()
-                        self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.link) : Double(0))
+                        if !offline {
+                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.link) : Double(0))
+                        }
                     }
                     
                     DispatchQueue.main.async(execute: { () -> Void in

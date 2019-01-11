@@ -701,7 +701,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return (SettingValues.isPro) ? 5 : 6
-        case 1: return 7
+        case 1: return 8
         case 2: return 8
         case 3: return 5
         default: fatalError("Unknown number of sections")
