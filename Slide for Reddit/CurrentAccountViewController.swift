@@ -172,6 +172,10 @@ class CurrentAccountViewController: UIViewController {
         updateModBadge()
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
+    }
+
 }
 
 // MARK: - Setup
