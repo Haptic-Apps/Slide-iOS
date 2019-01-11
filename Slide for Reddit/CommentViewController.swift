@@ -462,7 +462,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     if !self.comments.isEmpty {
                         self.updateStringsSingle(temp)
                         self.doArrays()
-                        if !offline {
+                        if !self.offline {
                             self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.link) : Double(0))
                         }
                     }
