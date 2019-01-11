@@ -123,6 +123,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
         tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.topAnchor == self.view.safeTopAnchor
         tabBar.sizeToFit()
 
         time = History.getInboxSeen()

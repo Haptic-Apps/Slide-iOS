@@ -241,4 +241,5 @@ extension Sequence where Iterator.Element: Hashable {
 extension Notification.Name {
     static let onAccountChangedToGuest = Notification.Name("on-account-changed-to-guest")
     static let onAccountChanged = Notification.Name("on-account-changed")
+    static let onAccountMailCountChanged = Notification.Name("on-account-mail-count-changed")
 }

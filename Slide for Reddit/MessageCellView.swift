@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import AudioToolbox
 import Anchorage
+import AudioToolbox
 import reddift
 import TTTAttributedLabel
 import UIKit

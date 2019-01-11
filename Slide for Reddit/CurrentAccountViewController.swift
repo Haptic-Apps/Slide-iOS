@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import BadgeSwift
 import reddift
 import SDWebImage
 import Then
@@ -15,12 +16,9 @@ import XLActionController
 
 /**
  TODO:
- - Badging for inbox
+ - Inbox badging isn't being updated when messages are marked as read (this means the Account object isn't being updated by the cell)
  - Empty state when logged out
- - Hide mod queue button if current user isn't a mod (don't do a network request
-    for this -- we should already know when we receive the Account object)
- - Cake day text under username
- - Unbreak inbox/mod VCs when presented
+ - 
  */
 
 protocol CurrentAccountViewControllerDelegate: AnyObject {
@@ -80,6 +78,24 @@ class CurrentAccountViewController: UIViewController {
         $0.accessibilityLabel = "Switch Accounts"
     }
 
+    var mailBadge = BadgeSwift().then {
+        $0.insets = CGSize(width: 3, height: 3)
+        $0.font = UIFont.systemFont(ofSize: 11)
+        $0.textColor = UIColor.white
+        $0.badgeColor = UIColor.red
+        $0.shadowOpacityBadge = 0
+        $0.text = "0"
+    }
+
+    var modBadge = BadgeSwift().then {
+        $0.insets = CGSize(width: 3, height: 3)
+        $0.font = UIFont.systemFont(ofSize: 11)
+        $0.textColor = UIColor.white
+        $0.badgeColor = UIColor.red
+        $0.shadowOpacityBadge = 0
+        $0.text = "0"
+    }
+
     // Content
 
     var accountNameLabel = UILabel().then {
@@ -122,6 +138,7 @@ class CurrentAccountViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onAccountMailCountChanged), name: .onAccountMailCountChanged, object: nil)
 
         configureForCurrentAccount()
     }
@@ -130,10 +147,14 @@ class CurrentAccountViewController: UIViewController {
         super.viewWillAppear(animated)
 
         // Hide the navigation bar on this view controller
+        self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
 
         // Focus the account label
         UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, accountNameLabel)
+
+        updateMailBadge()
+        updateModBadge()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -168,6 +189,9 @@ extension CurrentAccountViewController {
 
         backgroundView.addSubview(upperButtonStack)
         upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton)
+
+        mailButton.addSubview(mailBadge)
+        modButton.addSubview(modBadge)
 
         view.addSubview(contentView)
         contentView.addSubview(accountImageView)
@@ -212,6 +236,12 @@ extension CurrentAccountViewController {
         header.horizontalAnchors == contentView.horizontalAnchors + 20
 
         spinner.centerAnchors == header.centerAnchors
+
+        mailBadge.centerYAnchor == mailButton.centerYAnchor - 10
+        mailBadge.centerXAnchor == mailButton.centerXAnchor + 16
+
+        modBadge.centerYAnchor == modButton.centerYAnchor - 10
+        modBadge.centerXAnchor == modButton.centerXAnchor + 16
     }
 
     func setupActions() {
@@ -227,6 +257,9 @@ extension CurrentAccountViewController {
     }
 
     func configureForCurrentAccount() {
+
+        updateMailBadge()
+        updateModBadge()
 
         if !AccountController.isLoggedIn {
             // TODO: Show empty state
@@ -258,8 +291,7 @@ extension CurrentAccountViewController {
             let creationDateString: String = {
                 let creationDate = NSDate(timeIntervalSince1970: Double(account.created))
                 let dateFormatter = DateFormatter()
-                dateFormatter.locale = NSLocale.current
-                dateFormatter.dateFormat = "MM/dd/yyyy"
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yyyyMMMMd", options: 0, locale: NSLocale.current)
                 return dateFormatter.string(from: creationDate as Date)
             }()
             accountAgeLabel.text = "Created \(creationDateString)"
@@ -282,6 +314,27 @@ extension CurrentAccountViewController {
             self.accountNameLabel.alpha = isOn ? 0 : 1
             self.accountAgeLabel.alpha = isOn ? 0 : 1
             self.upperButtonStack.isUserInteractionEnabled = !isOn
+        }
+    }
+
+    func updateMailBadge() {
+        if let account = AccountController.current {
+            mailBadge.isHidden = !account.hasMail
+            mailBadge.text = "\(account.inboxCount)"
+        } else {
+            mailBadge.isHidden = true
+            mailBadge.text = ""
+        }
+    }
+
+    func updateModBadge() {
+        if let account = AccountController.current {
+            modBadge.isHidden = !account.hasModMail
+            // TODO: How do we know the mod mail count?
+            modBadge.text = ""
+        } else {
+            modBadge.isHidden = true
+            modBadge.text = ""
         }
     }
 }
@@ -393,6 +446,12 @@ extension CurrentAccountViewController {
     @objc func onAccountChangedToGuestNotificationPosted(_ notification: NSNotification) {
         DispatchQueue.main.async {
             self.configureForCurrentAccount()
+        }
+    }
+
+    @objc func onAccountMailCountChanged(_ notification: NSNotification) {
+        DispatchQueue.main.async {
+            self.updateMailBadge()
         }
     }
 }
