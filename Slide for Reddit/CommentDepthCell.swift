@@ -1416,7 +1416,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: boldFont])
         
         if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
-            endString.addAttributes([kTTTBackgroundFillColorAttributeName: ColorUtil.getColorForSub(sub: comment.subreddit), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange(location: 0, length: endString.length))
+            endString.addAttributes([kTTTBackgroundFillColorAttributeName: ColorUtil.accentColorForSub(sub: comment.subreddit), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange(location: 0, length: endString.length))
         }
 
         let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSFontAttributeName: boldFont, NSForegroundColorAttributeName: ColorUtil.fontColor, NSParagraphStyleAttributeName: paragraphStyle])
