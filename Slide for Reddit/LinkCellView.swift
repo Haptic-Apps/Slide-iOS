@@ -2008,8 +2008,30 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
         }
         
+        var scoreInt = link.score
+        switch ActionStates.getVoteDirection(s: link) {
+        case .up:
+            if link.voted {
+                if link.voted && !link.vote {
+                    scoreInt += 1
+                }
+                scoreInt += 1
+            }
+        case .down:
+            if link.voted {
+                if link.voted && link.vote {
+                    scoreInt -= 1
+                }
+                scoreInt -= 1
+            }
+        case .none:
+            if link.voted && link.vote && link.author == AccountController.currentName {
+                scoreInt -= 1
+            }
+        }
+        
         if full {
-            let subScore = NSMutableAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
+            let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
                     " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
@@ -2041,7 +2063,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             subScore.append(scoreRatio)
             score.attributedText = subScore
         } else {
-            let scoreString = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
+            let scoreString = NSAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
             
             if SettingValues.actionBarMode == .FULL {
                 score.attributedText = scoreString
