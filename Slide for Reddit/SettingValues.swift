@@ -166,7 +166,7 @@ class SettingValues {
     public static var hideAutomod = false
     public static var submissionGesturesEnabled = false
     public static var infoBelowTitle = false
-    public static var matchSilence = true
+   // public static var matchSilence = true
     public static var showPages = true
     public static var menuButton = true
     public static var disableBanner = false
@@ -449,7 +449,7 @@ class SettingValues {
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
         SettingValues.subredditBar = settings.object(forKey: SettingValues.pref_subBar) == nil ? true : settings.bool(forKey: SettingValues.pref_subBar)
-        SettingValues.matchSilence = settings.bool(forKey: SettingValues.pref_matchSilence)
+        //SettingValues.matchSilence = settings.bool(forKey: SettingValues.pref_matchSilence)
         SettingValues.infoBelowTitle = settings.bool(forKey: SettingValues.pref_infoBelowTitle)
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)

@@ -174,11 +174,7 @@ class AnyModalViewController: UIViewController {
                         strongSelf.embeddedPlayer = strongSelf.videoView!.player
                         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
                         do {
-                            if SettingValues.matchSilence {
-                                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-                            } else {
-                                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-                            }
+                            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
                         } catch {
                             NSLog(error.localizedDescription)
                         }
@@ -405,11 +401,7 @@ class AnyModalViewController: UIViewController {
         
         // Prevent video from stopping system background audio
         do {
-            if SettingValues.matchSilence {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-            } else {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-            }
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
         } catch let error as NSError {
             print(error)
         }
@@ -732,6 +724,14 @@ extension AnyModalViewController: UIGestureRecognizerDelegate {
 
 extension AnyModalViewController {
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
+        let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
+        if tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryPlayback{
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            } catch {
+                
+            }
+        }
         if !sliderBeingUsed {
             if let player = videoView.player {
                 scrubber.updateWithTime(elapsedTime: player.currentTime())

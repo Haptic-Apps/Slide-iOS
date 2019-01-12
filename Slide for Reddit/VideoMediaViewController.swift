@@ -416,11 +416,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         // Prevent video from stopping system background audio
         do {
-            if SettingValues.matchSilence {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-            } else {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-            }
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
         } catch let error as NSError {
             print(error)
         }
@@ -850,6 +846,14 @@ extension VideoMediaViewController {
 extension VideoMediaViewController {
     
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
+        let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
+        if tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryPlayback{
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            } catch {
+                
+            }
+        }
         if !sliderBeingUsed {
             if isYoutubeView {
                 if !sliderBeingUsed {
