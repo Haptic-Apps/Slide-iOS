@@ -75,7 +75,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         configureBackground()
 
-        searchBar.isUserInteractionEnabled = false
+        searchBar.isUserInteractionEnabled = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
                                                name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -168,7 +168,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     func collapse() {
 
-        searchBar.isUserInteractionEnabled = false
+        searchBar.isUserInteractionEnabled = true
 
         let y = UIScreen.main.bounds.height - bottomOffset
         if let parent = self.parentController, parent.menu.superview != nil {
@@ -358,10 +358,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
-        if !SettingValues.flatMode {
-            view.roundCorners([.topLeft, .topRight], radius: 30)
-        }
     }
 
     func configureViews() {
@@ -374,7 +370,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = UITableViewCellSeparatorStyle.none
-        tableView.clipsToBounds = true
+        tableView.clipsToBounds = false
         tableView.estimatedRowHeight = 50
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.separatorInset = .zero
