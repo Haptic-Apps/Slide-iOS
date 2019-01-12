@@ -213,6 +213,7 @@ class CachedTitle {
                         }
                         scoreInt += 1
                     }
+                    break
                 case .down:
                     if submission.voted {
                         if submission.voted && submission.vote {
@@ -220,10 +221,12 @@ class CachedTitle {
                         }
                         scoreInt -= 1
                     }
+                    break
                 case .none:
                     if submission.voted && submission.vote && submission.author == AccountController.currentName {
                         scoreInt -= 1
                     }
+                    break
                 }
 
                 let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk points", (Double(scoreInt) / Double(1000))) : " \(scoreInt) points", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: sColor])

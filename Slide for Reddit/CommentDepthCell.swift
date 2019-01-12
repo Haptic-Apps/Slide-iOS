@@ -1550,6 +1550,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }
                 submissionScore += 1
             }
+            break
         case .down:
             if comment.likes != .down {
                 if comment.likes == .up {
@@ -1557,10 +1558,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }
                 submissionScore -= 1
             }
+            break
         case .none:
             if comment.likes == .up && comment.author == AccountController.currentName {
                 submissionScore -= 1
             }
+            break
         }
         return submissionScore
     }

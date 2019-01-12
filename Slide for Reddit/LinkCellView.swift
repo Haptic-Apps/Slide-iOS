@@ -2017,6 +2017,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 scoreInt += 1
             }
+            break
         case .down:
             if link.voted {
                 if link.voted && link.vote {
@@ -2024,10 +2025,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 scoreInt -= 1
             }
+            break
         case .none:
             if link.voted && link.vote && link.author == AccountController.currentName {
                 scoreInt -= 1
             }
+            break
         }
         
         if full {
