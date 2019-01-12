@@ -207,26 +207,23 @@ class CachedTitle {
                 var scoreInt = submission.score
                 switch ActionStates.getVoteDirection(s: submission) {
                 case .up:
-                    if submission.voted {
-                        if submission.voted && !submission.vote {
+                    if submission.likes != .up {
+                        if submission.likes == .down {
                             scoreInt += 1
                         }
                         scoreInt += 1
                     }
-                    break
                 case .down:
-                    if submission.voted {
-                        if submission.voted && submission.vote {
+                    if submission.likes != .down {
+                        if submission.likes == .up {
                             scoreInt -= 1
                         }
                         scoreInt -= 1
                     }
-                    break
                 case .none:
-                    if submission.voted && submission.vote && submission.author == AccountController.currentName {
+                    if submission.likes == .up && submission.author == AccountController.currentName {
                         scoreInt -= 1
                     }
-                    break
                 }
 
                 let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk points", (Double(scoreInt) / Double(1000))) : " \(scoreInt) points", attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: sColor])

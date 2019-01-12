@@ -2011,28 +2011,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         var scoreInt = link.score
         switch ActionStates.getVoteDirection(s: link) {
         case .up:
-            if link.voted {
-                if link.voted && !link.vote {
+            if link.likes != .up {
+                if link.likes == .down {
                     scoreInt += 1
                 }
                 scoreInt += 1
             }
-            break
         case .down:
-            if link.voted {
-                if link.voted && link.vote {
+            if link.likes != .down {
+                if link.likes == .up {
                     scoreInt -= 1
                 }
                 scoreInt -= 1
             }
-            break
         case .none:
-            if link.voted && link.vote && link.author == AccountController.currentName {
+            if link.likes == .up && link.author == AccountController.currentName {
                 scoreInt -= 1
             }
-            break
         }
-        
         if full {
             let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
             let scoreRatio =
