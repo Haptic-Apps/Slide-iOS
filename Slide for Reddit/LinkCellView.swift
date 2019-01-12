@@ -1205,6 +1205,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.videoView!.player = nil
             self.avPlayerItem = nil
             self.updater?.invalidate()
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            } catch {
+            }
         }
         
         self.linkClicked = false
@@ -1770,7 +1774,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             if sound.isHidden {
                 sound.isHidden = false
             }
-        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient{
+        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient {
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
             } catch {
