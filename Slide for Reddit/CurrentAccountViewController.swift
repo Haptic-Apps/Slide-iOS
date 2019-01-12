@@ -47,6 +47,7 @@ class CurrentAccountViewController: UIViewController {
     var contentView = UIView().then {
         $0.backgroundColor = ColorUtil.backgroundColor
         $0.clipsToBounds = false
+        $0.layer.cornerRadius = 30
     }
 
     var closeButton = UIButton(type: .custom).then {
@@ -116,7 +117,7 @@ class CurrentAccountViewController: UIViewController {
         $0.font = FontGenerator.fontOfSize(size: 12, submission: false)
         $0.textColor = ColorUtil.fontColor
         $0.numberOfLines = 1
-        $0.text = "Created 01/10/2019"
+        $0.text = ""
     }
 
     var accountImageView = UIImageView().then {
