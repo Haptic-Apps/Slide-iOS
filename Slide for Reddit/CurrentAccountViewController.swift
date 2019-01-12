@@ -78,7 +78,7 @@ class CurrentAccountViewController: UIViewController {
         $0.accessibilityLabel = "Inbox"
     }
     var switchAccountsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.setImage(UIImage(named: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 16)
         $0.accessibilityLabel = "Switch Accounts"
     }
@@ -263,9 +263,8 @@ extension CurrentAccountViewController {
         updateModBadge()
 
         if AccountController.current != nil {
-            print("Loading image")
             accountImageView.sd_setImage(with: URL(string: AccountController.current!.image), placeholderImage: UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
-                guard let strongSelf = self else {return}
+                guard let strongSelf = self else { return }
                 strongSelf.accountImageView.image = image
             }
         } else {
@@ -286,8 +285,6 @@ extension CurrentAccountViewController {
                 ]
             )
         }()
-
-        accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
 
         modButton.isHidden = !(AccountController.current?.isMod ?? false)
 
