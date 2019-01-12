@@ -104,7 +104,7 @@ class CurrentAccountViewController: UIViewController {
     // Content
 
     var accountNameLabel = UILabel().then {
-        $0.font = FontGenerator.fontOfSize(size: 24, submission: false)
+        $0.font = FontGenerator.boldFontOfSize(size: 28, submission: false)
         $0.textColor = ColorUtil.fontColor
         $0.numberOfLines = 1
         $0.adjustsFontSizeToFitWidth = true
@@ -262,7 +262,12 @@ extension CurrentAccountViewController {
         updateMailBadge()
         updateModBadge()
 
-        accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
+        if AccountController.current != nil {
+            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image), placeholderImage: UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor), options: [.allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, _, _) in
+            }
+        } else {
+            accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
+        }
         setEmptyState(!AccountController.isLoggedIn, animate: true)
 
         let accountName = SettingValues.nameScrubbing ? "You" : AccountController.currentName.insertingZeroWidthSpacesBeforeCaptials()
@@ -492,14 +497,14 @@ class AccountHeaderView: UIView {
 
     var commentKarmaLabel: UILabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
         $0.textAlignment = .center
         $0.textColor = ColorUtil.fontColor
         $0.accessibilityTraits = UIAccessibilityTraitButton
     }
     var postKarmaLabel: UILabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
         $0.textAlignment = .center
         $0.textColor = ColorUtil.fontColor
         $0.accessibilityTraits = UIAccessibilityTraitButton
@@ -541,7 +546,6 @@ class AccountHeaderView: UIView {
         setupActions()
 
         setAccount(nil)
-
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -550,7 +554,7 @@ class AccountHeaderView: UIView {
 
     func setAccount(_ account: Account?) {
         commentKarmaLabel.attributedText = {
-            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 20, submission: true)]
+            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 16, submission: true)]
             let attributedString = NSMutableAttributedString(string: "\(account?.commentKarma.delimiter ?? "0")", attributes: attrs)
             let subt = NSMutableAttributedString(string: "\nCOMMENT KARMA")
             attributedString.append(subt)
@@ -558,7 +562,7 @@ class AccountHeaderView: UIView {
         }()
 
         postKarmaLabel.attributedText = {
-            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 20, submission: true)]
+            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 16, submission: true)]
             let attributedString = NSMutableAttributedString(string: "\(account?.linkKarma.delimiter ?? "0")", attributes: attrs)
             let subt = NSMutableAttributedString(string: "\nPOST KARMA")
             attributedString.append(subt)

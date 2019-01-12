@@ -80,7 +80,7 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
     }
     
     func configureViews() {
-        self.clipsToBounds = true
+        self.clipsToBounds = false
 
 //        title.setContentCompressionResistancePriority(UILayoutPriorityDefaultHigh, for: .horizontal)
         title.isUserInteractionEnabled = true
