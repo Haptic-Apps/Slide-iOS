@@ -216,7 +216,7 @@ extension CurrentAccountViewController {
         upperButtonStack.leftAnchor == accountImageView.rightAnchor
         upperButtonStack.bottomAnchor == contentView.topAnchor
 
-        contentView.topAnchor == view.safeTopAnchor + 250 // TODO: Switch this out for a height anchor at some point
+        contentView.topAnchor == view.safeTopAnchor + 400 // TODO: Switch this out for a height anchor at some point
         contentView.horizontalAnchors == view.horizontalAnchors
         contentView.bottomAnchor == view.bottomAnchor
 
@@ -519,7 +519,7 @@ class AccountHeaderView: UIView {
     }
 
     var detailsCell = UITableViewCell().then {
-        $0.configure(text: "Account Details", imageName: "reddit", imageColor: ColorUtil.fontColor)
+        $0.configure(text: "Your profile", imageName: "profile", imageColor: ColorUtil.fontColor)
     }
 
     var infoStack = UIStackView().then {
