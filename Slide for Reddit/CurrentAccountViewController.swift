@@ -263,7 +263,10 @@ extension CurrentAccountViewController {
         updateModBadge()
 
         if AccountController.current != nil {
-            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image), placeholderImage: UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor), options: [.allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, _, _) in
+            print("Loading image")
+            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image), placeholderImage: UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+                guard let strongSelf = self else {return}
+                strongSelf.accountImageView.image = image
             }
         } else {
             accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
