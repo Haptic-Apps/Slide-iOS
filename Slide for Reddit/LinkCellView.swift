@@ -1949,6 +1949,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.sound.alpha = 0
         }, completion: { (_) in
             self.sound.isHidden = true
+            self.sound.alpha = 1
         })
     }
     
