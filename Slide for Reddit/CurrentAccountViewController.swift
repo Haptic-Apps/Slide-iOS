@@ -47,7 +47,6 @@ class CurrentAccountViewController: UIViewController {
     var contentView = UIView().then {
         $0.backgroundColor = ColorUtil.backgroundColor
         $0.clipsToBounds = false
-        $0.layer.cornerRadius = 30
     }
 
     var closeButton = UIButton(type: .custom).then {
