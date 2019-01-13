@@ -45,7 +45,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 navigationItem.leftBarButtonItems = [accountB]
                 navigationItem.rightBarButtonItems = [readLaterB]
             } else {
-                navigationItem.leftBarButtonItems = []
                 navigationItem.rightBarButtonItems = [accountB, readLaterB]
             }
         } else {
@@ -53,10 +52,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 navigationItem.leftBarButtonItems = [accountB]
                 navigationItem.rightBarButtonItems = []
             } else {
-                navigationItem.leftBarButtonItems = []
                 navigationItem.rightBarButtonItems = [accountB]
             }
-            navigationItem.rightBarButtonItems = []
         }
     }
     
