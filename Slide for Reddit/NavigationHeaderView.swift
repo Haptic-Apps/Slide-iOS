@@ -57,7 +57,7 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
             $0.keyboardAppearance = .dark
         }
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -166,7 +166,7 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
             buttonContainer.topAnchor == accountContainer.bottomAnchor + 4
             buttonContainer.horizontalAnchors == self.horizontalAnchors + 16
             buttonContainer.heightAnchor == 0
-
+            
             search.topAnchor == buttonContainer.bottomAnchor + 4
             search.horizontalAnchors == self.horizontalAnchors
             search.heightAnchor == 50

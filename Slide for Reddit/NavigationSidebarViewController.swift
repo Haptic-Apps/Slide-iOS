@@ -8,12 +8,28 @@
 
 import Anchorage
 import AudioToolbox
+import MaterialComponents.MDCTabBar
 import reddift
 import reddift
 import SDWebImage
 import UIKit
 
 import UIKit.UIGestureRecognizerSubclass
+
+class TabTemplate: NSObject, MDCTabBarIndicatorTemplate {
+    func indicatorAttributes(
+        for context: MDCTabBarIndicatorContext
+        ) -> MDCTabBarIndicatorAttributes {
+        let bounds = context.bounds
+        let attributes = MDCTabBarIndicatorAttributes()
+        let underlineFrame = CGRect.init(x: bounds.minX,
+                                         y: bounds.height - 3,
+                                         width: bounds.width,
+                                         height: 2)
+        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
+        return attributes
+    }
+}
 
 class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDelegate {
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
@@ -26,6 +42,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var muxColor = ColorUtil.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
+    var alphabetical = true
+    var subs = Subscriptions.subreddits
+    var subsAlphabetical: [String: [String]] = [:]
+    var sectionTitles = [String]()
     
     var expanded = false
 
@@ -45,10 +65,31 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             $0.keyboardAppearance = .dark
         }
         $0.searchBarStyle = UISearchBarStyle.minimal
-        $0.placeholder = " Go to subreddit or profile"
+        $0.placeholder = " Search subs, posts, or profiles"
         $0.isTranslucent = true
         $0.barStyle = .blackTranslucent
     }
+    
+    var segment = MDCTabBar().then {
+        $0.items = [
+            UITabBarItem(title: "SORTED", image: nil, tag: 0),
+            UITabBarItem(title: "ALPHABETICAL", image: nil, tag: 1),
+        ]
+        $0.itemAppearance = .titles
+        $0.tintColor = ColorUtil.accentColorForSub(sub: "")
+        $0.backgroundColor = ColorUtil.foregroundColor
+        $0.selectedItem = $0.items[UserDefaults.standard.bool(forKey: "alphabetical") ? 1 : 0]
+        $0.selectedItemTintColor = ColorUtil.fontColor
+        $0.unselectedItemTintColor = ColorUtil.fontColor.withAlphaComponent(0.45)
+        $0.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
+        $0.selectionIndicatorTemplate = TabTemplate()
+        $0.inkColor = UIColor.clear
+        $0.alignment = .justified
+        $0.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
+        $0.alignment = .center
+        $0.backgroundColor = ColorUtil.foregroundColor
+
+   }
     
     init(controller: MainViewController) {
         self.parentController = controller
@@ -66,6 +107,17 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     override func viewDidLoad() {
+        alphabetical = UserDefaults.standard.bool(forKey: "alphabetical")
+        segment.delegate = self
+        for string in subs {
+            let letter = string.substring(0, length: 1).uppercased()
+            var current = subsAlphabetical[letter] ?? [String]()
+            current.append(string)
+            subsAlphabetical[letter] = current
+        }
+        
+        sectionTitles = subsAlphabetical.keys.sorted { $0.caseInsensitiveCompare($1) == .orderedAscending }
+        
         super.viewDidLoad()
         self.view = UITouchCapturingView()
 
@@ -358,19 +410,22 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        if !SettingValues.flatMode {
+            segment.roundCorners([.topLeft, .topRight], radius: 25)
+        }
     }
 
     func configureViews() {
 
         searchBar.sizeToFit()
         searchBar.delegate = self
-        view.addSubview(searchBar)
+        view.addSubviews(searchBar, segment)
 
         tableView.bounces = false
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = UITableViewCellSeparatorStyle.none
-        tableView.clipsToBounds = false
+        tableView.clipsToBounds = true
         tableView.estimatedRowHeight = 50
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.separatorInset = .zero
@@ -385,7 +440,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureLayout() {
-        searchBar.topAnchor == view.topAnchor
+        
+        segment.topAnchor == view.topAnchor
+        segment.horizontalAnchors == view.horizontalAnchors
+        segment.heightAnchor == 50
+
+        searchBar.topAnchor == segment.bottomAnchor - 2
         searchBar.horizontalAnchors == view.horizontalAnchors
         searchBar.heightAnchor == 50
 
@@ -427,8 +487,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     func reloadData() {
         tableView.reloadData()
-    }
-    
+    }    
 }
 
 extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataSource {
@@ -452,7 +511,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return suggestions.count > 0 ? 2 : 1
+        return (alphabetical && !isSearching) ? sectionTitles.count : (suggestions.count > 0 ? 2 : 1)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -463,12 +522,19 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         return 60
     }
 
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        return alphabetical && !isSearching ? sectionTitles : nil
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if alphabetical && !isSearching {
+            return subsAlphabetical[sectionTitles[section]]!.count
+        }
         if section == 0 {
             if isSearching {
                 return filteredContent.count + (filteredContent.contains(searchBar.text!) ? 0 : 1) + 3
             } else {
-                return Subscriptions.subreddits.count
+                return subs.count
             }
         } else {
             return suggestions.count
@@ -476,7 +542,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 1 {
+        if section == 1 && !alphabetical {
             return 40
         } else {
             return 0
@@ -526,17 +592,24 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 var thing = ""
                 if isSearching {
                     thing = filteredContent[indexPath.row]
+                } else if !alphabetical {
+                    thing = subs[indexPath.row]
                 } else {
-                    thing = Subscriptions.subreddits[indexPath.row]
+                    thing = subsAlphabetical[sectionTitles[indexPath.section]]![indexPath.row]
                 }
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                 c.setSubreddit(subreddit: thing, nav: self, exists: true)
                 cell = c
             }
         } else {
-            let thing = suggestions[indexPath.row]
+            let thing: String
+            if !alphabetical {
+                thing = subs[indexPath.row]
+            } else {
+                thing = subsAlphabetical[sectionTitles[indexPath.section]]![indexPath.row]
+            }
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-            c.setSubreddit(subreddit: thing, nav: self, exists: false)
+            c.setSubreddit(subreddit: thing, nav: self, exists: alphabetical)
             cell = c
         }
 
@@ -696,5 +769,21 @@ class UITouchCapturingView: UIView {
         }
         
         return nil
+    }
+}
+
+extension NavigationSidebarViewController: MDCTabBarDelegate {
+    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
+        if item.tag == 0 && alphabetical {
+            alphabetical = false
+            tableView.reloadData()
+            UserDefaults.standard.set(false, forKey: "alphabetical")
+            UserDefaults.standard.synchronize()
+        } else if item.tag == 1 && !alphabetical {
+            alphabetical = true
+            tableView.reloadData()
+            UserDefaults.standard.set(true, forKey: "alphabetical")
+            UserDefaults.standard.synchronize()
+        }
     }
 }
