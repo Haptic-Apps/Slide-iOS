@@ -97,8 +97,8 @@ class SettingsGeneral: UITableViewController {
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_pinToolbar)
             SubredditReorderViewController.changed = true
         } else if changed == matchSilenceSwitch {
-            SettingValues.matchSilence = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_matchSilence)
+            //SettingValues.matchSilence = changed.isOn
+           // UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_matchSilence)
         } else if changed == scrubUsernameSwitch {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 SettingValues.nameScrubbing = changed.isOn
@@ -153,7 +153,7 @@ class SettingsGeneral: UITableViewController {
         createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Show subreddit floating action button")
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Scrub your username (you will show as \"you\")")
         createCell(pinToolbar, pinToolbarSwitch, isOn: SettingValues.pinToolbar, text: "Pin toolbar and navigation bar in subreddit and comment views")
-        createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Let iOS handle audio focus")
+       // createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Let iOS handle audio focus")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
         createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators between loads of new submissions")
 
@@ -225,7 +225,7 @@ class SettingsGeneral: UITableViewController {
         case 1:
             switch indexPath.row {
             case 0: return self.hapticFeedback
-            case 1: return self.matchSilence
+            //case 1: return self.matchSilence
             default: fatalError("Unknown row in section 0")
             }
         case 2:
@@ -364,7 +364,7 @@ class SettingsGeneral: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 5
-        case 1: return 2
+        case 1: return 1
         case 2: return 1
         case 3: return 2
         default: fatalError("Unknown number of sections")
