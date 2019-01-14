@@ -70,13 +70,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     override func viewDidLoad() {
-        print(Subscriptions.pinned)
         for string in Subscriptions.pinned {
             var current = subsAlphabetical["★"] ?? [String]()
             current.append(string)
             subsAlphabetical["★"] = current
         }
-        
+        tableView.sectionIndexColor = ColorUtil.baseAccent
+
         for string in subs.filter({ !Subscriptions.pinned.contains($0) }).sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }) {
             let letter = string.substring(0, length: 1).uppercased()
             var current = subsAlphabetical[letter] ?? [String]()
@@ -513,20 +513,29 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         if section == 1 && !alphabetical {
             return 40
         } else {
-            return 0
+            return 40
         }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label: UILabel = UILabel()
-        label.textColor = ColorUtil.fontColor
+        label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.foregroundColor
 
-        switch section {
-        case 0: label.text  = ""
-        default: label.text  = "SUBREDDIT SUGGESTIONS"
+        if isSearching {
+            switch section {
+            case 0: label.text  = ""
+            default: label.text  = "SUBREDDIT SUGGESTIONS"
+            }
+        } else {
+            label.text = sectionTitles[section]
+            if sectionTitles[section] == "/" {
+                label.text = "MULTIREDDITS"
+            } else if section == 0 {
+                label.text = "PINNED"
+            }
         }
         return toReturn
     }
