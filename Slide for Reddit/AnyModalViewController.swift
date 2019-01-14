@@ -382,7 +382,6 @@ class AnyModalViewController: UIViewController {
         if #available(iOS 11.0, *) {
             self.setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
-        self.embeddedPlayer?.isMuted = false
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -416,7 +415,6 @@ class AnyModalViewController: UIViewController {
         
         if videoView.player?.currentItem != nil {
             scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
-            self.embeddedPlayer?.isMuted = false
         }
         
         // Prevent video from stopping system background audio

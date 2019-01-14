@@ -364,7 +364,6 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
-        
         muteCell.textLabel?.text = "Mute autoplaying videos"
         muteCell.backgroundColor = ColorUtil.foregroundColor
         muteCell.textLabel?.textColor = ColorUtil.fontColor
@@ -589,7 +588,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                         UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_muteAutoPlay)
                         SettingValues.muteVideos = item
                         UserDefaults.standard.synchronize()
-                        self.muteCell.detailTextLabel?.text = SettingValues.autoPlayMode.description()
+                        self.muteCell.detailTextLabel?.text = SettingValues.muteVideos.description()
                     }))
                 }
                 VCPresenter.presentAlert(alertController, parentVC: self)
