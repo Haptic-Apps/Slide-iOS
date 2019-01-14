@@ -41,6 +41,7 @@ class AnyModalViewController: UIViewController {
 
     var menuButton = UIButton()
     var downloadButton = UIButton()
+    var muteButton = UIButton()
     var bottomButtons = UIStackView()
     var goToCommentsButton = UIButton()
 
@@ -181,7 +182,6 @@ class AnyModalViewController: UIViewController {
                         strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
                         strongSelf.hideSpinner()
                         strongSelf.videoView?.player?.play()
-                        strongSelf.videoView?.player?.isMuted = false
                     }
                     }, failure: {
                         self.dismiss(animated: true, completion: {
@@ -220,9 +220,24 @@ class AnyModalViewController: UIViewController {
         displayLink = nil
     }
     
+    func unmute() {
+        self.videoView.player?.isMuted = false
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+        } catch {
+        }
+        UIView.animate(withDuration: 0.5, animations: {
+            self.muteButton.alpha = 0
+        }, completion: { (_) in
+            self.muteButton.isHidden = true
+            self.muteButton.alpha = 1
+        })
+    }
+
     func connectActions() {
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
+        muteButton.addTarget(self, action: #selector(unmute), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
 
         dTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
@@ -353,6 +368,11 @@ class AnyModalViewController: UIViewController {
         displayLink?.isPaused = false
 
         videoView.player?.play()
+        if SettingValues.muteAutoPlay {
+            self.videoView.player?.isMuted = true
+        } else {
+            self.videoView.player?.isMuted = false
+        }
 
         UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)
     }
@@ -451,6 +471,13 @@ class AnyModalViewController: UIViewController {
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
+        muteButton = UIButton().then {
+            $0.accessibilityIdentifier = "Un-Mute video"
+            $0.isHidden = true
+            $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+
         goToCommentsButton = UIButton().then {
             $0.accessibilityIdentifier = "Go to Comments Button"
             $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
@@ -462,7 +489,7 @@ class AnyModalViewController: UIViewController {
         closeButton.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
         self.view.addSubview(closeButton)
 
-        bottomButtons.addArrangedSubviews(goToCommentsButton, UIView.flexSpace(), downloadButton, menuButton)
+        bottomButtons.addArrangedSubviews(goToCommentsButton, UIView.flexSpace(), muteButton, downloadButton, menuButton)
     }
     
     func exit() {
@@ -725,7 +752,17 @@ extension AnyModalViewController: UIGestureRecognizerDelegate {
 extension AnyModalViewController {
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
-        if tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryPlayback{
+        if (self.videoView.player?.isMuted ?? false) && tracks {
+            if muteButton.isHidden {
+                muteButton.isHidden = false
+            }
+        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            } catch {
+                
+            }
+        } else if tracks && !SettingValues.muteAutoPlay && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
             } catch {
