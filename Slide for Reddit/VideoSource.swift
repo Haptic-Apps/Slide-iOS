@@ -35,7 +35,9 @@ class GfycatVideoSource: VideoSource {
         URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
-                failure()
+                DispatchQueue.main.async {
+                    failure()
+                }
             } else {
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
@@ -43,6 +45,12 @@ class GfycatVideoSource: VideoSource {
                     }
                     
                     print(json)
+                    if json["errorMessage"] != nil {
+                        DispatchQueue.main.async {
+                            failure()
+                        }
+                        return
+                    }
 
                     let gif = GfycatJSONBase.init(dictionary: json)
 
