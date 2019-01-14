@@ -641,8 +641,8 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             }
         } else {
             let thing: String
-            if !alphabetical {
-                thing = subs[indexPath.row]
+            if isSearching {
+                thing = suggestions[indexPath.row]
             } else {
                 thing = subsAlphabetical[sectionTitles[indexPath.section]]![indexPath.row]
             }
