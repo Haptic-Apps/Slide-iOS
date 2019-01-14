@@ -368,7 +368,7 @@ class AnyModalViewController: UIViewController {
         displayLink?.isPaused = false
 
         videoView.player?.play()
-        if SettingValues.muteAutoPlay {
+        if SettingValues.muteVideos == .ALWAYS {
             self.videoView.player?.isMuted = true
         } else {
             self.videoView.player?.isMuted = false
@@ -762,7 +762,7 @@ extension AnyModalViewController {
             } catch {
                 
             }
-        } else if tracks && !SettingValues.muteAutoPlay && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
+        } else if tracks && SettingValues.muteVideos != .ALWAYS && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
             } catch {

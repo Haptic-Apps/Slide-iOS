@@ -467,7 +467,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             youtubeView.isHidden = true
         }
         
-        if SettingValues.muteAutoPlay {
+        if SettingValues.muteVideos == .ALWAYS {
             self.videoView.player?.isMuted = true
         } else {
             self.videoView.player?.isMuted = false
@@ -891,7 +891,7 @@ extension VideoMediaViewController {
             } catch {
                 
             }
-        } else if tracks && !SettingValues.muteAutoPlay && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
+        } else if tracks && SettingValues.muteVideos != .ALWAYS && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
             } catch {

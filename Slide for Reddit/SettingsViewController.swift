@@ -44,11 +44,10 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var backupCell: UITableViewCell = UITableViewCell()
     var gestureCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "gestures")
     var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
-    var muteCell: UITableViewCell = UITableViewCell()
+    var muteCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "mute")
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch()
-    var mute = UISwitch()
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -366,16 +365,17 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
         
-        mute = UISwitch()
-        mute.isOn = SettingValues.muteAutoPlay
-        mute.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
         muteCell.textLabel?.text = "Mute autoplaying videos"
-        muteCell.accessoryView = mute
         muteCell.backgroundColor = ColorUtil.foregroundColor
         muteCell.textLabel?.textColor = ColorUtil.fontColor
         muteCell.selectionStyle = UITableViewCellSelectionStyle.none
         self.muteCell.imageView?.image = UIImage.init(named: "mute")?.toolbarIcon()
         self.muteCell.imageView?.tintColor = ColorUtil.fontColor
+        self.muteCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.muteCell.detailTextLabel?.text = SettingValues.muteVideos.description()
+        self.muteCell.detailTextLabel?.numberOfLines = 0
+        self.muteCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.muteCell.accessoryType = .none
 
         if reset {
             self.tableView.reloadData()
@@ -390,9 +390,6 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             } else {
                 changed.isOn = false
             }
-        } else if changed == mute {
-            SettingValues.muteAutoPlay = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_muteAutoPlay)
         }
 
         UserDefaults.standard.synchronize()
@@ -572,7 +569,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 ch = SubredditThemeViewController()
             case 3:
                 let alertController: BottomSheetActionController = BottomSheetActionController()
-                alertController.headerData = "AutoPlay settings"
+                alertController.headerData = "AutoPlay Settings"
                 for item in SettingValues.AutoPlay.cases {
                     alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
                         UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_autoPlayMode)
@@ -581,6 +578,18 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                         self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoPlaying videos can lead to more data use"
                         SingleSubredditViewController.cellVersion += 1
                         SubredditReorderViewController.changed = true
+                    }))
+                }
+                VCPresenter.presentAlert(alertController, parentVC: self)
+            case 4:
+                let alertController: BottomSheetActionController = BottomSheetActionController()
+                alertController.headerData = "Mute Settings"
+                for item in SettingValues.VideoMute.cases {
+                    alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
+                        UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_muteAutoPlay)
+                        SettingValues.muteVideos = item
+                        UserDefaults.standard.synchronize()
+                        self.muteCell.detailTextLabel?.text = SettingValues.autoPlayMode.description()
                     }))
                 }
                 VCPresenter.presentAlert(alertController, parentVC: self)
