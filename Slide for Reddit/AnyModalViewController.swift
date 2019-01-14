@@ -368,7 +368,7 @@ class AnyModalViewController: UIViewController {
         displayLink?.isPaused = false
 
         videoView.player?.play()
-        if SettingValues.muteVideos == .ALWAYS {
+        if SettingValues.muteVideos == .ALWAYS && (self.videoView.player?.isMuted ?? true) {
             self.videoView.player?.isMuted = true
         } else {
             self.videoView.player?.isMuted = false
