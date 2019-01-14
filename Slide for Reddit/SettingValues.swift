@@ -473,7 +473,7 @@ class SettingValues {
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
         SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (pad ? "split" : "single")) ?? (pad ? .SPLIT : .SINGLE)
-        SettingValues.muteVideos = VideoMute.init(rawValue: settings.string(forKey: SettingValues.pref_muteAutoPlay) ?? "always") ?? .ALWAYS
+        SettingValues.muteVideos = VideoMute.init(rawValue: settings.string(forKey: SettingValues.pref_muteAutoPlay) ?? "autoplay") ?? .AUTOPLAY
 
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
