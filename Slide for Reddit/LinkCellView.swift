@@ -401,7 +401,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             progressDot.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
-            if SettingValues.muteAutoPlay {
+            if SettingValues.muteVideos != .NEVER {
                 sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
                 sound.isHidden = false
             } else {
@@ -1682,7 +1682,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
                 strongSelf.videoView?.player?.play()
-                if SettingValues.muteAutoPlay {
+                if SettingValues.muteVideos != .NEVER {
                     strongSelf.videoView?.player?.isMuted = true
                 } else {
                     strongSelf.videoView?.player?.isMuted = false
@@ -1768,7 +1768,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             } catch {
                 
             }
-        } else if tracks && !SettingValues.muteAutoPlay && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
+        } else if tracks && SettingValues.muteVideos == .NEVER && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
             } catch {
