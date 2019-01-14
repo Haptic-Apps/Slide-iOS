@@ -8,28 +8,12 @@
 
 import Anchorage
 import AudioToolbox
-import MaterialComponents.MDCTabBar
 import reddift
 import reddift
 import SDWebImage
 import UIKit
 
 import UIKit.UIGestureRecognizerSubclass
-
-class TabTemplate: NSObject, MDCTabBarIndicatorTemplate {
-    func indicatorAttributes(
-        for context: MDCTabBarIndicatorContext
-        ) -> MDCTabBarIndicatorAttributes {
-        let bounds = context.bounds
-        let attributes = MDCTabBarIndicatorAttributes()
-        let underlineFrame = CGRect.init(x: bounds.minX,
-                                         y: bounds.height - 3,
-                                         width: bounds.width,
-                                         height: 2)
-        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
-        return attributes
-    }
-}
 
 class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDelegate {
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
@@ -70,27 +54,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         $0.barStyle = .blackTranslucent
     }
     
-    var segment = MDCTabBar().then {
-        $0.items = [
-            UITabBarItem(title: "SORTED", image: nil, tag: 0),
-            UITabBarItem(title: "ALPHABETICAL", image: nil, tag: 1),
-        ]
-        $0.itemAppearance = .titles
-        $0.tintColor = ColorUtil.accentColorForSub(sub: "")
-        $0.backgroundColor = ColorUtil.foregroundColor
-        $0.selectedItem = $0.items[UserDefaults.standard.bool(forKey: "alphabetical") ? 1 : 0]
-        $0.selectedItemTintColor = ColorUtil.fontColor
-        $0.unselectedItemTintColor = ColorUtil.fontColor.withAlphaComponent(0.45)
-        $0.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
-        $0.selectionIndicatorTemplate = TabTemplate()
-        $0.inkColor = UIColor.clear
-        $0.alignment = .justified
-        $0.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
-        $0.alignment = .center
-        $0.backgroundColor = ColorUtil.foregroundColor
-
-   }
-    
     init(controller: MainViewController) {
         self.parentController = controller
         super.init(nibName: nil, bundle: nil)
@@ -107,9 +70,14 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     override func viewDidLoad() {
-        alphabetical = UserDefaults.standard.bool(forKey: "alphabetical")
-        segment.delegate = self
-        for string in subs {
+        print(Subscriptions.pinned)
+        for string in Subscriptions.pinned {
+            var current = subsAlphabetical["★"] ?? [String]()
+            current.append(string)
+            subsAlphabetical["★"] = current
+        }
+        
+        for string in subs.filter({ !Subscriptions.pinned.contains($0) }).sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }) {
             let letter = string.substring(0, length: 1).uppercased()
             var current = subsAlphabetical[letter] ?? [String]()
             current.append(string)
@@ -117,6 +85,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         }
         
         sectionTitles = subsAlphabetical.keys.sorted { $0.caseInsensitiveCompare($1) == .orderedAscending }
+        if sectionTitles.contains("★") {
+            sectionTitles.remove(at: sectionTitles.count - 1)
+            sectionTitles.insert("★", at: 0)
+        }
         
         super.viewDidLoad()
         self.view = UITouchCapturingView()
@@ -411,7 +383,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !SettingValues.flatMode {
-            segment.roundCorners([.topLeft, .topRight], radius: 25)
+            searchBar.roundCorners([.topLeft, .topRight], radius: 25)
         }
     }
 
@@ -419,7 +391,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
         searchBar.sizeToFit()
         searchBar.delegate = self
-        view.addSubviews(searchBar, segment)
+        view.addSubviews(searchBar)
 
         tableView.bounces = false
         tableView.delegate = self
@@ -441,11 +413,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     func configureLayout() {
         
-        segment.topAnchor == view.topAnchor
-        segment.horizontalAnchors == view.horizontalAnchors
-        segment.heightAnchor == 50
-
-        searchBar.topAnchor == segment.bottomAnchor - 2
+        searchBar.topAnchor == view.topAnchor + 4
         searchBar.horizontalAnchors == view.horizontalAnchors
         searchBar.heightAnchor == 50
 
@@ -769,21 +737,5 @@ class UITouchCapturingView: UIView {
         }
         
         return nil
-    }
-}
-
-extension NavigationSidebarViewController: MDCTabBarDelegate {
-    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
-        if item.tag == 0 && alphabetical {
-            alphabetical = false
-            tableView.reloadData()
-            UserDefaults.standard.set(false, forKey: "alphabetical")
-            UserDefaults.standard.synchronize()
-        } else if item.tag == 1 && !alphabetical {
-            alphabetical = true
-            tableView.reloadData()
-            UserDefaults.standard.set(true, forKey: "alphabetical")
-            UserDefaults.standard.synchronize()
-        }
     }
 }
