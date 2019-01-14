@@ -69,14 +69,14 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
+    func loadSections() {
         for string in Subscriptions.pinned {
             var current = subsAlphabetical["★"] ?? [String]()
             current.append(string)
             subsAlphabetical["★"] = current
         }
         tableView.sectionIndexColor = ColorUtil.baseAccent
-
+        
         for string in subs.filter({ !Subscriptions.pinned.contains($0) }).sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }) {
             let letter = string.substring(0, length: 1).uppercased()
             var current = subsAlphabetical[letter] ?? [String]()
@@ -89,7 +89,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             sectionTitles.remove(at: sectionTitles.count - 1)
             sectionTitles.insert("★", at: 0)
         }
-        
+    }
+    
+    override func viewDidLoad() {
+        loadSections()
         super.viewDidLoad()
         self.view = UITouchCapturingView()
 
@@ -517,24 +520,77 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         }
     }
 
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return !isSearching
+    }
+    
+    func getIndexPath(sub: String) -> IndexPath {
+        var section = 0
+        var row = 0
+        for item in self.sectionTitles {
+            let array = self.subsAlphabetical[item]!
+            for innerSub in array {
+                if sub == innerSub {
+                    return IndexPath(row: row, section: section)
+                }
+                row += 1
+            }
+            section += 1
+        }
+        return IndexPath(row: 0, section: 0) //Should not get here
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
+        let sub = subsAlphabetical[sectionTitles[editActionsForRowAt.section]]![editActionsForRowAt.row]
+        let pinned = editActionsForRowAt.section == 0
+        if pinned {
+            let pin = UITableViewRowAction(style: .normal, title: "Un-Pin") { _, _ in
+                Subscriptions.setPinned(name: AccountController.currentName, subs: Subscriptions.pinned.filter( { $0 != sub })) {
+                    self.loadSections()
+                    let newIndexPath = self.getIndexPath(sub: sub)
+                    self.tableView.beginUpdates()
+                    self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
+                    self.tableView.endUpdates()
+                }
+            }
+            pin.backgroundColor = GMColor.red500Color()
+            return [pin]
+        } else {
+            let pin = UITableViewRowAction(style: .normal, title: "Pin") { _, _ in
+                var newPinned = Subscriptions.pinned
+                newPinned.append(sub)
+                Subscriptions.setPinned(name: AccountController.currentName, subs: newPinned) {
+                    self.loadSections()
+                    let newIndexPath = self.getIndexPath(sub: sub)
+                    self.tableView.beginUpdates()
+                    self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
+                    self.tableView.endUpdates()
+                }
+            }
+            pin.backgroundColor = GMColor.yellow500Color()
+            return [pin]
+        }
+    }
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.foregroundColor
+        label.backgroundColor = ColorUtil.foregroundColor
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 12, left: 0, bottom: 0, right: 0))
+        toReturn.backgroundColor = ColorUtil.backgroundColor
 
         if isSearching {
             switch section {
             case 0: label.text  = ""
-            default: label.text  = "SUBREDDIT SUGGESTIONS"
+            default: label.text  = "    SUBREDDIT SUGGESTIONS"
             }
         } else {
-            label.text = sectionTitles[section]
+            label.text = "    \(sectionTitles[section])"
             if sectionTitles[section] == "/" {
-                label.text = "MULTIREDDITS"
+                label.text = "    MULTIREDDITS"
             } else if section == 0 {
-                label.text = "PINNED"
+                label.text = "    PINNED"
             }
         }
         return toReturn
