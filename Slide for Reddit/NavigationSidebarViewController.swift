@@ -8,28 +8,12 @@
 
 import Anchorage
 import AudioToolbox
-import MaterialComponents.MDCTabBar
 import reddift
 import reddift
 import SDWebImage
 import UIKit
 
 import UIKit.UIGestureRecognizerSubclass
-
-class TabTemplate: NSObject, MDCTabBarIndicatorTemplate {
-    func indicatorAttributes(
-        for context: MDCTabBarIndicatorContext
-        ) -> MDCTabBarIndicatorAttributes {
-        let bounds = context.bounds
-        let attributes = MDCTabBarIndicatorAttributes()
-        let underlineFrame = CGRect.init(x: bounds.minX,
-                                         y: bounds.height - 3,
-                                         width: bounds.width,
-                                         height: 2)
-        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
-        return attributes
-    }
-}
 
 class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDelegate {
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
@@ -69,27 +53,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         $0.isTranslucent = true
         $0.barStyle = .blackTranslucent
     }
-    
-    var segment = MDCTabBar().then {
-        $0.items = [
-            UITabBarItem(title: "SORTED", image: nil, tag: 0),
-            UITabBarItem(title: "ALPHABETICAL", image: nil, tag: 1),
-        ]
-        $0.itemAppearance = .titles
-        $0.tintColor = ColorUtil.accentColorForSub(sub: "")
-        $0.backgroundColor = ColorUtil.foregroundColor
-        $0.selectedItem = $0.items[UserDefaults.standard.bool(forKey: "alphabetical") ? 1 : 0]
-        $0.selectedItemTintColor = ColorUtil.fontColor
-        $0.unselectedItemTintColor = ColorUtil.fontColor.withAlphaComponent(0.45)
-        $0.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
-        $0.selectionIndicatorTemplate = TabTemplate()
-        $0.inkColor = UIColor.clear
-        $0.alignment = .justified
-        $0.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
-        $0.alignment = .center
-        $0.backgroundColor = ColorUtil.foregroundColor
 
-   }
+    let horizontalSubGroup = HorizontalSubredditGroup()
     
     init(controller: MainViewController) {
         self.parentController = controller
@@ -106,10 +71,16 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        alphabetical = UserDefaults.standard.bool(forKey: "alphabetical")
-        segment.delegate = self
-        for string in subs {
+    func loadSections() {
+        subsAlphabetical.removeAll()
+        sectionTitles.removeAll()
+        for string in Subscriptions.pinned {
+            var current = subsAlphabetical["★"] ?? [String]()
+            current.append(string)
+            subsAlphabetical["★"] = current
+        }
+        
+        for string in subs.filter({ !Subscriptions.pinned.contains($0) }).sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }) {
             let letter = string.substring(0, length: 1).uppercased()
             var current = subsAlphabetical[letter] ?? [String]()
             current.append(string)
@@ -117,7 +88,15 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         }
         
         sectionTitles = subsAlphabetical.keys.sorted { $0.caseInsensitiveCompare($1) == .orderedAscending }
-        
+        if sectionTitles.contains("★") {
+            sectionTitles.remove(at: sectionTitles.count - 1)
+            sectionTitles.insert("★", at: 0)
+        }
+    }
+    
+    override func viewDidLoad() {
+        tableView.sectionIndexColor = ColorUtil.baseAccent
+        loadSections()
         super.viewDidLoad()
         self.view = UITouchCapturingView()
 
@@ -411,15 +390,19 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !SettingValues.flatMode {
-            segment.roundCorners([.topLeft, .topRight], radius: 25)
+            searchBar.roundCorners([.topLeft, .topRight], radius: 25)
         }
     }
 
     func configureViews() {
 
+        horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
+        horizontalSubGroup.delegate = self
+        view.addSubview(horizontalSubGroup)
+
         searchBar.sizeToFit()
         searchBar.delegate = self
-        view.addSubviews(searchBar, segment)
+        view.addSubview(searchBar)
 
         tableView.bounces = false
         tableView.delegate = self
@@ -440,12 +423,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureLayout() {
-        
-        segment.topAnchor == view.topAnchor
-        segment.horizontalAnchors == view.horizontalAnchors
-        segment.heightAnchor == 50
 
-        searchBar.topAnchor == segment.bottomAnchor - 2
+        horizontalSubGroup.topAnchor == view.topAnchor + 4
+        horizontalSubGroup.horizontalAnchors == view.horizontalAnchors
+        horizontalSubGroup.heightAnchor == 30
+        
+        searchBar.topAnchor == horizontalSubGroup.bottomAnchor
         searchBar.horizontalAnchors == view.horizontalAnchors
         searchBar.heightAnchor == 50
 
@@ -473,6 +456,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
+            self.horizontalSubGroup.setColors()
+            self.horizontalSubGroup.backgroundColor = ColorUtil.foregroundColor
             self.searchBar.tintColor = ColorUtil.fontColor
             self.searchBar.textColor = ColorUtil.fontColor
             self.searchBar.backgroundColor = ColorUtil.foregroundColor
@@ -545,20 +530,85 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         if section == 1 && !alphabetical {
             return 40
         } else {
-            return 0
+            return 40
+        }
+    }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return !isSearching
+    }
+    
+    func getIndexPath(sub: String) -> IndexPath {
+        var section = 0
+        var row = 0
+        for item in self.sectionTitles {
+            let array = self.subsAlphabetical[item]!
+            row = 0
+            for innerSub in array {
+                if sub == innerSub {
+                    return IndexPath(row: row, section: section)
+                }
+                row += 1
+            }
+            section += 1
+        }
+        return IndexPath(row: 0, section: 0) //Should not get here
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
+        let sub = subsAlphabetical[sectionTitles[editActionsForRowAt.section]]![editActionsForRowAt.row]
+        let pinned = editActionsForRowAt.section == 0
+        if pinned {
+            let pin = UITableViewRowAction(style: .normal, title: "Un-Pin") { _, _ in
+                Subscriptions.setPinned(name: AccountController.currentName, subs: Subscriptions.pinned.filter({ $0 != sub })) {
+                    self.tableView.beginUpdates()
+                    self.loadSections()
+                    let newIndexPath = self.getIndexPath(sub: sub)
+                    print(editActionsForRowAt)
+                    print(newIndexPath)
+                    self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
+                    self.tableView.endUpdates()
+                }
+            }
+            pin.backgroundColor = GMColor.red500Color()
+            return [pin]
+        } else {
+            let pin = UITableViewRowAction(style: .normal, title: "Pin") { _, _ in
+                var newPinned = Subscriptions.pinned
+                newPinned.append(sub)
+                Subscriptions.setPinned(name: AccountController.currentName, subs: newPinned) {
+                    self.tableView.beginUpdates()
+                    self.loadSections()
+                    let newIndexPath = self.getIndexPath(sub: sub)
+                    self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
+                    self.tableView.endUpdates()
+                }
+            }
+            pin.backgroundColor = GMColor.yellow500Color()
+            return [pin]
         }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label: UILabel = UILabel()
-        label.textColor = ColorUtil.fontColor
+        label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
+        label.backgroundColor = ColorUtil.foregroundColor
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 12, left: 0, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
-        switch section {
-        case 0: label.text  = ""
-        default: label.text  = "SUBREDDIT SUGGESTIONS"
+        if isSearching {
+            switch section {
+            case 0: label.text  = ""
+            default: label.text  = "    SUBREDDIT SUGGESTIONS"
+            }
+        } else {
+            label.text = "    \(sectionTitles[section])"
+            if sectionTitles[section] == "/" {
+                label.text = "    MULTIREDDITS"
+            } else if section == 0 {
+                label.text = "    PINNED"
+            }
         }
         return toReturn
     }
@@ -603,8 +653,8 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             }
         } else {
             let thing: String
-            if !alphabetical {
-                thing = subs[indexPath.row]
+            if isSearching {
+                thing = suggestions[indexPath.row]
             } else {
                 thing = subsAlphabetical[sectionTitles[indexPath.section]]![indexPath.row]
             }
@@ -722,6 +772,12 @@ extension NavigationSidebarViewController: UIScrollViewDelegate {
     }
 }
 
+extension NavigationSidebarViewController: HorizontalSubredditGroupDelegate {
+    func horizontalSubredditGroup(_ horizontalSubredditGroup: HorizontalSubredditGroup, didRequestSubredditWithName name: String) {
+        parentController?.goToSubreddit(subreddit: name)
+    }
+}
+
 extension NavigationSidebarViewController {
     func keyboardWillBeShown(notification: NSNotification) {
         //get the end position keyboard frame
@@ -772,18 +828,60 @@ class UITouchCapturingView: UIView {
     }
 }
 
-extension NavigationSidebarViewController: MDCTabBarDelegate {
-    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
-        if item.tag == 0 && alphabetical {
-            alphabetical = false
-            tableView.reloadData()
-            UserDefaults.standard.set(false, forKey: "alphabetical")
-            UserDefaults.standard.synchronize()
-        } else if item.tag == 1 && !alphabetical {
-            alphabetical = true
-            tableView.reloadData()
-            UserDefaults.standard.set(true, forKey: "alphabetical")
-            UserDefaults.standard.synchronize()
+protocol HorizontalSubredditGroupDelegate: AnyObject {
+    func horizontalSubredditGroup(_ horizontalSubredditGroup: HorizontalSubredditGroup, didRequestSubredditWithName name: String)
+}
+
+class HorizontalSubredditGroup: UIView {
+
+    weak var delegate: HorizontalSubredditGroupDelegate?
+
+    let stack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.distribution = .fillEqually
+    }
+
+    private var buttons: [UIButton] = []
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        addSubview(stack)
+        stack.edgeAnchors == edgeAnchors
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func setColors() {
+        for button in buttons {
+            button.setTitleColor(ColorUtil.baseAccent, for: .normal)
         }
     }
+
+    func setSubreddits(subredditNames: [String]) {
+        // Remove all buttons
+        for button in buttons {
+            stack.removeArrangedSubview(button)
+        }
+
+        // Make new buttons
+        for name in subredditNames {
+            let button = UIButton().then {
+                $0.setTitle(name, for: .normal)
+                $0.titleLabel?.font = FontGenerator.boldFontOfSize(size: 14, submission: false)
+            }
+            stack.addArrangedSubview(button)
+            button.addTarget(self, action: #selector(buttonWasTapped), for: .touchUpInside)
+
+        }
+
+        setColors()
+    }
+
+    @objc func buttonWasTapped(_ sender: UIButton) {
+        delegate?.horizontalSubredditGroup(self, didRequestSubredditWithName: sender.currentTitle!.lowercased())
+    }
+
 }
