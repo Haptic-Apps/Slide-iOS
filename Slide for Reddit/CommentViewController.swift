@@ -26,7 +26,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     override var keyCommands: [UIKeyCommand]? {
-        return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
+        if !isReply {
+            return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
+        }
+        return nil
     }
 
     var menuCell: CommentDepthCell?
