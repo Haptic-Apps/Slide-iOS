@@ -70,12 +70,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     func loadSections() {
+        subsAlphabetical.removeAll()
+        sectionTitles.removeAll()
         for string in Subscriptions.pinned {
             var current = subsAlphabetical["★"] ?? [String]()
             current.append(string)
             subsAlphabetical["★"] = current
         }
-        tableView.sectionIndexColor = ColorUtil.baseAccent
         
         for string in subs.filter({ !Subscriptions.pinned.contains($0) }).sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }) {
             let letter = string.substring(0, length: 1).uppercased()
@@ -92,6 +93,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     override func viewDidLoad() {
+        tableView.sectionIndexColor = ColorUtil.baseAccent
         loadSections()
         super.viewDidLoad()
         self.view = UITouchCapturingView()
@@ -529,6 +531,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         var row = 0
         for item in self.sectionTitles {
             let array = self.subsAlphabetical[item]!
+            row = 0
             for innerSub in array {
                 if sub == innerSub {
                     return IndexPath(row: row, section: section)
@@ -545,10 +548,12 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         let pinned = editActionsForRowAt.section == 0
         if pinned {
             let pin = UITableViewRowAction(style: .normal, title: "Un-Pin") { _, _ in
-                Subscriptions.setPinned(name: AccountController.currentName, subs: Subscriptions.pinned.filter( { $0 != sub })) {
+                Subscriptions.setPinned(name: AccountController.currentName, subs: Subscriptions.pinned.filter({ $0 != sub })) {
+                    self.tableView.beginUpdates()
                     self.loadSections()
                     let newIndexPath = self.getIndexPath(sub: sub)
-                    self.tableView.beginUpdates()
+                    print(editActionsForRowAt)
+                    print(newIndexPath)
                     self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
                     self.tableView.endUpdates()
                 }
@@ -560,9 +565,9 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 var newPinned = Subscriptions.pinned
                 newPinned.append(sub)
                 Subscriptions.setPinned(name: AccountController.currentName, subs: newPinned) {
+                    self.tableView.beginUpdates()
                     self.loadSections()
                     let newIndexPath = self.getIndexPath(sub: sub)
-                    self.tableView.beginUpdates()
                     self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
                     self.tableView.endUpdates()
                 }
