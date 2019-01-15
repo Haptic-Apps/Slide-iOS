@@ -9,7 +9,7 @@
 import UIKit
 
 extension UITabBarController {
-    override func topMostViewController() -> UIViewController {
+    @objc override func topMostViewController() -> UIViewController {
         return self.selectedViewController!.topMostViewController()
     }
 }

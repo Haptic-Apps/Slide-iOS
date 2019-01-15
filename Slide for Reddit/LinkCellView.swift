@@ -1201,7 +1201,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if self is AutoplayBannerLinkCellView {
             self.endVideos()
             do {
-                try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient))
+                if #available(iOS 10.0, *) {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+                } else {
+                    // Set category with options (iOS 9+) setCategory(_:options:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with:  [])
+                    
+                    // Set category without options (<= iOS 9) setCategory(_:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+                }
             } catch {
             }
         }
@@ -1767,14 +1775,30 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setOnce {
             setOnce = true
             do {
-                try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient))
+                if #available(iOS 10.0, *) {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+                } else {
+                    // Set category with options (iOS 9+) setCategory(_:options:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with:  [])
+                    
+                    // Set category without options (<= iOS 9) setCategory(_:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+                }
             } catch {
                 
             }
         } else if tracks && SettingValues.muteVideos == .NEVER && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setOnce {
             setOnce = true
             do {
-                try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.playback))
+                if #available(iOS 10.0, *) {
+                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+                } else {
+                    // Set category with options (iOS 9+) setCategory(_:options:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with:  [])
+                    
+                    // Set category without options (<= iOS 9) setCategory(_:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+                }
             } catch {
                 
             }
@@ -1946,7 +1970,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     @objc func unmute() {
         self.videoView?.player?.isMuted = false
         do {
-            try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.playback))
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+            } else {
+                // Set category with options (iOS 9+) setCategory(_:options:)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with:  [])
+                
+                // Set category without options (<= iOS 9) setCategory(_:)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+            }
         } catch {
         }
         UIView.animate(withDuration: 0.5, animations: {
