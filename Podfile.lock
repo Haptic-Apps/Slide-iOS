@@ -1,5 +1,5 @@
 PODS:
-  - ActionSheetPicker-3.0 (2.2.0)
+  - ActionSheetPicker-3.0 (2.3.0)
   - Alamofire (4.8.0)
   - Anchorage (4.3)
   - BadgeSwift (5.0.1)
@@ -22,6 +22,7 @@ PODS:
   - DTFoundation/UIKit (1.7.13):
     - DTFoundation/Core
   - Embassy (4.0.8)
+  - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.6.6)
   - MaterialComponents/ActivityIndicator (73.1.1):
     - MaterialComponents/Palettes
@@ -54,6 +55,7 @@ PODS:
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
+  - MiniKeychain (1.0.8)
   - MKColorPicker (1.2)
   - MotionAnimator (2.8.1):
     - MotionInterchange (~> 1.6)
@@ -64,9 +66,9 @@ PODS:
   - Realm/Headers (3.13.1)
   - RealmSwift (3.13.1):
     - Realm (= 3.13.1)
-  - reddift (2.0.0):
-    - reddift/MiniKeychain (= 2.0.0)
-  - reddift/MiniKeychain (2.0.0)
+  - reddift (2.0.3):
+    - HTMLSpecialCharacters
+    - MiniKeychain
   - RLBAlertsPickers (1.0)
   - SDWebImage (4.1.2):
     - SDWebImage/Core (= 4.1.2)
@@ -79,9 +81,9 @@ PODS:
   - SwiftyJSON (4.2.0)
   - Then (2.4.0)
   - TTTAttributedLabel (2.0.0)
-  - XLActionController (4.1.0):
-    - XLActionController/Core (= 4.1.0)
-  - XLActionController/Core (4.1.0)
+  - XLActionController (4.1.1):
+    - XLActionController/Core (= 4.1.1)
+  - XLActionController/Core (4.1.1)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
@@ -127,13 +129,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   ActionSheetPicker-3.0:
-    :commit: 752459578d8162c11f6311987bd3463e6d85712b
+    :commit: 6a7757579502871c9a2801f574557067503ef60d
     :git: https://github.com/ccrama/ActionSheetPicker-3.0
   DTCoreText:
     :commit: a02b61c94f80f65563a9fc0035f6facfdcc6ad01
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: e72ab80af7de93a13ba5432662dfc61b6167c583
+    :commit: 01f67cb656f4a327f62a6eff287020dd76ab49d8
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -142,11 +144,11 @@ CHECKOUT OPTIONS:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
     :git: https://github.com/fastred/sloppySwiper
   XLActionController:
-    :commit: 97b452cf7d50f0f39ced606601f404829ac509cb
+    :commit: 3adaa1008978e677d83c0c1f6a2a2862150aea9d
     :git: https://github.com/ccrama/XLActionController
 
 SPEC CHECKSUMS:
-  ActionSheetPicker-3.0: d11a4c12c6aaf704b8a3f56d179198c99f3e41e6
+  ActionSheetPicker-3.0: eef157d75e151f255c5333d26656c7fbfe905a51
   Alamofire: 3ec537f71edc9804815215393ae2b1a8ea33a844
   Anchorage: 21a98675245188427f0bcea21404d42a824a766f
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
@@ -154,16 +156,18 @@ SPEC CHECKSUMS:
   DTCoreText: c07f9d7109a1dd637d7190032261b7c8aff23c92
   DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
+  HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 8ab8cbf1e169577343b20ee804e357f0d08dfad0
   MaterialComponents: b9b5743f650af50c5138e517a0930a3ade0cd09f
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
+  MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
   RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
-  reddift: 3066e687c2a934b0f9aca6ee6e2161abc4c93a56
+  reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
   SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
@@ -174,7 +178,7 @@ SPEC CHECKSUMS:
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
   Then: 71866660c7af35a7343831f7668e7cd2b62ee0f2
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
-  XLActionController: e8a8b38d3b226a69921e412e769d8483d1794064
+  XLActionController: d2ab12a967ae0fee0b4563b8d809c8fb13ebc636
 
 PODFILE CHECKSUM: 5bbd2b0b1d83f438b5954675d442f16de7abc270
 
