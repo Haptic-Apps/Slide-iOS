@@ -17,7 +17,7 @@ class CurrentAccountPresentationController: UIPresentationController {
     // Mirror Manager params here
 
     override init(presentedViewController: UIViewController,
-         presenting presentingViewController: UIViewController?) {
+                  presenting presentingViewController: UIViewController?) {
 
         super.init(presentedViewController: presentedViewController,
                    presenting: presentingViewController)
@@ -27,6 +27,7 @@ class CurrentAccountPresentationController: UIPresentationController {
 
     override func containerViewWillLayoutSubviews() {
         presentedView?.frame = frameOfPresentedViewInContainerView
+        dimmingView.frame = frameOfPresentedViewInContainerView
     }
 
     override func size(forChildContentContainer container: UIContentContainer,
@@ -38,38 +39,31 @@ class CurrentAccountPresentationController: UIPresentationController {
         let accountView = presentedViewController as! CurrentAccountViewController
 
         if let containerView = containerView {
-            containerView.addSubview(dimmingView)
-            accountView.view.removeFromSuperview() // TODO: Risky?
-            dimmingView.contentView.addSubview(accountView.view)
-            dimmingView.edgeAnchors == containerView.edgeAnchors
+            containerView.insertSubview(dimmingView, at: 0)
+//            accountView.view.removeFromSuperview() // TODO: Risky?
+            containerView.addSubview(accountView.view)
         }
 
-        guard let coordinator = presentedViewController.transitionCoordinator else {
+        if let coordinator = presentedViewController.transitionCoordinator {
+            coordinator.animate(alongsideTransition: { _ in
+                self.dimmingView.effect = self.blurEffect
+            })
+        } else {
             dimmingView.effect = blurEffect
-            return
         }
-
-        coordinator.animate(alongsideTransition: { _ in
-            self.dimmingView.effect = self.blurEffect
-        })
     }
 
     override func dismissalTransitionWillBegin() {
-        guard let coordinator = presentedViewController.transitionCoordinator else {
+        if let coordinator = presentedViewController.transitionCoordinator {
+            coordinator.animate(alongsideTransition: { _ in
+                self.dimmingView.effect = nil
+            })
+        } else {
             dimmingView.effect = nil
-            return
         }
-
-        coordinator.animate(alongsideTransition: { _ in
-            self.dimmingView.effect = nil
-        })
     }
 
     lazy var blurEffect: UIBlurEffect = {
-//        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-//        blurEffect.setValue(5, forKeyPath: "blurRadius")
-//        return blurEffect
-
         return UIBlurEffect(style: .dark)
     }()
 
@@ -80,14 +74,6 @@ private extension CurrentAccountPresentationController {
     func setupDimmingView() {
         dimmingView = UIVisualEffectView(frame: UIScreen.main.bounds).then {
             $0.effect = nil
-//            $0.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
         }
-
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        dimmingView.addGestureRecognizer(recognizer)
-    }
-
-    @objc func handleTap(recognizer: UITapGestureRecognizer) {
-        presentingViewController.dismiss(animated: true)
     }
 }

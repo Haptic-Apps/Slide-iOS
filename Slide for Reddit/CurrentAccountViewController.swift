@@ -49,6 +49,10 @@ class CurrentAccountViewController: UIViewController {
         $0.clipsToBounds = false
     }
 
+    var backgroundView = UIView().then {
+        $0.backgroundColor = .clear
+    }
+
     var closeButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
@@ -182,6 +186,8 @@ class CurrentAccountViewController: UIViewController {
 extension CurrentAccountViewController {
     func setupViews() {
 
+        view.addSubview(backgroundView)
+
         view.addSubview(closeButton)
         view.addSubview(settingsButton)
 
@@ -207,6 +213,8 @@ extension CurrentAccountViewController {
 
     func setupConstraints() {
 
+        backgroundView.edgeAnchors == view.edgeAnchors
+
         closeButton.topAnchor == view.safeTopAnchor
         closeButton.leftAnchor == view.safeLeftAnchor
 
@@ -216,11 +224,10 @@ extension CurrentAccountViewController {
         upperButtonStack.leftAnchor == accountImageView.rightAnchor
         upperButtonStack.bottomAnchor == contentView.topAnchor
 
-        contentView.topAnchor == view.safeTopAnchor + 400 // TODO: Switch this out for a height anchor at some point
         contentView.horizontalAnchors == view.horizontalAnchors
         contentView.bottomAnchor == view.bottomAnchor
 
-        accountImageView.leftAnchor == contentView.leftAnchor + 20
+        accountImageView.leftAnchor == contentView.safeLeftAnchor + 20
         accountImageView.centerYAnchor == contentView.topAnchor
         accountImageView.sizeAnchors == CGSize.square(size: 100)
 
@@ -232,7 +239,8 @@ extension CurrentAccountViewController {
         accountAgeLabel.topAnchor == accountNameLabel.bottomAnchor
 
         header.topAnchor == accountAgeLabel.bottomAnchor + 22
-        header.horizontalAnchors == contentView.horizontalAnchors + 20
+        header.horizontalAnchors == contentView.safeHorizontalAnchors + 20
+        header.bottomAnchor == contentView.safeBottomAnchor - 16
 
         spinner.centerAnchors == header.centerAnchors
 
@@ -255,6 +263,9 @@ extension CurrentAccountViewController {
 
         let emptyStateLabelTap = UITapGestureRecognizer(target: self, action: #selector(emptyStateLabelTapped))
         emptyStateLabel.addGestureRecognizer(emptyStateLabelTap)
+
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(didRequestClose))
+        backgroundView.addGestureRecognizer(recognizer)
     }
 
     func configureForCurrentAccount() {
