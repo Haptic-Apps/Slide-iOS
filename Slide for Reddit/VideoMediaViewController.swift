@@ -35,7 +35,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func subtleVolume(_ subtleVolume: SubtleVolume, willChange value: Double) {
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.playback))
         } catch {
             
         }
@@ -97,7 +97,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         view.addSubview(volume)
         volume.delegate = self
 
-        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     override func viewDidLayoutSubviews() {
@@ -107,7 +107,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     func layoutVolume() {
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
-        volume.superview?.bringSubview(toFront: volume)
+        volume.superview?.bringSubviewToFront(volume)
         volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
     }
 
@@ -119,7 +119,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
-        displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
+        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
         displayLink?.isPaused = false
         videoView.player?.play()
     }
@@ -133,7 +133,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         videoView.player?.currentItem?.asset.cancelLoading()
         stopDisplayLink()
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient))
         } catch {
             
         }
@@ -275,10 +275,10 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         return true
     }
     
-    func unmute() {
+    @objc func unmute() {
         self.videoView.player?.isMuted = false
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.playback))
         } catch {
         }
         UIView.animate(withDuration: 0.5, animations: {
@@ -334,8 +334,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         fastForwardImageView.trailingAnchor == view.safeTrailingAnchor - 30
     }
     
-    func handleTap(_ sender: UITapGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.ended {
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.ended {
             if scrubber.alpha == 0 {
                 self.handleShowUI()
                 self.startTimerToHide()
@@ -345,8 +345,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
     }
     
-    func handleDoubleTap(_ sender: UITapGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.ended {
+    @objc func handleDoubleTap(_ sender: UITapGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.ended {
             
             let maxTime = scrubber.slider.maximumValue
             let x = sender.location(in: self.view).x
@@ -370,7 +370,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                                      repeats: false)
     }
     
-    func handleHideUI() {
+    @objc func handleHideUI() {
         if !self.scrubber.isHidden {
             if let parent = parent as? ModalMediaViewController {
                 parent.fullscreen(self)
@@ -398,7 +398,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
 
     // TODO: Also fade background to black?
-    func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
+    @objc func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
             return
         }
@@ -439,7 +439,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         // Prevent video from stopping system background audio
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient))
         } catch let error as NSError {
             print(error)
         }
@@ -458,7 +458,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.playback))
             } catch {
                 
             }
@@ -491,7 +491,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func showSpinner() {
-        spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = self.view.center
         spinnerIndicator.color = UIColor.white
         self.view.addSubview(spinnerIndicator)
@@ -589,7 +589,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 //        self.downloadButton.isHidden = true //todo maybe download videos in the future?
         let playerItem = AVPlayerItem(url: SettingValues.shouldAutoPlay() ? URL(string: url)! : URL(fileURLWithPath: getKeyFromURL()))
         videoView.player = AVPlayer(playerItem: playerItem)
-        videoView.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+        videoView.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
         videoView.player?.play()
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
@@ -598,7 +598,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var handlingPlayerItemDidreachEnd = false
     
     func playerItemDidreachEnd() {
-        self.videoView.player!.seek(to: CMTimeMake(1, 1000), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { [weak self] (_) in
+        self.videoView.player!.seek(to: CMTimeMake(value: 1, timescale: 1000), toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero, completionHandler: { [weak self] (_) in
             guard let strongSelf = self else { return }
             // NOTE: the following is not needed since `strongSelf.videoView.player?.actionAtItemEnd` is set to `AVPlayerActionAtItemEnd.none`
 //            if finished {
@@ -814,8 +814,8 @@ extension VideoMediaViewController {
             youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
             youtubeView.playVideo()
         } else {
-            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms with a resolution of 1 ms
-            let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), 1000)
+            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
+            let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), preferredTimescale: 1000)
             self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
                 self.videoView.player?.play()
             }
@@ -879,29 +879,29 @@ extension VideoMediaViewController {
 
 extension VideoMediaViewController {
     
-    func displayLinkDidUpdate(displaylink: CADisplayLink) {
+    @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
         if (self.videoView.player?.isMuted ?? false) && tracks {
             if muteButton.isHidden {
                 muteButton.isHidden = false
             }
-        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient {
+        } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) {
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient))
             } catch {
                 
             }
-        } else if tracks && SettingValues.muteVideos != .ALWAYS && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
+        } else if tracks && SettingValues.muteVideos != .ALWAYS && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) {
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.playback))
             } catch {
                 
             }
         }
 
-        if tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryPlayback{
+        if tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.playback){
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                try AVAudioSession.sharedInstance().setCategory(convertFromAVAudioSessionCategory(AVAudioSession.Category.playback))
             } catch {
                 
             }
@@ -1026,14 +1026,14 @@ extension VideoMediaViewController {
         return timeAdd
 
     }
-    func showTitle(_ sender: AnyObject) {
+    @objc func showTitle(_ sender: AnyObject) {
         let alertController = UIAlertController(title: "Caption", message: nil, preferredStyle: .alert)
         alertController.addTextViewer(text: .text(data.text!))
         alertController.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
     
-    func showContextMenu(_ sender: UIButton) {
+    @objc func showContextMenu(_ sender: UIButton) {
         guard let baseURL = self.data.baseURL else {
             return
         }
@@ -1049,7 +1049,7 @@ extension VideoMediaViewController {
         alert.addAction(
             UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(baseURL)
                 }
@@ -1095,11 +1095,11 @@ extension VideoMediaViewController {
         }
     }
     
-    func downloadVideoToLibrary(_ sender: AnyObject) {
+    @objc func downloadVideoToLibrary(_ sender: AnyObject) {
         CustomAlbum.shared.saveMovieToLibrary(movieURL: URL(fileURLWithPath: getKeyFromURL()), parent: self)
     }
     
-    func openInYoutube(_ sender: AnyObject) {
+    @objc func openInYoutube(_ sender: AnyObject) {
         if let url = youtubeURL {
             UIApplication.shared.openURL(url)
         }
@@ -1116,7 +1116,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         if isYoutubeView {
             self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
         } else {
-            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms with a resolution of 1 ms
+            let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
             self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
         }
     }
@@ -1184,18 +1184,18 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         let aVideoAsset: AVAsset = AVAsset(url: videoUrl)
         let aAudioAsset: AVAsset = AVAsset(url: audioUrl)
         
-        mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid))
-        mutableCompositionAudioTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid))
+        mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid))
+        mutableCompositionAudioTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid))
         
-        let aVideoAssetTrack: AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaTypeVideo)[0]
-        let aAudioAssetTrack: AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaTypeAudio)[0]
+        let aVideoAssetTrack: AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaType.video)[0]
+        let aAudioAssetTrack: AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaType.audio)[0]
         
         do {
-            try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: kCMTimeZero)
+            try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: CMTime.zero)
             
             //In my case my audio file is longer then video file so i took videoAsset duration
             //instead of audioAsset duration
-            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: kCMTimeZero)
+            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: CMTime.zero)
             
             //Use this instead above line if your audiofile and video file's playing durations are same
             //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
@@ -1203,10 +1203,10 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             print(error.localizedDescription)
         }
         
-        totalVideoCompositionInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration)
+        totalVideoCompositionInstruction.timeRange = CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration)
         
         let mutableVideoComposition: AVMutableVideoComposition = AVMutableVideoComposition()
-        mutableVideoComposition.frameDuration = CMTimeMake(1, 30)
+        mutableVideoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
         
         mutableVideoComposition.renderSize = aVideoAssetTrack.naturalSize
         
@@ -1223,21 +1223,31 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         
         //find your video on this URl
         let assetExport: AVAssetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality)!
-        assetExport.outputFileType = AVFileTypeMPEG4
+        assetExport.outputFileType = AVFileType.mp4
         assetExport.outputURL = savePathUrl
         assetExport.exportAsynchronously { () -> Void in
             switch assetExport.status {
                 
-            case AVAssetExportSessionStatus.completed:
+            case AVAssetExportSession.Status.completed:
                 completion()
                 print("success")
-            case AVAssetExportSessionStatus.failed:
+            case AVAssetExportSession.Status.failed:
                 print("failed \(assetExport.error?.localizedDescription ?? "")")
-            case AVAssetExportSessionStatus.cancelled:
+            case AVAssetExportSession.Status.cancelled:
                 print("cancelled \(assetExport.error?.localizedDescription ?? "")")
             default:
                 print("complete")
             }
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

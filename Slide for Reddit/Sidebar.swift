@@ -40,7 +40,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
                 sheet.addAction(
                     UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                         if #available(iOS 10.0, *) {
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                         } else {
                             UIApplication.shared.openURL(url)
                         }
@@ -107,7 +107,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
         } else {
             let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
             if AccountController.isLoggedIn {
-                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
+                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertAction.Style.default, handler: {(_: UIAlertAction!) in
                     Subscriptions.subscribe(sub.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     self.parent!.subChanged = true
                     BannerUtil.makeBanner(text: "Subscribed", seconds: 5, context: self.parent, top: true)
@@ -115,14 +115,14 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
                 alrController.addAction(somethingAction)
             }
             
-            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertAction.Style.default, handler: {(_: UIAlertAction!) in
                 Subscriptions.subscribe(sub.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 self.parent!.subChanged = true
                 BannerUtil.makeBanner(text: "Added to subscription list", seconds: 5, context: self.parent, top: true)
             })
             alrController.addAction(somethingAction)
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
             
             alrController.addAction(cancelAction)
             alrController.modalPresentationStyle = .popover
@@ -136,4 +136,9 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
         }
     }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

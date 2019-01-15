@@ -300,7 +300,7 @@ public extension String {
         
         // Find the next '&' and copy the characters preceding it to `result`:
         while let ampRange = self.range(of: "&", range: position ..< endIndex) {
-            result.append(self[position ..< ampRange.lowerBound])
+            result.append(String(self[position ..< ampRange.lowerBound]))
             position = ampRange.lowerBound
             
             // Find the next ';' and copy everything from '&' to ';' into `entity`
@@ -308,7 +308,7 @@ public extension String {
                 let entity = self[position ..< semiRange.upperBound]
                 position = semiRange.upperBound
                 
-                if let decoded = decode(entity) {
+                if let decoded = decode(String(entity)) {
                     // Replace by decoded character:
                     result.append(decoded)
                 } else {
@@ -321,7 +321,7 @@ public extension String {
             }
         }
         // Copy remaining characters to `result`:
-        result.append(self[position ..< endIndex])
+        result.append(String(self[position ..< endIndex]))
         return result
     }
 }

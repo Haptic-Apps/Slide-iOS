@@ -33,14 +33,14 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "size")?.navIcon(), for: UIControlState.normal)
-            sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControlEvents.touchUpInside)
+            sort.setImage(UIImage.init(named: "size")?.navIcon(), for: UIControl.State.normal)
+            sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)
             
             let nav = UIButton.init(type: .custom)
-            nav.setImage(UIImage.init(named: "nav")?.navIcon(), for: UIControlState.normal)
-            nav.addTarget(self, action: #selector(self.openExternally(_:)), for: UIControlEvents.touchUpInside)
+            nav.setImage(UIImage.init(named: "nav")?.navIcon(), for: UIControl.State.normal)
+            nav.addTarget(self, action: #selector(self.openExternally(_:)), for: UIControl.Event.touchUpInside)
             nav.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let navB = UIBarButtonItem.init(customView: nav)
 
@@ -49,7 +49,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
     }
     
-    func openExternally(_ sender: UIButton) {
+    @objc func openExternally(_ sender: UIButton) {
         guard let baseURL = self.webView.url else {
             return
         }
@@ -65,7 +65,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         alert.addAction(
             UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(baseURL)
                 }
@@ -113,7 +113,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         }
     }
     
-    func readerMode(_ sender: AnyObject) {
+    @objc func readerMode(_ sender: AnyObject) {
         let safariVC = SFHideSafariViewController(url: webView.url!, entersReaderIfAvailable: true)
         present(safariVC, animated: true, completion: nil)
     }
@@ -237,7 +237,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
     }
     
-    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebView.NavigationType) -> Bool {
         return request.url == nil || !(isAd(url: request.url!))
     }
 
@@ -278,8 +278,13 @@ extension WKWebView {
             finished = true
         })
         while !finished {
-            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: NSDate.distantFuture)
+            RunLoop.current.run(mode: RunLoop.Mode.default, before: NSDate.distantFuture)
         }
         return resultString!
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

@@ -144,7 +144,7 @@ public class AutoCache: NSObject {
                     realmListing.subreddit = sub
                     realmListing.updated = NSDate()
 
-                    let newLinks = listing.children.flatMap({ $0 as? Link })
+                    let newLinks = listing.children.compactMap({ $0 as? Link })
                     var converted: [RSubmission] = []
                     for link in newLinks {
                         let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
@@ -258,8 +258,8 @@ public class AutoCache: NSObject {
         AutoCache.progressView!.elevate(elevation: 2)
 
         let button = UIButtonWithContext.init(type: .custom)
-        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControlState.normal)
+        button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: AutoCache.progressView!.frame.size.width - 40, y: 11.5, width: 25, height: 25)
         button.addTapGestureRecognizer {
             AutoCache.cancelAutocache()

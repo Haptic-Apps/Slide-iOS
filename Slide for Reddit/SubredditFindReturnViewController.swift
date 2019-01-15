@@ -96,7 +96,7 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
 
         if AccountController.isLoggedIn {
-            let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertAction.Style.default, handler: {(_: UIAlertAction!) in
                 Subscriptions.subscribe(sub, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 BannerUtil.makeBanner(text: "Subscribed", seconds: 5, context: self.parent, top: true)
                 self.navigationController?.popViewController(animated: true)
@@ -109,14 +109,14 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
             return
         }
         
-        let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertActionStyle.default, handler: {(_: UIAlertAction!) in
+        let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertAction.Style.default, handler: {(_: UIAlertAction!) in
             Subscriptions.subscribe(sub, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             self.navigationController?.popViewController(animated: true)
             self.callback(sub)
         })
         alrController.addAction(somethingAction)
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
         
         alrController.addAction(cancelAction)
         alrController.modalPresentationStyle = .popover
@@ -196,8 +196,8 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.estimatedRowHeight = 400.0
-        tableView.rowHeight = UITableViewAutomaticDimension
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.none
+        tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
 
         self.searchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
         searchBar.autocorrectionType = .no
@@ -212,7 +212,7 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         
-        searchBar.searchBarStyle = UISearchBarStyle.minimal
+        searchBar.searchBarStyle = UISearchBar.Style.minimal
         searchBar.placeholder = " Search for a subreddit"
         searchBar.sizeToFit()
         searchBar.isTranslucent = true

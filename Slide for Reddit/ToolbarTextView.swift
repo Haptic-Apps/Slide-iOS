@@ -43,7 +43,7 @@ public class ToolbarTextView: NSObject {
             generateButtons(image: "strikethrough", action: #selector(ToolbarTextView.strike(_:))), ]) {
             button.0.frame = CGRect.init(x: i * 50, y: 0, width: 50, height: 50)
             button.0.isUserInteractionEnabled = true
-            button.0.addTarget(self, action: button.1, for: UIControlEvents.touchUpInside)
+            button.0.addTarget(self, action: button.1, for: UIControl.Event.touchUpInside)
             scrollView.addSubview(button.0)
             i += 1
         }
@@ -61,7 +61,7 @@ public class ToolbarTextView: NSObject {
 
     func generateButtons(image: String, action: Selector) -> (UIButton, Selector) {
         let more = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 50, height: 50))
-        more.setImage(UIImage.init(named: image)?.menuIcon(), for: UIControlState.normal)
+        more.setImage(UIImage.init(named: image)?.menuIcon(), for: UIControl.State.normal)
         return (more, action)
     }
 
@@ -73,7 +73,7 @@ public class ToolbarTextView: NSObject {
         text!.replace(text!.selectedTextRange!, withText: with + text!.text(in: text!.selectedTextRange!)!.replacingOccurrences(of: value, with: with))
     }
 
-    func saveDraft(_ sender: AnyObject?) {
+    @objc func saveDraft(_ sender: AnyObject?) {
         if let toSave = text!.text {
             if !toSave.isEmpty() {
                 Drafts.addDraft(s: text!.text)
@@ -84,7 +84,7 @@ public class ToolbarTextView: NSObject {
 
     var picker: ActionSheetStringPicker?
 
-    func openDrafts(_ sender: AnyObject) {
+    @objc func openDrafts(_ sender: AnyObject) {
         print("Opening drafts")
         if Drafts.drafts.isEmpty {
             parent.view.makeToast("No drafts found", duration: 4, position: .top)
@@ -114,7 +114,7 @@ public class ToolbarTextView: NSObject {
         self.openDrafts(sender)
     }
 
-    func uploadImage(_ sender: UIButton!) {
+    @objc func uploadImage(_ sender: UIButton!) {
         let alert = UIAlertController.init(style: .actionSheet)
         alert.addPhotoLibraryPicker(
                 flow: .vertical,
@@ -325,13 +325,13 @@ public class ToolbarTextView: NSObject {
 
     }
 
-    func draw(_ sender: UIButton!) {
+    @objc func draw(_ sender: UIButton!) {
 
     }
 
     var insertLink: String?
 
-    func link(_ sender: UIButton!) {
+    @objc func link(_ sender: UIButton!) {
         let alert = UIAlertController(title: "Insert Link", message: "", preferredStyle: .alert)
 
         let configU: TextField.Config = { textField in
@@ -387,28 +387,28 @@ public class ToolbarTextView: NSObject {
 
     }
 
-    func bold(_ sender: UIButton!) {
+    @objc func bold(_ sender: UIButton!) {
         wrapIn("**")
     }
 
-    func italics(_ sender: UIButton!) {
+    @objc func italics(_ sender: UIButton!) {
         wrapIn("*")
     }
 
-    func list(_ sender: UIButton!) {
+    @objc func list(_ sender: UIButton!) {
         replaceIn("\n", with: "\n* ")
     }
 
-    func numberedList(_ sender: UIButton!) {
+    @objc func numberedList(_ sender: UIButton!) {
         replaceIn("\n", with: "\n1. ")
 
     }
 
-    func size(_ sender: UIButton!) {
+    @objc func size(_ sender: UIButton!) {
         replaceIn("\n", with: "\n#")
     }
 
-    func strike(_ sender: UIButton!) {
+    @objc func strike(_ sender: UIButton!) {
         wrapIn("~~")
     }
 }

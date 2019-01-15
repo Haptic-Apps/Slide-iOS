@@ -50,7 +50,7 @@ class ProgressBarView: UIView {
         
         progressLayer = CAShapeLayer()
         progressLayer.path = cPath.cgPath
-        progressLayer.lineCap = kCALineCapButt
+        progressLayer.lineCap = CAShapeLayerLineCap.butt
         progressLayer.lineWidth = self.frame.height
         progressLayer.fillColor = nil
         progressLayer.strokeColor = UIColor.clear.cgColor

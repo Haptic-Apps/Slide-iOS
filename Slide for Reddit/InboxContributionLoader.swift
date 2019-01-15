@@ -50,7 +50,7 @@ class InboxContributionLoader: ContributionLoader {
                             self.content = []
                         }
                         let before = self.content.count
-                        for message in listing.children.flatMap({ $0 }) {
+                        for message in listing.children.compactMap({ $0 }) {
                             self.content.append(RealmDataWrapper.messageToRMessage(message: message as! Message))
                             if (message as! Message).baseJson["replies"] != nil {
                                 let json = (message as! Message).baseJson as JSONDictionary

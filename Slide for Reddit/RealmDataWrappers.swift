@@ -428,8 +428,8 @@ class RListing: Object {
         return "subreddit"
     }
     
-    dynamic var updated = NSDate(timeIntervalSince1970: 1)
-    dynamic var subreddit = ""
+    @objc dynamic var updated = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var subreddit = ""
     let links = List<RSubmission>()
 }
 
@@ -438,31 +438,31 @@ class RSubmission: Object {
         return "id"
     }
     
-    dynamic var id = ""
-    dynamic var name = ""
-    dynamic var author = ""
-    dynamic var created = NSDate(timeIntervalSince1970: 1)
-    dynamic var edited = NSDate(timeIntervalSince1970: 1)
-    dynamic var gilded = false
-    dynamic var gold = 0
-    dynamic var silver = 0
-    dynamic var platinum = 0
-    dynamic var htmlBody = ""
-    dynamic var body = ""
-    dynamic var title = ""
-    dynamic var subreddit = ""
-    dynamic var archived = false
-    dynamic var locked = false
-    dynamic var urlString = ""
-    dynamic var distinguished = ""
-    dynamic var videoPreview = ""
-    dynamic var isCrosspost = false
-    dynamic var spoiler = false
-    dynamic var oc = false
-    dynamic var canMod = false
-    dynamic var crosspostAuthor = ""
-    dynamic var crosspostSubreddit = ""
-    dynamic var crosspostPermalink = ""
+    @objc dynamic var id = ""
+    @objc dynamic var name = ""
+    @objc dynamic var author = ""
+    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var edited = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var gilded = false
+    @objc dynamic var gold = 0
+    @objc dynamic var silver = 0
+    @objc dynamic var platinum = 0
+    @objc dynamic var htmlBody = ""
+    @objc dynamic var body = ""
+    @objc dynamic var title = ""
+    @objc dynamic var subreddit = ""
+    @objc dynamic var archived = false
+    @objc dynamic var locked = false
+    @objc dynamic var urlString = ""
+    @objc dynamic var distinguished = ""
+    @objc dynamic var videoPreview = ""
+    @objc dynamic var isCrosspost = false
+    @objc dynamic var spoiler = false
+    @objc dynamic var oc = false
+    @objc dynamic var canMod = false
+    @objc dynamic var crosspostAuthor = ""
+    @objc dynamic var crosspostSubreddit = ""
+    @objc dynamic var crosspostPermalink = ""
     
     var type: ContentType.CType {
         if isSelf {
@@ -480,35 +480,35 @@ class RSubmission: Object {
     }
     
     var reports = List<String>()
-    dynamic var removedBy = ""
-    dynamic var removed = false
-    dynamic var approvedBy = ""
-    dynamic var approved = false
-    dynamic var removalReason = ""
-    dynamic var removalNote = ""
+    @objc dynamic var removedBy = ""
+    @objc dynamic var removed = false
+    @objc dynamic var approvedBy = ""
+    @objc dynamic var approved = false
+    @objc dynamic var removalReason = ""
+    @objc dynamic var removalNote = ""
     
-    dynamic var isEdited = false
-    dynamic var commentCount = 0
-    dynamic var saved = false
-    dynamic var stickied = false
-    dynamic var visited = false
-    dynamic var isSelf = false
-    dynamic var permalink = ""
-    dynamic var bannerUrl = ""
-    dynamic var thumbnailUrl = ""
-    dynamic var lqUrl = ""
-    dynamic var lQ = false
-    dynamic var thumbnail = false
-    dynamic var banner = false
-    dynamic var nsfw = false
-    dynamic var score = 0
-    dynamic var upvoteRatio: Double = 0
-    dynamic var flair = ""
-    dynamic var domain = ""
-    dynamic var voted = false
-    dynamic var height = 0
-    dynamic var width = 0
-    dynamic var vote = false
+    @objc dynamic var isEdited = false
+    @objc dynamic var commentCount = 0
+    @objc dynamic var saved = false
+    @objc dynamic var stickied = false
+    @objc dynamic var visited = false
+    @objc dynamic var isSelf = false
+    @objc dynamic var permalink = ""
+    @objc dynamic var bannerUrl = ""
+    @objc dynamic var thumbnailUrl = ""
+    @objc dynamic var lqUrl = ""
+    @objc dynamic var lQ = false
+    @objc dynamic var thumbnail = false
+    @objc dynamic var banner = false
+    @objc dynamic var nsfw = false
+    @objc dynamic var score = 0
+    @objc dynamic var upvoteRatio: Double = 0
+    @objc dynamic var flair = ""
+    @objc dynamic var domain = ""
+    @objc dynamic var voted = false
+    @objc dynamic var height = 0
+    @objc dynamic var width = 0
+    @objc dynamic var vote = false
     let comments = List<RComment>()
     
     func getId() -> String {
@@ -532,17 +532,17 @@ class RMessage: Object {
         return "id"
     }
     
-    dynamic var id = ""
-    dynamic var name = ""
-    dynamic var author = ""
-    dynamic var created = NSDate(timeIntervalSince1970: 1)
-    dynamic var htmlBody = ""
-    dynamic var isNew = false
-    dynamic var linkTitle = ""
-    dynamic var context = ""
-    dynamic var wasComment = false
-    dynamic var subreddit = ""
-    dynamic var subject = ""
+    @objc dynamic var id = ""
+    @objc dynamic var name = ""
+    @objc dynamic var author = ""
+    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var htmlBody = ""
+    @objc dynamic var isNew = false
+    @objc dynamic var linkTitle = ""
+    @objc dynamic var context = ""
+    @objc dynamic var wasComment = false
+    @objc dynamic var subreddit = ""
+    @objc dynamic var subject = ""
     
     func getId() -> String {
         return id
@@ -558,43 +558,43 @@ class RComment: Object {
         return id
     }
     
-    dynamic var id = ""
-    dynamic var name = ""
-    dynamic var body = ""
-    dynamic var author = ""
-    dynamic var permalink = ""
+    @objc dynamic var id = ""
+    @objc dynamic var name = ""
+    @objc dynamic var body = ""
+    @objc dynamic var author = ""
+    @objc dynamic var permalink = ""
     var reports = List<String>()
-    dynamic var removedBy = ""
-    dynamic var removalReason = ""
-    dynamic var removalNote = ""
-    dynamic var approvedBy = ""
-    dynamic var approved = false
-    dynamic var removed = false
-    dynamic var created = NSDate(timeIntervalSince1970: 1)
-    dynamic var edited = NSDate(timeIntervalSince1970: 1)
-    dynamic var depth = 0
-    dynamic var gilded = false
-    dynamic var gold = 0
-    dynamic var silver = 0
-    dynamic var platinum = 0
-    dynamic var htmlText = ""
-    dynamic var distinguished = ""
-    dynamic var linkid = ""
-    dynamic var canMod = false
-    dynamic var sticky = false
-    dynamic var submissionTitle = ""
-    dynamic var pinned = false
-    dynamic var controversiality = 0
-    dynamic var isEdited = false
-    dynamic var subreddit = ""
-    dynamic var scoreHidden = false
-    dynamic var parentId = ""
-    dynamic var archived = false
-    dynamic var score = 0
-    dynamic var flair = ""
-    dynamic var voted = false
-    dynamic var vote = false
-    dynamic var saved = false
+    @objc dynamic var removedBy = ""
+    @objc dynamic var removalReason = ""
+    @objc dynamic var removalNote = ""
+    @objc dynamic var approvedBy = ""
+    @objc dynamic var approved = false
+    @objc dynamic var removed = false
+    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var edited = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var depth = 0
+    @objc dynamic var gilded = false
+    @objc dynamic var gold = 0
+    @objc dynamic var silver = 0
+    @objc dynamic var platinum = 0
+    @objc dynamic var htmlText = ""
+    @objc dynamic var distinguished = ""
+    @objc dynamic var linkid = ""
+    @objc dynamic var canMod = false
+    @objc dynamic var sticky = false
+    @objc dynamic var submissionTitle = ""
+    @objc dynamic var pinned = false
+    @objc dynamic var controversiality = 0
+    @objc dynamic var isEdited = false
+    @objc dynamic var subreddit = ""
+    @objc dynamic var scoreHidden = false
+    @objc dynamic var parentId = ""
+    @objc dynamic var archived = false
+    @objc dynamic var score = 0
+    @objc dynamic var flair = ""
+    @objc dynamic var voted = false
+    @objc dynamic var vote = false
+    @objc dynamic var saved = false
     
     var likes: VoteDirection {
         if voted {
@@ -609,7 +609,7 @@ class RComment: Object {
 }
 
 class RString: Object {
-    dynamic var value = ""
+    @objc dynamic var value = ""
 }
 
 class RMore: Object {
@@ -621,23 +621,23 @@ class RMore: Object {
         return id
     }
     
-    dynamic var count = 0
-    dynamic var id = ""
-    dynamic var name = ""
-    dynamic var parentId = ""
+    @objc dynamic var count = 0
+    @objc dynamic var id = ""
+    @objc dynamic var name = ""
+    @objc dynamic var parentId = ""
     let children = List<RString>()
 }
 
 class RSubmissionListing: Object {
-    dynamic var name = ""
-    dynamic var accessed = NSDate(timeIntervalSince1970: 1)
-    dynamic var comments = false
+    @objc dynamic var name = ""
+    @objc dynamic var accessed = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var comments = false
     let submissions = List<RSubmission>()
 }
 
 class RFriend: Object {
-    dynamic var name = ""
-    dynamic var friendSince = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var name = ""
+    @objc dynamic var friendSince = NSDate(timeIntervalSince1970: 1)
 }
 
 extension String {
@@ -646,7 +646,7 @@ extension String {
             return nil
         }
         
-        return try NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue], documentAttributes: nil).string
+        return try NSAttributedString(data: data, options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary([convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html), convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.characterEncoding): String.Encoding.utf8.rawValue]), documentAttributes: nil).string
     }
 }
 
@@ -659,16 +659,31 @@ extension String {
         }
         
         let attributedOptions: [String: Any] = [
-            NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
-            NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue,
+            convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html),
+            convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.characterEncoding): String.Encoding.utf8.rawValue,
             ]
         
         do {
-            let attributedString = try NSAttributedString(data: encodedData, options: attributedOptions, documentAttributes: nil)
+            let attributedString = try NSAttributedString(data: encodedData, options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary(attributedOptions), documentAttributes: nil)
             self = attributedString.string
         } catch {
             print("Error: \(error)")
             self = htmlEncodedString
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
+	return input.rawValue
 }

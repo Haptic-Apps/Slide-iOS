@@ -13,12 +13,12 @@ final class ForceTouchGestureRecognizer: UIGestureRecognizer {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesEnded(touches, with: event)
-        state = UIGestureRecognizer.State.failed
+        state = UIGestureRecognizer.UIGestureRecognizer.State.failed
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesCancelled(touches, with: event)
-        state = UIGestureRecognizer.State.failed
+        state = UIGestureRecognizer.UIGestureRecognizer.State.failed
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {

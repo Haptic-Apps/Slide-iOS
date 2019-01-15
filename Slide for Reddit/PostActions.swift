@@ -139,7 +139,7 @@ class PostActions: NSObject {
         }
         alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(link.url!)
             }
@@ -183,7 +183,7 @@ class PostActions: NSObject {
             }
             let alert = UIAlertController(title: "Reports",
                                           message: reports,
-                                          preferredStyle: UIAlertControllerStyle.alert)
+                                          preferredStyle: UIAlertController.Style.alert)
             
             let cancelAction = UIAlertAction(title: "OK",
                                              style: .cancel, handler: nil)
@@ -773,4 +773,9 @@ class PostActions: NSObject {
         }
         return nil
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

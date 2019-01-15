@@ -85,7 +85,7 @@ class SettingsGeneral: UITableViewController {
                                 print("Application background refresh minimum interval: \(60 * 10) seconds")
                                 print("Application background refresh status: \(UIApplication.shared.backgroundRefreshStatus.rawValue)")
                             } else {
-                                UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
+                                UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
                                 print("Application background refresh minimum set to never")
                             }
                         }
@@ -135,10 +135,10 @@ class SettingsGeneral: UITableViewController {
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
             s.isOn = isOn
-            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
             cell.accessoryView = s
         }
-        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        cell.selectionStyle = UITableViewCell.SelectionStyle.none
     }
 
     override func loadView() {

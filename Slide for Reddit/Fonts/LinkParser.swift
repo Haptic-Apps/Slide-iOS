@@ -13,16 +13,16 @@ import UIKit
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor) -> NSMutableAttributedString {
         let string = NSMutableAttributedString.init(attributedString: attributedString)
-        string.removeAttribute(kCTForegroundColorFromContextAttributeName as String, range: NSRange.init(location: 0, length: string.length))
+        string.removeAttribute(convertToNSAttributedStringKey(kCTForegroundColorFromContextAttributeName as String), range: NSRange.init(location: 0, length: string.length))
         if string.length > 0 {
             string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
                 for attr in attrs {
                     if let url = attr.value as? URL {
                         if SettingValues.enlargeLinks {
-                            string.addAttribute(NSFontAttributeName, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
+                            string.addAttribute(NSAttributedString.Key.font, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
                         }
-                        string.addAttribute(NSForegroundColorAttributeName, value: color, range: range)
-                        string.addAttribute(kCTUnderlineColorAttributeName as String, value: UIColor.clear, range: range)
+                        string.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
+                        string.addAttribute(convertToNSAttributedStringKey(kCTUnderlineColorAttributeName as String), value: UIColor.clear, range: range)
                         let type = ContentType.getContentType(baseUrl: url)
 
                         if type == .SPOILER {
@@ -31,7 +31,7 @@ class LinkParser {
 
                         if SettingValues.showLinkContentType {
 
-                            let typeString = NSMutableAttributedString.init(string: "", attributes: [:])
+                            let typeString = NSMutableAttributedString.init(string: "", attributes: convertToOptionalNSAttributedStringKeyDictionary([:]))
                             switch type {
                             case .ALBUM:
                                 typeString.mutableString.setString("(Album)")
@@ -61,9 +61,9 @@ class LinkParser {
                                 }
                             }
                             string.insert(typeString, at: range.location + range.length)
-                            string.addAttributes([NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: ColorUtil.fontColor], range: NSRange.init(location: range.location + range.length, length: typeString.length))
+                            string.addAttributes(convertToNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]), range: NSRange.init(location: range.location + range.length, length: typeString.length))
                         }
-                        string.addAttribute(kCTForegroundColorAttributeName as String, value: color, range: range)
+                        string.addAttribute(convertToNSAttributedStringKey(kCTForegroundColorAttributeName as String), value: color, range: range)
                         break
                     }
                 }
@@ -83,10 +83,31 @@ extension NSMutableAttributedString {
             let matchesArray = regex.matches(in: self.string, options: [], range: NSRange(location: 0, length: self.length))
             for match in matchesArray {
                 let attributedText = self.attributedSubstring(from: match.range).mutableCopy() as! NSMutableAttributedString
-                attributedText.addAttribute(NSBackgroundColorAttributeName, value: color, range: NSRange(location: 0, length: attributedText.length))
-                attributedText.addAttribute(kCTForegroundColorAttributeName as String, value: color, range: NSRange(location: 0, length: attributedText.length))
+                attributedText.addAttribute(NSAttributedString.Key.backgroundColor, value: color, range: NSRange(location: 0, length: attributedText.length))
+                attributedText.addAttribute(convertToNSAttributedStringKey(kCTForegroundColorAttributeName as String), value: color, range: NSRange(location: 0, length: attributedText.length))
                 self.replaceCharacters(in: match.range, with: attributedText)
             }
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSAttributedStringKey(_ input: String) -> NSAttributedString.Key {
+	return NSAttributedString.Key(rawValue: input)
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

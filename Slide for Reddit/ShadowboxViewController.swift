@@ -72,7 +72,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     var navItem: UINavigationItem?
     var navigationBar = UINavigationBar()
     
-    func exit() {
+    @objc func exit() {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -96,7 +96,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         navigationBar.horizontalAnchors == self.view.horizontalAnchors
     }
     
-    func color() {
+    @objc func color() {
         SettingValues.blackShadowbox = !SettingValues.blackShadowbox
         UserDefaults.standard.set(SettingValues.blackShadowbox, forKey: SettingValues.pref_blackShadowbox)
         UserDefaults.standard.synchronize()
@@ -118,15 +118,15 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     func doButtons() {
         navItem = UINavigationItem(title: "")
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControl.State.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)
         navItem?.leftBarButtonItem = closeB
         
         let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: !SettingValues.blackShadowbox ? "colors" : "nocolors")?.navIcon(), for: UIControlState.normal)
-        shadowbox.addTarget(self, action: #selector(self.color), for: UIControlEvents.touchUpInside)
+        shadowbox.setImage(UIImage.init(named: !SettingValues.blackShadowbox ? "colors" : "nocolors")?.navIcon(), for: UIControl.State.normal)
+        shadowbox.addTarget(self, action: #selector(self.color), for: UIControl.Event.touchUpInside)
         shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let shadowboxB = UIBarButtonItem.init(customView: shadowbox)
         navItem?.rightBarButtonItem = shadowboxB
@@ -183,7 +183,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
     var selected = false
     var currentVc = UIViewController()
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
 
@@ -233,7 +233,7 @@ extension UIPanGestureRecognizer {
             touchesBegan = false
         }
         let forbiddenDirectionsCount = touches
-            .flatMap({ ($0.location(in: $0.view) - $0.previousLocation(in: $0.view)).direction })
+            .compactMap({ ($0.location(in: $0.view) - $0.previousLocation(in: $0.view)).direction })
             .filter({ $0 != direction })
             .count
         if forbiddenDirectionsCount > 0 {

@@ -61,7 +61,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         
         if type == .EXTERNAL {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(lnk.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(lnk.url!)
             }
@@ -199,7 +199,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
             
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(newUrl, options: [:], completionHandler: nil)
+                UIApplication.shared.open(newUrl, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(newUrl)
             }
@@ -256,4 +256,9 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         return SmallerPresentationController(presentedViewController: presented,
                                              presenting: presenting)
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

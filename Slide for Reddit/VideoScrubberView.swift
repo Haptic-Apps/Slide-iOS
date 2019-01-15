@@ -98,7 +98,7 @@ class VideoScrubberView: UIView {
 //        timeElapsedRightConstraint = timeElapsedLabel.rightAnchor == CGFloat(slider.thumbCenterX - 16) ~ .low
 //        slider
 
-        timeTotalLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: 10)
+        timeTotalLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: UIFont.Weight(rawValue: 10))
         timeTotalLabel.textAlignment = .center
         timeTotalLabel.textColor = UIColor.white
 
@@ -165,12 +165,12 @@ class VideoScrubberView: UIView {
 }
 
 extension VideoScrubberView {
-    func sliderValueChanged(_ sender: ThickSlider) {
+    @objc func sliderValueChanged(_ sender: ThickSlider) {
         delegate?.sliderValueChanged(toSeconds: sender.value)
         timeTotalLabel.text = "+\(getTimeString(Int(floor(sender.value))))"
     }
 
-    func sliderDidBeginDragging(_ sender: ThickSlider) {
+    @objc func sliderDidBeginDragging(_ sender: ThickSlider) {
         delegate?.sliderDidBeginDragging()
         slider.setThumbImage(largeThumbImage, for: .normal)
         UIView.animate(withDuration: 0.3) {
@@ -178,7 +178,7 @@ extension VideoScrubberView {
         }
     }
 
-    func sliderDidEndDragging(_ sender: ThickSlider) {
+    @objc func sliderDidEndDragging(_ sender: ThickSlider) {
         delegate?.sliderDidEndDragging()
         slider.setThumbImage(smallThumbImage, for: .normal)
         UIView.animate(withDuration: 0.3) {
@@ -186,7 +186,7 @@ extension VideoScrubberView {
         }
     }
 
-    func playButtonTapped(_ sender: UIButton) {
+    @objc func playButtonTapped(_ sender: UIButton) {
         if let delegate = delegate {
             if delegate.toggleReturnPlaying() {
                 setPauseButton()

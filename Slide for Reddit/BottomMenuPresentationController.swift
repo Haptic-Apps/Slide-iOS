@@ -26,7 +26,7 @@ class BottomMenuPresentationController: UIPresentationController, UIViewControll
 
 extension BottomMenuPresentationController {
 
-    func backgroundViewTapped(_ sender: AnyObject) {
+    @objc func backgroundViewTapped(_ sender: AnyObject) {
         presentingViewController.dismiss(animated: true, completion: nil)
     }
 
@@ -160,7 +160,7 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
             viewToAnimate.frame = offsetFrame
         }
         
-        let options: UIViewAnimationOptions = interactive ? [.curveLinear] : [.curveEaseInOut]
+        let options: UIView.AnimationOptions = interactive ? [.curveLinear] : [.curveEaseInOut]
         let animateBlock = { [weak self] in
             if self!.reverse {
                 viewToAnimate.frame = offsetFrame

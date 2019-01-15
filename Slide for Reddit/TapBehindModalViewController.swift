@@ -38,8 +38,8 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
     }
     
     // MARK: - Gesture methods to dismiss this with tap outside
-    func handleTapBehind(sender: UITapGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.ended {
+    @objc func handleTapBehind(sender: UITapGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.ended {
             let location: CGPoint = sender.location(in: self.view)
             
             if !self.view.point(inside: location, with: nil) {

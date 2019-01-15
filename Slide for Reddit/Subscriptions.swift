@@ -159,7 +159,7 @@ class Subscriptions {
                         print(result.error!)
                         completion(toReturn, toReturnMultis)
                     case .success(let listing):
-                        toReturn += listing.children.flatMap({ $0 as? Subreddit })
+                        toReturn += listing.children.compactMap({ $0 as? Subreddit })
                         paginator = listing.paginator
                         print("Size is \(toReturn.count) and hasmore is \(paginator.hasMore())")
                         if paginator.hasMore() {

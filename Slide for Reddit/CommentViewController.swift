@@ -495,7 +495,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     }
 
-    func refresh(_ sender: AnyObject) {
+    @objc func refresh(_ sender: AnyObject) {
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
@@ -727,7 +727,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         titleView.font = UIFont.boldSystemFont(ofSize: 17)
         let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
         titleView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: 500))
-        titleView.accessibilityTraits = UIAccessibilityTraitHeader | UIAccessibilityTraitLink
+        titleView.accessibilityTraits = UIAccessibilityTraits(rawValue: UIAccessibilityTraits.header.rawValue | UIAccessibilityTraits.link.rawValue)
         titleView.accessibilityHint = "Opens the sub red it r \(sub)"
         titleView.accessibilityLabel = "Sub red it: r \(sub)"
         self.navigationItem.titleView = titleView
@@ -786,12 +786,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             let finalText: NSMutableAttributedString!
             if textParts.count > 1 {
-                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
-                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
                 firstPart.append(secondPart)
                 finalText = firstPart
             } else {
-                finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+                finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
             }
             popup.attributedText = finalText
 
@@ -814,7 +814,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 popup.widthAnchor == width
                 popup.heightAnchor == 48
                 popup.centerXAnchor == self.navigationController!.view.centerXAnchor
-                self.navigationController!.view.bringSubview(toFront: popup)
+                self.navigationController!.view.bringSubviewToFront(popup)
                 
                 UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                     self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
@@ -861,14 +861,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.tableHeaderView = savedHeaderView!
 
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-        sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
 
         let search = UIButton.init(type: .custom)
-        search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControlState.normal)
-        search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
+        search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControl.State.normal)
+        search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
         search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
 
@@ -885,7 +885,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         hideSearchBar()
     }
 
-    func sort(_ selector: UIButton?) {
+    @objc func sort(_ selector: UIButton?) {
         if !offline {
             let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
 
@@ -931,7 +931,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl!.frame.size.height)
         refreshControl?.tintColor = ColorUtil.fontColor
         refreshControl?.attributedTitle = NSAttributedString(string: "")
-        refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControlEvents.valueChanged)
+        refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControl.Event.valueChanged)
         var top = CGFloat(64)
         let bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
@@ -943,16 +943,16 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             tableView.addSubview(refreshControl!)
         }
 
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
 
         searchBar.delegate = self
-        searchBar.searchBarStyle = UISearchBarStyle.minimal
+        searchBar.searchBarStyle = UISearchBar.Style.minimal
         searchBar.textColor = .white
         searchBar.showsCancelButton = true
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
 
         tableView.estimatedRowHeight = 200
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
 
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell")
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell")
@@ -961,13 +961,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(keyboardWillShow(_:)),
-                name: NSNotification.Name.UIKeyboardWillShow,
+                name: UIResponder.keyboardWillShowNotification,
                 object: nil
         )
         NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(keyboardWillHide(_:)),
-                name: NSNotification.Name.UIKeyboardWillHide,
+                name: UIResponder.keyboardWillHideNotification,
                 object: nil)
 
         headerCell = FullLinkCellView()
@@ -1024,8 +1024,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var keyboardHeight = CGFloat(0)
 
-    func keyboardWillShow(_ notification: Notification) {
-        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             if keyboardHeight == 0 {
                 keyboardHeight = keyboardRectangle.height
@@ -1037,7 +1037,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var normalInsets = UIEdgeInsets(top: 0, left: 0, bottom: 45, right: 0)
 
-    func keyboardWillHide(_ notification: Notification) {
+    @objc func keyboardWillHide(_ notification: Notification) {
         tableView.contentInset = normalInsets
     }
 
@@ -1116,15 +1116,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
             sort.accessibilityLabel = "Change sort type"
-            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-            sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControlEvents.touchUpInside)
+            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
             
             let search = UIButton.init(type: .custom)
             search.accessibilityLabel = "Search"
-            search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControlState.normal)
-            search.addTarget(self, action: #selector(self.search(_:)), for: UIControlEvents.touchUpInside)
+            search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControl.State.normal)
+            search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
             search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let searchB = UIBarButtonItem.init(customView: search)
             
@@ -1168,7 +1168,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             popup.widthAnchor == width
             popup.heightAnchor == 48
             popup.centerXAnchor == self.navigationController!.view.centerXAnchor
-            self.navigationController!.view.bringSubview(toFront: popup)
+            self.navigationController!.view.bringSubviewToFront(popup)
             
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
@@ -1210,13 +1210,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.navigationController?.popViewController(animated: true)
     }
     
-    func showMod(_ sender: AnyObject) {
+    @objc func showMod(_ sender: AnyObject) {
         if !modLink.isEmpty() {
             VCPresenter.openRedditLink(self.modLink, self.navigationController, self)
         }
     }
     
-    func showMenu(_ sender: AnyObject) {
+    @objc func showMenu(_ sender: AnyObject) {
         if !offline {
             let link = submission!
 
@@ -1257,7 +1257,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var subInfo: Subreddit?
 
-    func search(_ sender: AnyObject) {
+    @objc func search(_ sender: AnyObject) {
         if !dataArray.isEmpty {
             showSearchBar()
         }
@@ -1372,7 +1372,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         vote(.none)
     }
 
-    func loadAll(_ sender: AnyObject) {
+    @objc func loadAll(_ sender: AnyObject) {
         context = ""
         reset = true
         refreshControl?.beginRefreshing()
@@ -1401,11 +1401,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         return count
     }
     
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
 
-    func showNavTypes(_ sender: UIView) {
+    @objc func showNavTypes(_ sender: UIView) {
         if !loaded {
             return
         }
@@ -1462,7 +1462,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.isGoingDown = false
     }
     
-    func goUp(_ sender: AnyObject) {
+    @objc func goUp(_ sender: AnyObject) {
         if !loaded {
             return
         }
@@ -1488,7 +1488,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var lastMoved = -1
     var isGoingDown = false
     
-    func goDown(_ sender: AnyObject) {
+    @objc func goDown(_ sender: AnyObject) {
         if !loaded {
             return
         }
@@ -1574,36 +1574,36 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             let up = UIButton(type: .custom)
             up.accessibilityLabel = "Navigate up one comment thread"
-            up.setImage(UIImage(named: "up")?.toolbarIcon(), for: UIControlState.normal)
-            up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControlEvents.touchUpInside)
+            up.setImage(UIImage(named: "up")?.toolbarIcon(), for: UIControl.State.normal)
+            up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
             up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let upB = UIBarButtonItem(customView: up)
 
             let nav = UIButton(type: .custom)
             nav.accessibilityLabel = "Change criteria for comment thread navigation"
-            nav.setImage(UIImage(named: "nav")?.toolbarIcon(), for: UIControlState.normal)
-            nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControlEvents.touchUpInside)
+            nav.setImage(UIImage(named: "nav")?.toolbarIcon(), for: UIControl.State.normal)
+            nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
             nav.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let navB = UIBarButtonItem(customView: nav)
 
             let down = UIButton(type: .custom)
             down.accessibilityLabel = "Navigate down one comment thread"
-            down.setImage(UIImage(named: "down")?.toolbarIcon(), for: UIControlState.normal)
-            down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControlEvents.touchUpInside)
+            down.setImage(UIImage(named: "down")?.toolbarIcon(), for: UIControl.State.normal)
+            down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
             down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let downB = UIBarButtonItem(customView: down)
 
             let more = UIButton(type: .custom)
             more.accessibilityLabel = "Post options"
-            more.setImage(UIImage(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
-            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            more.setImage(UIImage(named: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
+            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)
             mod.accessibilityLabel = "Moderator options"
-            mod.setImage(UIImage(named: "mod")?.toolbarIcon(), for: UIControlState.normal)
-            mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControlEvents.touchUpInside)
+            mod.setImage(UIImage(named: "mod")?.toolbarIcon(), for: UIControl.State.normal)
+            mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
             mod.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             modB = UIBarButtonItem(customView: mod)
             if modLink.isEmpty() && modB.customView != nil {
@@ -1645,7 +1645,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if SettingValues.collapseFully {
             let datasetPosition = (indexPath as NSIndexPath).row
             if dataArray.isEmpty {
-                return UITableViewAutomaticDimension
+                return UITableView.automaticDimension
             }
             let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
             if !hiddenPersons.contains(thing) && thing != self.menuId {
@@ -1654,13 +1654,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 }
             }
         }
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
 
     var tagText: String?
 
     func tagUser(name: String) {
-        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertController.Style.alert)
         let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
             if let text = self.tagText {
                 ColorUtil.setTagForUser(name: name, tag: text)
@@ -1924,7 +1924,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     @objc func spacePressed() {
         if !isEditing {
-            UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 self.tableView.contentOffset.y += 350
             }, completion: nil)
         }
@@ -2196,7 +2196,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             
             if !skipTop {
                 self.tableView.scrollToRow(at: indexPath,
-                                           at: UITableViewScrollPosition.none, animated: false)
+                                           at: UITableView.ScrollPosition.none, animated: false)
             }
             
             id = (contents as! RComment).getIdentifier()
@@ -2245,7 +2245,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         let base = NSMutableAttributedString.init(attributedString: cc)
         let r = base.mutableString.range(of: "\(searchBar.text!)", options: .caseInsensitive, range: NSRange(location: 0, length: base.string.length))
         if r.length > 0 {
-            base.addAttribute(NSForegroundColorAttributeName, value: ColorUtil.accentColorForSub(sub: subreddit), range: r)
+            base.addAttribute(NSAttributedString.Key.foregroundColor, value: ColorUtil.accentColorForSub(sub: subreddit), range: r)
         }
         return base.attributedSubstring(from: NSRange.init(location: 0, length: base.length))
     }
@@ -2478,7 +2478,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         return SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && translatingCell == nil
     }
     
-    func panCell(_ recognizer: UIPanGestureRecognizer) {
+    @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!).x
@@ -2512,4 +2512,15 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             translatingCell = nil
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

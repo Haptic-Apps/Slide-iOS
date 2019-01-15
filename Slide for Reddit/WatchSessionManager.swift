@@ -96,7 +96,7 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
 
     static let sharedManager = WatchSessionManager()
     
-    private let session: WCSession? = WCSession.isSupported() ? WCSession.default() : nil
+    private let session: WCSession? = WCSession.isSupported() ? WCSession.default : nil
     private var validSession: WCSession? {
         if let session = session, session.isPaired && session.isWatchAppInstalled {
             return session

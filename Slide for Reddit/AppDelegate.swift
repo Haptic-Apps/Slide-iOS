@@ -104,7 +104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
 
@@ -194,7 +194,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         resetStack()
         window?.makeKeyAndVisible()
         
-        let remoteNotif = launchOptions?[UIApplicationLaunchOptionsKey.localNotification] as? UILocalNotification
+        let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
         
         if remoteNotif != nil {
             if let url = remoteNotif!.userInfo?["permalink"] as? String {
@@ -211,7 +211,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Application background refresh minimum interval: \(60 * 10) seconds")
             print("Application background refresh status: \(UIApplication.shared.backgroundRefreshStatus.rawValue)")
         } else {
-            UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
+            UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
             print("Application background refresh minimum set to never")
         }
 
@@ -291,12 +291,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.backgroundTaskId = UIApplication.shared.beginBackgroundTask (withName: "Download New Messages") {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
-            self.backgroundTaskId = UIBackgroundTaskInvalid
+            self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
         }
 
         func cleanup() {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
-            self.backgroundTaskId = UIBackgroundTaskInvalid
+            self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
         }
 
         print("getData running...")
@@ -427,7 +427,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     case .failure:
                         print(result.error!)
                     case .success(let listing):
-                        self.subreddits += listing.children.flatMap({ $0 as? Subreddit })
+                        self.subreddits += listing.children.compactMap({ $0 as? Subreddit })
                         self.paginator = listing.paginator
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
@@ -501,7 +501,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         
         let bUrl = url.absoluteString
         if bUrl.startsWith("googlechrome://") || bUrl.startsWith("firefox://") || bUrl.startsWith("opera-http://") {
@@ -748,4 +748,9 @@ extension Session {
             } catch { print(error) }
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
+	return input.rawValue
 }

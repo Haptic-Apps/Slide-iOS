@@ -75,7 +75,7 @@ public class TextDisplayStackView: UIStackView {
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         firstTextView.horizontalAnchors == self.horizontalAnchors
         firstTextView.topAnchor == self.topAnchor
-        firstTextView.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        firstTextView.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         overflow.bottomAnchor == self.bottomAnchor
         overflow.horizontalAnchors == self.horizontalAnchors
     }
@@ -138,7 +138,7 @@ public class TextDisplayStackView: UIStackView {
             let newTitle = NSMutableAttributedString(attributedString: title)
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
-                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
+                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                     newTitle.append(createAttributedChunk(baseHTML: blocks[0], accent: tColor))
                 }
                 startIndex = 1
@@ -171,10 +171,10 @@ public class TextDisplayStackView: UIStackView {
         } else {
             let newTitle = NSMutableAttributedString(attributedString: title)
             if body != nil {
-                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
+                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 newTitle.append(body!)
             } else if !htmlString.isEmpty() {
-                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 5)]))
+                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor))
             }
             
@@ -287,7 +287,7 @@ public class TextDisplayStackView: UIStackView {
                 estimatedHeight += body.globalHeight
                 body.layer.cornerRadius = 10
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
-                body.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                body.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if block.startsWith("<cite>") {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "Quote"
@@ -319,7 +319,7 @@ public class TextDisplayStackView: UIStackView {
                 label.heightAnchor == textSizeB.height
                 label.topAnchor == baseView.topAnchor
                 label.bottomAnchor == baseView.bottomAnchor
-                label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 overflow.addArrangedSubview(baseView)
                             
                 baseView.horizontalAnchors == overflow.horizontalAnchors
@@ -341,7 +341,7 @@ public class TextDisplayStackView: UIStackView {
                 let framesetterB = CTFramesetterCreateWithAttributedString(text)
                 let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
                 estimatedHeight += textSizeB.height
-                label.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 overflow.addArrangedSubview(label)
                 label.horizontalAnchors == overflow.horizontalAnchors
                 label.heightAnchor == textSizeB.height
@@ -369,9 +369,9 @@ public class TextDisplayStackView: UIStackView {
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
         }
         
-        html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
+        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
             if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName: 0, "TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName: NSNumber(value: 1)], range: range)
+                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
             }
         })
         
@@ -398,9 +398,9 @@ public class TextDisplayStackView: UIStackView {
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "\t\t\t▪ ")
         }
 
-        html.enumerateAttribute(NSStrikethroughStyleAttributeName, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
+        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
             if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, NSBaselineOffsetAttributeName: 0, "TTTStrikeOutAttribute": 1, NSStrikethroughStyleAttributeName: NSNumber(value: 1)], range: range)
+                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
             }
         })
         return LinkParser.parse(html, accentColor)
@@ -652,4 +652,20 @@ public class TextDisplayStackView: UIStackView {
         
         return base
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }

@@ -226,7 +226,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     }
     
     func showAuthorChooser() {
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         
         let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
@@ -271,10 +271,10 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
             s.isOn = isOn
-            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
             cell.accessoryView = s
         }
-        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        cell.selectionStyle = UITableViewCell.SelectionStyle.none
     }
 
     override func loadView() {
@@ -305,7 +305,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         authorThemeCell.backgroundColor = ColorUtil.foregroundColor
         authorThemeCell.textLabel?.numberOfLines = 0
         authorThemeCell.textLabel?.lineBreakMode = .byWordWrapping
-        authorThemeCell.selectionStyle = UITableViewCellSelectionStyle.none
+        authorThemeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         let circleView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         circleView.layer.cornerRadius = 15
         circleView.backgroundColor = ColorUtil.getCommentNameColor("NONE")
@@ -318,7 +318,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         themeColorCell.backgroundColor = ColorUtil.foregroundColor
         themeColorCell.textLabel?.numberOfLines = 0
         themeColorCell.textLabel?.lineBreakMode = .byWordWrapping
-        themeColorCell.selectionStyle = UITableViewCellSelectionStyle.none
+        themeColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         let currentColors = ColorUtil.getCommentDepthColors().backwards()
         let stack = UIStackView(frame: CGRect(x: 0, y: 0, width: 68, height: 30)).then {
             $0.axis = .horizontal

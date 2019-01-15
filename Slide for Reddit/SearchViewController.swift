@@ -26,20 +26,20 @@ class SearchViewController: ContentListingViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControlState.normal)
-        edit.addTarget(self, action: #selector(self.edit(_:)), for: UIControlEvents.touchUpInside)
+        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControl.State.normal)
+        edit.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
         let time = UIButton.init(type: .custom)
-        time.setImage(UIImage.init(named: "restore")?.navIcon(), for: UIControlState.normal)
-        time.addTarget(self, action: #selector(self.time(_:)), for: UIControlEvents.touchUpInside)
+        time.setImage(UIImage.init(named: "restore")?.navIcon(), for: UIControl.State.normal)
+        time.addTarget(self, action: #selector(self.time(_:)), for: UIControl.Event.touchUpInside)
         time.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         timeB = UIBarButtonItem.init(customView: time)
 
         let filter = UIButton.init(type: .custom)
-        filter.setImage(UIImage.init(named: "filter")?.navIcon(), for: UIControlState.normal)
-        filter.addTarget(self, action: #selector(self.filter(_:)), for: UIControlEvents.touchUpInside)
+        filter.setImage(UIImage.init(named: "filter")?.navIcon(), for: UIControl.State.normal)
+        filter.addTarget(self, action: #selector(self.filter(_:)), for: UIControl.Event.touchUpInside)
         filter.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         filterB = UIBarButtonItem.init(customView: filter)
 
@@ -49,7 +49,7 @@ class SearchViewController: ContentListingViewController {
     var filterB = UIBarButtonItem.init()
     var timeB = UIBarButtonItem.init()
     
-    func time(_ sender: UIView) {
+    @objc func time(_ sender: UIView) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Time period", message: "", preferredStyle: .actionSheet)
         
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
@@ -78,7 +78,7 @@ class SearchViewController: ContentListingViewController {
         self.present(actionSheetController, animated: true, completion: nil)
     }
     
-    func filter(_ sender: UIView) {
+    @objc func filter(_ sender: UIView) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Search sort", message: "", preferredStyle: .actionSheet)
         
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
@@ -109,7 +109,7 @@ class SearchViewController: ContentListingViewController {
 
     var searchText: String?
 
-    func edit(_ sender: AnyObject) {
+    @objc func edit(_ sender: AnyObject) {
         let alert = UIAlertController(title: "Edit search", message: "", preferredStyle: .actionSheet)
 
         let config: TextField.Config = { textField in
