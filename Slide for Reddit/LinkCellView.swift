@@ -401,7 +401,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             progressDot.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
-            if SettingValues.muteAutoPlay {
+            if SettingValues.muteVideos != .NEVER {
                 sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
                 sound.isHidden = false
             } else {
@@ -1681,8 +1681,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 //                if #available(iOS 10.0, *) {
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
+                strongSelf.setOnce = false
                 strongSelf.videoView?.player?.play()
-                if SettingValues.muteAutoPlay {
+                if SettingValues.muteVideos != .NEVER {
                     strongSelf.videoView?.player?.isMuted = true
                 } else {
                     strongSelf.videoView?.player?.isMuted = false
@@ -1756,19 +1757,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return h > 0 ? String(format: "%1d:%02d:%02d", h, m, s) : String(format: "%1d:%02d", m, s)
     }
     
+    var setOnce = false
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
         if (self.videoView.player?.isMuted ?? false) && tracks {
             if sound.isHidden {
                 sound.isHidden = false
             }
-        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient {
+        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient && !setOnce {
+            setOnce = true
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
             } catch {
                 
             }
-        } else if tracks && !SettingValues.muteAutoPlay && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
+        } else if tracks && SettingValues.muteVideos == .NEVER && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient && !setOnce {
+            setOnce = true
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
             } catch {

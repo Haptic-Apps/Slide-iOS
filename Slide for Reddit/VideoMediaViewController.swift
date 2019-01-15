@@ -50,6 +50,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var videoType: VideoType!
     
     var menuButton = UIButton()
+    var muteButton = UIButton()
     var downloadButton = UIButton()
     var ytButton = UIButton()
     var request: DownloadRequest?
@@ -224,7 +225,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             $0.isHidden = true // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
-        
+
+        muteButton = UIButton().then {
+            $0.accessibilityIdentifier = "Un-mute video"
+            $0.setImage(UIImage(named: "mute")?.navIcon(true), for: [])
+            $0.isHidden = true // The button will be unhidden once the content has loaded.
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+
         ytButton = UIButton().then {
             $0.accessibilityIdentifier = "Open in YouTube"
             $0.setImage(UIImage(named: "youtube")?.navIcon(true), for: [])
@@ -253,7 +261,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             $0.textColor = .white
         }
 
-        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), ytButton, downloadButton, menuButton)
+        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), ytButton, muteButton, downloadButton, menuButton)
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -267,9 +275,24 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         return true
     }
     
+    func unmute() {
+        self.videoView.player?.isMuted = false
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+        } catch {
+        }
+        UIView.animate(withDuration: 0.5, animations: {
+            self.muteButton.alpha = 0
+        }, completion: { (_) in
+            self.muteButton.isHidden = true
+            self.muteButton.alpha = 1
+        })
+    }
+    
     func connectActions() {
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
+        muteButton.addTarget(self, action: #selector(unmute), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
         ytButton.addTarget(self, action: #selector(openInYoutube(_:)), for: .touchUpInside)
@@ -434,9 +457,20 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             youtubeView.isHidden = false
             progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            } catch {
+                
+            }
             return
         } else {
             youtubeView.isHidden = true
+        }
+        
+        if SettingValues.muteVideos == .ALWAYS {
+            self.videoView.player?.isMuted = true
+        } else {
+            self.videoView.player?.isMuted = false
         }
 
         // Otherwise load AVPlayer
@@ -847,6 +881,24 @@ extension VideoMediaViewController {
     
     func displayLinkDidUpdate(displaylink: CADisplayLink) {
         let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
+        if (self.videoView.player?.isMuted ?? false) && tracks {
+            if muteButton.isHidden {
+                muteButton.isHidden = false
+            }
+        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            } catch {
+                
+            }
+        } else if tracks && SettingValues.muteVideos != .ALWAYS && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            } catch {
+                
+            }
+        }
+
         if tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryPlayback{
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)

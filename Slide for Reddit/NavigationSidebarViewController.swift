@@ -53,6 +53,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         $0.isTranslucent = true
         $0.barStyle = .blackTranslucent
     }
+
+    let horizontalSubGroup = HorizontalSubredditGroup()
     
     init(controller: MainViewController) {
         self.parentController = controller
@@ -394,9 +396,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     func configureViews() {
 
+        horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
+        horizontalSubGroup.delegate = self
+        view.addSubview(horizontalSubGroup)
+
         searchBar.sizeToFit()
         searchBar.delegate = self
-        view.addSubviews(searchBar)
+        view.addSubview(searchBar)
 
         tableView.bounces = false
         tableView.delegate = self
@@ -417,8 +423,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureLayout() {
+
+        horizontalSubGroup.topAnchor == view.topAnchor + 4
+        horizontalSubGroup.horizontalAnchors == view.horizontalAnchors
+        horizontalSubGroup.heightAnchor == 30
         
-        searchBar.topAnchor == view.topAnchor + 4
+        searchBar.topAnchor == horizontalSubGroup.bottomAnchor
         searchBar.horizontalAnchors == view.horizontalAnchors
         searchBar.heightAnchor == 50
 
@@ -446,6 +456,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
+            self.horizontalSubGroup.setColors()
+            self.horizontalSubGroup.backgroundColor = ColorUtil.foregroundColor
             self.searchBar.tintColor = ColorUtil.fontColor
             self.searchBar.textColor = ColorUtil.fontColor
             self.searchBar.backgroundColor = ColorUtil.foregroundColor
@@ -760,6 +772,12 @@ extension NavigationSidebarViewController: UIScrollViewDelegate {
     }
 }
 
+extension NavigationSidebarViewController: HorizontalSubredditGroupDelegate {
+    func horizontalSubredditGroup(_ horizontalSubredditGroup: HorizontalSubredditGroup, didRequestSubredditWithName name: String) {
+        parentController?.goToSubreddit(subreddit: name)
+    }
+}
+
 extension NavigationSidebarViewController {
     func keyboardWillBeShown(notification: NSNotification) {
         //get the end position keyboard frame
@@ -808,4 +826,62 @@ class UITouchCapturingView: UIView {
         
         return nil
     }
+}
+
+protocol HorizontalSubredditGroupDelegate: AnyObject {
+    func horizontalSubredditGroup(_ horizontalSubredditGroup: HorizontalSubredditGroup, didRequestSubredditWithName name: String)
+}
+
+class HorizontalSubredditGroup: UIView {
+
+    weak var delegate: HorizontalSubredditGroupDelegate?
+
+    let stack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.distribution = .fillEqually
+    }
+
+    private var buttons: [UIButton] = []
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        addSubview(stack)
+        stack.edgeAnchors == edgeAnchors
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func setColors() {
+        for button in buttons {
+            button.setTitleColor(ColorUtil.baseAccent, for: .normal)
+        }
+    }
+
+    func setSubreddits(subredditNames: [String]) {
+        // Remove all buttons
+        for button in buttons {
+            stack.removeArrangedSubview(button)
+        }
+
+        // Make new buttons
+        for name in subredditNames {
+            let button = UIButton().then {
+                $0.setTitle(name, for: .normal)
+                $0.titleLabel?.font = FontGenerator.boldFontOfSize(size: 14, submission: false)
+            }
+            stack.addArrangedSubview(button)
+            button.addTarget(self, action: #selector(buttonWasTapped), for: .touchUpInside)
+
+        }
+
+        setColors()
+    }
+
+    @objc func buttonWasTapped(_ sender: UIButton) {
+        delegate?.horizontalSubredditGroup(self, didRequestSubredditWithName: sender.currentTitle!.lowercased())
+    }
+
 }
