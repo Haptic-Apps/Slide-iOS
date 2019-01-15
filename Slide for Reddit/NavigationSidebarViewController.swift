@@ -871,6 +871,7 @@ class HorizontalSubredditGroup: UIView {
             let button = UIButton().then {
                 $0.setTitle(name, for: .normal)
                 $0.titleLabel?.font = FontGenerator.boldFontOfSize(size: 14, submission: false)
+                $0.titleLabel?.textAlignment = .center
             }
             stack.addArrangedSubview(button)
             button.addTarget(self, action: #selector(buttonWasTapped), for: .touchUpInside)
