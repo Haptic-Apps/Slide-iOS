@@ -161,7 +161,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         let accent = ColorUtil.accentColorForSub(sub: "")
         if let body = json["body_html"] as? String {
             if !body.isEmpty() {
-                var html = body.gtm_stringByUnescapingFromHTML()!
+                var html = body.unescapeHTML
                 do {
                     html = html.trimmed()
                     html = WrapSpoilers.addSpoilers(html)

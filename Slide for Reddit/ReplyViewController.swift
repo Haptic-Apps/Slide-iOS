@@ -1119,7 +1119,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                     try self.session?.distinguish(comment.getId(), how: "yes", sticky: true, completion: { (_) -> Void in
                         var newComment = comment
                         newComment.stickied = true
-                        newComment.distinguished = "mod"
+                        newComment.distinguished = .moderator
                         self.checkReplies(newComment)
                     })
                 } catch {

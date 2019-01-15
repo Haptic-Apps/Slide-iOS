@@ -138,9 +138,9 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     case .success(let listing):
                         let subs = listing.children.flatMap({ $0 as? Subreddit })
                         for sub in subs {
-                            if !sub.keyColor.isEmpty() {
+                            if sub.keyColor.hexString != "#FFFFFF" {
                                 toReturn.append(sub.displayName)
-                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString)
                                 if UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color != .black {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                     self.count += 1
@@ -157,10 +157,9 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             } else {
                 Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: { (subs, multis) in
                     for sub in subs {
-                        if !sub.keyColor.isEmpty() {
-                            print("Coloring \(sub.displayName)")
+                        if sub.keyColor.hexString != "#FFFFFF" {
                             toReturn.append(sub.displayName)
-                            let color = ColorUtil.getClosestColor(hex: sub.keyColor)
+                            let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString)
                             if UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString != "#000000" {
                                 defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 self.count += 1

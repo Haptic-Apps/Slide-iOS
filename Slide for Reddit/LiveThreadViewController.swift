@@ -82,7 +82,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             
             var content: NSAttributedString?
             if !(data["body_html"] as? String ?? "").isEmpty() {
-                var html = (data["body_html"] as! String).gtm_stringByUnescapingFromHTML()!
+                var html = (data["body_html"] as! String).unescapeHTML
                 html = html.trimmed()
                 do {
                     html = WrapSpoilers.addSpoilers(html)

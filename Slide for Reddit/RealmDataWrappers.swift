@@ -133,7 +133,7 @@ class RealmDataWrapper {
         rSubmission.videoPreview = try! (videoPreview ?? "").convertHtmlSymbols() ?? ""
         rSubmission.height = h
         rSubmission.width = w
-        rSubmission.distinguished = submission.distinguished
+        rSubmission.distinguished = submission.distinguished.type
         rSubmission.canMod = submission.canMod
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
@@ -293,7 +293,7 @@ class RealmDataWrapper {
         rSubmission.name = submission.id
         rSubmission.height = h
         rSubmission.width = w
-        rSubmission.distinguished = submission.distinguished
+        rSubmission.distinguished = submission.distinguished.type
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
@@ -371,7 +371,7 @@ class RealmDataWrapper {
         rComment.canMod = comment.canMod
         rComment.linkid = comment.linkId
         rComment.archived = comment.archived
-        rComment.distinguished = comment.distinguished
+        rComment.distinguished = comment.distinguished.type
         rComment.controversiality = comment.controversiality
         rComment.voted = comment.likes != .none
         rComment.vote = comment.likes == .up

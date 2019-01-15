@@ -431,8 +431,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         self.paginator = listing.paginator
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
-                            if !sub.keyColor.isEmpty {
-                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
+                            if sub.keyColor.hexString != "#FFFFFF" {
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString)
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
@@ -459,8 +459,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                         for sub in subs {
                             toReturn.append(sub.displayName)
-                            if !sub.keyColor.isEmpty {
-                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
+                            if sub.keyColor.hexString != "#FFFFFF" {
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString)
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
