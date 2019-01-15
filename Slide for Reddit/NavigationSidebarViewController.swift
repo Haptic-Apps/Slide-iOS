@@ -130,6 +130,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         switch sender.state {
         case .began:
+            backgroundView.isHidden = false
             lastPercentY = CGFloat(0)
             callbacks.didBeginPanning?()
             if let navVC = parentController!.navigationController {
@@ -232,6 +233,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             guard let strongSelf = self else { return }
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             strongSelf.callbacks.didCollapse?()
+            strongSelf.backgroundView.isHidden = true
         }
 
         UIView.animate(withDuration: 0.4,
@@ -266,6 +268,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             let completionBlock: (Bool) -> Void = { [weak self] finished in
                 guard let strongSelf = self else { return }
                 strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
+                strongSelf.backgroundView.isHidden = true
             }
             
             UIView.animate(withDuration: 0.4,
@@ -277,6 +280,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                            completion: completionBlock)
         } else {
             self.backgroundView.alpha = 0
+            self.backgroundView.isHidden = true
             self.topView?.alpha = 1
             self.view.frame = CGRect(x: 0, y: y, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: desiredHeight)
             self.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
@@ -288,6 +292,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         if self.view.isHidden {
             return
         }
+
+        backgroundView.isHidden = false
 
         if let navVC = parentController!.navigationController {
             navVC.view.addSubviews(backgroundView, self.view)
@@ -361,6 +367,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         backgroundView.edgeAnchors == parentController!.view.edgeAnchors
 
         backgroundView.alpha = 0
+        backgroundView.isHidden = true
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
