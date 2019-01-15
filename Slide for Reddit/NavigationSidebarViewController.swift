@@ -864,6 +864,7 @@ class HorizontalSubredditGroup: UIView {
     func setColors() {
         for button in buttons {
             button.setTitleColor(ColorUtil.baseAccent, for: .normal)
+            button.setTitleColor(ColorUtil.fontColor, for: .highlighted)
         }
     }
 
@@ -879,16 +880,18 @@ class HorizontalSubredditGroup: UIView {
                 $0.setTitle(name, for: .normal)
                 $0.titleLabel?.font = FontGenerator.boldFontOfSize(size: 14, submission: false)
                 $0.titleLabel?.textAlignment = .center
+                $0.accessibilityLabel = name
+                $0.accessibilityHint = "Navigates to the subreddit \(name)"
             }
             stack.addArrangedSubview(button)
             button.addTarget(self, action: #selector(buttonWasTapped), for: .touchUpInside)
-
+            buttons.append(button)
         }
 
         setColors()
     }
 
-    @objc func buttonWasTapped(_ sender: UIButton) {
+    @objc private func buttonWasTapped(_ sender: UIButton) {
         delegate?.horizontalSubredditGroup(self, didRequestSubredditWithName: sender.currentTitle!.lowercased())
     }
 
