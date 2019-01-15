@@ -135,7 +135,7 @@ CHECKOUT OPTIONS:
     :commit: a02b61c94f80f65563a9fc0035f6facfdcc6ad01
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: f42ca99719c8114dd1a4459004e73a8b338a2f0e
+    :commit: 4f7380a29ad1873e5753c53d62faaeb276ea766e
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
@@ -180,6 +180,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: d2ab12a967ae0fee0b4563b8d809c8fb13ebc636
 
-PODFILE CHECKSUM: 1c4f925a5110a5b92deb408c47c130fcc80c121e
+PODFILE CHECKSUM: 928d5821a1c8d86df80cdd7924ed7e0a3ebe97b0
 
 COCOAPODS: 1.4.0
