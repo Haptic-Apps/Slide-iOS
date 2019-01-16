@@ -727,6 +727,6 @@ extension Session {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
+private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
 	return input.rawValue
 }

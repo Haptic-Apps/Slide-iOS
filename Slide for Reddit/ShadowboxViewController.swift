@@ -269,7 +269,7 @@ public extension UIPanGestureRecognizer {
         }
     }
     
-    fileprivate var touchesBegan: Bool {
+    private var touchesBegan: Bool {
         get {
             let object = objc_getAssociatedObject(self, &UIPanGestureRecognizerRuntimeKeys.touchesBegan)
             return (object as? Bool) ?? false
@@ -281,7 +281,7 @@ public extension UIPanGestureRecognizer {
     }
 }
 
-fileprivate extension CGPoint {
+private extension CGPoint {
     
     var direction: UIPanGestureRecognizer.Direction? {
         guard self != .zero else {

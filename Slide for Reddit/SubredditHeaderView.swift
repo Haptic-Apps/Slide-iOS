@@ -347,16 +347,16 @@ extension UIView {
 
     // In order to create computed properties for extensions, we need a key to
     // store and access the stored property
-    fileprivate struct AssociatedObjectKeys {
+    private struct AssociatedObjectKeys {
         static var tapGestureRecognizer = "tapGR"
         static var longTapGestureRecognizer = "longTapGR"
 
     }
 
-    fileprivate typealias Action = (() -> Void)?
+    private typealias Action = (() -> Void)?
 
     // Set our computed property type to a closure
-    fileprivate var tapGestureRecognizerAction: Action? {
+    private var tapGestureRecognizerAction: Action? {
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
@@ -369,7 +369,7 @@ extension UIView {
         }
     }
 
-    fileprivate var longTapGestureRecognizerAction: Action? {
+    private var longTapGestureRecognizerAction: Action? {
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
@@ -400,13 +400,13 @@ extension UIView {
 
     // Every time the user taps on the UIImageView, this function gets called,
     // which triggers the closure we stored
-    @objc fileprivate func handleTapGesture(sender: UITapGestureRecognizer) {
+    @objc private func handleTapGesture(sender: UITapGestureRecognizer) {
         if let action = self.tapGestureRecognizerAction {
             action?()
         }
     }
 
-    @objc fileprivate func handleLongTapGesture(sender: UITapGestureRecognizer) {
+    @objc private func handleLongTapGesture(sender: UITapGestureRecognizer) {
         if let action = self.longTapGestureRecognizerAction {
             action?()
         }
@@ -426,12 +426,12 @@ extension Int {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
 	return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
 	guard let input = input else { return nil }
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }

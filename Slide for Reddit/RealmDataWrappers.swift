@@ -674,16 +674,16 @@ extension String {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
+private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value)})
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
+private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
 	return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
+private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
 	return input.rawValue
 }

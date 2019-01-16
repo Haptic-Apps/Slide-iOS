@@ -27,8 +27,8 @@ class IAPHandler: NSObject {
     let PRO = "me.ccrama.pro.base"
     let PRO_DONATE = "me.ccrama.pro.donate"
 
-    fileprivate var productID = ""
-    fileprivate var productsRequest = SKProductsRequest()
+    private var productID = ""
+    private var productsRequest = SKProductsRequest()
     public var iapProducts = [SKProduct]()
     
     var purchaseStatusBlock: ((IAPHandlerAlertType) -> Void)?

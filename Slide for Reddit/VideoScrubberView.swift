@@ -148,7 +148,7 @@ class VideoScrubberView: UIView {
         }
     }
 
-    fileprivate func getTimeString(_ time: Int) -> String {
+    private func getTimeString(_ time: Int) -> String {
         let h = time / 3600
         let m = (time % 3600) / 60
         let s = (time % 3600) % 60

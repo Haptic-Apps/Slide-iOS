@@ -10,7 +10,7 @@ import UIKit
 
 class SlideInPresentationController: UIPresentationController {
 
-    fileprivate var dimmingView: UIView!
+    private var dimmingView: UIView!
     private var direction: PresentationDirection
     private var coverageRatio: CGFloat
 

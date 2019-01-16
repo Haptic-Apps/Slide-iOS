@@ -84,9 +84,9 @@ final class AsyncImagePickerViewController: UIViewController {
             return $0
         }(UICollectionViewFlowLayout())))
     
-    fileprivate var selection: SelectionType?
-    fileprivate var images: [URL] = []
-    fileprivate var selectedImages: [Int] = []
+    private var selection: SelectionType?
+    private var images: [URL] = []
+    private var selectedImages: [Int] = []
     
     // MARK: Initialize
     
@@ -199,7 +199,7 @@ class ItemWithImage: UICollectionViewCell {
         return $0
     }(UIView())
     
-    fileprivate let inset: CGFloat = 8
+    private let inset: CGFloat = 8
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -211,7 +211,7 @@ class ItemWithImage: UICollectionViewCell {
         setup()
     }
     
-    fileprivate func setup() {
+    private func setup() {
         backgroundColor = .clear
         
         let unselected: UIView = UIView()

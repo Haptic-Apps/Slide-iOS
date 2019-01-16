@@ -11,12 +11,12 @@ import UIKit
 
 class BottomMenuPresentationController: UIPresentationController, UIViewControllerTransitioningDelegate {
 
-    fileprivate var interactive = false
-    fileprivate var dismissInteractionController: PanGestureInteractionController?
+    private var interactive = false
+    private var dismissInteractionController: PanGestureInteractionController?
     weak var tableView: UITableView?
     weak var scrollView: UIScrollView?
 
-    lazy fileprivate var backgroundView = UIView()
+    lazy private var backgroundView = UIView()
 
     init(presentedViewController: UIViewController, presenting: UIViewController) {
         super.init(presentedViewController: presentedViewController, presenting: presenting)
@@ -269,12 +269,12 @@ extension PanGestureInteractionController: UIGestureRecognizerDelegate {
 
 extension UIPanGestureRecognizer {
 
-    fileprivate func angle(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
+    private func angle(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
         // TODO | - Not sure if this is correct
         return atan2(a.y, a.x) - atan2(b.y, b.x)
     }
 
-    fileprivate func shouldRecognizeForDirection() -> Bool {
+    private func shouldRecognizeForDirection() -> Bool {
         guard let view = view else {
             return false
         }

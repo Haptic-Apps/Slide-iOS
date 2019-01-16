@@ -24,7 +24,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
     let volumeHeight: CGFloat = 3
-    
+    var setAudio = false
+
     var safeAreaInsets: UIEdgeInsets {
         if #available(iOS 11.0, tvOS 11.0, *) {
             return view.safeAreaInsets
@@ -39,7 +40,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             } else {
                 // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with:  [])
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
                 
                 // Set category without options (<= iOS 9) setCategory(_:)
                 AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
@@ -918,15 +919,15 @@ extension VideoMediaViewController {
 }
 
 extension VideoMediaViewController {
-    
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
         if (self.videoView.player?.isMuted ?? false) && tracks {
             if muteButton.isHidden {
                 muteButton.isHidden = false
             }
-        } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) {
+        } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setAudio {
             do {
+                setAudio = true
                 if #available(iOS 10.0, *) {
                     try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
                 } else {
@@ -939,8 +940,9 @@ extension VideoMediaViewController {
             } catch {
                 
             }
-        } else if tracks && SettingValues.muteVideos != .ALWAYS && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) {
+        } else if tracks && SettingValues.muteVideos != .ALWAYS && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setAudio {
             do {
+                setAudio = true
                 if #available(iOS 10.0, *) {
                     try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
                 } else {
@@ -955,21 +957,6 @@ extension VideoMediaViewController {
             }
         }
 
-        if tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.playback){
-            do {
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-                } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with:  [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
-                }
-            } catch {
-                
-            }
-        }
         if !sliderBeingUsed {
             if isYoutubeView {
                 if !sliderBeingUsed {
@@ -1307,11 +1294,11 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
 	return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

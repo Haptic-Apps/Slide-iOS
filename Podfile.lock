@@ -1,6 +1,6 @@
 PODS:
   - ActionSheetPicker-3.0 (2.3.0)
-  - Alamofire (4.8.0)
+  - Alamofire (4.8.1)
   - Anchorage (4.3)
   - BadgeSwift (5.0.1)
   - BiometricAuthentication (2.2)
@@ -149,7 +149,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   ActionSheetPicker-3.0: eef157d75e151f255c5333d26656c7fbfe905a51
-  Alamofire: 3ec537f71edc9804815215393ae2b1a8ea33a844
+  Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
   Anchorage: 21a98675245188427f0bcea21404d42a824a766f
   BadgeSwift: 3defa56f504bfb46f2300122c4a565ec9e405c1e
   BiometricAuthentication: 9eeaae9cda890d95bc1fc41e72285e68cb6bc8b0
