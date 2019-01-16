@@ -2181,7 +2181,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         var topCell = indexPath.row
         var contents = content[dataArray[topCell]]
         var id = ""
-        if (contents as! RComment).depth == 1 {
+        if contents is RComment && (contents as! RComment).depth == 1 {
             //collapse self
             id = baseCell.comment!.getIdentifier()
         } else {

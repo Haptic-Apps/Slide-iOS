@@ -111,6 +111,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         configureBackground()
 
         searchBar.isUserInteractionEnabled = true
+        (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
                                                name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -205,6 +206,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     @objc func collapse() {
 
         searchBar.isUserInteractionEnabled = false
+        (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
         let y = UIScreen.main.bounds.height - bottomOffset
         if let parent = self.parentController, parent.menu.superview != nil {
@@ -296,6 +298,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         if self.view.isHidden {
             return
         }
+        (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = true
 
         backgroundView.isHidden = false
 
