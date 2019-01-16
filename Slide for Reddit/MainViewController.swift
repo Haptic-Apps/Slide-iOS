@@ -134,10 +134,14 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             menuNav?.tableView.reloadData()
         }
         
-        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
-            UIApplication.shared.statusBarStyle = .default
+        setNeedsStatusBarAppearanceUpdate()
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() {
+            return .default
         } else {
-            UIApplication.shared.statusBarStyle = .lightContent
+            return .lightContent
         }
     }
     
@@ -256,7 +260,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                             }
                             UserDefaults.standard.set(unread, forKey: "mail")
                             NotificationCenter.default.post(name: .onAccountMailCountChanged, object: nil, userInfo: [
-                                "Count": unread
+                                "Count": unread,
                                 ])
                             UserDefaults.standard.synchronize()
                         }

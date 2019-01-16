@@ -60,6 +60,14 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -69,11 +77,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.view.backgroundColor = UIColor.clear
         self.navigationController?.view.backgroundColor = .clear
         
-        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
-            UIApplication.shared.statusBarStyle = .default
-        } else {
-            UIApplication.shared.statusBarStyle = .lightContent
-        }
+        setNeedsStatusBarAppearanceUpdate()
         
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         

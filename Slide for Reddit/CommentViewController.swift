@@ -1147,11 +1147,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             tableView.reloadData()
         }
         
-        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
-            UIApplication.shared.statusBarStyle = .default
-        } else {
-            UIApplication.shared.statusBarStyle = .lightContent
-        }
+        setNeedsStatusBarAppearanceUpdate()
         if navigationController != nil && (didDisappearCompletely || !loaded) {
             self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
             self.updateToolbar()
@@ -1182,6 +1178,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

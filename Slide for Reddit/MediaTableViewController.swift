@@ -15,9 +15,7 @@ import UIKit
 class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewControllerTransitioningDelegate {
     
     override var prefersStatusBarHidden: Bool {
-        get {
-            return false
-        }
+        return false
     }
 
     var subChanged = false

@@ -25,6 +25,14 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         super.viewWillAppear(animated)
         doToolbar()
     }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
     
     func doToolbar() {
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "")
@@ -38,11 +46,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         
         self.view.backgroundColor = ColorUtil.backgroundColor
         
-        if ColorUtil.theme.isLight() {
-            UIApplication.shared.statusBarStyle = .default
-        } else {
-            UIApplication.shared.statusBarStyle = .lightContent
-        }
+        setNeedsStatusBarAppearanceUpdate()
 
         if current == pages.count - 1 {
             let start = UIButton.init(type: .system)

@@ -125,7 +125,7 @@ public class LocalKeystore {
         UserDefaults.standard.removeObject(forKey: "AUTH+\(name)")
         var tokenArray = UserDefaults.standard.array(forKey: "SAVED_TOKENS") as? [String] ?? [String]()
         
-        tokenArray = tokenArray.filter{$0 != name}
+        tokenArray = tokenArray.filter { $0 != name }
         
         UserDefaults.standard.set(tokenArray, forKey: "SAVED_TOKENS")
         UserDefaults.standard.synchronize()

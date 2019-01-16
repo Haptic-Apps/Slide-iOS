@@ -253,7 +253,7 @@ class ModalMediaViewController: UIViewController {
         if parent is AlbumViewController || parent is ShadowboxLinkViewController {
             self.closeButton.isHidden = true
         }
-        UIApplication.shared.statusBarStyle = .lightContent
+        desiredStatusBarStyle = .lightContent
 
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: closeButton)
     }
@@ -291,10 +291,20 @@ class ModalMediaViewController: UIViewController {
         }
         
         if SettingValues.reduceColor && ColorUtil.theme.isLight() {
-            UIApplication.shared.statusBarStyle = .default
+            desiredStatusBarStyle = .default
         } else {
-            UIApplication.shared.statusBarStyle = .lightContent
+            desiredStatusBarStyle = .lightContent
         }
+    }
+
+    var desiredStatusBarStyle: UIStatusBarStyle = .default {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return desiredStatusBarStyle
     }
 
 //    override func didReceiveMemoryWarning() {
