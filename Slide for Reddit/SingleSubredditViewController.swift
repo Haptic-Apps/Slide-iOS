@@ -671,6 +671,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.refresh()
             case .HIDE_READ:
                 self.hideReadPosts()
+            case .HIDE_PERMANENTLY:
+                self.hideReadPostsPermanently()
             case .GALLERY:
                 self.galleryMode()
             case .SEARCH:
@@ -955,6 +957,48 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
                 }, completion: nil)
+            }
+        }
+    }
+    
+    func hideReadPostsPermanently() {
+        var indexPaths: [IndexPath] = []
+        var toRemove: [RSubmission] = []
+        
+        var index = 0
+        var count = 0
+        for submission in links {
+            if History.getSeen(s: submission) {
+                indexPaths.append(IndexPath(row: count, section: 0))
+                toRemove.append(submission)
+                links.remove(at: index)
+            } else {
+                index += 1
+            }
+            count += 1
+        }
+        
+        //todo save realm
+        DispatchQueue.main.async {
+            if !indexPaths.isEmpty {
+                self.flowLayout.reset()
+                self.tableView.performBatchUpdates({
+                    self.tableView.deleteItems(at: indexPaths)
+                }, completion: nil)
+            }
+        }
+        
+        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+            var hideString = ""
+            for item in toRemove {
+                hideString.append(item.getId() + ",")
+            }
+            hideString = hideString.substring(0, length: hideString.length - 1)
+            do {
+                try session.setHide(true, name: hideString) { (result) in
+                    print(result)
+                }
+            } catch {
             }
         }
     }

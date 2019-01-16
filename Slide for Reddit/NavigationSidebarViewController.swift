@@ -77,6 +77,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         for string in Subscriptions.pinned {
             var current = subsAlphabetical["★"] ?? [String]()
             current.append(string)
+            print(current)
+            print(Subscriptions.pinned)
             subsAlphabetical["★"] = current
         }
         
