@@ -585,7 +585,8 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
         let sub = subsAlphabetical[sectionTitles[editActionsForRowAt.section]]![editActionsForRowAt.row]
-        let pinned = editActionsForRowAt.section == 0
+        let wasEmpty = Subscriptions.pinned.isEmpty
+        let pinned = editActionsForRowAt.section == 0 && !wasEmpty
         if pinned {
             let pin = UITableViewRowAction(style: .normal, title: "Un-Pin") { _, _ in
                 Subscriptions.setPinned(name: AccountController.currentName, subs: Subscriptions.pinned.filter({ $0 != sub })) {
@@ -595,6 +596,9 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                     print(editActionsForRowAt)
                     print(newIndexPath)
                     self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
+                    if Subscriptions.pinned.isEmpty {
+                        self.tableView.deleteSections(IndexSet([0]), with: .automatic)
+                    }
                     self.tableView.endUpdates()
                 }
             }
@@ -608,6 +612,9 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                     self.tableView.beginUpdates()
                     self.loadSections()
                     let newIndexPath = self.getIndexPath(sub: sub)
+                    if wasEmpty {
+                        self.tableView.insertSections(IndexSet([0]), with: .automatic)
+                    }
                     self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
                     self.tableView.endUpdates()
                 }
