@@ -722,7 +722,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 case .success(let postedComment):
                     DispatchQueue.main.async {
                         self.alertController?.dismiss(animated: false, completion: {
-                            self.parent!.dismiss(animated: true, completion: nil)
                         })
                         self.replyDelegate!.replySent(comment: postedComment, cell: self)
                     }

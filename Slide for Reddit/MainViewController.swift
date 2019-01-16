@@ -43,16 +43,18 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             
             if SettingValues.subredditBar {
                 navigationItem.leftBarButtonItems = [accountB]
-                navigationItem.rightBarButtonItems = [readLaterB]
+                navigationItem.rightBarButtonItems = [sortB, readLaterB]
             } else {
-                navigationItem.rightBarButtonItems = [accountB, readLaterB]
+                navigationItem.rightBarButtonItems = [sortB, readLaterB]
+                doLeftItem()
             }
         } else {
             if SettingValues.subredditBar {
                 navigationItem.leftBarButtonItems = [accountB]
-                navigationItem.rightBarButtonItems = []
+                navigationItem.rightBarButtonItems = [sortB]
             } else {
-                navigationItem.rightBarButtonItems = [accountB]
+                navigationItem.rightBarButtonItems = [sortB]
+                doLeftItem()
             }
         }
     }
@@ -658,6 +660,32 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         menuNav?.view.frame.size.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
     
+    func doLeftItem() {
+        let label = UILabel()
+        label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
+        label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
+        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        
+        if SettingValues.reduceColor {
+            var sideView = UIView()
+            sideView = UIView(frame: CGRect(x: 5, y: 5, width: 15, height: 15))
+            sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
+            sideView.translatesAutoresizingMaskIntoConstraints = false
+            label.addSubview(sideView)
+            sideView.layer.cornerRadius = 7.5
+            sideView.clipsToBounds = true
+        }
+        
+        label.sizeToFit()
+        let leftItem = UIBarButtonItem(customView: label)
+        
+        if !SettingValues.subredditBar {
+            self.navigationItem.leftBarButtonItems = SettingValues.subredditBar ? [leftItem] : [accountB, leftItem]
+        }
+
+    }
+    
     func doCurrentPage(_ page: Int) {
         guard page < vCs.count else { return }
         let vc = vCs[page] as! SingleSubredditViewController
@@ -679,29 +707,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         }
         
-        let label = UILabel()
-        label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
-        label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
-        label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.boldSystemFont(ofSize: 20)
-        
-        if SettingValues.reduceColor {
-            var sideView = UIView()
-            sideView = UIView(frame: CGRect(x: 5, y: 5, width: 15, height: 15))
-            sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-            sideView.translatesAutoresizingMaskIntoConstraints = false
-            label.addSubview(sideView)
-            sideView.layer.cornerRadius = 7.5
-            sideView.clipsToBounds = true
-        }
-        
-        label.sizeToFit()
-        let leftItem = UIBarButtonItem(customView: label)
-        
-        if !SettingValues.subredditBar {
-            self.navigationItem.leftBarButtonItems = [leftItem]
-        }
-        
+        doLeftItem()
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
         
