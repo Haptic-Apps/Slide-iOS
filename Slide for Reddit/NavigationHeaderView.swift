@@ -119,8 +119,8 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
             $0.isUserInteractionEnabled = true
         }
 
-        account.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .horizontal)
-        title.setContentCompressionResistancePriority(UILayoutPriorityDefaultLow, for: .horizontal)
+        account.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
+        title.setContentCompressionResistancePriority(UILayoutPriority.defaultLow, for: .horizontal)
 
         accountContainer.addArrangedSubviews(account, title, .flexSpace(), mod, inbox)
 

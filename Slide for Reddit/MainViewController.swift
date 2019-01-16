@@ -838,8 +838,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         sortB = UIBarButtonItem.init(customView: sort)
 
         let account = UIButton(type: .custom)
-        account.setImage(UIImage(named: "profile")?.navIcon(), for: UIControlState.normal)
-        account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControlEvents.touchUpInside)
+        account.setImage(UIImage(named: "profile")?.navIcon(), for: UIControl.State.normal)
+        account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityLabel = "Account"
         
@@ -965,7 +965,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         VCPresenter.showVC(viewController: ReadLaterViewController(subreddit: currentTitle), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
     }
 
-    func showCurrentAccountMenu(_ sender: UIButton?) {
+    @objc func showCurrentAccountMenu(_ sender: UIButton?) {
         let vc = CurrentAccountViewController()
         vc.delegate = self
         vc.modalPresentationStyle = .custom

@@ -39,7 +39,7 @@ class CurrentAccountViewController: UIViewController {
     }
 
     var spinner = UIActivityIndicatorView().then {
-        $0.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge
+        $0.style = UIActivityIndicatorView.Style.whiteLarge
         $0.color = ColorUtil.fontColor
         $0.hidesWhenStopped = true
     }
@@ -54,13 +54,13 @@ class CurrentAccountViewController: UIViewController {
     }
 
     var closeButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+        $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Close"
     }
 
     var settingsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControlState.normal)
+        $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 24, bottom: 24, right: 16)
         $0.accessibilityLabel = "App Settings"
     }
@@ -72,17 +72,17 @@ class CurrentAccountViewController: UIViewController {
         $0.spacing = 0
     }
     var modButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "Mod Queue"
     }
     var mailButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 8, right: 8)
         $0.accessibilityLabel = "Inbox"
     }
     var switchAccountsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControlState.normal)
+        $0.setImage(UIImage(named: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 16)
         $0.accessibilityLabel = "Switch Accounts"
     }
@@ -144,8 +144,8 @@ class CurrentAccountViewController: UIViewController {
         $0.textAlignment = .center
         $0.attributedText = {
             var font = UIFont.boldSystemFont(ofSize: 20)
-            let attributedString = NSMutableAttributedString.init(string: "You are logged out.\n", attributes: [NSFontAttributeName: font])
-            attributedString.append(NSMutableAttributedString.init(string: "Tap here to sign in!", attributes: [NSFontAttributeName: font.bold()]))
+            let attributedString = NSMutableAttributedString.init(string: "You are logged out.\n", attributes: [NSAttributedString.Key.font: font])
+            attributedString.append(NSMutableAttributedString.init(string: "Tap here to sign in!", attributes: [NSAttributedString.Key.font: font.bold()]))
             return attributedString
         }()
     }
@@ -170,7 +170,7 @@ class CurrentAccountViewController: UIViewController {
         super.viewWillAppear(animated)
 
         // Focus the account label
-        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, accountNameLabel)
+        UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: accountNameLabel)
 
         updateMailBadge()
         updateModBadge()
@@ -292,7 +292,7 @@ extension CurrentAccountViewController {
             return NSAttributedString(
                 string: accountName,
                 attributes: [
-                    NSParagraphStyleAttributeName: paragraphStyle,
+                    NSAttributedString.Key.paragraphStyle: paragraphStyle,
                 ]
             )
         }()
@@ -511,14 +511,14 @@ class AccountHeaderView: UIView {
         $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
         $0.textAlignment = .center
         $0.textColor = ColorUtil.fontColor
-        $0.accessibilityTraits = UIAccessibilityTraitButton
+        $0.accessibilityTraits = UIAccessibilityTraits.button
     }
     var postKarmaLabel: UILabel = UILabel().then {
         $0.numberOfLines = 0
         $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
         $0.textAlignment = .center
         $0.textColor = ColorUtil.fontColor
-        $0.accessibilityTraits = UIAccessibilityTraitButton
+        $0.accessibilityTraits = UIAccessibilityTraits.button
     }
 
     var savedCell = UITableViewCell().then {
@@ -565,7 +565,7 @@ class AccountHeaderView: UIView {
 
     func setAccount(_ account: Account?) {
         commentKarmaLabel.attributedText = {
-            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 16, submission: true)]
+            let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
             let attributedString = NSMutableAttributedString(string: "\(account?.commentKarma.delimiter ?? "0")", attributes: attrs)
             let subt = NSMutableAttributedString(string: "\nCOMMENT KARMA")
             attributedString.append(subt)
@@ -573,7 +573,7 @@ class AccountHeaderView: UIView {
         }()
 
         postKarmaLabel.attributedText = {
-            let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 16, submission: true)]
+            let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
             let attributedString = NSMutableAttributedString(string: "\(account?.linkKarma.delimiter ?? "0")", attributes: attrs)
             let subt = NSMutableAttributedString(string: "\nPOST KARMA")
             attributedString.append(subt)

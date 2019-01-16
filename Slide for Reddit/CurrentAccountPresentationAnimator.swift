@@ -54,10 +54,10 @@ extension CurrentAccountPresentationAnimator: UIViewControllerAnimatedTransition
         controller.contentView.frame = initialContentViewFrame
         controller.upperButtonStack.frame = initialUpperButtonStackFrame
 
-        var curve = UIViewAnimationOptions.curveEaseInOut
+        var curve = UIView.AnimationOptions.curveEaseInOut
         if let interactionController = interactionController,
             interactionController.interactionInProgress {
-            curve = UIViewAnimationOptions.curveLinear
+            curve = UIView.AnimationOptions.curveLinear
         }
 
         UIView.animate(withDuration: transitionDuration(using: transitionContext),

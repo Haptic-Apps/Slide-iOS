@@ -48,7 +48,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         if ColorUtil.theme != .LIGHT {
             $0.keyboardAppearance = .dark
         }
-        $0.searchBarStyle = UISearchBarStyle.minimal
+        $0.searchBarStyle = UISearchBar.Style.minimal
         $0.placeholder = " Search subs, posts, or profiles"
         $0.isTranslucent = true
         $0.barStyle = .blackTranslucent
