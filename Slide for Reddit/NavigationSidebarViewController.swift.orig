@@ -26,12 +26,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var muxColor = ColorUtil.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
+    var alphabetical = true
     var subs = Subscriptions.subreddits
     var subsAlphabetical: [String: [String]] = [:]
     var sectionTitles = [String]()
-
-    var headerView = UIView()
-    var dragHandleView = UIView()
     
     var expanded = false
 
@@ -204,7 +202,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     @objc func collapse() {
 
-        searchBar.isUserInteractionEnabled = false
+        searchBar.isUserInteractionEnabled = true
 
         let y = UIScreen.main.bounds.height - bottomOffset
         if let parent = self.parentController, parent.menu.superview != nil {
@@ -327,7 +325,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.backgroundView.alpha = 1
             strongSelf.topView?.alpha = 0
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
-            strongSelf.topView?.backgroundColor = strongSelf.headerView.backgroundColor
+            strongSelf.topView?.backgroundColor = strongSelf.searchBar.backgroundColor
             strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
             strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
@@ -401,7 +399,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !SettingValues.flatMode {
-            headerView.roundCorners([.topLeft, .topRight], radius: 25)
+            searchBar.roundCorners([.topLeft, .topRight], radius: 25)
         }
     }
 
@@ -411,13 +409,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         //horizontalSubGroup.delegate = self
         //view.addSubview(horizontalSubGroup)
 
-        view.addSubview(headerView)
-
-        headerView.addSubview(dragHandleView)
-
         searchBar.sizeToFit()
         searchBar.delegate = self
-        headerView.addSubview(searchBar)
+        view.addSubview(searchBar)
 
         tableView.bounces = false
         tableView.delegate = self
@@ -442,21 +436,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         //horizontalSubGroup.topAnchor == view.topAnchor
         //horizontalSubGroup.horizontalAnchors == view.horizontalAnchors
         //horizontalSubGroup.heightAnchor == 90
-
-        headerView.topAnchor == view.topAnchor
-        headerView.horizontalAnchors == view.horizontalAnchors
-
-        dragHandleView.topAnchor == headerView.topAnchor + 8
-        dragHandleView.centerXAnchor == headerView.centerXAnchor
-        dragHandleView.sizeAnchors == CGSize(width: 60, height: 6)
-        dragHandleView.layer.cornerRadius = 3
         
-        searchBar.topAnchor == dragHandleView.bottomAnchor + 4
-        searchBar.horizontalAnchors == headerView.horizontalAnchors
+        searchBar.topAnchor == view.topAnchor
+        searchBar.horizontalAnchors == view.horizontalAnchors
         searchBar.heightAnchor == 50
-        searchBar.bottomAnchor == headerView.bottomAnchor
 
-        tableView.topAnchor == headerView.bottomAnchor
+        tableView.topAnchor == searchBar.bottomAnchor
         tableView.horizontalAnchors == view.horizontalAnchors
         tableView.bottomAnchor == view.bottomAnchor
     }
@@ -482,11 +467,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         DispatchQueue.main.async {
             //self.horizontalSubGroup.setColors()
             //self.horizontalSubGroup.backgroundColor = ColorUtil.foregroundColor
-            self.headerView.backgroundColor = ColorUtil.foregroundColor
-            self.dragHandleView.backgroundColor = ColorUtil.fontColor.withAlphaComponent(0.2)
             self.searchBar.tintColor = ColorUtil.fontColor
             self.searchBar.textColor = ColorUtil.fontColor
-            self.searchBar.backgroundColor = .clear
+            self.searchBar.backgroundColor = ColorUtil.foregroundColor
             self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         }
     }
@@ -522,7 +505,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return !isSearching ? sectionTitles.count : (suggestions.count > 0 ? 2 : 1)
+        return (alphabetical && !isSearching) ? sectionTitles.count : (suggestions.count > 0 ? 2 : 1)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -534,11 +517,11 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return !isSearching ? sectionTitles : nil
+        return alphabetical && !isSearching ? sectionTitles : nil
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if !isSearching {
+        if alphabetical && !isSearching {
             return subsAlphabetical[sectionTitles[section]]!.count
         }
         if section == 0 {
@@ -553,10 +536,11 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if isSearching && section == 0 {
-            return 0
+        if section == 1 && !alphabetical {
+            return 28
+        } else {
+            return 28
         }
-        return 28
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -615,26 +599,26 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        label.backgroundColor = ColorUtil.foregroundColor
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0))
+        toReturn.backgroundColor = ColorUtil.backgroundColor
 
         if isSearching {
             switch section {
             case 0: label.text  = ""
-            default: label.text  = "SUBREDDIT SUGGESTIONS"
+            default: label.text  = "    SUBREDDIT SUGGESTIONS"
             }
         } else {
-            label.text = "\(sectionTitles[section])"
+            label.text = "    \(sectionTitles[section])"
             if sectionTitles[section] == "/" {
-                label.text = "MULTIREDDITS"
+                label.text = "    MULTIREDDITS"
             } else if sectionTitles[section] == "★" {
-                label.text = "PINNED"
+                label.text = "    PINNED"
             }
         }
-
-        let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.foregroundColor
         return toReturn
     }
 
@@ -667,6 +651,8 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 var thing = ""
                 if isSearching {
                     thing = filteredContent[indexPath.row]
+                } else if !alphabetical {
+                    thing = subs[indexPath.row]
                 } else {
                     thing = subsAlphabetical[sectionTitles[indexPath.section]]![indexPath.row]
                 }
@@ -682,7 +668,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 thing = subsAlphabetical[sectionTitles[indexPath.section]]![indexPath.row]
             }
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-            c.setSubreddit(subreddit: thing, nav: self, exists: true)
+            c.setSubreddit(subreddit: thing, nav: self, exists: alphabetical)
             cell = c
         }
 
