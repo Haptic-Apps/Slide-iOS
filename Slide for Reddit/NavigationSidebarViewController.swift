@@ -430,16 +430,16 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureLayout() {
-
-        horizontalSubGroup.topAnchor == view.topAnchor + 4
-        horizontalSubGroup.horizontalAnchors == view.horizontalAnchors
-        horizontalSubGroup.heightAnchor == 30
         
-        searchBar.topAnchor == horizontalSubGroup.bottomAnchor
+        searchBar.topAnchor == view.topAnchor + 4
         searchBar.horizontalAnchors == view.horizontalAnchors
         searchBar.heightAnchor == 50
 
-        tableView.topAnchor == searchBar.bottomAnchor
+        horizontalSubGroup.topAnchor == searchBar.bottomAnchor
+        horizontalSubGroup.horizontalAnchors == view.horizontalAnchors
+        horizontalSubGroup.heightAnchor == 30
+
+        tableView.topAnchor == horizontalSubGroup.bottomAnchor
         tableView.horizontalAnchors == view.horizontalAnchors
         tableView.bottomAnchor == view.bottomAnchor
     }
@@ -535,9 +535,9 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 1 && !alphabetical {
-            return 40
+            return 28
         } else {
-            return 40
+            return 28
         }
     }
 
@@ -601,7 +601,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
         label.backgroundColor = ColorUtil.foregroundColor
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 12, left: 0, bottom: 0, right: 0))
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
         if isSearching {
@@ -613,7 +613,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             label.text = "    \(sectionTitles[section])"
             if sectionTitles[section] == "/" {
                 label.text = "    MULTIREDDITS"
-            } else if section == 0 {
+            } else if sectionTitles[section] == "★" {
                 label.text = "    PINNED"
             }
         }
