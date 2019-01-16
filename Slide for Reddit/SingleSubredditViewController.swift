@@ -783,7 +783,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     case .failure:
                         print(result.error!.description)
                         DispatchQueue.main.async {
-                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
+                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
                                 self.load(reset: true)
                             } else {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -1013,7 +1013,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
         }))
 
-        if sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/") {
+        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { (_) in
                 let text = self.searchText ?? ""
                 if !AccountController.isLoggedIn {
@@ -2044,7 +2044,7 @@ extension SingleSubredditViewController {
             }
         }))
 
-        if sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/") {
+        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
             alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { _ in
                 self.newPost(sender)
             }))

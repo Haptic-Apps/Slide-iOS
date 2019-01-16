@@ -193,7 +193,11 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.view.backgroundColor = UIColor.clear
-        UIApplication.shared.statusBarStyle = .lightContent
+        setNeedsStatusBarAppearanceUpdate()
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     var navItem: UINavigationItem?

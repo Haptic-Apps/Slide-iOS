@@ -32,7 +32,9 @@ class Subscriptions {
         if let accounts = UserDefaults.standard.array(forKey: "subsP" + AccountController.currentName) {
             return accounts as! [String]
         }
-        return []
+        UserDefaults.standard.set(["frontpage", "all", "popular"], forKey: "subsP" + AccountController.currentName)
+        UserDefaults.standard.synchronize()
+        return ["frontpage", "all", "popular"]
     }
     
     public static var offline: [String] {

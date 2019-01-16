@@ -54,7 +54,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         $0.barStyle = .blackTranslucent
     }
 
-    let horizontalSubGroup = HorizontalSubredditGroup()
+    //let horizontalSubGroup = HorizontalSubredditGroup()
     
     init(controller: MainViewController) {
         self.parentController = controller
@@ -403,9 +403,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     func configureViews() {
 
-        horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
-        horizontalSubGroup.delegate = self
-        view.addSubview(horizontalSubGroup)
+        //horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
+        //horizontalSubGroup.delegate = self
+        //view.addSubview(horizontalSubGroup)
 
         searchBar.sizeToFit()
         searchBar.delegate = self
@@ -430,12 +430,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func configureLayout() {
-
-        horizontalSubGroup.topAnchor == view.topAnchor + 4
-        horizontalSubGroup.horizontalAnchors == view.horizontalAnchors
-        horizontalSubGroup.heightAnchor == 30
+    
+        //horizontalSubGroup.topAnchor == view.topAnchor
+        //horizontalSubGroup.horizontalAnchors == view.horizontalAnchors
+        //horizontalSubGroup.heightAnchor == 90
         
-        searchBar.topAnchor == horizontalSubGroup.bottomAnchor
+        searchBar.topAnchor == view.topAnchor
         searchBar.horizontalAnchors == view.horizontalAnchors
         searchBar.heightAnchor == 50
 
@@ -463,8 +463,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
-            self.horizontalSubGroup.setColors()
-            self.horizontalSubGroup.backgroundColor = ColorUtil.foregroundColor
+            //self.horizontalSubGroup.setColors()
+            //self.horizontalSubGroup.backgroundColor = ColorUtil.foregroundColor
             self.searchBar.tintColor = ColorUtil.fontColor
             self.searchBar.textColor = ColorUtil.fontColor
             self.searchBar.backgroundColor = ColorUtil.foregroundColor
@@ -535,9 +535,9 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 1 && !alphabetical {
-            return 40
+            return 28
         } else {
-            return 40
+            return 28
         }
     }
 
@@ -601,7 +601,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
         label.backgroundColor = ColorUtil.foregroundColor
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 12, left: 0, bottom: 0, right: 0))
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
         if isSearching {
@@ -613,7 +613,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             label.text = "    \(sectionTitles[section])"
             if sectionTitles[section] == "/" {
                 label.text = "    MULTIREDDITS"
-            } else if section == 0 {
+            } else if sectionTitles[section] == "★" {
                 label.text = "    PINNED"
             }
         }
@@ -877,12 +877,24 @@ class HorizontalSubredditGroup: UIView {
         // Make new buttons
         for name in subredditNames {
             let button = UIButton().then {
-                $0.setTitle(name, for: .normal)
+                $0.setTitle("\n\n\n\n\(name)", for: .normal)
                 $0.titleLabel?.font = FontGenerator.boldFontOfSize(size: 14, submission: false)
                 $0.titleLabel?.textAlignment = .center
                 $0.accessibilityLabel = name
+                $0.titleLabel?.numberOfLines = 0
                 $0.accessibilityHint = "Navigates to the subreddit \(name)"
             }
+            let dot = UIImageView().then {
+                $0.backgroundColor = ColorUtil.baseAccent
+                $0.layer.cornerRadius = 25
+                $0.heightAnchor == 50
+                $0.contentMode = .center
+                $0.widthAnchor == 50
+                $0.image = UIImage(named: "subs")!.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
+            }
+            button.addSubview(dot)
+            dot.centerXAnchor == button.centerXAnchor
+            dot.bottomAnchor == button.bottomAnchor - 25
             stack.addArrangedSubview(button)
             button.addTarget(self, action: #selector(buttonWasTapped), for: .touchUpInside)
             buttons.append(button)
@@ -892,7 +904,7 @@ class HorizontalSubredditGroup: UIView {
     }
 
     @objc private func buttonWasTapped(_ sender: UIButton) {
-        delegate?.horizontalSubredditGroup(self, didRequestSubredditWithName: sender.currentTitle!.lowercased())
+        delegate?.horizontalSubredditGroup(self, didRequestSubredditWithName: sender.currentTitle!.lowercased().trimmed())
     }
 
 }
