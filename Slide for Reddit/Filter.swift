@@ -68,7 +68,7 @@ class Filter: UITableViewController {
         self.tableView.frame = CGRect.init(x: 30, y: 8, width: 275, height: 420)
     }
 
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == imageSwitch {
             enabled[0] = changed.isOn
         } else if changed == albumSwitch {
@@ -95,59 +95,59 @@ class Filter: UITableViewController {
 
         imageSwitch = UISwitch()
         imageSwitch.isOn = enabled[0]
-        imageSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        imageSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.image.textLabel?.text = "Images"
         self.image.accessoryView = imageSwitch
         self.image.backgroundColor = .clear
-        self.image.selectionStyle = UITableViewCellSelectionStyle.none
+        self.image.selectionStyle = UITableViewCell.SelectionStyle.none
 
         albumSwitch = UISwitch()
         albumSwitch.isOn = enabled[1]
-        albumSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        albumSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.album.textLabel?.text = "Albums"
         self.album.accessoryView = albumSwitch
         self.album.backgroundColor = .clear
-        self.album.selectionStyle = UITableViewCellSelectionStyle.none
+        self.album.selectionStyle = UITableViewCell.SelectionStyle.none
 
         gifSwitch = UISwitch()
         gifSwitch.isOn = enabled[2]
-        gifSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        gifSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.gif.textLabel?.text = "Gifs"
         self.gif.accessoryView = gifSwitch
         self.gif.backgroundColor = .clear
-        self.gif.selectionStyle = UITableViewCellSelectionStyle.none
+        self.gif.selectionStyle = UITableViewCell.SelectionStyle.none
 
         videoSwitch = UISwitch()
         videoSwitch.isOn = enabled[3]
-        videoSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        videoSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.video.textLabel?.text = "Videos"
         self.video.accessoryView = videoSwitch
         self.video.backgroundColor = .clear
-        self.video.selectionStyle = UITableViewCellSelectionStyle.none
+        self.video.selectionStyle = UITableViewCell.SelectionStyle.none
 
         linkSwitch = UISwitch()
         linkSwitch.isOn = enabled[4]
-        linkSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        linkSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.link.textLabel?.text = "Links"
         self.link.accessoryView = linkSwitch
         self.link.backgroundColor = .clear
-        self.link.selectionStyle = UITableViewCellSelectionStyle.none
+        self.link.selectionStyle = UITableViewCell.SelectionStyle.none
 
         selftextSwitch = UISwitch()
         selftextSwitch.isOn = enabled[5]
-        selftextSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        selftextSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.selftext.textLabel?.text = "Selftext"
         self.selftext.accessoryView = selftextSwitch
         self.selftext.backgroundColor = .clear
-        self.selftext.selectionStyle = UITableViewCellSelectionStyle.none
+        self.selftext.selectionStyle = UITableViewCell.SelectionStyle.none
 
         nsfwSwitch = UISwitch()
         nsfwSwitch.isOn = enabled[6]
-        nsfwSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        nsfwSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.nsfw.textLabel?.text = "NSFW Content"
         self.nsfw.accessoryView = nsfwSwitch
         self.nsfw.backgroundColor = .clear
-        self.nsfw.selectionStyle = UITableViewCellSelectionStyle.none
+        self.nsfw.selectionStyle = UITableViewCell.SelectionStyle.none
 
     }
 

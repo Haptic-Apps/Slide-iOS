@@ -205,13 +205,13 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         box.leftAnchor == baseBody.leftAnchor + 12
         box.bottomAnchor == baseBody.bottomAnchor - 8
         box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
-        box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         box.heightAnchor == CGFloat(24)
         buttons.heightAnchor == CGFloat(24)
         buttons.rightAnchor == baseBody.rightAnchor - 12
         buttons.bottomAnchor == baseBody.bottomAnchor - 8
-        buttons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-        titleLabel.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+        buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+        titleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         titleLabel.topAnchor == baseBody.topAnchor
         titleLabel.horizontalAnchors == baseBody.horizontalAnchors + 12
         titleLabel.bottomAnchor == box.topAnchor - 8
@@ -227,15 +227,15 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             switch  ActionStates.getVoteDirection(s: link) {
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
-                attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.downvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
             case .up:
                 upvote.image = LinkCellImageCache.upvoteTinted
-                attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
             default:
-                attrs = ([NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
+                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
             }
             
-            score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
+            score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
             
             comments.text = "\(link.commentCount)"
             
@@ -248,15 +248,15 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             switch ActionStates.getVoteDirection(s: link) {
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
-                attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.downvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
             case .up:
                 upvote.image = LinkCellImageCache.upvoteTinted
-                attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
             default:
-                attrs = ([NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
+                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
             }
             
-            score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
+            score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
             
             //todo what to do here titleLabel.setText(CachedTitle.getTitle(submission: link, full: false, false, true))
         }
@@ -316,8 +316,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false))
             if embed != nil {
                 self.embeddedVC = embed
-                self.addChildViewController(embed!)
-                embed!.didMove(toParentViewController: self)
+                self.addChild(embed!)
+                embed!.didMove(toParent: self)
                 self.topBody.addSubview(embed!.view)
                 embed!.view.horizontalAnchors == topBody.horizontalAnchors
                 embed!.view.topAnchor == topBody.safeTopAnchor
@@ -364,7 +364,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 default:
                     text = "Link"
                 }
-            let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 16, submission: true)])
+            let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 16, submission: true)]))
             finalText.append(NSAttributedString.init(string: "\n\(baseURL!.host ?? baseURL!.absoluteString)"))
             info.textAlignment = .center
             info.attributedText = finalText
@@ -465,4 +465,15 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

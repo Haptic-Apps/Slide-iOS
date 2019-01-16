@@ -300,14 +300,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         layoutForType()
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
         var userInfo = notification.userInfo!
-        var keyboardFrame: CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+        var keyboardFrame: CGRect = (userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
         keyboardFrame = self.view.convert(keyboardFrame, from: nil)
 
         var contentInset: UIEdgeInsets = self.scrollView.contentInset
@@ -417,11 +417,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         replyButtons?.contentSize = CGSize.init(width: finalWidth, height: CGFloat(30))
     }
     
-    func changeState(_ sender: UIStateButton) {
+    @objc func changeState(_ sender: UIStateButton) {
         sender.isSelected = !sender.isSelected
     }
 
-    func info(_ sender: UIStateButton) {
+    @objc func info(_ sender: UIStateButton) {
         Sidebar.init(parent: self, subname: subreddit).displaySidebar()
     }
 
@@ -827,17 +827,17 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
 
         let send = UIButton.init(type: .custom)
-        send.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        send.setImage(UIImage.init(named: "send")!.navIcon(), for: UIControlState.normal)
-        send.addTarget(self, action: #selector(self.send(_:)), for: UIControlEvents.touchUpInside)
+        send.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+        send.setImage(UIImage.init(named: "send")!.navIcon(), for: UIControl.State.normal)
+        send.addTarget(self, action: #selector(self.send(_:)), for: UIControl.Event.touchUpInside)
         send.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         send.accessibilityLabel = "Send"
         let sendB = UIBarButtonItem.init(customView: send)
         navigationItem.rightBarButtonItem = sendB
 
         let button = UIButtonWithContext.init(type: .custom)
-        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControlState.normal)
+        button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.accessibilityLabel = "Close"
         button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
@@ -846,7 +846,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         navigationItem.leftBarButtonItem = barButton
     }
 
-    func close(_ sender: AnyObject) {
+    @objc func close(_ sender: AnyObject) {
         let alert = UIAlertController.init(title: "Discard this \(type.isMessage() ? "message" : (type.isComment()) ? "comment" : type.isEdit() ? "edit" : "submission")?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
             if self.navigationController?.viewControllers.count ?? 1 == 1 {
@@ -932,7 +932,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         if type == .EDIT_SELFTEXT {
             alertController = UIAlertController(title: nil, message: "Editing submission...\n\n", preferredStyle: .alert)
 
-            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
             spinnerIndicator.color = UIColor.black
             spinnerIndicator.startAnimating()
@@ -954,7 +954,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         } else {
             alertController = UIAlertController(title: nil, message: "Posting submission...\n\n", preferredStyle: .alert)
 
-            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
             spinnerIndicator.color = UIColor.black
             spinnerIndicator.startAnimating()
@@ -1039,7 +1039,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
 
         alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
-        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
         spinnerIndicator.color = UIColor.black
         spinnerIndicator.startAnimating()
@@ -1086,7 +1086,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         let body = text!.last!
 
         alertController = UIAlertController(title: nil, message: "Posting comment...\n\n", preferredStyle: .alert)
-        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
         spinnerIndicator.color = UIColor.black
         spinnerIndicator.startAnimating()
@@ -1119,7 +1119,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                     try self.session?.distinguish(comment.getId(), how: "yes", sticky: true, completion: { (_) -> Void in
                         var newComment = comment
                         newComment.stickied = true
-                        newComment.distinguished = "mod"
+                        newComment.distinguished = .moderator
                         self.checkReplies(newComment)
                     })
                 } catch {
@@ -1147,7 +1147,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
     }
 
-    func send(_ sender: AnyObject) {
+    @objc func send(_ sender: AnyObject) {
         switch type {
         case .SUBMIT_IMAGE:
             fallthrough
@@ -1210,8 +1210,8 @@ extension UIView {
         self.translatesAutoresizingMaskIntoConstraints = false
         cont.translatesAutoresizingMaskIntoConstraints = false
         cont.addSubview(self)
-        cont.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[innerView]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["innerView": self]))
-        cont.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[innerView]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["innerView": self]))
+        cont.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[innerView]|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["innerView": self]))
+        cont.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[innerView]|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["innerView": self]))
         cont.addConstraint(NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal, toItem: cont, attribute: .width, multiplier: 1.0, constant: 0))
         return cont
     }
@@ -1300,8 +1300,8 @@ public class UIStateButton: UIButton {
     override open var isSelected: Bool {
         didSet {
             backgroundColor = isSelected ? color : ColorUtil.foregroundColor
-            borderColor = color
-            borderWidth = isSelected ? CGFloat(0) : CGFloat(2)
+            self.layer.borderColor = color .cgColor
+            self.layer.borderWidth = isSelected ? CGFloat(0) : CGFloat(2)
         }
     }
 }

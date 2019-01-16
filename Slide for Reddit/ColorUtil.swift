@@ -30,7 +30,7 @@ extension UIColor {
     }
 }
 
-class ColorUtil {
+public class ColorUtil {
     static var theme = Theme.DARK
     static var setOnce = false
     static var defaultTheme = Theme.DARK

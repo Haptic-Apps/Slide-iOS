@@ -47,7 +47,7 @@ class AnyModalViewController: UIViewController {
 
     var closeButton = UIButton().then {
         $0.accessibilityIdentifier = "Close Button"
-        $0.accessibilityTraits = UIAccessibilityTraitButton
+        $0.accessibilityTraits = UIAccessibilityTraits.button
         $0.accessibilityLabel = "Close button"
         $0.accessibilityHint = "Closes the media view"
     }
@@ -96,7 +96,7 @@ class AnyModalViewController: UIViewController {
         self.urlToLoad = baseUrl
     }
 
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
     
@@ -152,7 +152,7 @@ class AnyModalViewController: UIViewController {
         volume.animation = .slideDown
         view.addSubview(volume)
         
-        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         if urlToLoad != nil && self.embeddedPlayer == nil {
             let url = VideoMediaViewController.format(sS: urlToLoad!.absoluteString, true)
@@ -173,9 +173,17 @@ class AnyModalViewController: UIViewController {
                         let avPlayerItem = AVPlayerItem(url: strongSelf.baseURL!)
                         strongSelf.videoView?.player = AVPlayer(playerItem: avPlayerItem)
                         strongSelf.embeddedPlayer = strongSelf.videoView!.player
-                        strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+                        strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
                         do {
-                            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                            if #available(iOS 10.0, *) {
+                                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+                            } else {
+                                // Set category with options (iOS 9+) setCategory(_:options:)
+                                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
+                                
+                                // Set category without options (<= iOS 9) setCategory(_:)
+                                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+                            }
                         } catch {
                             NSLog(error.localizedDescription)
                         }
@@ -211,7 +219,7 @@ class AnyModalViewController: UIViewController {
     func layoutVolume() {
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
-        volume.superview?.bringSubview(toFront: volume)
+        volume.superview?.bringSubviewToFront(volume)
         volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
     }
 
@@ -220,10 +228,18 @@ class AnyModalViewController: UIViewController {
         displayLink = nil
     }
     
-    func unmute() {
+    @objc func unmute() {
         self.videoView.player?.isMuted = false
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+            } else {
+                // Set category with options (iOS 9+) setCategory(_:options:)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
+                
+                // Set category without options (<= iOS 9) setCategory(_:)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+            }
         } catch {
         }
         UIView.animate(withDuration: 0.5, animations: {
@@ -253,7 +269,7 @@ class AnyModalViewController: UIViewController {
         self.view.addGestureRecognizer(longPress)
     }
     
-    func showContextMenu(_ sender: UIButton) {
+    @objc func showContextMenu(_ sender: UIButton) {
         guard let baseURL = self.baseURL else {
             return
         }
@@ -269,7 +285,7 @@ class AnyModalViewController: UIViewController {
         alert.addAction(
             UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(baseURL)
                 }
@@ -335,7 +351,7 @@ class AnyModalViewController: UIViewController {
         }
     }
     
-    func openComments(_ sender: AnyObject) {
+    @objc func openComments(_ sender: AnyObject) {
         if commentCallback != nil {
             self.dismiss(animated: true) {
                 self.commentCallback!()
@@ -343,7 +359,7 @@ class AnyModalViewController: UIViewController {
         }
     }
     
-    func downloadVideoToLibrary(_ sender: AnyObject) {
+    @objc func downloadVideoToLibrary(_ sender: AnyObject) {
         VideoMediaDownloader(urlToLoad: baseURL!).getVideoWithCompletion(completion: { (fileURL) in
             if fileURL != nil {
                 CustomAlbum.shared.saveMovieToLibrary(movieURL: fileURL!, parent: self)
@@ -364,7 +380,7 @@ class AnyModalViewController: UIViewController {
         }
 
         displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
-        displayLink?.add(to: .current, forMode: .defaultRunLoopMode)
+        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
         displayLink?.isPaused = false
 
         videoView.player?.play()
@@ -374,7 +390,7 @@ class AnyModalViewController: UIViewController {
             self.videoView.player?.isMuted = false
         }
 
-        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)
+        UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: closeButton)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -419,7 +435,15 @@ class AnyModalViewController: UIViewController {
         
         // Prevent video from stopping system background audio
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+            } else {
+                // Set category with options (iOS 9+) setCategory(_:options:)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
+                
+                // Set category without options (<= iOS 9) setCategory(_:)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+            }
         } catch let error as NSError {
             print(error)
         }
@@ -484,13 +508,13 @@ class AnyModalViewController: UIViewController {
         }
 
         closeButton.setImage(UIImage(named: "close")?.navIcon(true), for: .normal)
-        closeButton.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         self.view.addSubview(closeButton)
 
         bottomButtons.addArrangedSubviews(goToCommentsButton, UIView.flexSpace(), muteButton, downloadButton, menuButton)
     }
     
-    func exit() {
+    @objc func exit() {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -515,8 +539,8 @@ class AnyModalViewController: UIViewController {
 
     }
     
-    func handleTap(_ sender: UITapGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.ended {
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.ended {
             if scrubber.alpha == 0 {
                 self.handleShowUI()
                 self.startTimerToHide()
@@ -526,8 +550,8 @@ class AnyModalViewController: UIViewController {
         }
     }
     
-    func handleDoubleTap(_ sender: UITapGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.ended {
+    @objc func handleDoubleTap(_ sender: UITapGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.ended {
             
             let maxTime = scrubber.slider.maximumValue
             let x = sender.location(in: self.view).x
@@ -542,7 +566,7 @@ class AnyModalViewController: UIViewController {
     }
     
     func showSpinner() {
-        spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = self.view.center
         spinnerIndicator.color = UIColor.white
         self.view.addSubview(spinnerIndicator)
@@ -564,7 +588,7 @@ class AnyModalViewController: UIViewController {
                                      repeats: false)
     }
     
-    func handleHideUI() {
+    @objc func handleHideUI() {
         if !self.scrubber.isHidden {
             self.fullscreen(self)
             
@@ -598,7 +622,7 @@ class AnyModalViewController: UIViewController {
     var handlingPlayerItemDidreachEnd = false
     
     func playerItemDidreachEnd() {
-        self.videoView?.player?.seek(to: CMTimeMake(1, 1000), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { [weak self] (_) in
+        self.videoView?.player?.seek(to: CMTimeMake(value: 1, timescale: 1000), toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero, completionHandler: { [weak self] (_) in
             guard let strongSelf = self else { return }
             // NOTE: the following is not needed since `strongSelf.videoView.player?.actionAtItemEnd` is set to `AVPlayerActionAtItemEnd.none`
             //            if finished {
@@ -609,7 +633,7 @@ class AnyModalViewController: UIViewController {
     }
 
     // TODO: Also fade background to black?
-    func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
+    @objc func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
             return
         }
@@ -701,7 +725,7 @@ extension AnyModalViewController: UIGestureRecognizerDelegate {
         }
     }
     
-    func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
+    @objc func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
         let translation = panGesture.translation(in: view)
         
         let viewToMove = videoView!
@@ -748,21 +772,37 @@ extension AnyModalViewController: UIGestureRecognizerDelegate {
 }
 
 extension AnyModalViewController {
-    func displayLinkDidUpdate(displaylink: CADisplayLink) {
+    @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
         if (self.videoView.player?.isMuted ?? false) && tracks {
             if muteButton.isHidden {
                 muteButton.isHidden = false
             }
-        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient {
+        } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) {
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                if #available(iOS 10.0, *) {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+                } else {
+                    // Set category with options (iOS 9+) setCategory(_:options:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
+                    
+                    // Set category without options (<= iOS 9) setCategory(_:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+                }
             } catch {
                 
             }
-        } else if tracks && SettingValues.muteVideos != .ALWAYS && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient {
+        } else if tracks && SettingValues.muteVideos != .ALWAYS && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) {
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                if #available(iOS 10.0, *) {
+                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+                } else {
+                    // Set category with options (iOS 9+) setCategory(_:options:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
+                    
+                    // Set category without options (<= iOS 9) setCategory(_:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+                }
             } catch {
                 
             }
@@ -814,8 +854,8 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         newTime = min(newTime, maxTime) // Prevent seeking beyond end
         newTime = max(newTime, 0) // Prevent seeking before beginning
         
-        let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms with a resolution of 1 ms
-        let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), 1000)
+        let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
+        let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), preferredTimescale: 1000)
         self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
             self.videoView.player?.play()
         }
@@ -827,7 +867,7 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         
         let targetTime = CMTime(seconds: Double(toSeconds), preferredTimescale: 1000)
         
-        let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, 1000) // 1 ms with a resolution of 1 ms
+        let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
         self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
     }
     
@@ -885,4 +925,14 @@ extension AVAsset {
         }
         return estimatedSize
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

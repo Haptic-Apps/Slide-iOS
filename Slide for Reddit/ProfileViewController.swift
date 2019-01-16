@@ -29,7 +29,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     }
 
     func pickColor(sender: AnyObject) {
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
@@ -71,7 +71,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     var tagText: String?
 
     func tagUser() {
-        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertController.Style.alert)
         let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
             if let text = self.tagText {
                 ColorUtil.setTagForUser(name: self.name, tag: text)
@@ -95,9 +95,9 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             textField.placeholder = "Tag"
             textField.left(image: UIImage.init(named: "flag"), color: .black)
             textField.leftViewPadding = 12
-            textField.borderWidth = 1
-            textField.cornerRadius = 8
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderWidth = 1
+            textField.layer.cornerRadius = 8
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -175,14 +175,14 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         }
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
          sortB = UIBarButtonItem.init(customView: sort)
         
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControlState.normal)
-        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControl.State.normal)
+        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
          moreB = UIBarButtonItem.init(customView: more)
         
@@ -196,7 +196,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         let date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
         let df = DateFormatter()
         df.dateFormat = "MM/dd/yyyy"
-        let alrController = UIAlertController(title: "", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alrController = UIAlertController(title: "", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertController.Style.actionSheet)
         
         let margin: CGFloat = 8.0
         let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height: 75)
@@ -316,7 +316,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         return more
     }
 
-    func trophyTapped(_ sender: AnyObject) {
+    @objc func trophyTapped(_ sender: AnyObject) {
     }
     
     func close() {
@@ -401,7 +401,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
 
     var currentVc = UIViewController()
     
-    func showSortMenu(_ sender: UIButton?) {
+    @objc func showSortMenu(_ sender: UIButton?) {
         (self.currentVc as? ProfileViewController)?.showSortMenu(sender)
         //TODO implement this!
     }
@@ -445,7 +445,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         return vCs[nextIndex]
     }
 
-    func showMenu(_ sender: AnyObject) {
+    @objc func showMenu(_ sender: AnyObject) {
         do {
             try session?.getUserProfile(self.name, completion: { (result) in
                 switch result {

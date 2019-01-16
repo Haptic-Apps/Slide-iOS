@@ -87,7 +87,7 @@ extension SettingsBackup {
     }
 
     func backupSync() {
-        let icloud = NSUbiquitousKeyValueStore.default()
+        let icloud = NSUbiquitousKeyValueStore.default
         for item in icloud.dictionaryRepresentation {
             icloud.removeObject(forKey: item.key)
         }
@@ -103,7 +103,7 @@ extension SettingsBackup {
     }
 
     func restoreSync() {
-        let icloud = NSUbiquitousKeyValueStore.default()
+        let icloud = NSUbiquitousKeyValueStore.default
         for item in icloud.dictionaryRepresentation {
             UserDefaults.standard.set(item.value, forKey: item.key)
         }

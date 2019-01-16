@@ -74,9 +74,9 @@ extension String {
                 return results
             }
             var res = [String]()
-            res.append((self as NSString).substring(with: match.rangeAt(0)))
+            res.append((self as NSString).substring(with: match.range(at: 0)))
             for i in 1...lastRangeIndex {
-                let capturedGroupIndex = match.rangeAt(i)
+                let capturedGroupIndex = match.range(at: i)
                 let matchedString = (self as NSString).substring(with: capturedGroupIndex)
                 res.append(matchedString)
             }

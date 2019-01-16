@@ -44,21 +44,21 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         navigationController?.setNavigationBarHidden(false, animated: true)
         setupBaseBarColors()
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControlState.normal)
-        edit.addTarget(self, action: #selector(self.new(_:)), for: UIControlEvents.touchUpInside)
+        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControl.State.normal)
+        edit.addTarget(self, action: #selector(self.new(_:)), for: UIControl.Event.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
         let read = UIButton.init(type: .custom)
-        read.setImage(UIImage.init(named: "seen")?.navIcon(), for: UIControlState.normal)
-        read.addTarget(self, action: #selector(self.read(_:)), for: UIControlEvents.touchUpInside)
+        read.setImage(UIImage.init(named: "seen")?.navIcon(), for: UIControl.State.normal)
+        read.addTarget(self, action: #selector(self.read(_:)), for: UIControl.Event.touchUpInside)
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)
 
         navigationItem.rightBarButtonItems = [editB, readB]
     }
 
-    func new(_ sender: AnyObject) {
+    @objc func new(_ sender: AnyObject) {
         VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(completion: {(_) in
             DispatchQueue.main.async(execute: { () -> Void in
                 BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self)
@@ -66,7 +66,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         })), parentVC: self)
     }
 
-    func read(_ sender: AnyObject) {
+    @objc func read(_ sender: AnyObject) {
         do {
             try session?.markAllMessagesAsRead(completion: { (result) in
                 switch result {

@@ -22,7 +22,7 @@ class ModalMediaViewController: UIViewController {
 
     var closeButton = UIButton().then {
         $0.accessibilityIdentifier = "Close Button"
-        $0.accessibilityTraits = UIAccessibilityTraitButton
+        $0.accessibilityTraits = UIAccessibilityTraits.button
         $0.accessibilityLabel = "Close button"
         $0.accessibilityHint = "Closes the media view"
     }
@@ -46,7 +46,7 @@ class ModalMediaViewController: UIViewController {
         
         let type = ContentType.getContentType(baseUrl: url)
         if ContentType.isImgurLink(uri: url) || type == .DEVIANTART || type == .XKCD {
-            spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = self.view.center
             spinnerIndicator.color = UIColor.white
             self.view.addSubview(spinnerIndicator)
@@ -201,7 +201,7 @@ class ModalMediaViewController: UIViewController {
         setModel(model: model)
     }
     
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
 
@@ -255,7 +255,7 @@ class ModalMediaViewController: UIViewController {
         }
         UIApplication.shared.statusBarStyle = .lightContent
 
-        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, closeButton)
+        UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: closeButton)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -309,16 +309,16 @@ class ModalMediaViewController: UIViewController {
             videoView = video.videoView
             displayLink = video.displayLink
         }
-        self.addChildViewController(embeddedVC)
-        embeddedVC.didMove(toParentViewController: self)
+        self.addChild(embeddedVC)
+        embeddedVC.didMove(toParent: self)
         self.view.addSubview(embeddedVC.view)
 
         closeButton.setImage(UIImage(named: "close")?.navIcon(true), for: .normal)
-        closeButton.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         self.view.addSubview(closeButton)
     }
     
-    func exit() {
+    @objc func exit() {
         self.dismiss(animated: true, completion: nil)
     }
 
@@ -357,7 +357,7 @@ class ModalMediaViewController: UIViewController {
 extension ModalMediaViewController {
     func fullscreen(_ sender: AnyObject) {
         // Don't allow fullscreen if the user is a voiceover user.
-        if UIAccessibilityIsVoiceOverRunning() {
+        if UIAccessibility.isVoiceOverRunning {
             return
         }
 
@@ -403,13 +403,13 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
         }
     }
 
-    func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
+    @objc func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
         let translation = panGesture.translation(in: view)
         
         let viewToMove: UIView
         if embeddedVC is ImageMediaViewController {
             viewToMove = (embeddedVC as! ImageMediaViewController).imageView
-        } else if embeddedVC != nil{
+        } else if embeddedVC != nil {
             viewToMove = (embeddedVC as! VideoMediaViewController).isYoutubeView ? (embeddedVC as! VideoMediaViewController).youtubeView : (embeddedVC as! VideoMediaViewController).videoView
         } else {
             return

@@ -25,10 +25,10 @@ class CacheSettings: UITableViewController {
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
             s.isOn = isOn
-            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
             cell.accessoryView = s
         }
-        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        cell.selectionStyle = UITableViewCell.SelectionStyle.none
     }
     
     override func viewDidLoad() {
@@ -116,7 +116,7 @@ class CacheSettings: UITableViewController {
         return section == 0 ? 1 : subs.count
     }
 
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == autoCacheSwitch {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 SettingValues.autoCache = changed.isOn
@@ -158,7 +158,7 @@ class CacheSettings: UITableViewController {
                 aSwitch.isOn = true
             }
             aSwitch.accessibilityIdentifier = thing
-            aSwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            aSwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: UIControl.Event.valueChanged)
             c.accessoryView = aSwitch
             return cell!
         }

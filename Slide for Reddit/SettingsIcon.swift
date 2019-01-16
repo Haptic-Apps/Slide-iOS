@@ -126,7 +126,7 @@ class SettingsIcon: UITableViewController {
 public class IconCell: UITableViewCell {
     var title = UILabel()
     var iconView = UIImageView()
-    override public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         setupView()

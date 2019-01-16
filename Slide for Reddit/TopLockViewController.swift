@@ -51,7 +51,7 @@ public class TopLockViewController: UIViewController {
         doBios()
     }
     
-    func doBios() {
+    @objc func doBios() {
         if SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate() {
             BioMetricAuthenticator.authenticateWithBioMetrics(reason: "", success: {
                 self.dismiss(animated: true, completion: nil)

@@ -29,7 +29,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
     
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
 
@@ -69,7 +69,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
 
         if type == .EXTERNAL {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(lnk.url!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(lnk.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(lnk.url!)
             }
@@ -207,7 +207,7 @@ class MediaViewController: UIViewController, MediaVCDelegate {
 
             if #available(iOS 10.0, *) {
                 print("Opening externally")
-                UIApplication.shared.open(newUrl, options: [:], completionHandler: nil)
+                UIApplication.shared.open(newUrl, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(newUrl)
             }
@@ -265,9 +265,9 @@ class MediaViewController: UIViewController, MediaVCDelegate {
         if let navigationController = navigationController {
             navigationController.navigationBar.shadowImage = UIImage()
             navigationController.navigationBar.barTintColor = color
-            navigationController.navigationBar.titleTextAttributes = [
-                NSForegroundColorAttributeName: SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white as Any,
-            ]
+            navigationController.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([
+                NSAttributedString.Key.foregroundColor.rawValue: SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white as Any,
+            ])
             // If no color was specified but the color muxer is doing its thing,
             // grab the "from" color so that we don't get a white flash.
             if color == nil,
@@ -282,4 +282,15 @@ class MediaViewController: UIViewController, MediaVCDelegate {
         navigationController?.navigationBar.shadowImage = UIImage()
         setNavColors()
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

@@ -448,7 +448,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if !single {
             if AutoCache.progressView != nil {
                 oldY = AutoCache.progressView!.frame.origin.y
-                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
                     AutoCache.progressView!.frame.origin.y = self.view.frame.size.height - 56
                 }, completion: nil)
             }
@@ -461,7 +461,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
 
         if !single && AutoCache.progressView != nil {
-                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
                     AutoCache.progressView!.frame.origin.y = self.oldY
                 }, completion: { _ in
                     self.fab?.isHidden = false
@@ -591,7 +591,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             self.fab!.clipsToBounds = true
             let title = "  " + SettingValues.fabType.getTitle()
             self.fab!.setTitle(title, for: .normal)
-            self.fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.navIcon(true))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+            self.fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.navIcon(true))!, renderMode: UIImage.RenderingMode.alwaysOriginal)
             self.fab!.elevate(elevation: 2)
             self.fab!.titleLabel?.textAlignment = .center
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -637,7 +637,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
     }
 
-    func doFabActions() {
+    @objc func doFabActions() {
         if UserDefaults.standard.bool(forKey: "FAB_SHOWN") == false {
             let a = UIAlertController(title: "Subreddit Action Button", message: "This is the subreddit action button!\n\nThis button's actions can be customized by long pressing on it at any time, and this button can be removed completely in Settings > General.", preferredStyle: .alert)
             a.addAction(UIAlertAction(title: "Change action", style: .default, handler: { (_) in
@@ -711,7 +711,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
-        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
+        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         tableView.alwaysBounceVertical = true
         
@@ -748,31 +748,31 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         if single && !offline {
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-            sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
+            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
             subb = UIButton.init(type: .custom)
-            subb.setImage(UIImage.init(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControlState.normal)
-            subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControlEvents.touchUpInside)
+            subb.setImage(UIImage.init(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
+            subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
             subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let subbB = UIBarButtonItem.init(customView: subb)
 
             let info = UIButton.init(type: .custom)
-            info.setImage(UIImage.init(named: "info")?.toolbarIcon(), for: UIControlState.normal)
-            info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControlEvents.touchUpInside)
+            info.setImage(UIImage.init(named: "info")?.toolbarIcon(), for: UIControl.State.normal)
+            info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControl.Event.touchUpInside)
             info.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let infoB = UIBarButtonItem.init(customView: info)
 
             more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControlState.normal)
-            more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControlEvents.touchUpInside)
+            more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControl.State.normal)
+            more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
             
             navigationItem.rightBarButtonItems = [sortB, subbB]
-            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
             
             toolbarItems = [infoB, flexButton, moreB]
             title = sub
@@ -844,9 +844,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     func doDisplayMultiSidebar(_ sub: Multireddit) {
-        let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertControllerStyle.alert)
+        let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertController.Style.alert)
         for s in sub.subreddits {
-            let somethingAction = UIAlertAction(title: "r/" + s, style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "r/" + s, style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 VCPresenter.showVC(viewController: SingleSubredditViewController.init(subName: s, single: true), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
             })
             let color = ColorUtil.getColorForSub(sub: s)
@@ -862,7 +862,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         //somethingAction = UIAlertAction(title: "Delete multireddit", style: UIAlertActionStyle.destructive, handler: { (_: UIAlertAction!) in print("something") })
         //alrController.addAction(somethingAction)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
 
         alrController.addAction(cancelAction)
 
@@ -870,34 +870,34 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         self.present(alrController, animated: true, completion: {})
     }
 
-    func subscribeSingle(_ selector: AnyObject) {
+    @objc func subscribeSingle(_ selector: AnyObject) {
         if subChanged && !Subscriptions.isSubscriber(sub) || Subscriptions.isSubscriber(sub) {
             //was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
-            subb.setImage(UIImage.init(named: "addcircle")?.navIcon(), for: UIControlState.normal)
+            subb.setImage(UIImage.init(named: "addcircle")?.navIcon(), for: UIControl.State.normal)
         } else {
             let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .actionSheet)
             if AccountController.isLoggedIn {
-                let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+                let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
                     BannerUtil.makeBanner(text: "Subscribed to r/\(self.sub)", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                    self.subb.setImage(UIImage.init(named: "subbed")?.navIcon(), for: UIControlState.normal)
+                    self.subb.setImage(UIImage.init(named: "subbed")?.navIcon(), for: UIControl.State.normal)
                 })
                 alrController.addAction(somethingAction)
             }
 
-            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 BannerUtil.makeBanner(text: "r/\(self.sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                self.subb.setImage(UIImage.init(named: "subbed")?.navIcon(), for: UIControlState.normal)
+                self.subb.setImage(UIImage.init(named: "subbed")?.navIcon(), for: UIControl.State.normal)
             })
             alrController.addAction(somethingAction)
 
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
 
             alrController.addAction(cancelAction)
 
@@ -987,9 +987,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             textField.placeholder = "Search for a post..."
             textField.left(image: UIImage.init(named: "search"), color: .black)
             textField.leftViewPadding = 12
-            textField.borderWidth = 1
-            textField.cornerRadius = 8
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderWidth = 1
+            textField.layer.cornerRadius = 8
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -1033,7 +1033,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     }
     
-    func doDisplaySidebar() {
+    @objc func doDisplaySidebar() {
         Sidebar.init(parent: self, subname: self.sub).displaySidebar()
     }
 
@@ -1091,7 +1091,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         //todo maybe?
     }
 
-    func showSortMenu(_ selector: UIView?) {
+    @objc func showSortMenu(_ selector: UIView?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
@@ -1283,7 +1283,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         } else {
                                             BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
                                         }
-                                        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.tableView)
+                                        UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
                                     } catch {
                                         
                                     }
@@ -1306,7 +1306,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             self.realmListing!.links.removeAll()
                         }
 
-                        let newLinks = listing.children.flatMap({ $0 as? Link })
+                        let newLinks = listing.children.compactMap({ $0 as? Link })
                         var converted: [RSubmission] = []
                         for link in newLinks {
                             let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
@@ -1396,7 +1396,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                 }
                                 
                             }
-                            UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.tableView)
+                            UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
                         }
                     }
                 })
@@ -1782,7 +1782,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 let lighterSub = sub.add(overlay: UIColor.white.withAlphaComponent(0.4))
                 var coloredIcon = UIImage.convertGradientToImage(colors: [lighterSub, sub], frame: CGSize.square(size: 150))
                 coloredIcon = coloredIcon.overlayWith(image: UIImage(named: "slideoverlay")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
-                let imageData: Data = UIImagePNGRepresentation(coloredIcon)! 
+                let imageData: Data = coloredIcon.pngData()! 
                 let base64String = imageData.base64EncodedString()
 
                 // send EOF
@@ -1828,16 +1828,16 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 extension SingleSubredditViewController {
 
     @objc func spacePressed() {
-        UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             self.tableView.contentOffset.y += 350
         }, completion: nil)
     }
 
-    func drefresh(_ sender: AnyObject) {
+    @objc func drefresh(_ sender: AnyObject) {
         refresh()
     }
 
-    func showMoreNone(_ sender: AnyObject) {
+    @objc func showMoreNone(_ sender: AnyObject) {
         showMore(sender, parentVC: nil)
     }
 
@@ -1854,7 +1854,7 @@ extension SingleSubredditViewController {
 
     func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
         isAccent = false
         let margin: CGFloat = 10.0
@@ -1937,7 +1937,7 @@ extension SingleSubredditViewController {
     
     func pickAccent(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
         isAccent = true
         let margin: CGFloat = 10.0
@@ -2122,12 +2122,12 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             
             let finalText: NSMutableAttributedString!
             if textParts.count > 1 {
-                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 16)])
-                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.systemFont(ofSize: 13)])
+                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16)]))
+                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
                 firstPart.append(secondPart)
                 finalText = firstPart
             } else {
-                finalText = NSMutableAttributedString.init(string: submission.title, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+                finalText = NSMutableAttributedString.init(string: submission.title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
             }
 
             cell.time.font = UIFont.systemFont(ofSize: 12)
@@ -2185,7 +2185,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 extension SingleSubredditViewController: LinkCellViewDelegate {
 
     func openComments(id: String, subreddit: String?) {
-        if let nav = ((self.splitViewController?.viewControllers.count > 1) ? self.splitViewController?.viewControllers[1] : nil) as? UINavigationController, let detail = nav.viewControllers[0] as? PagingCommentViewController {
+        if let nav = ((self.splitViewController?.viewControllers.count ?? 0 > 1) ? self.splitViewController?.viewControllers[1] : nil) as? UINavigationController, let detail = nav.viewControllers[0] as? PagingCommentViewController {
             if detail.submissions[0].getId() == id {
                 return
             }
@@ -2437,7 +2437,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         return true
     }
     
-    func panCell(_ recognizer: UIPanGestureRecognizer) {
+    @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil && recognizer.state == .began {
             let velocity = recognizer.velocity(in: recognizer.view!).x
@@ -2501,8 +2501,8 @@ public class ReadLaterCell: UICollectionViewCell {
     func setArticles(articles: Int) {
         let text = "Read Later "
         let numberText = "(\(articles))"
-        let number = NSMutableAttributedString.init(string: numberText, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)])
-        let readLater = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: UIFont.systemFont(ofSize: 15)])
+        let number = NSMutableAttributedString.init(string: numberText, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 15)]))
+        let readLater = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 15)]))
         let finalText = readLater
         finalText.append(number)
 
@@ -2567,4 +2567,15 @@ public class PageCell: UICollectionViewCell {
         time.lineBreakMode = .byWordWrapping
         time.textAlignment = .center
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

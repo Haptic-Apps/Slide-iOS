@@ -78,16 +78,16 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         let itemWidth = width - 10
         let id = data["id"] as! String
         if estimatedHeights[id] == nil {
-            let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 14, submission: true)])
+            let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 14, submission: true)]))
             
             var content: NSAttributedString?
             if !(data["body_html"] as? String ?? "").isEmpty() {
-                var html = (data["body_html"] as! String).gtm_stringByUnescapingFromHTML()!
+                var html = (data["body_html"] as! String).unescapeHTML
                 html = html.trimmed()
                 do {
                     html = WrapSpoilers.addSpoilers(html)
                     html = WrapSpoilers.addTables(html)
-                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary([convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html)]), documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
                     content = LinkParser.parse(attr2, .white)
@@ -145,15 +145,15 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         self.baseData = json
         self.title = (json["title"] as? String) ?? ""
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControlState.normal)
-        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControl.State.normal)
+        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let moreB = UIBarButtonItem.init(customView: more)
         navigationItem.rightBarButtonItem = moreB
     }
     
     var baseData: JSONDictionary?
-    func showMenu(_ sender: AnyObject) {
+    @objc func showMenu(_ sender: AnyObject) {
         let alert = UIAlertController.init(title: (baseData!["title"] as? String) ?? "", message: "\n\n\(baseData!["viewer_count"] as! Int) watching\n\n\n\(baseData!["description"] as! String)", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(alert, animated: true)
@@ -220,4 +220,30 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             self.tableView.reloadData()
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
+	return input.rawValue
 }

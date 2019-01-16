@@ -51,7 +51,7 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
             var colorDict = [String: String]()
             let sublist = Subscriptions.subreddits
             for sub in Subscriptions.subreddits {
-                colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString
+                colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString()
             }
             replyHandler(["subs": colorDict, "orderedsubs": sublist, "pro": SettingValues.isPro])
         } else if message["links"] != nil {
@@ -96,7 +96,7 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
 
     static let sharedManager = WatchSessionManager()
     
-    private let session: WCSession? = WCSession.isSupported() ? WCSession.default() : nil
+    private let session: WCSession? = WCSession.isSupported() ? WCSession.default : nil
     private var validSession: WCSession? {
         if let session = session, session.isPaired && session.isWatchAppInstalled {
             return session

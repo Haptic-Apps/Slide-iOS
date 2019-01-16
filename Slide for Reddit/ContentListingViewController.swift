@@ -57,7 +57,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         }
     }
 
-    func drefresh(_ sender: AnyObject) {
+    @objc func drefresh(_ sender: AnyObject) {
         refresh()
     }
 
@@ -85,7 +85,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             refresh()
         }
         
-        if self.navigationController != nil && !((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader)){
+        if self.navigationController != nil && !((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader)) {
             if !(self.navigationController?.delegate is SloppySwiper) {
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
                 self.navigationController!.delegate = swiper!
@@ -114,7 +114,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         refreshControl.tintColor = ColorUtil.fontColor
 
         refreshControl.attributedTitle = NSAttributedString(string: "")
-        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
+        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
         tableView.addSubview(refreshControl)
         refreshControl.centerAnchors == tableView.centerAnchors
 
@@ -143,7 +143,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         }
         emptyStateView.isHidden = true
         emptyStateView.edgeAnchors == self.tableView.edgeAnchors
-        self.view.bringSubview(toFront: emptyStateView)
+        self.view.bringSubviewToFront(emptyStateView)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
@@ -251,22 +251,22 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             } else if thing is RComment {
                 let comment = thing as! RComment
                 if estimatedHeights[comment.id] == nil {
-                    let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false)] as [String: Any]
+                    let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false)] as [String: Any]
                     let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ")
 
-                    let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: attrs)
+                    let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
                     let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
                     let color = ColorUtil.getColorForSub(sub: comment.subreddit)
                     if color != ColorUtil.baseColor {
-                        subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
+                        subString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: subString.length))
                     }
 
-                    let infoString = NSMutableAttributedString.init(string: "", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: false)])
+                    let infoString = NSMutableAttributedString.init(string: "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false)]))
                     infoString.append(boldString)
                     infoString.append(endString)
                     infoString.append(subString)
 
-                    let titleString = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: false)])
+                    let titleString = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: false)]))
                     titleString.append(NSAttributedString.init(string: "\n", attributes: nil))
                     titleString.append(infoString)
                     
@@ -283,9 +283,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 if estimatedHeights[message.id] == nil {
                     var title: NSMutableAttributedString = NSMutableAttributedString()
                     if message.wasComment {
-                        title = NSMutableAttributedString.init(string: message.linkTitle, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
+                        title = NSMutableAttributedString.init(string: message.linkTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
                     } else {
-                        title = NSMutableAttributedString.init(string: message.subject, attributes: [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 18, submission: true)])
+                        title = NSMutableAttributedString.init(string: message.subject, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
                     }
 
                     let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
@@ -293,10 +293,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let subString = NSMutableAttributedString(string: "r/\(message.subreddit)")
                     let color = ColorUtil.getColorForSub(sub: message.subreddit)
                     if color != ColorUtil.baseColor {
-                        subString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: subString.length))
+                        subString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: subString.length))
                     }
 
-                    let infoString = NSMutableAttributedString.init(string: "", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
+                    let infoString = NSMutableAttributedString.init(string: "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)]))
                     infoString.append(endString)
                     if !message.subreddit.isEmpty {
                         infoString.append(NSAttributedString.init(string: "  •  "))
@@ -307,7 +307,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     var content: NSMutableAttributedString?
                     if !html.isEmpty() {
                         do {
-                            let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                            let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary([convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html)]), documentAttributes: nil)
                             let font = FontGenerator.fontOfSize(size: 16, submission: false)
                             let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
                             content = LinkParser.parse(attr2, .white)
@@ -461,7 +461,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.refreshControl.tintColor = ColorUtil.fontColor
         
         self.refreshControl.attributedTitle = NSAttributedString(string: "")
-        self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControlEvents.valueChanged)
+        self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
         self.tableView.addSubview(self.refreshControl)
     }
 
@@ -623,19 +623,45 @@ class EmptyStateView: UIView {
     func setText(title: String, message: String?) {
         let finalText: NSMutableAttributedString!
         if let message = message {
-            let firstPart = NSMutableAttributedString.init(string: title, attributes: [
-                NSForegroundColorAttributeName: ColorUtil.fontColor.withAlphaComponent(0.8),
-                NSFontAttributeName: UIFont.boldSystemFont(ofSize: 16),
-                ])
-            let secondPart = NSMutableAttributedString.init(string: "\n" + message, attributes: [
-                NSForegroundColorAttributeName: ColorUtil.fontColor.withAlphaComponent(0.5),
-                NSFontAttributeName: UIFont.systemFont(ofSize: 14),
-                ])
+            let firstPart = NSMutableAttributedString.init(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([
+                convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor.withAlphaComponent(0.8),
+                convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16),
+                ]))
+            let secondPart = NSMutableAttributedString.init(string: "\n" + message, attributes: convertToOptionalNSAttributedStringKeyDictionary([
+                convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor.withAlphaComponent(0.5),
+                convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 14),
+                ]))
             firstPart.append(secondPart)
             finalText = firstPart
         } else {
-            finalText = NSMutableAttributedString.init(string: title, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
+            finalText = NSMutableAttributedString.init(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
         }
         titleLabel.attributedText = finalText
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
+	return input.rawValue
 }

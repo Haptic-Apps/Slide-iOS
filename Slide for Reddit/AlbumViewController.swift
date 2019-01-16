@@ -199,7 +199,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     var navItem: UINavigationItem?
     var spinnerIndicator = UIActivityIndicatorView()
     
-    func exit() {
+    @objc func exit() {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -216,16 +216,16 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.isTranslucent = true
         navigationBar.tintColor = .white
         navItem = UINavigationItem(title: "Loading album...")
-        navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: UIColor.white])
 
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.navIcon(true), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.setImage(UIImage.init(named: "close")?.navIcon(true), for: UIControl.State.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)
         navItem?.leftBarButtonItem = closeB
         
-        spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = self.view.center
         spinnerIndicator.color = UIColor.white
         self.view.addSubview(spinnerIndicator)
@@ -279,7 +279,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         SDImageCache.shared().clearMemory()
     }
     
-    func overview(_ sender: AnyObject) {
+    @objc func overview(_ sender: AnyObject) {
         let alert = UIAlertController(style: .actionSheet)
         alert.addAsyncImagePicker(
             flow: .vertical,
@@ -355,4 +355,10 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         return (SDImageCache.shared().makeDiskCachePath(key) ?? "") + ".mp4"
     }
     
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
