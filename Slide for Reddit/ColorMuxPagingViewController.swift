@@ -25,7 +25,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         let point = scrollView.contentOffset
 
         var percentComplete: CGFloat
-        percentComplete = fabs(point.x - self.view.frame.size.width) / self.view.frame.size.width
+        percentComplete = abs(point.x - self.view.frame.size.width) / self.view.frame.size.width
 
         if let color1 = color1, let color2 = color2 {
             if !color2.cgColor.__equalTo(color1.cgColor) {

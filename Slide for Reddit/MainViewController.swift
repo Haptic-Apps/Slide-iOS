@@ -256,7 +256,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                             }
                             UserDefaults.standard.set(unread, forKey: "mail")
                             NotificationCenter.default.post(name: .onAccountMailCountChanged, object: nil, userInfo: [
-                                "Count": unread
+                                "Count": unread,
                                 ])
                             UserDefaults.standard.synchronize()
                         }

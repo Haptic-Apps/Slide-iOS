@@ -90,7 +90,7 @@ class AccountController {
                         case .success(let account):
                             AccountController.current = account
                             NotificationCenter.default.post(name: .onAccountChanged, object: nil, userInfo: [
-                                "Account": account
+                                "Account": account,
                                 ])
                             if AccountController.currentName == name {
                                 AccountController.isGold = account.isGold
