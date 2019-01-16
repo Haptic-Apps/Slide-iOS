@@ -189,10 +189,13 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
 
 }
 
+private var hasSwizzled = false
+
 extension UIPanGestureRecognizer {
-    
-    override open class func initialize() {
-        super.initialize()
+    final public class func swizzle() {
+        guard !hasSwizzled else { return }
+        
+        hasSwizzled = true
         guard self === UIPanGestureRecognizer.self else {
             return
         }
@@ -200,11 +203,11 @@ extension UIPanGestureRecognizer {
         func replace(_ method: Selector, with anotherMethod: Selector, for clаss: AnyClass) {
             let original = class_getInstanceMethod(clаss, method)
             let swizzled = class_getInstanceMethod(clаss, anotherMethod)
-            switch class_addMethod(clаss, method, method_getImplementation(swizzled!), method_getTypeEncoding(swizzled)) {
+            switch class_addMethod(clаss, method, method_getImplementation(swizzled!), method_getTypeEncoding(swizzled!)) {
             case true:
-                class_replaceMethod(clаss, anotherMethod, method_getImplementation(original), method_getTypeEncoding(original))
+                class_replaceMethod(clаss, anotherMethod, method_getImplementation(original!), method_getTypeEncoding(original!))
             case false:
-                method_exchangeImplementations(original!, swizzled)
+                method_exchangeImplementations(original!, swizzled!)
             }
         }
         

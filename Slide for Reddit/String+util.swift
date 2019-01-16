@@ -184,18 +184,6 @@ public extension String {
         return self.count
     }
     
-    func pad(_ n: Int, _ string: String = " ") -> String {
-        return "".join([string.times(n), self, string.times(n)])
-    }
-    
-    func padLeft(_ n: Int, _ string: String = " ") -> String {
-        return "".join([string.times(n), self])
-    }
-    
-    func padRight(_ n: Int, _ string: String = " ") -> String {
-        return "".join([self, string.times(n)])
-    }
-    
     func slugify(withSeparator separator: Character = "-") -> String {
         let slugCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\(separator)")
         return latinize()
@@ -224,10 +212,6 @@ public extension String {
             .components(separatedBy: " ")
             .filter { $0 != "" }
             .joined(separator: " ")
-    }
-    
-    func times(_ n: Int) -> String {
-        return (0..<n).reduce("") { $0 + self }
     }
     
     func toFloat() -> Float? {

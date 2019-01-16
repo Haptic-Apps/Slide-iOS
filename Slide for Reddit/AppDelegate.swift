@@ -108,6 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
 
+        UIPanGestureRecognizer.swizzle()
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
         seenFile = documentDirectory.appending("/seen.plist")
@@ -549,15 +550,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func killAndReturn() {
-        if let rootViewController = UIApplication.topViewController() {
-            var navigationArray = rootViewController.viewControllers
-            navigationArray.removeAll()
-            rootViewController.viewControllers = navigationArray
-            rootViewController.pushViewController(MainViewController(coder: NSCoder.init())!, animated: false)
-        }
-    }
-    
     func applicationDidBecomeActive(_ application: UIApplication) {
         UIView.animate(withDuration: 0.25, animations: {
             self.backView?.alpha = 0
@@ -647,22 +639,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         NotificationCenter.default.post(name: OAuth2TokenRepositoryDidSaveTokenName, object: nil, userInfo: nil)
-    }
-}
-
-extension UIApplication {
-    class func topViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UINavigationController? {
-        if let nav = base as? UINavigationController {
-            return nav
-        }
-        if let tab = base as? UITabBarController {
-            let moreNavigationController = tab.moreNavigationController
-            return moreNavigationController
-        }
-        if let presented = base?.presentedViewController {
-            return topViewController(base: presented)
-        }
-        return base?.navigationController
     }
 }
 

@@ -25,8 +25,6 @@
 		098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */; };
 		098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4220EFC5B600FE201B /* UIButton+Extensions.swift */; };
 		098B5A4520EFC5E800FE201B /* RSubmission+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4420EFC5E800FE201B /* RSubmission+Extensions.swift */; };
-		098B5A4720EFC68100FE201B /* UITabBarController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4620EFC68100FE201B /* UITabBarController+Extensions.swift */; };
-		098B5A4920EFC6A200FE201B /* UINavigationController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4820EFC6A200FE201B /* UINavigationController+Extensions.swift */; };
 		098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */; };
 		098B5A4D20EFC6E200FE201B /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */; };
 		098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */; };
@@ -362,8 +360,6 @@
 		098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4220EFC5B600FE201B /* UIButton+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4420EFC5E800FE201B /* RSubmission+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSubmission+Extensions.swift"; sourceTree = "<group>"; };
-		098B5A4620EFC68100FE201B /* UITabBarController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBarController+Extensions.swift"; sourceTree = "<group>"; };
-		098B5A4820EFC6A200FE201B /* UINavigationController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Extensions.swift"; sourceTree = "<group>"; };
@@ -695,8 +691,6 @@
 				098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */,
 				098B5A4220EFC5B600FE201B /* UIButton+Extensions.swift */,
 				098B5A4420EFC5E800FE201B /* RSubmission+Extensions.swift */,
-				098B5A4620EFC68100FE201B /* UITabBarController+Extensions.swift */,
-				098B5A4820EFC6A200FE201B /* UINavigationController+Extensions.swift */,
 				098B5A4A20EFC6C000FE201B /* UILabel+Extensions.swift */,
 				098B5A4C20EFC6E200FE201B /* UIViewController+Extensions.swift */,
 				BE3B74362107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift */,
@@ -1732,7 +1726,6 @@
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */,
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
-				098B5A4920EFC6A200FE201B /* UINavigationController+Extensions.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
 				0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */,
 				BE25402621CCC03E003BD547 /* ForceTouchGestureRecognizer.swift in Sources */,
@@ -1867,7 +1860,6 @@
 				BE0C4F9A21BCC0B7006C54FF /* SettingsIcon.swift in Sources */,
 				B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */,
 				BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */,
-				098B5A4720EFC68100FE201B /* UITabBarController+Extensions.swift in Sources */,
 				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
 				BE1CD01920F599C7007746B6 /* TextStackEstimator.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,

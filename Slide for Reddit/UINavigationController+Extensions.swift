@@ -9,7 +9,7 @@
 import UIKit
 
 extension UINavigationController {
-    override func topMostViewController() -> UIViewController {
+    @objc override func topMostViewController() -> UIViewController {
         return self.visibleViewController!.topMostViewController()
     }
 }
