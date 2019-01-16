@@ -576,7 +576,7 @@ class PostActions: NSObject {
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -597,7 +597,7 @@ class PostActions: NSObject {
             textField.leftViewPadding = 16
             textField.layer.borderWidth = 0
             textField.layer.cornerRadius = 0
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
