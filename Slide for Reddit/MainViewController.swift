@@ -642,7 +642,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        menuNav?.view.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
+        menuNav?.view.frame.size.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
     
     func doCurrentPage(_ page: Int) {

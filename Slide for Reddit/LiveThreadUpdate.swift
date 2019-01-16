@@ -42,7 +42,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     func estimateHeight() -> CGFloat {
         if estimatedHeight == 0 {
             let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 12, height: CGFloat.greatestFiniteMagnitude), nil)
+            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: self.contentView.frame.size.width - 12, height: CGFloat.greatestFiniteMagnitude), nil)
 
             estimatedHeight = CGFloat(24) + CGFloat(!hasText ? 0 : textSizeB.height)
         }

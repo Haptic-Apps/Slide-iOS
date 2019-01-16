@@ -574,9 +574,9 @@ class PostActions: NSObject {
             textField.placeholder = "Subreddit"
             textField.left(image: UIImage.init(named: "subs"), color: .black)
             textField.leftViewPadding = 12
-            textField.borderWidth = 1
-            textField.cornerRadius = 8
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderWidth = 1
+            textField.layer.cornerRadius = 8
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -595,9 +595,9 @@ class PostActions: NSObject {
             textField.placeholder = "Enter a new title"
             textField.left(image: UIImage.init(named: "size"), color: .black)
             textField.leftViewPadding = 16
-            textField.borderWidth = 0
-            textField.cornerRadius = 0
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderWidth = 0
+            textField.layer.cornerRadius = 0
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -695,9 +695,9 @@ class PostActions: NSObject {
                 textField.placeholder = "Reason (optional)"
                 textField.left(image: UIImage.init(named: "flag"), color: .black)
                 textField.leftViewPadding = 12
-                textField.borderWidth = 1
-                textField.cornerRadius = 8
-                textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                textField.layer.borderWidth = 1
+                textField.layer.cornerRadius = 8
+                textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
                 textField.backgroundColor = .white
                 textField.keyboardAppearance = .default
                 textField.keyboardType = .default

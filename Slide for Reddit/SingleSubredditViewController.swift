@@ -987,9 +987,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             textField.placeholder = "Search for a post..."
             textField.left(image: UIImage.init(named: "search"), color: .black)
             textField.leftViewPadding = 12
-            textField.borderWidth = 1
-            textField.cornerRadius = 8
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderWidth = 1
+            textField.layer.cornerRadius = 8
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -2185,7 +2185,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 extension SingleSubredditViewController: LinkCellViewDelegate {
 
     func openComments(id: String, subreddit: String?) {
-        if let nav = ((self.splitViewController?.viewControllers.count > 1) ? self.splitViewController?.viewControllers[1] : nil) as? UINavigationController, let detail = nav.viewControllers[0] as? PagingCommentViewController {
+        if let nav = ((self.splitViewController?.viewControllers.count ?? 0 > 1) ? self.splitViewController?.viewControllers[1] : nil) as? UINavigationController, let detail = nav.viewControllers[0] as? PagingCommentViewController {
             if detail.submissions[0].getId() == id {
                 return
             }

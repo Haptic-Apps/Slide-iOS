@@ -69,7 +69,7 @@ PODS:
   - reddift (2.0.3):
     - HTMLSpecialCharacters
     - MiniKeychain
-  - RLBAlertsPickers (1.0)
+  - RLBAlertsPickers (1.1.1)
   - SDWebImage (4.1.2):
     - SDWebImage/Core (= 4.1.2)
   - SDWebImage/Core (4.1.2)
@@ -101,7 +101,7 @@ DEPENDENCIES:
   - MTColorDistance
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
-  - RLBAlertsPickers (from `https://github.com/HapticApps/Alerts-Pickers`)
+  - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
   - SDWebImage (~> 4.1.2)
   - SloppySwiper (from `https://github.com/fastred/sloppySwiper`)
   - Starscream (~> 3.0.2)
@@ -121,7 +121,7 @@ EXTERNAL SOURCES:
   reddift:
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
-    :git: https://github.com/HapticApps/Alerts-Pickers
+    :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
     :git: https://github.com/fastred/sloppySwiper
   XLActionController:
@@ -135,11 +135,11 @@ CHECKOUT OPTIONS:
     :commit: a02b61c94f80f65563a9fc0035f6facfdcc6ad01
     :git: https://github.com/Cocoanetics/DTCoreText
   reddift:
-    :commit: 4f7380a29ad1873e5753c53d62faaeb276ea766e
+    :commit: 362739dfe80c4ca3dd9d153a0fd08bd6e0bcb0c7
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
-    :commit: 583f111c780546a42320c406f1fcf21f9f2caf30
-    :git: https://github.com/HapticApps/Alerts-Pickers
+    :commit: 42f7a6b801e31920e023920d592b2e3b1ecb5eeb
+    :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
     :git: https://github.com/fastred/sloppySwiper
@@ -168,7 +168,7 @@ SPEC CHECKSUMS:
   Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
   RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
-  RLBAlertsPickers: 60b4bd5afcd92065774ed1b21d836bc89cc79d98
+  RLBAlertsPickers: e8d2b6dd7d97d32e1f940a6b3bd3e8913bd6ad90
   SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
@@ -180,6 +180,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: d2ab12a967ae0fee0b4563b8d809c8fb13ebc636
 
-PODFILE CHECKSUM: 928d5821a1c8d86df80cdd7924ed7e0a3ebe97b0
+PODFILE CHECKSUM: ccd8d297b792b73ba464364d58b84d45b58e16af
 
 COCOAPODS: 1.4.0

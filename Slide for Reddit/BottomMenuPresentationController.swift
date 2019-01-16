@@ -234,7 +234,7 @@ private class PanGestureInteractionController: UIPercentDrivenInteractiveTransit
             update(percentCompleteForTranslation(translation: sender.translation(in: sender.view)))
         case .ended:
             let velocity = sender.velocity(in: sender.view).y
-            if sender.shouldRecognizeForDirection() && (percentComplete > 0.25 || velocity > 350) {
+            if sender.shouldRecognizeForDirection(.down) && (percentComplete > 0.25 || velocity > 350) {
                 finish()
             } else {
                 cancel()
