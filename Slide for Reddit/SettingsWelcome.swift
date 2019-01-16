@@ -50,9 +50,9 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
             start.titleLabel?.textColor = ColorUtil.fontColor
             start.setTitleColor(ColorUtil.fontColor, for: .normal)
             
-            start.addTarget(self, action: #selector(self.skip(_:)), for: UIControlEvents.touchUpInside)
+            start.addTarget(self, action: #selector(self.skip(_:)), for: UIControl.Event.touchUpInside)
             let startB = UIBarButtonItem.init(customView: start)
-            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
             start.sizeToFit()
             toolbarItems = [flexButton, startB]
         } else {
@@ -61,7 +61,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
             skip.titleLabel?.textColor = ColorUtil.fontColor
             skip.setTitleColor(ColorUtil.fontColor, for: .normal)
             skip.sizeToFit()
-            skip.addTarget(self, action: #selector(self.skip(_:)), for: UIControlEvents.touchUpInside)
+            skip.addTarget(self, action: #selector(self.skip(_:)), for: UIControl.Event.touchUpInside)
             let skipB = UIBarButtonItem.init(customView: skip)
             
             let next = UIButton.init(type: .system)
@@ -69,10 +69,10 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
             next.titleLabel?.textColor = ColorUtil.fontColor
             next.setTitleColor(ColorUtil.fontColor, for: .normal)
             next.sizeToFit()
-            next.addTarget(self, action: #selector(self.next(_:)), for: UIControlEvents.touchUpInside)
+            next.addTarget(self, action: #selector(self.next(_:)), for: UIControl.Event.touchUpInside)
             let nextB = UIBarButtonItem.init(customView: next)
             
-            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
             
             toolbarItems = [skipB, flexButton, nextB]
         }
@@ -80,7 +80,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         self.navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
     }
 
-    func skip(_ sender: AnyObject) {
+    @objc func skip(_ sender: AnyObject) {
         UserDefaults.standard.set(true, forKey: "firstOpen")
         UserDefaults.standard.synchronize()
         navigationController?.navigationBar.isHidden = false
@@ -91,7 +91,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
     
     var current = 0
     
-    func next(_ sender: AnyObject) {
+    @objc func next(_ sender: AnyObject) {
         current += 1
         setViewControllers([pages[current]], direction: .forward, animated: true, completion: nil)
         doToolbar()
@@ -222,9 +222,9 @@ class SettingsWelcomeTheme: UIViewController {
         let about = UILabel.init(frame: CGRect.init(x: 48, y: 70, width: self.view.frame.size.width - 96, height: 150))
         about.textColor = ColorUtil.fontColor
         about.font = UIFont.boldSystemFont(ofSize: 26)
-        let attributedTitle = NSMutableAttributedString(string: "Choose a theme to get started!", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 26), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let attributedTitle = NSMutableAttributedString(string: "Choose a theme to get started!", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 26), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
         attributedTitle.appendString("\n")
-        attributedTitle.append(NSAttributedString(string: "There are more themes available in Settings after setup", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18), NSForegroundColorAttributeName: ColorUtil.fontColor]))
+        attributedTitle.append(NSAttributedString(string: "There are more themes available in Settings after setup", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor])))
         about.attributedText = attributedTitle
         about.textAlignment = .center
         about.numberOfLines = 0
@@ -256,7 +256,7 @@ class SettingsWelcomeTheme: UIViewController {
         iOS.layer.cornerRadius = 22.5
         iOS.clipsToBounds = true
         iOS.setTitle("  Light", for: .normal)
-        iOS.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: GMColor.blue500Color()))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        iOS.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: GMColor.blue500Color()))!, renderMode: UIImage.RenderingMode.alwaysOriginal)
         iOS.elevate(elevation: 2)
         iOS.titleLabel?.font = UIFont.systemFont(ofSize: 18)
         iOS.setTitleColor(GMColor.blue500Color(), for: .normal)
@@ -272,7 +272,7 @@ class SettingsWelcomeTheme: UIViewController {
         dark.layer.cornerRadius = 22.5
         dark.clipsToBounds = true
         dark.setTitle("  Dark gray", for: .normal)
-        dark.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.DARK.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        dark.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.DARK.fontColor))!, renderMode: UIImage.RenderingMode.alwaysOriginal)
         dark.elevate(elevation: 2)
         dark.titleLabel?.font = FontGenerator.Font.ROBOTO_BOLD.font.withSize(18)
         dark.setTitleColor(ColorUtil.Theme.DARK.fontColor, for: .normal)
@@ -288,7 +288,7 @@ class SettingsWelcomeTheme: UIViewController {
         blue.layer.cornerRadius = 22.5
         blue.clipsToBounds = true
         blue.setTitle("  Deep blue", for: .normal)
-        blue.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.BLUE.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        blue.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.BLUE.fontColor))!, renderMode: UIImage.RenderingMode.alwaysOriginal)
         blue.elevate(elevation: 2)
         blue.titleLabel?.font = FontGenerator.Font.HELVETICA.font.withSize(18)
         blue.setTitleColor(ColorUtil.Theme.BLUE.fontColor, for: .normal)
@@ -304,7 +304,7 @@ class SettingsWelcomeTheme: UIViewController {
         deep.layer.cornerRadius = 22.5
         deep.clipsToBounds = true
         deep.setTitle("  Dark Purple", for: .normal)
-        deep.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.DEEP.fontColor))!, renderMode: UIImageRenderingMode.alwaysOriginal)
+        deep.leftImage(image: (UIImage.init(named: "colors")?.navIcon().getCopy(withColor: ColorUtil.Theme.DEEP.fontColor))!, renderMode: UIImage.RenderingMode.alwaysOriginal)
         deep.elevate(elevation: 2)
         deep.titleLabel?.font = FontGenerator.Font.HELVETICA.font.withSize(18)
         deep.setTitleColor(ColorUtil.Theme.DEEP.fontColor, for: .normal)
@@ -424,9 +424,9 @@ class SettingsWelcomeStart: UIViewController {
         let about = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width - 96, height: 100))
         about.textColor = ColorUtil.fontColor
         about.textAlignment = .center
-        let attributedTitle = NSMutableAttributedString(string: "Welcome to Slide!", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 26), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let attributedTitle = NSMutableAttributedString(string: "Welcome to Slide!", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 26), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
         attributedTitle.appendString("\n")
-        attributedTitle.append(NSAttributedString(string: "Let's get started", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18), NSForegroundColorAttributeName: ColorUtil.fontColor]))
+        attributedTitle.append(NSAttributedString(string: "Let's get started", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor])))
         about.numberOfLines = 0
         about.attributedText = attributedTitle
         self.view.addSubview(about)
@@ -485,9 +485,9 @@ class SettingsWelcomeLayout: UIViewController {
         about.textAlignment = .center
         about.numberOfLines = 0
         about.lineBreakMode = .byWordWrapping
-        let attributedTitle = NSMutableAttributedString(string: "Choose a view mode", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 26), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let attributedTitle = NSMutableAttributedString(string: "Choose a view mode", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 26), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
         attributedTitle.appendString("\n")
-        attributedTitle.append(NSAttributedString(string: "This can be changed later in Settings!", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18), NSForegroundColorAttributeName: ColorUtil.fontColor]))
+        attributedTitle.append(NSAttributedString(string: "This can be changed later in Settings!", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor])))
         about.attributedText = attributedTitle
         self.view.addSubview(about)
         
@@ -715,9 +715,9 @@ class SettingsWelcomeMisc: UIViewController {
         about.textAlignment = .center
         about.numberOfLines = 0
         about.lineBreakMode = .byWordWrapping
-        let attributedTitle = NSMutableAttributedString(string: "Other settings", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 26), NSForegroundColorAttributeName: ColorUtil.fontColor])
+        let attributedTitle = NSMutableAttributedString(string: "Other settings", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 26), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
         attributedTitle.appendString("\n")
-        attributedTitle.append(NSAttributedString(string: "These can be changed later in Settings!", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18), NSForegroundColorAttributeName: ColorUtil.fontColor]))
+        attributedTitle.append(NSAttributedString(string: "These can be changed later in Settings!", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor])))
         about.attributedText = attributedTitle
 
         self.view.addSubview(about)
@@ -731,7 +731,7 @@ class SettingsWelcomeMisc: UIViewController {
         tabs = UISwitch().then {
             $0.isOn = SettingValues.subredditBar
             $0.onTintColor = ColorUtil.baseAccent
-            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         }
 
         let fabLabel = UILabel().then {
@@ -743,7 +743,7 @@ class SettingsWelcomeMisc: UIViewController {
         fab = UISwitch().then {
             $0.isOn = !SettingValues.hiddenFAB
             $0.onTintColor = ColorUtil.baseAccent
-            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         }
         
         let dataLabel = UILabel().then {
@@ -755,7 +755,7 @@ class SettingsWelcomeMisc: UIViewController {
         data = UISwitch().then {
             $0.isOn = SettingValues.dataSavingEnabled
             $0.onTintColor = ColorUtil.baseAccent
-            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         }
 
         let historyLabel = UILabel().then {
@@ -767,7 +767,7 @@ class SettingsWelcomeMisc: UIViewController {
         history = UISwitch().then {
             $0.isOn = SettingValues.saveHistory
             $0.onTintColor = ColorUtil.baseAccent
-            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            $0.addTarget(self, action: #selector(SettingsWelcomeMisc.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         }
         
         self.view.addSubviews(tabsLabel, tabs,
@@ -812,7 +812,7 @@ class SettingsWelcomeMisc: UIViewController {
         doCells()
     }
     
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == tabs {
             SettingValues.subredditBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_viewType)
@@ -828,4 +828,15 @@ class SettingsWelcomeMisc: UIViewController {
         }
         UserDefaults.standard.synchronize()
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

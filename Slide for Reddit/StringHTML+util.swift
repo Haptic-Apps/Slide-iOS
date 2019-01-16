@@ -4,7 +4,7 @@ import Foundation
 
 public extension String {
     
-    fileprivate struct HTMLEntities {
+    private struct HTMLEntities {
         static let characterEntities: [String: Character] = [
             
             // XML predefined entities:
@@ -270,7 +270,7 @@ public extension String {
     // Unicode character, e.g.
     //    decodeNumeric("64", 10)   --> "@"
     //    decodeNumeric("20ac", 16) --> "€"
-    fileprivate func decodeNumeric(_ string: String, base: Int32) -> Character? {
+    private func decodeNumeric(_ string: String, base: Int32) -> Character? {
         let code = UInt32(strtoul(string, nil, base))
         return Character(UnicodeScalar(code)!)
     }
@@ -281,7 +281,7 @@ public extension String {
     //     decode("&#x20ac;") --> "€"
     //     decode("&lt;")     --> "<"
     //     decode("&foo;")    --> nil
-    fileprivate func decode(_ entity: String) -> Character? {
+    private func decode(_ entity: String) -> Character? {
         if entity.hasPrefix("&#x") || entity.hasPrefix("&#X") {
             return decodeNumeric(entity.substring(from: entity.index(entity.startIndex, offsetBy: 3)), base: 16)
         } else if entity.hasPrefix("&#") {
@@ -300,7 +300,7 @@ public extension String {
         
         // Find the next '&' and copy the characters preceding it to `result`:
         while let ampRange = self.range(of: "&", range: position ..< endIndex) {
-            result.append(self[position ..< ampRange.lowerBound])
+            result.append(String(self[position ..< ampRange.lowerBound]))
             position = ampRange.lowerBound
             
             // Find the next ';' and copy everything from '&' to ';' into `entity`
@@ -308,12 +308,12 @@ public extension String {
                 let entity = self[position ..< semiRange.upperBound]
                 position = semiRange.upperBound
                 
-                if let decoded = decode(entity) {
+                if let decoded = decode(String(entity)) {
                     // Replace by decoded character:
                     result.append(decoded)
                 } else {
                     // Invalid entity, copy verbatim:
-                    result.append(entity)
+                    result.append(String(entity))
                 }
             } else {
                 // No matching ';'.
@@ -321,7 +321,7 @@ public extension String {
             }
         }
         // Copy remaining characters to `result`:
-        result.append(self[position ..< endIndex])
+        result.append(String(self[position ..< endIndex]))
         return result
     }
 }

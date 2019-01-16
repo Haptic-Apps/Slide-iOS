@@ -71,7 +71,7 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 if SettingValues.actionBarMode.isSide() {
                     sideButtons.topAnchor == bannerImage.bottomAnchor + ceight
-                    sideButtons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                    sideButtons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                     sideButtons.bottomAnchor <= contentView.bottomAnchor - ceight
                 }
                 

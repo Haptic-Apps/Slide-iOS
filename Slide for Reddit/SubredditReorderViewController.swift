@@ -28,38 +28,38 @@ class SubredditReorderViewController: UITableViewController {
         tableView.reloadData()
 
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControlState.normal)
-        sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControlEvents.touchUpInside)
+        sync.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControl.State.normal)
+        sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControl.Event.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let add = UIButton.init(type: .custom)
-        add.setImage(UIImage.init(named: "add")!.navIcon(), for: UIControlState.normal)
-        add.addTarget(self, action: #selector(self.add(_:)), for: UIControlEvents.touchUpInside)
+        add.setImage(UIImage.init(named: "add")!.navIcon(), for: UIControl.State.normal)
+        add.addTarget(self, action: #selector(self.add(_:)), for: UIControl.Event.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
 
         let az = UIButton.init(type: .custom)
-        az.setImage(UIImage.init(named: "az")!.navIcon(), for: UIControlState.normal)
-        az.addTarget(self, action: #selector(self.sortAz(_:)), for: UIControlEvents.touchUpInside)
+        az.setImage(UIImage.init(named: "az")!.navIcon(), for: UIControl.State.normal)
+        az.addTarget(self, action: #selector(self.sortAz(_:)), for: UIControl.Event.touchUpInside)
         az.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let azB = UIBarButtonItem.init(customView: az)
 
         let top = UIButton.init(type: .custom)
-        top.setImage(UIImage.init(named: "upvote")!.navIcon(), for: UIControlState.normal)
-        top.addTarget(self, action: #selector(self.top(_:)), for: UIControlEvents.touchUpInside)
+        top.setImage(UIImage.init(named: "upvote")!.navIcon(), for: UIControl.State.normal)
+        top.addTarget(self, action: #selector(self.top(_:)), for: UIControl.Event.touchUpInside)
         top.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let topB = UIBarButtonItem.init(customView: top)
 
         let delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage.init(named: "delete")!.navIcon(), for: UIControlState.normal)
-        delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
+        delete.setImage(UIImage.init(named: "delete")!.navIcon(), for: UIControl.State.normal)
+        delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControl.Event.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
 
         let pin = UIButton.init(type: .custom)
-        pin.setImage(UIImage.init(named: "lock")!.navIcon(), for: UIControlState.normal)
-        pin.addTarget(self, action: #selector(self.pin(_:)), for: UIControlEvents.touchUpInside)
+        pin.setImage(UIImage.init(named: "lock")!.navIcon(), for: UIControl.State.normal)
+        pin.addTarget(self, action: #selector(self.pin(_:)), for: UIControl.Event.touchUpInside)
         pin.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let pinB = UIBarButtonItem.init(customView: pin)
 
@@ -81,7 +81,7 @@ class SubredditReorderViewController: UITableViewController {
     public static var changed = false
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -90,7 +90,7 @@ class SubredditReorderViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
 
     func save(_ selector: AnyObject?) {
@@ -105,7 +105,7 @@ class SubredditReorderViewController: UITableViewController {
         cell?.backgroundColor = ColorUtil.foregroundColor
     }
     
-    func add(_ selector: AnyObject) {
+    @objc func add(_ selector: AnyObject) {
         let searchVC = SubredditFindReturnViewController(includeSubscriptions: false, includeCollections: true, includeTrending: true) { (sub) in
             if !self.subs.contains(sub) {
                 self.subs.append(sub)
@@ -113,17 +113,17 @@ class SubredditReorderViewController: UITableViewController {
                     self.tableView.reloadData()
                     let indexPath = IndexPath.init(row: self.subs.count - 1, section: 0)
                     self.tableView.scrollToRow(at: indexPath,
-                                               at: UITableViewScrollPosition.top, animated: true)
+                                               at: UITableView.ScrollPosition.top, animated: true)
                 }
             }
         }
         VCPresenter.showVC(viewController: searchVC, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
     }
     
-    func sync(_ selector: AnyObject) {
+    @objc func sync(_ selector: AnyObject) {
         let alertController = UIAlertController(title: nil, message: "Syncing subscriptions...\n\n", preferredStyle: .alert)
 
-        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
         spinnerIndicator.color = UIColor.black
         spinnerIndicator.startAnimating()
@@ -147,7 +147,7 @@ class SubredditReorderViewController: UITableViewController {
                 self.tableView.reloadData()
                 let indexPath = IndexPath.init(row: end - 1, section: 0)
                 self.tableView.scrollToRow(at: indexPath,
-                        at: UITableViewScrollPosition.top, animated: true)
+                        at: UITableView.ScrollPosition.top, animated: true)
                 alertController.dismiss(animated: true, completion: nil)
             }
         })
@@ -180,7 +180,7 @@ class SubredditReorderViewController: UITableViewController {
         return cell!
     }
 
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
 
@@ -200,7 +200,7 @@ class SubredditReorderViewController: UITableViewController {
         subs.insert(itemToMove, at: destinationIndexPath.row)
     }
 
-    func top(_ selector: AnyObject) {
+    @objc func top(_ selector: AnyObject) {
         if let rows = tableView.indexPathsForSelectedRows {
             var top: [String] = []
             for i in rows {
@@ -214,13 +214,13 @@ class SubredditReorderViewController: UITableViewController {
             tableView.reloadData()
             let indexPath = IndexPath.init(row: 0, section: 0)
             self.tableView.scrollToRow(at: indexPath,
-                    at: UITableViewScrollPosition.top, animated: true)
+                    at: UITableView.ScrollPosition.top, animated: true)
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
 
         }
     }
 
-    func pin(_ selector: AnyObject) {
+    @objc func pin(_ selector: AnyObject) {
         if let rows = tableView.indexPathsForSelectedRows {
             var pinned2: [String] = []
             var pinned3: [String] = []
@@ -248,7 +248,7 @@ class SubredditReorderViewController: UITableViewController {
                 tableView.reloadData()
                 let indexPath = IndexPath.init(row: 0, section: 0)
                 self.tableView.scrollToRow(at: indexPath,
-                        at: UITableViewScrollPosition.top, animated: true)
+                        at: UITableView.ScrollPosition.top, animated: true)
                 //todo saved pin
             }
 
@@ -260,7 +260,7 @@ class SubredditReorderViewController: UITableViewController {
         }
     }
 
-    func sortAz(_ selector: AnyObject) {
+    @objc func sortAz(_ selector: AnyObject) {
         self.subs = self.subs.filter({ (input) -> Bool in
             return !pinned.contains(input)
         })
@@ -284,10 +284,10 @@ class SubredditReorderViewController: UITableViewController {
         tableView.reloadData()
         let indexPath = IndexPath.init(row: 0, section: 0)
         self.tableView.scrollToRow(at: indexPath,
-                at: UITableViewScrollPosition.top, animated: true)
+                at: UITableView.ScrollPosition.top, animated: true)
     }
 
-    func remove(_ selector: AnyObject) {
+    @objc func remove(_ selector: AnyObject) {
         if let rows = tableView.indexPathsForSelectedRows {
 
             let actionSheetController: UIAlertController = UIAlertController(title: "Remove subscriptions", message: "", preferredStyle: .alert)
@@ -365,7 +365,7 @@ class SubredditReorderViewController: UITableViewController {
         }
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             subs.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)

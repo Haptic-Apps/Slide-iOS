@@ -42,7 +42,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     }
 
     func pickTheme() {
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         isAccent = false
         let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
@@ -107,7 +107,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     }
 
     func pickAccent() {
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
         let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
@@ -164,10 +164,10 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
             s.isOn = isOn
-            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
             cell.accessoryView = s
         }
-        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        cell.selectionStyle = UITableViewCell.SelectionStyle.none
     }
 
     override func viewDidLoad() {
@@ -225,12 +225,12 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         tintOutsideSwitch = UISwitch()
         tintOutsideSwitch.isOn = SettingValues.onlyTintOutside
-        tintOutsideSwitch.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        tintOutsideSwitch.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.tintOutside.textLabel?.text = "Only tint outside of subreddit"
         self.tintOutside.accessoryView = tintOutsideSwitch
         self.tintOutside.backgroundColor = ColorUtil.foregroundColor
         self.tintOutside.textLabel?.textColor = ColorUtil.fontColor
-        tintOutside.selectionStyle = UITableViewCellSelectionStyle.none
+        tintOutside.selectionStyle = UITableViewCell.SelectionStyle.none
 
         self.tintingMode.textLabel?.text = "Subreddit tinting mode"
         self.tintingMode.detailTextLabel?.text = SettingValues.tintingMode
@@ -240,13 +240,13 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         
         reduceColor = UISwitch()
         reduceColor.isOn = SettingValues.reduceColor
-        reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
         reduceColorCell.textLabel?.numberOfLines = 0
         reduceColorCell.accessoryView = reduceColor
         reduceColorCell.backgroundColor = ColorUtil.foregroundColor
         reduceColorCell.textLabel?.textColor = ColorUtil.fontColor
-        reduceColorCell.selectionStyle = UITableViewCellSelectionStyle.none
+        reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.reduceColorCell.imageView?.image = UIImage.init(named: "nocolors")?.toolbarIcon()
         self.reduceColorCell.imageView?.tintColor = ColorUtil.fontColor
 
@@ -265,8 +265,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.tableView.tableFooterView = UIView()
         
         let button = UIButtonWithContext.init(type: .custom)
-        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
+        button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
@@ -279,7 +279,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.navigationController?.popViewController(animated: true)
     }
 
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == reduceColor {
             MainViewController.needsRestart = true
             SettingValues.reduceColor = changed.isOn
@@ -293,8 +293,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
             setupBaseBarColors()
             let button = UIButtonWithContext.init(type: .custom)
-            button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControlState.normal)
+            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
             
@@ -506,7 +506,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         let enabled = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
         enabled.isOn = SettingValues.nightModeEnabled
-        enabled.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        enabled.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         actionSheetController.view.addSubview(enabled)
 
         var button: UIAlertAction = UIAlertAction(title: "Select night hours", style: .default) { _ -> Void in

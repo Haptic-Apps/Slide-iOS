@@ -50,7 +50,7 @@ class RelatedContributionLoader: ContributionLoader {
                             self.content = []
                         }
                         let before = self.content.count
-                        let baseContent = listing.1.children.flatMap({ $0 })
+                        let baseContent = listing.1.children.compactMap({ $0 })
                         for item in baseContent {
                             if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))

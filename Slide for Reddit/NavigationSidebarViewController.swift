@@ -67,9 +67,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         self.header.settings.isUserInteractionEnabled = false
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
-                                               name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+                                               name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
-                                               name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     struct Callbacks {
@@ -92,9 +92,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             callbacks.didBeginPanning?()
             if let navVC = parentController!.navigationController {
                 navVC.view.addSubviews(backgroundView, self.view)
-                navVC.view.bringSubview(toFront: backgroundView)
+                navVC.view.bringSubviewToFront(backgroundView)
                 backgroundView.edgeAnchors == navVC.view.edgeAnchors
-                navVC.view.bringSubview(toFront: self.view)
+                navVC.view.bringSubviewToFront(self.view)
             } else {
                 NSLog("Warning: No parentController!.navigationController. Background behind drawer probably won't show up.")
             }
@@ -165,7 +165,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         return 1 - percent
     }
     
-    func collapse() {
+    @objc func collapse() {
         self.header.account.isUserInteractionEnabled = false
         self.header.inbox.isUserInteractionEnabled = false
         self.header.mod.isUserInteractionEnabled = false
@@ -257,9 +257,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
         if let navVC = parentController!.navigationController {
             navVC.view.addSubviews(backgroundView, self.view)
-            navVC.view.bringSubview(toFront: backgroundView)
+            navVC.view.bringSubviewToFront(backgroundView)
             backgroundView.edgeAnchors == navVC.view.edgeAnchors
-            navVC.view.bringSubview(toFront: self.view)
+            navVC.view.bringSubviewToFront(self.view)
         } else {
             NSLog("Warning: No parentController!.navigationController. Background behind drawer probably won't show up.")
         }
@@ -372,10 +372,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         tableView.bounces = false
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.none
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         tableView.clipsToBounds = true
         tableView.estimatedRowHeight = 50
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorInset = .zero
 
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
@@ -385,7 +385,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         view.addSubview(tableView)
 
         searchBar = header.search
-        searchBar?.searchBarStyle = UISearchBarStyle.minimal
+        searchBar?.searchBarStyle = UISearchBar.Style.minimal
         searchBar?.placeholder = " Go to subreddit or profile"
         searchBar?.sizeToFit()
         searchBar?.isTranslucent = true
@@ -592,7 +592,7 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
         }
     }
 
-    func getSuggestions() {
+    @objc func getSuggestions() {
         if task != nil {
             task?.cancel()
         }
@@ -669,10 +669,10 @@ extension NavigationSidebarViewController: UIScrollViewDelegate {
 }
 
 extension NavigationSidebarViewController {
-    func keyboardWillBeShown(notification: NSNotification) {
+    @objc func keyboardWillBeShown(notification: NSNotification) {
         //get the end position keyboard frame
         let keyInfo: Dictionary = notification.userInfo!
-        var keyboardFrame: CGRect = keyInfo[UIKeyboardFrameEndUserInfoKey] as! CGRect
+        var keyboardFrame: CGRect = keyInfo[UIResponder.keyboardFrameEndUserInfoKey] as! CGRect
         //convert it to the same view coords as the tableView it might be occluding
         keyboardFrame = self.tableView.convert(keyboardFrame, to: self.tableView)
         //calculate if the rects intersect
@@ -680,7 +680,7 @@ extension NavigationSidebarViewController {
         if !intersect.isNull {
             //yes they do - adjust the insets on tableview to handle it
             //first get the duration of the keyboard appearance animation
-            let duration: TimeInterval = keyInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
+            let duration: TimeInterval = keyInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
             // Change the table insets to match - animated to the same duration of the keyboard appearance
             UIView.animate(withDuration: duration, animations: {
                 let edgeInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardFrame.size.height, right: 0)
@@ -690,9 +690,9 @@ extension NavigationSidebarViewController {
         }
     }
 
-    func keyboardWillBeHidden(notification: NSNotification) {
+    @objc func keyboardWillBeHidden(notification: NSNotification) {
         let keyInfo: Dictionary = notification.userInfo!
-        let duration: TimeInterval = keyInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
+        let duration: TimeInterval = keyInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
         // Clear the table insets - animated to the same duration of the keyboard disappearance
         UIView.animate(withDuration: duration) {
             self.tableView.contentInset = UIEdgeInsets.zero

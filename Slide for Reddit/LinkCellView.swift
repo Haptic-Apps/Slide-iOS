@@ -38,36 +38,36 @@ enum CurrentType {
 
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate, UIGestureRecognizerDelegate {
     
-    func upvote(sender: UITapGestureRecognizer? = nil) {
+    @objc func upvote(sender: UITapGestureRecognizer? = nil) {
         //todo maybe? contentView.blink(color: GMColor.orange500Color())
         del?.upvote(self)
     }
     
-    func hide(sender: UITapGestureRecognizer? = nil) {
+    @objc func hide(sender: UITapGestureRecognizer? = nil) {
         del?.hide(self)
     }
     
-    func reply(sender: UITapGestureRecognizer? = nil) {
+    @objc func reply(sender: UITapGestureRecognizer? = nil) {
         del?.reply(self)
     }
     
-    func downvote(sender: UITapGestureRecognizer? = nil) {
+    @objc func downvote(sender: UITapGestureRecognizer? = nil) {
         del?.downvote(self)
     }
     
-    func more(sender: UITapGestureRecognizer? = nil) {
+    @objc func more(sender: UITapGestureRecognizer? = nil) {
         del?.more(self)
     }
     
-    func mod(sender: UITapGestureRecognizer? = nil) {
+    @objc func mod(sender: UITapGestureRecognizer? = nil) {
         del?.mod(self)
     }
     
-    func save(sender: UITapGestureRecognizer? = nil) {
+    @objc func save(sender: UITapGestureRecognizer? = nil) {
         del?.save(self)
     }
 
-    func readLater(sender: UITapGestureRecognizer? = nil) {
+    @objc func readLater(sender: UITapGestureRecognizer? = nil) {
         del?.readLater(self)
     }
     
@@ -157,7 +157,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             
             alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
@@ -177,7 +177,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
         accessibilityView.isAccessibilityElement = true
-        accessibilityView.accessibilityTraits = UIAccessibilityTraitLink
+        accessibilityView.accessibilityTraits = UIAccessibilityTraits.link
         
         self.thumbImageContainer = UIView().then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
@@ -410,7 +410,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             timeView = UILabel().then {
                 $0.textColor = .white
-                $0.font = UIFont.monospacedDigitSystemFont(ofSize: 11, weight: 5)
+                $0.font = UIFont.monospacedDigitSystemFont(ofSize: 11, weight: UIFont.Weight(rawValue: 5))
                 $0.textAlignment = .center
                 $0.alpha = 0.6
                 $0.layer.cornerRadius = 5
@@ -422,8 +422,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             topVideoView.addSubviews(progressDot, sound, timeView)
             
             contentView.addSubviews(videoView, topVideoView)
-            contentView.bringSubview(toFront: videoView)
-            contentView.bringSubview(toFront: topVideoView)
+            contentView.bringSubviewToFront(videoView)
+            contentView.bringSubviewToFront(topVideoView)
             
             playView = UIImageView().then {
                     $0.image = UIImage(named: "play")?.getCopy(withSize: CGSize.square(size: 60), withColor: .white)
@@ -570,7 +570,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var dragCancelled = false
     var direction = 0
     
-    func linkMenu(sender: AnyObject) {
+    @objc func linkMenu(sender: AnyObject) {
         if parentViewController != nil && parentViewController?.presentedViewController == nil {
             let url = self.link!.url!
             let alertController: BottomSheetActionController = BottomSheetActionController()
@@ -599,7 +599,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
 
             alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
@@ -668,7 +668,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 return
             } else if progressBar.superview == nil {
                 contentView.addSubviews(typeImage, progressBar)
-                contentView.bringSubview(toFront: typeImage)
+                contentView.bringSubviewToFront(typeImage)
                 typeImage.centerAnchors == self.contentView.centerAnchors
                 typeImage.heightAnchor == 45
                 typeImage.widthAnchor == 45
@@ -772,7 +772,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             pulseAnimation.duration = 0.5
             pulseAnimation.toValue = 1.2
             pulseAnimation.fromValue = 0.2
-            pulseAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            pulseAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
             pulseAnimation.autoreverses = false
             pulseAnimation.repeatCount = Float.greatestFiniteMagnitude
             
@@ -780,7 +780,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             fadeAnimation.duration = 0.5
             fadeAnimation.toValue = 0
             fadeAnimation.fromValue = 2.5
-            fadeAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            fadeAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
             fadeAnimation.autoreverses = false
             fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
             
@@ -868,12 +868,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 box.leftAnchor == contentView.leftAnchor + ctwelve
                 box.bottomAnchor == contentView.bottomAnchor - ceight
                 box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
-                box.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 box.heightAnchor == CGFloat(24)
                 buttons.heightAnchor == CGFloat(24)
                 buttons.rightAnchor == contentView.rightAnchor - ctwelve
                 buttons.bottomAnchor == contentView.bottomAnchor - ceight
-                buttons.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+                buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if SettingValues.actionBarMode.isSide() {
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     sideButtons.rightAnchor == contentView.rightAnchor - ceight
@@ -884,7 +884,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 sideButtons.widthAnchor == CGFloat(40)
             }
             
-            title.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+            title.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         }
         
         if !full {
@@ -1048,12 +1048,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         title.delegate = self
         
         title.linkAttributes = [
-            NSForegroundColorAttributeName: ColorUtil.fontColor,
-            NSUnderlineStyleAttributeName: NSNumber(value: false),
+            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
+            convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
         ]
         title.activeLinkAttributes = [
-            NSForegroundColorAttributeName: ColorUtil.fontColor,
-            NSUnderlineStyleAttributeName: NSNumber(value: false),
+            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
+            convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
         ]
         
         if let titleText = title.text as? NSString {
@@ -1071,7 +1071,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func doDTap(_ sender: AnyObject) {
+    @objc func doDTap(_ sender: AnyObject) {
         typeImage = UIImageView().then {
             $0.accessibilityIdentifier = "Action type"
             $0.layer.cornerRadius = 22.5
@@ -1089,8 +1089,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         typeImage.image = UIImage(named: SettingValues.submissionActionDoubleTap.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
         typeImage.backgroundColor = SettingValues.submissionActionDoubleTap.getColor()
         contentView.addSubviews(typeImage, overView)
-        contentView.bringSubview(toFront: overView)
-        contentView.bringSubview(toFront: typeImage)
+        contentView.bringSubviewToFront(overView)
+        contentView.bringSubviewToFront(typeImage)
         overView.backgroundColor = SettingValues.submissionActionDoubleTap.getColor()
         overView.edgeAnchors == self.contentView.edgeAnchors
         typeImage.centerAnchors == self.contentView.centerAnchors
@@ -1131,7 +1131,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.readLater()
         case .EXTERNAL:
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(self.link!.url ?? URL(string: self.link!.permalink)!)
             }
@@ -1148,7 +1148,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func do3dTouch(_ sender: AnyObject) {
+    @objc func do3dTouch(_ sender: AnyObject) {
         switch SettingValues.submissionActionForceTouch {
         case .UPVOTE:
             self.upvote()
@@ -1172,7 +1172,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.readLater()
         case .EXTERNAL:
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(self.link!.url ?? URL(string: self.link!.permalink)!)
             }
@@ -1201,7 +1201,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if self is AutoplayBannerLinkCellView {
             self.endVideos()
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                if #available(iOS 10.0, *) {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+                } else {
+                    // Set category with options (iOS 9+) setCategory(_:options:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
+                    
+                    // Set category without options (<= iOS 9) setCategory(_:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+                }
             } catch {
             }
         }
@@ -1381,7 +1389,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 sound.isHidden = true
                 self.timeView.isHidden = true
                 self.updateProgress(-1, "", buffering: false)
-                self.contentView.bringSubview(toFront: topVideoView!)
+                self.contentView.bringSubviewToFront(topVideoView!)
                 doLoadVideo()
                 videoOverride = true
             } else if self is FullLinkCellView {
@@ -1397,7 +1405,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 topVideoView?.isHidden = false
                 sound.isHidden = true
                 self.updateProgress(-1, "", buffering: false)
-                self.contentView.bringSubview(toFront: topVideoView!)
+                self.contentView.bringSubviewToFront(topVideoView!)
                 self.playView.isHidden = false
                 self.progressDot.isHidden = true
                 self.timeView.isHidden = true
@@ -1504,30 +1512,30 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if submission.isCrosspost && full {
                     let colorF = UIColor.white
                     
-                    let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+                    let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
                     
-                    let endString = NSMutableAttributedString(string: "\nOriginal submission by ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
-                    let by = NSMutableAttributedString(string: " in ", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+                    let endString = NSMutableAttributedString(string: "\nOriginal submission by ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+                    let by = NSMutableAttributedString(string: " in ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
                     
-                    let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF])
+                    let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
                     
                     let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
                     if AccountController.currentName == submission.author {
-                        authorString.addAttributes([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+                        authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
                     } else if userColor != ColorUtil.baseColor {
-                        authorString.addAttributes([kTTTBackgroundFillColorAttributeName: userColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: false), NSForegroundColorAttributeName: UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3], range: NSRange.init(location: 0, length: authorString.length))
+                        authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
                     }
                     
                     endString.append(authorString)
                     endString.append(by)
                     
-                    let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true), NSForegroundColorAttributeName: colorF] as [String: Any]
+                    let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
                     
-                    let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: attrs)
+                    let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
                     
                     let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
                     if color != ColorUtil.baseColor {
-                        boldString.addAttribute(NSForegroundColorAttributeName, value: color, range: NSRange.init(location: 0, length: boldString.length))
+                        boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
                     }
                     
                     endString.append(boldString)
@@ -1539,7 +1547,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     info.attributedText = finalText
                     
                 } else {
-                    let finalText = NSMutableAttributedString.init(string: text, attributes: [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 14, submission: true)])
+                    let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
                     finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
                     info.attributedText = finalText
                 }
@@ -1676,7 +1684,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             DispatchQueue.main.async {
                 strongSelf.avPlayerItem = AVPlayerItem(url: strongSelf.videoURL!)
                 strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
-                strongSelf.videoView?.player?.actionAtItemEnd = AVPlayerActionAtItemEnd.none
+                strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
 //                Is currently causing issues with not resuming after buffering
 //                if #available(iOS 10.0, *) {
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
@@ -1690,7 +1698,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 }
                 strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
                 strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
-                strongSelf.updater?.add(to: .current, forMode: .defaultRunLoopMode)
+                strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.default)
                 strongSelf.updater?.isPaused = false
                 UIView.animate(withDuration: 0.3, animations: {
                     strongSelf.bannerImage.alpha = 0
@@ -1721,7 +1729,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return LinkCellView.cachedInternet!
     }
     
-    func showMore() {
+    @objc func showMore() {
         timer!.invalidate()
         if !self.cancelled && LinkCellView.checkInternet() && parentViewController?.presentedViewController == nil {
             if #available(iOS 10.0, *) {
@@ -1736,7 +1744,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var handlingPlayerItemDidreachEnd = false
     
     func playerItemDidreachEnd() {
-        self.videoView?.player?.seek(to: CMTimeMake(1, 1000), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { [weak self] (_) in
+        self.videoView?.player?.seek(to: CMTimeMake(value: 1, timescale: 1000), toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero, completionHandler: { [weak self] (_) in
             guard let strongSelf = self else { return }
             // NOTE: the following is not needed since `strongSelf.videoView.player?.actionAtItemEnd` is set to `AVPlayerActionAtItemEnd.none`
 //            if finished {
@@ -1758,23 +1766,39 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     var setOnce = false
-    func displayLinkDidUpdate(displaylink: CADisplayLink) {
+    @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
         if (self.videoView.player?.isMuted ?? false) && tracks {
             if sound.isHidden {
                 sound.isHidden = false
             }
-        } else if !tracks && AVAudioSession.sharedInstance().category != AVAudioSessionCategoryAmbient && !setOnce {
+        } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setOnce {
             setOnce = true
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+                if #available(iOS 10.0, *) {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+                } else {
+                    // Set category with options (iOS 9+) setCategory(_:options:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
+                    
+                    // Set category without options (<= iOS 9) setCategory(_:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+                }
             } catch {
                 
             }
-        } else if tracks && SettingValues.muteVideos == .NEVER && AVAudioSession.sharedInstance().category == AVAudioSessionCategoryAmbient && !setOnce {
+        } else if tracks && SettingValues.muteVideos == .NEVER && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setOnce {
             setOnce = true
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                if #available(iOS 10.0, *) {
+                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+                } else {
+                    // Set category with options (iOS 9+) setCategory(_:options:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
+                    
+                    // Set category without options (<= iOS 9) setCategory(_:)
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+                }
             } catch {
                 
             }
@@ -1798,8 +1822,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.began {
+    @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
             timer = Timer.scheduledTimer(timeInterval: 0.25,
                                          target: self,
@@ -1808,13 +1832,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                                          repeats: false)
             
         }
-        if sender.state == UIGestureRecognizerState.ended {
+        if sender.state == UIGestureRecognizer.State.ended {
             timer!.invalidate()
             cancelled = true
         }
     }
     
-    func edit(sender: AnyObject) {
+    @objc func edit(sender: AnyObject) {
         let link = self.link!
         
         let alertController: BottomSheetActionController = BottomSheetActionController()
@@ -1914,9 +1938,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 textField.placeholder = "Flair text"
                 textField.left(image: UIImage.init(named: "flag"), color: .black)
                 textField.leftViewPadding = 12
-                textField.borderWidth = 1
-                textField.cornerRadius = 8
-                textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                textField.layer.borderWidth = 1
+                textField.layer.cornerRadius = 8
+                textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
                 textField.backgroundColor = .white
                 textField.keyboardAppearance = .default
                 textField.keyboardType = .default
@@ -1943,10 +1967,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func unmute() {
+    @objc func unmute() {
         self.videoView?.player?.isMuted = false
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+            } else {
+                // Set category with options (iOS 9+) setCategory(_:options:)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
+                
+                // Set category without options (<= iOS 9) setCategory(_:)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+            }
         } catch {
         }
         UIView.animate(withDuration: 0.5, animations: {
@@ -1998,13 +2030,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         case .down:
             downvote.setImage(LinkCellImageCache.downvoteTinted, for: .normal)
             sideDownvote.setImage(LinkCellImageCache.downvoteTintedSmall, for: .normal)
-            attrs = ([NSForegroundColorAttributeName: ColorUtil.downvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.downvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
         case .up:
             upvote.setImage(LinkCellImageCache.upvoteTinted, for: .normal)
             sideUpvote.setImage(LinkCellImageCache.upvoteTintedSmall, for: .normal)
-            attrs = ([NSForegroundColorAttributeName: ColorUtil.upvoteColor, NSFontAttributeName: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
-            attrs = ([NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 12, submission: true)])
+            attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
         }
         
         var scoreInt = link.score
@@ -2029,39 +2061,39 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
         if full {
-            let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
+            let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
-                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSFontAttributeName: comments.font, NSForegroundColorAttributeName: comments.textColor])
+                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): comments.font, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): comments.textColor]))
             
             var attrsNew: [String: Any] = [:]
             if scoreRatio.length > 0 {
                 let numb = (link.upvoteRatio)
                 if numb <= 0.5 {
                     if numb <= 0.1 {
-                        attrsNew = [NSForegroundColorAttributeName: GMColor.blue500Color()]
+                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue500Color()]
                     } else if numb <= 0.3 {
-                        attrsNew = [NSForegroundColorAttributeName: GMColor.blue400Color()]
+                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue400Color()]
                     } else {
-                        attrsNew = [NSForegroundColorAttributeName: GMColor.blue300Color()]
+                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue300Color()]
                     }
                 } else {
                     if numb >= 0.9 {
-                        attrsNew = [NSForegroundColorAttributeName: GMColor.orange500Color()]
+                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange500Color()]
                     } else if numb >= 0.7 {
-                        attrsNew = [NSForegroundColorAttributeName: GMColor.orange400Color()]
+                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange400Color()]
                     } else {
-                        attrsNew = [NSForegroundColorAttributeName: GMColor.orange300Color()]
+                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange300Color()]
                     }
                 }
             }
             
-            scoreRatio.addAttributes(attrsNew, range: NSRange.init(location: 0, length: scoreRatio.length))
+            scoreRatio.addAttributes(convertToNSAttributedStringKeyDictionary(attrsNew), range: NSRange.init(location: 0, length: scoreRatio.length))
             
             subScore.append(scoreRatio)
             score.attributedText = subScore
         } else {
-            let scoreString = NSAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
+            let scoreString = NSAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
             
             if SettingValues.actionBarMode == .FULL {
                 score.attributedText = scoreString
@@ -2097,7 +2129,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         let f = self.contentView.frame
-        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
+        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
         self.contentView.frame = fr
     }
     
@@ -2232,10 +2264,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
     
-    func openLink(sender: UITapGestureRecognizer? = nil) {
+    @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
             var url = link.url
-            var type = ContentType.getContentType(submission: link)
+            let type = ContentType.getContentType(submission: link)
             if self is ThumbnailLinkCellView && (ContentType.displayVideo(t: type) && type != .VIDEO) {
                 var baseUrl = link.url
                 if !link.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link.url!) {
@@ -2255,7 +2287,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func openLinkVideo(sender: UITapGestureRecognizer? = nil) {
+    @objc func openLinkVideo(sender: UITapGestureRecognizer? = nil) {
         if !playView.isHidden {
             doLoadVideo()
             playView.isHidden = true
@@ -2271,7 +2303,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func openComment(sender: UITapGestureRecognizer? = nil) {
+    @objc func openComment(sender: UITapGestureRecognizer? = nil) {
         if !full && !linkClicked {
             if let delegate = self.del {
                 if videoView != nil {
@@ -2444,4 +2476,30 @@ class PostActionsManager {
     init(submission: RSubmission) {
         self.submission = submission
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

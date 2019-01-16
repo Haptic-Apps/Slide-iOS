@@ -29,7 +29,7 @@ class SubredditCellView: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         configureViews()
@@ -95,7 +95,7 @@ class SubredditCellView: UITableViewCell {
         pin.isHidden = !shouldShow
     }
 
-    func openFull(_ sender: AnyObject) {
+    @objc func openFull(_ sender: AnyObject) {
         timer!.invalidate()
         if navController != nil {
             if #available(iOS 10.0, *) {
@@ -178,8 +178,8 @@ class SubredditCellView: UITableViewCell {
 // MARK: Actions
 extension SubredditCellView {
 
-    func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.began {
+    @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
             timer = Timer.scheduledTimer(timeInterval: 0.25,
                                          target: self,
@@ -188,7 +188,7 @@ extension SubredditCellView {
                                          repeats: false)
 
         }
-        if sender.state == UIGestureRecognizerState.ended {
+        if sender.state == UIGestureRecognizer.State.ended {
             timer!.invalidate()
             cancelled = true
         }

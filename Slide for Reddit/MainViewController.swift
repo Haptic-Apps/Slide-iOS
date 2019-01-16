@@ -21,8 +21,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let count = ReadLater.readLaterIDs.count
         if count > 0 {
             let readLater = UIButton.init(type: .custom)
-            readLater.setImage(UIImage.init(named: "bin")?.navIcon(), for: UIControlState.normal)
-            readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControlEvents.touchUpInside)
+            readLater.setImage(UIImage.init(named: "bin")?.navIcon(), for: UIControl.State.normal)
+            readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControl.Event.touchUpInside)
             
             readLaterBadge?.removeFromSuperview()
             readLaterBadge = nil
@@ -143,7 +143,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     //        return .bottom
     //    }
     
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
     
@@ -374,7 +374,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         } else {
             alertController = UIAlertController(title: nil, message: "Syncing subscriptions...\n\n", preferredStyle: .alert)
             
-            let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             UserDefaults.standard.setValue(true, forKey: "done" + token.name)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
             spinnerIndicator.color = UIColor.black
@@ -427,7 +427,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         Subscriptions.set(name: (tempToken?.name)!, subs: subs, completion: {
             self.menuNav?.view.removeFromSuperview()
             self.menuNav?.backgroundView.removeFromSuperview()
-            self.menuNav?.removeFromParentViewController()
+            self.menuNav?.removeFromParent()
             self.menuNav = nil
             self.hardReset()
         })
@@ -441,7 +441,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             menu.removeFromSuperview()
             menuNav?.view.removeFromSuperview()
             menuNav?.backgroundView.removeFromSuperview()
-            menuNav?.removeFromParentViewController()
+            menuNav?.removeFromParent()
             menuNav = nil
         }
         menuNav = NavigationSidebarViewController(controller: self)
@@ -472,9 +472,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         //        self.coverPartiallyDelegate = CoverPartiallyPresentationController(presentedViewController: menuNav!, presenting: self, coverDirection: .down)
         //        menuNav?.transitioningDelegate = coverPartiallyDelegate
         
-        self.addChildViewController(menuNav!)
+        self.addChild(menuNav!)
         self.view.addSubview(menuNav!.view)
-        menuNav!.didMove(toParentViewController: self)
+        menuNav!.didMove(toParent: self)
         
         // 3- Adjust bottomSheet frame and initial position.
         let height = view.frame.height
@@ -486,7 +486,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: height * 0.9)
     }
     
-    func restartVC() {
+    @objc func restartVC() {
         if (splitViewController != nil && SettingValues.appMode != .SPLIT) || (splitViewController == nil && SettingValues.appMode == .SPLIT) {
             (UIApplication.shared.delegate as! AppDelegate).resetStack()
             //return
@@ -532,11 +532,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 vCs.append(SingleSubredditViewController(subName: subname, parent: self))
             }
             if subs.count < 2 && !subname.contains("/") {
-                subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" ]))
+                subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
             }
         }
         
-        subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" ]))
+        subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" as NSSecureCoding ]))
         subs.reverse()
         UIApplication.shared.shortcutItems = subs
         
@@ -642,14 +642,14 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        menuNav?.view.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
+        menuNav?.view.frame.size.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
     
     func doCurrentPage(_ page: Int) {
         guard page < vCs.count else { return }
         let vc = vCs[page] as! SingleSubredditViewController
         MainViewController.current = vc.sub
-        UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, "Viewing \(vc.sub)")
+        UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
         self.currentTitle = MainViewController.current
         menuNav!.setColors(MainViewController.current)
@@ -735,7 +735,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     @objc func spacePressed() {
-        UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             if let vc = self.getSubredditVC() {
                 vc.tableView.contentOffset.y += 350
             }
@@ -749,7 +749,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.color1 = ColorUtil.backgroundColor
         self.color2 = ColorUtil.backgroundColor
         
-        self.splitViewController?.preferredDisplayMode = UISplitViewControllerDisplayMode.allVisible
+        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
         self.splitViewController?.maximumPrimaryColumnWidth = 10000
         self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.33
         
@@ -823,38 +823,38 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             return
         }
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControlState.normal)
-        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControlEvents.touchUpInside)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         sortB = UIBarButtonItem.init(customView: sort)
         
         let settings = UIButton.init(type: .custom)
-        settings.setImage(UIImage.init(named: "settings")?.toolbarIcon(), for: UIControlState.normal)
+        settings.setImage(UIImage.init(named: "settings")?.toolbarIcon(), for: UIControl.State.normal)
         //todo this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         settings.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let settingsB = UIBarButtonItem.init(customView: settings)
         
         let offline = UIButton.init(type: .custom)
-        offline.setImage(UIImage.init(named: "offline")?.toolbarIcon(), for: UIControlState.normal)
-        offline.addTarget(self, action: #selector(self.restartVC), for: UIControlEvents.touchUpInside)
+        offline.setImage(UIImage.init(named: "offline")?.toolbarIcon(), for: UIControl.State.normal)
+        offline.addTarget(self, action: #selector(self.restartVC), for: UIControl.Event.touchUpInside)
         offline.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let offlineB = UIBarButtonItem.init(customView: offline)
         
-        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
         
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         if !MainViewController.isOffline {
             more = UIButton.init(type: .custom)
             more.accessibilityIdentifier = "more"
-            more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControlState.normal)
-            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControlEvents.touchUpInside)
+            more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
+            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             
             menu = UIButton.init(type: .custom)
             menu.accessibilityIdentifier = "menu"
-            menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControlState.normal)
-            menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+            menu.setImage(UIImage.init(named: "menu")?.toolbarIcon(), for: UIControl.State.normal)
+            menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
             menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             toolbar?.addSubview(menu)
             toolbar?.addSubview(more)
@@ -888,7 +888,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         break
                     case .success(let listing):
                         
-                        let submissions = listing.children.flatMap({ $0 as? Link })
+                        let submissions = listing.children.compactMap({ $0 as? Link })
                         if submissions.count < 2 {
                             return
                         }
@@ -942,11 +942,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         menuNav?.view.isHidden = true
     }
     
-    func showSortMenu(_ sender: UIButton?) {
+    @objc func showSortMenu(_ sender: UIButton?) {
         getSubredditVC()?.showSortMenu(sender)
     }
     
-    func showReadLater(_ sender: UIButton?) {
+    @objc func showReadLater(_ sender: UIButton?) {
         VCPresenter.showVC(viewController: ReadLaterViewController(subreddit: currentTitle), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
     }
     
@@ -965,7 +965,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
     }
     
-    func showDrawer(_ sender: AnyObject) {
+    @objc func showDrawer(_ sender: AnyObject) {
         if menuNav == nil {
             makeMenuNav()
         }
@@ -977,7 +977,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         getSubredditVC()?.shadowboxMode()
     }
     
-    func showMenu(_ sender: AnyObject) {
+    @objc func showMenu(_ sender: AnyObject) {
         getSubredditVC()?.showMore(sender, parentVC: self)
     }
     

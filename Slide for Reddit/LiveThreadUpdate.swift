@@ -29,7 +29,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         let rightmargin = 5
         
         let f = self.contentView.frame
-        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
+        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
         self.contentView.frame = fr
     }
     
@@ -42,7 +42,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     func estimateHeight() -> CGFloat {
         if estimatedHeight == 0 {
             let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 12, height: CGFloat.greatestFiniteMagnitude), nil)
+            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: self.contentView.frame.size.width - 12, height: CGFloat.greatestFiniteMagnitude), nil)
 
             estimatedHeight = CGFloat(24) + CGFloat(!hasText ? 0 : textSizeB.height)
         }
@@ -104,21 +104,21 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         let views=["label": title, "body": textView, "banner": image, "info": info] as [String: Any]
         
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[label]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                                        metrics: metrics,
                                                                        views: views))
         
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[body]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                                        metrics: metrics,
                                                                        views: views))
         
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[info]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                                        metrics: metrics,
                                                                        views: views))
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[banner]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                                        metrics: metrics,
                                                                        views: views))
 
@@ -128,7 +128,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         
         lsC = []
         lsC.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[banner(bh)]-4-[label]-4-[info]-4-[body]-8-|",
-                                                              options: NSLayoutFormatOptions(rawValue: 0),
+                                                              options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                               metrics: metrics,
                                                               views: views))
         self.contentView.addConstraints(lsC)
@@ -161,12 +161,12 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         let accent = ColorUtil.accentColorForSub(sub: "")
         if let body = json["body_html"] as? String {
             if !body.isEmpty() {
-                var html = body.gtm_stringByUnescapingFromHTML()!
+                var html = body.unescapeHTML
                 do {
                     html = html.trimmed()
                     html = WrapSpoilers.addSpoilers(html)
                     html = WrapSpoilers.addTables(html)
-                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary([convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html)]), documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: accent)
                     content = LinkParser.parse(attr2, accent)
@@ -195,7 +195,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
                 if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1
                 }
-                bigConstraint = NSLayoutConstraint(item: image, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: image, attribute: NSLayoutAttribute.height, multiplier: aspect, constant: 0.0)
+                bigConstraint = NSLayoutConstraint(item: image, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: image, attribute: NSLayoutConstraint.Attribute.height, multiplier: aspect, constant: 0.0)
                 
                     let h = getHeightFromAspectRatio(imageHeight: height, imageWidth: width)
                     if h == 0 {
@@ -238,7 +238,22 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
     
-    func openContent(sender: UITapGestureRecognizer? = nil) {
+    @objc func openContent(sender: UITapGestureRecognizer? = nil) {
         parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, heroVC: nil)
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
+	return input.rawValue
 }

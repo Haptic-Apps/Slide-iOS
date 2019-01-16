@@ -32,7 +32,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
     

@@ -87,10 +87,10 @@ class SettingsHistory: UITableViewController {
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
             s.isOn = isOn
-            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
             cell.accessoryView = s
         }
-        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        cell.selectionStyle = UITableViewCell.SelectionStyle.none
     }
     
     override func loadView() {
@@ -109,13 +109,13 @@ class SettingsHistory: UITableViewController {
         clearHistory.textLabel?.text = "Clear submission history"
         clearHistory.backgroundColor = ColorUtil.foregroundColor
         clearHistory.textLabel?.textColor = ColorUtil.fontColor
-        clearHistory.selectionStyle = UITableViewCellSelectionStyle.none
+        clearHistory.selectionStyle = UITableViewCell.SelectionStyle.none
         clearHistory.accessoryType = .disclosureIndicator
 
         clearSubs.textLabel?.text = "Clear subreddit history"
         clearSubs.backgroundColor = ColorUtil.foregroundColor
         clearSubs.textLabel?.textColor = ColorUtil.fontColor
-        clearSubs.selectionStyle = UITableViewCellSelectionStyle.none
+        clearSubs.selectionStyle = UITableViewCell.SelectionStyle.none
         clearSubs.accessoryType = .disclosureIndicator
 
         doDisables()

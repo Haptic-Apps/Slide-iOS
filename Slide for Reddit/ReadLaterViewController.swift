@@ -38,15 +38,15 @@ class ReadLaterViewController: ContentListingViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let doneall = UIButton.init(type: .custom)
-        doneall.setImage(UIImage.init(named: "doneall")?.navIcon(), for: UIControlState.normal)
-        doneall.addTarget(self, action: #selector(self.doneAll), for: UIControlEvents.touchUpInside)
+        doneall.setImage(UIImage.init(named: "doneall")?.navIcon(), for: UIControl.State.normal)
+        doneall.addTarget(self, action: #selector(self.doneAll), for: UIControl.Event.touchUpInside)
         doneall.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let doneallB = UIBarButtonItem.init(customView: doneall)
         
         self.navigationItem.rightBarButtonItem = doneallB
     }
     
-    func doneAll() {
+    @objc func doneAll() {
         let alert = UIAlertController(title: "Really mark all as read?", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
             for item in self.baseData.content {

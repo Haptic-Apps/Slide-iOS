@@ -58,7 +58,7 @@ class SettingsFont: UITableViewController {
         setupBaseBarColors()
     }
     
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == enlarge {
             SettingValues.enlargeLinks = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_enlargeLinks)
@@ -103,7 +103,7 @@ class SettingsFont: UITableViewController {
         doFontSizes()
     }
     
-    func doCommentSize() {
+    @objc func doCommentSize() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Comment font size", message: "", preferredStyle: .actionSheet)
         
         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
@@ -191,7 +191,7 @@ class SettingsFont: UITableViewController {
     
     }
     
-    func doSubmissionSize() {
+    @objc func doSubmissionSize() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Submission font size", message: "", preferredStyle: .actionSheet)
         
         var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
@@ -284,24 +284,24 @@ class SettingsFont: UITableViewController {
 
         enlarge = UISwitch()
         enlarge.isOn = SettingValues.enlargeLinks
-        enlarge.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        enlarge.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.enlargeCell.textLabel?.text = "Make links larger and easier to select"
         self.enlargeCell.accessoryView = enlarge
         self.enlargeCell.textLabel?.numberOfLines = 0
         self.enlargeCell.backgroundColor = ColorUtil.foregroundColor
         self.enlargeCell.textLabel?.textColor = ColorUtil.fontColor
-        enlargeCell.selectionStyle = UITableViewCellSelectionStyle.none
+        enlargeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         
         type = UISwitch()
         type.isOn = SettingValues.showLinkContentType
-        type.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        type.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.typeCell.textLabel?.text = "Show content type preview next to links"
         self.typeCell.textLabel?.numberOfLines = 0
         self.typeCell.textLabel?.lineBreakMode = .byWordWrapping
         self.typeCell.accessoryView = type
         self.typeCell.backgroundColor = ColorUtil.foregroundColor
         self.typeCell.textLabel?.textColor = ColorUtil.fontColor
-        typeCell.selectionStyle = UITableViewCellSelectionStyle.none
+        typeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         
         self.commentSize.backgroundColor = ColorUtil.foregroundColor
         self.commentSize.textLabel?.textColor = ColorUtil.fontColor

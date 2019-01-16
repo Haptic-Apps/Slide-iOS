@@ -75,31 +75,31 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
 
         // Set up title children
         self.account = UIButton.init(type: .custom).then {
-            $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "profile")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
+            $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            $0.setImage(UIImage.init(named: "profile")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
         }
 
         self.more = UIButton.init(type: .custom).then {
-            $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
+            $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            $0.setImage(UIImage.init(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
         }
 
         self.inbox = UIButton.init(type: .custom).then {
-            $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "inbox")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
+            $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            $0.setImage(UIImage.init(named: "inbox")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
             $0.isUserInteractionEnabled = true
         }
         
         self.mod = UIButton.init(type: .custom).then {
-            $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
+            $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            $0.setImage(UIImage.init(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
             $0.isUserInteractionEnabled = true
             $0.isHidden = true
         }
 
         self.settings = UIButton.init(type: .custom).then {
-            $0.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControlState.normal)
+            $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            $0.setImage(UIImage.init(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
             $0.isUserInteractionEnabled = true
         }
 
@@ -125,10 +125,10 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
         let sTap = UITapGestureRecognizer(target: self, action: #selector(self.settings(_:)))
         settings.addGestureRecognizer(sTap)
 
-        mod.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
-        account.addTarget(self, action: #selector(self.switchAccounts(_:)), for: UIControlEvents.touchUpInside)
-        more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControlEvents.touchUpInside)
-        inbox.addTarget(self, action: #selector(self.mod(_:)), for: UIControlEvents.touchUpInside)
+        mod.addTarget(self, action: #selector(self.mod(_:)), for: UIControl.Event.touchUpInside)
+        account.addTarget(self, action: #selector(self.switchAccounts(_:)), for: UIControl.Event.touchUpInside)
+        more.addTarget(self, action: #selector(self.showMore(_:)), for: UIControl.Event.touchUpInside)
+        inbox.addTarget(self, action: #selector(self.mod(_:)), for: UIControl.Event.touchUpInside)
     }
 
     func updateLayout() {
@@ -216,9 +216,9 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
             inbox.isHidden = false
         } else {
             inbox.isHidden = true
-            let titleT = NSMutableAttributedString.init(string: "Guest\n", attributes: [NSFontAttributeName: titleFont])
+            let titleT = NSMutableAttributedString.init(string: "Guest\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont]))
             titleFont = UIFont.systemFont(ofSize: 20)
-            titleT.append(NSMutableAttributedString.init(string: "Tap to sign in", attributes: [NSFontAttributeName: titleFont.bold()]))
+            titleT.append(NSMutableAttributedString.init(string: "Tap to sign in", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont.bold()])))
             title.attributedText = titleT
         }
 
@@ -260,20 +260,20 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
         // Center the badge vertically in its container
         constraints.append(NSLayoutConstraint(
                 item: badge,
-                attribute: NSLayoutAttribute.centerY,
-                relatedBy: NSLayoutRelation.equal,
+                attribute: NSLayoutConstraint.Attribute.centerY,
+                relatedBy: NSLayoutConstraint.Relation.equal,
                 toItem: inbox,
-                attribute: NSLayoutAttribute.centerY,
+                attribute: NSLayoutConstraint.Attribute.centerY,
                 multiplier: 1, constant: -10)
         )
 
         // Center the badge horizontally in its container
         constraints.append(NSLayoutConstraint(
                 item: badge,
-                attribute: NSLayoutAttribute.centerX,
-                relatedBy: NSLayoutRelation.equal,
+                attribute: NSLayoutConstraint.Attribute.centerX,
+                relatedBy: NSLayoutConstraint.Relation.equal,
                 toItem: inbox,
-                attribute: NSLayoutAttribute.centerX,
+                attribute: NSLayoutConstraint.Attribute.centerX,
                 multiplier: 1, constant: 15)
         )
 
@@ -284,7 +284,7 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
 
 // MARK: Actions
 extension NavigationHeaderView {
-    func you(_ sender: AnyObject) {
+    @objc func you(_ sender: AnyObject) {
         if !account.isUserInteractionEnabled {
             (self.parentController as? NavigationSidebarViewController)?.expand()
         } else {
@@ -300,14 +300,14 @@ extension NavigationHeaderView {
         }
     }
 
-    func inbox(_ sender: AnyObject) {
+    @objc func inbox(_ sender: AnyObject) {
         self.parentController?.dismiss(animated: true) {
             let inbox = InboxViewController.init()
             VCPresenter.showVC(viewController: inbox, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
         }
     }
 
-    func showMore(_ sender: AnyObject) {
+    @objc func showMore(_ sender: AnyObject) {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Navigate"
@@ -359,9 +359,9 @@ extension NavigationHeaderView {
             textField.placeholder = "Username"
             textField.left(image: UIImage.init(named: "user"), color: .black)
             textField.leftViewPadding = 12
-            textField.borderWidth = 1
-            textField.cornerRadius = 8
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderWidth = 1
+            textField.layer.cornerRadius = 8
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -386,21 +386,21 @@ extension NavigationHeaderView {
         parentController?.present(alert, animated: true, completion: nil)
     }
 
-    func settings(_ sender: AnyObject) {
+    @objc func settings(_ sender: AnyObject) {
         self.parentController!.dismiss(animated: true) {
             let settings = SettingsViewController()
             VCPresenter.showVC(viewController: settings, popupIfPossible: false, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
         }
     }
 
-    func mod(_ sender: AnyObject) {
+    @objc func mod(_ sender: AnyObject) {
         self.parentController!.dismiss(animated: true) {
             let settings = ModerationViewController()
             VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: (self.parentController as! NavigationSidebarViewController).parentController?.navigationController, parentViewController: (self.parentController as! NavigationSidebarViewController).parentController)
         }
     }
 
-    func switchAccounts(_ sender: AnyObject) {
+    @objc func switchAccounts(_ sender: AnyObject) {
         let optionMenu = BottomSheetActionController()
         optionMenu.headerData = "Accounts"
 
@@ -457,7 +457,7 @@ extension NavigationHeaderView {
 //https://stackoverflow.com/a/44698425/3697225
 extension UIFont {
 
-    func withTraits(_ traits: UIFontDescriptorSymbolicTraits) -> UIFont {
+    func withTraits(_ traits: UIFontDescriptor.SymbolicTraits) -> UIFont {
 
         // create a new font descriptor with the given traits
         if let fd = fontDescriptor.withSymbolicTraits(traits) {
@@ -480,4 +480,15 @@ extension UIFont {
     func boldItalics() -> UIFont {
         return withTraits([.traitBold, .traitItalic])
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

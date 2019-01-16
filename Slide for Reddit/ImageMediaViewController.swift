@@ -148,7 +148,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
     }
     
-    func fullscreen(_ sender: AnyObject) {
+    @objc func fullscreen(_ sender: AnyObject) {
         if (parent as! ModalMediaViewController).fullscreen {
             (parent as! ModalMediaViewController).unFullscreen(self)
         } else {
@@ -267,7 +267,7 @@ extension ImageMediaViewController {
         }
     }
 
-    func downloadImageToLibrary(_ sender: AnyObject) {
+    @objc func downloadImageToLibrary(_ sender: AnyObject) {
         if let image = self.imageView.image {
             DispatchQueue.global(qos: .userInteractive).async {
                 CustomAlbum.shared.save(image: image, parent: self)
@@ -278,19 +278,19 @@ extension ImageMediaViewController {
     }
 
     // Reloads the image with the HQ version of the image.
-    func viewInHD(_ sender: AnyObject) {
+    @objc func viewInHD(_ sender: AnyObject) {
         forceHD = true
         loadContent()
     }
 
-    func showTitle(_ sender: AnyObject) {
+    @objc func showTitle(_ sender: AnyObject) {
         let alertController = UIAlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
         alertController.addTextViewer(text: .text(data.text!))
         alertController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
 
-    func showContextMenu(_ sender: UIButton) {
+    @objc func showContextMenu(_ sender: UIButton) {
         guard let baseURL = self.data.baseURL else {
             return
         }
@@ -306,7 +306,7 @@ extension ImageMediaViewController {
         alert.addAction(
             UIAlertAction(title: "Open in Safari", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(baseURL)
                 }
@@ -411,4 +411,9 @@ extension ImageMediaViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return scrollView.zoomScale == min(scrollView.minimumZoomScale, 1)
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

@@ -11,12 +11,12 @@ import UIKit
 
 class BottomMenuPresentationController: UIPresentationController, UIViewControllerTransitioningDelegate {
 
-    fileprivate var interactive = false
-    fileprivate var dismissInteractionController: PanGestureInteractionController?
+    private var interactive = false
+    private var dismissInteractionController: PanGestureInteractionController?
     weak var tableView: UITableView?
     weak var scrollView: UIScrollView?
 
-    lazy fileprivate var backgroundView = UIView()
+    lazy private var backgroundView = UIView()
 
     init(presentedViewController: UIViewController, presenting: UIViewController) {
         super.init(presentedViewController: presentedViewController, presenting: presenting)
@@ -26,7 +26,7 @@ class BottomMenuPresentationController: UIPresentationController, UIViewControll
 
 extension BottomMenuPresentationController {
 
-    func backgroundViewTapped(_ sender: AnyObject) {
+    @objc func backgroundViewTapped(_ sender: AnyObject) {
         presentingViewController.dismiss(animated: true, completion: nil)
     }
 
@@ -160,7 +160,7 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
             viewToAnimate.frame = offsetFrame
         }
         
-        let options: UIViewAnimationOptions = interactive ? [.curveLinear] : [.curveEaseInOut]
+        let options: UIView.AnimationOptions = interactive ? [.curveLinear] : [.curveEaseInOut]
         let animateBlock = { [weak self] in
             if self!.reverse {
                 viewToAnimate.frame = offsetFrame
@@ -234,7 +234,7 @@ private class PanGestureInteractionController: UIPercentDrivenInteractiveTransit
             update(percentCompleteForTranslation(translation: sender.translation(in: sender.view)))
         case .ended:
             let velocity = sender.velocity(in: sender.view).y
-            if sender.shouldRecognizeForDirection() && (percentComplete > 0.25 || velocity > 350) {
+            if sender.shouldRecognizeForDirection(.down) && (percentComplete > 0.25 || velocity > 350) {
                 finish()
             } else {
                 cancel()
@@ -269,12 +269,12 @@ extension PanGestureInteractionController: UIGestureRecognizerDelegate {
 
 extension UIPanGestureRecognizer {
 
-    fileprivate func angle(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
+    private func angle(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
         // TODO | - Not sure if this is correct
         return atan2(a.y, a.x) - atan2(b.y, b.x)
     }
 
-    fileprivate func shouldRecognizeForDirection() -> Bool {
+    private func shouldRecognizeForDirection() -> Bool {
         guard let view = view else {
             return false
         }

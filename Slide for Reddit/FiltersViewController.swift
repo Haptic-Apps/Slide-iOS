@@ -28,11 +28,11 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             switch indexPath.section {
             case 0:
@@ -67,7 +67,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         self.title = "Filters"
         self.tableView.separatorStyle = .none
 
-        domainEnter.searchBarStyle = UISearchBarStyle.minimal
+        domainEnter.searchBarStyle = UISearchBar.Style.minimal
         domainEnter.placeholder = "Add a new domain to filter"
         domainEnter.delegate = self
         domainEnter.returnKeyType = .done
@@ -80,7 +80,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
             domainEnter.keyboardAppearance = .dark
         }
 
-        selftextEnter.searchBarStyle = UISearchBarStyle.minimal
+        selftextEnter.searchBarStyle = UISearchBar.Style.minimal
         selftextEnter.placeholder = "Add a new subreddit to filter"
         selftextEnter.delegate = self
         selftextEnter.returnKeyType = .done
@@ -93,7 +93,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
             selftextEnter.keyboardAppearance = .dark
         }
 
-        titleEnter.searchBarStyle = UISearchBarStyle.minimal
+        titleEnter.searchBarStyle = UISearchBar.Style.minimal
         titleEnter.placeholder = "Add a new title keyword to filter"
         titleEnter.delegate = self
         titleEnter.returnKeyType = .done
@@ -106,7 +106,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
             titleEnter.keyboardAppearance = .dark
         }
 
-        profileEnter.searchBarStyle = UISearchBarStyle.minimal
+        profileEnter.searchBarStyle = UISearchBar.Style.minimal
         profileEnter.placeholder = "Add a new user to filter"
         profileEnter.delegate = self
         profileEnter.returnKeyType = .done
@@ -119,7 +119,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
             profileEnter.keyboardAppearance = .dark
         }
 
-        subredditEnter.searchBarStyle = UISearchBarStyle.minimal
+        subredditEnter.searchBarStyle = UISearchBar.Style.minimal
         subredditEnter.placeholder = "Add a new subreddit to filter"
         subredditEnter.delegate = self
         subredditEnter.returnKeyType = .done
@@ -132,7 +132,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
             subredditEnter.keyboardAppearance = .dark
         }
 
-        flairEnter.searchBarStyle = UISearchBarStyle.minimal
+        flairEnter.searchBarStyle = UISearchBar.Style.minimal
         flairEnter.placeholder = "Add a new flair keyword to filter"
         flairEnter.delegate = self
         flairEnter.returnKeyType = .done

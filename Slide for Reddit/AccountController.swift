@@ -201,7 +201,7 @@ class AccountController {
                     print(result.error!.localizedDescription)
                     completion(toReturn)
                 case .success(let listing):
-                    toReturn += listing.children.flatMap({ $0 as? Subreddit })
+                    toReturn += listing.children.compactMap({ $0 as? Subreddit })
                     paginator = listing.paginator
                     if paginator.hasMore() {
                         getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)

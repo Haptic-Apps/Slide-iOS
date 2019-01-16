@@ -104,10 +104,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
 
+        UIPanGestureRecognizer.swizzle()
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
         seenFile = documentDirectory.appending("/seen.plist")
@@ -194,7 +195,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         resetStack()
         window?.makeKeyAndVisible()
         
-        let remoteNotif = launchOptions?[UIApplicationLaunchOptionsKey.localNotification] as? UILocalNotification
+        let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
         
         if remoteNotif != nil {
             if let url = remoteNotif!.userInfo?["permalink"] as? String {
@@ -211,7 +212,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Application background refresh minimum interval: \(60 * 10) seconds")
             print("Application background refresh status: \(UIApplication.shared.backgroundRefreshStatus.rawValue)")
         } else {
-            UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalNever)
+            UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
             print("Application background refresh minimum set to never")
         }
 
@@ -291,12 +292,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.backgroundTaskId = UIApplication.shared.beginBackgroundTask (withName: "Download New Messages") {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
-            self.backgroundTaskId = UIBackgroundTaskInvalid
+            self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
         }
 
         func cleanup() {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
-            self.backgroundTaskId = UIBackgroundTaskInvalid
+            self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
         }
 
         print("getData running...")
@@ -427,12 +428,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     case .failure:
                         print(result.error!)
                     case .success(let listing):
-                        self.subreddits += listing.children.flatMap({ $0 as? Subreddit })
+                        self.subreddits += listing.children.compactMap({ $0 as? Subreddit })
                         self.paginator = listing.paginator
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
-                            if !sub.keyColor.isEmpty {
-                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
+                            if sub.keyColor.hexString() != "#FFFFFF" {
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
@@ -459,8 +460,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                         for sub in subs {
                             toReturn.append(sub.displayName)
-                            if !sub.keyColor.isEmpty {
-                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
+                            if sub.keyColor.hexString() != "#FFFFFF" {
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
@@ -501,7 +502,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         
         let bUrl = url.absoluteString
         if bUrl.startsWith("googlechrome://") || bUrl.startsWith("firefox://") || bUrl.startsWith("opera-http://") {
@@ -549,15 +550,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func killAndReturn() {
-        if let rootViewController = UIApplication.topViewController() {
-            var navigationArray = rootViewController.viewControllers
-            navigationArray.removeAll()
-            rootViewController.viewControllers = navigationArray
-            rootViewController.pushViewController(MainViewController(coder: NSCoder.init())!, animated: false)
-        }
-    }
-    
     func applicationDidBecomeActive(_ application: UIApplication) {
         UIView.animate(withDuration: 0.25, animations: {
             self.backView?.alpha = 0
@@ -650,22 +642,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-extension UIApplication {
-    class func topViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UINavigationController? {
-        if let nav = base as? UINavigationController {
-            return nav
-        }
-        if let tab = base as? UITabBarController {
-            let moreNavigationController = tab.moreNavigationController
-            return moreNavigationController
-        }
-        if let presented = base?.presentedViewController {
-            return topViewController(base: presented)
-        }
-        return base?.navigationController
-    }
-}
-
 extension URL {
     func getKeyVals() -> [String: String]? {
         var results = [String: String]()
@@ -748,4 +724,9 @@ extension Session {
             } catch { print(error) }
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
+	return input.rawValue
 }

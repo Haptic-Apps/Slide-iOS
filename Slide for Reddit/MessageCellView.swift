@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import AudioToolbox
 import Anchorage
+import AudioToolbox
 import reddift
 import TTTAttributedLabel
 import UIKit
@@ -30,7 +30,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         let rightmargin = 0
         
         let f = self.contentView.frame
-        let fr = UIEdgeInsetsInsetRect(f, UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
+        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
         self.contentView.frame = fr
     }
 
@@ -88,21 +88,21 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     var cancelled = false
     
     func getTitleText(message: RMessage) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject, attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 18, submission: false), NSForegroundColorAttributeName: !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.fontColor])
+        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.fontColor]))
         
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 16, submission: false)])
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
         
         var color = ColorUtil.getColorForSub(sub: message.subreddit)
         if color == ColorUtil.baseColor {
             color = ColorUtil.fontColor
         }
 
-        let subString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 16, submission: false), NSForegroundColorAttributeName: color])
+        let subString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
         
         let infoString = NSMutableAttributedString()
         infoString.append(endString)
         if !message.subreddit.isEmpty {
-            infoString.append(NSAttributedString.init(string: "  •  ", attributes: [NSForegroundColorAttributeName: ColorUtil.fontColor, NSFontAttributeName: FontGenerator.fontOfSize(size: 16, submission: false)]))
+            infoString.append(NSAttributedString.init(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)])))
             infoString.append(subString)
         }
         
@@ -111,7 +111,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         return titleText
     }
 
-    func showLongMenu() {
+    @objc func showLongMenu() {
         timer!.invalidate()
         if !self.cancelled {
             //todo show menu
@@ -177,8 +177,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         }
     }
 
-    func showMenu(_ sender: UILongPressGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.began {
+    @objc func showMenu(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
             timer = Timer.scheduledTimer(timeInterval: 0.25,
                     target: self,
@@ -186,7 +186,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
                     userInfo: nil,
                     repeats: false)
         }
-        if sender.state == UIGestureRecognizerState.ended {
+        if sender.state == UIGestureRecognizer.State.ended {
             timer!.invalidate()
             cancelled = true
         }
@@ -203,7 +203,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
 
-    func doReply(sender: UITapGestureRecognizer? = nil) {
+    @objc func doReply(sender: UITapGestureRecognizer? = nil) {
         if !ActionStates.isRead(s: message!) {
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
@@ -232,4 +232,15 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
             }
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

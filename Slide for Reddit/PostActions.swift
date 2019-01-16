@@ -139,7 +139,7 @@ class PostActions: NSObject {
         }
         alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+                UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(link.url!)
             }
@@ -183,7 +183,7 @@ class PostActions: NSObject {
             }
             let alert = UIAlertController(title: "Reports",
                                           message: reports,
-                                          preferredStyle: UIAlertControllerStyle.alert)
+                                          preferredStyle: UIAlertController.Style.alert)
             
             let cancelAction = UIAlertAction(title: "OK",
                                              style: .cancel, handler: nil)
@@ -574,9 +574,9 @@ class PostActions: NSObject {
             textField.placeholder = "Subreddit"
             textField.left(image: UIImage.init(named: "subs"), color: .black)
             textField.leftViewPadding = 12
-            textField.borderWidth = 1
-            textField.cornerRadius = 8
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderWidth = 1
+            textField.layer.cornerRadius = 8
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -595,9 +595,9 @@ class PostActions: NSObject {
             textField.placeholder = "Enter a new title"
             textField.left(image: UIImage.init(named: "size"), color: .black)
             textField.leftViewPadding = 16
-            textField.borderWidth = 0
-            textField.cornerRadius = 0
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.layer.borderWidth = 0
+            textField.layer.cornerRadius = 0
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -695,9 +695,9 @@ class PostActions: NSObject {
                 textField.placeholder = "Reason (optional)"
                 textField.left(image: UIImage.init(named: "flag"), color: .black)
                 textField.leftViewPadding = 12
-                textField.borderWidth = 1
-                textField.cornerRadius = 8
-                textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                textField.layer.borderWidth = 1
+                textField.layer.cornerRadius = 8
+                textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
                 textField.backgroundColor = .white
                 textField.keyboardAppearance = .default
                 textField.keyboardType = .default
@@ -746,7 +746,6 @@ class PostActions: NSObject {
             
         VCPresenter.presentAlert(alert, parentVC: parent)
     }
-
     
     static func getIDString(_ json: JSONAny) -> reddift.Result<String> {
         if let json = json as? JSONDictionary {
@@ -773,4 +772,9 @@ class PostActions: NSObject {
         }
         return nil
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

@@ -34,8 +34,8 @@ public class VCPresenter {
 
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = newParent
-            button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControlState.normal)
+            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
 
@@ -64,10 +64,10 @@ public class VCPresenter {
         } else {
             let button = UIButtonWithContext.init(type: .custom)
             button.accessibilityLabel = "Back"
-            button.accessibilityTraits = UIAccessibilityTraitButton
+            button.accessibilityTraits = UIAccessibilityTraits.button
             button.parentController = parentNavigationController!
-            button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControlState.normal)
+            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleBackButton(controller:)), for: .touchUpInside)
 
@@ -92,8 +92,8 @@ public class VCPresenter {
             
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = newParent
-            button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControlState.normal)
+            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
             
