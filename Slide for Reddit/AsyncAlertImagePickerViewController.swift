@@ -179,7 +179,7 @@ class ItemWithImage: UICollectionViewCell {
     lazy var unselectedCircle: UIView = {
         $0.backgroundColor = .clear
         $0.layer.borderWidth = 2
-        $0.layer.borderColor = UIColor.white as! CGColor
+        $0.layer.borderColor = UIColor.white.cgColor
         $0.layer.masksToBounds = false
         $0.isHidden = true
         return $0
@@ -189,7 +189,7 @@ class ItemWithImage: UICollectionViewCell {
         $0.backgroundColor = .clear
         $0.layer.borderWidth = 2
         $0.isHidden = true
-        $0.layer.borderColor = UIColor.white as! CGColor
+        $0.layer.borderColor = UIColor.white.cgColor
         $0.layer.masksToBounds = false
         return $0
     }(UIView())

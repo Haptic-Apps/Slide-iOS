@@ -187,7 +187,7 @@ public class ToolbarTextView: NSObject {
                                                     textField.leftViewPadding = 12
                                                     textField.layer.borderWidth = 1
                                                     textField.layer.cornerRadius = 8
-                                                    textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
+                                                    textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
                                                     textField.backgroundColor = .white
                                                     textField.keyboardAppearance = .default
                                                     textField.keyboardType = .default
@@ -241,7 +241,7 @@ public class ToolbarTextView: NSObject {
                                     textField.leftViewPadding = 12
                                     textField.layer.borderWidth = 1
                                     textField.layer.cornerRadius = 8
-                                    textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
+                                    textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
                                     textField.backgroundColor = .white
                                     textField.keyboardAppearance = .default
                                     textField.keyboardType = .default
@@ -342,7 +342,7 @@ public class ToolbarTextView: NSObject {
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -360,7 +360,7 @@ public class ToolbarTextView: NSObject {
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default

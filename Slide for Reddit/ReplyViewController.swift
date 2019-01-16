@@ -1300,7 +1300,7 @@ public class UIStateButton: UIButton {
     override open var isSelected: Bool {
         didSet {
             backgroundColor = isSelected ? color : ColorUtil.foregroundColor
-            self.layer.borderColor = color as! CGColor
+            self.layer.borderColor = color .cgColor
             self.layer.borderWidth = isSelected ? CGFloat(0) : CGFloat(2)
         }
     }

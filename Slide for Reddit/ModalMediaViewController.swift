@@ -409,7 +409,7 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
         let viewToMove: UIView
         if embeddedVC is ImageMediaViewController {
             viewToMove = (embeddedVC as! ImageMediaViewController).imageView
-        } else if embeddedVC != nil{
+        } else if embeddedVC != nil {
             viewToMove = (embeddedVC as! VideoMediaViewController).isYoutubeView ? (embeddedVC as! VideoMediaViewController).youtubeView : (embeddedVC as! VideoMediaViewController).videoView
         } else {
             return
