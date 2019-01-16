@@ -550,6 +550,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        if AccountController.current == nil && UserDefaults.standard.string(forKey: "name") != "GUEST" {
+            AccountController.initialize()
+        }
         UIView.animate(withDuration: 0.25, animations: {
             self.backView?.alpha = 0
         }, completion: { (_) in
