@@ -109,9 +109,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         searchBar.isUserInteractionEnabled = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
-                                               name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+                                               name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
-                                               name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     struct Callbacks {
@@ -130,13 +130,14 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         switch sender.state {
         case .began:
+            backgroundView.isHidden = false
             lastPercentY = CGFloat(0)
             callbacks.didBeginPanning?()
             if let navVC = parentController!.navigationController {
                 navVC.view.addSubviews(backgroundView, self.view)
-                navVC.view.bringSubview(toFront: backgroundView)
+                navVC.view.bringSubviewToFront(backgroundView)
                 backgroundView.edgeAnchors == navVC.view.edgeAnchors
-                navVC.view.bringSubview(toFront: self.view)
+                navVC.view.bringSubviewToFront(self.view)
             } else {
                 NSLog("Warning: No parentController!.navigationController. Background behind drawer probably won't show up.")
             }
@@ -197,7 +198,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         return 1 - percent
     }
     
-    func collapse() {
+    @objc func collapse() {
 
         searchBar.isUserInteractionEnabled = true
 
@@ -232,6 +233,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             guard let strongSelf = self else { return }
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             strongSelf.callbacks.didCollapse?()
+            strongSelf.backgroundView.isHidden = true
         }
 
         UIView.animate(withDuration: 0.4,
@@ -266,6 +268,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             let completionBlock: (Bool) -> Void = { [weak self] finished in
                 guard let strongSelf = self else { return }
                 strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
+                strongSelf.backgroundView.isHidden = true
             }
             
             UIView.animate(withDuration: 0.4,
@@ -277,6 +280,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                            completion: completionBlock)
         } else {
             self.backgroundView.alpha = 0
+            self.backgroundView.isHidden = true
             self.topView?.alpha = 1
             self.view.frame = CGRect(x: 0, y: y, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: desiredHeight)
             self.topView?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
@@ -289,11 +293,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             return
         }
 
+        backgroundView.isHidden = false
+
         if let navVC = parentController!.navigationController {
             navVC.view.addSubviews(backgroundView, self.view)
-            navVC.view.bringSubview(toFront: backgroundView)
+            navVC.view.bringSubviewToFront(backgroundView)
             backgroundView.edgeAnchors == navVC.view.edgeAnchors
-            navVC.view.bringSubview(toFront: self.view)
+            navVC.view.bringSubviewToFront(self.view)
         } else {
             NSLog("Warning: No parentController!.navigationController. Background behind drawer probably won't show up.")
         }
@@ -361,6 +367,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         backgroundView.edgeAnchors == parentController!.view.edgeAnchors
 
         backgroundView.alpha = 0
+        backgroundView.isHidden = true
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -407,10 +414,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         tableView.bounces = false
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.none
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         tableView.clipsToBounds = true
         tableView.estimatedRowHeight = 50
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorInset = .zero
 
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
@@ -696,7 +703,7 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
         }
     }
 
-    func getSuggestions() {
+    @objc func getSuggestions() {
         if task != nil {
             task?.cancel()
         }
@@ -779,10 +786,10 @@ extension NavigationSidebarViewController: HorizontalSubredditGroupDelegate {
 }
 
 extension NavigationSidebarViewController {
-    func keyboardWillBeShown(notification: NSNotification) {
+    @objc func keyboardWillBeShown(notification: NSNotification) {
         //get the end position keyboard frame
         let keyInfo: Dictionary = notification.userInfo!
-        var keyboardFrame: CGRect = keyInfo[UIKeyboardFrameEndUserInfoKey] as! CGRect
+        var keyboardFrame: CGRect = keyInfo[UIResponder.keyboardFrameEndUserInfoKey] as! CGRect
         //convert it to the same view coords as the tableView it might be occluding
         keyboardFrame = self.tableView.convert(keyboardFrame, to: self.tableView)
         //calculate if the rects intersect
@@ -790,7 +797,7 @@ extension NavigationSidebarViewController {
         if !intersect.isNull {
             //yes they do - adjust the insets on tableview to handle it
             //first get the duration of the keyboard appearance animation
-            let duration: TimeInterval = keyInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
+            let duration: TimeInterval = keyInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
             // Change the table insets to match - animated to the same duration of the keyboard appearance
             UIView.animate(withDuration: duration, animations: {
                 let edgeInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardFrame.size.height, right: 0)
@@ -800,9 +807,9 @@ extension NavigationSidebarViewController {
         }
     }
 
-    func keyboardWillBeHidden(notification: NSNotification) {
+    @objc func keyboardWillBeHidden(notification: NSNotification) {
         let keyInfo: Dictionary = notification.userInfo!
-        let duration: TimeInterval = keyInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
+        let duration: TimeInterval = keyInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
         // Clear the table insets - animated to the same duration of the keyboard disappearance
         UIView.animate(withDuration: duration) {
             self.tableView.contentInset = UIEdgeInsets.zero
@@ -857,6 +864,7 @@ class HorizontalSubredditGroup: UIView {
     func setColors() {
         for button in buttons {
             button.setTitleColor(ColorUtil.baseAccent, for: .normal)
+            button.setTitleColor(ColorUtil.fontColor, for: .highlighted)
         }
     }
 
@@ -871,16 +879,19 @@ class HorizontalSubredditGroup: UIView {
             let button = UIButton().then {
                 $0.setTitle(name, for: .normal)
                 $0.titleLabel?.font = FontGenerator.boldFontOfSize(size: 14, submission: false)
+                $0.titleLabel?.textAlignment = .center
+                $0.accessibilityLabel = name
+                $0.accessibilityHint = "Navigates to the subreddit \(name)"
             }
             stack.addArrangedSubview(button)
             button.addTarget(self, action: #selector(buttonWasTapped), for: .touchUpInside)
-
+            buttons.append(button)
         }
 
         setColors()
     }
 
-    @objc func buttonWasTapped(_ sender: UIButton) {
+    @objc private func buttonWasTapped(_ sender: UIButton) {
         delegate?.horizontalSubredditGroup(self, didRequestSubredditWithName: sender.currentTitle!.lowercased())
     }
 

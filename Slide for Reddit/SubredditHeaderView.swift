@@ -21,7 +21,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     var sorting = UITableViewCell()
     var mods = UITableViewCell()
 
-    func mods(_ sender: UITableViewCell) {
+    @objc func mods(_ sender: UITableViewCell) {
         var list: [User] = []
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.about(subreddit!, aboutWhere: SubredditAbout.moderators, completion: { (result) in
@@ -122,7 +122,7 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
-        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, delegate: self, width: width - 24)
+        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, delegate: self, width: self.frame.size.width - 24)
         
         self.subscribers = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         subscribers.numberOfLines = 1
@@ -154,11 +154,11 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
 
     }
     
-    func new(_ selector: UITableViewCell) {
+    @objc func new(_ selector: UITableViewCell) {
         PostActions.showPostMenu(parentController!, sub: self.subreddit!.displayName)
     }
     
-    func sort(_ selector: UITableViewCell) {
+    @objc func sort(_ selector: UITableViewCell) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
@@ -264,18 +264,18 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         here.textColor = ColorUtil.fontColor
         subscribers.textColor = ColorUtil.fontColor
 
-        let attrs = [NSFontAttributeName: FontGenerator.boldFontOfSize(size: 20, submission: true)]
-        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes: attrs)
+        let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 20, submission: true)]
+        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
         var subt = NSMutableAttributedString(string: "\nSUBSCRIBERS")
         attributedString.append(subt)
         subscribers.attributedText = attributedString
         
-        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes: attrs)
+        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
         subt = NSMutableAttributedString(string: "\nHERE")
         attributedString.append(subt)
         here.attributedText = attributedString
 
-        var width = UIScreen.main.bounds.width
+        let width = UIScreen.main.bounds.width
 
         info.estimatedWidth = width - 24
         if !subreddit.descriptionHtml.isEmpty() {
@@ -347,16 +347,16 @@ extension UIView {
 
     // In order to create computed properties for extensions, we need a key to
     // store and access the stored property
-    fileprivate struct AssociatedObjectKeys {
+    private struct AssociatedObjectKeys {
         static var tapGestureRecognizer = "tapGR"
         static var longTapGestureRecognizer = "longTapGR"
 
     }
 
-    fileprivate typealias Action = (() -> Void)?
+    private typealias Action = (() -> Void)?
 
     // Set our computed property type to a closure
-    fileprivate var tapGestureRecognizerAction: Action? {
+    private var tapGestureRecognizerAction: Action? {
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
@@ -369,7 +369,7 @@ extension UIView {
         }
     }
 
-    fileprivate var longTapGestureRecognizerAction: Action? {
+    private var longTapGestureRecognizerAction: Action? {
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
@@ -400,13 +400,13 @@ extension UIView {
 
     // Every time the user taps on the UIImageView, this function gets called,
     // which triggers the closure we stored
-    @objc fileprivate func handleTapGesture(sender: UITapGestureRecognizer) {
+    @objc private func handleTapGesture(sender: UITapGestureRecognizer) {
         if let action = self.tapGestureRecognizerAction {
             action?()
         }
     }
 
-    @objc fileprivate func handleLongTapGesture(sender: UITapGestureRecognizer) {
+    @objc private func handleLongTapGesture(sender: UITapGestureRecognizer) {
         if let action = self.longTapGestureRecognizerAction {
             action?()
         }
@@ -423,4 +423,15 @@ extension Int {
     var delimiter: String {
         return Int.numberFormatter.string(from: NSNumber(value: self)) ?? ""
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

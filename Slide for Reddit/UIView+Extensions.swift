@@ -23,8 +23,8 @@ extension UIView {
         
         batch {
             let constraints = self.edgeAnchors == container.edgeAnchors + padding
-            constraints.bottom.priority = UILayoutPriorityRequired - 1
-            constraints.trailing.priority = UILayoutPriorityRequired - 1
+            constraints.bottom.priority = UILayoutPriority.required - 1
+            constraints.trailing.priority = UILayoutPriority.required - 1
         }
         
         return container
@@ -33,15 +33,15 @@ extension UIView {
     // TODO: Make static
     func flexSpace() -> UIView {
         return UIView().then {
-            $0.setContentHuggingPriority(0, for: .horizontal)
-            $0.setContentHuggingPriority(0, for: .vertical)
+            $0.setContentHuggingPriority(UILayoutPriority(rawValue: 0), for: .horizontal)
+            $0.setContentHuggingPriority(UILayoutPriority(rawValue: 0), for: .vertical)
         }
     }
     
     static func flexSpace() -> UIView {
         return UIView().then {
-            $0.setContentHuggingPriority(0, for: .horizontal)
-            $0.setContentHuggingPriority(0, for: .vertical)
+            $0.setContentHuggingPriority(UILayoutPriority(rawValue: 0), for: .horizontal)
+            $0.setContentHuggingPriority(UILayoutPriority(rawValue: 0), for: .vertical)
         }
     }
     

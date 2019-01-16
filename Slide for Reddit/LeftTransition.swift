@@ -30,7 +30,7 @@ class LeftTransition: NSObject, UIViewControllerAnimatedTransitioning {
         containerView.addSubview(toVC.view)
         
         if dismiss {
-            containerView.bringSubview(toFront: fromVC.view)
+            containerView.bringSubviewToFront(fromVC.view)
             UIView.animate(withDuration: transitionDuration(using: transitionContext), animations: { () -> Void in
                 fromVC.view.frame = originRect
             }, completion: { (_ ) -> Void in

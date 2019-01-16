@@ -198,7 +198,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
     }
         
     //Swift 4 messes up this method for some reason...
-    @objc(collectionView:layout:insetForSectionAtIndex:)  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    @objc(collectionView:layout:insetForSectionAtIndex:)  override open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver {
             return UIEdgeInsets.init(top: 0, left: 250, bottom: 0, right: 250)
         }

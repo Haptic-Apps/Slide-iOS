@@ -37,26 +37,26 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.title = "Subreddit themes"
 
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControlState.normal)
-        sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControlEvents.touchUpInside)
+        sync.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControl.State.normal)
+        sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControl.Event.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let add = UIButton.init(type: .custom)
-        add.setImage(UIImage.init(named: "edit")!.navIcon(), for: UIControlState.normal)
-        add.addTarget(self, action: #selector(self.add(_:)), for: UIControlEvents.touchUpInside)
+        add.setImage(UIImage.init(named: "edit")!.navIcon(), for: UIControl.State.normal)
+        add.addTarget(self, action: #selector(self.add(_:)), for: UIControl.Event.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
 
         let delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage.init(named: "delete")!.navIcon(), for: UIControlState.normal)
-        delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControlEvents.touchUpInside)
+        delete.setImage(UIImage.init(named: "delete")!.navIcon(), for: UIControl.State.normal)
+        delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControl.Event.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
 
         let all = UIButton.init(type: .custom)
-        all.setImage(UIImage.init(named: "selectall")!.navIcon(), for: UIControlState.normal)
-        all.addTarget(self, action: #selector(self.all(_:)), for: UIControlEvents.touchUpInside)
+        all.setImage(UIImage.init(named: "selectall")!.navIcon(), for: UIControl.State.normal)
+        all.addTarget(self, action: #selector(self.all(_:)), for: UIControl.Event.touchUpInside)
         all.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let allB = UIBarButtonItem.init(customView: all)
 
@@ -68,14 +68,14 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.tableView.tableFooterView = UIView()
     }
 
-    public func all(_ selector: AnyObject) {
+    @objc public func all(_ selector: AnyObject) {
         for row in 0..<subs.count {
             tableView.selectRow(at: IndexPath(row: row, section: 0), animated: false, scrollPosition: .none)
         }
         self.navigationItem.setRightBarButtonItems(chosenButtons, animated: true)
     }
     
-    public func add(_ selector: AnyObject) {
+    @objc public func add(_ selector: AnyObject) {
         var selected: [String] = []
         if tableView.indexPathsForSelectedRows != nil {
             for i in tableView.indexPathsForSelectedRows! {
@@ -85,7 +85,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         }
     }
 
-    public func remove(_ selector: AnyObject) {
+    @objc public func remove(_ selector: AnyObject) {
         if tableView.indexPathsForSelectedRows != nil {
             for i in tableView.indexPathsForSelectedRows! {
                 doDelete(subs[i.row])
@@ -104,21 +104,21 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     public static var changed = false
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
 
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
 
     var alertController: UIAlertController?
     var count = 0
 
-    func sync(_ selector: AnyObject) {
+    @objc func sync(_ selector: AnyObject) {
         let defaults = UserDefaults.standard
         alertController = UIAlertController(title: nil, message: "Syncing colors...\n\n", preferredStyle: .alert)
 
-        let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
         spinnerIndicator.color = UIColor.black
         spinnerIndicator.startAnimating()
@@ -136,11 +136,11 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     case .failure:
                         print(result.error!)
                     case .success(let listing):
-                        let subs = listing.children.flatMap({ $0 as? Subreddit })
+                        let subs = listing.children.compactMap({ $0 as? Subreddit })
                         for sub in subs {
-                            if !sub.keyColor.isEmpty() {
+                            if sub.keyColor.hexString() != "#FFFFFF" {
                                 toReturn.append(sub.displayName)
-                                let color = ColorUtil.getClosestColor(hex: sub.keyColor)
+                                let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color != .black {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                     self.count += 1
@@ -157,11 +157,10 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             } else {
                 Subscriptions.getSubscriptionsFully(session: (UIApplication.shared.delegate as! AppDelegate).session!, completion: { (subs, multis) in
                     for sub in subs {
-                        if !sub.keyColor.isEmpty() {
-                            print("Coloring \(sub.displayName)")
+                        if sub.keyColor.hexString() != "#FFFFFF" {
                             toReturn.append(sub.displayName)
-                            let color = ColorUtil.getClosestColor(hex: sub.keyColor)
-                            if UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString != "#000000" {
+                            let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
+                            if UserDefaults.standard.colorForKey(key: "color+" + sub.displayName) == nil && color.hexString() != "#000000" {
                                 defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 self.count += 1
                             }
@@ -170,7 +169,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                     for m in multis {
                         toReturn.append("/m/" + m.displayName)
                         let color = (UIColor.init(hexString: m.keyColor))
-                        if UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil && color.hexString != "#000000" {
+                        if UserDefaults.standard.colorForKey(key: "color+" + m.displayName) == nil && color.hexString() != "#000000" {
                             defaults.setColor(color: color, forKey: "color+" + m.displayName)
                             self.count += 1
                         }
@@ -235,7 +234,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         return cell!
     }
 
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
 
@@ -277,7 +276,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     func edit(_ sub: [String], sender: UIButton) {
         editSubs = sub
 
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
         isAccent = false
         let margin: CGFloat = 10.0
@@ -326,7 +325,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     var isAccent = false
     func pickAccent(_ sub: [String], sender: UIButton) {
         isAccent = true
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
         let margin: CGFloat = 10.0
         let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
@@ -384,7 +383,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         UserDefaults.standard.synchronize()
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             doDelete(subs[indexPath.row])
         }
@@ -739,7 +738,7 @@ public extension UIView {
             activityView.layer.shadowOffset = style.shadowOffset
         }
 
-        let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let activityIndicatorView = UIActivityIndicatorView(style: .whiteLarge)
         activityIndicatorView.center = CGPoint(x: activityView.bounds.size.width / 2.0, y: activityView.bounds.size.height / 2.0)
         activityView.addSubview(activityIndicatorView)
         activityIndicatorView.startAnimating()
@@ -768,7 +767,7 @@ public extension UIView {
             toast.alpha = 1.0
         }, completion: { _ in
             let timer = Timer(timeInterval: duration, target: self, selector: #selector(UIView.toastTimerDidFinish(_:)), userInfo: toast, repeats: false)
-            RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
+            RunLoop.main.add(timer, forMode: RunLoop.Mode.common)
             objc_setAssociatedObject(toast, &ToastKeys.Timer, timer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         })
     }
@@ -799,14 +798,14 @@ public extension UIView {
 
     // MARK: - Events
 
-    func handleToastTapped(_ recognizer: UITapGestureRecognizer) {
+    @objc func handleToastTapped(_ recognizer: UITapGestureRecognizer) {
         if let toast = recognizer.view, let timer = objc_getAssociatedObject(toast, &ToastKeys.Timer) as? Timer {
             timer.invalidate()
             self.hideToast(toast, fromTap: true)
         }
     }
 
-    func toastTimerDidFinish(_ timer: Timer) {
+    @objc func toastTimerDidFinish(_ timer: Timer) {
         if let toast = timer.userInfo as? UIView {
             self.hideToast(toast)
         }

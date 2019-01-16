@@ -51,7 +51,7 @@ class SearchContributionLoader: ContributionLoader {
                             self.content = []
                         }
                         let before = self.content.count
-                        for item in listing.children.flatMap({ $0 }) {
+                        for item in listing.children.compactMap({ $0 }) {
                             if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             } else {

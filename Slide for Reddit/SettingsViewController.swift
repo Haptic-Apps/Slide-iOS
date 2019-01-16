@@ -57,8 +57,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             navigationItem.rightBarButtonItem = menuB
         }
         let button = UIButtonWithContext.init(type: .custom)
-        button.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControlState.normal)
+        button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
@@ -110,7 +110,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
-    func didPro(_ sender: AnyObject) {
+    @objc func didPro(_ sender: AnyObject) {
         let alert = UIAlertController.init(title: "Pro Supporter", message: "Thank you for supporting my work and going Pro :)\n\nIf you need any assistance with pro features, feel free to send me a message!", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Email", style: .default, handler: { (_) in
             if MFMailComposeViewController.canSendMail() {
@@ -345,7 +345,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         viewModeCell.accessoryType = .disclosureIndicator
         viewModeCell.backgroundColor = ColorUtil.foregroundColor
         viewModeCell.textLabel?.textColor = ColorUtil.fontColor
-        viewModeCell.selectionStyle = UITableViewCellSelectionStyle.none
+        viewModeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.viewModeCell.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
         self.viewModeCell.imageView?.tintColor = ColorUtil.fontColor
         self.viewModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -355,19 +355,19 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         lock = UISwitch()
         lock.isOn = SettingValues.biometrics
         lock.isEnabled = BioMetricAuthenticator.canAuthenticate()
-        lock.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+        lock.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         lockCell.textLabel?.text = "Biometric app lock"
         lockCell.accessoryView = lock
         lockCell.backgroundColor = ColorUtil.foregroundColor
         lockCell.textLabel?.textColor = ColorUtil.fontColor
-        lockCell.selectionStyle = UITableViewCellSelectionStyle.none
+        lockCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
         muteCell.textLabel?.text = "Mute autoplaying videos"
         muteCell.backgroundColor = ColorUtil.foregroundColor
         muteCell.textLabel?.textColor = ColorUtil.fontColor
-        muteCell.selectionStyle = UITableViewCellSelectionStyle.none
+        muteCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.muteCell.imageView?.image = UIImage.init(named: "mute")?.toolbarIcon()
         self.muteCell.imageView?.tintColor = ColorUtil.fontColor
         self.muteCell.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -381,7 +381,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         }
     }
 
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == lock {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 SettingValues.biometrics = changed.isOn
@@ -661,14 +661,14 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 2:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios/graphs/contributors")!
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
             case 3:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
@@ -739,4 +739,9 @@ extension Bundle {
         }
         return nil
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

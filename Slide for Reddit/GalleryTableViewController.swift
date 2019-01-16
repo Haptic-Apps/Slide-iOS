@@ -34,7 +34,7 @@ class GalleryTableViewController: MediaTableViewController {
         super.viewDidAppear(animated)
         if let view = self.view.superview {
             view.addSubview(exit)
-            view.bringSubview(toFront: exit)
+            view.bringSubviewToFront(exit)
             exit.bottomAnchor == view.bottomAnchor - 8
             exit.rightAnchor == view.rightAnchor - 8
             exit.widthAnchor == 50

@@ -34,7 +34,7 @@ public extension UIColor {
 
         var classCount = objc_getClassList(nil, 0)
         var allClasses = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
-        var autoreleasingAllClasses = AutoreleasingUnsafeMutablePointer<AnyClass?>(allClasses)
+        var autoreleasingAllClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(allClasses)
         classCount = objc_getClassList(autoreleasingAllClasses, classCount)
 
         var modifiedClassCount = 0

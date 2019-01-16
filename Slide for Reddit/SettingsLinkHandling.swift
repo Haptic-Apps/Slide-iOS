@@ -127,7 +127,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         return indexPath.section == 2
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             switch indexPath.section {
             case 2:
@@ -165,10 +165,10 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
             s.isOn = isOn
-            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
             cell.accessoryView = s
         }
-        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        cell.selectionStyle = UITableViewCell.SelectionStyle.none
     }
 
     override func loadView() {
@@ -186,7 +186,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
         self.tableView.tableFooterView = UIView()
 
-        domainEnter.searchBarStyle = UISearchBarStyle.minimal
+        domainEnter.searchBarStyle = UISearchBar.Style.minimal
         domainEnter.placeholder = "Enter domain to open externally"
         domainEnter.delegate = self
         domainEnter.returnKeyType = .done
@@ -306,8 +306,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         label.numberOfLines = 0
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        let contentAttribute = NSMutableAttributedString(string: "Content Settings", attributes: [NSFontAttributeName: label.font, NSForegroundColorAttributeName: label.textColor])
-        contentAttribute.append(NSMutableAttributedString(string: "\nAdditionally, you can set specific domains to open externally in the section below", attributes: [NSFontAttributeName: FontGenerator.fontOfSize(size: 16, submission: true), NSForegroundColorAttributeName: label.textColor]))
+        let contentAttribute = NSMutableAttributedString(string: "Content Settings", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): label.font, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): label.textColor]))
+        contentAttribute.append(NSMutableAttributedString(string: "\nAdditionally, you can set specific domains to open externally in the section below", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): label.textColor])))
         toReturn.backgroundColor = ColorUtil.backgroundColor
         switch section {
         case 0: label.text = "Web browser"
@@ -326,4 +326,15 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         default: fatalError("Unknown number of sections")
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

@@ -22,7 +22,7 @@ class GalleryCellView: UITableViewCell {
     func setLink(_ link: RSubmission, parent: UIViewController & MediaVCDelegate) {
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.clipsToBounds = true
-        bannerImage.contentMode = UIViewContentMode.scaleAspectFit
+        bannerImage.contentMode = UIView.ContentMode.scaleAspectFit
 
         self.commentsImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         self.commentsImage.image = UIImage.init(named: "comments")?.navIcon(true)
@@ -74,7 +74,7 @@ class GalleryCellView: UITableViewCell {
         return estimatedHeight
     }
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
 
@@ -99,25 +99,25 @@ class GalleryCellView: UITableViewCell {
         let views=["banner": bannerImage, "comments": commentsImage, "type": typeImage] as [String: Any]
 
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[banner]-2-|",
-                                                          options: NSLayoutFormatOptions(rawValue: 0),
+                                                          options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                           metrics: [:],
                                                           views: views))
         
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-2-[banner]-2-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                                        metrics: [:],
                                                                        views: views))
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[comments]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                                        metrics: [:],
                                                                        views: views))
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[type]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                                        metrics: [:],
                                                                        views: views))
 
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[type]-8-[comments]-8-|",
-                                                                       options: NSLayoutFormatOptions(rawValue: 0),
+                                                                       options: NSLayoutConstraint.FormatOptions(rawValue: 0),
                                                                        metrics: [:],
                                                                        views: views))
         

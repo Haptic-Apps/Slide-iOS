@@ -72,7 +72,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     var navItem: UINavigationItem?
     var navigationBar = UINavigationBar()
     
-    func exit() {
+    @objc func exit() {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -96,7 +96,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         navigationBar.horizontalAnchors == self.view.horizontalAnchors
     }
     
-    func color() {
+    @objc func color() {
         SettingValues.blackShadowbox = !SettingValues.blackShadowbox
         UserDefaults.standard.set(SettingValues.blackShadowbox, forKey: SettingValues.pref_blackShadowbox)
         UserDefaults.standard.synchronize()
@@ -118,15 +118,15 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     func doButtons() {
         navItem = UINavigationItem(title: "")
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControlState.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControlEvents.touchUpInside)
+        close.setImage(UIImage.init(named: "close")?.navIcon(), for: UIControl.State.normal)
+        close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)
         navItem?.leftBarButtonItem = closeB
         
         let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage.init(named: !SettingValues.blackShadowbox ? "colors" : "nocolors")?.navIcon(), for: UIControlState.normal)
-        shadowbox.addTarget(self, action: #selector(self.color), for: UIControlEvents.touchUpInside)
+        shadowbox.setImage(UIImage.init(named: !SettingValues.blackShadowbox ? "colors" : "nocolors")?.navIcon(), for: UIControl.State.normal)
+        shadowbox.addTarget(self, action: #selector(self.color), for: UIControl.Event.touchUpInside)
         shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let shadowboxB = UIBarButtonItem.init(customView: shadowbox)
         navItem?.rightBarButtonItem = shadowboxB
@@ -183,16 +183,19 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
     var selected = false
     var currentVc = UIViewController()
-    override func prefersHomeIndicatorAutoHidden() -> Bool {
+    override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
 
 }
 
+private var hasSwizzled = false
+
 extension UIPanGestureRecognizer {
-    
-    override open class func initialize() {
-        super.initialize()
+    final public class func swizzle() {
+        guard !hasSwizzled else { return }
+        
+        hasSwizzled = true
         guard self === UIPanGestureRecognizer.self else {
             return
         }
@@ -200,11 +203,11 @@ extension UIPanGestureRecognizer {
         func replace(_ method: Selector, with anotherMethod: Selector, for clаss: AnyClass) {
             let original = class_getInstanceMethod(clаss, method)
             let swizzled = class_getInstanceMethod(clаss, anotherMethod)
-            switch class_addMethod(clаss, method, method_getImplementation(swizzled), method_getTypeEncoding(swizzled)) {
+            switch class_addMethod(clаss, method, method_getImplementation(swizzled!), method_getTypeEncoding(swizzled!)) {
             case true:
-                class_replaceMethod(clаss, anotherMethod, method_getImplementation(original), method_getTypeEncoding(original))
+                class_replaceMethod(clаss, anotherMethod, method_getImplementation(original!), method_getTypeEncoding(original!))
             case false:
-                method_exchangeImplementations(original, swizzled)
+                method_exchangeImplementations(original!, swizzled!)
             }
         }
         
@@ -233,7 +236,7 @@ extension UIPanGestureRecognizer {
             touchesBegan = false
         }
         let forbiddenDirectionsCount = touches
-            .flatMap({ ($0.location(in: $0.view) - $0.previousLocation(in: $0.view)).direction })
+            .compactMap({ ($0.location(in: $0.view) - $0.previousLocation(in: $0.view)).direction })
             .filter({ $0 != direction })
             .count
         if forbiddenDirectionsCount > 0 {
@@ -266,7 +269,7 @@ public extension UIPanGestureRecognizer {
         }
     }
     
-    fileprivate var touchesBegan: Bool {
+    private var touchesBegan: Bool {
         get {
             let object = objc_getAssociatedObject(self, &UIPanGestureRecognizerRuntimeKeys.touchesBegan)
             return (object as? Bool) ?? false
@@ -278,13 +281,13 @@ public extension UIPanGestureRecognizer {
     }
 }
 
-fileprivate extension CGPoint {
+private extension CGPoint {
     
     var direction: UIPanGestureRecognizer.Direction? {
         guard self != .zero else {
             return nil
         }
-        switch fabs(x) > fabs(y) {
+        switch abs(x) > abs(y) {
         case true:  return .horizontal
         case false: return .vertical
         }

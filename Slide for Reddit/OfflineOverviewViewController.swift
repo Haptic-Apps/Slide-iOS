@@ -43,7 +43,7 @@ class OfflineOverviewViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "sub")
+        let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "sub")
         
         cell.textLabel?.textColor = ColorUtil.fontColor
         cell.textLabel?.font = FontGenerator.boldFontOfSize(size: 16, submission: true)

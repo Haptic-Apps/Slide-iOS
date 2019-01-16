@@ -78,7 +78,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         self.doSubreddit(sub: subreddit!, UIScreen.main.bounds.width)
     }
 
-    func doSub(_ changed: UISwitch) {
+    @objc func doSub(_ changed: UISwitch) {
         if !changed.isOn {
             Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: self, top: true)
@@ -86,20 +86,20 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         } else {
             let alrController = UIAlertController.init(title: "Follow \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
             if AccountController.isLoggedIn {
-                let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+                let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     BannerUtil.makeBanner(text: "Subscribed to r/\(self.subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
                 })
                 alrController.addAction(somethingAction)
             }
             
-            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 BannerUtil.makeBanner(text: "r/\(self.subreddit!.displayName) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
             })
             alrController.addAction(somethingAction)
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
             
             alrController.addAction(cancelAction)
             

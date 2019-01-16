@@ -88,7 +88,7 @@ class EmbeddableMediaViewController: UIViewController {
 
     func setProgressViewVisible(_ visible: Bool) {
         // Bring the loading indicator to the front
-        self.view.bringSubview(toFront: progressView)
+        self.view.bringSubviewToFront(progressView)
         if visible {
             progressView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
             progressView.isHidden = false
@@ -114,7 +114,7 @@ class EmbeddableMediaViewController: UIViewController {
 // MARK: - Actions
 extension EmbeddableMediaViewController {
     
-    func openComments(_ sender: AnyObject) {
+    @objc func openComments(_ sender: AnyObject) {
         if commentCallback != nil {
             self.dismiss(animated: true) {
                 self.commentCallback!()

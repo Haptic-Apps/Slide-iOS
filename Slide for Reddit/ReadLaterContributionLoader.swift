@@ -49,7 +49,7 @@ class ReadLaterContributionLoader: ContributionLoader {
                             self.content = []
                         }
                         let before = self.content.count
-                        let baseContent = listing.children.flatMap({ $0 })
+                        let baseContent = listing.children.compactMap({ $0 })
                         for item in baseContent {
                             if item is Link {
                                 self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
