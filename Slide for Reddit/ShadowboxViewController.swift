@@ -287,7 +287,7 @@ private extension CGPoint {
         guard self != .zero else {
             return nil
         }
-        switch fabs(x) > fabs(y) {
+        switch abs(x) > abs(y) {
         case true:  return .horizontal
         case false: return .vertical
         }

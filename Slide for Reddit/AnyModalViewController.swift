@@ -179,7 +179,7 @@ class AnyModalViewController: UIViewController {
                                 try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
                             } else {
                                 // Set category with options (iOS 9+) setCategory(_:options:)
-                                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with:  [])
+                                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
                                 
                                 // Set category without options (<= iOS 9) setCategory(_:)
                                 AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
@@ -235,7 +235,7 @@ class AnyModalViewController: UIViewController {
                 try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
             } else {
                 // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with:  [])
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
                 
                 // Set category without options (<= iOS 9) setCategory(_:)
                 AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
@@ -439,7 +439,7 @@ class AnyModalViewController: UIViewController {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
             } else {
                 // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with:  [])
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
                 
                 // Set category without options (<= iOS 9) setCategory(_:)
                 AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
@@ -784,7 +784,7 @@ extension AnyModalViewController {
                     try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
                 } else {
                     // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with:  [])
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
                     
                     // Set category without options (<= iOS 9) setCategory(_:)
                     AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
@@ -798,7 +798,7 @@ extension AnyModalViewController {
                     try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
                 } else {
                     // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with:  [])
+                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
                     
                     // Set category without options (<= iOS 9) setCategory(_:)
                     AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
@@ -934,5 +934,5 @@ private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category)
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

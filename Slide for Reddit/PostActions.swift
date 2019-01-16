@@ -576,7 +576,7 @@ class PostActions: NSObject {
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -597,7 +597,7 @@ class PostActions: NSObject {
             textField.leftViewPadding = 16
             textField.layer.borderWidth = 0
             textField.layer.cornerRadius = 0
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
             textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
@@ -697,7 +697,7 @@ class PostActions: NSObject {
                 textField.leftViewPadding = 12
                 textField.layer.borderWidth = 1
                 textField.layer.cornerRadius = 8
-                textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) as! CGColor
+                textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
                 textField.backgroundColor = .white
                 textField.keyboardAppearance = .default
                 textField.keyboardType = .default
@@ -746,7 +746,6 @@ class PostActions: NSObject {
             
         VCPresenter.presentAlert(alert, parentVC: parent)
     }
-
     
     static func getIDString(_ json: JSONAny) -> reddift.Result<String> {
         if let json = json as? JSONDictionary {
@@ -777,5 +776,5 @@ class PostActions: NSObject {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
