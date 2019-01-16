@@ -171,7 +171,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
 
-        UIApplication.shared.statusBarStyle = .lightContent
         SettingValues.initialize()
         FontGenerator.initialize()
         AccountController.initialize()

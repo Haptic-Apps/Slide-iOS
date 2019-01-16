@@ -1180,7 +1180,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var currentPositionTouched: CGPoint?
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent

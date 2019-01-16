@@ -174,12 +174,16 @@ class CurrentAccountViewController: UIViewController {
 
         updateMailBadge()
         updateModBadge()
+        UIApplication.shared.statusBarStyle = .lightContent
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return UIStatusBarStyle.lightContent
+    override func viewWillDisappear(_ animated: Bool) {
+        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
+            UIApplication.shared.statusBarStyle = .default
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
     }
-
 }
 
 // MARK: - Setup
