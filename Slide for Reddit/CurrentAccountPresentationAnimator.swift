@@ -35,26 +35,24 @@ extension CurrentAccountPresentationAnimator: UIViewControllerAnimatedTransition
 
         controller.view.layoutSubviews()
 
-        let yForPuttingContentTopEdgeAtScreenBottom = transitionContext.containerView.frame.size.height + (controller.contentView.frame.origin.y - controller.accountImageView.frame.origin.y) // Height of picture frame outside of contentView
-
         let presentedContentViewFrame = controller.contentView.frame
         var dismissedContentViewFrame = presentedContentViewFrame
-        dismissedContentViewFrame.origin.y = yForPuttingContentTopEdgeAtScreenBottom
-
+        dismissedContentViewFrame.origin.y = transitionContext.containerView.frame.size.height + controller.outOfBoundsHeight
         let initialContentViewFrame = isPresentation ? dismissedContentViewFrame : presentedContentViewFrame
         let finalContentViewFrame = isPresentation ? presentedContentViewFrame : dismissedContentViewFrame
+        controller.contentView.frame = initialContentViewFrame
+
+        // Use this offset for any other elements you need to vertically animate alongside the content view
+        let deltaY = dismissedContentViewFrame.origin.y - presentedContentViewFrame.origin.y
 
         let presentedUpperButtonStackFrame = controller.upperButtonStack.frame
         var dismissedUpperButtonStackFrame = presentedUpperButtonStackFrame
-        dismissedUpperButtonStackFrame.origin.y = yForPuttingContentTopEdgeAtScreenBottom - (controller.contentView.frame.origin.y - controller.upperButtonStack.frame.origin.y)
-
+        dismissedUpperButtonStackFrame.origin.y += deltaY
         let initialUpperButtonStackFrame = isPresentation ? dismissedUpperButtonStackFrame : presentedUpperButtonStackFrame
         let finalUpperButtonStackFrame = isPresentation ? presentedUpperButtonStackFrame : dismissedUpperButtonStackFrame
-
-        controller.contentView.frame = initialContentViewFrame
         controller.upperButtonStack.frame = initialUpperButtonStackFrame
 
-        var curve = UIView.AnimationOptions.curveEaseInOut
+        var curve = UIView.AnimationOptions.curveEaseOut
         if let interactionController = interactionController,
             interactionController.interactionInProgress {
             curve = UIView.AnimationOptions.curveLinear

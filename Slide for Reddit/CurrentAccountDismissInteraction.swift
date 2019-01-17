@@ -13,7 +13,7 @@ class CurrentAccountDismissInteraction: UIPercentDrivenInteractiveTransition {
 
     private var shouldCompleteTransition = false
     private weak var viewController: UIViewController!
-    private var storedHeight: CGFloat = 1
+    private var storedHeight: CGFloat = 400
 
     init(viewController: UIViewController) {
         super.init()
@@ -41,18 +41,14 @@ class CurrentAccountDismissInteraction: UIPercentDrivenInteractiveTransition {
             viewController.dismiss(animated: true, completion: nil)
             storedHeight = vc.contentViewHeight
         case .changed:
-            shouldCompleteTransition = progress > 0.25 || velocity.y > 1000
+            shouldCompleteTransition = progress > 0.5 || velocity.y > 1000
             update(progress)
         case .cancelled:
             interactionInProgress = false
             cancel()
         case .ended:
             interactionInProgress = false
-            if shouldCompleteTransition {
-                finish()
-            } else {
-                cancel()
-            }
+            shouldCompleteTransition ? finish() : cancel()
         default:
             break
         }

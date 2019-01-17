@@ -35,7 +35,13 @@ class CurrentAccountViewController: UIViewController {
 
     /// Overall height of the content view, including its out-of-bounds elements.
     var contentViewHeight: CGFloat {
-        return view.frame.maxY - accountImageView.frame.minY
+        let converted = accountImageView.convert(accountImageView.bounds, to: view)
+        return view.frame.maxY - converted.minY
+    }
+
+    var outOfBoundsHeight: CGFloat {
+        let converted = accountImageView.convert(accountImageView.bounds, to: view)
+        return contentView.frame.minY - converted.minY
     }
 
     var spinner = UIActivityIndicatorView().then {
