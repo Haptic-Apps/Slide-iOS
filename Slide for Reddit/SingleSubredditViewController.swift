@@ -1284,7 +1284,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 if sub.hasPrefix("/m/") {
                     subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
                 }
-
+                if sub.contains("/u/") {
+                    subreddit = Multireddit.init(name: sub.split("/")[3], user: sub.split("/")[1])
+                }
+                
                 try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
                     self.loaded = true
                     switch result {
