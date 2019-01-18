@@ -178,7 +178,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return !self.view.isHidden && (gestureRecognizer is UIPanGestureRecognizer && (gestureRecognizer as! UIPanGestureRecognizer).velocity(in: self.view).y < 0 && topView?.alpha ?? 1 == 0) ? false : true
+        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer,
+            recognizer.velocity(in: self.view).y < 0,
+            let topView = topView,
+            topView.alpha == 0 {
+            return false
+        }
+        return true
     }
     
     func update(_ recognizer: UIPanGestureRecognizer) {
@@ -589,11 +595,14 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             let pin = UITableViewRowAction(style: .normal, title: "Un-Pin") { _, _ in
                 Subscriptions.setPinned(name: AccountController.currentName, subs: Subscriptions.pinned.filter({ $0 != sub })) {
                     self.tableView.beginUpdates()
+                    let oldSectionCount = self.sectionTitles.count
                     self.loadSections()
+                    let sectionDiff = self.sectionTitles.count - oldSectionCount
                     let newIndexPath = self.getIndexPath(sub: sub)
-                    print(editActionsForRowAt)
-                    print(newIndexPath)
                     self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
+                    if sectionDiff != 0 {
+                        self.tableView.insertSections([newIndexPath.section], with: .automatic)
+                    }
                     if Subscriptions.pinned.isEmpty {
                         self.tableView.deleteSections(IndexSet([0]), with: .automatic)
                     }
@@ -608,8 +617,13 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 newPinned.append(sub)
                 Subscriptions.setPinned(name: AccountController.currentName, subs: newPinned) {
                     self.tableView.beginUpdates()
+                    let oldSectionCount = self.sectionTitles.count
                     self.loadSections()
+                    let sectionDiff = self.sectionTitles.count - oldSectionCount
                     let newIndexPath = self.getIndexPath(sub: sub)
+                    if sectionDiff != 0 {
+                        self.tableView.deleteSections([editActionsForRowAt.section], with: .automatic)
+                    }
                     if wasEmpty {
                         self.tableView.insertSections(IndexSet([0]), with: .automatic)
                     }
