@@ -26,9 +26,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var muxColor = ColorUtil.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
-    var subs = Subscriptions.subreddits
-    var subsAlphabetical: [String: [String]] = [:]
-    var sectionTitles = [String]()
+
+    var subsSource = SubscribedSubredditsSectionProvider()
 
     var headerView = UIView()
     var dragHandleView = UIView()
@@ -73,35 +72,37 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         fatalError("init(coder:) has not been implemented")
     }
     
-    func loadSections() {
-        subsAlphabetical.removeAll()
-        sectionTitles.removeAll()
-        for string in Subscriptions.pinned {
-            var current = subsAlphabetical["★"] ?? [String]()
-            current.append(string)
-            print(current)
-            print(Subscriptions.pinned)
-            subsAlphabetical["★"] = current
-        }
-        
-        for string in subs.filter({ !Subscriptions.pinned.contains($0) }).sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }) {
-            let letter = string.substring(0, length: 1).uppercased()
-            var current = subsAlphabetical[letter] ?? [String]()
-            current.append(string)
-            subsAlphabetical[letter] = current
-        }
-        
-        sectionTitles = subsAlphabetical.keys.sorted { $0.caseInsensitiveCompare($1) == .orderedAscending }
-        if sectionTitles.contains("★") {
-            sectionTitles.remove(at: sectionTitles.count - 1)
-            sectionTitles.insert("★", at: 0)
-        }
-    }
-    
+//    func loadSections() {
+//        subsAlphabetical.removeAll()
+//        sectionTitles.removeAll()
+//        for string in Subscriptions.pinned {
+//            var current = subsAlphabetical["★"] ?? [String]()
+//            current.append(string)
+//            print(current)
+//            print(Subscriptions.pinned)
+//            subsAlphabetical["★"] = current
+//        }
+//
+//        for string in subs.filter({ !Subscriptions.pinned.contains($0) }).sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }) {
+//            let letter = string.substring(0, length: 1).uppercased()
+//            var current = subsAlphabetical[letter] ?? [String]()
+//            current.append(string)
+//            subsAlphabetical[letter] = current
+//        }
+//
+//        sectionTitles = subsAlphabetical.keys.sorted { $0.caseInsensitiveCompare($1) == .orderedAscending }
+//        if sectionTitles.contains("★") {
+//            sectionTitles.remove(at: sectionTitles.count - 1)
+//            sectionTitles.insert("★", at: 0)
+//        }
+//    }
+
     override func viewDidLoad() {
-        tableView.sectionIndexColor = ColorUtil.baseAccent
-        loadSections()
         super.viewDidLoad()
+
+        tableView.sectionIndexColor = ColorUtil.baseAccent
+        subsSource.reload()
+
         self.view = UITouchCapturingView()
 
         configureViews()
@@ -531,7 +532,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return !isSearching ? sectionTitles.count : (suggestions.count > 0 ? 2 : 1)
+        return !isSearching ? subsSource.sections.count : (suggestions.count > 0 ? 2 : 1)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -543,21 +544,18 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return !isSearching ? sectionTitles : nil
+        return !isSearching ? subsSource.sortedSectionTitles : nil
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if !isSearching {
-            return subsAlphabetical[sectionTitles[section]]!.count
-        }
-        if section == 0 {
-            if isSearching {
+            return subsSource.numberOfRowsInSection(section)
+        } else {
+            if section == 0 {
                 return filteredContent.count + (filteredContent.contains(searchBar.text!) ? 0 : 1) + 3
             } else {
-                return subs.count
+                return suggestions.count
             }
-        } else {
-            return suggestions.count
         }
     }
 
@@ -571,43 +569,36 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return !isSearching
     }
-    
-    func getIndexPath(sub: String) -> IndexPath {
-        var section = 0
-        var row = 0
-        for item in self.sectionTitles {
-            let array = self.subsAlphabetical[item]!
-            row = 0
-            for innerSub in array {
-                if sub == innerSub {
-                    return IndexPath(row: row, section: section)
-                }
-                row += 1
-            }
-            section += 1
-        }
-        return IndexPath(row: 0, section: 0) //Should not get here
-    }
-    
+
     func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
-        let sub = subsAlphabetical[sectionTitles[editActionsForRowAt.section]]![editActionsForRowAt.row]
+        let sub = subsSource.subredditsInSection(editActionsForRowAt.section)![editActionsForRowAt.row]
         let wasEmpty = Subscriptions.pinned.isEmpty
-        let pinned = editActionsForRowAt.section == 0 && !wasEmpty
-        if pinned {
+        let isPinned = editActionsForRowAt.section == 0 && !wasEmpty
+        if isPinned {
             let pin = UITableViewRowAction(style: .normal, title: "Un-Pin") { _, _ in
                 Subscriptions.setPinned(name: AccountController.currentName, subs: Subscriptions.pinned.filter({ $0 != sub })) {
                     self.tableView.beginUpdates()
-                    let oldSectionCount = self.sectionTitles.count
-                    self.loadSections()
-                    let sectionDiff = self.sectionTitles.count - oldSectionCount
-                    let newIndexPath = self.getIndexPath(sub: sub)
-                    self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
-                    if sectionDiff != 0 {
-                        self.tableView.insertSections([newIndexPath.section], with: .automatic)
+
+                    let oldSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
+                    let oldSubSectionName = self.subsSource.sortedSectionTitles[oldSubIndex.section]
+                    self.subsSource.reload()
+                    let newSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
+                    let newSubSectionName = self.subsSource.sortedSectionTitles[newSubIndex.section]
+
+                    // Add new section if it doesn't exist
+                    if let newSection = self.subsSource.sections[newSubSectionName],
+                        newSection.count == 1,
+                        newSection[0] == sub {
+                        self.tableView.insertSections([newSubIndex.section], with: .automatic)
                     }
-                    if Subscriptions.pinned.isEmpty {
-                        self.tableView.deleteSections(IndexSet([0]), with: .automatic)
+
+                    self.tableView.moveRow(at: editActionsForRowAt, to: newSubIndex)
+
+                    // Remove old section if it's gone
+                    if self.subsSource.sections[oldSubSectionName] == nil {
+                        self.tableView.deleteSections([oldSubIndex.section], with: .automatic)
                     }
+
                     self.tableView.endUpdates()
                 }
             }
@@ -619,17 +610,27 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 newPinned.append(sub)
                 Subscriptions.setPinned(name: AccountController.currentName, subs: newPinned) {
                     self.tableView.beginUpdates()
-                    let oldSectionCount = self.sectionTitles.count
-                    self.loadSections()
-                    let sectionDiff = self.sectionTitles.count - oldSectionCount
-                    let newIndexPath = self.getIndexPath(sub: sub)
-                    if sectionDiff != 0 {
-                        self.tableView.deleteSections([editActionsForRowAt.section], with: .automatic)
+
+                    let oldSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
+                    let oldSubSectionName = self.subsSource.sortedSectionTitles[oldSubIndex.section]
+                    self.subsSource.reload()
+                    let newSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
+                    let newSubSectionName = self.subsSource.sortedSectionTitles[newSubIndex.section]
+
+                    // Add new section if it doesn't exist
+                    if let newSection = self.subsSource.sections[newSubSectionName],
+                        newSection.count == 1,
+                        newSection[0] == sub {
+                        self.tableView.insertSections([newSubIndex.section], with: .automatic)
                     }
-                    if wasEmpty {
-                        self.tableView.insertSections(IndexSet([0]), with: .automatic)
+
+                    self.tableView.moveRow(at: editActionsForRowAt, to: newSubIndex)
+
+                    // Remove old section if it's gone
+                    if self.subsSource.sections[oldSubSectionName] == nil {
+                        self.tableView.deleteSections([oldSubIndex.section], with: .automatic)
                     }
-                    self.tableView.moveRow(at: editActionsForRowAt, to: newIndexPath)
+
                     self.tableView.endUpdates()
                 }
             }
@@ -649,12 +650,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             default: label.text  = "SUBREDDIT SUGGESTIONS"
             }
         } else {
-            label.text = "\(sectionTitles[section])"
-            if sectionTitles[section] == "/" {
-                label.text = "MULTIREDDITS"
-            } else if sectionTitles[section] == "★" {
-                label.text = "PINNED"
-            }
+            label.text = subsSource.sortedSectionTitles[section]
         }
 
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
@@ -665,35 +661,39 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: SubredditCellView
         if indexPath.section == 0 {
-            if indexPath.row == filteredContent.count && isSearching {
-                let thing = searchBar.text!
-                let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-                c.setSubreddit(subreddit: thing, nav: self, exists: false)
-                cell = c
-            } else if isSearching && indexPath.row == filteredContent.count + 1 {
-                let thing = searchBar.text!
-                let c = tableView.dequeueReusableCell(withIdentifier: "profile", for: indexPath) as! SubredditCellView
-                c.setProfile(profile: thing, nav: self)
-                cell = c
-            } else if isSearching && indexPath.row == filteredContent.count + 2 {
-                // "Search Reddit for <text>" cell
-                let thing = searchBar.text!
-                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
-                c.setSearch(string: thing, sub: nil, nav: self)
-                cell = c
-            } else if isSearching && indexPath.row == filteredContent.count + 3 {
-                // "Search r/subreddit for <text>" cell
-                let thing = searchBar.text!
-                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
-                c.setSearch(string: thing, sub: MainViewController.current, nav: self)
-                cell = c
+            if isSearching {
+                if indexPath.row == filteredContent.count {
+                    let thing = searchBar.text!
+                    let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
+                    c.setSubreddit(subreddit: thing, nav: self, exists: false)
+                    cell = c
+                } else if indexPath.row == filteredContent.count + 1 {
+                    let thing = searchBar.text!
+                    let c = tableView.dequeueReusableCell(withIdentifier: "profile", for: indexPath) as! SubredditCellView
+                    c.setProfile(profile: thing, nav: self)
+                    cell = c
+                } else if indexPath.row == filteredContent.count + 2 {
+                    // "Search Reddit for <text>" cell
+                    let thing = searchBar.text!
+                    let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                    c.setSearch(string: thing, sub: nil, nav: self)
+                    cell = c
+                } else if indexPath.row == filteredContent.count + 3 {
+                    // "Search r/subreddit for <text>" cell
+                    let thing = searchBar.text!
+                    let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                    c.setSearch(string: thing, sub: MainViewController.current, nav: self)
+                    cell = c
+                } else {
+                    var thing = ""
+                    thing = filteredContent[indexPath.row]
+                    let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
+                    c.setSubreddit(subreddit: thing, nav: self, exists: true)
+                    cell = c
+                }
             } else {
                 var thing = ""
-                if isSearching {
-                    thing = filteredContent[indexPath.row]
-                } else {
-                    thing = subsAlphabetical[sectionTitles[indexPath.section]]![indexPath.row]
-                }
+                thing = subsSource.subredditsInSection(indexPath.section)![indexPath.row]
                 let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                 c.setSubreddit(subreddit: thing, nav: self, exists: true)
                 cell = c
@@ -703,7 +703,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             if isSearching {
                 thing = suggestions[indexPath.row]
             } else {
-                thing = subsAlphabetical[sectionTitles[indexPath.section]]![indexPath.row]
+                thing = subsSource.subredditsInSection(indexPath.section)![indexPath.row]
             }
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
             c.setSubreddit(subreddit: thing, nav: self, exists: true)
@@ -945,6 +945,126 @@ class HorizontalSubredditGroup: UIView {
 
     @objc private func buttonWasTapped(_ sender: UIButton) {
         delegate?.horizontalSubredditGroup(self, didRequestSubredditWithName: sender.currentTitle!.lowercased().trimmed())
+    }
+
+}
+
+class SubscribedSubredditsSectionProvider {
+    private(set) var sections: [String: [String]] = [:]
+
+    enum Keys: String, CaseIterable {
+        case pinned = "★"
+        case multi = "MULTIREDDITS"
+        case numeric = "#"
+    }
+
+    private(set) var sortedSectionTitles: [String] = []
+
+    private var pinnedSubs: Set<String> = Set()
+    private var multiSubs: Set<String> = Set()
+    private var numericSubs: Set<String> = Set()
+
+    init() {
+        reload()
+    }
+
+    func reload() {
+        reloadSections()
+        reloadSortedTitles()
+    }
+
+    private func reloadSortedTitles() {
+        var titles: [String] = []
+        if sections[Keys.pinned.rawValue] != nil {
+            titles.append(Keys.pinned.rawValue)
+        }
+        if sections[Keys.multi.rawValue] != nil {
+            titles.append(Keys.multi.rawValue)
+        }
+        if sections[Keys.numeric.rawValue] != nil {
+            titles.append(Keys.numeric.rawValue)
+        }
+
+        let azKeys = sections.keys
+            .filter { !Keys.allCases.map { $0.rawValue }.contains($0) }
+            .sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
+        titles.append(contentsOf: azKeys)
+
+        sortedSectionTitles = titles
+    }
+
+    private func reloadSections() {
+        sections.removeAll()
+
+        pinnedSubs = Set(Subscriptions.pinned)
+        numericSubs = Set(Subscriptions.subreddits
+            .filter { return String($0[0]).isNumeric() })
+            .subtracting(pinnedSubs)
+        multiSubs = Set(Subscriptions.subreddits
+            .filter { return $0[0] == "/" })
+            .subtracting(pinnedSubs)
+
+        // Insert pinned section if any pinned subs exist
+        if !pinnedSubs.isEmpty {
+            sections[Keys.pinned.rawValue] = Array(pinnedSubs)//.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
+        }
+
+        // Insert "multi" section for multireddits
+        if !multiSubs.isEmpty {
+            sections[Keys.multi.rawValue] = multiSubs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
+        }
+
+        // Insert "#" section for numeric subs
+        if !numericSubs.isEmpty {
+            sections[Keys.numeric.rawValue] = numericSubs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
+        }
+
+        // All the subs that aren't in a special category
+        let otherSubs = Set(Subscriptions.subreddits)
+            .subtracting(pinnedSubs.union(numericSubs).union(multiSubs))
+
+        // Make sections for a-z
+        for sub in otherSubs.sorted() {
+            let firstChar = String(sub[0]).uppercased()
+            if sections[firstChar] == nil {
+                sections[firstChar] = []
+            }
+            sections[firstChar]!.append(sub)
+        }
+    }
+
+    func subredditsInSection(_ section: Int) -> [String]? {
+        return sections[sortedSectionTitles[section]]
+    }
+
+    func numberOfRowsInSection(_ section: Int) -> Int {
+        return subredditsInSection(section)?.count ?? 0
+    }
+
+    func getIndexPath(forSubreddit sub: String) -> IndexPath? {
+        if let index = Array(multiSubs).firstIndex(of: sub),
+            let sectionIndex = sortedSectionTitles.firstIndex(of: Keys.multi.rawValue) {
+            return IndexPath(row: index, section: sectionIndex)
+        }
+
+        if let index = Array(numericSubs).firstIndex(of: sub),
+            let sectionIndex = sortedSectionTitles.firstIndex(of: Keys.numeric.rawValue) {
+            return IndexPath(row: index, section: sectionIndex)
+        }
+
+        if let index = Array(pinnedSubs).firstIndex(of: sub),
+            let sectionIndex = sortedSectionTitles.firstIndex(of: Keys.pinned.rawValue) {
+            return IndexPath(row: index, section: sectionIndex)
+        }
+
+        let firstChar = String(sub[0]).uppercased()
+        if let sectionIndex = sortedSectionTitles.firstIndex(of: firstChar),
+            let section = sections[firstChar],
+            let rowIndex = section.firstIndex(of: sub) {
+            return IndexPath(row: rowIndex, section: sectionIndex)
+        }
+
+        return nil
     }
 
 }
