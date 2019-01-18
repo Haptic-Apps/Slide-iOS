@@ -367,6 +367,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 //            tableView.reloadData()
 //        }
     }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return ColorUtil.theme.isLight() ? .default : .lightContent
+    }
     
     static func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
         let ratio = imageHeight / imageWidth
