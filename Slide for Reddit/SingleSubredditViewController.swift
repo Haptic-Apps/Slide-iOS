@@ -783,7 +783,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     case .failure:
                         print(result.error!.description)
                         DispatchQueue.main.async {
-                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
+                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.contains("/m/") || self.sub.contains("+") {
                                 self.load(reset: true)
                             } else {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -1239,6 +1239,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
                 if sub.hasPrefix("/m/") {
                     subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
+                }
+                if sub.contains("/u/") {
+                    subreddit = Multireddit.init(name: sub.split("/")[3], user: sub.split("/")[2])
                 }
 
                 try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
