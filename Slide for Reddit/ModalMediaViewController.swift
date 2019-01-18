@@ -254,6 +254,7 @@ class ModalMediaViewController: UIViewController {
             self.closeButton.isHidden = true
         }
         desiredStatusBarStyle = .lightContent
+        setNeedsStatusBarAppearanceUpdate()
 
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: closeButton)
     }
