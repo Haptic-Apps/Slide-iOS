@@ -61,6 +61,7 @@ PODS:
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
   - MTColorDistance (0.0.3)
+  - OpalImagePicker (2.0.0)
   - Realm (3.13.1):
     - Realm/Headers (= 3.13.1)
   - Realm/Headers (3.13.1)
@@ -99,6 +100,7 @@ DEPENDENCIES:
   - MaterialComponents/Tabs
   - MKColorPicker (from `https://github.com/ccrama/MKColorPicker`)
   - MTColorDistance
+  - OpalImagePicker
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
@@ -170,6 +172,7 @@ SPEC CHECKSUMS:
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
+  OpalImagePicker: efc91612ef5b3849314801f68fddc26200da9435
   Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
   RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
@@ -185,6 +188,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: d2ab12a967ae0fee0b4563b8d809c8fb13ebc636
 
-PODFILE CHECKSUM: 5148ceec201ce38abd8bfd7d672c7ec16e8f5097
+PODFILE CHECKSUM: ba95534d5abe5364117708e789e3ed51c4023288
 
 COCOAPODS: 1.4.0

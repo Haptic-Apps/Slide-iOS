@@ -12,6 +12,7 @@ target 'Slide for Reddit' do
   pod 'BadgeSwift', '~> 7.0'
   pod 'LicensesViewController', '~> 0.7.0'
   pod 'BiometricAuthentication'
+  pod 'OpalImagePicker'
   pod 'MaterialComponents/ActivityIndicator'
   pod 'MaterialComponents/Tabs'
   pod 'MaterialComponents/ProgressView'
