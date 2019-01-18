@@ -112,6 +112,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         configureBackground()
 
         searchBar.isUserInteractionEnabled = true
+        searchBar.addTapGestureRecognizer {
+            self.expand()
+        }
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
@@ -212,7 +215,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     @objc func collapse() {
 
-        searchBar.isUserInteractionEnabled = false
+        searchBar.isUserInteractionEnabled = true
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
         let y = UIScreen.main.bounds.height - bottomOffset
@@ -954,7 +957,7 @@ class SubscribedSubredditsSectionProvider {
 
     enum Keys: String, CaseIterable {
         case pinned = "★"
-        case multi = "MULTIREDDITS"
+        case multi = "+"
         case numeric = "#"
     }
 
