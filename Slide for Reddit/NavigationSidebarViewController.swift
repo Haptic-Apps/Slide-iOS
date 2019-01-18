@@ -111,8 +111,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         configureBackground()
 
-        searchBar.isUserInteractionEnabled = true
-        searchBar.addTapGestureRecognizer {
+//        searchBar.isUserInteractionEnabled = true
+//        searchBar.addTapGestureRecognizer {
+//            self.expand()
+//        }
+        headerView.addTapGestureRecognizer {
             self.expand()
         }
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
@@ -215,7 +218,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     @objc func collapse() {
 
-        searchBar.isUserInteractionEnabled = true
+        searchBar.isUserInteractionEnabled = false
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
         let y = UIScreen.main.bounds.height - bottomOffset
