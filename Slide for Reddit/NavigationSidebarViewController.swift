@@ -1009,7 +1009,7 @@ class SubscribedSubredditsSectionProvider {
 
         // Insert pinned section if any pinned subs exist
         if !pinnedSubs.isEmpty {
-            sections[Keys.pinned.rawValue] = Array(pinnedSubs)//.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
+            sections[Keys.pinned.rawValue] = Subscriptions.pinned//.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
         }
 
         // Insert "multi" section for multireddits
