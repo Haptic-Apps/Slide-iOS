@@ -49,7 +49,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         fatalError("init(coder:) has not been implemented")
     }
 
-    func close(_ sender: AnyObject) {
+    @objc func close(_ sender: AnyObject) {
         self.dismiss(animated: true)
     }
     

@@ -234,14 +234,14 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func subscribe(_ sender: AnyObject) {
+    @objc func subscribe(_ sender: AnyObject) {
     }
 
-    func theme(_ sender: AnyObject) {
+    @objc func theme(_ sender: AnyObject) {
 
     }
 
-    func submit(_ sender: AnyObject) {
+    @objc func submit(_ sender: AnyObject) {
 
     }
 

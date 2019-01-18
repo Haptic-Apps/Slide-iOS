@@ -1844,7 +1844,7 @@ extension SingleSubredditViewController {
         showMore(sender, parentVC: nil)
     }
 
-    func hideAll(_ sender: AnyObject) {
+    @objc func hideAll(_ sender: AnyObject) {
         for submission in links {
             if History.getSeen(s: submission) {
                 let index = links.index(of: submission)!
@@ -1855,7 +1855,7 @@ extension SingleSubredditViewController {
         tableView.reloadData()
     }
 
-    func pickTheme(sender: AnyObject?, parent: MainViewController?) {
+    @objc func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
@@ -1995,11 +1995,11 @@ extension SingleSubredditViewController {
         present(alertController, animated: true, completion: nil)
     }
 
-    func newPost(_ sender: AnyObject) {
+    @objc func newPost(_ sender: AnyObject) {
         PostActions.showPostMenu(self, sub: self.sub)
     }
 
-    func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
+    @objc func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "r/\(sub)"

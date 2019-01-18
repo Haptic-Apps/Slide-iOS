@@ -72,7 +72,7 @@ class SubredditReorderViewController: UITableViewController {
 
     }
 
-    func close(_ sender: AnyObject?) {
+    @objc func close(_ sender: AnyObject?) {
         self.dismiss(animated: true)
     }
 

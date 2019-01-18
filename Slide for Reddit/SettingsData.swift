@@ -44,7 +44,7 @@ class SettingsData: UITableViewController {
         setupBaseBarColors()
     }
     
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == enableDataSaving {
             SettingValues.dataSavingEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingEnabled)

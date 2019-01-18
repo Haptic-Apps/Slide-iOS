@@ -264,7 +264,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         return !left ? (SettingValues.commentActionLeftRight != .NONE ? SettingValues.commentActionLeftRight : SettingValues.commentActionLeftLeft) : (SettingValues.commentActionRightLeft != .NONE ? SettingValues.commentActionRightLeft : SettingValues.commentActionRightRight) //Setting is for right swipe, left here is right side. So needs to be flipped (!left)
     }
 
-    func handlePan(_ sender: UIPanGestureRecognizer) {
+    @objc func handlePan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began || progressBar == nil {
             dragCancelled = false
             direction = 0
@@ -433,7 +433,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
 
-    func showMenu(_ sender: AnyObject?) {
+    @objc func showMenu(_ sender: AnyObject?) {
         self.oldLocation = CGPoint.zero
         checkReply { (completed) in
             self.contentView.endEditing(true)
@@ -662,7 +662,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
-    func doEdit(_ sender: AnyObject) {
+    @objc func doEdit(_ sender: AnyObject) {
         alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
         
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -1609,7 +1609,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
 
-    func pushedSingleTap(_ sender: AnyObject?) {
+    @objc func pushedSingleTap(_ sender: AnyObject?) {
         checkReply { (completed) in
             self.contentView.endEditing(true)
             if completed {

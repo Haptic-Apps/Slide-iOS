@@ -355,7 +355,7 @@ class ModalMediaViewController: UIViewController {
 
 // MARK: - Actions
 extension ModalMediaViewController {
-    func fullscreen(_ sender: AnyObject) {
+    @objc func fullscreen(_ sender: AnyObject) {
         // Don't allow fullscreen if the user is a voiceover user.
         if UIAccessibility.isVoiceOverRunning {
             return
@@ -374,7 +374,7 @@ extension ModalMediaViewController {
         })
     }
 
-    func unFullscreen(_ sender: AnyObject) {
+    @objc func unFullscreen(_ sender: AnyObject) {
         fullscreen = false
         self.embeddedVC.bottomButtons.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {

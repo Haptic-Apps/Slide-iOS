@@ -49,7 +49,7 @@ class SettingsGestures: UITableViewController {
         setupBaseBarColors()
     }
     
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == submissionGestures {
             SettingValues.submissionGesturesEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_submissionGesturesEnabled)

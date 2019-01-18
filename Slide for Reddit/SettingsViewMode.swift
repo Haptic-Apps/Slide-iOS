@@ -26,7 +26,7 @@ class SettingsViewMode: UITableViewController {
         setupBaseBarColors()
     }
     
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == subredditBarSwitch {
             MainViewController.needsRestart = true
             SettingValues.subredditBar = changed.isOn

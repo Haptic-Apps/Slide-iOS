@@ -139,7 +139,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         }
     }
     
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == internalImage {
             SettingValues.internalImageView = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalImageView)

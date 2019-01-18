@@ -49,7 +49,7 @@ class SettingsGeneral: UITableViewController {
         setupBaseBarColors()
     }
 
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == showPagesSwitch {
             MainViewController.needsRestart = true
             SettingValues.showPages = changed.isOn
