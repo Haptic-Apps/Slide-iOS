@@ -1198,7 +1198,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         return ""
     }
     
-    func dismiss(_ sender: AnyObject) {
+    @objc func dismiss(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
     }
 

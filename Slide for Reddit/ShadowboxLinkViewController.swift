@@ -398,7 +398,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
     
-      func upvote(_ sender: AnyObject) {
+      @objc func upvote(_ sender: AnyObject) {
         if content is RSubmission {
             let submission = content as! RSubmission
             do {
@@ -413,7 +413,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
 
-    func downvote(_ sender: AnyObject) {
+    @objc func downvote(_ sender: AnyObject) {
         if content is RSubmission {
             let submission = content as! RSubmission
             do {
@@ -428,7 +428,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
 
-    func comments(_ sender: AnyObject) {
+    @objc func comments(_ sender: AnyObject) {
         if content is RSubmission {
             VCPresenter.openRedditLink((content as! RSubmission).permalink, nil, self)
         } else if content is RComment {
@@ -436,7 +436,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
 
-    func content(_ sender: AnyObject) {
+    @objc func content(_ sender: AnyObject) {
         doShow(url: baseURL!, heroView: thumbImageContainer.isHidden ? embeddedVC.view : thumbImage, heroVC: parentVC)
     }
 

@@ -36,7 +36,7 @@ class SettingsContent: UITableViewController {
         setupBaseBarColors()
     }
     
-    func switchIsChanged(_ changed: UISwitch) {
+    @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == showNSFWPreviews {
             SettingValues.nsfwPreviews = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nsfwPreviews + AccountController.currentName)

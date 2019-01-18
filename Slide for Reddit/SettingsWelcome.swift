@@ -101,7 +101,7 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
         doToolbar()
     }
     
-    func close(_ sender: AnyObject) {
+    @objc func close(_ sender: AnyObject) {
         SubredditReorderViewController.changed = true
     }
     

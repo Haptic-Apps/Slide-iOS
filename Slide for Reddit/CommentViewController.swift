@@ -1210,7 +1210,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var duringAnimation = false
 
-    func close(_ sender: AnyObject) {
+    @objc func close(_ sender: AnyObject) {
         self.navigationController?.popViewController(animated: true)
     }
     
@@ -1364,15 +1364,15 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
     }
 
-    func downVote(_ sender: AnyObject?) {
+    @objc func downVote(_ sender: AnyObject?) {
         vote(.down)
     }
 
-    func upVote(_ sender: AnyObject?) {
+    @objc func upVote(_ sender: AnyObject?) {
         vote(.up)
     }
 
-    func cancelVote(_ sender: AnyObject?) {
+    @objc func cancelVote(_ sender: AnyObject?) {
         vote(.none)
     }
 

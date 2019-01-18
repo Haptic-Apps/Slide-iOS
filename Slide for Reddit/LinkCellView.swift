@@ -619,7 +619,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func handlePan(_ sender: UIPanGestureRecognizer) {
+    @objc func handlePan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began || progressBar == nil {
             dragCancelled = false
             direction = 0

@@ -674,7 +674,7 @@ class AnyModalViewController: UIViewController {
 
 // MARK: - Actions
 extension AnyModalViewController {
-    func fullscreen(_ sender: AnyObject) {
+    @objc func fullscreen(_ sender: AnyObject) {
         fullscreen = true
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
@@ -688,7 +688,7 @@ extension AnyModalViewController {
         })
     }
     
-    func unFullscreen(_ sender: AnyObject) {
+    @objc func unFullscreen(_ sender: AnyObject) {
         fullscreen = false
         self.bottomButtons.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
