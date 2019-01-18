@@ -479,3 +479,8 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
         set {}
     }
 }
+extension UINavigationController {
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
+        return presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? .default
+    }
+}

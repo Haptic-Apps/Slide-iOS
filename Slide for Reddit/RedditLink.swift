@@ -49,6 +49,8 @@ class RedditLink {
         switch type {
         case .SHORTENED:
             return CommentViewController.init(submission: parts[1], subreddit: nil, np: np)
+        case .MULTI:
+            return SingleSubredditViewController.init(subName: "/u/\(parts[2])/m/\(parts[4])", single: true)
         case .LIVE:
             print(parts[1])
             return LiveThreadViewController.init(id: parts[2])
@@ -207,6 +209,9 @@ class RedditLink {
         } else if url.matches(regex: "(?i)reddit\\.com/r/[a-z0-9-_.]+/comments/\\w+.*") {
             // Submission. Format: reddit.com/r/$subreddit/comments/$post_id/$post_title [optional]
             return RedditLinkType.SUBMISSION
+        } else if url.matches(regex: "(?i)reddit\\.com/u(?:ser)?/[a-z0-9-_]+.*/m/[a-z0-9_]+.*") {
+            // Multireddit. Format: reddit.com/u [or user]/$username/m/$multireddit/$sort [optional]
+            return RedditLinkType.MULTI
         } else if url.matches(regex: "(?i)reddit\\.com/comments/\\w+.*") {
             // Submission without a given subreddit. Format: reddit.com/comments/$post_id/$post_title [optional]
             return RedditLinkType.SUBMISSION_WITHOUT_SUB
@@ -230,6 +235,7 @@ class RedditLink {
         case SUBMISSION_WITHOUT_SUB
         case SUBREDDIT
         case USER
+        case MULTI
         case SEARCH
         case MESSAGE
         case LIVE

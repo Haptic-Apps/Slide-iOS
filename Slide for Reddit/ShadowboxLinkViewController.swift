@@ -147,6 +147,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
             $0.accessibilityIdentifier = "Self Text View"
         }
+        
+        self.textView.baseFontColor = .white
 
         self.thumbImage = UIImageView().then {
             $0.accessibilityIdentifier = "Thumbnail Image"

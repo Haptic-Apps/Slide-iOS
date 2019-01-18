@@ -6,6 +6,7 @@
 import ActionSheetPicker_3_0
 import Alamofire
 import MobileCoreServices
+import OpalImagePicker
 import Photos
 import RLBAlertsPickers
 import SwiftyJSON
@@ -115,22 +116,24 @@ public class ToolbarTextView: NSObject {
     }
 
     @objc func uploadImage(_ sender: UIButton!) {
-        let alert = UIAlertController.init(style: .actionSheet)
-        alert.addPhotoLibraryPicker(
-                flow: .vertical,
-                paging: false,
-                selection: .multiple(action: { images in
-                    if !images.isEmpty {
-                        let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(images.count) image\(images.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
-                        alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { _ in
-                            self.uploadAsync(images)
-                        })
-                        self.parent.present(alert, animated: true, completion: nil)
-                    }
-                }))
-        alert.addAction(title: "Cancel", style: .cancel)
-        parent.present(alert, animated: true, completion: nil)
+        let imagePicker = OpalImagePickerController()
+        imagePicker.allowedMediaTypes = [PHAssetMediaType.image]
+        self.parent.presentOpalImagePickerController(imagePicker, animated: true,
+                                         select: { (assets) in
+                                            imagePicker.dismiss(animated: true, completion: {
+                                                if !assets.isEmpty {
+                                                    let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(assets.count) image\(assets.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
+                                                    alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
+                                                    alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { _ in
+                                                        self.uploadAsync(assets)
+                                                    })
+                                                    self.parent.present(alert, animated: true, completion: nil)
+                                                }
+
+                                            })
+        }, cancel: {
+            imagePicker.dismiss(animated: true)
+        })
     }
 
     var progressBar = UIProgressView()

@@ -878,10 +878,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
     }
     
+    var doneOnce = false
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if type == .SUBMIT_IMAGE {
+        if type == .SUBMIT_IMAGE && !doneOnce {
             toolbar?.uploadImage(UIButton())
+            doneOnce = true
         }
     }
     
