@@ -218,6 +218,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     @objc func collapse() {
 
+        doneOnce = false
         searchBar.isUserInteractionEnabled = false
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
@@ -307,6 +308,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         }
     }
     
+    var doneOnce = false
     func expand() {
         if self.view.isHidden {
             return
@@ -350,7 +352,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
-            if SettingValues.autoKeyboard {
+            if SettingValues.autoKeyboard && !strongSelf.doneOnce {
+                strongSelf.doneOnce = true
                 strongSelf.searchBar.becomeFirstResponder()
             }
             strongSelf.searchBar.isUserInteractionEnabled = true
