@@ -75,3 +75,17 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 	guard let input = input else { return nil }
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
+
+extension String {
+    func insertingZeroWidthSpacesBeforeCaptials() -> String {
+        var str = ""
+        for (i, char) in self.enumerated() {
+            let charStr = String(char)
+            if i != 0 && charStr.lowercased() != charStr {
+                str += "\u{200B}"
+            }
+            str += charStr
+        }
+        return str
+    }
+}

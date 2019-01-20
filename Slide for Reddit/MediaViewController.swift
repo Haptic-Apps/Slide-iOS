@@ -15,9 +15,7 @@ import UIKit
 class MediaViewController: UIViewController, MediaVCDelegate {
     
     override var prefersStatusBarHidden: Bool {
-        get {
-            return false
-        }
+        return false
     }
 
     lazy var slideInTransitioningDelegate = SlideInPresentationManager()
@@ -153,8 +151,8 @@ class MediaViewController: UIViewController, MediaVCDelegate {
 
     public func shouldTruncate(url: URL) -> Bool {
         return false //Todo: figure out what this does
-        let path = url.path
-        return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".")
+//        let path = url.path
+//        return !ContentType.isGif(uri: url) && !ContentType.isImage(uri: url) && path.contains(".")
     }
 
     func showSpoiler(_ string: String) {

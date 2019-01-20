@@ -42,7 +42,7 @@ extension BottomMenuPresentationController {
         if #available(iOS 11, *) {
             let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
             let blurView = UIVisualEffectView(frame: backgroundView.frame)
-            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurEffect.setValue(5, forKeyPath: "blurRadius")
             blurView.effect = blurEffect
             backgroundView.insertSubview(blurView, at: 0)
             blurView.horizontalAnchors == backgroundView.horizontalAnchors

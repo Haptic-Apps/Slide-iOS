@@ -171,7 +171,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
 
-        UIApplication.shared.statusBarStyle = .lightContent
         SettingValues.initialize()
         FontGenerator.initialize()
         AccountController.initialize()
@@ -551,6 +550,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        if AccountController.current == nil && UserDefaults.standard.string(forKey: "name") != "GUEST" {
+            AccountController.initialize()
+        }
         UIView.animate(withDuration: 0.25, animations: {
             self.backView?.alpha = 0
         }, completion: { (_) in

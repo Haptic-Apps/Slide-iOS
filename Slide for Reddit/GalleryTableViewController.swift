@@ -42,7 +42,7 @@ class GalleryTableViewController: MediaTableViewController {
             exit.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
             
             blurView = UIVisualEffectView(frame: exit.bounds)
-            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurEffect.setValue(5, forKeyPath: "blurRadius")
             blurView!.effect = blurEffect
             exit.insertSubview(blurView!, at: 0)
             blurView!.edgeAnchors == exit.edgeAnchors

@@ -34,6 +34,8 @@ class AccountController {
     static var changed = false
     static var modSubs: [String] = []
 
+    static var current: Account?
+
     static func delete(name: String) {
         do {
             try LocalKeystore.removeToken(of: name)
@@ -63,8 +65,10 @@ class AccountController {
             if name == "GUEST" {
                 AccountController.isLoggedIn = false
                 AccountController.isGold = false
+                AccountController.current = nil
                 AccountController.currentName = name
                 (UIApplication.shared.delegate as! AppDelegate).session = Session()
+                NotificationCenter.default.post(name: .onAccountChangedToGuest, object: nil)
             } else {
                 do {
                     AccountController.isLoggedIn = true
@@ -84,6 +88,10 @@ class AccountController {
                         case .failure(let error):
                             print(error)
                         case .success(let account):
+                            AccountController.current = account
+                            NotificationCenter.default.post(name: .onAccountChanged, object: nil, userInfo: [
+                                "Account": account,
+                                ])
                             if AccountController.currentName == name {
                                 AccountController.isGold = account.isGold
                             }
@@ -228,4 +236,10 @@ extension Sequence where Iterator.Element: Hashable {
         var seen: [Iterator.Element: Bool] = [:]
         return self.filter { seen.updateValue(true, forKey: $0) == nil }
     }
+}
+
+extension Notification.Name {
+    static let onAccountChangedToGuest = Notification.Name("on-account-changed-to-guest")
+    static let onAccountChanged = Notification.Name("on-account-changed")
+    static let onAccountMailCountChanged = Notification.Name("on-account-mail-count-changed")
 }

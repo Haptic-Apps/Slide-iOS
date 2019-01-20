@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import MaterialComponents.MaterialTabs
 import reddift
 import UIKit
@@ -61,6 +62,12 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let navigationController = navigationController {
+            if navigationController.viewControllers.count == 1 {
+                navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "Close", style: .done, target: self, action: #selector(closeButtonPressed))
+            }
+        }
+
         var items: [String] = []
         for i in content {
             items.append(i.description)
@@ -83,9 +90,12 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         tabBar.delegate = self
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
         // 5
-        tabBar.sizeToFit()
 
         self.view.addSubview(tabBar)
+        tabBar.heightAnchor == 48
+        tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.topAnchor == self.view.safeTopAnchor
+        tabBar.sizeToFit()
 
         time = History.getInboxSeen()
         History.inboxSeen()
@@ -208,4 +218,11 @@ extension ModerationViewController: MDCTabBarDelegate {
 
     }
 
+}
+
+// MARK: - Actions
+extension ModerationViewController {
+    @objc func closeButtonPressed() {
+        dismiss(animated: true, completion: nil)
+    }
 }

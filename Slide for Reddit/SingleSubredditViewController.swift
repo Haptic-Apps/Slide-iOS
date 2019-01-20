@@ -367,6 +367,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 //            tableView.reloadData()
 //        }
     }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return ColorUtil.theme.isLight() ? .default : .lightContent
+    }
     
     static func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
         let ratio = imageHeight / imageWidth
@@ -671,6 +675,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.refresh()
             case .HIDE_READ:
                 self.hideReadPosts()
+            case .HIDE_PERMANENTLY:
+                self.hideReadPostsPermanently()
             case .GALLERY:
                 self.galleryMode()
             case .SEARCH:
@@ -783,7 +789,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     case .failure:
                         print(result.error!.description)
                         DispatchQueue.main.async {
-                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.contains("/m/") || self.sub.contains("+") {
+                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
                                 self.load(reset: true)
                             } else {
                                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -958,6 +964,48 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
         }
     }
+    
+    func hideReadPostsPermanently() {
+        var indexPaths: [IndexPath] = []
+        var toRemove: [RSubmission] = []
+        
+        var index = 0
+        var count = 0
+        for submission in links {
+            if History.getSeen(s: submission) {
+                indexPaths.append(IndexPath(row: count, section: 0))
+                toRemove.append(submission)
+                links.remove(at: index)
+            } else {
+                index += 1
+            }
+            count += 1
+        }
+        
+        //todo save realm
+        DispatchQueue.main.async {
+            if !indexPaths.isEmpty {
+                self.flowLayout.reset()
+                self.tableView.performBatchUpdates({
+                    self.tableView.deleteItems(at: indexPaths)
+                }, completion: nil)
+            }
+        }
+        
+        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+            var hideString = ""
+            for item in toRemove {
+                hideString.append(item.getId() + ",")
+            }
+            hideString = hideString.substring(0, length: hideString.length - 1)
+            do {
+                try session.setHide(true, name: hideString) { (result) in
+                    print(result)
+                }
+            } catch {
+            }
+        }
+    }
 
     func resetColors() {
         if single {
@@ -1013,7 +1061,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
         }))
 
-        if sub != "all" && sub != "frontpage" && sub != "friends" && !sub.startsWith("/m/") {
+        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
             alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { (_) in
                 let text = self.searchText ?? ""
                 if !AccountController.isLoggedIn {
@@ -2047,7 +2095,7 @@ extension SingleSubredditViewController {
             }
         }))
 
-        if sub != "all" && sub != "frontpage" && !sub.contains("+") && !sub.contains("/m/") {
+        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
             alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { _ in
                 self.newPost(sender)
             }))

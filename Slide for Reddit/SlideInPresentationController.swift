@@ -101,7 +101,7 @@ private extension SlideInPresentationController {
         dimmingView.alpha = 0.0
         let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
         let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(3, forKeyPath: "blurRadius")
+        blurEffect.setValue(5, forKeyPath: "blurRadius")
         blurView.effect = blurEffect
         dimmingView.insertSubview(blurView, at: 0)
 

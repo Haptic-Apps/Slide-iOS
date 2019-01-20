@@ -32,7 +32,9 @@ class Subscriptions {
         if let accounts = UserDefaults.standard.array(forKey: "subsP" + AccountController.currentName) {
             return accounts as! [String]
         }
-        return []
+        UserDefaults.standard.set(["frontpage", "all", "popular"], forKey: "subsP" + AccountController.currentName)
+        UserDefaults.standard.synchronize()
+        return ["frontpage", "all", "popular"]
     }
     
     public static var offline: [String] {
@@ -130,6 +132,7 @@ class Subscriptions {
     public static func unsubscribe(_ name: String, session: Session) {
         var subs = Subscriptions.subreddits
         subs = subs.filter { $0 != name }
+        setPinned(name: AccountController.currentName, subs: pinned.filter { $0 != name }, completion: {})
         SubredditReorderViewController.changed = true
         set(name: AccountController.currentName, subs: subs) { () in }
         if AccountController.isLoggedIn {

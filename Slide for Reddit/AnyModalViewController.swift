@@ -137,7 +137,7 @@ class AnyModalViewController: UIViewController {
         
         self.view.insertSubview(background!, at: 0)
         blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(3, forKeyPath: "blurRadius")
+        blurEffect.setValue(5, forKeyPath: "blurRadius")
         blurView!.effect = blurEffect
         view.insertSubview(blurView!, at: 0)
         
@@ -295,17 +295,19 @@ class AnyModalViewController: UIViewController {
             UIAlertAction(title: "Share Video", style: .default) { (_) in
                 VideoMediaDownloader.init(urlToLoad: baseURL).getVideoWithCompletion(completion: { (fileURL) in
                     DispatchQueue.main.async {
-                        let shareItems: [Any] = [fileURL]
-                        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                        if let presenter = activityViewController.popoverPresentationController {
-                            presenter.sourceView = sender
-                            presenter.sourceRect = sender.bounds
-                        }
-                        let window = UIApplication.shared.keyWindow!
-                        if let modalVC = window.rootViewController?.presentedViewController {
-                            modalVC.present(activityViewController, animated: true, completion: nil)
-                        } else {
-                            window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                        if fileURL != nil {
+                            let shareItems: [Any] = [fileURL!]
+                            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                            if let presenter = activityViewController.popoverPresentationController {
+                                presenter.sourceView = sender
+                                presenter.sourceRect = sender.bounds
+                            }
+                            let window = UIApplication.shared.keyWindow!
+                            if let modalVC = window.rootViewController?.presentedViewController {
+                                modalVC.present(activityViewController, animated: true, completion: nil)
+                            } else {
+                                window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                            }
                         }
                     }
                 }, parent: self)

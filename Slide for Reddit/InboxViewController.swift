@@ -94,6 +94,12 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let navigationController = navigationController {
+            if navigationController.viewControllers.count == 1 {
+                navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "Close", style: .done, target: self, action: #selector(closeButtonPressed))
+            }
+        }
+
         var items: [String] = []
         for i in content {
             items.append(i.description)
@@ -117,6 +123,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
         tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.topAnchor == self.view.safeTopAnchor
         tabBar.sizeToFit()
 
         time = History.getInboxSeen()
@@ -244,5 +251,12 @@ extension InboxViewController: MDCTabBarDelegate {
                            animated: false,
                            completion: nil)
         
+    }
+}
+
+// MARK: - Actions
+extension InboxViewController {
+    @objc func closeButtonPressed() {
+        dismiss(animated: true, completion: nil)
     }
 }

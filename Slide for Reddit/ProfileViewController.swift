@@ -328,6 +328,12 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let navigationController = navigationController {
+            if navigationController.viewControllers.count == 1 {
+                navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "Close", style: .done, target: self, action: #selector(closeButtonPressed))
+            }
+        }
+
         view.backgroundColor = ColorUtil.backgroundColor
         var items: [String] = []
         if friends {
@@ -502,4 +508,11 @@ extension ProfileViewController: MDCTabBarDelegate {
         
     }
     
+}
+
+// MARK: - Actions
+extension ProfileViewController {
+    @objc func closeButtonPressed() {
+        dismiss(animated: true, completion: nil)
+    }
 }

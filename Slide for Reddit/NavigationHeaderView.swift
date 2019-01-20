@@ -21,19 +21,43 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
     var parentController: UIViewController?
     var subreddit = ""
     var isModerator = false
-    var mailBadge: BadgeSwift?
 
     private var layoutConstraints: [NSLayoutConstraint] = []
 
-    var back = UIView()
+    var accountContainer = UIStackView().then {
+        $0.axis = .horizontal
+//        $0.alignment = .fill
+//        $0.distribution = .fillProportionally
+        $0.spacing = 8
+    }
+    var buttonContainer = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+    }
+
     var title = UILabel()
     var account = UIButton()
     var inbox = UIButton()
+    var inboxBadge = BadgeSwift().then {
+        $0.insets = CGSize(width: 3, height: 3)
+        $0.font = UIFont.systemFont(ofSize: 11)
+        $0.textColor = UIColor.white
+        $0.badgeColor = UIColor.red
+        $0.shadowOpacityBadge = 0
+    }
     var settings = UIButton()
     var more = UIButton()
     var mod = UIButton()
-    var search: UISearchBar = UISearchBar()
-
+    var search = UISearchBar().then {
+        $0.autocorrectionType = .no
+        $0.autocapitalizationType = .none
+        $0.spellCheckingType = .no
+        $0.returnKeyType = .search
+        if ColorUtil.theme != .LIGHT {
+            $0.keyboardAppearance = .dark
+        }
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -56,54 +80,53 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
     }
     
     func configureViews() {
-        self.clipsToBounds = true
+        self.clipsToBounds = false
 
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: 50, height: 90))
+//        title.setContentCompressionResistancePriority(UILayoutPriorityDefaultHigh, for: .horizontal)
         title.isUserInteractionEnabled = true
 
-        self.search = UISearchBar(frame: CGRect(x: 0, y: 0, width: 3, height: 50))
-        search.autocorrectionType = .no
-        search.autocapitalizationType = .none
-        search.spellCheckingType = .no
-        search.returnKeyType = .search
         search.delegate = self
-        if ColorUtil.theme != .LIGHT {
-            search.keyboardAppearance = .dark
-        }
 
-        self.addSubviews(back, search)
+        self.addSubviews(accountContainer, buttonContainer, search)
 
         // Set up title children
-        self.account = UIButton.init(type: .custom).then {
+        self.account = UIButton(type: .custom).then {
             $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "profile")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
+            $0.setImage(UIImage(named: "profile")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
         }
 
-        self.more = UIButton.init(type: .custom).then {
+        self.more = UIButton(type: .custom).then {
             $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
+            $0.setImage(UIImage(named: "moreh")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
         }
 
-        self.inbox = UIButton.init(type: .custom).then {
+        self.inbox = UIButton(type: .custom).then {
             $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "inbox")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
+            $0.setImage(UIImage(named: "inbox")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
             $0.isUserInteractionEnabled = true
         }
         
-        self.mod = UIButton.init(type: .custom).then {
+        self.mod = UIButton(type: .custom).then {
             $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
+            $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
             $0.isUserInteractionEnabled = true
             $0.isHidden = true
         }
 
-        self.settings = UIButton.init(type: .custom).then {
+        self.settings = UIButton(type: .custom).then {
             $0.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            $0.setImage(UIImage.init(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
+            $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: SettingValues.reduceColor ? ColorUtil.fontColor : .white), for: UIControl.State.normal)
             $0.isUserInteractionEnabled = true
         }
 
-        back.addSubviews(title, account, inbox, mod, settings)
+        account.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
+        title.setContentCompressionResistancePriority(UILayoutPriority.defaultLow, for: .horizontal)
+
+        accountContainer.addArrangedSubviews(account, title, .flexSpace(), mod, inbox)
+
+        buttonContainer.addArrangedSubviews(settings, .flexSpace())
+
+        inbox.addSubview(inboxBadge)
 
     }
 
@@ -137,84 +160,61 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
 
         layoutConstraints = batch {
 
-            back.topAnchor == self.topAnchor
-            back.heightAnchor == 90
-            back.horizontalAnchors == self.horizontalAnchors
-            
-            title.verticalAnchors == back.verticalAnchors
+            accountContainer.topAnchor == self.topAnchor + 12
+            accountContainer.horizontalAnchors == self.horizontalAnchors + 16
 
-            search.topAnchor == title.bottomAnchor + 4
+            buttonContainer.topAnchor == accountContainer.bottomAnchor + 4
+            buttonContainer.horizontalAnchors == self.horizontalAnchors + 16
+            buttonContainer.heightAnchor == 0
+            
+            search.topAnchor == buttonContainer.bottomAnchor + 4
             search.horizontalAnchors == self.horizontalAnchors
             search.heightAnchor == 50
             search.bottomAnchor == self.bottomAnchor
+            mod.isHidden = !isModerator
 
-            // Title constraints
-            account.leftAnchor == back.leftAnchor + 16
-            account.centerYAnchor == back.centerYAnchor
-            account.widthAnchor == 30
-            title.leftAnchor == account.rightAnchor + 16
-
-            settings.rightAnchor == back.rightAnchor - 16
-            settings.centerYAnchor == back.centerYAnchor
-            settings.widthAnchor == 30
-
-            inbox.rightAnchor == settings.leftAnchor - 20
-            inbox.centerYAnchor == back.centerYAnchor
-            inbox.widthAnchor == 30
-
-            if isModerator {
-                mod.isHidden = false
-                mod.rightAnchor == inbox.leftAnchor - 16
-                mod.widthAnchor == 30
-                mod.centerYAnchor == title.centerYAnchor
-                title.rightAnchor == mod.leftAnchor - 16
-            } else {
-                title.rightAnchor == inbox.leftAnchor - 16
-            }
-            
-            // TODO: Determine if we still need this
-            if #available(iOS 11.0, *) {
-                account.heightAnchor == 90
-                title.heightAnchor == 90
-                inbox.heightAnchor == 90
-                settings.heightAnchor == 90
-            }
+            inboxBadge.centerYAnchor == inbox.centerYAnchor - 10
+            inboxBadge.centerXAnchor == inbox.centerXAnchor + 16
         }
     }
 
     func setIsMod(_ hasMail: Bool) {
         isModerator = true
         DispatchQueue.main.async {
-            self.updateLayout()
+            self.mod.isHidden = !self.isModerator
         }
     }
 
     func doColors(_ sub: String) {
         doColors()
-        back.backgroundColor = ColorUtil.getColorForSub(sub: sub)
+        buttonContainer.backgroundColor = ColorUtil.getColorForSub(sub: sub)
         if SettingValues.reduceColor {
             title.textColor = ColorUtil.fontColor
-            back.backgroundColor = ColorUtil.foregroundColor
+            buttonContainer.backgroundColor = ColorUtil.foregroundColor
         }
     }
 
     func doColors() {
-        var titleFont = UIFont.boldSystemFont(ofSize: 25)
+        var titleFont = UIFont.boldSystemFont(ofSize: 20)
         title.font = titleFont
-        title.numberOfLines = 0
-        title.lineBreakMode = .byWordWrapping
         title.textColor = .white
+        title.textAlignment = .left
         if SettingValues.reduceColor {
             title.textColor = ColorUtil.fontColor
-            back.backgroundColor = ColorUtil.foregroundColor
+            buttonContainer.backgroundColor = ColorUtil.foregroundColor
         }
-        title.textAlignment = .left
         
         if AccountController.isLoggedIn {
+            title.numberOfLines = 1
             title.adjustsFontSizeToFitWidth = true
+            title.allowsDefaultTighteningForTruncation = true
+            title.minimumScaleFactor = 10.0
+//            title.preferredMaxLayoutWidth = 1000
             title.text = AccountController.formatUsername(input: AccountController.currentName, small: true)
+            title.text = "Wow this is a long username jeez"
             inbox.isHidden = false
         } else {
+            title.numberOfLines = 0
             inbox.isHidden = true
             let titleT = NSMutableAttributedString.init(string: "Guest\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont]))
             titleFont = UIFont.systemFont(ofSize: 20)
@@ -231,55 +231,10 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
         updateLayout()
     }
 
-    func getEstHeight() -> CGFloat {
-        return CGFloat(90 + 50 + 4)
+    func setMail(_ mailCount: Int) {
+        inboxBadge.isHidden = mailCount == 0
+        inboxBadge.text = "\(mailCount)"
     }
-
-    func setMail(_ mailcount: Int) {
-            mailBadge?.removeFromSuperview()
-            mailBadge = nil
-
-        if mailcount != 0 {
-            mailBadge = BadgeSwift()
-            inbox.addSubview(mailBadge!)
-            
-            mailBadge!.text = "\(mailcount)"
-            mailBadge!.insets = CGSize(width: 3, height: 3)
-            mailBadge!.font = UIFont.systemFont(ofSize: 11)
-            mailBadge!.textColor = UIColor.white
-            mailBadge!.badgeColor = UIColor.red
-            mailBadge!.shadowOpacityBadge = 0
-            positionBadge(mailBadge!)
-        }
-    }
-
-    private func positionBadge(_ badge: UIView) {
-        badge.translatesAutoresizingMaskIntoConstraints = false
-        var constraints = [NSLayoutConstraint]()
-
-        // Center the badge vertically in its container
-        constraints.append(NSLayoutConstraint(
-                item: badge,
-                attribute: NSLayoutConstraint.Attribute.centerY,
-                relatedBy: NSLayoutConstraint.Relation.equal,
-                toItem: inbox,
-                attribute: NSLayoutConstraint.Attribute.centerY,
-                multiplier: 1, constant: -10)
-        )
-
-        // Center the badge horizontally in its container
-        constraints.append(NSLayoutConstraint(
-                item: badge,
-                attribute: NSLayoutConstraint.Attribute.centerX,
-                relatedBy: NSLayoutConstraint.Relation.equal,
-                toItem: inbox,
-                attribute: NSLayoutConstraint.Attribute.centerX,
-                multiplier: 1, constant: 15)
-        )
-
-        inbox.addConstraints(constraints)
-    }
-
 }
 
 // MARK: Actions

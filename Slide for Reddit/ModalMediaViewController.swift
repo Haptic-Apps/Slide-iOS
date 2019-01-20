@@ -231,7 +231,7 @@ class ModalMediaViewController: UIViewController {
             
             self.view.insertSubview(background!, at: 0)
             blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-            blurEffect.setValue(3, forKeyPath: "blurRadius")
+            blurEffect.setValue(5, forKeyPath: "blurRadius")
             blurView!.effect = blurEffect
             view.insertSubview(blurView!, at: 0)
         }
@@ -253,7 +253,7 @@ class ModalMediaViewController: UIViewController {
         if parent is AlbumViewController || parent is ShadowboxLinkViewController {
             self.closeButton.isHidden = true
         }
-        UIApplication.shared.statusBarStyle = .lightContent
+        desiredStatusBarStyle = .lightContent
 
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: closeButton)
     }
@@ -291,10 +291,20 @@ class ModalMediaViewController: UIViewController {
         }
         
         if SettingValues.reduceColor && ColorUtil.theme.isLight() {
-            UIApplication.shared.statusBarStyle = .default
+            desiredStatusBarStyle = .default
         } else {
-            UIApplication.shared.statusBarStyle = .lightContent
+            desiredStatusBarStyle = .lightContent
         }
+    }
+
+    var desiredStatusBarStyle: UIStatusBarStyle = .default {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return desiredStatusBarStyle
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -467,5 +477,10 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
             return true
         }
         set {}
+    }
+}
+extension UINavigationController {
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
+        return presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? (SettingValues.reduceColor && ColorUtil.theme.isLight() ? .default : .lightContent)
     }
 }
