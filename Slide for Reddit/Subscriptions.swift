@@ -132,6 +132,7 @@ class Subscriptions {
     public static func unsubscribe(_ name: String, session: Session) {
         var subs = Subscriptions.subreddits
         subs = subs.filter { $0 != name }
+        setPinned(name: AccountController.currentName, subs: pinned.filter { $0 != name }, completion: {})
         SubredditReorderViewController.changed = true
         set(name: AccountController.currentName, subs: subs) { () in }
         if AccountController.isLoggedIn {

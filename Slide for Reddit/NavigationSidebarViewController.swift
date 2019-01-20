@@ -472,7 +472,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         searchBar.heightAnchor == 50
         searchBar.bottomAnchor == headerView.bottomAnchor
 
-        tableView.topAnchor == headerView.bottomAnchor
+        tableView.topAnchor == headerView.bottomAnchor - 2
         tableView.horizontalAnchors == view.horizontalAnchors
         tableView.bottomAnchor == view.bottomAnchor
     }
@@ -577,6 +577,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
+        tableView.contentOffset = CGPoint(x: 0, y: tableView.contentOffset.y + 1)
         let sub = subsSource.subredditsInSection(editActionsForRowAt.section)![editActionsForRowAt.row]
         let wasEmpty = Subscriptions.pinned.isEmpty
         let isPinned = editActionsForRowAt.section == 0 && !wasEmpty
