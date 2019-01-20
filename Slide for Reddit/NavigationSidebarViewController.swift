@@ -653,7 +653,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             default: label.text  = "SUBREDDIT SUGGESTIONS"
             }
         } else {
-            label.text = subsSource.sortedSectionTitles[section]
+            label.text = subsSource.sortedSectionTitles[section] == "+" ? "MULTIREDDITS" : subsSource.sortedSectionTitles[section]
         }
 
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
