@@ -130,6 +130,10 @@
 		BE20852E21588F3B00D8F33C /* Slide for Apple Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BE20851121588F3900D8F33C /* Slide for Apple Watch.app */; };
 		BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20853921589FD600D8F33C /* SubmissionRowController.swift */; };
 		BE25402621CCC03E003BD547 /* ForceTouchGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */; };
+		BE257A6E21F64AA30082A47E /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE257A6D21F64AA30082A47E /* Media.xcassets */; };
+		BE257A7021F64AA30082A47E /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A6F21F64AA30082A47E /* ActionViewController.swift */; };
+		BE257A7321F64AA30082A47E /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE257A7121F64AA30082A47E /* MainInterface.storyboard */; };
+		BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE257A6B21F64AA30082A47E /* Open in Slide.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE292568213C5730006B5130 /* LocalKeystore.swift */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
@@ -285,6 +289,13 @@
 			remoteGlobalIDString = BE20851021588F3900D8F33C;
 			remoteInfo = "Slide for Apple Watch";
 		};
+		BE257A7521F64AA30082A47E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE257A6A21F64AA30082A47E;
+			remoteInfo = "Open in Slide";
+		};
 		BE8FCA191E0C46090063B8EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
@@ -308,6 +319,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -477,6 +489,11 @@
 		BE20852B21588F3B00D8F33C /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
 		BE20853921589FD600D8F33C /* SubmissionRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionRowController.swift; sourceTree = "<group>"; };
 		BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceTouchGestureRecognizer.swift; sourceTree = "<group>"; };
+		BE257A6B21F64AA30082A47E /* Open in Slide.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Open in Slide.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE257A6D21F64AA30082A47E /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		BE257A6F21F64AA30082A47E /* ActionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewController.swift; sourceTree = "<group>"; };
+		BE257A7221F64AA30082A47E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		BE257A7421F64AA30082A47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE292568213C5730006B5130 /* LocalKeystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalKeystore.swift; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
@@ -637,6 +654,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BE20851A21588F3A00D8F33C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE257A6821F64AA30082A47E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -835,6 +859,17 @@
 			path = "Slide for Apple Watch Extension";
 			sourceTree = "<group>";
 		};
+		BE257A6C21F64AA30082A47E /* Open in Slide */ = {
+			isa = PBXGroup;
+			children = (
+				BE257A6D21F64AA30082A47E /* Media.xcassets */,
+				BE257A6F21F64AA30082A47E /* ActionViewController.swift */,
+				BE257A7121F64AA30082A47E /* MainInterface.storyboard */,
+				BE257A7421F64AA30082A47E /* Info.plist */,
+			);
+			path = "Open in Slide";
+			sourceTree = "<group>";
+		};
 		BE2DEAAC1E26828B00FBF0B5 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1012,6 +1047,7 @@
 				BE77470720367D98006C72E8 /* Credits.plist */,
 				BE20851221588F3900D8F33C /* Slide for Apple Watch */,
 				BE20852121588F3B00D8F33C /* Slide for Apple Watch Extension */,
+				BE257A6C21F64AA30082A47E /* Open in Slide */,
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				BE8FCA051E0C46090063B8EF /* Products */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
@@ -1029,6 +1065,7 @@
 				BE8FCA231E0C46090063B8EF /* Slide for RedditUITests.xctest */,
 				BE20851121588F3900D8F33C /* Slide for Apple Watch.app */,
 				BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */,
+				BE257A6B21F64AA30082A47E /* Open in Slide.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1211,6 +1248,23 @@
 			productReference = BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */;
 			productType = "com.apple.product-type.watchkit2-extension";
 		};
+		BE257A6A21F64AA30082A47E /* Open in Slide */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE257A7A21F64AA30082A47E /* Build configuration list for PBXNativeTarget "Open in Slide" */;
+			buildPhases = (
+				BE257A6721F64AA30082A47E /* Sources */,
+				BE257A6821F64AA30082A47E /* Frameworks */,
+				BE257A6921F64AA30082A47E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Open in Slide";
+			productName = "Open in Slide";
+			productReference = BE257A6B21F64AA30082A47E /* Open in Slide.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		BE8FCA031E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE8FCA2C1E0C46090063B8EF /* Build configuration list for PBXNativeTarget "Slide for Reddit" */;
@@ -1232,6 +1286,7 @@
 			);
 			dependencies = (
 				BE20852D21588F3B00D8F33C /* PBXTargetDependency */,
+				BE257A7621F64AA30082A47E /* PBXTargetDependency */,
 			);
 			name = "Slide for Reddit";
 			productName = "Slide for Reddit";
@@ -1286,7 +1341,7 @@
 		BE8FC9FC1E0C46090063B8EF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1000;
+				LastSwiftUpdateCheck = 1010;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
@@ -1297,6 +1352,11 @@
 					};
 					BE20851C21588F3A00D8F33C = {
 						CreatedOnToolsVersion = 10.0;
+						DevelopmentTeam = FTT89576VQ;
+						ProvisioningStyle = Automatic;
+					};
+					BE257A6A21F64AA30082A47E = {
+						CreatedOnToolsVersion = 10.1;
 						DevelopmentTeam = FTT89576VQ;
 						ProvisioningStyle = Automatic;
 					};
@@ -1354,6 +1414,7 @@
 				BE8FCA221E0C46090063B8EF /* Slide for RedditUITests */,
 				BE20851021588F3900D8F33C /* Slide for Apple Watch */,
 				BE20851C21588F3A00D8F33C /* Slide for Apple Watch Extension */,
+				BE257A6A21F64AA30082A47E /* Open in Slide */,
 			);
 		};
 /* End PBXProject section */
@@ -1373,6 +1434,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE20852921588F3B00D8F33C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE257A6921F64AA30082A47E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE257A6E21F64AA30082A47E /* Media.xcassets in Resources */,
+				BE257A7321F64AA30082A47E /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1723,6 +1793,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BE257A6721F64AA30082A47E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE257A7021F64AA30082A47E /* ActionViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE8FCA001E0C46090063B8EF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1944,6 +2022,11 @@
 			target = BE20851021588F3900D8F33C /* Slide for Apple Watch */;
 			targetProxy = BE20852C21588F3B00D8F33C /* PBXContainerItemProxy */;
 		};
+		BE257A7621F64AA30082A47E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE257A6A21F64AA30082A47E /* Open in Slide */;
+			targetProxy = BE257A7521F64AA30082A47E /* PBXContainerItemProxy */;
+		};
 		BE8FCA1A1E0C46090063B8EF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BE8FCA031E0C46090063B8EF /* Slide for Reddit */;
@@ -1963,6 +2046,14 @@
 				BE20851421588F3A00D8F33C /* Base */,
 			);
 			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
+		BE257A7121F64AA30082A47E /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE257A7221F64AA30082A47E /* Base */,
+			);
+			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 		BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */ = {
@@ -2081,6 +2172,57 @@
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Release;
+		};
+		BE257A7821F64AA30082A47E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Open in Slide/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide-debug.Open-in-Slide";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BE257A7921F64AA30082A47E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Open in Slide/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide-debug.Open-in-Slide";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -2205,6 +2347,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8418A9BEF33A156AD44406EB /* Pods-Slide for Reddit.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Slide for Reddit/Slide for Reddit.entitlements";
@@ -2238,6 +2381,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 82B87BFA0FABB983084EDBB3 /* Pods-Slide for Reddit.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Slide for Reddit/Slide for Reddit.entitlements";
@@ -2349,6 +2493,15 @@
 			buildConfigurations = (
 				BE20852F21588F3B00D8F33C /* Debug */,
 				BE20853021588F3B00D8F33C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BE257A7A21F64AA30082A47E /* Build configuration list for PBXNativeTarget "Open in Slide" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE257A7821F64AA30082A47E /* Debug */,
+				BE257A7921F64AA30082A47E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

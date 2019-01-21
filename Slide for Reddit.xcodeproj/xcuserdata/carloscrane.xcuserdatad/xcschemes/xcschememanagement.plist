@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Open in Slide.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>42</integer>
+		</dict>
 		<key>Share to Slide.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -22,12 +27,12 @@
 		<key>Slide for Apple Watch.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>35</integer>
+			<integer>33</integer>
 		</dict>
 		<key>Slide for Reddit Prod Test.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>36</integer>
+			<integer>35</integer>
 		</dict>
 		<key>Slide for Reddit.xcscheme</key>
 		<dict>
