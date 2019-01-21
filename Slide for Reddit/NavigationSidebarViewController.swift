@@ -217,7 +217,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     @objc func collapse() {
-
         doneOnce = false
         searchBar.isUserInteractionEnabled = false
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
