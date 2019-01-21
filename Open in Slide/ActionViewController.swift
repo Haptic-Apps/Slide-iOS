@@ -6,8 +6,8 @@
 //  Copyright © 2019 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import MobileCoreServices
+import UIKit
 
 class ActionViewController: UIViewController {
 
@@ -24,7 +24,7 @@ class ActionViewController: UIViewController {
         for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
             for provider in item.attachments! {
                 if provider.hasItemConformingToTypeIdentifier("public.url") {
-                    provider.loadItem(forTypeIdentifier: "public.url", options: nil, completionHandler: { (url, error) -> Void in
+                    provider.loadItem(forTypeIdentifier: "public.url", options: nil, completionHandler: { (url, _) -> Void in
                         if let shareURL = url as? NSURL {
                             print("Got URL!")
                             urlFound = true
@@ -46,7 +46,7 @@ class ActionViewController: UIViewController {
             }
             
             if urlFound {
-                // We only handle one image, so stop looking for more.
+                //Only do first link
                 break
             }
         }
@@ -60,6 +60,7 @@ class ActionViewController: UIViewController {
             }
             responder = responder?.next
         }
+        self.extensionContext!.cancelRequest(withError: NSError())
         return false
     }
 
