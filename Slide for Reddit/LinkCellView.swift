@@ -1048,11 +1048,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         title.delegate = self
         
         title.linkAttributes = [
-            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.navIconColor,
+            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
             convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
         ]
         title.activeLinkAttributes = [
-            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.navIconColor,
+            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
             convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
         ]
         

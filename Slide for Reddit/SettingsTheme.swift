@@ -200,28 +200,28 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.primary.backgroundColor = ColorUtil.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.fontColor
         self.primary.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.primary.imageView?.tintColor = ColorUtil.fontColor
+        self.primary.imageView?.tintColor = ColorUtil.navIconColor
 
         self.accent.textLabel?.text = "Accent color"
         self.accent.accessoryType = .none
         self.accent.backgroundColor = ColorUtil.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.fontColor
         self.accent.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.accent.imageView?.tintColor = ColorUtil.fontColor
+        self.accent.imageView?.tintColor = ColorUtil.navIconColor
 
         self.base.textLabel?.text = "App theme"
         self.base.accessoryType = .none
         self.base.backgroundColor = ColorUtil.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.fontColor
         self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.base.imageView?.tintColor = ColorUtil.fontColor
+        self.base.imageView?.tintColor = ColorUtil.navIconColor
 
         self.night.textLabel?.text = "Automatic night theme"
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.night.imageView?.tintColor = ColorUtil.fontColor
+        self.night.imageView?.tintColor = ColorUtil.navIconColor
 
         tintOutsideSwitch = UISwitch()
         tintOutsideSwitch.isOn = SettingValues.onlyTintOutside

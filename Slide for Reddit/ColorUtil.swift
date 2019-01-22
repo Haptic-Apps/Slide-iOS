@@ -348,14 +348,13 @@ public class ColorUtil {
             case .CONTRAST:
                 return ColorUtil.fontColor
             case .MINT:
-                return ColorUtil.fontColor
+                return UIColor(hexString: "#9fc675")
             case .CREAM:
                 return ColorUtil.fontColor
             case .PINK:
                 return UIColor(hexString: "#ea8ab4")
             }
         }
-
         
         public func isLight() -> Bool {
             return self == .LIGHT || self == .MINT || self == .CREAM || self == .PINK
