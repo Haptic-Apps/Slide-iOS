@@ -279,7 +279,12 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                     SDWebImageDownloader.shared().downloadImage(with: url, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: { (_, _, _) in
                     }, completed: { (image, _, _, _) in
                         if image != nil {
-                            self.backgroundColor = image!.areaAverage()
+                            DispatchQueue.global(qos: .background).async {
+                                let average = image!.areaAverage()
+                                DispatchQueue.main.async {
+                                    self.backgroundColor = average
+                                }
+                            }
                         }
                     })
                 }
@@ -443,19 +448,15 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         doBackground()
+        if !populated {
+            populateContent()
+            populated = true
+        }
         //self.baseView.backgroundColor = .clear
     }
 
     var first = true
     var populated = false
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if !populated {
-            populateContent()
-            populated = true
-        }
-    }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)

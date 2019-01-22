@@ -1116,7 +1116,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
             let visibleIndexPath = tableView.indexPathForItem(at: visiblePoint)
 
-            let controller = ShadowboxViewController.init(submissions: links, subreddit: sub, index: visibleIndexPath?.row ?? 0)
+            let controller = ShadowboxViewController.init(submissions: links, subreddit: sub, index: visibleIndexPath?.row ?? 0, paginator: paginator, sort: sort, time: time)
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         }

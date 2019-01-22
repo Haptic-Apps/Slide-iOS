@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import reddift
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
 
@@ -14,6 +15,9 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
     var vCs: [UIViewController] = []
     var baseSubmissions: [RSubmission] = []
+    var paginator: Paginator
+    var sort: LinkSortType
+    var time: TimeFilterWithin
     var subreddit: String
     var index: Int
 
@@ -35,9 +39,12 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
     }
     
-    public init(submissions: [RSubmission], subreddit: String, index: Int) {
+    public init(submissions: [RSubmission], subreddit: String, index: Int, paginator: Paginator, sort: LinkSortType, time: TimeFilterWithin) {
         self.subreddit = subreddit
+        self.sort = sort
+        self.time = time
         self.index = index
+        self.paginator = paginator
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         self.baseSubmissions = submissions
@@ -140,6 +147,63 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
         
         currentVc = self.viewControllers!.first!
+        if vCs.lastIndex(of: currentVc) == vCs.count - 2 {
+            loadMore()
+        }
+    }
+    
+    var loading = false
+    var nomore = false
+    func loadMore() {
+        if !loading {
+            do {
+                loading = true
+                var path: SubredditURLPath = Subreddit.init(subreddit: self.subreddit)
+                
+                if subreddit.hasPrefix("/m/") {
+                    path = Multireddit.init(name: subreddit.substring(3, length: subreddit.length - 3), user: AccountController.currentName)
+                }
+                if subreddit.contains("/u/") {
+                    path = Multireddit.init(name: subreddit.split("/")[3], user: subreddit.split("/")[1])
+                }
+                
+                try (UIApplication.shared.delegate as? AppDelegate)?.session?.getList(paginator, subreddit: path, sort: sort, timeFilterWithin: time, completion: { (result) in
+                    switch result {
+                    case .failure:
+                        print(result.error!)
+                        //Loading failed, ignore
+                    case .success(let listing):
+                        let newLinks = listing.children.compactMap({ $0 as? Link })
+                        var converted: [RSubmission] = []
+                        for link in newLinks {
+                            let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
+                            converted.append(newRS)
+                        }
+                        
+                        let values = PostFilter.filter(converted, previous: self.baseSubmissions, baseSubreddit: self.subreddit).map { $0 as! RSubmission }
+                        
+                        self.baseSubmissions += values
+                        self.paginator = listing.paginator
+                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
+                        
+                        DispatchQueue.main.async {
+                            for s in values {
+                                if !(s.nsfw && !SettingValues.nsfwPreviews) {
+                                    self.vCs.append(ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self))
+                                }
+                            }
+                            self.setViewControllers([self.currentVc],
+                                                    direction: .forward,
+                                                    animated: false ,
+                                                    completion: nil)
+                        }
+                    }
+                })
+            } catch {
+                print(error)
+            }
+            
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
