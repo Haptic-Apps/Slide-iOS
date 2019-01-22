@@ -76,6 +76,7 @@ public class ColorUtil {
         }
         foregroundColor = theme.foregroundColor
         backgroundColor = theme.backgroundColor
+        navIconColor = theme.navIconColor
         fontColor = theme.fontColor
         let color = UserDefaults.standard.colorForKey(key: "basecolor")
         if color != nil {
@@ -90,6 +91,7 @@ public class ColorUtil {
 
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
+    static var navIconColor = UIColor.white
     static var fontColor = UIColor.black {
         didSet {
             LinkCellImageCache.initialize()
@@ -241,6 +243,7 @@ public class ColorUtil {
         case MINT = "mint"
         case CREAM = "cream"
         case CONTRAST = "acontrast"
+        case PINK = "pink"
         
         public var displayName: String {
             switch self {
@@ -264,11 +267,13 @@ public class ColorUtil {
                 return "Mint green"
             case .CREAM:
                 return "Crème"
+            case .PINK:
+                return "Pink"
             }
         }
 
         public static var cases: [Theme] {
-            return [.LIGHT, .DARK, .BLACK, .CONTRAST, .BLUE, .SEPIA, .RED, .DEEP, .MINT, .CREAM]
+            return [.LIGHT, .DARK, .BLACK, .CONTRAST, .BLUE, .SEPIA, .RED, .DEEP, .MINT, .PINK, .CREAM]
         }
         public var foregroundColor: UIColor {
             switch self {
@@ -292,6 +297,8 @@ public class ColorUtil {
                 return UIColor.white
             case .CREAM:
                 return UIColor(hexString: "#DCD8C2")
+            case .PINK:
+                return UIColor(hexString: "#FFFFFC")
             }
         }
 
@@ -317,11 +324,41 @@ public class ColorUtil {
                 return UIColor(hexString: "#eef6e8")
             case .CREAM:
                 return UIColor(hexString: "#D1CDB9")
+            case .PINK:
+                return UIColor(hexString: "#fff5e8")
             }
         }
         
+        public var navIconColor: UIColor {
+            switch self {
+            case .LIGHT:
+                return ColorUtil.fontColor
+            case .DEEP:
+                return ColorUtil.fontColor
+            case .DARK:
+                return ColorUtil.fontColor
+            case .BLUE:
+                return ColorUtil.fontColor
+            case .SEPIA:
+                return ColorUtil.fontColor
+            case .RED:
+                return ColorUtil.fontColor
+            case .BLACK:
+                return ColorUtil.fontColor
+            case .CONTRAST:
+                return ColorUtil.fontColor
+            case .MINT:
+                return ColorUtil.fontColor
+            case .CREAM:
+                return ColorUtil.fontColor
+            case .PINK:
+                return UIColor(hexString: "#ea8ab4")
+            }
+        }
+
+        
         public func isLight() -> Bool {
-            return self == .LIGHT || self == .MINT || self == .CREAM
+            return self == .LIGHT || self == .MINT || self == .CREAM || self == .PINK
         }
 
         public var fontColor: UIColor {
@@ -346,6 +383,8 @@ public class ColorUtil {
                 return UIColor(hexString: "#09360f").withAlphaComponent(0.87)
             case .CREAM:
                 return UIColor(hexString: "#444139").withAlphaComponent(0.87)
+            case .PINK:
+                return UIColor(hexString: "#262844").withAlphaComponent(0.87)
             }
         }
     }

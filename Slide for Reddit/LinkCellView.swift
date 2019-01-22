@@ -1048,11 +1048,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         title.delegate = self
         
         title.linkAttributes = [
-            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
+            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.navIconColor,
             convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
         ]
         title.activeLinkAttributes = [
-            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
+            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.navIconColor,
             convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
         ]
         
@@ -1227,8 +1227,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         lq = false
 
         self.contentView.backgroundColor = ColorUtil.foregroundColor
-        comments.textColor = ColorUtil.fontColor
-        title.textColor = ColorUtil.fontColor
+        comments.textColor = ColorUtil.navIconColor
+        title.textColor = ColorUtil.navIconColor
 
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
         activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
@@ -2036,7 +2036,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             sideUpvote.setImage(LinkCellImageCache.upvoteTintedSmall, for: .normal)
             attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
-            attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
+            attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.navIconColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
         }
         
         var scoreInt = link.score
@@ -2353,7 +2353,7 @@ extension UILabel {
             textAttachment.image = image as? UIImage
         } else {
             
-            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.fontColor)
+            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.navIconColor)
             textAttachment.image = img
             LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
         }

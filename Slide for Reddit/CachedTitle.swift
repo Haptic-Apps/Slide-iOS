@@ -39,12 +39,17 @@ class CachedTitle {
 
     static func titleForSubmission(submission: RSubmission, full: Bool, white: Bool) -> NSAttributedString {
 
-        var colorF = ColorUtil.fontColor
+        var colorF = ColorUtil.navIconColor
         if white {
             colorF = .white
         }
+        
+        var color2 = ColorUtil.fontColor
+        if white {
+            color2 = .white
+        }
 
-        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color2]))
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         if !submission.flair.isEmpty {
@@ -194,7 +199,7 @@ class CachedTitle {
                 infoString.append(NSAttributedString.init(string: "\n"))
             }
             if SettingValues.scoreInTitle {
-                var sColor = ColorUtil.fontColor
+                var sColor = colorF
                 switch ActionStates.getVoteDirection(s: submission) {
                 case .down:
                     sColor = ColorUtil.downvoteColor
