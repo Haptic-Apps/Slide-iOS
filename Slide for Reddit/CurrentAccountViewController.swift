@@ -171,6 +171,16 @@ class CurrentAccountViewController: UIViewController {
 
         configureForCurrentAccount()
     }
+    
+    var setStyle: UIStatusBarStyle = .default {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return setStyle
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -180,15 +190,11 @@ class CurrentAccountViewController: UIViewController {
 
         updateMailBadge()
         updateModBadge()
-        UIApplication.shared.statusBarStyle = .lightContent
+        setStyle = .lightContent
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
-            UIApplication.shared.statusBarStyle = .default
-        } else {
-            UIApplication.shared.statusBarStyle = .lightContent
-        }
+        setStyle = SettingValues.reduceColor && ColorUtil.theme.isLight() ? .default : .lightContent
     }
 }
 
