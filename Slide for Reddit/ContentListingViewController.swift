@@ -26,6 +26,36 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.baseData.getData(reload: true)
     }
     
+    @objc func showSortMenu(_ selector: UIButton?) {
+        if baseData is ProfileContributionLoader {
+            let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
+            
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
+                print("Cancel")
+            }
+            actionSheetController.addAction(cancelActionButton)
+            
+            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+            
+            for link in UserContentSortBy.cases {
+                let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
+                    self.showTimeMenuUser(s: link, selector: selector)
+                }
+                if userSort == link {
+                    saveActionButton.setValue(selected, forKey: "image")
+                }
+                actionSheetController.addAction(saveActionButton)
+            }
+            
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = selector!
+                presenter.sourceRect = selector!.bounds
+            }
+            
+            self.present(actionSheetController, animated: true, completion: nil)
+        }
+    }
+    
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
     }
@@ -344,6 +374,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
 
     var sort = LinkSortType.hot
+    var userSort = UserContentSortBy.new
     var time = TimeFilterWithin.day
 
     func showMenu(sender: UIButton?) {
@@ -367,7 +398,37 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         }
 
         self.present(actionSheetController, animated: true, completion: nil)
+    }
 
+    func showTimeMenuUser(s: UserContentSortBy, selector: UIButton?) {
+        if s == .hot || s == .new {
+            userSort = s
+            refresh()
+            return
+        } else {
+            let actionSheetController: UIAlertController = UIAlertController(title: "Time Period", message: "", preferredStyle: .actionSheet)
+            
+            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
+                print("Cancel")
+            }
+            actionSheetController.addAction(cancelActionButton)
+            
+            for t in TimeFilterWithin.cases {
+                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
+                    self.userSort = s
+                    self.time = t
+                    self.refresh()
+                }
+                actionSheetController.addAction(saveActionButton)
+            }
+            
+            if let presenter = actionSheetController.popoverPresentationController {
+                presenter.sourceView = selector!
+                presenter.sourceRect = selector!.bounds
+            }
+            
+            self.present(actionSheetController, animated: true, completion: nil)
+        }
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIButton?) {

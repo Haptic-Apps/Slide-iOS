@@ -39,7 +39,7 @@ class ProfileContributionLoader: ContributionLoader {
                 if reload {
                     paginator = Paginator()
                 }
-                try delegate?.session?.getUserContent(name, content: userContent, sort: .new, timeFilterWithin: (delegate?.time)!, paginator: paginator, completion: { (result) in
+                try delegate?.session?.getUserContent(name, content: userContent, sort: (delegate?.userSort)!, timeFilterWithin: (delegate?.time)!, paginator: paginator, completion: { (result) in
                     switch result {
                     case .failure:
                         self.delegate?.failed(error: result.error!)

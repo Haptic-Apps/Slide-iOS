@@ -142,11 +142,24 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         if friends {
             self.vCs.append(ContentListingViewController.init(dataSource: FriendsContributionLoader.init()))
         }
+        
         for place in content {
             self.vCs.append(ContentListingViewController.init(dataSource: ProfileContributionLoader.init(name: name, whereContent: place)))
         }
+        
         tabBar = MDCTabBar()
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        let sort = UIButton.init(type: .custom)
+        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
+        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        sortB = UIBarButtonItem.init(customView: sort)
+        
+        let more = UIButton.init(type: .custom)
+        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControl.State.normal)
+        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        moreB = UIBarButtonItem.init(customView: more)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -174,20 +187,8 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
             navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         }
-        let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
-        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-         sortB = UIBarButtonItem.init(customView: sort)
-        
-        let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControl.State.normal)
-        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-         moreB = UIBarButtonItem.init(customView: more)
         
         if navigationController != nil {
-            navigationItem.rightBarButtonItems = [ moreB!/*, sortB!*/]
             self.navigationController?.navigationBar.shadowImage = UIImage()
         }
     }
@@ -397,12 +398,19 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                            direction: .forward,
                            animated: true,
                            completion: nil)
+        let current = content[openTo]
+        if current == .comments || current == .overview || current == .submitted {
+            navigationItem.rightBarButtonItems = [ moreB!, sortB!]
+        } else {
+            navigationItem.rightBarButtonItems = [ moreB!]
+        }
+
     }
 
     var currentVc = UIViewController()
     
     @objc func showSortMenu(_ sender: UIButton?) {
-        (self.currentVc as? ProfileViewController)?.showSortMenu(sender)
+        (self.currentVc as? ContentListingViewController)?.showSortMenu(sender)
         //TODO implement this!
     }
     
@@ -468,6 +476,13 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         tabBar.setSelectedItem(tabBar.items[page! ], animated: true)
         currentVc = self.viewControllers!.first!
         currentIndex = page!
+        
+        let current = content[page!]
+        if current == .comments || current == .overview || current == .submitted {
+            navigationItem.rightBarButtonItems = [ moreB!, sortB!]
+        } else {
+            navigationItem.rightBarButtonItems = [ moreB!]
+        }
     }
 
     var currentIndex = 0
