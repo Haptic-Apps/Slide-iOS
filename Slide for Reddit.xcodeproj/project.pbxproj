@@ -135,6 +135,7 @@
 		BE257A7021F64AA30082A47E /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A6F21F64AA30082A47E /* ActionViewController.swift */; };
 		BE257A7321F64AA30082A47E /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE257A7121F64AA30082A47E /* MainInterface.storyboard */; };
 		BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE257A6B21F64AA30082A47E /* Open in Slide.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BE257A7D21F8D9710082A47E /* SettingsMainTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A7C21F8D9710082A47E /* SettingsMainTheme.swift */; };
 		BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE292568213C5730006B5130 /* LocalKeystore.swift */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
@@ -224,6 +225,9 @@
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
 		BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */; };
+		BE8AE94121F919FF00E1C0D1 /* SettingsCustomTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8AE94021F919FF00E1C0D1 /* SettingsCustomTheme.swift */; };
+		BE8AE94321F9225000E1C0D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE8AE94221F9225000E1C0D1 /* Main.storyboard */; };
+		BE8AE94721F922F400E1C0D1 /* ColorPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */; };
 		BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */; };
 		BE8FCA081E0C46090063B8EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA071E0C46090063B8EF /* AppDelegate.swift */; };
 		BE8FCA0A1E0C46090063B8EF /* SingleSubredditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA091E0C46090063B8EF /* SingleSubredditViewController.swift */; };
@@ -495,6 +499,7 @@
 		BE257A6F21F64AA30082A47E /* ActionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewController.swift; sourceTree = "<group>"; };
 		BE257A7221F64AA30082A47E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BE257A7421F64AA30082A47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BE257A7C21F8D9710082A47E /* SettingsMainTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMainTheme.swift; sourceTree = "<group>"; };
 		BE292568213C5730006B5130 /* LocalKeystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalKeystore.swift; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
@@ -585,6 +590,9 @@
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
 		BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
+		BE8AE94021F919FF00E1C0D1 /* SettingsCustomTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCustomTheme.swift; sourceTree = "<group>"; };
+		BE8AE94221F9225000E1C0D1 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
 		BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarginedTableViewCell.swift; sourceTree = "<group>"; };
 		BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Slide for Reddit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE8FCA071E0C46090063B8EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -897,6 +905,8 @@
 				BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */,
 				BE0958DE218A08620076966C /* SettingsViewMode.swift */,
 				BE0C4F9921BCC0B7006C54FF /* SettingsIcon.swift */,
+				BE257A7C21F8D9710082A47E /* SettingsMainTheme.swift */,
+				BE8AE94021F919FF00E1C0D1 /* SettingsCustomTheme.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1166,6 +1176,8 @@
 				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
 				BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */,
 				BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */,
+				BE8AE94221F9225000E1C0D1 /* Main.storyboard */,
+				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1468,6 +1480,7 @@
 				BE1B57EA21DED23000FF6F98 /* ic_stars@2x.png in Resources */,
 				BE0C4F9421BCBE83006C54FF /* ic_yellow@3x.png in Resources */,
 				BE0C4F8621BCBE83006C54FF /* ic_green@2x.png in Resources */,
+				BE8AE94321F9225000E1C0D1 /* Main.storyboard in Resources */,
 				BE0C4F9721BCBE83006C54FF /* ic_pink@2x.png in Resources */,
 				BE0C4F9321BCBE83006C54FF /* ic_tronblue@3x.png in Resources */,
 				BE8FCA121E0C46090063B8EF /* LaunchScreen.storyboard in Resources */,
@@ -1863,6 +1876,7 @@
 				BE2DEAAE1E2682A800FBF0B5 /* SettingsGeneral.swift in Sources */,
 				BE6EA6CD1E1C1E9400E9E709 /* StremableMp4.swift in Sources */,
 				BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */,
+				BE8AE94721F922F400E1C0D1 /* ColorPickerViewController.swift in Sources */,
 				BE7439EB1E201BB0008BB63B /* NavigationSidebarViewController.swift in Sources */,
 				BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */,
 				0965260B20E2987800EA53BE /* UISearchBar+Extensions.swift in Sources */,
@@ -1965,6 +1979,7 @@
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
 				098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */,
 				09B2AF6420F7A2ED00580F15 /* VideoSource.swift in Sources */,
+				BE8AE94121F919FF00E1C0D1 /* SettingsCustomTheme.swift in Sources */,
 				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
 				B776BB46CB68FCCCA9E843A9 /* CacheSettings.swift in Sources */,
@@ -1976,6 +1991,7 @@
 				BE8264E92194AE0E002A540E /* OfflineOverviewViewController.swift in Sources */,
 				09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */,
 				BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */,
+				BE257A7D21F8D9710082A47E /* SettingsMainTheme.swift in Sources */,
 				BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */,
 				0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */,
 				B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */,

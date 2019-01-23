@@ -714,6 +714,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.backgroundColor
+        inHeadView?.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
 
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")

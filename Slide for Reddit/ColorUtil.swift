@@ -32,8 +32,12 @@ extension UIColor {
 
 public class ColorUtil {
     static var theme = Theme.DARK
-    static var setOnce = false
     static var defaultTheme = Theme.DARK
+    static var CUSTOM_FOREGROUND = "customForeground"
+    static var CUSTOM_FONT = "customFont"
+    static var CUSTOM_BACKGROUND = "customBackground"
+    static var CUSTOM_NAVICON = "customNavicon"
+    static var CUSTOM_STATUSBAR = "customStatus"
 
     static func shouldBeNight() -> Bool {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -70,10 +74,6 @@ public class ColorUtil {
             }
         }
         
-        if !setOnce {
-            LinkCellImageCache.initialize()
-            setOnce = true
-        }
         foregroundColor = theme.foregroundColor
         backgroundColor = theme.backgroundColor
         fontColor = theme.fontColor
@@ -91,12 +91,13 @@ public class ColorUtil {
 
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
-    static var navIconColor = UIColor.white
-    static var fontColor = UIColor.black {
+    static var navIconColor = UIColor.white {
         didSet {
             LinkCellImageCache.initialize()
         }
     }
+    
+    static var fontColor = UIColor.black
 
     private static func image(fromLayer layer: CALayer) -> UIImage {
         UIGraphicsBeginImageContext(layer.frame.size)
@@ -244,6 +245,7 @@ public class ColorUtil {
         case CREAM = "cream"
         case CONTRAST = "acontrast"
         case PINK = "pink"
+        case CUSTOM = "custom"
         
         public var displayName: String {
             switch self {
@@ -269,6 +271,8 @@ public class ColorUtil {
                 return "Crème"
             case .PINK:
                 return "Pink"
+            case .CUSTOM:
+                return "Custom theme"
             }
         }
 
@@ -299,6 +303,8 @@ public class ColorUtil {
                 return UIColor(hexString: "#DCD8C2")
             case .PINK:
                 return UIColor(hexString: "#FFFFFC")
+            case .CUSTOM:
+                return UserDefaults.standard.colorForKey(key: CUSTOM_FOREGROUND) ?? UIColor.white
             }
         }
 
@@ -326,38 +332,42 @@ public class ColorUtil {
                 return UIColor(hexString: "#D1CDB9")
             case .PINK:
                 return UIColor(hexString: "#fff5e8")
+            case .CUSTOM:
+                return UserDefaults.standard.colorForKey(key: CUSTOM_BACKGROUND) ?? UIColor(hexString: "#e5e5e5")
             }
         }
         
         public var navIconColor: UIColor {
             switch self {
             case .LIGHT:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.LIGHT.fontColor
             case .DEEP:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.DEEP.fontColor
             case .DARK:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.DARK.fontColor
             case .BLUE:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.BLUE.fontColor
             case .SEPIA:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.SEPIA.fontColor
             case .RED:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.RED.fontColor
             case .BLACK:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.BLACK.fontColor
             case .CONTRAST:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.CONTRAST.fontColor
             case .MINT:
                 return UIColor(hexString: "#9fc675")
             case .CREAM:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.CREAM.fontColor
             case .PINK:
                 return UIColor(hexString: "#ea8ab4")
+            case .CUSTOM:
+                return UserDefaults.standard.colorForKey(key: CUSTOM_NAVICON) ?? ColorUtil.Theme.LIGHT.fontColor
             }
         }
         
         public func isLight() -> Bool {
-            return self == .LIGHT || self == .MINT || self == .CREAM || self == .PINK
+            return self == .LIGHT || self == .MINT || self == .CREAM || self == .PINK || (self == .CUSTOM && !UserDefaults.standard.bool(forKey: CUSTOM_STATUSBAR))
         }
 
         public var fontColor: UIColor {
@@ -384,6 +394,8 @@ public class ColorUtil {
                 return UIColor(hexString: "#444139").withAlphaComponent(0.87)
             case .PINK:
                 return UIColor(hexString: "#262844").withAlphaComponent(0.87)
+            case .CUSTOM:
+                return UserDefaults.standard.colorForKey(key: CUSTOM_FONT) ?? UIColor(hexString: "#000000").withAlphaComponent(0.87)
             }
         }
     }
