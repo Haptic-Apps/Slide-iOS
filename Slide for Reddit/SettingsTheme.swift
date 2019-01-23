@@ -181,9 +181,18 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         // Dispose of any resources that can be recreated.
     }
 
+    var doneOnce = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
+        if doneOnce {
+            self.loadView()
+            self.tableView.reloadData(with: .automatic)
+            self.tochange!.doCells()
+            self.tochange!.tableView.reloadData()
+        } else {
+            doneOnce = true
+        }
     }
 
     override func loadView() {
@@ -210,7 +219,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.accent.imageView?.tintColor = ColorUtil.navIconColor
 
         self.base.textLabel?.text = "App theme"
-        self.base.accessoryType = .none
+        self.base.accessoryType = .disclosureIndicator
         self.base.backgroundColor = ColorUtil.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.fontColor
         self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
@@ -371,6 +380,38 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     }
 
+    func selectTheme() {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Select a night theme", message: "", preferredStyle: .actionSheet)
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        for theme in ColorUtil.Theme.cases {
+            if theme != .LIGHT && theme != .MINT && theme != .CREAM {
+                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
+                    SettingValues.nightTheme = theme
+                    UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
+                    UserDefaults.standard.synchronize()
+                    _ = ColorUtil.doInit()
+                    self.loadView()
+                    self.tableView.reloadData(with: .automatic)
+                    self.tochange!.doCells()
+                    self.tochange!.tableView.reloadData()
+                }
+                actionSheetController.addAction(saveActionButton)
+            }
+        }
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selectedTableView
+            presenter.sourceRect = selectedTableView.bounds
+        }
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
+    
     var selectedTableView = UIView()
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -381,7 +422,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         } else if indexPath.section == 0 && indexPath.row == 1 {
             pickAccent()
         } else if indexPath.section == 0 && indexPath.row == 2 {
-            showBaseTheme()
+            VCPresenter.showVC(viewController: SettingsMainTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         } else if indexPath.section == 1 && indexPath.row == 0 {
             //tintmode
         } else if indexPath.section == 0 && indexPath.row == 3 {
@@ -463,38 +504,6 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         }
 
         self.present(alert, animated: true, completion: nil)
-    }
-
-    func selectTheme() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Select a night theme", message: "", preferredStyle: .actionSheet)
-
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        for theme in ColorUtil.Theme.cases {
-            if theme != .LIGHT && theme != .MINT && theme != .CREAM {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
-                    SettingValues.nightTheme = theme
-                    UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
-                    UserDefaults.standard.synchronize()
-                    _ = ColorUtil.doInit()
-                    self.loadView()
-                    self.tableView.reloadData(with: .automatic)
-                    self.tochange!.doCells()
-                    self.tochange!.tableView.reloadData()
-                }
-                actionSheetController.addAction(saveActionButton)
-            }
-        }
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selectedTableView
-            presenter.sourceRect = selectedTableView.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
     }
 
     func showNightTheme() {

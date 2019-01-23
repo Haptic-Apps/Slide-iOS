@@ -91,12 +91,13 @@ public class ColorUtil {
 
     static var foregroundColor = UIColor.white
     static var backgroundColor = UIColor.white
-    static var navIconColor = UIColor.white
-    static var fontColor = UIColor.black {
+    static var navIconColor = UIColor.white {
         didSet {
             LinkCellImageCache.initialize()
         }
     }
+    
+    static var fontColor = UIColor.black
 
     private static func image(fromLayer layer: CALayer) -> UIImage {
         UIGraphicsBeginImageContext(layer.frame.size)
@@ -332,25 +333,25 @@ public class ColorUtil {
         public var navIconColor: UIColor {
             switch self {
             case .LIGHT:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.LIGHT.fontColor
             case .DEEP:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.DEEP.fontColor
             case .DARK:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.DARK.fontColor
             case .BLUE:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.BLUE.fontColor
             case .SEPIA:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.SEPIA.fontColor
             case .RED:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.RED.fontColor
             case .BLACK:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.BLACK.fontColor
             case .CONTRAST:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.CONTRAST.fontColor
             case .MINT:
                 return UIColor(hexString: "#9fc675")
             case .CREAM:
-                return ColorUtil.fontColor
+                return ColorUtil.Theme.CREAM.fontColor
             case .PINK:
                 return UIColor(hexString: "#ea8ab4")
             }
