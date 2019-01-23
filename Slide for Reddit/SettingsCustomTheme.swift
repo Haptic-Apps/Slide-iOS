@@ -169,7 +169,7 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.setColor(color: theme.backgroundColor, forKey: ColorUtil.CUSTOM_BACKGROUND)
                 UserDefaults.standard.setColor(color: theme.fontColor, forKey: ColorUtil.CUSTOM_FONT)
                 UserDefaults.standard.setColor(color: theme.navIconColor, forKey: ColorUtil.CUSTOM_NAVICON)
-                UserDefaults.standard.set(theme.isLight(), forKey: ColorUtil.CUSTOM_STATUSBAR)
+                UserDefaults.standard.set(!theme.isLight(), forKey: ColorUtil.CUSTOM_STATUSBAR)
                 self.cleanup()
             }
             actionSheetController.addAction(saveActionButton)
