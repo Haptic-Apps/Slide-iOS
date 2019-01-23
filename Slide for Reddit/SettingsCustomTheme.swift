@@ -61,6 +61,7 @@ class SettingsCustomTheme: UITableViewController {
         }
     }
     
+    var defaultButton: UIBarButtonItem?
     override func loadView() {
         super.loadView()
         setupBaseBarColors()
@@ -140,10 +141,47 @@ class SettingsCustomTheme: UITableViewController {
         
         let barButton = UIBarButtonItem.init(customView: button)
         
+        let defaultb = UIButtonWithContext.init(type: .custom)
+        defaultb.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+        defaultb.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControl.State.normal)
+        defaultb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        defaultb.addTarget(self, action: #selector(reset), for: .touchUpInside)
+        
+        defaultButton = UIBarButtonItem.init(customView: defaultb)
+
         navigationItem.leftBarButtonItem = barButton
         applySwitch.isOn = ColorUtil.theme == .CUSTOM
         applySwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: .valueChanged)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: applySwitch)
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: applySwitch), defaultButton!]
+    }
+    
+    @objc func reset() {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "Will overwrite your current custom settings", preferredStyle: .actionSheet)
+        
+        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
+            print("Cancel")
+        }
+        actionSheetController.addAction(cancelActionButton)
+        
+        for theme in ColorUtil.Theme.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
+                UserDefaults.standard.setColor(color: theme.foregroundColor, forKey: ColorUtil.CUSTOM_FOREGROUND)
+                UserDefaults.standard.setColor(color: theme.backgroundColor, forKey: ColorUtil.CUSTOM_BACKGROUND)
+                UserDefaults.standard.setColor(color: theme.fontColor, forKey: ColorUtil.CUSTOM_FONT)
+                UserDefaults.standard.setColor(color: theme.navIconColor, forKey: ColorUtil.CUSTOM_NAVICON)
+                UserDefaults.standard.set(theme.isLight(), forKey: ColorUtil.CUSTOM_STATUSBAR)
+                self.cleanup()
+            }
+            actionSheetController.addAction(saveActionButton)
+        }
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = defaultButton!.customView!
+            presenter.sourceRect = defaultButton!.customView!.bounds
+        }
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -236,7 +274,6 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.cleanup()
             }
-            alert.addAction(title: "Set Foreground Color", style: .default)
             alert.addAction(title: "Cancel", style: .cancel)
             self.present(alert, animated: true)
         } else if indexPath.row == 1 {
@@ -248,7 +285,6 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.cleanup()
             }
-            alert.addAction(title: "Set Background Color", style: .default)
             alert.addAction(title: "Cancel", style: .cancel)
             self.present(alert, animated: true)
         } else if indexPath.row == 2 {
@@ -260,7 +296,6 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.cleanup()
             }
-            alert.addAction(title: "Set Font Color", style: .default)
             alert.addAction(title: "Cancel", style: .cancel)
             self.present(alert, animated: true)
         } else if indexPath.row == 3 {
@@ -272,7 +307,6 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.cleanup()
             }
-            alert.addAction(title: "Set Icon Color", style: .default)
             alert.addAction(title: "Cancel", style: .cancel)
             self.present(alert, animated: true)
         }

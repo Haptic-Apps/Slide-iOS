@@ -469,8 +469,6 @@ import UIKit
         updateThumbPosition(animated: false)
     }
     
-    
-    
     //MARK: - Touch Tracking
     
     override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
