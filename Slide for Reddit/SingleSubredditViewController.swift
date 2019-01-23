@@ -1447,7 +1447,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                 }
                                 
                             }
-                            UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
+//                            UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
                         }
                     }
                 })

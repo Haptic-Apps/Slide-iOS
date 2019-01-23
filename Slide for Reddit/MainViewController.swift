@@ -851,7 +851,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         account.setImage(UIImage(named: "profile")?.navIcon(), for: UIControl.State.normal)
         account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
         accountB = UIBarButtonItem(customView: account)
+        accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
+        accountB.accessibilityHint = "Open account page"
         
         let settings = UIButton.init(type: .custom)
         settings.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControl.State.normal)
@@ -870,31 +872,33 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         if !MainViewController.isOffline {
-            more = UIButton.init(type: .custom)
-            more.accessibilityIdentifier = "more"
-            more.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            more = UIButton(type: .custom).then {
+                $0.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
+                $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+
+                $0.accessibilityIdentifier = "Subreddit options button"
+                $0.accessibilityLabel = "Options"
+                $0.accessibilityHint = "Open subreddit options menu"
+            }
+            toolbar?.insertSubview(more, at: 0)
+            more.sizeAnchors == .square(size: 56)
             
-            menu = UIButton.init(type: .custom)
-            menu.accessibilityIdentifier = "search"
-            menu.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControl.State.normal)
-            menu.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
-            menu.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-            toolbar?.addSubview(menu)
-            toolbar?.addSubview(more)
-            
-            menu.heightAnchor == 56
-            menu.widthAnchor == 56
+            menu = UIButton(type: .custom).then {
+                $0.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControl.State.normal)
+                $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
+                $0.accessibilityIdentifier = "Nav drawer button"
+                $0.accessibilityLabel = "Navigate"
+                $0.accessibilityHint = "Open navigation drawer"
+            }
+            toolbar?.insertSubview(menu, at: 0)
+            menu.sizeAnchors == .square(size: 56)
+
             if let tool = toolbar {
                 menu.leftAnchor == tool.leftAnchor
                 menu.topAnchor == tool.topAnchor
                 more.rightAnchor == tool.rightAnchor
                 more.topAnchor == tool.topAnchor
             }
-            
-            more.heightAnchor == 56
-            more.widthAnchor == 56
             
         } else {
             toolbarItems = [settingsB, accountB, flexButton, offlineB]

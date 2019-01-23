@@ -38,6 +38,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     var task: URLSessionDataTask?
 
+    var accessibilityCloseButton = UIButton().then {
+        $0.accessibilityIdentifier = "Close button"
+        $0.accessibilityLabel = "Close"
+        $0.accessibilityHint = "Close navigation drawer"
+    }
+
     // Guaranteed amount of space between top edge of menu and top edge of screen
     let minTopOffset: CGFloat = 42
 
@@ -53,6 +59,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         $0.placeholder = " Search subs, posts, or profiles"
         $0.isTranslucent = true
         $0.barStyle = .blackTranslucent
+        $0.accessibilityLabel = "Search"
+        $0.accessibilityHint = "Search subreddits, posts, or profiles"
     }
 
     //let horizontalSubGroup = HorizontalSubredditGroup()
@@ -111,10 +119,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         configureBackground()
 
-//        searchBar.isUserInteractionEnabled = true
-//        searchBar.addTapGestureRecognizer {
-//            self.expand()
-//        }
         headerView.addTapGestureRecognizer {
             self.expand()
         }
@@ -124,6 +128,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                                                name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
                                                name: UIResponder.keyboardWillHideNotification, object: nil)
+
+        updateAccessibility()
     }
     
     struct Callbacks {
@@ -253,6 +259,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             strongSelf.callbacks.didCollapse?()
             strongSelf.backgroundView.isHidden = true
+            strongSelf.expanded = false
+            strongSelf.updateAccessibility()
         }
 
         UIView.animate(withDuration: 0.4,
@@ -353,6 +361,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             guard let strongSelf = self else { return }
             if SettingValues.autoKeyboard && !strongSelf.doneOnce {
                 strongSelf.doneOnce = true
+                strongSelf.expanded = true
+                strongSelf.updateAccessibility()
                 strongSelf.searchBar.becomeFirstResponder()
             }
             strongSelf.searchBar.isUserInteractionEnabled = true
@@ -437,6 +447,9 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         searchBar.delegate = self
         headerView.addSubview(searchBar)
 
+        headerView.addSubview(accessibilityCloseButton)
+        accessibilityCloseButton.addTarget(self, action: #selector(accessibilityCloseButtonActivated), for: .touchUpInside)
+
         tableView.bounces = false
         tableView.delegate = self
         tableView.dataSource = self
@@ -463,6 +476,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
         headerView.topAnchor == view.topAnchor
         headerView.horizontalAnchors == view.horizontalAnchors
+
+        accessibilityCloseButton.topAnchor == headerView.topAnchor
+        accessibilityCloseButton.leftAnchor == headerView.leftAnchor
+        accessibilityCloseButton.sizeAnchors == .square(size: 10)
 
         dragHandleView.topAnchor == headerView.topAnchor + 8
         dragHandleView.centerXAnchor == headerView.centerXAnchor
@@ -659,7 +676,20 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             default: label.text  = "SUBREDDIT SUGGESTIONS"
             }
         } else {
-            label.text = subsSource.sortedSectionTitles[section] == "+" ? "MULTIREDDITS" : subsSource.sortedSectionTitles[section]
+            let sectionTitle = subsSource.sortedSectionTitles[section]
+            if sectionTitle == SubscribedSubredditsSectionProvider.Keys.pinned.rawValue {
+                label.text = SubscribedSubredditsSectionProvider.Keys.pinned.rawValue
+                label.accessibilityLabel = SubscribedSubredditsSectionProvider.Keys.pinned.accessibleName
+            } else if sectionTitle == SubscribedSubredditsSectionProvider.Keys.multi.rawValue {
+                label.text = "MULTIREDDITS"
+                label.accessibilityLabel = SubscribedSubredditsSectionProvider.Keys.multi.accessibleName
+            } else if sectionTitle == SubscribedSubredditsSectionProvider.Keys.numeric.rawValue {
+                label.text = SubscribedSubredditsSectionProvider.Keys.numeric.rawValue
+                label.accessibilityLabel = SubscribedSubredditsSectionProvider.Keys.numeric.accessibleName
+            } else {
+                label.text = sectionTitle
+                label.accessibilityLabel = sectionTitle.lowercased()
+            }
         }
 
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
@@ -867,6 +897,20 @@ extension NavigationSidebarViewController {
     }
 }
 
+// MARK: - Accessibility
+extension NavigationSidebarViewController {
+    func updateAccessibility() {
+        tableView.accessibilityElementsHidden = !expanded
+        searchBar.accessibilityElementsHidden = !expanded
+        accessibilityCloseButton.accessibilityElementsHidden = !expanded
+        self.view.accessibilityViewIsModal = expanded // Block sibling elements from being interacted with
+    }
+
+    @objc func accessibilityCloseButtonActivated(_ sender: UIButton) {
+        self.collapse()
+    }
+}
+
 class UITouchCapturingView: UIView {
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if isHidden || alpha == 0 {
@@ -965,6 +1009,17 @@ class SubscribedSubredditsSectionProvider {
         case pinned = "★"
         case multi = "+"
         case numeric = "#"
+
+        var accessibleName: String {
+            switch self {
+            case .pinned:
+                return "Pinned"
+            case .multi:
+                return "Multi reddits"
+            case .numeric:
+                return "Numbered"
+            }
+        }
     }
 
     private(set) var sortedSectionTitles: [String] = []
