@@ -29,6 +29,16 @@ public extension UIColor {
                 ])!
         }
     }
+    
+    public func hsbaComponents() -> (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
+        var h: CGFloat = 0.0
+        var s: CGFloat = 0.0
+        var b: CGFloat = 0.0
+        var a: CGFloat = 0.0
+        
+        self.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        return (hue: h, saturation: s, brightness: b, alpha: a)
+    }
 
     private static let rzl_swizzleImplementation: Void = {
 
