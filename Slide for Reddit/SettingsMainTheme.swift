@@ -29,6 +29,14 @@ class SettingsMainTheme: UITableViewController {
         setupBaseBarColors()
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+    
     func doLayout() {
         setupBaseBarColors()
         

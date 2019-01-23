@@ -49,6 +49,14 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch()
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if SettingsPro.changed {

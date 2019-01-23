@@ -20,7 +20,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     var tintingMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "tintingMode")
     var tintOutside: UITableViewCell = UITableViewCell()
     var tintOutsideSwitch: UISwitch = UISwitch()
-    
+    var custom: UITableViewCell = UITableViewCell()
+
     var reduceColorCell: UITableViewCell = UITableViewCell()
     var reduceColor: UISwitch = UISwitch()
 
@@ -218,6 +219,13 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.accent.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.accent.imageView?.tintColor = ColorUtil.navIconColor
 
+        self.custom.textLabel?.text = "Custom theme"
+        self.custom.accessoryType = .disclosureIndicator
+        self.custom.backgroundColor = ColorUtil.foregroundColor
+        self.custom.textLabel?.textColor = ColorUtil.fontColor
+        self.custom.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.custom.imageView?.tintColor = ColorUtil.navIconColor
+
         self.base.textLabel?.text = "App theme"
         self.base.accessoryType = .disclosureIndicator
         self.base.backgroundColor = ColorUtil.foregroundColor
@@ -282,6 +290,14 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
     }
     
     @objc public func handleBackButton() {
@@ -366,7 +382,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             case 1: return self.accent
             case 2: return self.base
             case 3: return self.night
-            case 4: return self.reduceColorCell
+            case 4: return self.custom
+            case 5: return self.reduceColorCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -428,6 +445,10 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         } else if indexPath.section == 0 && indexPath.row == 3 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 showNightTheme()
+            }
+        } else if indexPath.section == 0 && indexPath.row == 5 {
+            if !VCPresenter.proDialogShown(feature: false, self) {
+                VCPresenter.showVC(viewController: SettingsCustomTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }
         }
     }
@@ -592,7 +613,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 5
+        case 0: return 6
         case 1: return 2
         default: fatalError("Unknown number of sections")
         }
