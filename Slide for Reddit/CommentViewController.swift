@@ -947,7 +947,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBar.Style.minimal
-        searchBar.textColor = .white
+        searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight() ? ColorUtil.fontColor : .white
         searchBar.showsCancelButton = true
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
 

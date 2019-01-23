@@ -142,10 +142,10 @@ CHECKOUT OPTIONS:
     :commit: 6e5f700a3eae0f7c40d4582e7fab80e6311a7eda
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
-    :commit: 362739dfe80c4ca3dd9d153a0fd08bd6e0bcb0c7
+    :commit: cc0b5f250cc83b18a0549dc2a2aa5a4eff102675
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
-    :commit: 42f7a6b801e31920e023920d592b2e3b1ecb5eeb
+    :commit: ec1f42324ef72985799ac73cc477ca65251a6512
     :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
     :commit: 90e1566555734d08a4c72619595f5a2157c104b3
