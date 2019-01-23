@@ -76,8 +76,8 @@ public class ColorUtil {
         }
         foregroundColor = theme.foregroundColor
         backgroundColor = theme.backgroundColor
-        navIconColor = theme.navIconColor
         fontColor = theme.fontColor
+        navIconColor = theme.navIconColor
         let color = UserDefaults.standard.colorForKey(key: "basecolor")
         if color != nil {
             baseColor = color!
