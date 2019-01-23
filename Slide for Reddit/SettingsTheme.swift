@@ -446,7 +446,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 showNightTheme()
             }
-        } else if indexPath.section == 0 && indexPath.row == 5 {
+        } else if indexPath.section == 0 && indexPath.row == 4 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 VCPresenter.showVC(viewController: SettingsCustomTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }

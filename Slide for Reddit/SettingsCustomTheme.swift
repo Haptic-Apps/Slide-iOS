@@ -74,31 +74,32 @@ class SettingsCustomTheme: UITableViewController {
         self.foreground.accessoryType = .none
         self.foreground.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
         self.foreground.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.foreground.imageView?.image = UIImage.init(named: "dot")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.navIconColor)
+        self.foreground.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.navIconColor)
         
         self.background.textLabel?.text = "Background color"
         self.background.accessoryType = .none
         self.background.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
         self.background.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.background.imageView?.image = UIImage.init(named: "dot")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.backgroundColor)
+        self.background.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.backgroundColor)
 
         self.font.textLabel?.text = "Font color"
         self.font.accessoryType = .none
         self.font.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
         self.font.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.font.imageView?.image = UIImage.init(named: "dot")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.fontColor)
+        self.font.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.fontColor)
 
         self.navicon.textLabel?.text = "Icons color"
         self.navicon.accessoryType = .none
         self.navicon.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
         self.navicon.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.navicon.imageView?.image = UIImage.init(named: "dot")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.navIconColor)
+        self.navicon.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.navIconColor)
 
         self.statusbar.textLabel?.text = "Light statusbar"
         self.statusbar.accessoryType = .none
         self.statusbar.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
         self.statusbar.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
         statusbarSwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: .valueChanged)
+        statusbarSwitch.isOn = UserDefaults.standard.bool(forKey: ColorUtil.CUSTOM_STATUSBAR)
         self.statusbar.accessoryView = statusbarSwitch
 
         self.tableView.tableFooterView = UIView()
@@ -140,6 +141,7 @@ class SettingsCustomTheme: UITableViewController {
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
+        applySwitch.isOn = ColorUtil.theme == .CUSTOM
         applySwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: .valueChanged)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: applySwitch)
     }
@@ -172,7 +174,7 @@ class SettingsCustomTheme: UITableViewController {
             MainViewController.needsRestart = true
         }
         
-        loadView()
+        cleanup()
         self.tableView.reloadData(with: .automatic)
     }
     
@@ -236,7 +238,7 @@ class SettingsCustomTheme: UITableViewController {
             }
             alert.addAction(title: "Set Foreground Color", style: .default)
             alert.addAction(title: "Cancel", style: .cancel)
-            alert.show()
+            self.present(alert, animated: true)
         } else if indexPath.row == 1 {
             //background
             
@@ -248,7 +250,7 @@ class SettingsCustomTheme: UITableViewController {
             }
             alert.addAction(title: "Set Background Color", style: .default)
             alert.addAction(title: "Cancel", style: .cancel)
-            alert.show()
+            self.present(alert, animated: true)
         } else if indexPath.row == 2 {
             //font
             
@@ -260,7 +262,7 @@ class SettingsCustomTheme: UITableViewController {
             }
             alert.addAction(title: "Set Font Color", style: .default)
             alert.addAction(title: "Cancel", style: .cancel)
-            alert.show()
+            self.present(alert, animated: true)
         } else if indexPath.row == 3 {
             //navicon
             
@@ -272,7 +274,7 @@ class SettingsCustomTheme: UITableViewController {
             }
             alert.addAction(title: "Set Icon Color", style: .default)
             alert.addAction(title: "Cancel", style: .cancel)
-            alert.show()
+            self.present(alert, animated: true)
         }
     }
     

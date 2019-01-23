@@ -245,7 +245,7 @@ public class ColorUtil {
         case CREAM = "cream"
         case CONTRAST = "acontrast"
         case PINK = "pink"
-        case CUSTOM = "custsom"
+        case CUSTOM = "custom"
         
         public var displayName: String {
             switch self {
@@ -367,7 +367,7 @@ public class ColorUtil {
         }
         
         public func isLight() -> Bool {
-            return self == .LIGHT || self == .MINT || self == .CREAM || self == .PINK || (self == .CUSTOM && UserDefaults.standard.bool(forKey: CUSTOM_STATUSBAR))
+            return self == .LIGHT || self == .MINT || self == .CREAM || self == .PINK || (self == .CUSTOM && !UserDefaults.standard.bool(forKey: CUSTOM_STATUSBAR))
         }
 
         public var fontColor: UIColor {
