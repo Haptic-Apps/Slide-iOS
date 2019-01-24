@@ -35,6 +35,7 @@
 		09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */; };
 		09B51D052114E22C00BCB745 /* PostContentPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D042114E22C00BCB745 /* PostContentPresentationController.swift */; };
 		09B51D072114E80000BCB745 /* PostContentPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */; };
+		09BBDBF621F977F900FC8BF9 /* FontSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */; };
 		09C5A40D212B09A8000339FD /* BottomMenuPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5A40C212B09A8000339FD /* BottomMenuPresentationController.swift */; };
 		09D6603221E69211003D632C /* CurrentAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6603121E69211003D632C /* CurrentAccountViewController.swift */; };
 		09D6603421E8F189003D632C /* CurrentAccountPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6603321E8F189003D632C /* CurrentAccountPresentationManager.swift */; };
@@ -389,6 +390,7 @@
 		09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationAnimator.swift; sourceTree = "<group>"; };
 		09B51D042114E22C00BCB745 /* PostContentPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationController.swift; sourceTree = "<group>"; };
 		09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationAnimator.swift; sourceTree = "<group>"; };
+		09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSelectionTableViewController.swift; sourceTree = "<group>"; };
 		09C5A40C212B09A8000339FD /* BottomMenuPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomMenuPresentationController.swift; sourceTree = "<group>"; };
 		09D6603121E69211003D632C /* CurrentAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountViewController.swift; sourceTree = "<group>"; };
 		09D6603321E8F189003D632C /* CurrentAccountPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountPresentationManager.swift; sourceTree = "<group>"; };
@@ -907,6 +909,7 @@
 				BE0C4F9921BCC0B7006C54FF /* SettingsIcon.swift */,
 				BE257A7C21F8D9710082A47E /* SettingsMainTheme.swift */,
 				BE8AE94021F919FF00E1C0D1 /* SettingsCustomTheme.swift */,
+				09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1977,6 +1980,7 @@
 				BE1CD01920F599C7007746B6 /* TextStackEstimator.swift in Sources */,
 				09D6603621E8F199003D632C /* CurrentAccountPresentationController.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
+				09BBDBF621F977F900FC8BF9 /* FontSelectionTableViewController.swift in Sources */,
 				098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */,
 				09B2AF6420F7A2ED00580F15 /* VideoSource.swift in Sources */,
 				BE8AE94121F919FF00E1C0D1 /* SettingsCustomTheme.swift in Sources */,
