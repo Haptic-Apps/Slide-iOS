@@ -246,6 +246,7 @@ public class ColorUtil {
         case CONTRAST = "acontrast"
         case PINK = "pink"
         case CUSTOM = "custom"
+        case SOLARIZE = "solarize"
         
         public var displayName: String {
             switch self {
@@ -273,11 +274,13 @@ public class ColorUtil {
                 return "Pink"
             case .CUSTOM:
                 return "Custom theme"
+            case .SOLARIZE:
+                return "Solarized"
             }
         }
 
         public static var cases: [Theme] {
-            return [.LIGHT, .DARK, .BLACK, .CONTRAST, .BLUE, .SEPIA, .RED, .DEEP, .MINT, .PINK, .CREAM]
+            return [.LIGHT, .DARK, .BLACK, .CONTRAST, .BLUE, .SEPIA, .RED, .DEEP, .MINT, .PINK, .CREAM, .SOLARIZE]
         }
         public var foregroundColor: UIColor {
             switch self {
@@ -305,6 +308,8 @@ public class ColorUtil {
                 return UIColor(hexString: "#FFFFFC")
             case .CUSTOM:
                 return UserDefaults.standard.colorForKey(key: CUSTOM_FOREGROUND) ?? UIColor.white
+            case .SOLARIZE:
+                return UIColor(hexString: "#0C3641")
             }
         }
 
@@ -334,6 +339,8 @@ public class ColorUtil {
                 return UIColor(hexString: "#fff5e8")
             case .CUSTOM:
                 return UserDefaults.standard.colorForKey(key: CUSTOM_BACKGROUND) ?? UIColor(hexString: "#e5e5e5")
+            case .SOLARIZE:
+                return UIColor(hexString: "#032B35")
             }
         }
         
@@ -363,6 +370,8 @@ public class ColorUtil {
                 return UIColor(hexString: "#ea8ab4")
             case .CUSTOM:
                 return UserDefaults.standard.colorForKey(key: CUSTOM_NAVICON) ?? ColorUtil.Theme.LIGHT.fontColor
+            case .SOLARIZE:
+                return UIColor(hexString: "#6E73C1")
             }
         }
         
@@ -396,6 +405,8 @@ public class ColorUtil {
                 return UIColor(hexString: "#262844").withAlphaComponent(0.87)
             case .CUSTOM:
                 return UserDefaults.standard.colorForKey(key: CUSTOM_FONT) ?? UIColor(hexString: "#000000").withAlphaComponent(0.87)
+            case .SOLARIZE:
+                return UIColor(hexString: "#667B82")
             }
         }
     }

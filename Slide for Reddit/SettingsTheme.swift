@@ -219,14 +219,14 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.accent.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.accent.imageView?.tintColor = ColorUtil.navIconColor
 
-        self.custom.textLabel?.text = "Custom theme"
+        self.custom.textLabel?.text = "Custom base theme"
         self.custom.accessoryType = .disclosureIndicator
         self.custom.backgroundColor = ColorUtil.foregroundColor
         self.custom.textLabel?.textColor = ColorUtil.fontColor
-        self.custom.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.custom.imageView?.image = UIImage.init(named: "selectall")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.custom.imageView?.tintColor = ColorUtil.navIconColor
 
-        self.base.textLabel?.text = "App theme"
+        self.base.textLabel?.text = "Base theme"
         self.base.accessoryType = .disclosureIndicator
         self.base.backgroundColor = ColorUtil.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.fontColor
@@ -378,11 +378,11 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.primary
-            case 1: return self.accent
-            case 2: return self.base
-            case 3: return self.night
-            case 4: return self.custom
+            case 0: return self.base
+            case 1: return self.custom
+            case 2: return self.primary
+            case 3: return self.accent
+            case 4: return self.night
             case 5: return self.reduceColorCell
             default: fatalError("Unknown row in section 0")
             }
@@ -434,19 +434,19 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedTableView = tableView.cellForRow(at: indexPath)!.contentView
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 0 && indexPath.row == 0 {
+        if indexPath.section == 0 && indexPath.row == 2 {
             pickTheme()
-        } else if indexPath.section == 0 && indexPath.row == 1 {
+        } else if indexPath.section == 0 && indexPath.row == 3 {
             pickAccent()
-        } else if indexPath.section == 0 && indexPath.row == 2 {
+        } else if indexPath.section == 0 && indexPath.row == 0 {
             VCPresenter.showVC(viewController: SettingsMainTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         } else if indexPath.section == 1 && indexPath.row == 0 {
             //tintmode
-        } else if indexPath.section == 0 && indexPath.row == 3 {
+        } else if indexPath.section == 0 && indexPath.row == 4 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 showNightTheme()
             }
-        } else if indexPath.section == 0 && indexPath.row == 4 {
+        } else if indexPath.section == 0 && indexPath.row == 1 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 VCPresenter.showVC(viewController: SettingsCustomTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }
