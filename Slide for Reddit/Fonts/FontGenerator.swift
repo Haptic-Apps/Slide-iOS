@@ -12,7 +12,8 @@ import UIKit
 class FontGenerator {
     public static func fontOfSize(size: CGFloat, submission: Bool) -> UIFont {
         let fontName = UserDefaults.standard.string(forKey: submission ? "postfont" : "commentfont") ?? "system"
-        return UIFont(name: fontName, size: size) ?? UIFont.systemFont(ofSize: size)
+        let adjustedSize = size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset)
+        return UIFont(name: fontName, size: adjustedSize) ?? UIFont.systemFont(ofSize: adjustedSize)
     }
     
     public static func boldFontOfSize(size: CGFloat, submission: Bool) -> UIFont {
@@ -20,7 +21,8 @@ class FontGenerator {
         guard let descriptor = normalFont.fontDescriptor.withSymbolicTraits(.traitBold) else {
             return UIFont.boldSystemFont(ofSize: size)
         }
-        return UIFont(descriptor: descriptor, size: size)
+        let adjustedSize = size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset)
+        return UIFont(descriptor: descriptor, size: adjustedSize)
     }
     
     public static var postFont = Font.SYSTEM

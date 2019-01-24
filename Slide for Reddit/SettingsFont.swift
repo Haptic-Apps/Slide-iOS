@@ -15,11 +15,30 @@ class SettingsFont: UITableViewController {
     var typeCell: UITableViewCell = UITableViewCell()
     var enlarge = UISwitch()
     var type = UISwitch()
-    var commentSize: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "commentSize")
-    var submissionSize: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "submissionSize")
 
-    var submissionFont = UITableViewCell(style: .subtitle, reuseIdentifier: "submissionFont")
-    var commentFont = UITableViewCell(style: .subtitle, reuseIdentifier: "commentFont")
+    var commentSize: UITableViewCell = UITableViewCell(style: .value1, reuseIdentifier: "commentSize")
+    var submissionSize: UITableViewCell = UITableViewCell(style: .value1, reuseIdentifier: "submissionSize")
+
+    var submissionFont = UITableViewCell(style: .value1, reuseIdentifier: "submissionFont")
+    var commentFont = UITableViewCell(style: .value1, reuseIdentifier: "commentFont")
+
+    var submissionPreview = UITableViewCell(style: .default, reuseIdentifier: "submissionPreview").then {
+        $0.selectionStyle = .none
+    }
+    var commentPreview = UITableViewCell(style: .default, reuseIdentifier: "commentPreview").then {
+        $0.selectionStyle = .none
+    }
+
+    let fontSizes: [Int: String] = [
+        10: "Largest",
+        8: "Extra Large",
+        4: "Very Large",
+        2: "Large",
+        0: "Normal",
+        -2: "Small",
+        -4: "Very Small",
+        -6: "Smallest",
+        ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,28 +67,12 @@ class SettingsFont: UITableViewController {
         UserDefaults.standard.synchronize()
     }
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
-        
-        switch section {
-        case 0: label.text  = "Font size"
-        case 1: label.text  = "Submission font"
-        case 2: label.text = "Comment font"
-        default: label.text  = ""
-        }
-        return toReturn
-    }
-    
     func setSizeComment(size: Int) {
         SettingValues.commentFontOffset = size
         UserDefaults.standard.set(size, forKey: SettingValues.pref_commentFontSize)
         UserDefaults.standard.synchronize()
         FontGenerator.initialize()
-        doFontSizes()
+        refresh()
     }
     
     func setSizeSubmission(size: Int) {
@@ -79,178 +82,7 @@ class SettingsFont: UITableViewController {
         SubredditReorderViewController.changed = true
         CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
         FontGenerator.initialize()
-        doFontSizes()
-    }
-    
-    @objc func doCommentSize() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Comment font size", message: "", preferredStyle: .actionSheet)
-        
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        let currentCommentSize = SettingValues.commentFontOffset
-        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-        
-        cancelActionButton = UIAlertAction(title: "Largest", style: .default) { _ -> Void in
-            self.setSizeComment(size: 10)
-        }
-        if currentCommentSize == 10 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { _ -> Void in
-            self.setSizeComment(size: 8)
-        }
-        if currentCommentSize == 8 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { _ -> Void in
-            self.setSizeComment(size: 4)
-        }
-        if currentCommentSize == 4 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Large", style: .default) { _ -> Void in
-            self.setSizeComment(size: 2)
-        }
-        if currentCommentSize == 2 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Normal", style: .default) { _ -> Void in
-            self.setSizeComment(size: 0)
-        }
-        if currentCommentSize == 0 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Small", style: .default) { _ -> Void in
-            self.setSizeComment(size: -2)
-        }
-        if currentCommentSize == -2 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Very Small", style: .default) { _ -> Void in
-            self.setSizeComment(size: -4)
-        }
-        if currentCommentSize == -4 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Smallest", style: .default) { _ -> Void in
-            self.setSizeComment(size: -6)
-        }
-        if currentCommentSize == -6 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = commentSize.contentView
-            presenter.sourceRect = commentSize.contentView.bounds
-        }
-        self.present(actionSheetController, animated: true, completion: nil)
-    
-    }
-    
-    @objc func doSubmissionSize() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Submission font size", message: "", preferredStyle: .actionSheet)
-        
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        let currentLinkSize = SettingValues.postFontOffset
-        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-
-        cancelActionButton = UIAlertAction(title: "Largest", style: .default) { _ -> Void in
-            self.setSizeSubmission(size: 10)
-        }
-        if currentLinkSize == 10 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        cancelActionButton = UIAlertAction(title: "Extra Large", style: .default) { _ -> Void in
-            self.setSizeSubmission(size: 8)
-        }
-        if currentLinkSize == 8 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Very Large", style: .default) { _ -> Void in
-            self.setSizeSubmission(size: 4)
-        }
-        if currentLinkSize == 4 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Large", style: .default) { _ -> Void in
-            self.setSizeSubmission(size: 2)
-        }
-        if currentLinkSize == 2 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Normal", style: .default) { _ -> Void in
-            self.setSizeSubmission(size: 0)
-        }
-        if currentLinkSize == 0 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Small", style: .default) { _ -> Void in
-            self.setSizeSubmission(size: -2)
-        }
-        if currentLinkSize == -2 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Very Small", style: .default) { _ -> Void in
-            self.setSizeSubmission(size: -4)
-        }
-        if currentLinkSize == -4 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        cancelActionButton = UIAlertAction(title: "Smallest", style: .default) { _ -> Void in
-            self.setSizeSubmission(size: -6)
-        }
-        if currentLinkSize == -6 {
-            cancelActionButton.setValue(selected, forKey: "image")
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = submissionSize.contentView
-            presenter.sourceRect = submissionSize.contentView.bounds
-        }
-        self.present(actionSheetController, animated: true, completion: nil)
+        refresh()
     }
     
     override func loadView() {
@@ -258,122 +90,72 @@ class SettingsFont: UITableViewController {
         
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
-        self.title = "Font"
+        self.title = "Font Settings"
         self.tableView.separatorStyle = .none
 
         enlarge = UISwitch()
         enlarge.isOn = SettingValues.enlargeLinks
         enlarge.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        self.enlargeCell.textLabel?.text = "Make links larger and easier to select"
-        self.enlargeCell.accessoryView = enlarge
-        self.enlargeCell.textLabel?.numberOfLines = 0
-        self.enlargeCell.backgroundColor = ColorUtil.foregroundColor
-        self.enlargeCell.textLabel?.textColor = ColorUtil.fontColor
+        enlargeCell.textLabel?.text = "Make links larger and easier to select"
+        enlargeCell.accessoryView = enlarge
+        enlargeCell.textLabel?.numberOfLines = 0
         enlargeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         
         type = UISwitch()
         type.isOn = SettingValues.showLinkContentType
         type.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        self.typeCell.textLabel?.text = "Show content type preview next to links"
-        self.typeCell.textLabel?.numberOfLines = 0
-        self.typeCell.textLabel?.lineBreakMode = .byWordWrapping
-        self.typeCell.accessoryView = type
-        self.typeCell.backgroundColor = ColorUtil.foregroundColor
-        self.typeCell.textLabel?.textColor = ColorUtil.fontColor
+        typeCell.textLabel?.text = "Show content type preview next to links"
+        typeCell.textLabel?.numberOfLines = 0
+        typeCell.textLabel?.lineBreakMode = .byWordWrapping
+        typeCell.accessoryView = type
         typeCell.selectionStyle = UITableViewCell.SelectionStyle.none
-        
-        self.commentSize.backgroundColor = ColorUtil.foregroundColor
-        self.commentSize.textLabel?.textColor = ColorUtil.fontColor
-        self.commentSize.detailTextLabel?.textColor = ColorUtil.fontColor
-        
-        let tap = UITapGestureRecognizer.init(target: self, action: #selector(self.doCommentSize))
-        self.commentSize.contentView.addGestureRecognizer(tap)
 
-        self.submissionSize.backgroundColor = ColorUtil.foregroundColor
-        self.submissionSize.textLabel?.textColor = ColorUtil.fontColor
-        self.submissionSize.detailTextLabel?.textColor = ColorUtil.fontColor
-        let tap2 = UITapGestureRecognizer.init(target: self, action: #selector(self.doSubmissionSize))
-        self.submissionSize.contentView.addGestureRecognizer(tap2)
+        submissionPreview.textLabel?.text = "I'm a text preview!"
 
-        submissionFont.textLabel?.text = "Submission Font"
-        submissionFont.backgroundColor = ColorUtil.foregroundColor
-        submissionFont.textLabel?.textColor = ColorUtil.fontColor
-        submissionFont.detailTextLabel?.textColor = ColorUtil.fontColor
+        submissionSize.textLabel?.text = "Font size"
+        submissionSize.addTapGestureRecognizer { [weak self] in
+            self?.submissionSizeCellWasTapped()
+        }
 
-        commentFont.textLabel?.text = "Comment Font"
-        commentFont.backgroundColor = ColorUtil.foregroundColor
-        commentFont.textLabel?.textColor = ColorUtil.fontColor
-        commentFont.detailTextLabel?.textColor = ColorUtil.fontColor
+        submissionFont.textLabel?.text = "Font"
+        submissionFont.addTapGestureRecognizer { [weak self] in
+            self?.submissionFontCellWasTapped()
+        }
 
-        doFontSizes()
+        commentPreview.textLabel?.text = "I'm a text preview!"
+
+        commentSize.textLabel?.text = "Font size"
+        commentSize.addTapGestureRecognizer { [weak self] in
+            self?.commentSizeCellWasTapped()
+        }
+
+        commentFont.textLabel?.text = "Font"
+        commentFont.addTapGestureRecognizer { [weak self] in
+            self?.commentFontCellWasTapped()
+        }
+
+        refresh()
         self.tableView.tableFooterView = UIView()
 
     }
     
-    func doFontSizes() {
-        self.submissionSize.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
-        self.commentSize.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
+    func refresh() {
+        self.submissionPreview.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
+        self.commentPreview.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
 
-        self.submissionFont.detailTextLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
+//        self.submissionFont.detailTextLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
         self.submissionFont.detailTextLabel?.text = UserDefaults.standard.string(forKey: "postfont") ?? "Unknown"
-        self.commentFont.detailTextLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
+//        self.commentFont.detailTextLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
         self.commentFont.detailTextLabel?.text = UserDefaults.standard.string(forKey: "commentfont") ?? "Unknown"
-        
-        var commentText = ""
-        switch SettingValues.commentFontOffset {
-        case 10:
-            commentText = "Largest"
-        case 8:
-            commentText = "Extra Large"
-        case 4:
-            commentText = "Very Large"
-        case 2:
-            commentText = "Large"
-        case 0:
-            commentText = "Normal"
-        case -2:
-            commentText = "Small"
-        case -4:
-            commentText = "Very Small"
-        case -6:
-            commentText = "Smallest"
-        default:
-            commentText = "Default"
-        }
-        
-        var submissionText = ""
-        switch SettingValues.postFontOffset {
-        case 10:
-            submissionText = "Largest"
-        case 8:
-            submissionText = "Extra Large"
-        case 4:
-            submissionText = "Very Large"
-        case 2:
-            submissionText = "Large"
-        case 0:
-            submissionText = "Normal"
-        case -2:
-            submissionText = "Small"
-        case -4:
-            submissionText = "Very Small"
-        case -6:
-            submissionText = "Smallest"
-        default:
-            submissionText = "Default"
-        }
-        
-        self.commentSize.textLabel?.text = "Comment font size"
-        self.submissionSize.textLabel?.text = "Submission title size"
-        
-        self.submissionSize.detailTextLabel?.text = submissionText
-        self.commentSize.detailTextLabel?.text = commentText
+
+        self.submissionSize.detailTextLabel?.text = fontSizes[SettingValues.postFontOffset] ?? "Default"
+        self.commentSize.detailTextLabel?.text = fontSizes[SettingValues.commentFontOffset] ?? "Default"
 
         self.tableView.reloadData()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 70
@@ -387,54 +169,137 @@ class SettingsFont: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.submissionSize
-            case 1: return self.commentSize
-            case 2: return self.enlargeCell
-            case 3: return self.typeCell
-            default: fatalError("Unknown row in section 0")
+            case 0: cell = self.submissionFont
+            case 1: cell = self.submissionSize
+            case 2: cell = self.submissionPreview
+            default: fatalError("Unknown row in section \(indexPath.section)")
             }
         case 1:
             switch indexPath.row {
-            case 0: return self.submissionFont
-            case 1: return self.commentFont
-            default: fatalError("Unknown row in section 1")
+            case 0: cell = self.commentFont
+            case 1: cell = self.commentSize
+            case 2: cell = self.commentPreview
+            default: fatalError("Unknown row in section \(indexPath.section)")
+            }
+        case 2:
+            switch indexPath.row {
+            case 0: cell = self.enlargeCell
+            case 1: cell = self.typeCell
+            default: fatalError("Unknown row in section \(indexPath.section)")
             }
         default: fatalError("Unknown section")
         }
-        
+
+        cell.style()
+        if indexPath == IndexPath(row: 2, section: 0) || indexPath == IndexPath(row: 2, section: 1) {
+            cell.backgroundColor = ColorUtil.backgroundColor
+        }
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 1 {
-            switch indexPath.row {
-            case 0:
-                let vc = FontSelectionTableViewController()
-                vc.key = "postfont"
-                vc.delegate = self
-                navigationController?.pushViewController(vc, animated: true)
-            case 1:
-                let vc = FontSelectionTableViewController()
-                vc.key = "commentfont"
-                vc.delegate = self
-                navigationController?.pushViewController(vc, animated: true)
-            default: fatalError("Unknown row in section 1")
-            }
-        }
+        // Each cell already has a tap handler in init
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 4    // section 0 has 2 rows
-        case 1: return 2    // section 1 has 2 rows
+        case 0: return 3    // section 0 has 2 rows
+        case 1: return 3    // section 1 has 2 rows
+        case 2: return 2
         default: fatalError("Unknown number of sections")
         }
     }
+
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label: UILabel = UILabel().then {
+            $0.textColor = ColorUtil.baseAccent
+            $0.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
+        }
+        let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0))
+        toReturn.backgroundColor = ColorUtil.backgroundColor
+
+        switch section {
+        case 0: label.text = "Submissions"
+        case 1: label.text = "Comments"
+        case 2: label.text = "Options"
+        default: label.text = ""
+        }
+        return toReturn
+    }
     
+}
+
+// MARK: - Actions
+extension SettingsFont {
+    func submissionFontCellWasTapped() {
+        let vc = FontSelectionTableViewController()
+        vc.key = "postfont"
+        vc.delegate = self
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    func commentFontCellWasTapped() {
+        let vc = FontSelectionTableViewController()
+        vc.key = "commentfont"
+        vc.delegate = self
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    func commentSizeCellWasTapped() {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Comment font size", message: "", preferredStyle: .actionSheet)
+
+        actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        for key in fontSizes.keys.sorted() {
+            let description = fontSizes[key]!
+            let action = UIAlertAction(title: description, style: .default) { _ in
+                self.setSizeComment(size: key)
+            }
+            if SettingValues.commentFontOffset == key {
+                let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+                action.setValue(selected, forKey: "image")
+            }
+            actionSheetController.addAction(action)
+        }
+
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = commentSize.contentView
+            presenter.sourceRect = commentSize.contentView.bounds
+        }
+        self.present(actionSheetController, animated: true, completion: nil)
+
+    }
+
+    func submissionSizeCellWasTapped() {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Submission font size", message: "", preferredStyle: .actionSheet)
+
+        actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        for key in fontSizes.keys.sorted() {
+            let description = fontSizes[key]!
+            let action = UIAlertAction(title: description, style: .default) { _ in
+                self.setSizeSubmission(size: key)
+            }
+            if SettingValues.postFontOffset == key {
+                let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+                action.setValue(selected, forKey: "image")
+            }
+            actionSheetController.addAction(action)
+        }
+
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = submissionSize.contentView
+            presenter.sourceRect = submissionSize.contentView.bounds
+        }
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
 }
 
 extension SettingsFont: FontSelectionTableViewControllerDelegate {
@@ -446,6 +311,14 @@ extension SettingsFont: FontSelectionTableViewControllerDelegate {
         FontGenerator.initialize()
         CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
         CachedTitle.titles.removeAll()
-        doFontSizes()
+        refresh()
+    }
+}
+
+private extension UITableViewCell {
+    func style() {
+        backgroundColor = ColorUtil.foregroundColor
+        textLabel?.textColor = ColorUtil.fontColor
+        detailTextLabel?.textColor = ColorUtil.fontColor.withAlphaComponent(0.7)
     }
 }
