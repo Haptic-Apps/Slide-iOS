@@ -19,7 +19,9 @@ class SettingsViewMode: UITableViewController {
     var numberColumns: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "number")
     
     var subredditBar = UITableViewCell()
-    var subredditBarSwitch = UISwitch()
+    var subredditBarSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

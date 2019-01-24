@@ -14,8 +14,12 @@ class CacheSettings: UITableViewController {
     var autoCache: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "auto")
     var cacheContent: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "cache")
 
-    var autoCacheSwitch = UISwitch()
-    var cacheContentSwitch = UISwitch()
+    var autoCacheSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var cacheContentSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
@@ -153,7 +157,9 @@ class CacheSettings: UITableViewController {
             c.setSubreddit(subreddit: thing, nav: nil)
             cell = c
             cell?.backgroundColor = ColorUtil.foregroundColor
-            let aSwitch = UISwitch()
+            let aSwitch = UISwitch().then {
+                $0.tintColor = ColorUtil.accentColorForSub(sub: thing)
+            }
             if selected.contains(thing) {
                 aSwitch.isOn = true
             }

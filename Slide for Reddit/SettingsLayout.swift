@@ -19,53 +19,87 @@ class SettingsLayout: UITableViewController {
     var actionBarCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "actionbar")
 
     var flatModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "flat")
-    var flatMode = UISwitch()
+    var flatMode = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var largerThumbnailCell: UITableViewCell = UITableViewCell()
-    var largerThumbnail = UISwitch()
+    var largerThumbnail = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var thumbLinkCell: UITableViewCell = UITableViewCell()
-    var thumbLink = UISwitch()
+    var thumbLink = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var scoreTitleCell: UITableViewCell = UITableViewCell()
-    var scoreTitle = UISwitch()
+    var scoreTitle = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var commentTitleCell: UITableViewCell = UITableViewCell()
-    var commentTitle = UISwitch()
+    var commentTitle = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var infoBelowTitleCell: UITableViewCell = UITableViewCell()
-    var infoBelowTitle = UISwitch()
+    var infoBelowTitle = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var abbreviateScoreCell: UITableViewCell = UITableViewCell()
-    var abbreviateScore = UISwitch()
+    var abbreviateScore = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var domainInfoCell: UITableViewCell = UITableViewCell()
-    var domainInfo = UISwitch()
+    var domainInfo = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var leftThumbCell: UITableViewCell = UITableViewCell()
-    var leftThumb = UISwitch()
+    var leftThumb = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var hideCell: UITableViewCell = UITableViewCell()
-    var hide = UISwitch()
+    var hide = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var moreCell: UITableViewCell = UITableViewCell()
-    var more = UISwitch()
+    var more = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var saveCell: UITableViewCell = UITableViewCell()
-    var save = UISwitch()
+    var save = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var readLaterCell: UITableViewCell = UITableViewCell()
-    var readLater = UISwitch()
+    var readLater = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var selftextCell: UITableViewCell = UITableViewCell()
-    var selftext = UISwitch()
+    var selftext = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var smalltagCell: UITableViewCell = UITableViewCell()
-    var smalltag = UISwitch()
+    var smalltag = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
-    var linkCell = UITableViewCell()
+    var linkCell = UITableViewCell().then {
+        $0.tintColor = ColorUtil.baseAccent
+    }
     
-    var link = LinkCellView()
+    var link = LinkCellView().then {
+        $0.tintColor = ColorUtil.baseAccent
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
