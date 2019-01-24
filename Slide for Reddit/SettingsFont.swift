@@ -93,16 +93,20 @@ class SettingsFont: UITableViewController {
         self.title = "Font Settings"
         self.tableView.separatorStyle = .none
 
-        enlarge = UISwitch()
-        enlarge.isOn = SettingValues.enlargeLinks
+        enlarge = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+            $0.isOn = SettingValues.enlargeLinks
+        }
         enlarge.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         enlargeCell.textLabel?.text = "Make links larger and easier to select"
         enlargeCell.accessoryView = enlarge
         enlargeCell.textLabel?.numberOfLines = 0
         enlargeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         
-        type = UISwitch()
-        type.isOn = SettingValues.showLinkContentType
+        type = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+            $0.isOn = SettingValues.showLinkContentType
+        }
         type.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         typeCell.textLabel?.text = "Show content type preview next to links"
         typeCell.textLabel?.numberOfLines = 0
