@@ -13,10 +13,14 @@ import XLActionController
 class SettingsGestures: UITableViewController {
     
     var submissionGesturesCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "subs")
-    var submissionGestures = UISwitch()
+    var submissionGestures = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var disableBannerCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "banner")
-    var disableBanner = UISwitch()
+    var disableBanner = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var forceTouchSubmissionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "3dsubmission")
 

@@ -13,32 +13,48 @@ import XLActionController
 
 class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     var disableNavigationBarCell: UITableViewCell = UITableViewCell()
-    var disableNavigationBar = UISwitch()
+    var disableNavigationBar = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var authorThemeCell: UITableViewCell = UITableViewCell()
 
     var themeColorCell: UITableViewCell = UITableViewCell()
     
     var wideIndicatorCell: UITableViewCell = UITableViewCell()
-    var wideIndicator = UISwitch()
+    var wideIndicator = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var collapseDefaultCell: UITableViewCell = UITableViewCell()
-    var collapseDefault = UISwitch()
+    var collapseDefault = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var swapLongPressCell: UITableViewCell = UITableViewCell()
-    var swapLongPress = UISwitch()
+    var swapLongPress = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var collapseFullyCell: UITableViewCell = UITableViewCell()
-    var collapseFully = UISwitch()
+    var collapseFully = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var fullscreenImageCell: UITableViewCell = UITableViewCell()
-    var fullscreenImage = UISwitch()
+    var fullscreenImage = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var highlightOpCell: UITableViewCell = UITableViewCell()
-    var highlightOp = UISwitch()
+    var highlightOp = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var hideAutomodCell: UITableViewCell = UITableViewCell()
-    var hideAutomod = UISwitch()
+    var hideAutomod = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

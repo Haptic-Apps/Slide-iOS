@@ -47,7 +47,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var muteCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "mute")
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
-    var lock = UISwitch()
+    var lock = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight() && SettingValues.reduceColor {
@@ -59,6 +61,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        lock.onTintColor = ColorUtil.baseAccent
         if SettingsPro.changed {
             self.tableView.reloadData()
             let menuB = UIBarButtonItem(image: UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
@@ -360,7 +363,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.viewModeCell.detailTextLabel?.text = "Multi-Column mode, Split UI, and subreddit bar settings"
         self.viewModeCell.detailTextLabel?.numberOfLines = 0
 
-        lock = UISwitch()
+        lock = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         lock.isOn = SettingValues.biometrics
         lock.isEnabled = BioMetricAuthenticator.canAuthenticate()
         lock.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)

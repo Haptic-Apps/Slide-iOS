@@ -19,8 +19,12 @@ class SettingsCustomTheme: UITableViewController {
     var navicon: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "navicon")
     var statusbar: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "status")
 
-    var applySwitch: UISwitch = UISwitch()
-    var statusbarSwitch: UISwitch = UISwitch()
+    var applySwitch: UISwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var statusbarSwitch: UISwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text

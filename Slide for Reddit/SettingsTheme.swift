@@ -240,7 +240,9 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.night.imageView?.tintColor = ColorUtil.navIconColor
 
-        tintOutsideSwitch = UISwitch()
+        tintOutsideSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         tintOutsideSwitch.isOn = SettingValues.onlyTintOutside
         tintOutsideSwitch.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.tintOutside.textLabel?.text = "Only tint outside of subreddit"
@@ -255,7 +257,9 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.tintingMode.textLabel?.textColor = ColorUtil.fontColor
         self.tintingMode.detailTextLabel?.textColor = ColorUtil.fontColor
         
-        reduceColor = UISwitch()
+        reduceColor = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         reduceColor.isOn = SettingValues.reduceColor
         reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"

@@ -12,10 +12,14 @@ import UIKit
 class SettingsContent: UITableViewController {
     
     var showNSFWPreviewsCell: UITableViewCell = UITableViewCell()
-    var showNSFWPreviews = UISwitch()
+    var showNSFWPreviews = UISwitch().then {
+        $0.tintColor = GMColor.red500Color()
+    }
 
     var hideCollectionViewsCell: UITableViewCell = UITableViewCell()
-    var hideCollectionViews = UISwitch()
+    var hideCollectionViews = UISwitch().then {
+        $0.tintColor = GMColor.red500Color()
+    }
     
    //for future var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
    // var dontLoadImagePreviews = UISwitch()

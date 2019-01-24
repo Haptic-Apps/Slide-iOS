@@ -13,8 +13,12 @@ class SettingsFont: UITableViewController {
     
     var enlargeCell: UITableViewCell = UITableViewCell()
     var typeCell: UITableViewCell = UITableViewCell()
-    var enlarge = UISwitch()
-    var type = UISwitch()
+    var enlarge = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var type = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     var commentSize: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "commentSize")
     var submissionSize: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "submissionSize")
 
@@ -282,7 +286,9 @@ class SettingsFont: UITableViewController {
         self.title = "Font"
         self.tableView.separatorStyle = .none
 
-        enlarge = UISwitch()
+        enlarge = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         enlarge.isOn = SettingValues.enlargeLinks
         enlarge.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.enlargeCell.textLabel?.text = "Make links larger and easier to select"
@@ -292,7 +298,9 @@ class SettingsFont: UITableViewController {
         self.enlargeCell.textLabel?.textColor = ColorUtil.fontColor
         enlargeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         
-        type = UISwitch()
+        type = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         type.isOn = SettingValues.showLinkContentType
         type.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.typeCell.textLabel?.text = "Show content type preview next to links"
