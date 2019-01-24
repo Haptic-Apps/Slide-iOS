@@ -23,14 +23,30 @@ class SettingsGeneral: UITableViewController {
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
     var notifications: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "notif")
-    var hideFABSwitch = UISwitch()
-    var scrubUsernameSwitch = UISwitch()
-    var pinToolbarSwitch = UISwitch()
-    var hapticFeedbackSwitch = UISwitch()
-    var autoKeyboardSwitch = UISwitch()
-    var matchSilenceSwitch = UISwitch()
-    var showPagesSwitch = UISwitch()
-    var notificationsSwitch = UISwitch()
+    var hideFABSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var scrubUsernameSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var pinToolbarSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var hapticFeedbackSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var autoKeyboardSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var matchSilenceSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var showPagesSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var notificationsSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

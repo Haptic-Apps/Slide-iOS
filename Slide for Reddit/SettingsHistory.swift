@@ -11,16 +11,24 @@ import UIKit
 class SettingsHistory: UITableViewController {
     
     var saveHistoryCell: UITableViewCell = UITableViewCell()
-    var saveHistory = UISwitch()
+    var saveHistory = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var saveNSFWHistoryCell: UITableViewCell = UITableViewCell()
-    var saveNSFWHistory = UISwitch()
+    var saveNSFWHistory = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var readOnScrollCell: UITableViewCell = UITableViewCell()
-    var readOnScroll = UISwitch()
+    var readOnScroll = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var dotCell: UITableViewCell = UITableViewCell()
-    var dot = UISwitch()
+    var dot = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var clearHistory: UITableViewCell = UITableViewCell()
 

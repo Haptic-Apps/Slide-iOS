@@ -17,19 +17,33 @@ class Filter: UITableViewController {
     var parentVC: SingleSubredditViewController
     
     var image: UITableViewCell = UITableViewCell()
-    var imageSwitch = UISwitch()
+    var imageSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     var album: UITableViewCell = UITableViewCell()
-    var albumSwitch = UISwitch()
+    var albumSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     var gif: UITableViewCell = UITableViewCell()
-    var gifSwitch = UISwitch()
+    var gifSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     var video: UITableViewCell = UITableViewCell()
-    var videoSwitch = UISwitch()
+    var videoSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     var link: UITableViewCell = UITableViewCell()
-    var linkSwitch = UISwitch()
+    var linkSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     var selftext: UITableViewCell = UITableViewCell()
-    var selftextSwitch = UISwitch()
+    var selftextSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     var nsfw: UITableViewCell = UITableViewCell()
-    var nsfwSwitch = UISwitch()
+    var nsfwSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var numberOfSections: Int {
         return AccountController.canShowNSFW ? 7 : 6
@@ -93,7 +107,9 @@ class Filter: UITableViewController {
         self.view.backgroundColor = .clear
         self.tableView.separatorStyle = .none
 
-        imageSwitch = UISwitch()
+        imageSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         imageSwitch.isOn = enabled[0]
         imageSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.image.textLabel?.text = "Images"
@@ -101,7 +117,9 @@ class Filter: UITableViewController {
         self.image.backgroundColor = .clear
         self.image.selectionStyle = UITableViewCell.SelectionStyle.none
 
-        albumSwitch = UISwitch()
+        albumSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         albumSwitch.isOn = enabled[1]
         albumSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.album.textLabel?.text = "Albums"
@@ -109,7 +127,9 @@ class Filter: UITableViewController {
         self.album.backgroundColor = .clear
         self.album.selectionStyle = UITableViewCell.SelectionStyle.none
 
-        gifSwitch = UISwitch()
+        gifSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         gifSwitch.isOn = enabled[2]
         gifSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.gif.textLabel?.text = "Gifs"
@@ -117,7 +137,9 @@ class Filter: UITableViewController {
         self.gif.backgroundColor = .clear
         self.gif.selectionStyle = UITableViewCell.SelectionStyle.none
 
-        videoSwitch = UISwitch()
+        videoSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         videoSwitch.isOn = enabled[3]
         videoSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.video.textLabel?.text = "Videos"
@@ -125,7 +147,9 @@ class Filter: UITableViewController {
         self.video.backgroundColor = .clear
         self.video.selectionStyle = UITableViewCell.SelectionStyle.none
 
-        linkSwitch = UISwitch()
+        linkSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         linkSwitch.isOn = enabled[4]
         linkSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.link.textLabel?.text = "Links"
@@ -133,7 +157,9 @@ class Filter: UITableViewController {
         self.link.backgroundColor = .clear
         self.link.selectionStyle = UITableViewCell.SelectionStyle.none
 
-        selftextSwitch = UISwitch()
+        selftextSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         selftextSwitch.isOn = enabled[5]
         selftextSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.selftext.textLabel?.text = "Selftext"
@@ -141,7 +167,9 @@ class Filter: UITableViewController {
         self.selftext.backgroundColor = .clear
         self.selftext.selectionStyle = UITableViewCell.SelectionStyle.none
 
-        nsfwSwitch = UISwitch()
+        nsfwSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
         nsfwSwitch.isOn = enabled[6]
         nsfwSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.nsfw.textLabel?.text = "NSFW Content"

@@ -11,19 +11,29 @@ import UIKit
 
 class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
-    var domainEnter = UISearchBar()
+    var domainEnter = UISearchBar().then {
+        $0.tintColor = ColorUtil.baseAccent
+    }
 
     var internalGifCell: UITableViewCell = UITableViewCell()
-    var internalGif = UISwitch()
+    var internalGif = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var internalImageCell: UITableViewCell = UITableViewCell()
-    var internalImage = UISwitch()
+    var internalImage = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var internalAlbumCell: UITableViewCell = UITableViewCell()
-    var internalAlbum = UISwitch()
+    var internalAlbum = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var internalYouTubeCell: UITableViewCell = UITableViewCell()
-    var internalYouTube = UISwitch()
+    var internalYouTube = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var chromeIcon: UIImage?
     var safariIcon: UIImage?

@@ -12,21 +12,31 @@ import UIKit
 class SettingsData: UITableViewController {
     
     var enableDataSavingCell: UITableViewCell = UITableViewCell()
-    var enableDataSaving = UISwitch()
+    var enableDataSaving = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var disableOnWifiCell: UITableViewCell = UITableViewCell()
-    var disableOnWifi = UISwitch()
+    var disableOnWifi = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     //load hq always
     //LOwer quality mode
     //Dont show images
     var loadHQViewerCell: UITableViewCell = UITableViewCell()
-    var loadHQViewer = UISwitch()
+    var loadHQViewer = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var lowerQualityModeCell: UITableViewCell = UITableViewCell()
-    var lowerQualityMode = UISwitch()
+    var lowerQualityMode = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
-    var dontLoadImagePreviews = UISwitch()
+    var dontLoadImagePreviews = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
