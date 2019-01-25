@@ -439,7 +439,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     parent.more.rightAnchor == topView.rightAnchor
                 }
                 UIView.animate(withDuration: 0.25) {
-                    self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - ((self.parentController?.menuNav?.bottomOffset ?? 56) / 2), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                    self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.parentController?.menuNav?.bottomOffset ?? 56) / 2)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
                     self.parentController?.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
                     self.parentController?.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
                 }

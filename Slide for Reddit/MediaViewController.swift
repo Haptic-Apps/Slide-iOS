@@ -17,6 +17,14 @@ class MediaViewController: UIViewController, MediaVCDelegate {
     override var prefersStatusBarHidden: Bool {
         return false
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
 
     lazy var slideInTransitioningDelegate = SlideInPresentationManager()
     lazy var postContentTransitioningDelegate = PostContentPresentationManager()

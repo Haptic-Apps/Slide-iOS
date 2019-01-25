@@ -114,6 +114,7 @@ class SettingValues {
     public static let pref_disableBanner = "DISABLE_BANNER"
     public static let pref_newIndicator = "NEW_INDICATOR"
     public static let pref_muteAutoPlay = "MUTE_VIDEOS"
+    public static let pref_totallyCollapse = "TOTALLY_COLLAPSE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -138,6 +139,7 @@ class SettingValues {
 
     public static var browser = "firefox"
     public static var subredditBar = true
+    public static var totallyCollapse = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true
     public static var defaultSorting = LinkSortType.hot
@@ -422,6 +424,7 @@ class SettingValues {
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
         SettingValues.notifications = settings.bool(forKey: SettingValues.pref_notifications)
+        SettingValues.totallyCollapse = settings.bool(forKey: SettingValues.pref_totallyCollapse)
         SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)
         SettingValues.disableNavigationBar = settings.bool(forKey: SettingValues.pref_disableNavigationBar)
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)

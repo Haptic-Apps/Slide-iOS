@@ -197,9 +197,13 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
     }
-    
+
     var navItem: UINavigationItem?
     var spinnerIndicator = UIActivityIndicatorView()
     
