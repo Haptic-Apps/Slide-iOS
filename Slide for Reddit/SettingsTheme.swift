@@ -35,10 +35,12 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
-            titleLabel.textColor = self.accentChosen!
+            titleLabel.textColor = self.accentChosen
+            self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: accentChosen!)
         } else {
             primaryChosen = colorPickerView.colors[indexPath.row]
             setupBaseBarColors(primaryChosen)
+            self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: primaryChosen!)
         }
     }
 
@@ -92,6 +94,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
             self.setupBaseBarColors()
+            self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
         })
 
         //alertController.addAction(custom)
@@ -144,6 +147,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
             self.accentChosen = nil
             self.titleLabel.textColor = ColorUtil.baseAccent
+            self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
         })
 
         alertController.addAction(somethingAction)
