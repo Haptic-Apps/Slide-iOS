@@ -22,6 +22,10 @@ import XLActionController
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, UINavigationControllerDelegate {
 
+    override var prefersStatusBarHidden: Bool {
+        return SettingValues.fullyHideNavbar
+    }
+
     override var keyCommands: [UIKeyCommand]? {
         return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
     }
@@ -179,6 +183,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if !(navigationController is TapBehindModalViewController) {
             inHeadView = UIView().then {
                 $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
+                if SettingValues.fullyHideNavbar {
+                    $0.backgroundColor = .clear
+                }
             }
             self.view.addSubview(inHeadView!)
             inHeadView!.isHidden = UIDevice.current.orientation.isLandscape
@@ -415,37 +422,37 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
         
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-            }, completion: { _ in
-                self.fab?.isHidden = true
-                self.isHiding = false
-            })
+        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+        }, completion: { _ in
+            self.fab?.isHidden = true
+            self.isHiding = false
+        })
         
-            if single {
-                navigationController?.setToolbarHidden(true, animated: true)
-            } else {
-                if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView {
-                    parent.menu.deactivateImmediateConstraints()
-                    parent.menu.topAnchor == topView.topAnchor - 10
-                    parent.menu.widthAnchor == 56
-                    parent.menu.heightAnchor == 56
-                    parent.menu.leftAnchor == topView.leftAnchor
-                    
-                    parent.more.deactivateImmediateConstraints()
-                    parent.more.topAnchor == topView.topAnchor - 10
-                    parent.more.widthAnchor == 56
-                    parent.more.heightAnchor == 56
-                    parent.more.rightAnchor == topView.rightAnchor
-                }
-                UIView.animate(withDuration: 0.25) {
-                    self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.parentController?.menuNav?.bottomOffset ?? 56) / 2)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
-                    self.parentController?.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
-                    self.parentController?.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
-                }
-//            if !single && parentController != nil {
-//                parentController!.drawerButton.isHidden = false
-//            }
+        if single {
+            navigationController?.setToolbarHidden(true, animated: true)
+        } else {
+            if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView {
+                parent.menu.deactivateImmediateConstraints()
+                parent.menu.topAnchor == topView.topAnchor - 10
+                parent.menu.widthAnchor == 56
+                parent.menu.heightAnchor == 56
+                parent.menu.leftAnchor == topView.leftAnchor
+                
+                parent.more.deactivateImmediateConstraints()
+                parent.more.topAnchor == topView.topAnchor - 10
+                parent.more.widthAnchor == 56
+                parent.more.heightAnchor == 56
+                parent.more.rightAnchor == topView.rightAnchor
+            }
+            UIView.animate(withDuration: 0.25) {
+                self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.parentController?.menuNav?.bottomOffset ?? 56) / 2)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                self.parentController?.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+                self.parentController?.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+            }
+            //            if !single && parentController != nil {
+            //                parentController!.drawerButton.isHidden = false
+            //            }
         }
         self.isToolbarHidden = true
 
@@ -715,6 +722,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.backgroundColor
         inHeadView?.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
+        if SettingValues.fullyHideNavbar {
+            inHeadView?.backgroundColor = .clear
+        }
 
         refreshControl.tintColor = ColorUtil.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
@@ -2274,6 +2284,9 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
             sideView.backgroundColor = c
             sideView.backgroundColor = c
             inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
+            if SettingValues.fullyHideNavbar {
+                inHeadView?.backgroundColor = .clear
+            }
             if parentController != nil {
                 parentController?.colorChanged(c)
             }
