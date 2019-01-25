@@ -37,6 +37,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             accentChosen = colorPickerView.colors[indexPath.row]
             titleLabel.textColor = self.accentChosen
             self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: accentChosen!)
+            reduceColor.onTintColor = accentChosen!
         } else {
             primaryChosen = colorPickerView.colors[indexPath.row]
             setupBaseBarColors(primaryChosen)
@@ -146,6 +147,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
             self.accentChosen = nil
+            self.reduceColor.onTintColor = ColorUtil.baseAccent
             self.titleLabel.textColor = ColorUtil.baseAccent
             self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
         })
