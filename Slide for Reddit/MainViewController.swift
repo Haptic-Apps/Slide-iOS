@@ -518,7 +518,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             self.dataSource = nil
         }
         
-        self.delegate = self
         if self.subs != nil {
             self.subs!.removeFromSuperview()
             self.subs = nil
@@ -588,10 +587,15 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         doButtons()
         
         tabBar.removeFromSuperview()
+        self.navigationItem.leftBarButtonItems = []
+        self.navigationItem.rightBarButtonItems = []
+        self.delegate = self
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
+            self.dataSource = self
         } else {
             self.navigationItem.titleView = nil
+            self.dataSource = nil
         }
     }
     

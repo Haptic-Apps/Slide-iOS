@@ -209,15 +209,13 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.primary.accessoryType = .none
         self.primary.backgroundColor = ColorUtil.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.fontColor
-        self.primary.imageView?.image = UIImage.init(named: "colors")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.primary.imageView?.tintColor = ColorUtil.navIconColor
+        self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
 
         self.accent.textLabel?.text = "Accent color"
         self.accent.accessoryType = .none
         self.accent.backgroundColor = ColorUtil.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.fontColor
-        self.accent.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.accent.imageView?.tintColor = ColorUtil.navIconColor
+        self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
 
         self.custom.textLabel?.text = "Custom base theme"
         self.custom.accessoryType = .disclosureIndicator
