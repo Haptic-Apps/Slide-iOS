@@ -45,7 +45,7 @@ class CurrentAccountPresentationController: UIPresentationController {
         }
 
         if let coordinator = presentedViewController.transitionCoordinator {
-            coordinator.animate(alongsideTransition: { _ in
+            UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseInOut, animations: {
                 self.dimmingView.effect = self.blurEffect
             })
         } else {
@@ -56,8 +56,10 @@ class CurrentAccountPresentationController: UIPresentationController {
     override func dismissalTransitionWillBegin() {
         if let coordinator = presentedViewController.transitionCoordinator {
             coordinator.animate(alongsideTransition: { _ in
-                self.dimmingView.effect = nil
-            })
+                self.dimmingView.alpha = 0
+            }) { context in
+                self.dimmingView.alpha = 1
+            }
         } else {
             dimmingView.effect = nil
         }

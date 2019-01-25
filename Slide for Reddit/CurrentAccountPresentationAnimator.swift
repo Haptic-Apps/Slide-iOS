@@ -23,7 +23,7 @@ final class CurrentAccountPresentationAnimator: NSObject {
 extension CurrentAccountPresentationAnimator: UIViewControllerAnimatedTransitioning {
     func transitionDuration(
         using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.3
+        return isPresentation ? 0.4 : 0.25
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -52,22 +52,45 @@ extension CurrentAccountPresentationAnimator: UIViewControllerAnimatedTransition
         let finalUpperButtonStackFrame = isPresentation ? presentedUpperButtonStackFrame : dismissedUpperButtonStackFrame
         controller.upperButtonStack.frame = initialUpperButtonStackFrame
 
-        var curve = UIView.AnimationOptions.curveEaseOut
+        var curve = UIView.AnimationOptions.curveEaseInOut
+        var spring = CGFloat(0.7)
+        var initial = CGFloat(1.4)
         if let interactionController = interactionController,
             interactionController.interactionInProgress {
             curve = UIView.AnimationOptions.curveLinear
+            spring = 0
+            initial = 0
         }
+        if !isPresentation {
+            spring = 0
+        }
+        if spring == 0 {
+            UIView.animate(withDuration: transitionDuration(using: transitionContext),
+                           delay: 0,
+                           options: curve,
+                           animations: {
+                            controller.closeButton.alpha = self.isPresentation ? 1 : 0
+                            controller.settingsButton.alpha = self.isPresentation ? 1 : 0
+                            controller.contentView.frame = finalContentViewFrame
+                            controller.upperButtonStack.frame = finalUpperButtonStackFrame
+            }, completion: { _ in
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            })
 
-        UIView.animate(withDuration: transitionDuration(using: transitionContext),
-                       delay: 0,
-                       options: curve,
-                       animations: {
-            controller.closeButton.alpha = self.isPresentation ? 1 : 0
-            controller.settingsButton.alpha = self.isPresentation ? 1 : 0
-            controller.contentView.frame = finalContentViewFrame
-            controller.upperButtonStack.frame = finalUpperButtonStackFrame
-        }, completion: { _ in
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-        })
+        } else {
+            UIView.animate(withDuration: transitionDuration(using: transitionContext),
+                delay: 0,
+                usingSpringWithDamping: spring,
+                initialSpringVelocity: initial,
+                options: curve,
+                animations: {
+                controller.closeButton.alpha = self.isPresentation ? 1 : 0
+                controller.settingsButton.alpha = self.isPresentation ? 1 : 0
+                controller.contentView.frame = finalContentViewFrame
+                controller.upperButtonStack.frame = finalUpperButtonStackFrame
+            }, completion: { _ in
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            })
+        }
     }
 }
