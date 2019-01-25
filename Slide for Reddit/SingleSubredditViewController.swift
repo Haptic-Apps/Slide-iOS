@@ -784,59 +784,61 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             toolbarItems = [infoB, flexButton, moreB]
             title = sub
 
-            do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
-                    switch result {
-                    case .failure:
-                        print(result.error!.description)
-                        DispatchQueue.main.async {
-                            if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
-                                self.load(reset: true)
-                            } else {
-                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                    let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
-                                    alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
-                                        self.navigationController?.popViewController(animated: true)
-                                        self.dismiss(animated: true, completion: nil)
-
-                                    }))
-                                    self.present(alert, animated: true, completion: nil)
+            if !loaded {
+                do {
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
+                        switch result {
+                        case .failure:
+                            print(result.error!.description)
+                            DispatchQueue.main.async {
+                                if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
+                                    self.load(reset: true)
+                                } else {
+                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                        let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
+                                        alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                            self.navigationController?.popViewController(animated: true)
+                                            self.dismiss(animated: true, completion: nil)
+                                            
+                                        }))
+                                        self.present(alert, animated: true, completion: nil)
+                                    }
+                                    
                                 }
-
                             }
-                        }
-                    case .success(let r):
-                        self.subInfo = r
-                        DispatchQueue.main.async {
-                            if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
-                                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                    let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
-                                    alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
-                                        self.navigationController?.popViewController(animated: true)
-                                        self.dismiss(animated: true, completion: nil)
-                                    }))
-                                    self.present(alert, animated: true, completion: nil)
-                                }
-                            } else {
-                                if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
-                                    if SettingValues.saveHistory {
-                                        if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
-                                            Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
-                                        } else if !self.subInfo!.over18 {
-                                            Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                        case .success(let r):
+                            self.subInfo = r
+                            DispatchQueue.main.async {
+                                if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
+                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                        let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
+                                        alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                            self.navigationController?.popViewController(animated: true)
+                                            self.dismiss(animated: true, completion: nil)
+                                        }))
+                                        self.present(alert, animated: true, completion: nil)
+                                    }
+                                } else {
+                                    if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
+                                        if SettingValues.saveHistory {
+                                            if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
+                                                Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                            } else if !self.subInfo!.over18 {
+                                                Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                            }
                                         }
                                     }
+                                    print("Loading")
+                                    self.load(reset: true)
                                 }
-                                print("Loading")
-                                self.load(reset: true)
+                                
                             }
-
                         }
-                    }
-                })
-            } catch {
+                    })
+                } catch {
+                }
             }
-        } else if offline && single {
+        } else if offline && single && !loaded {
             title = sub
             self.navigationController?.setToolbarHidden(true, animated: false)
             self.load(reset: true)

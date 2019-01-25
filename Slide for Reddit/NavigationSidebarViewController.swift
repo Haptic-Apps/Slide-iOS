@@ -1030,10 +1030,10 @@ class SubscribedSubredditsSectionProvider {
 
         // All the subs that aren't in a special category
         let otherSubs = Set(Subscriptions.subreddits)
-            .subtracting(pinnedSubs.union(numericSubs).union(multiSubs))
+            .subtracting(numericSubs.union(multiSubs))
 
         // Make sections for a-z
-        for sub in otherSubs.sorted() {
+        for sub in otherSubs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }) {
             let firstChar = String(sub[0]).uppercased()
             if sections[firstChar] == nil {
                 sections[firstChar] = []

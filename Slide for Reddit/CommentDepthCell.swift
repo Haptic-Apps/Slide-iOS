@@ -638,9 +638,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                             if let comment = listing.children[0] as? Comment {
                                 DispatchQueue.main.async {
                                     self.alertController?.dismiss(animated: false, completion: {
-                                        self.parent!.dismiss(animated: true, completion: nil)
+                                        self.replyDelegate!.editSent(cr: comment, cell: self)
                                     })
-                                    self.replyDelegate!.editSent(cr: comment, cell: self)
                                 }
                             }
                         }
