@@ -618,13 +618,12 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                         self.tableView.insertSections([newSubIndex.section], with: .automatic)
                     }
 
-                    self.tableView.moveRow(at: editActionsForRowAt, to: newSubIndex)
-
+                    self.tableView.deleteRows(at: [editActionsForRowAt], with: .automatic)
+                    
                     // Remove old section if it's gone
                     if self.subsSource.sections[oldSubSectionName] == nil {
                         self.tableView.deleteSections([oldSubIndex.section], with: .automatic)
                     }
-
                     self.tableView.endUpdates()
                 }
             }
@@ -636,7 +635,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                 newPinned.append(sub)
                 Subscriptions.setPinned(name: AccountController.currentName, subs: newPinned) {
                     self.tableView.beginUpdates()
-
+                    
                     let oldSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
                     let oldSubSectionName = self.subsSource.sortedSectionTitles[oldSubIndex.section]
                     self.subsSource.reload()
@@ -650,7 +649,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                         self.tableView.insertSections([newSubIndex.section], with: .automatic)
                     }
 
-                    self.tableView.moveRow(at: editActionsForRowAt, to: newSubIndex)
+                    self.tableView.insertRows(at: [editActionsForRowAt], with: .automatic)
 
                     // Remove old section if it's gone
                     if self.subsSource.sections[oldSubSectionName] == nil {
