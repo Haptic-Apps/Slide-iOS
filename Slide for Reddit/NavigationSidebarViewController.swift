@@ -618,7 +618,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                         self.tableView.insertSections([newSubIndex.section], with: .automatic)
                     }
 
-                    self.tableView.deleteRows(at: [editActionsForRowAt], with: .automatic)
+                    self.tableView.deleteRows(at: [oldSubIndex], with: .automatic)
                     
                     // Remove old section if it's gone
                     if self.subsSource.sections[oldSubSectionName] == nil {
@@ -649,7 +649,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                         self.tableView.insertSections([newSubIndex.section], with: .automatic)
                     }
 
-                    self.tableView.insertRows(at: [editActionsForRowAt], with: .automatic)
+                    self.tableView.insertRows(at: [newSubIndex], with: .automatic)
 
                     // Remove old section if it's gone
                     if self.subsSource.sections[oldSubSectionName] == nil {
@@ -1062,10 +1062,8 @@ class SubscribedSubredditsSectionProvider {
         pinnedSubs = Set(Subscriptions.pinned)
         numericSubs = Set(Subscriptions.subreddits
             .filter { return String($0[0]).isNumeric() })
-            .subtracting(pinnedSubs)
         multiSubs = Set(Subscriptions.subreddits
             .filter { return $0[0] == "/" })
-            .subtracting(pinnedSubs)
 
         // Insert pinned section if any pinned subs exist
         if !pinnedSubs.isEmpty {
@@ -1105,6 +1103,12 @@ class SubscribedSubredditsSectionProvider {
     }
 
     func getIndexPath(forSubreddit sub: String) -> IndexPath? {
+        
+        if let index = Array(pinnedSubs).firstIndex(of: sub),
+            let sectionIndex = sortedSectionTitles.firstIndex(of: Keys.pinned.rawValue) {
+            return IndexPath(row: index, section: sectionIndex)
+        }
+
         if let index = Array(multiSubs).firstIndex(of: sub),
             let sectionIndex = sortedSectionTitles.firstIndex(of: Keys.multi.rawValue) {
             return IndexPath(row: index, section: sectionIndex)
@@ -1112,11 +1116,6 @@ class SubscribedSubredditsSectionProvider {
 
         if let index = Array(numericSubs).firstIndex(of: sub),
             let sectionIndex = sortedSectionTitles.firstIndex(of: Keys.numeric.rawValue) {
-            return IndexPath(row: index, section: sectionIndex)
-        }
-
-        if let index = Array(pinnedSubs).firstIndex(of: sub),
-            let sectionIndex = sortedSectionTitles.firstIndex(of: Keys.pinned.rawValue) {
             return IndexPath(row: index, section: sectionIndex)
         }
 
