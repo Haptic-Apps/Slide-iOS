@@ -13,6 +13,7 @@ import UIKit
 class CurrentAccountPresentationController: UIPresentationController {
 
     fileprivate var dimmingView: UIVisualEffectView!
+    fileprivate var backgroundView: UIView!
 
     // Mirror Manager params here
 
@@ -28,6 +29,7 @@ class CurrentAccountPresentationController: UIPresentationController {
     override func containerViewWillLayoutSubviews() {
         presentedView?.frame = frameOfPresentedViewInContainerView
         dimmingView.frame = frameOfPresentedViewInContainerView
+        backgroundView.frame = frameOfPresentedViewInContainerView
     }
 
     override func size(forChildContentContainer container: UIContentContainer,
@@ -40,12 +42,13 @@ class CurrentAccountPresentationController: UIPresentationController {
 
         if let containerView = containerView {
             containerView.insertSubview(dimmingView, at: 0)
+            containerView.insertSubview(backgroundView, at: 0)
 //            accountView.view.removeFromSuperview() // TODO: Risky?
             containerView.addSubview(accountView.view)
         }
 
         if let coordinator = presentedViewController.transitionCoordinator {
-            UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
                 self.dimmingView.effect = self.blurEffect
             })
         } else {
@@ -57,16 +60,20 @@ class CurrentAccountPresentationController: UIPresentationController {
         if let coordinator = presentedViewController.transitionCoordinator {
             coordinator.animate(alongsideTransition: { _ in
                 self.dimmingView.alpha = 0
-            }) { context in
+                self.backgroundView.alpha = 0
+            }, completion: { context in
                 self.dimmingView.alpha = 1
-            }
+                self.backgroundView.alpha = 0.7
+            })
         } else {
             dimmingView.effect = nil
         }
     }
 
     lazy var blurEffect: UIBlurEffect = {
-        return UIBlurEffect(style: .dark)
+        return (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init().then {
+            $0.setValue(5, forKeyPath: "blurRadius")
+        }
     }()
 
 }
@@ -74,6 +81,10 @@ class CurrentAccountPresentationController: UIPresentationController {
 // MARK: - Private
 private extension CurrentAccountPresentationController {
     func setupDimmingView() {
+        backgroundView = UIView(frame: UIScreen.main.bounds).then {
+            $0.backgroundColor = .black
+            $0.alpha = 0.7
+        }
         dimmingView = UIVisualEffectView(frame: UIScreen.main.bounds).then {
             $0.effect = nil
         }
