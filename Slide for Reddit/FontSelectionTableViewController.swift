@@ -59,6 +59,23 @@ protocol FontSelectionTableViewControllerDelegate: AnyObject {
 
 class FontSelectionTableViewController: UITableViewController {
 
+    enum Item {
+        case system
+        case boldSystem
+        case named(string: String)
+
+        func font(forSize size: CGFloat) -> UIFont? {
+            switch self {
+            case .system:
+                return UIFont.systemFont(ofSize: size)
+            case .boldSystem:
+                return UIFont.boldSystemFont(ofSize: size)
+            case .named(let name):
+                return UIFont(name: name, size: size)
+            }
+        }
+    }
+
     weak var delegate: FontSelectionTableViewControllerDelegate?
     var key: String = ""
 
@@ -66,9 +83,11 @@ class FontSelectionTableViewController: UITableViewController {
         return UserDefaults.standard.string(forKey: key)
     }
 
-    private lazy var allFontNames: [String] = {
-       return UIFont.familyNames.flatMap { UIFont.fontNames(forFamilyName: $0) }.sorted()
-    }()
+    private lazy var allFonts: [Item] = [.system, .boldSystem] +
+        UIFont.familyNames
+            .flatMap(UIFont.fontNames(forFamilyName:))
+            .sorted()
+            .map(Item.named(string:))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -96,24 +115,26 @@ extension FontSelectionTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return allFontNames.count
+        return allFonts.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "fontCell", for: indexPath)
-        let fontName = allFontNames[indexPath.row]
+        let fontName = allFonts[indexPath.row].font(forSize: 16)?.fontName ?? "system"
         cell.textLabel?.font = UIFont(name: fontName, size: 16)
         cell.textLabel?.text = fontName
         cell.backgroundColor = ColorUtil.foregroundColor
         cell.textLabel?.textColor = ColorUtil.fontColor
         if fontName == currentFont {
             cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
         }
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedFontName = allFontNames[indexPath.row]
+        let selectedFontName = allFonts[indexPath.row].font(forSize: 16)?.fontName ?? "system"
 
         // Store the font to the given key
         UserDefaults.standard.set(selectedFontName, forKey: key)
