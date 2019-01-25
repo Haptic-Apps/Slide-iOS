@@ -1197,7 +1197,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var menuHeight: [NSLayoutConstraint] = []
     var topMargin: [NSLayoutConstraint] = []
     var isMore = false
-    
+    let force = ForceTouchGestureRecognizer()
+
     func connectGestures() {
         if !gesturesAdded {
             gesturesAdded = true
@@ -1221,12 +1222,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             title.parentLongPress = long
             self.addGestureRecognizer(long)
             
-            let force = ForceTouchGestureRecognizer()
-            force.addTarget(self, action: #selector(self.do3dTouch(_:)))
-            force.cancelsTouchesInView = false
-            self.contentView.addGestureRecognizer(force)
+            if SettingValues.commentActionForceTouch != .NONE {
+                force.addTarget(self, action: #selector(self.do3dTouch(_:)))
+                force.cancelsTouchesInView = false
+                self.contentView.addGestureRecognizer(force)
+            }
         }
-
     }
 
     func setMore(more: RMore, depth: Int, depthColors: [UIColor], parent: CommentViewController) {
@@ -1264,6 +1265,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         if depth == 1 {
             marginTop = 8
+        }
+        
+        if !title.ignoreHeight {
+            marginTop = 0
         }
         
         var attr = NSAttributedString()
@@ -1307,6 +1312,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath) {
 
+        if SettingValues.commentActionForceTouch == .NONE { //todo change this
+        }
         self.accessibilityValue = """
         "\(text.string)"
         Written by user \(comment.author).
@@ -1364,6 +1371,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         if depth == 1 {
             marginTop = 8
+        }
+        
+        if !title.ignoreHeight {
+            marginTop = 0
         }
 
         refresh(comment: comment, submissionAuthor: author, text: text, date)
@@ -1683,6 +1694,61 @@ class UIShortTapGestureRecognizer: UITapGestureRecognizer {
                 self?.state = UIGestureRecognizer.State.failed
             }
         }
+    }
+}
+
+/*class ForceNavView: TapBehindModalViewController, ForceTouchGestureDelegate {
+    func touchStarted() {
+        
+    }
+    
+    func touchCancelled() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func pop() {
+        
+    }
+}
+
+extension CommentDepthCell: ForceTouchGestureDelegate {
+    func touchStarted() {
+        parentPresentedTextView = TextDisplayStackView(fontSize: 12, submission: false, color: ColorUtil.fontColor, delegate: self, width: UIScreen.main.bounds.size.width * 0.8)
+        parentPresentedTextView?.setTextWithTitleHTML(NSAttributedString(string: "asdfasdf"), htmlString: "<b>ASDFSDF</b> not bold")
+        let alert = UIViewController()
+        alert.view.addSubview(parentPresentedTextView!)
+        alert.view.backgroundColor = ColorUtil.foregroundColor
+        alert.view.roundCorners(UIRectCorner.allCorners, radius: 20)
+        alert.view.addGestureRecognizer(force)
+        alert.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.8, height: UIScreen.main.bounds.size.height * 0.8)
+        let nav = ForceNavView.init(rootViewController: alert)
+        nav.setNavigationBarHidden(true, animated: false)
+        nav.modalPresentationStyle = UIModalPresentationStyle.popover
+        force.forceDelegate = nav
+        let popover = nav.popoverPresentationController
+        popover?.delegate = self
+        popover?.sourceView = parent!.view
+        popover?.sourceRect = CGRect(x: parent!.view.center.x, y: parent!.view.center.y, width: 0, height: 0)
+        popover?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+        presentedVC = nav
+        parent?.present(nav, animated: true, completion: nil)
+    }
+    
+    func touchCancelled() {
+        presentedVC?.dismiss(animated: true, completion: nil)
+    }
+    
+    func pop() {
+        print("Popped")
+    }
+}
+*/
+extension CommentDepthCell: UIPopoverPresentationControllerDelegate {
+    func adaptivePresentationStyle(
+        for controller: UIPresentationController,
+        traitCollection: UITraitCollection)
+        -> UIModalPresentationStyle {
+            return .none
     }
 }
 

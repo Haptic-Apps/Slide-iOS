@@ -8,14 +8,16 @@
 
 //Code from https://stackoverflow.com/a/44171475/3697225
 
+import Anchorage
 import Foundation
+
 class TapBehindModalViewController: UINavigationController, UIGestureRecognizerDelegate {
     private var tapOutsideRecognizer: UITapGestureRecognizer!
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if self.tapOutsideRecognizer == nil && (modalPresentationStyle == .pageSheet || modalPresentationStyle == .formSheet) {
+        if self.tapOutsideRecognizer == nil && (modalPresentationStyle == .pageSheet || modalPresentationStyle == .formSheet || modalPresentationStyle == .popover) {
             self.tapOutsideRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapBehind))
             self.tapOutsideRecognizer.numberOfTapsRequired = 1
             self.tapOutsideRecognizer.cancelsTouchesInView = false
@@ -23,6 +25,7 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
             self.view.window?.addGestureRecognizer(self.tapOutsideRecognizer)
         }
     }
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)

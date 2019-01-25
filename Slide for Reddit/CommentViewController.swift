@@ -17,7 +17,7 @@ import TTTAttributedLabel
 import UIKit
 import XLActionController
 
-class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate {
+class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate, UIPopoverPresentationControllerDelegate {
     
     func hide(index: Int) {
         if index >= 0 {
@@ -107,7 +107,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
     }
-
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+        // Return no adaptive presentation style, use default presentation behavior
+        return .none
+    }
+    
     var parents: [String: String] = [:]
     var approved: [String] = []
     var removed: [String] = []
@@ -922,7 +927,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false
-        
+        self.registerForPreviewing(with: self, sourceView: self.tableView)
+
         self.tableView.allowsSelection = false
         self.tableView.layer.speed = 1.5
         
@@ -1206,6 +1212,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
             self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
         }
+
     }
 
     var duringAnimation = false
@@ -1312,7 +1319,23 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         return buf
     }
-
+    
+    private var blurView: UIVisualEffectView?
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+    private var blackView = UIView()
+    
+    func setBackgroundView() {
+        blackView.backgroundColor = .black
+        blackView.alpha = 0.7
+        blurView = UIVisualEffectView(frame: self.view.bounds)
+        blurEffect.setValue(5, forKeyPath: "blurRadius")
+        blurView!.effect = blurEffect
+        self.view.insertSubview(blackView, at: 0)
+        self.view.insertSubview(blurView!, at: 0)
+        blurView!.edgeAnchors == self.view.edgeAnchors
+        blackView.edgeAnchors == self.view.edgeAnchors
+    }
+    
     func updateStrings(_ newComments: [(Thing, Int)]) {
         var color = UIColor.black
         var first = true
@@ -2062,20 +2085,21 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
     let parentOP = parents[thing]
         if let cell = cell as? CommentDepthCell {
-            if content[thing] is RComment {
+            var innerContent = content[thing]
+            if innerContent is RComment {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(thing)
                 if hiddenP {
-                    count = getChildNumber(n: content[thing]!.getIdentifier())
+                    count = getChildNumber(n: innerContent!.getIdentifier())
                 }
                 var t = text[thing]!
                 if isSearching {
                     t = highlight(t)
                 }
 
-                cell.setComment(comment: content[thing] as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath)
+                cell.setComment(comment: innerContent as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath)
             } else {
-                cell.setMore(more: (content[thing] as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
+                cell.setMore(more: (innerContent as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
             }
             cell.content = content[thing]
         }
@@ -2528,3 +2552,101 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
 	return input.rawValue
 }
+
+class ParentCommentViewController: UIViewController {
+    var childView = UIView()
+    init(view: UIView) {
+        super.init(nibName: nil, bundle: nil)
+        self.childView = view
+    }
+    
+    override func viewDidLoad() {
+        self.view.addSubview(childView)
+        childView.horizontalAnchors == self.view.horizontalAnchors
+        childView.topAnchor == self.view.topAnchor
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension CommentViewController: UIViewControllerPreviewingDelegate {
+    
+    func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
+        self.setBackgroundView()
+    }
+    func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
+        self.blackView.removeFromSuperview()
+        self.blurView?.removeFromSuperview()
+    }
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        
+        guard let indexPath = self.tableView.indexPathForRow(at: location) else {
+            return nil
+        }
+        
+        guard let cell = self.tableView.cellForRow(at: indexPath) as? CommentDepthCell else {
+            return nil
+        }
+        
+        if cell.depth == 1 {
+            return nil
+        }
+        
+        var topCell = (indexPath as NSIndexPath).row
+        var contents = content[dataArray[topCell]]
+        
+        while (contents is RComment ? (contents as! RComment).depth >= cell.depth : true) && dataArray.count > topCell && topCell - 1 >= 0 {
+            topCell -= 1
+            contents = content[dataArray[topCell]]
+        }
+
+        let parentCell = CommentDepthCell(style: .default, reuseIdentifier: "test")
+        if let cell2 = parentCell as? CommentDepthCell, let comment = contents as? RComment {
+            cell2.title.ignoreHeight = false
+            cell2.contentView.layer.cornerRadius = 10
+            cell2.contentView.clipsToBounds = true
+            cell2.title.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 16
+            if contents is RComment {
+                var count = 0
+                let hiddenP = hiddenPersons.contains(comment.getIdentifier())
+                if hiddenP {
+                    count = getChildNumber(n: comment.getIdentifier())
+                }
+                var t = text[comment.getIdentifier()]!
+                if isSearching {
+                    t = highlight(t)
+                }
+                
+                cell2.setComment(comment: contents as! RComment, depth: 0, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentDepthColors, indexPath: indexPath)
+            } else {
+                cell2.setMore(more: (contents as! RMore), depth: cDepth[comment.getIdentifier()]!, depthColors: commentDepthColors, parent: self)
+            }
+            cell2.content = comment
+            let detailViewController = ParentCommentViewController(view: cell2.contentView)
+            detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 16)
+
+            previewingContext.sourceRect = cell.frame
+            return detailViewController
+        }
+        return nil
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        viewControllerToCommit.modalPresentationStyle = .popover
+        if let popover = viewControllerToCommit.popoverPresentationController {
+            popover.sourceView = self.tableView
+            popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+            
+            popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            //detailViewController.frame = CGRect(x: (self.view.frame.bounds.width / 2 - (UIScreen.main.bounds.size.width * 0.85)), y: (self.view.frame.bounds.height / 2 - (cell2.title.estimatedHeight + 12)), width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 12)
+            popover.delegate = self
+        }
+
+        self.present(viewControllerToCommit, animated: true, completion: {
+        })
+    }
+}
+
+
