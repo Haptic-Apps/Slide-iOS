@@ -10,23 +10,19 @@ import DTCoreText
 import UIKit
 
 class FontGenerator {
-    //Fonts are: HelveticaNeue, RobotoCondensed-Regular, RobotoCondensed-Bold, Roboto-Light, Roboto-Bold, Roboto-Medium, or System Font (San Fransisco)
     public static func fontOfSize(size: CGFloat, submission: Bool) -> UIFont {
-        if let font = fontDict["\(size)\(submission)"] {
-            return font
-        }
-        let newFont = (submission ? postFont.font : commentFont.font).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
-        fontDict["\(size)\(submission)"] = newFont
-        return newFont
+        let fontName = UserDefaults.standard.string(forKey: submission ? "postfont" : "commentfont") ?? "system"
+        let adjustedSize = size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset)
+        return UIFont(name: fontName, size: adjustedSize) ?? UIFont.systemFont(ofSize: adjustedSize)
     }
     
     public static func boldFontOfSize(size: CGFloat, submission: Bool) -> UIFont {
-        if let font = fontDict["\(size)\(submission)B"] {
-            return font
+        let normalFont = fontOfSize(size: size, submission: submission)
+        guard let descriptor = normalFont.fontDescriptor.withSymbolicTraits(.traitBold) else {
+            return UIFont.boldSystemFont(ofSize: size)
         }
-        let newFont = (submission ? postFont.bold() : commentFont.bold()).withSize( size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset))
-        fontDict["\(size)\(submission)B"] = newFont
-        return newFont
+        let adjustedSize = size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset)
+        return UIFont(descriptor: descriptor, size: adjustedSize)
     }
     
     public static var postFont = Font.SYSTEM
