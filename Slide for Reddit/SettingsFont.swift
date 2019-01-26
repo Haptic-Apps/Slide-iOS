@@ -359,6 +359,10 @@ extension SettingsFont {
                 CachedTitle.titles.removeAll()
                 self.refresh()
             }
+            if weight.rawValue == (submission ? SettingValues.submissionFontWeight : SettingValues.commentFontWeight) {
+                let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+                action.setValue(selected, forKey: "image")
+            }
             actionSheetController.addAction(action)
         }
 
