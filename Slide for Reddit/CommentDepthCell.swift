@@ -1367,7 +1367,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = 0
         }
         
-        title.estimatedWidth = (parent.view.frame.size.width ) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) - CGFloat(16)
+        if !title.ignoreHeight {
+            title.estimatedWidth = (parent.view.frame.size.width ) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) - CGFloat(16)
+        }
 
         if depth == 1 {
             marginTop = 8
@@ -1375,6 +1377,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         if !title.ignoreHeight {
             marginTop = 0
+            self.depth = 0
+            sideWidth = 8
+            sideView.backgroundColor = ColorUtil.foregroundColor
         }
 
         refresh(comment: comment, submissionAuthor: author, text: text, date)

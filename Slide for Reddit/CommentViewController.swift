@@ -1326,14 +1326,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     
     func setBackgroundView() {
         blackView.backgroundColor = .black
-        blackView.alpha = 0.7
-        blurView = UIVisualEffectView(frame: self.view.bounds)
+        blackView.alpha = 0.2
+        blurView = UIVisualEffectView(frame: self.navigationController!.view!.bounds)
         blurEffect.setValue(5, forKeyPath: "blurRadius")
         blurView!.effect = blurEffect
-        self.view.insertSubview(blackView, at: 0)
-        self.view.insertSubview(blurView!, at: 0)
-        blurView!.edgeAnchors == self.view.edgeAnchors
-        blackView.edgeAnchors == self.view.edgeAnchors
+        self.navigationController!.view!.insertSubview(blackView, at: self.navigationController!.view!.subviews.count)
+        self.navigationController!.view!.insertSubview(blurView!, at: self.navigationController!.view!.subviews.count)
+        blurView!.edgeAnchors == self.navigationController!.view!.edgeAnchors
+        blackView.edgeAnchors == self.navigationController!.view!.edgeAnchors
     }
     
     func updateStrings(_ newComments: [(Thing, Int)]) {
@@ -2564,6 +2564,7 @@ class ParentCommentViewController: UIViewController {
         self.view.addSubview(childView)
         childView.horizontalAnchors == self.view.horizontalAnchors
         childView.topAnchor == self.view.topAnchor
+        childView.bottomAnchor == self.view.bottomAnchor
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -2576,9 +2577,15 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
     func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
         self.setBackgroundView()
     }
-    func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
-        self.blackView.removeFromSuperview()
-        self.blurView?.removeFromSuperview()
+    func popoverPresentationControllerShouldDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) -> Bool {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.blackView.alpha = 0
+            self.blurView?.alpha = 0
+        }) { (_) in
+            self.blackView.removeFromSuperview()
+            self.blurView?.removeFromSuperview()
+        }
+        return true
     }
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         
@@ -2607,7 +2614,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             cell2.title.ignoreHeight = false
             cell2.contentView.layer.cornerRadius = 10
             cell2.contentView.clipsToBounds = true
-            cell2.title.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 16
+            cell2.title.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
             if contents is RComment {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(comment.getIdentifier())
@@ -2624,8 +2631,9 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
                 cell2.setMore(more: (contents as! RMore), depth: cDepth[comment.getIdentifier()]!, depthColors: commentDepthColors, parent: self)
             }
             cell2.content = comment
+            cell2.contentView.isUserInteractionEnabled = false
             let detailViewController = ParentCommentViewController(view: cell2.contentView)
-            detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 16)
+            detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 42)
 
             previewingContext.sourceRect = cell.frame
             return detailViewController
