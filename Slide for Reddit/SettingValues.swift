@@ -801,3 +801,23 @@ class SettingValues {
     }
 
 }
+
+extension SettingValues {
+    static var commentFontWeight: String? {
+        get {
+            return UserDefaults.standard.string(forKey: "COMMENT_FONT_WEIGHT") ?? "Regular"
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "COMMENT_FONT_WEIGHT")
+        }
+    }
+
+    static var submissionFontWeight: String? {
+        get {
+            return UserDefaults.standard.string(forKey: "SUBMISSION_FONT_WEIGHT") ?? "Regular"
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "SUBMISSION_FONT_WEIGHT")
+        }
+    }
+}
