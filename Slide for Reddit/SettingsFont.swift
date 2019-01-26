@@ -160,10 +160,15 @@ class SettingsFont: UITableViewController {
         self.submissionPreview.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
         self.commentPreview.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
 
-//        self.submissionFont.detailTextLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
         self.submissionFont.detailTextLabel?.text = FontGenerator.fontOfSize(size: 16, submission: true).familyName
-//        self.commentFont.detailTextLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
+        if self.submissionFont.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).familyName {
+            self.submissionFont.detailTextLabel?.text = "System Default"
+        }
+
         self.commentFont.detailTextLabel?.text = FontGenerator.fontOfSize(size: 16, submission: false).familyName
+        if self.commentFont.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).familyName {
+            self.commentFont.detailTextLabel?.text = "System Default"
+        }
 
         self.submissionSize.detailTextLabel?.text = fontSizes[SettingValues.postFontOffset] ?? "Default"
         self.commentSize.detailTextLabel?.text = fontSizes[SettingValues.commentFontOffset] ?? "Default"
@@ -260,6 +265,7 @@ class SettingsFont: UITableViewController {
 extension SettingsFont {
     func submissionFontCellWasTapped() {
         let vc = FontSelectionTableViewController()
+        vc.title = "Submission Font"
         vc.key = FontSelectionTableViewController.Key.postFont
         vc.delegate = self
         navigationController?.pushViewController(vc, animated: true)
@@ -267,7 +273,8 @@ extension SettingsFont {
 
     func commentFontCellWasTapped() {
         let vc = FontSelectionTableViewController()
-        vc.key = FontSelectionTableViewController.Key.postFont
+        vc.title = "Comment Font"
+        vc.key = FontSelectionTableViewController.Key.commentFont
         vc.delegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
