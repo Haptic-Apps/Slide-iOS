@@ -10,6 +10,14 @@ import reddift
 import UIKit
 
 class SettingsFont: UITableViewController {
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
     
     var enlargeCell: UITableViewCell = UITableViewCell()
     var typeCell: UITableViewCell = UITableViewCell()
