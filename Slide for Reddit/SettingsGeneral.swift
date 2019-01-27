@@ -20,6 +20,7 @@ class SettingsGeneral: UITableViewController {
     var matchSilence: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mute")
     var showPages: UITableViewCell = UITableViewCell()
     var totallyCollapse: UITableViewCell = UITableViewCell()
+    var fullyHideNavbar: UITableViewCell = UITableViewCell()
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -28,6 +29,9 @@ class SettingsGeneral: UITableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
     var totallyCollapseSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var fullyHideNavbarSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     var scrubUsernameSwitch = UISwitch().then {
@@ -80,6 +84,9 @@ class SettingsGeneral: UITableViewController {
         } else if changed == totallyCollapseSwitch {
             SettingValues.totallyCollapse = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_totallyCollapse)
+        } else if changed == fullyHideNavbarSwitch {
+            SettingValues.fullyHideNavbar = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_fullyHideNavbar)
         } else if changed == hapticFeedbackSwitch {
             SettingValues.hapticFeedback = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hapticFeedback)
@@ -187,6 +194,7 @@ class SettingsGeneral: UITableViewController {
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard automatically in bottom drawer")
         createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators between loads of new submissions")
         createCell(totallyCollapse, totallyCollapseSwitch, isOn: SettingValues.totallyCollapse, text: "Hide bottom navigation bar on scroll")
+        createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.fullyHideNavbar, text: "Hide status bar on scroll")
 
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
@@ -259,7 +267,8 @@ class SettingsGeneral: UITableViewController {
             case 2: return self.autoKeyboard
             case 3: return self.pinToolbar
             case 4: return self.totallyCollapse
-            case 5: return self.scrubUsername
+            case 5: return self.fullyHideNavbar
+            case 6: return self.scrubUsername
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -403,7 +412,7 @@ class SettingsGeneral: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 6
+        case 0: return 7
         case 1: return 1
         case 2: return 1
         case 3: return 2
