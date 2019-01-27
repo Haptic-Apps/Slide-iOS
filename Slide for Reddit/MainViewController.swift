@@ -16,6 +16,10 @@ import UIKit
 import WatchConnectivity
 
 class MainViewController: ColorMuxPagingViewController, UINavigationControllerDelegate, ReadLaterDelegate {
+
+    override var prefersStatusBarHidden: Bool {
+        return SettingValues.fullyHideNavbar
+    }
     
     func didUpdate() {
         let count = ReadLater.readLaterIDs.count
@@ -105,6 +109,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
+        self.setNeedsStatusBarAppearanceUpdate()
+        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         let shouldBeNight = ColorUtil.shouldBeNight()
         if SubredditReorderViewController.changed || (shouldBeNight && ColorUtil.theme != SettingValues.nightTheme) || (!shouldBeNight && ColorUtil.theme != ColorUtil.defaultTheme) {
@@ -699,7 +705,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.currentTitle = MainViewController.current
         menuNav!.setColors(MainViewController.current)
         navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: vc.sub, true)
+        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: vc.sub, true)
         
         if !(vc).loaded || !SettingValues.subredditBar {
             if vc.loaded {
@@ -789,7 +795,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
-        self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle, true)
+        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         if SettingValues.subredditBar {
             self.view.addSubview(inHeadView)
@@ -965,6 +971,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func colorChanged(_ color: UIColor) {
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
+        if SettingValues.fullyHideNavbar {
+            inHeadView.backgroundColor = .clear
+        }
         menuNav?.setColors(finalSubs[currentPage])
     }
     

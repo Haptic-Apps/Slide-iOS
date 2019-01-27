@@ -10,6 +10,14 @@ import reddift
 import UIKit
 
 class SettingsFont: UITableViewController {
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
     
     var enlargeCell: UITableViewCell = UITableViewCell()
     var typeCell: UITableViewCell = UITableViewCell()
@@ -21,6 +29,9 @@ class SettingsFont: UITableViewController {
 
     var submissionFont = UITableViewCell(style: .value1, reuseIdentifier: "submissionFont")
     var commentFont = UITableViewCell(style: .value1, reuseIdentifier: "commentFont")
+
+    var submissionWeight = UITableViewCell(style: .value1, reuseIdentifier: "submissionWeight")
+    var commentWeight = UITableViewCell(style: .value1, reuseIdentifier: "commentWeight")
 
     var submissionPreview = UITableViewCell(style: .default, reuseIdentifier: "submissionPreview").then {
         $0.selectionStyle = .none
@@ -121,6 +132,11 @@ class SettingsFont: UITableViewController {
             self?.submissionSizeCellWasTapped()
         }
 
+        submissionWeight.textLabel?.text = "Font weight"
+        submissionWeight.addTapGestureRecognizer { [weak self] in
+            self?.weightCellWasTapped(submission: true)
+        }
+
         submissionFont.textLabel?.text = "Font"
         submissionFont.addTapGestureRecognizer { [weak self] in
             self?.submissionFontCellWasTapped()
@@ -138,6 +154,11 @@ class SettingsFont: UITableViewController {
             self?.commentFontCellWasTapped()
         }
 
+        commentWeight.textLabel?.text = "Font weight"
+        commentWeight.addTapGestureRecognizer { [weak self] in
+            self?.weightCellWasTapped(submission: false)
+        }
+
         refresh()
         self.tableView.tableFooterView = UIView()
 
@@ -147,13 +168,21 @@ class SettingsFont: UITableViewController {
         self.submissionPreview.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
         self.commentPreview.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
 
-//        self.submissionFont.detailTextLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
-        self.submissionFont.detailTextLabel?.text = UserDefaults.standard.string(forKey: "postfont") ?? "Unknown"
-//        self.commentFont.detailTextLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
-        self.commentFont.detailTextLabel?.text = UserDefaults.standard.string(forKey: "commentfont") ?? "Unknown"
+        self.submissionFont.detailTextLabel?.text = FontGenerator.fontOfSize(size: 16, submission: true).familyName
+        if self.submissionFont.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).familyName {
+            self.submissionFont.detailTextLabel?.text = "System Default"
+        }
+
+        self.commentFont.detailTextLabel?.text = FontGenerator.fontOfSize(size: 16, submission: false).familyName
+        if self.commentFont.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).familyName {
+            self.commentFont.detailTextLabel?.text = "System Default"
+        }
 
         self.submissionSize.detailTextLabel?.text = fontSizes[SettingValues.postFontOffset] ?? "Default"
         self.commentSize.detailTextLabel?.text = fontSizes[SettingValues.commentFontOffset] ?? "Default"
+
+        self.submissionWeight.detailTextLabel?.text = SettingValues.submissionFontWeight ?? "Regular"
+        self.commentWeight.detailTextLabel?.text = SettingValues.commentFontWeight ?? "Regular"
 
         self.tableView.reloadData()
     }
@@ -179,14 +208,16 @@ class SettingsFont: UITableViewController {
             switch indexPath.row {
             case 0: cell = self.submissionFont
             case 1: cell = self.submissionSize
-            case 2: cell = self.submissionPreview
+            case 2: cell = self.submissionWeight
+            case 3: cell = self.submissionPreview
             default: fatalError("Unknown row in section \(indexPath.section)")
             }
         case 1:
             switch indexPath.row {
             case 0: cell = self.commentFont
             case 1: cell = self.commentSize
-            case 2: cell = self.commentPreview
+            case 2: cell = self.commentWeight
+            case 3: cell = self.commentPreview
             default: fatalError("Unknown row in section \(indexPath.section)")
             }
         case 2:
@@ -199,7 +230,7 @@ class SettingsFont: UITableViewController {
         }
 
         cell.style()
-        if indexPath == IndexPath(row: 2, section: 0) || indexPath == IndexPath(row: 2, section: 1) {
+        if indexPath == IndexPath(row: 3, section: 0) || indexPath == IndexPath(row: 3, section: 1) {
             cell.backgroundColor = ColorUtil.backgroundColor
         }
         return cell
@@ -212,8 +243,8 @@ class SettingsFont: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 3    // section 0 has 2 rows
-        case 1: return 3    // section 1 has 2 rows
+        case 0: return 4    // section 0 has 2 rows
+        case 1: return 4    // section 1 has 2 rows
         case 2: return 2
         default: fatalError("Unknown number of sections")
         }
@@ -242,14 +273,16 @@ class SettingsFont: UITableViewController {
 extension SettingsFont {
     func submissionFontCellWasTapped() {
         let vc = FontSelectionTableViewController()
-        vc.key = "postfont"
+        vc.title = "Submission Font"
+        vc.key = FontSelectionTableViewController.Key.postFont
         vc.delegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
 
     func commentFontCellWasTapped() {
         let vc = FontSelectionTableViewController()
-        vc.key = "commentfont"
+        vc.title = "Comment Font"
+        vc.key = FontSelectionTableViewController.Key.commentFont
         vc.delegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -304,11 +337,89 @@ extension SettingsFont {
         }
         self.present(actionSheetController, animated: true, completion: nil)
     }
+
+    func weightCellWasTapped(submission: Bool) {
+
+        let actionSheetController: UIAlertController = UIAlertController(title: submission ? "Submission font size" : "Comment font size", message: "", preferredStyle: .actionSheet)
+
+        actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        let currentFamily = FontGenerator.fontOfSize(size: 16, submission: submission).familyName
+        let fontsInFamily = UIFont.fontNames(forFamilyName: currentFamily)
+        // Prune out the weights that aren't available for the selected font
+        let availableWeights = FontGenerator.FontWeight.allCases.filter { weight in
+            if weight == .regular {
+                return true // Always display regular
+            }
+            for font in fontsInFamily {
+                if font.lowercased().contains(weight.rawValue.lowercased()) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        for weight in availableWeights {
+            let action = UIAlertAction(title: weight.rawValue, style: .default) { _ in
+                // Update the stored font weight
+                if submission {
+                    SettingValues.submissionFontWeight = weight.rawValue
+                } else {
+                    SettingValues.commentFontWeight = weight.rawValue
+                }
+
+                UserDefaults.standard.synchronize()
+                FontGenerator.initialize()
+                CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
+                CachedTitle.titles.removeAll()
+                self.refresh()
+            }
+            if weight.rawValue == (submission ? SettingValues.submissionFontWeight : SettingValues.commentFontWeight) {
+                let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+                action.setValue(selected, forKey: "image")
+            }
+            actionSheetController.addAction(action)
+        }
+
+        actionSheetController.modalPresentationStyle = .popover
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = submissionSize.contentView
+            presenter.sourceRect = submissionSize.contentView.bounds
+        }
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
+}
+
+extension UIFont {
+    func withWeight(_ weight: UIFont.Weight) -> UIFont {
+        var attributes = fontDescriptor.fontAttributes
+        var traits = (attributes[.traits] as? [UIFontDescriptor.TraitKey: Any]) ?? [:]
+
+        traits[.weight] = weight
+
+        attributes[.name] = nil
+        attributes[.traits] = traits
+        attributes[.family] = familyName
+
+        let descriptor = UIFontDescriptor(fontAttributes: attributes)
+
+        return UIFont(descriptor: descriptor, size: pointSize)
+    }
 }
 
 extension SettingsFont: FontSelectionTableViewControllerDelegate {
 
-    func fontSelectionTableViewController(_ controller: FontSelectionTableViewController, didChooseFontWithName fontName: String) {
+    func fontSelectionTableViewController(_ controller: FontSelectionTableViewController,
+                                          didChooseFontWithName fontName: String,
+                                          forKey key: FontSelectionTableViewController.Key) {
+
+        // Reset the font weight if the font was changed
+        switch key {
+        case .postFont:
+            SettingValues.submissionFontWeight = "Regular"
+        case .commentFont:
+            SettingValues.commentFontWeight = "Regular"
+        }
 
         // Update the VC
         UserDefaults.standard.synchronize()
