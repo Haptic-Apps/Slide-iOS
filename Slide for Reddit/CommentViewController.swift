@@ -501,6 +501,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     @objc func refresh(_ sender: AnyObject) {
+        print("Refreshing")
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
@@ -656,7 +657,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.doBanner(self.submission!)
                                 
                                 var index = 0
-                                var loaded = false
+                                var loaded = true
                                 
                                 if SettingValues.hideAutomod && self.context.isEmpty() && self.submission!.author != AccountController.currentName && !self.comments.isEmpty {
                                     if let comment = self.content[self.comments[0]] as? RComment {
@@ -1326,14 +1327,18 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     
     func setBackgroundView() {
         blackView.backgroundColor = .black
-        blackView.alpha = 0.2
+        blackView.alpha = 0
         blurView = UIVisualEffectView(frame: self.navigationController!.view!.bounds)
-        blurEffect.setValue(5, forKeyPath: "blurRadius")
-        blurView!.effect = blurEffect
+        self.blurView!.effect = self.blurEffect
+        self.blurEffect.setValue(10, forKeyPath: "blurRadius")
         self.navigationController!.view!.insertSubview(blackView, at: self.navigationController!.view!.subviews.count)
         self.navigationController!.view!.insertSubview(blurView!, at: self.navigationController!.view!.subviews.count)
         blurView!.edgeAnchors == self.navigationController!.view!.edgeAnchors
         blackView.edgeAnchors == self.navigationController!.view!.edgeAnchors
+        
+        UIView.animate(withDuration: 0.2, delay: 1, options: .curveEaseInOut, animations: {
+            self.blackView.alpha = 0.2
+        })
     }
     
     func updateStrings(_ newComments: [(Thing, Int)]) {
@@ -2577,6 +2582,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
     func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
         self.setBackgroundView()
     }
+    
     func popoverPresentationControllerShouldDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) -> Bool {
         UIView.animate(withDuration: 0.2, animations: {
             self.blackView.alpha = 0

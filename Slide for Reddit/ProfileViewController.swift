@@ -477,11 +477,14 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         currentVc = self.viewControllers!.first!
         currentIndex = page!
         
-        let current = content[page!]
-        if current == .comments || current == .overview || current == .submitted {
-            navigationItem.rightBarButtonItems = [ moreB!, sortB!]
-        } else {
-            navigationItem.rightBarButtonItems = [ moreB!]
+        let contentIndex = page! - (friends ? 1 : 0)
+        if contentIndex >= 0 {
+            let current = content[contentIndex]
+            if current == .comments || current == .overview || current == .submitted {
+                navigationItem.rightBarButtonItems = [ moreB!, sortB!]
+            } else {
+                navigationItem.rightBarButtonItems = [ moreB!]
+            }
         }
     }
 
@@ -516,6 +519,16 @@ extension ProfileViewController: MDCTabBarDelegate {
         let firstViewController = vCs[tabBar.items.index(of: item)!]
         currentIndex = tabBar.items.index(of: item)!
         currentVc = firstViewController
+        
+        let contentIndex = currentIndex - (friends ? 1 : 0)
+        if contentIndex >= 0 {
+            let current = content[contentIndex]
+            if current == .comments || current == .overview || current == .submitted {
+                navigationItem.rightBarButtonItems = [ moreB!, sortB!]
+            } else {
+                navigationItem.rightBarButtonItems = [ moreB!]
+            }
+        }
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,

@@ -13,7 +13,11 @@ import UIKit
 class RedditLink {
     
     public static func getViewControllerForURL(urlS: URL) -> UIViewController {
-        let oldUrl = urlS
+        var urlString = urlS.absoluteString.replacingOccurrences(of: "slide://", with: "https://")
+        if !urlString.startsWith("http") && !urlString.startsWith("https") {
+            urlString = "https://" + urlString
+        }
+        let oldUrl = URL(string: urlString)!
         var url = formatRedditUrl(urlS: urlS)
         var np = false
         if url.isEmpty() {
@@ -112,7 +116,6 @@ class RedditLink {
             return ProfileViewController.init(name: parts[2])
         case .OTHER:
             break
-            
         }
         if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
             let safariVC = SFHideSafariViewController(url: oldUrl, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
