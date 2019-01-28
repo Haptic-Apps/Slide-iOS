@@ -15,6 +15,10 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var vCs: [UIViewController] = []
     var swiper: SloppySwiper?
 
+    override var prefersStatusBarHidden: Bool {
+        return SettingValues.fullyHideNavbar
+    }
+
     public init(submissions: [RSubmission], offline: Bool) {
         self.submissions = submissions
         var first = true
