@@ -2309,6 +2309,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if videoView != nil {
                     videoView?.player?.pause()
                 }
+                History.addSeen(s: link!)
                 delegate.openComments(id: link!.getId(), subreddit: link!.subreddit)
                 if History.getSeen(s: link!) && !SettingValues.newIndicator {
                     self.title.alpha = 0.3

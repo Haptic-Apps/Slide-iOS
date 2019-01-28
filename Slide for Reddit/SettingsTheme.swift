@@ -177,26 +177,15 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         cell.selectionStyle = UITableViewCell.SelectionStyle.none
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     var doneOnce = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         if doneOnce {
-            self.loadView()
-            self.tableView.reloadData(with: .automatic)
+            self.setupViews()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
+            self.tableView.reloadData()
         } else {
             doneOnce = true
         }
@@ -204,49 +193,56 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     override func loadView() {
         super.loadView()
-        setupBaseBarColors()
-
+        setupViews()
+    }
+    
+    func setupViews() {
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
+        
         self.view.backgroundColor = ColorUtil.backgroundColor
         // set the title
         self.title = "Edit theme"
         self.tableView.separatorStyle = .none
-
+        
         self.primary.textLabel?.text = "Primary color"
         self.primary.accessoryType = .none
         self.primary.backgroundColor = ColorUtil.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.fontColor
         self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
-
+        
         self.accent.textLabel?.text = "Accent color"
         self.accent.accessoryType = .none
         self.accent.backgroundColor = ColorUtil.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.fontColor
         self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
-
+        
         self.custom.textLabel?.text = "Custom base theme"
         self.custom.accessoryType = .disclosureIndicator
         self.custom.backgroundColor = ColorUtil.foregroundColor
         self.custom.textLabel?.textColor = ColorUtil.fontColor
         self.custom.imageView?.image = UIImage.init(named: "selectall")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.custom.imageView?.tintColor = ColorUtil.navIconColor
-
+        
         self.base.textLabel?.text = "Base theme"
         self.base.accessoryType = .disclosureIndicator
         self.base.backgroundColor = ColorUtil.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.fontColor
         self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.base.imageView?.tintColor = ColorUtil.navIconColor
-
+        
         self.night.textLabel?.text = "Automatic night theme"
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.night.imageView?.tintColor = ColorUtil.navIconColor
-
+        
         tintOutsideSwitch = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
         }
+        
         tintOutsideSwitch.isOn = SettingValues.onlyTintOutside
         tintOutsideSwitch.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.tintOutside.textLabel?.text = "Only tint outside of subreddit"
@@ -254,7 +250,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         self.tintOutside.backgroundColor = ColorUtil.foregroundColor
         self.tintOutside.textLabel?.textColor = ColorUtil.fontColor
         tintOutside.selectionStyle = UITableViewCell.SelectionStyle.none
-
+        
         self.tintingMode.textLabel?.text = "Subreddit tinting mode"
         self.tintingMode.detailTextLabel?.text = SettingValues.tintingMode
         self.tintingMode.backgroundColor = ColorUtil.foregroundColor
@@ -264,6 +260,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         reduceColor = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
         }
+        
         reduceColor.isOn = SettingValues.reduceColor
         reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
@@ -274,7 +271,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.reduceColorCell.imageView?.image = UIImage.init(named: "nocolors")?.toolbarIcon()
         self.reduceColorCell.imageView?.tintColor = ColorUtil.fontColor
-
+        
         if SettingValues.reduceColor {
             self.primary.isUserInteractionEnabled = false
             self.primary.textLabel?.isEnabled = false
@@ -286,8 +283,6 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         }
         
         createCell(reduceColorCell, reduceColor, isOn: SettingValues.reduceColor, text: "Reduce color throughout app (affects all navigation bars)")
-
-        self.tableView.tableFooterView = UIView()
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -298,6 +293,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -341,7 +338,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
-        loadView()
+        setupViews()
         UserDefaults.standard.synchronize()
         if SettingValues.reduceColor {
             self.primary.isUserInteractionEnabled = false
@@ -375,10 +372,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         return 60
     }
 
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         SubredditReorderViewController.changed = true
     }
 
@@ -420,7 +415,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                     UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
                     UserDefaults.standard.synchronize()
                     _ = ColorUtil.doInit()
-                    self.loadView()
+                    self.setupViews()
                     self.tableView.reloadData(with: .automatic)
                     self.tochange!.doCells()
                     self.tochange!.tableView.reloadData()
@@ -477,7 +472,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
             _ = ColorUtil.doInit()
-            self.loadView()
+            self.setupViews()
             self.tableView.reloadData(with: .automatic)
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
@@ -586,7 +581,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                     UserDefaults.standard.synchronize()
                     _ = ColorUtil.doInit()
                     SubredditReorderViewController.changed = true
-                    self.loadView()
+                    self.setupViews()
                     self.tableView.reloadData(with: .automatic)
                     self.tochange!.doCells()
                     self.tochange!.tableView.reloadData()
