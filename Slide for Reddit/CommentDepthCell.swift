@@ -723,6 +723,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                         self.alertController?.dismiss(animated: false, completion: {
                         })
                         self.replyDelegate!.replySent(comment: postedComment, cell: self)
+                        self.parent?.isReply = false
+                        self.replyDelegate!.discard()
                     }
                 }
             })

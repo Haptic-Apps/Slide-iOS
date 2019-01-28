@@ -25,6 +25,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return SettingValues.fullyHideNavbar
+    }
+
     override var keyCommands: [UIKeyCommand]? {
         if !isReply {
             return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
@@ -270,7 +274,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         if submission != nil {
-            self.inHeadView.backgroundColor = !SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.foregroundColor
+            self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.foregroundColor)
         }
         
         let landscape = size.width > size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)

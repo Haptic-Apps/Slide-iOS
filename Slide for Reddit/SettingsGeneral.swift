@@ -129,9 +129,13 @@ class SettingsGeneral: UITableViewController {
             if SettingValues.pinToolbar {
                 self.totallyCollapse.contentView.alpha = 0.5
                 self.totallyCollapse.isUserInteractionEnabled = false
+                self.fullyHideNavbar.contentView.alpha = 0.5
+                self.fullyHideNavbar.isUserInteractionEnabled = false
             } else {
                 self.totallyCollapse.contentView.alpha = 1
                 self.totallyCollapse.isUserInteractionEnabled = true
+                self.fullyHideNavbar.contentView.alpha = 1
+                self.fullyHideNavbar.isUserInteractionEnabled = true
             }
         } else if changed == matchSilenceSwitch {
             //SettingValues.matchSilence = changed.isOn
@@ -219,9 +223,13 @@ class SettingsGeneral: UITableViewController {
         if SettingValues.pinToolbar {
             self.totallyCollapse.contentView.alpha = 0.5
             self.totallyCollapse.isUserInteractionEnabled = false
+            self.fullyHideNavbar.contentView.alpha = 0.5
+            self.fullyHideNavbar.isUserInteractionEnabled = false
         } else {
             self.totallyCollapse.contentView.alpha = 1
             self.totallyCollapse.isUserInteractionEnabled = true
+            self.fullyHideNavbar.contentView.alpha = 1
+            self.fullyHideNavbar.isUserInteractionEnabled = true
         }
         self.notifications.textLabel?.text = "New message notifications"
         self.notifications.detailTextLabel?.text = "Check for new mail every 15 minutes"
