@@ -75,7 +75,7 @@ class PostActions: NSObject {
         }))
 
         if AccountController.isLoggedIn {
-            if SettingValues.actionBarMode != .FULL && AccountController.modSubs.contains(link.subreddit) {
+            if !SettingValues.actionBarMode.isFull() && AccountController.modSubs.contains(link.subreddit) {
                 alertController.addAction(Action(ActionData(title: "Moderate", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
                     PostActions.showModMenu(cell, parent: parent)
                 }))

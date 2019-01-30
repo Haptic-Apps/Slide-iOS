@@ -435,7 +435,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         
         contentView.layer.masksToBounds = true
         
-        if SettingValues.actionBarMode == .FULL || full {
+        if SettingValues.actionBarMode.isFull() || full {
             self.box = UIStackView().then {
                 $0.accessibilityIdentifier = "Count Info Stack Horizontal"
                 $0.axis = .horizontal
@@ -452,7 +452,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 $0.distribution = .fill
                 $0.spacing = 16
             }
-            buttons.addArrangedSubviews(edit, reply, readLater, save, hide, upvote, downvote, mod, menu)
+            if SettingValues.actionBarMode == .FULL_LEFT {
+                buttons.addArrangedSubviews(menu, upvote, downvote, edit, reply, readLater, save, hide, mod)
+            } else {
+                buttons.addArrangedSubviews(edit, reply, readLater, save, hide, upvote, downvote, mod, menu)
+            }
             self.contentView.addSubview(buttons)
         } else {
             buttons = UIStackView()
@@ -559,8 +563,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
         
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
-        buttons.isHidden = SettingValues.actionBarMode != .FULL && !full
-        buttons.isUserInteractionEnabled = SettingValues.actionBarMode != .FULL || full
+        buttons.isHidden = !SettingValues.actionBarMode.isFull() && !full
+        buttons.isUserInteractionEnabled = !SettingValues.actionBarMode.isFull() || full
     }
     
     var progressBar: ProgressBarView!
@@ -864,16 +868,29 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 self.contentView.clipsToBounds = false
             }
             
-            if SettingValues.actionBarMode == .FULL || full {
-                box.leftAnchor == contentView.leftAnchor + ctwelve
-                box.bottomAnchor == contentView.bottomAnchor - ceight
-                box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
-                box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-                box.heightAnchor == CGFloat(24)
-                buttons.heightAnchor == CGFloat(24)
-                buttons.rightAnchor == contentView.rightAnchor - ctwelve
-                buttons.bottomAnchor == contentView.bottomAnchor - ceight
-                buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+            if SettingValues.actionBarMode.isFull() || full {
+                
+                if SettingValues.actionBarMode == .FULL_LEFT {
+                    box.rightAnchor == contentView.rightAnchor - ctwelve
+                    box.bottomAnchor == contentView.bottomAnchor - ceight
+                    box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
+                    box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+                    box.heightAnchor == CGFloat(24)
+                    buttons.heightAnchor == CGFloat(24)
+                    buttons.leftAnchor == contentView.leftAnchor + ctwelve
+                    buttons.bottomAnchor == contentView.bottomAnchor - ceight
+                } else {
+                    box.leftAnchor == contentView.leftAnchor + ctwelve
+                    box.bottomAnchor == contentView.bottomAnchor - ceight
+                    box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
+                    box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+                    box.heightAnchor == CGFloat(24)
+                    buttons.heightAnchor == CGFloat(24)
+                    buttons.rightAnchor == contentView.rightAnchor - ctwelve
+                    buttons.bottomAnchor == contentView.bottomAnchor - ceight
+
+                }
+            buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if SettingValues.actionBarMode.isSide() {
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     sideButtons.rightAnchor == contentView.rightAnchor - ceight
@@ -1293,7 +1310,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
         
-        if SettingValues.actionBarMode != .FULL && !full {
+        if !SettingValues.actionBarMode.isFull() && !full {
             buttons.isHidden = true
             box.isHidden = true
         }
@@ -2095,7 +2112,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             let scoreString = NSAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
             
-            if SettingValues.actionBarMode == .FULL {
+            if SettingValues.actionBarMode.isFull() {
                 score.attributedText = scoreString
             } else if SettingValues.actionBarMode != .NONE {
                 sideScore.attributedText = scoreString
@@ -2174,7 +2191,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 paddingRight = 5
             }
             
-            let actionbar = CGFloat(!full && SettingValues.actionBarMode != .FULL ? 0 : 24)
+            let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 24)
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)

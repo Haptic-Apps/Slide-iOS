@@ -40,7 +40,7 @@ final class AutoplayBannerLinkCellView: LinkCellView {
 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 
-                if SettingValues.actionBarMode == .FULL {
+                if SettingValues.actionBarMode.isFull() {
                     bannerImage.bottomAnchor == box.topAnchor - ctwelve
                 } else {
                     bannerImage.bottomAnchor == contentView.bottomAnchor - ctwelve
@@ -60,7 +60,7 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                     title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
                 }
                 
-                if SettingValues.actionBarMode != .FULL {
+                if !SettingValues.actionBarMode.isFull {
                     title.bottomAnchor <= contentView.bottomAnchor - ceight
                 } else {
                     title.bottomAnchor == box.topAnchor - ceight

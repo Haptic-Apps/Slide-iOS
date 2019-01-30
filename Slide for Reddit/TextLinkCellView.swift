@@ -36,7 +36,7 @@ final class TextLinkCellView: LinkCellView {
             } else {
                 title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
             }
-            if SettingValues.actionBarMode != .FULL {
+            if !SettingValues.actionBarMode.isFull() {
                 title.bottomAnchor == contentView.bottomAnchor - ctwelve
             } else {
                 title.bottomAnchor <= box.topAnchor - ceight

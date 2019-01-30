@@ -255,6 +255,8 @@ class SettingsLayout: UITableViewController {
         switch SettingValues.actionBarMode {
         case .FULL:
             actionBarCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
+        case .FULL_LEFT:
+            actionBarCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
         case .NONE:
             actionBarCell.imageView?.image = UIImage.init(named: "hide")?.toolbarIcon()
         case .SIDE:
@@ -370,7 +372,18 @@ class SettingsLayout: UITableViewController {
                 SingleSubredditViewController.cellVersion += 1
                 SubredditReorderViewController.changed = true
             }))
-            
+            alertController.addAction(Action(ActionData(title: "Full left action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { _ in
+                UserDefaults.standard.set("left", forKey: SettingValues.pref_actionbarMode)
+                SettingValues.actionBarMode = .FULL_LEFT
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
+                SingleSubredditViewController.cellVersion += 1
+                SubredditReorderViewController.changed = true
+            }))
+
             alertController.addAction(Action(ActionData(title: "Side action bar", image: UIImage(named: "up")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("side", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE
@@ -476,7 +489,7 @@ class SettingsLayout: UITableViewController {
     }
     
     func doDisables() {
-        if SettingValues.actionBarMode != .FULL {
+        if !SettingValues.actionBarMode.isFull() {
             hide.isEnabled = false
             save.isEnabled = false
             readLater.isEnabled = false

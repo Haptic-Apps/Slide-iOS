@@ -1666,14 +1666,14 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             paddingRight = 5
         }
         
-        let actionbar = CGFloat(SettingValues.actionBarMode != .FULL ? 0 : 24)
+        let actionbar = CGFloat(!SettingValues.actionBarMode.isFull() ? 0 : 24)
         
         let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
         let textHeight = CGFloat(submission.isSelf ? 5 : 0)
         
         if thumb {
             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
-            if SettingValues.actionBarMode == .FULL {
+            if SettingValues.actionBarMode.isFull() {
                 innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else {
@@ -1682,25 +1682,25 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         } else if big {
             if SettingValues.postViewMode == .CENTER {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
-                if SettingValues.actionBarMode == .FULL {
+                if SettingValues.actionBarMode.isFull() {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
                 } else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
                 }
             } else {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
-                if SettingValues.actionBarMode == .FULL {
+                if SettingValues.actionBarMode.isFull() {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
                 } else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
                 }
             }
-            if SettingValues.actionBarMode == .FULL {
+            if SettingValues.actionBarMode.isFull() {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             }
         } else {
             innerPadding += (SettingValues.postViewMode == .COMPACT ? 12 : 16) //between top and title
-            if SettingValues.actionBarMode == .FULL {
+            if SettingValues.actionBarMode.isFull() {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else {
@@ -1713,7 +1713,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             estimatedUsableWidth -= thumbheight //is the same as the width
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
-        } else if SettingValues.actionBarMode == .FULL {
+        } else if SettingValues.actionBarMode.isFull() {
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title label padding
         }
         

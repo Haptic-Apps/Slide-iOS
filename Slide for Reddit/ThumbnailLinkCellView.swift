@@ -25,7 +25,7 @@ final class ThumbnailLinkCellView: LinkCellView {
             thumbImageContainer.isHidden = false
             let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
             let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
-            if SettingValues.actionBarMode != .FULL {
+            if !SettingValues.actionBarMode.isFull() {
                 thumbImageContainer.bottomAnchor <= contentView.bottomAnchor - ctwelve
             } else {
                 thumbImageContainer.bottomAnchor <= box.topAnchor - ceight
@@ -63,7 +63,7 @@ final class ThumbnailLinkCellView: LinkCellView {
                 title.rightAnchor == (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             }
             title.topAnchor == contentView.topAnchor + ctwelve
-            if SettingValues.actionBarMode != .FULL {
+            if !SettingValues.actionBarMode.isFull() {
                 title.bottomAnchor <= contentView.bottomAnchor - ctwelve
             } else {
                 title.bottomAnchor <= box.topAnchor - ceight

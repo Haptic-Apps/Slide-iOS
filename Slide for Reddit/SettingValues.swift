@@ -247,11 +247,16 @@ class SettingValues {
     enum ActionBarMode: String {
         case NONE = "none"
         case FULL = "full"
+        case FULL_LEFT = "left"
         case SIDE = "side"
         case SIDE_RIGHT = "right"
         
         func isSide() -> Bool {
             return self == .SIDE || self == .SIDE_RIGHT
+        }
+        
+        func isFull() -> Bool {
+            return self == .FULL || self == .FULL_LEFT
         }
     }
 
