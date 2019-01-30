@@ -505,7 +505,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     @objc func refresh(_ sender: AnyObject) {
-        print("Refreshing")
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
@@ -1204,8 +1203,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.isHiding = false
         didDisappearCompletely = false
         
-        if !(parent is PagingCommentViewController) && self.navigationController != nil {
+        if !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) {
             if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
+
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
                 self.navigationController!.delegate = swiper!
             }
@@ -1749,7 +1749,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         inHeadView.removeFromSuperview()
         headerCell.videoView?.player?.pause()
         self.didDisappearCompletely = true
-        swiper = nil
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -2040,7 +2039,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
-        
+
         if !SettingValues.pinToolbar && !isReply {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {

@@ -60,7 +60,7 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                     title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
                 }
                 
-                if !SettingValues.actionBarMode.isFull {
+                if !SettingValues.actionBarMode.isFull() {
                     title.bottomAnchor <= contentView.bottomAnchor - ceight
                 } else {
                     title.bottomAnchor == box.topAnchor - ceight
