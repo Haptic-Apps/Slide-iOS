@@ -118,8 +118,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             if finalSubs.count != Subscriptions.subreddits.count {
                 subChanged = true
             } else {
-                for i in 0 ..< finalSubs.count {
-                    if finalSubs[i] != Subscriptions.subreddits[i] {
+                for i in 0 ..< Subscriptions.pinned.count {
+                    if finalSubs[i] != Subscriptions.pinned[i] {
                         subChanged = true
                         break
                     }
@@ -329,8 +329,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func goToSubreddit(subreddit: String) {
         menuNav?.dismiss(animated: true) {
-            if Subscriptions.subreddits.contains(subreddit) {
-                let index = Subscriptions.subreddits.index(of: subreddit)
+            if self.finalSubs.contains(subreddit) {
+                let index = self.finalSubs.index(of: subreddit)
                 if index == nil {
                     return
                 }
@@ -538,7 +538,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         finalSubs = []
         LinkCellView.cachedInternet = nil
         
-        finalSubs = Subscriptions.subreddits
+        finalSubs.append(contentsOf: Subscriptions.pinned)
+        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+
         MainViewController.isOffline = false
         var subs = [UIMutableApplicationShortcutItem]()
         for subname in finalSubs {

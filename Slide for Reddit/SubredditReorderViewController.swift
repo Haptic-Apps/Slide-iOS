@@ -191,8 +191,16 @@ class SubredditReorderViewController: UITableViewController {
         return indexPath.section == 0 && !pinned.isEmpty
     }
     
+    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        if sourceIndexPath.section != proposedDestinationIndexPath.section {
+            return sourceIndexPath
+        } else {
+            return proposedDestinationIndexPath
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let itemToMove: String = subs[sourceIndexPath.row]
+        let itemToMove: String = pinned[sourceIndexPath.row]
         pinned.remove(at: sourceIndexPath.row)
         pinned.insert(itemToMove, at: destinationIndexPath.row)
     }
