@@ -219,13 +219,17 @@ class SubredditReorderViewController: UITableViewController {
         return toReturn
     }
     
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 70
+    }
+
     @objc func pin(_ selector: AnyObject) {
         if let rows = tableView.indexPathsForSelectedRows {
             var pinned2: [String] = []
             var pinned3: [String] = []
             for i in rows {
                 print(i)
-                if i.section == 1 || pinned.isEmpty {
+                if i.section > 0 || pinned.isEmpty {
                     pinned2.append(self.subs[i.row])
                     print("pin \(self.subs[i.row])")
                 } else {
