@@ -935,7 +935,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
         self.tableView.allowsSelection = false
         self.tableView.layer.speed = 1.5
-        
+        self.extendedLayoutIncludesOpaqueBars = true
+
         tableView.backgroundColor = ColorUtil.backgroundColor
         refreshControl = UIRefreshControl()
         self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl!.frame.size.height)
@@ -1205,7 +1206,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         
         if !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) {
             if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
-
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
                 self.navigationController!.delegate = swiper!
             }
@@ -2566,6 +2566,7 @@ class ParentCommentViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         self.view.addSubview(childView)
         childView.horizontalAnchors == self.view.horizontalAnchors
         childView.topAnchor == self.view.topAnchor

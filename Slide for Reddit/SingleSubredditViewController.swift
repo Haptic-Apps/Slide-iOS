@@ -412,6 +412,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 showUI()
             }
         }
+        
         lastYUsed = currentY
         lastY = currentY
     }
@@ -2162,7 +2163,7 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count + ((links.count != 0 && loaded) ? 1 : 0)
+        return links.count + (loaded ? 1 : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

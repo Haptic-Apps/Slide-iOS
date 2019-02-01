@@ -291,7 +291,7 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<cite>") {
                 let label = TTTAttributedLabel.init(frame: CGRect.zero)
                 label.accessibilityIdentifier = "Quote"
-                let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</cite>", with: "").replacingOccurrences(of: "</p>", with: "").trimmed(), accent: tColor)
+                let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed(), accent: tColor)
                 label.delegate = delegate
                 if let long = parentLongPress {
                     long.require(toFail: label.longPressGestureRecognizer)
@@ -597,6 +597,8 @@ public class TextDisplayStackView: UIStackView {
                 }
             }
         }
+        
+        print(preSeperated)
         
         return preSeperated
     }

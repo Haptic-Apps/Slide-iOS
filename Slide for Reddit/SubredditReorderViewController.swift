@@ -23,7 +23,10 @@ class SubredditReorderViewController: UITableViewController {
         self.tableView.backgroundColor = ColorUtil.backgroundColor
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
+        
         subs.append(contentsOf: Subscriptions.subreddits)
+        self.subs = self.subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
+
         pinned.append(contentsOf: Subscriptions.pinned)
         tableView.reloadData()
 
@@ -39,18 +42,6 @@ class SubredditReorderViewController: UITableViewController {
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
 
-        let az = UIButton.init(type: .custom)
-        az.setImage(UIImage.init(named: "az")!.navIcon(), for: UIControl.State.normal)
-        az.addTarget(self, action: #selector(self.sortAz(_:)), for: UIControl.Event.touchUpInside)
-        az.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-        let azB = UIBarButtonItem.init(customView: az)
-
-        let top = UIButton.init(type: .custom)
-        top.setImage(UIImage.init(named: "upvote")!.navIcon(), for: UIControl.State.normal)
-        top.addTarget(self, action: #selector(self.top(_:)), for: UIControl.Event.touchUpInside)
-        top.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
-        let topB = UIBarButtonItem.init(customView: top)
-
         let delete = UIButton.init(type: .custom)
         delete.setImage(UIImage.init(named: "delete")!.navIcon(), for: UIControl.State.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControl.Event.touchUpInside)
@@ -63,8 +54,8 @@ class SubredditReorderViewController: UITableViewController {
         pin.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let pinB = UIBarButtonItem.init(customView: pin)
 
-        editItems = [deleteB, topB, pinB]
-        normalItems = [addB, syncB, azB]
+        editItems = [deleteB, pinB]
+        normalItems = [addB, syncB]
 
         self.navigationItem.rightBarButtonItems = normalItems
 
@@ -95,8 +86,10 @@ class SubredditReorderViewController: UITableViewController {
 
     func save(_ selector: AnyObject?) {
         SubredditReorderViewController.changed = true
-        Subscriptions.set(name: AccountController.currentName, subs: subs, completion: {
-            self.dismiss(animated: true, completion: nil)
+        Subscriptions.setPinned(name: AccountController.currentName, subs: pinned, completion: {
+            Subscriptions.set(name: AccountController.currentName, subs: self.subs, completion: {
+                self.dismiss(animated: true, completion: nil)
+            })
         })
     }
 
@@ -109,6 +102,8 @@ class SubredditReorderViewController: UITableViewController {
         let searchVC = SubredditFindReturnViewController(includeSubscriptions: false, includeCollections: true, includeTrending: true) { (sub) in
             if !self.subs.contains(sub) {
                 self.subs.append(sub)
+                self.subs = self.subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
+
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                     let indexPath = IndexPath.init(row: self.subs.count - 1, section: 0)
@@ -143,6 +138,7 @@ class SubredditReorderViewController: UITableViewController {
                     self.subs.append("/m/" + m.displayName)
                 }
             }
+            self.subs = self.subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 let indexPath = IndexPath.init(row: end - 1, section: 0)
@@ -162,21 +158,24 @@ class SubredditReorderViewController: UITableViewController {
     // MARK: – Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return pinned.isEmpty ? 1 : 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return subs.count
+        return section == 0 && pinned.isEmpty ? subs.count : (section == 0 ? pinned.count : subs.count)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let thing = subs[indexPath.row]
+        let thing = indexPath.section == 0 && !self.pinned.isEmpty ? self.pinned[indexPath.row] : subs[indexPath.row]
         var cell: SubredditCellView?
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
         cell?.backgroundColor = ColorUtil.foregroundColor
-        cell?.showPin(pinned.contains(thing))
+        let pinned = self.pinned.contains(thing)
+        cell?.showPin(pinned)
+        cell?.showsReorderControl = pinned
+        
         return cell!
     }
 
@@ -188,103 +187,59 @@ class SubredditReorderViewController: UITableViewController {
         return true
     }
 
-    var stuck: [String] = []
-
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return !stuck.contains(subs[indexPath.row])
+        return indexPath.section == 0 && !pinned.isEmpty
     }
-
+    
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let itemToMove: String = subs[sourceIndexPath.row]
-        subs.remove(at: sourceIndexPath.row)
-        subs.insert(itemToMove, at: destinationIndexPath.row)
+        pinned.remove(at: sourceIndexPath.row)
+        pinned.insert(itemToMove, at: destinationIndexPath.row)
     }
 
-    @objc func top(_ selector: AnyObject) {
-        if let rows = tableView.indexPathsForSelectedRows {
-            var top: [String] = []
-            for i in rows {
-                top.append(self.subs[i.row])
-                self.tableView.deselectRow(at: i, animated: true)
-            }
-            self.subs = self.subs.filter({ (input) -> Bool in
-                return !top.contains(input)
-            })
-            self.subs.insert(contentsOf: top, at: 0)
-            tableView.reloadData()
-            let indexPath = IndexPath.init(row: 0, section: 0)
-            self.tableView.scrollToRow(at: indexPath,
-                    at: UITableView.ScrollPosition.top, animated: true)
-            self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
-
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label: UILabel = UILabel()
+        label.textColor = ColorUtil.baseAccent
+        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
+        toReturn.backgroundColor = ColorUtil.backgroundColor
+        switch section {
+        case 0: label.text = pinned.isEmpty ? "All Subreddits" : "Pinned"
+        case 1: label.text =  "All Subreddits"
+        default: label.text  = ""
         }
+        return toReturn
     }
-
+    
     @objc func pin(_ selector: AnyObject) {
         if let rows = tableView.indexPathsForSelectedRows {
             var pinned2: [String] = []
             var pinned3: [String] = []
             for i in rows {
-                if !pinned.contains(self.subs[i.row]) {
+                print(i)
+                if i.section == 1 || pinned.isEmpty {
                     pinned2.append(self.subs[i.row])
+                    print("pin \(self.subs[i.row])")
                 } else {
-                    pinned3.append(self.subs[i.row])
+                    pinned3.append(self.pinned[i.row])
+                    print("Unpin \(self.pinned[i.row])")
                 }
             }
-            if pinned2.isEmpty {
-                //Are all pinned, need to unpin
-                self.pinned = self.pinned.filter({ (input) -> Bool in
-                    return !pinned3.contains(input)
-                })
-                tableView.reloadData()
-                //todo saved pin
-            } else {
-                //Need to pin remaining and move to top
-                pinned.append(contentsOf: pinned2)
-                self.subs = self.subs.filter({ (input) -> Bool in
-                    return !pinned.contains(input)
-                })
-                self.subs.insert(contentsOf: pinned, at: 0)
-                tableView.reloadData()
-                let indexPath = IndexPath.init(row: 0, section: 0)
-                self.tableView.scrollToRow(at: indexPath,
-                        at: UITableView.ScrollPosition.top, animated: true)
-                //todo saved pin
-            }
-
-            SubredditReorderViewController.changed = true
-            Subscriptions.setPinned(name: AccountController.currentName, subs: pinned, completion: {
+            
+            //Are all pinned, need to unpin
+            self.pinned = self.pinned.filter({ (input) -> Bool in
+                return !pinned3.contains(input)
             })
+
+            //Need to pin remaining and move to top
+            pinned.append(contentsOf: pinned2)
+            tableView.reloadData()
+            let indexPath = IndexPath.init(row: 0, section: 0)
+            self.tableView.scrollToRow(at: indexPath,
+                    at: UITableView.ScrollPosition.top, animated: true)
+
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
-
         }
-    }
-
-    @objc func sortAz(_ selector: AnyObject) {
-        self.subs = self.subs.filter({ (input) -> Bool in
-            return !pinned.contains(input)
-        })
-        self.subs = self.subs.sorted() {
-            $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
-        }
-        self.subs.insert(contentsOf: pinned, at: 0)
-        if self.subs.contains("all") {
-            self.subs.remove(at: self.subs.index(of: "all")!)
-            self.subs.insert("all", at: 0)
-        }
-        if self.subs.contains("popular") {
-            self.subs.remove(at: self.subs.index(of: "popular")!)
-            self.subs.insert("popular", at: 0)
-        }
-        if self.subs.contains("frontpage") {
-            self.subs.remove(at: self.subs.index(of: "frontpage")!)
-            self.subs.insert("frontpage", at: 0)
-        }
-
-        tableView.reloadData()
-        let indexPath = IndexPath.init(row: 0, section: 0)
-        self.tableView.scrollToRow(at: indexPath,
-                at: UITableView.ScrollPosition.top, animated: true)
     }
 
     @objc func remove(_ selector: AnyObject) {
@@ -358,7 +313,6 @@ class SubredditReorderViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !tableView.indexPathsForSelectedRows!.isEmpty {
-            print(tableView.indexPathsForSelectedRows!.count)
             self.navigationItem.setRightBarButtonItems(editItems, animated: true)
         } else {
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
