@@ -2362,7 +2362,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                             self.tableView.endUpdates()
                             if SettingValues.collapseFully, let path = tableView.indexPath(for: cell) {
                                 self.tableView.scrollToRow(at: path,
-                                                           at: UITableView.ScrollPosition.none, animated: false)
+                                                           at: UITableView.ScrollPosition.none, animated: true)
                             }
                         }
                     } else {
@@ -2373,17 +2373,17 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                             //todo hide child number
                         } else {
                             if childNumber > 0 {
-                                hideAll(comment: comment.getIdentifier(), i: row! + 1)
-                                if !hiddenPersons.contains(id) {
-                                    hiddenPersons.insert(id)
-                                }
                                 if childNumber > 0 {
                                     oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
                                     cell.collapse(childNumber: childNumber)
                                     if SettingValues.collapseFully, let path = tableView.indexPath(for: cell) {
                                         self.tableView.scrollToRow(at: path,
-                                                                   at: UITableView.ScrollPosition.none, animated: false)
+                                                                   at: UITableView.ScrollPosition.none, animated: true)
                                     }
+                                }
+                                hideAll(comment: comment.getIdentifier(), i: row! + 1)
+                                if !hiddenPersons.contains(id) {
+                                    hiddenPersons.insert(id)
                                 }
                             }
                         }
