@@ -2640,7 +2640,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             cell2.content = comment
             cell2.contentView.isUserInteractionEnabled = false
             let detailViewController = ParentCommentViewController(view: cell2.contentView)
-            detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 42)
+            detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 24)
 
             previewingContext.sourceRect = cell.frame
             return detailViewController

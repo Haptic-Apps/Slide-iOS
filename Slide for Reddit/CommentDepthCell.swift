@@ -1369,7 +1369,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = 0
         }
         
-        if !title.ignoreHeight {
+        if title.ignoreHeight {
             title.estimatedWidth = (parent.view.frame.size.width ) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) - CGFloat(16)
         }
 
