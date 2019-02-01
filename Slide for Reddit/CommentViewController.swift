@@ -2203,6 +2203,8 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
             }
         case .NONE:
             break
+        case .PARENT_PREVIEW:
+            break
         }
     }
 
@@ -2602,6 +2604,20 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         
         guard let cell = self.tableView.cellForRow(at: indexPath) as? CommentDepthCell else {
             return nil
+        }
+        
+        if SettingValues.commentActionForceTouch != .PARENT_PREVIEW {
+            //todo maybe
+            /*let textView =
+            let locationInTextView = textView.convert(location, to: textView)
+            
+            if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
+                previewingContext.sourceRect = textView.convert(rect, from: textView)
+                if let controller = parentViewController?.getControllerForUrl(baseUrl: url) {
+                    return controller
+                }
+            }*/
+            return
         }
         
         if cell.depth == 1 {

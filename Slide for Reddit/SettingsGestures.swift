@@ -140,7 +140,7 @@ class SettingsGestures: UITableViewController {
     func showAction(cell: UITableViewCell) {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Select a comment gesture"
-        for action in SettingValues.CommentAction.cases {
+        for action in cell == self.forceTouchActionCell ? SettingValues.CommentAction.cases3D : SettingValues.CommentAction.cases {
             alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
                 if cell == self.leftRightActionCell {
                     SettingValues.commentActionLeftRight = action

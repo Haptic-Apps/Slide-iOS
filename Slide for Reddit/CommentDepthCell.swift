@@ -1224,7 +1224,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             title.parentLongPress = long
             self.addGestureRecognizer(long)
             
-            if SettingValues.commentActionForceTouch != .NONE {
+            if SettingValues.commentActionForceTouch != .PARENT_PREVIEW && SettingValues.commentActionForceTouch != .NONE {
                 force.addTarget(self, action: #selector(self.do3dTouch(_:)))
                 force.cancelsTouchesInView = false
                 self.contentView.addGestureRecognizer(force)
