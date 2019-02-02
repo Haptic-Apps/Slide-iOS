@@ -2378,7 +2378,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                     cell.collapse(childNumber: childNumber)
                                     if SettingValues.collapseFully, let path = tableView.indexPath(for: cell) {
                                         self.tableView.scrollToRow(at: path,
-                                                                   at: UITableView.ScrollPosition.none, animated: true)
+                                                                   at: UITableView.ScrollPosition.none, animated: false)
                                     }
                                 }
                                 hideAll(comment: comment.getIdentifier(), i: row! + 1)

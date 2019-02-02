@@ -786,8 +786,10 @@ extension VideoMediaViewController {
             }
 
             if let u = dictionary["u"] {
-                let param = u[u.indexOf("=")! + 1 ..< u.length]
-                video = param[0 ..< (param.contains("&") ? param.indexOf("&")! : param.length)]
+                let startIndex = u.indexOf("=")! + 1
+                let param = u.substring(startIndex, length: u.length - startIndex)
+                let paramStart = param.contains("&") ? param.indexOf("&")! : 0
+                video = param.substring(paramStart, length: param.length - paramStart)
             }
         }
         
