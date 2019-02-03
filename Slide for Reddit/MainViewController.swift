@@ -42,11 +42,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             readLaterBadge!.textColor = SettingValues.reduceColor ? ColorUtil.navIconColor : UIColor.white
             readLaterBadge!.badgeColor = .clear
             readLaterBadge!.shadowOpacityBadge = 0
-            
+            readLater.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
             if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItems = [accountB]
+                navigationItem.leftBarButtonItem = accountB
                 navigationItem.rightBarButtonItems = [sortB, readLaterB]
             } else {
                 navigationItem.rightBarButtonItems = [sortB, readLaterB]
@@ -54,10 +55,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         } else {
             if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItems = [accountB]
-                navigationItem.rightBarButtonItems = [sortB]
+                navigationItem.leftBarButtonItem = accountB
+                navigationItem.rightBarButtonItem = sortB
             } else {
-                navigationItem.rightBarButtonItems = [sortB]
+                navigationItem.rightBarButtonItem = sortB
                 doLeftItem()
             }
         }
@@ -862,6 +863,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let account = UIButton(type: .custom)
         account.setImage(UIImage(named: "profile")?.navIcon(), for: UIControl.State.normal)
         account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
+        account.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
