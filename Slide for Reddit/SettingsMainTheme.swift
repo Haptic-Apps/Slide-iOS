@@ -156,7 +156,7 @@ class ThemeCellView: UITableViewCell {
         let colors = UserDefaults.standard.string(forKey: string)!.removingPercentEncoding!
         let split = colors.split("#")
 
-        title.textColor = UIColor(hex: split[6])
+        title.textColor = UIColor(hex: split[4])
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
         contentView.backgroundColor = UIColor(hex: split[2])
