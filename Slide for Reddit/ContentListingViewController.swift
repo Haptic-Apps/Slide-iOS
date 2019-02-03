@@ -26,6 +26,14 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.baseData.getData(reload: true)
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     @objc func showSortMenu(_ selector: UIButton?) {
         if baseData is ProfileContributionLoader {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)

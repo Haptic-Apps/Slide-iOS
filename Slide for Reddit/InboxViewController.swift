@@ -18,6 +18,14 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
     var vCs: [UIViewController] = []
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     public init() {
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         self.content = InboxViewController.doDefault()

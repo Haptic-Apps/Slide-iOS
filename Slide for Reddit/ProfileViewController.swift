@@ -301,9 +301,16 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.setupBaseBarColors()
     }
     
     func generateButtons(trophy: Trophy) -> UIImageView {

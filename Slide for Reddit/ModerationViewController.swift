@@ -18,6 +18,14 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
 
     var vCs: [UIViewController] = []
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     public init() {
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
 
@@ -117,7 +125,6 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         }
 
         if self.navigationController?.interactivePopGestureRecognizer != nil {
-            print("Not nil")
             for view in view.subviews {
                 if let scrollView = view as? UIScrollView {
                     scrollView.panGestureRecognizer.require(toFail: self.navigationController!.interactivePopGestureRecognizer!)
@@ -130,6 +137,25 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
                 animated: true,
                 completion: nil)
 
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.lastPosition = scrollView.contentOffset.x
+        
+        if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        } else if currentIndex == vCs.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        }
+    }
+    
+    //From https://stackoverflow.com/a/25167681/3697225
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        } else if currentIndex == vCs.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        }
     }
 
     var selected = false
