@@ -158,10 +158,10 @@ class ThemeCellView: UITableViewCell {
 
         title.textColor = UIColor(hex: split[6])
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
-        icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[4]))
+        icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
         contentView.backgroundColor = UIColor(hex: split[2])
         self.backgroundColor = UIColor(hex: split[2])
-        self.tintColor = UIColor(hex: split[4])
+        self.tintColor = UIColor(hex: split[5])
     }
     
     func setTheme(theme: ColorUtil.Theme) {
