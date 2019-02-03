@@ -63,7 +63,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             )
         }
         alert.addAction(
-            UIAlertAction(title: "Open in Safari", style: .default) { (_) in
+            UIAlertAction(title: "Open externally (Safari)", style: .default) { (_) in
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {

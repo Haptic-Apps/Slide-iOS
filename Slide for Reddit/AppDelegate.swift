@@ -511,6 +511,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if url.absoluteString.contains("/r/") {
             VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)
             return true
+        } else if url.absoluteString.contains("colors") {
+            let themeName = url.absoluteString.removingPercentEncoding!.split("#")[1]
+            let alert = UIAlertController(title: "Save \"\(themeName.replacingOccurrences(of: "<H>", with: "#"))\"", message: "You can set it as your theme in Settings > Theme", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+                let colorString = url.absoluteString.removingPercentEncoding!
+                
+                let title = colorString.split("#")[1]
+                UserDefaults.standard.set(colorString, forKey: "Theme+" + title)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            if let parent = window?.rootViewController {
+                parent.present(alert, animated: true)
+            }
+            return true
         } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("redd.it") {
                 VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)
                 return true

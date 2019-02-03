@@ -60,7 +60,7 @@ public class SubmissionRowController: NSObject {
         
         let attrs = [NSAttributedString.Key.font: subtitleFont, NSAttributedString.Key.foregroundColor: UIColor.white]
         
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: NSDate.init(timeIntervalSince1970: TimeInterval(dictionary["created"] as? Int ?? 0)), numericDates: true))", attributes: [NSAttributedString.Key.font: subtitleFont, NSAttributedString.Key.foregroundColor: UIColor.gray])
+        let endString = NSMutableAttributedString(string: "  •  \(dictionary["created"] as! String)", attributes: [NSAttributedString.Key.font: subtitleFont, NSAttributedString.Key.foregroundColor: UIColor.gray])
         
         let authorString = NSMutableAttributedString(string: "\nu/\(dictionary["author"] as? String ?? "")", attributes: [NSAttributedString.Key.font: subtitleFont, NSAttributedString.Key.foregroundColor: UIColor.gray])
         

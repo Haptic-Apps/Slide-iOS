@@ -201,6 +201,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             } else {
                 UIApplication.shared.openURL(newUrl)
             }
+        } else if url.scheme == "slide" {
+            UIApplication.shared.openURL(url)
         } else {
             var urlString = url.absoluteString
             if urlString.startsWith("//") {

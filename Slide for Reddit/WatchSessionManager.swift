@@ -49,7 +49,8 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
             replyHandler([:])
         } else if message["sublist"] != nil {
             var colorDict = [String: String]()
-            let sublist = Subscriptions.subreddits
+            var sublist = Subscriptions.pinned
+            sublist.append(contentsOf: Subscriptions.subreddits)
             for sub in Subscriptions.subreddits {
                 colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString()
             }
@@ -79,9 +80,14 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                 let dict = NSMutableDictionary()
                                 for item in ((link as! Link).baseJson) {
                                     if (item.key == "subreddit" || item.key == "author" || item.key == "title" || item.key == "thumbnail" || item.key == "is_self" || item.key == "over_18" || item.key == "score" || item.key == "num_comments" || item.key == "spoiler" || item.key == "locked" || item.key == "author" || item.key == "id" || item.key == "domain" || item.key == "permalink" || item.key == "url" || item.key == "created"  || item.key == "stickied" || item.key == "link_flair_text") && (item.value is String || item.value is Int || item.value is Double) {
-                                        dict[item.key] = item.value
+                                        if item.key == "created" {
+                                            dict["created"] = DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval((link as! Link).createdUtc)), numericDates: true)
+                                        } else {
+                                            dict[item.key] = item.value
+                                        }
                                     }
                                 }
+                                print(dict)
                                 results.append(dict)
                             }
                             replyHandler(["links": results])

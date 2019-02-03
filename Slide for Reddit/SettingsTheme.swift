@@ -22,6 +22,8 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     var tintOutsideSwitch: UISwitch = UISwitch()
     var custom: UITableViewCell = UITableViewCell()
 
+    var shareButton = UIBarButtonItem.init()
+
     var reduceColorCell: UITableViewCell = UITableViewCell()
     var reduceColor: UISwitch = UISwitch()
 
@@ -31,6 +33,10 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
     var accentChosen: UIColor?
     var primaryChosen: UIColor?
+    
+    var customThemes: [String] {
+        return UserDefaults.standard.dictionaryRepresentation().keys.filter({$0.startsWith("Theme+")})
+    }
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
@@ -110,6 +116,11 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         present(alertController, animated: true, completion: nil)
     }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.tableView.register(ThemeCellView.classForCoder(), forCellReuseIdentifier: "theme")
+    }
 
     func pickAccent() {
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -142,6 +153,10 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
                 _ = ColorUtil.doInit()
                 self.titleLabel.textColor = self.accentChosen!
                 self.tochange!.tableView.reloadData()
+                self.setupViews()
+                self.tochange!.doCells()
+                self.tochange!.tableView.reloadData()
+                self.tableView.reloadData()
             }
         })
 
@@ -292,8 +307,16 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         
         let barButton = UIBarButtonItem.init(customView: button)
         
+        let save = UIButtonWithContext.init(type: .custom)
+        save.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+        save.setImage(UIImage.init(named: "save")!.navIcon(), for: UIControl.State.normal)
+        save.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        save.addTarget(self, action: #selector(self.save), for: .touchUpInside)
+        let saveButton = UIBarButtonItem.init(customView: save)
+
         navigationItem.leftBarButtonItem = barButton
-        
+        navigationItem.rightBarButtonItems = [saveButton]
+
         self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
@@ -307,6 +330,51 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     
     @objc public func handleBackButton() {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    var themeText: String?
+    @objc public func save() {
+        let alert = UIAlertController(title: "Name this theme", message: "", preferredStyle: .alert)
+        
+        let date = Date()
+        let calender = Calendar.current
+        let components = calender.dateComponents([.year,.month,.day], from: date)
+        
+        let year = components.year
+        let month = components.month
+        let day = components.day
+        
+        let today_string = String(year!) + "-" + String(month!) + "-" + String(day!)
+        
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = .black
+            textField.placeholder = "Theme name"
+            textField.layer.borderWidth = 1
+            textField.autocorrectionType = UITextAutocorrectionType.no
+            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
+            textField.backgroundColor = .white
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.returnKeyType = .done
+            textField.text = today_string
+            textField.action { textField in
+                self.themeText = textField.text
+            }
+        }
+        
+        alert.addOneTextField(configuration: config)
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
+            var colorString = "slide:///colors"
+            colorString += ("#" + (self.themeText?.replacingOccurrences(of: "#", with: "<H>") ?? today_string)).addPercentEncoding
+            
+            colorString += (ColorUtil.foregroundColor.toHexString() + ColorUtil.backgroundColor.toHexString() + ColorUtil.navIconColor.toHexString() + ColorUtil.fontColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(ColorUtil.theme.isLight())).addPercentEncoding
+            UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string).replacingOccurrences(of: "#", with: "<H>").addPercentEncoding)
+            UserDefaults.standard.synchronize()
+            self.tableView.reloadData()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
 
     @objc func switchIsChanged(_ changed: UISwitch) {
@@ -361,7 +429,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return customThemes.count == 0 ? 1 : 2
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -390,14 +458,36 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             default: fatalError("Unknown row in section 0")
             }
         case 1:
-            switch indexPath.row {
-            case 0: return self.tintingMode
-            case 1: return self.tintOutside
-            default: fatalError("Unknown row in section 1")
-            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
+            cell.setTheme(string: customThemes[indexPath.row])
+            return cell
         default: fatalError("Unknown section")
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 1
+    }
+    
+    @available(iOS 11.0, *)
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let shareAction = UIContextualAction(style: .normal, title: "Share") { (_, _, b) in
+            b(true)
+            let textShare = [UserDefaults.standard.string(forKey: self.customThemes[indexPath.row])]
+            let activityViewController = UIActivityViewController(activityItems: textShare, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.shareButton.customView
+            self.present(activityViewController, animated: true, completion: nil)
+        }
+        shareAction.backgroundColor = ColorUtil.baseAccent
 
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, b) in
+            UserDefaults.standard.removeObject(forKey: self.customThemes[indexPath.row])
+            self.tableView.reloadData()
+            b(true)
+        }
+        deleteAction.backgroundColor = .red
+        let configuration = UISwipeActionsConfiguration(actions: [shareAction, deleteAction])
+        return configuration
     }
 
     func selectTheme() {
@@ -443,8 +533,6 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             pickAccent()
         } else if indexPath.section == 0 && indexPath.row == 0 {
             VCPresenter.showVC(viewController: SettingsMainTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
-        } else if indexPath.section == 1 && indexPath.row == 0 {
-            //tintmode
         } else if indexPath.section == 0 && indexPath.row == 4 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 showNightTheme()
@@ -452,6 +540,39 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         } else if indexPath.section == 0 && indexPath.row == 1 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 VCPresenter.showVC(viewController: SettingsCustomTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+            }
+        } else if indexPath.section == 1 {
+            if !VCPresenter.proDialogShown(feature: true, self) {
+                let theme = customThemes[indexPath.row]
+                let themeData = UserDefaults.standard.string(forKey: theme)!.removingPercentEncoding!
+                let split = themeData.split("#")
+                let alert = UIAlertController(title: "Apply theme \"\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))\"", message: "This will overwrite all your theme preferences", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Apply", style: .destructive, handler: { (_) in
+                    UserDefaults.standard.set("custom", forKey: "theme")
+                    
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[2]), forKey: ColorUtil.CUSTOM_FOREGROUND)
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[3]), forKey: ColorUtil.CUSTOM_BACKGROUND)
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[4]), forKey: ColorUtil.CUSTOM_FONT)
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[5]), forKey: ColorUtil.CUSTOM_NAVICON)
+                    
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[6]), forKey: "baseColor")
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[7]), forKey: "accentcolor")
+                    
+                    UserDefaults.standard.set(!Bool(split[8])!, forKey: ColorUtil.CUSTOM_STATUSBAR)
+                    UserDefaults.standard.synchronize()
+                    
+                    _ = ColorUtil.doInit()
+                    SubredditReorderViewController.changed = true
+                    self.tableView.reloadData(with: .automatic)
+                    MainViewController.needsRestart = true
+                    self.setupViews()
+                    self.tochange!.doCells()
+                    self.tochange!.tableView.reloadData()
+                    self.tableView.reloadData()
+                    self.setupBaseBarColors()
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                self.present(alert, animated: true)
             }
         }
     }
@@ -608,7 +729,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
 
         switch section {
         case 0: titleLabel.text = "App theme"
-        case 1: titleLabel.text = "Tinting"
+        case 1: titleLabel.text = "Saved themes"
         default: titleLabel.text = ""
         }
         return toReturn
@@ -617,7 +738,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 6
-        case 1: return 2
+        case 1: return customThemes.count
         default: fatalError("Unknown number of sections")
         }
     }
