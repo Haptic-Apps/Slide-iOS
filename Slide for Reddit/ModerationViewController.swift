@@ -177,19 +177,6 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
     var currentIndex = 0
     var lastPosition: CGFloat = 0
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.lastPosition = scrollView.contentOffset.x
-
-        if (currentIndex == vCs.count - 1) && (lastPosition > scrollView.frame.width) {
-            scrollView.contentOffset.x = scrollView.frame.width
-            return
-
-        } else if currentIndex == 0 && lastPosition < scrollView.frame.width {
-            scrollView.contentOffset.x = scrollView.frame.width
-            return
-        }
-    }
-
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = vCs.index(of: viewController) else {
