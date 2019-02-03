@@ -102,7 +102,13 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
         tabBar.horizontalAnchors == self.view.horizontalAnchors
-        tabBar.topAnchor == self.view.safeTopAnchor
+        
+        self.edgesForExtendedLayout = UIRectEdge.all
+        
+        self.extendedLayoutIncludesOpaqueBars = true
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + UIApplication.shared.statusBarFrame.height
         tabBar.sizeToFit()
 
         time = History.getInboxSeen()

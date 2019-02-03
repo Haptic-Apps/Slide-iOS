@@ -28,6 +28,14 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : colorPickerView.colors[indexPath.row]
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     func pickColor(sender: AnyObject) {
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         let margin: CGFloat = 10.0
@@ -301,16 +309,9 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.setupBaseBarColors()
     }
     
     func generateButtons(trophy: Trophy) -> UIImageView {
@@ -374,11 +375,16 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
-        tabBar.horizontalAnchors == self.view.horizontalAnchors
-        tabBar.topAnchor == self.view.safeTopAnchor
-        tabBar.sizeToFit()
 
-        self.edgesForExtendedLayout = []
+        tabBar.horizontalAnchors == self.view.horizontalAnchors
+        
+        self.edgesForExtendedLayout = UIRectEdge.all
+        
+        self.extendedLayoutIncludesOpaqueBars = true
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + UIApplication.shared.statusBarFrame.height
+        tabBar.sizeToFit()
         
         self.dataSource = self
         self.delegate = self

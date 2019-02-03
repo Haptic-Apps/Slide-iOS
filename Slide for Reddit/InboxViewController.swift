@@ -122,7 +122,6 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.description, image: nil, tag: index)
         }
-        tabBar.selectionIndicatorTemplate = IndicatorTemplate()
         tabBar.delegate = self
         tabBar.inkColor = UIColor.clear
         tabBar.selectedItem = tabBar.items[0]
@@ -130,10 +129,17 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
-        tabBar.horizontalAnchors == self.view.horizontalAnchors
-        tabBar.topAnchor == self.view.safeTopAnchor
-        tabBar.sizeToFit()
+        
+        self.edgesForExtendedLayout = UIRectEdge.all
+    
+        self.extendedLayoutIncludesOpaqueBars = true
+        self.automaticallyAdjustsScrollViewInsets = false
 
+        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + UIApplication.shared.statusBarFrame.height
+
+        tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.sizeToFit()
+        
         time = History.getInboxSeen()
         History.inboxSeen()
         view.backgroundColor = ColorUtil.backgroundColor
