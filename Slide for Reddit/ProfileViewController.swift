@@ -399,7 +399,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                            animated: true,
                            completion: nil)
         let current = content[openTo]
-        if current == .comments || current == .overview || current == .submitted {
+        if current == .comments || current == .submitted {
             navigationItem.rightBarButtonItems = [ moreB!, sortB!]
         } else {
             navigationItem.rightBarButtonItems = [ moreB!]
