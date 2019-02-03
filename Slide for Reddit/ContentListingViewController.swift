@@ -121,6 +121,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 self.navigationController!.delegate = swiper!
             }
         }
+        
+        setupBaseBarColors()
     }
 
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()

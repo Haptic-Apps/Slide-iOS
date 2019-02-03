@@ -303,6 +303,12 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        let current = content[openTo]
+        if current == .comments || current == .submitted || current == .overview {
+            navigationItem.rightBarButtonItems = [ moreB!, sortB!]
+        } else {
+            navigationItem.rightBarButtonItems = [ moreB!]
+        }
     }
     
     func generateButtons(trophy: Trophy) -> UIImageView {
@@ -410,7 +416,6 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     
     @objc func showSortMenu(_ sender: UIButton?) {
         (self.currentVc as? ContentListingViewController)?.showSortMenu(sender)
-        //TODO implement this!
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
