@@ -1496,7 +1496,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     @objc func goUp(_ sender: AnyObject) {
-        if !loaded {
+        if !loaded || content.isEmpty {
             return
         }
         var topCell = 0
@@ -1522,7 +1522,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var isGoingDown = false
     
     @objc func goDown(_ sender: AnyObject) {
-        if !loaded {
+        if !loaded || content.isEmpty {
             return
         }
         var topCell = 0

@@ -112,6 +112,7 @@ class ThemeCellView: UITableViewCell {
     
     var icon = UIImageView()
     var title: UILabel = UILabel()
+    var body = UIView()
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -127,6 +128,11 @@ class ThemeCellView: UITableViewCell {
     func configureViews() {
         self.clipsToBounds = true
         
+        self.body = UIView().then {
+            $0.layer.cornerRadius = 22
+            $0.clipsToBounds = true
+        }
+        
         self.title = UILabel().then {
             $0.numberOfLines = 0
             $0.font = UIFont.systemFont(ofSize: 16)
@@ -137,18 +143,23 @@ class ThemeCellView: UITableViewCell {
             $0.isHidden = false
             $0.contentMode = .center
         }
-        
-        self.contentView.addSubviews(title, icon)
+        self.contentView.addSubview(body)
+        self.body.addSubviews(title, icon)
     }
     
     func configureLayout() {
         batch {
-            icon.leftAnchor == contentView.leftAnchor + 2
+            body.leftAnchor == contentView.leftAnchor + 8
+            body.rightAnchor == contentView.rightAnchor - 8
+            body.topAnchor == contentView.topAnchor + 8
+            body.bottomAnchor == contentView.bottomAnchor - 8
+
+            icon.leftAnchor == body.leftAnchor + 2
             icon.sizeAnchors == CGSize.square(size: 60)
-            icon.centerYAnchor == contentView.centerYAnchor
+            icon.centerYAnchor == body.centerYAnchor
             
             title.leftAnchor == icon.rightAnchor
-            title.centerYAnchor == contentView.centerYAnchor
+            title.centerYAnchor == body.centerYAnchor
         }
     }
     
@@ -159,17 +170,28 @@ class ThemeCellView: UITableViewCell {
         title.textColor = UIColor(hex: split[4])
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
-        contentView.backgroundColor = UIColor(hex: split[2])
-        self.backgroundColor = UIColor(hex: split[2])
+        body.backgroundColor = UIColor(hex: split[2])
+        self.backgroundColor = ColorUtil.backgroundColor
         self.tintColor = UIColor(hex: split[5])
     }
     
+    func setTheme(colors: String) {
+        let split = colors.split("#")
+        
+        title.textColor = UIColor(hex: split[4])
+        title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
+        icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
+        body.backgroundColor = UIColor(hex: split[2])
+        self.backgroundColor = ColorUtil.backgroundColor
+        self.tintColor = UIColor(hex: split[5])
+    }
+
     func setTheme(theme: ColorUtil.Theme) {
         title.textColor = theme.fontColor
         title.text = theme.displayName
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: theme.navIconColor)
-        contentView.backgroundColor = theme.foregroundColor
-        self.backgroundColor = theme.foregroundColor
+        body.backgroundColor = theme.foregroundColor
+        self.backgroundColor = ColorUtil.backgroundColor
         self.tintColor = theme.navIconColor
     }
 }

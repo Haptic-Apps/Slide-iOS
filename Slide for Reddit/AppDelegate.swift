@@ -6,6 +6,7 @@
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import BiometricAuthentication
 import RealmSwift
 import reddift
@@ -513,7 +514,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         } else if url.absoluteString.contains("colors") {
             let themeName = url.absoluteString.removingPercentEncoding!.split("#")[1]
-            let alert = UIAlertController(title: "Save \"\(themeName.replacingOccurrences(of: "<H>", with: "#"))\"", message: "You can set it as your theme in Settings > Theme", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Save \"\(themeName.replacingOccurrences(of: "<H>", with: "#"))\"", message: "You can set it as your theme in Settings > Theme\n\n\n\n\n", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
                 let colorString = url.absoluteString.removingPercentEncoding!
                 
@@ -521,8 +522,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UserDefaults.standard.set(colorString, forKey: "Theme+" + title)
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            let themeView = ThemeCellView().then {
+                $0.setTheme(colors: url.absoluteString.removingPercentEncoding!)
+            }
+            let cv = themeView.contentView
+            alert.view.addSubview(cv)
+            cv.leftAnchor == alert.view.leftAnchor + 8
+            cv.rightAnchor == alert.view.rightAnchor - 8
+            cv.topAnchor == alert.view.topAnchor + 90
+            cv.heightAnchor == 60
+        
             if let parent = window?.rootViewController {
-                parent.present(alert, animated: true)
+                parent.present(alert, animated: true, completion: {
+                    //  Add your progressbar after alert is shown (and measured)
+                })
             }
             return true
         } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("redd.it") {

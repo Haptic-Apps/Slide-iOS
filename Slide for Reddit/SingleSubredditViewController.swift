@@ -1247,8 +1247,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
     
     var page = 0
+    var reset = false
 
     func load(reset: Bool) {
+        self.reset = reset
         PagingCommentViewController.savedComment = nil
         LinkCellView.checkedWifi = false
         if sub.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
@@ -1308,6 +1310,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 
                 try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, completion: { (result) in
                     self.loaded = true
+                    self.reset = false
                     switch result {
                     case .failure:
                         print(result.error!)
@@ -2163,7 +2166,7 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count + (loaded ? 1 : 0)
+        return links.count + (loaded && !reset ? 1 : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
