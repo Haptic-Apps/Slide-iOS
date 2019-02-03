@@ -15,17 +15,15 @@ class LinkParser {
         let string = NSMutableAttributedString.init(attributedString: attributedString)
         string.removeAttribute(convertToNSAttributedStringKey(kCTForegroundColorFromContextAttributeName as String), range: NSRange.init(location: 0, length: string.length))
         if string.length > 0 {
-            if string.string.contains("slide://") {
+            while string.string.contains("slide://") {
                 do {
-                    let matches: [NSTextCheckingResult] = try NSRegularExpression(pattern: ".*?(slide:\\/\\/[a-zA-Z%?#0-9]+).*?", options: []).matches(in: string.string, options: NSRegularExpression.MatchingOptions.init(rawValue: 0), range: NSRange(location: 0, length: string.length))
-                    for match: NSTextCheckingResult in matches {
-                        let matchRange: NSRange = match.range(at: 1)
-                        if matchRange.location != NSNotFound {
-                            let attributedText = string.attributedSubstring(from: match.range).mutableCopy() as! NSMutableAttributedString
-                            let newText = NSMutableAttributedString(string: "Slide Theme", attributes: attributedText.attributes(at: 0, effectiveRange: nil))
-                            newText.addAttribute(NSAttributedString.Key.link, value: URL(string: attributedText.string), range: NSRange(location: 0, length: newText.length))
-                            string.replaceCharacters(in: match.range, with: newText)
-                        }
+                    let match = try NSRegularExpression(pattern: ".*?(slide:\\/\\/[a-zA-Z%?#0-9]+).*?", options: []).matches(in: string.string, options: NSRegularExpression.MatchingOptions.init(rawValue: 0), range: NSRange(location: 0, length: string.length))[0]
+                    let matchRange: NSRange = match.range(at: 1)
+                    if matchRange.location != NSNotFound {
+                        let attributedText = string.attributedSubstring(from: match.range).mutableCopy() as! NSMutableAttributedString
+                        let newText = NSMutableAttributedString(string: "Slide Theme", attributes: attributedText.attributes(at: 0, effectiveRange: nil))
+                        newText.addAttribute(NSAttributedString.Key.link, value: URL(string: attributedText.string), range: NSRange(location: 0, length: newText.length))
+                        string.replaceCharacters(in: match.range, with: newText)
                     }
                 } catch {
                     

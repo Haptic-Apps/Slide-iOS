@@ -365,7 +365,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
         
         alert.addOneTextField(configuration: config)
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
-            var colorString = "slide:///colors"
+            var colorString = "slide://colors"
             colorString += ("#" + (self.themeText?.replacingOccurrences(of: "#", with: "<H>") ?? today_string)).addPercentEncoding
             
             colorString += (ColorUtil.foregroundColor.toHexString() + ColorUtil.backgroundColor.toHexString() + ColorUtil.navIconColor.toHexString() + ColorUtil.fontColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(ColorUtil.theme.isLight())).addPercentEncoding
