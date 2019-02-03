@@ -303,12 +303,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let current = content[openTo]
-        if current == .comments || current == .submitted || current == .overview {
-            navigationItem.rightBarButtonItems = [ moreB!, sortB!]
-        } else {
-            navigationItem.rightBarButtonItems = [ moreB!]
-        }
+        self.setupBaseBarColors()
     }
     
     func generateButtons(trophy: Trophy) -> UIImageView {
@@ -404,6 +399,8 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
                            direction: .forward,
                            animated: true,
                            completion: nil)
+        
+        self.currentVc = vCs[openTo]
         let current = content[openTo]
         if current == .comments || current == .submitted || current == .overview {
             navigationItem.rightBarButtonItems = [ moreB!, sortB!]
