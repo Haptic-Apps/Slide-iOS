@@ -111,6 +111,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if !loaded && !loading {
             self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
             refreshControl.beginRefreshing()
+        } else {
+            self.tableView.reloadData()
         }
         if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
             self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
