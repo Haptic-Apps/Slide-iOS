@@ -231,11 +231,19 @@ extension CurrentAccountViewController {
 
         backgroundView.edgeAnchors == view.edgeAnchors
 
-        closeButton.topAnchor == view.safeTopAnchor
-        closeButton.leftAnchor == view.safeLeftAnchor
-
-        settingsButton.topAnchor == view.safeTopAnchor
-        settingsButton.rightAnchor == view.safeRightAnchor
+        if #available(iOS 11, *) {
+            closeButton.topAnchor == view.safeTopAnchor
+            closeButton.leftAnchor == view.safeLeftAnchor
+            
+            settingsButton.topAnchor == view.safeTopAnchor
+            settingsButton.rightAnchor == view.safeRightAnchor
+        } else {
+            closeButton.topAnchor == view.safeTopAnchor + 12
+            closeButton.leftAnchor == view.safeLeftAnchor
+            
+            settingsButton.topAnchor == view.safeTopAnchor + 12
+            settingsButton.rightAnchor == view.safeRightAnchor
+        }
 
         upperButtonStack.leftAnchor == accountImageView.rightAnchor
         upperButtonStack.bottomAnchor == contentView.topAnchor

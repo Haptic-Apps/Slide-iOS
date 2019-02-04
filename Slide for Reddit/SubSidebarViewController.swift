@@ -25,6 +25,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        subbed.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: subbed)
         setupBaseBarColors(ColorUtil.getColorForSub(sub: (subreddit?.displayName)!))
         self.navigationController?.setNavigationBarHidden(false, animated: true)

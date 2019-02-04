@@ -53,7 +53,6 @@ class SettingsWelcome: UIPageViewController, UIPageViewControllerDataSource, UIP
             start.setTitle("LET'S GO!", for: .normal)
             start.titleLabel?.textColor = ColorUtil.fontColor
             start.setTitleColor(ColorUtil.fontColor, for: .normal)
-            
             start.addTarget(self, action: #selector(self.skip(_:)), for: UIControl.Event.touchUpInside)
             let startB = UIBarButtonItem.init(customView: start)
             let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)

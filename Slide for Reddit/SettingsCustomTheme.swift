@@ -156,6 +156,8 @@ class SettingsCustomTheme: UITableViewController {
         navigationItem.leftBarButtonItem = barButton
         applySwitch.isOn = ColorUtil.theme == .CUSTOM
         applySwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: .valueChanged)
+        applySwitch.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+
         navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: applySwitch), defaultButton!]
     }
     

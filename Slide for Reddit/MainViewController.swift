@@ -55,10 +55,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         } else {
             if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItem = accountB
-                navigationItem.rightBarButtonItem = sortB
+                navigationItem.leftBarButtonItems = [accountB]
+                navigationItem.rightBarButtonItems = [sortB]
             } else {
-                navigationItem.rightBarButtonItem = sortB
+                navigationItem.rightBarButtonItems = [sortB]
                 doLeftItem()
             }
         }
