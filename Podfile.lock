@@ -24,26 +24,26 @@ PODS:
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (73.1.1):
+  - MaterialComponents/ActivityIndicator (76.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (73.1.1)
-  - MaterialComponents/Ink (73.1.1):
+  - MaterialComponents/AnimationTiming (76.0.0)
+  - MaterialComponents/Ink (76.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (73.1.1)
-  - MaterialComponents/private/Application (73.1.1)
-  - MaterialComponents/private/Math (73.1.1)
-  - MaterialComponents/ProgressView (73.1.1):
+  - MaterialComponents/Palettes (76.0.0)
+  - MaterialComponents/private/Application (76.0.0)
+  - MaterialComponents/private/Math (76.0.0)
+  - MaterialComponents/ProgressView (76.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (73.1.1)
-  - MaterialComponents/ShadowLayer (73.1.1):
+  - MaterialComponents/ShadowElevations (76.0.0)
+  - MaterialComponents/ShadowLayer (76.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (73.1.1):
+  - MaterialComponents/Tabs (76.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -51,7 +51,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (73.1.1):
+  - MaterialComponents/Typography (76.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -77,7 +77,7 @@ PODS:
   - SloppySwiper (0.6)
   - Starscream (3.0.6)
   - SubtleVolume (1.0.2)
-  - SwiftLint (0.29.3)
+  - SwiftLint (0.30.1)
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.2.0)
   - Then (2.4.0)
@@ -139,7 +139,7 @@ CHECKOUT OPTIONS:
     :commit: a02b61c94f80f65563a9fc0035f6facfdcc6ad01
     :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
-    :commit: 6e5f700a3eae0f7c40d4582e7fab80e6311a7eda
+    :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
     :commit: cc0b5f250cc83b18a0549dc2a2aa5a4eff102675
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: b9b5743f650af50c5138e517a0930a3ade0cd09f
+  MaterialComponents: a1a359d3915155be5dd462aaceb0cf9be7ac7148
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -181,7 +181,7 @@ SPEC CHECKSUMS:
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SubtleVolume: 88618f8304a0e605d1adca14b95376dcbf9e03ce
-  SwiftLint: bfa7ca7b4d170cfaf0d236ca3ffd969e88a2f002
+  SwiftLint: a54bf1fe12b55c68560eb2a7689dfc81458508f7
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
   Then: 71866660c7af35a7343831f7668e7cd2b62ee0f2

@@ -238,10 +238,10 @@ extension CurrentAccountViewController {
             settingsButton.topAnchor == view.safeTopAnchor
             settingsButton.rightAnchor == view.safeRightAnchor
         } else {
-            closeButton.topAnchor == view.safeTopAnchor + 12
+            closeButton.topAnchor == view.safeTopAnchor + 24
             closeButton.leftAnchor == view.safeLeftAnchor
             
-            settingsButton.topAnchor == view.safeTopAnchor + 12
+            settingsButton.topAnchor == view.safeTopAnchor + 24
             settingsButton.rightAnchor == view.safeRightAnchor
         }
 
