@@ -197,11 +197,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
+        return .lightContent
     }
 
     var navItem: UINavigationItem?

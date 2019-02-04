@@ -368,7 +368,7 @@ class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
             var colorString = "slide://colors"
             colorString += ("#" + (self.themeText?.replacingOccurrences(of: "#", with: "<H>") ?? today_string)).addPercentEncoding
             
-            colorString += (ColorUtil.foregroundColor.toHexString() + ColorUtil.backgroundColor.toHexString() + ColorUtil.navIconColor.toHexString() + ColorUtil.fontColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(ColorUtil.theme.isLight())).addPercentEncoding
+            colorString += (ColorUtil.foregroundColor.toHexString() + ColorUtil.backgroundColor.toHexString() + ColorUtil.fontColor.toHexString() + ColorUtil.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(ColorUtil.theme.isLight())).addPercentEncoding
             UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string).replacingOccurrences(of: "#", with: "<H>").addPercentEncoding)
             UserDefaults.standard.synchronize()
             self.tableView.reloadData()
