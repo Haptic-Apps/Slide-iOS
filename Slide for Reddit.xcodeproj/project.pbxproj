@@ -138,6 +138,7 @@
 		BE1DA5E22208AC80001C7DB4 /* ic_lightblue@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1DA5D32208AC80001C7DB4 /* ic_lightblue@2x~ipad.png */; };
 		BE1DA5E32208AC80001C7DB4 /* ic_tronblue@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1DA5D42208AC80001C7DB4 /* ic_tronblue@2x~ipad.png */; };
 		BE1DA5E42208AC80001C7DB4 /* ic_mint@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1DA5D52208AC80001C7DB4 /* ic_mint@2x~ipad.png */; };
+		BE1DA5E62208EC59001C7DB4 /* SettingsUserTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA5E52208EC59001C7DB4 /* SettingsUserTags.swift */; };
 		BE20851521588F3A00D8F33C /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE20851321588F3900D8F33C /* Interface.storyboard */; };
 		BE20851721588F3A00D8F33C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE20851621588F3A00D8F33C /* Assets.xcassets */; };
 		BE20851E21588F3B00D8F33C /* Slide for Apple Watch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -515,6 +516,7 @@
 		BE1DA5D32208AC80001C7DB4 /* ic_lightblue@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_lightblue@2x~ipad.png"; sourceTree = "<group>"; };
 		BE1DA5D42208AC80001C7DB4 /* ic_tronblue@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_tronblue@2x~ipad.png"; sourceTree = "<group>"; };
 		BE1DA5D52208AC80001C7DB4 /* ic_mint@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_mint@2x~ipad.png"; sourceTree = "<group>"; };
+		BE1DA5E52208EC59001C7DB4 /* SettingsUserTags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUserTags.swift; sourceTree = "<group>"; };
 		BE20851121588F3900D8F33C /* Slide for Apple Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Slide for Apple Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE20851421588F3A00D8F33C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		BE20851621588F3A00D8F33C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -943,6 +945,7 @@
 				BE257A7C21F8D9710082A47E /* SettingsMainTheme.swift */,
 				BE8AE94021F919FF00E1C0D1 /* SettingsCustomTheme.swift */,
 				09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */,
+				BE1DA5E52208EC59001C7DB4 /* SettingsUserTags.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1980,6 +1983,7 @@
 				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
+				BE1DA5E62208EC59001C7DB4 /* SettingsUserTags.swift in Sources */,
 				0924E527219E088800C31D5E /* UIWindow+RootViewController.swift in Sources */,
 				0924E525219C8EA700C31D5E /* NSDate+Extensions.swift in Sources */,
 				BE780B5E1E32B41300DAA1EB /* SubredditThemeViewController.swift in Sources */,

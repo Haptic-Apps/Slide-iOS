@@ -45,6 +45,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var gestureCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "gestures")
     var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
     var muteCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "mute")
+    var tagsCell: UITableViewCell = UITableViewCell()
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch().then {
@@ -192,6 +193,13 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.icon.imageView?.image = Bundle.main.icon?.getCopy(withSize: CGSize(width: 25, height: 25))
         self.icon.imageView?.layer.cornerRadius = 5
         self.icon.imageView?.clipsToBounds = true
+
+        self.tagsCell.textLabel?.text = "User Tags Management"
+        self.tagsCell.accessoryType = .disclosureIndicator
+        self.tagsCell.backgroundColor = ColorUtil.foregroundColor
+        self.tagsCell.textLabel?.textColor = ColorUtil.fontColor
+        self.tagsCell.imageView?.image = UIImage.init(named: "user")?.toolbarIcon()
+        self.tagsCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.goPro.textLabel?.text = "Support Slide, go Pro!"
         self.goPro.accessoryType = .disclosureIndicator
@@ -482,6 +490,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 5: return self.cacheCell
             case 6: return self.clearCell
             case 7: return self.backupCell
+            case 8: return self.tagsCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
@@ -661,6 +670,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 } else {
                     ch = SettingsBackup()
                 }
+            case 8:
+                ch = SettingsUserTags()
             default:
                 break
             }
@@ -723,7 +734,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         switch section {
         case 0: return (SettingValues.isPro) ? 5 : 6
         case 1: return 8
-        case 2: return 8
+        case 2: return 9
         case 3: return 5
         default: fatalError("Unknown number of sections")
         }
