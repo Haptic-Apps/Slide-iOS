@@ -42,22 +42,14 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     var firefoxIcon: UIImage?
     var focusIcon: UIImage?
 
-    //for future var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
-    // var dontLoadImagePreviews = UISwitch()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        testBrowsers()
-        doImages()
-        // Do any additional setup after loading the view.
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     func doImages() {
         var first = GMColor.blue500Color()
         var second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))

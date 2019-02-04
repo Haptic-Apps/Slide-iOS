@@ -30,6 +30,10 @@ class GalleryTableViewController: MediaTableViewController {
         UIApplication.shared.statusBarView?.backgroundColor = .black
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let view = self.view.superview {

@@ -19,11 +19,6 @@ class SettingsMainTheme: UITableViewController {
         UserDefaults.standard.synchronize()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()

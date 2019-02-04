@@ -20,6 +20,14 @@ class SettingsBackup: UITableViewController {
     var restore: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
     var backup: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }

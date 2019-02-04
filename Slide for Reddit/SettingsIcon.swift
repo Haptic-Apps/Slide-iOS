@@ -23,6 +23,14 @@ class SettingsIcon: UITableViewController {
         self.tableView.register(IconCell.classForCoder(), forCellReuseIdentifier: "icon")
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

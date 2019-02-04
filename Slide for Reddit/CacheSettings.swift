@@ -20,6 +20,14 @@ class CacheSettings: UITableViewController {
     var cacheContentSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text

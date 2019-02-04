@@ -34,20 +34,14 @@ class SettingsHistory: UITableViewController {
 
     var clearSubs: UITableViewCell = UITableViewCell()
 
-    //for future var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
-    // var dontLoadImagePreviews = UISwitch()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()

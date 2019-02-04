@@ -245,6 +245,10 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         return vCs[nextIndex]
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     var selected = false
     var currentVc = UIViewController()
     override var prefersHomeIndicatorAutoHidden: Bool {

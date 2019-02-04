@@ -47,6 +47,15 @@ class SettingsGestures: UITableViewController {
     var canForceTouch = false
 
     var commentCell = UITableViewCell()
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateCells()

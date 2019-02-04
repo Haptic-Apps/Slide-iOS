@@ -24,6 +24,10 @@ class AnyModalViewController: UIViewController {
         }
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     var embeddedPlayer: AVPlayer?
     var videoView: VideoView!
     weak var toReturnTo: LinkCellView?

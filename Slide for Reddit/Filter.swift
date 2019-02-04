@@ -49,6 +49,14 @@ class Filter: UITableViewController {
         return AccountController.canShowNSFW ? 7 : 6
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     public init(subreddit: String, parent: SingleSubredditViewController) {
         self.sub = subreddit
         enabled = PostFilter.enabledArray(sub)

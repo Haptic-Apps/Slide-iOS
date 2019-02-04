@@ -18,6 +18,14 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     var chosenButtons = [UIBarButtonItem]()
     var regularButtons = [UIBarButtonItem]()
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.separatorStyle = .none

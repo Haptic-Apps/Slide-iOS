@@ -18,6 +18,14 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         return false
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     var subChanged = false
 
     var link: RSubmission!

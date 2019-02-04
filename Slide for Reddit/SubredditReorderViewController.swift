@@ -16,6 +16,14 @@ class SubredditReorderViewController: UITableViewController {
     var editItems: [UIBarButtonItem] = []
     var normalItems: [UIBarButtonItem] = []
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")

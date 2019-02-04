@@ -34,6 +34,14 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         super.viewDidAppear(animated)
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()

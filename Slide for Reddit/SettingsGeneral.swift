@@ -56,6 +56,14 @@ class SettingsGeneral: UITableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
