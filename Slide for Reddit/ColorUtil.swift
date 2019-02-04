@@ -406,7 +406,7 @@ public class ColorUtil {
             case .CUSTOM:
                 return UserDefaults.standard.colorForKey(key: CUSTOM_FONT) ?? UIColor(hexString: "#000000").withAlphaComponent(0.87)
             case .SOLARIZE:
-                return UIColor(hexString: "#667B82")
+                return UIColor(hexString: "#839496")
             }
         }
     }
