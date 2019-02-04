@@ -2360,10 +2360,11 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                             self.tableView.beginUpdates()
                             cell.collapse(childNumber: 0)
                             self.tableView.endUpdates()
+                            /* disable for now
                             if SettingValues.collapseFully, let path = tableView.indexPath(for: cell) {
                                 self.tableView.scrollToRow(at: path,
                                                            at: UITableView.ScrollPosition.none, animated: true)
-                            }
+                            }*/
                         }
                     } else {
                         if hiddenPersons.contains((id)) && childNumber > 0 {
@@ -2376,10 +2377,11 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                 if childNumber > 0 {
                                     oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
                                     cell.collapse(childNumber: childNumber)
+                                    /* disable for now
                                     if SettingValues.collapseFully, let path = tableView.indexPath(for: cell) {
                                         self.tableView.scrollToRow(at: path,
                                                                    at: UITableView.ScrollPosition.none, animated: false)
-                                    }
+                                    }*/
                                 }
                                 hideAll(comment: comment.getIdentifier(), i: row! + 1)
                                 if !hiddenPersons.contains(id) {
