@@ -529,7 +529,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 if offline {
                     self.loadOffline()
                 } else {
-                    try session?.getArticles(name, sort: sort, comments: (context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
+                    try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error)
@@ -2405,7 +2405,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                     strings.append(c.value)
                                 }
                                 cell.animateMore()
-                                try session?.getMoreChildren(strings, name: link.id, sort: .top, id: more.id, completion: { (result) -> Void in
+                                try session?.getMoreChildren(strings, name: link.id, sort: sort == .suggested ? nil : sort, id: more.id, completion: { (result) -> Void in
                                     switch result {
                                     case .failure(let error):
                                         print(error)

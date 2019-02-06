@@ -146,7 +146,7 @@ class SettingValues {
     public static var upvotePercentage = true
     public static var defaultSorting = LinkSortType.hot
     public static var defaultTimePeriod = TimeFilterWithin.day
-    public static var defaultCommentSorting = CommentSort.confidence
+    public static var defaultCommentSorting = CommentSort.suggested
     public static var tintingMode = "TINTING_MODE"
     public static var onlyTintOutside = false
     public static var postViewMode = PostViewType.LIST
