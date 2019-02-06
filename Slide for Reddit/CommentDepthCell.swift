@@ -1643,7 +1643,7 @@ extension CommentDepthCell: TTTAttributedLabelDelegate {
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
         if parent != nil {
             let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = url.host
+            alertController.headerData = url.absoluteString
             
             alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
                 UIPasteboard.general.setValue(url, forPasteboardType: "public.url")

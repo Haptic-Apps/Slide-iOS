@@ -276,7 +276,7 @@ extension SettingsFont {
         vc.title = "Submission Font"
         vc.key = FontSelectionTableViewController.Key.postFont
         vc.delegate = self
-        navigationController?.pushViewController(vc, animated: true)
+        VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
     }
 
     func commentFontCellWasTapped() {
@@ -284,7 +284,7 @@ extension SettingsFont {
         vc.title = "Comment Font"
         vc.key = FontSelectionTableViewController.Key.commentFont
         vc.delegate = self
-        navigationController?.pushViewController(vc, animated: true)
+        VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
     }
 
     func commentSizeCellWasTapped() {
@@ -340,33 +340,18 @@ extension SettingsFont {
 
     func weightCellWasTapped(submission: Bool) {
 
-        let actionSheetController: UIAlertController = UIAlertController(title: submission ? "Submission font size" : "Comment font size", message: "", preferredStyle: .actionSheet)
+        let actionSheetController: UIAlertController = UIAlertController(title: submission ? "Submission font weight" : "Comment font weight", message: "", preferredStyle: .actionSheet)
 
         actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
         let currentFamily = FontGenerator.fontOfSize(size: 16, submission: submission).familyName
         let fontsInFamily = UIFont.fontNames(forFamilyName: currentFamily)
+        print(fontsInFamily)
         // Prune out the weights that aren't available for the selected font
-        let availableWeights = FontGenerator.FontWeight.allCases.filter { weight in
-            if weight == .regular {
-                return true // Always display regular
-            }
-            for font in fontsInFamily {
-                if font.lowercased().contains(weight.rawValue.lowercased()) {
-                    return true
-                }
-            }
-            return false
-        }
-
-        for weight in availableWeights {
-            let action = UIAlertAction(title: weight.rawValue, style: .default) { _ in
+        for font in fontsInFamily {
+            let action = UIAlertAction(title: font, style: .default) { _ in
                 // Update the stored font weight
-                if submission {
-                    SettingValues.submissionFontWeight = weight.rawValue
-                } else {
-                    SettingValues.commentFontWeight = weight.rawValue
-                }
+                UserDefaults.standard.set(font, forKey: submission ? "postfont" : "commentfont")
 
                 UserDefaults.standard.synchronize()
                 FontGenerator.initialize()
@@ -374,7 +359,8 @@ extension SettingsFont {
                 CachedTitle.titles.removeAll()
                 self.refresh()
             }
-            if weight.rawValue == (submission ? SettingValues.submissionFontWeight : SettingValues.commentFontWeight) {
+            
+            if font == FontGenerator.fontOfSize(size: 16, submission: submission).familyName {
                 let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
                 action.setValue(selected, forKey: "image")
             }
@@ -383,8 +369,8 @@ extension SettingsFont {
 
         actionSheetController.modalPresentationStyle = .popover
         if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = submissionSize.contentView
-            presenter.sourceRect = submissionSize.contentView.bounds
+            presenter.sourceView = submission ? submissionWeight.contentView : commentWeight.contentView
+            presenter.sourceRect = submission ? submissionWeight.contentView.bounds : commentWeight.contentView.bounds
         }
         self.present(actionSheetController, animated: true, completion: nil)
     }

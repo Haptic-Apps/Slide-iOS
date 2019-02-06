@@ -149,7 +149,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
         if parentViewController != nil {
             let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = url.host
+            alertController.headerData = url.absoluteString
             
             alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
                 UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
@@ -578,7 +578,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if parentViewController != nil && parentViewController?.presentedViewController == nil {
             let url = self.link!.url!
             let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = url.host
+            alertController.headerData = url.absoluteString
             alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
                 let shareItems: Array = [url]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
@@ -2022,7 +2022,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         self.link!.flair = (text != nil && !text!.isEmpty) ? text! : flair.text
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
-                        self.showBody(width: self.contentView.frame.size.width - 24)
+                        if self.textView != nil {
+                            self.showBody(width: self.contentView.frame.size.width - 24)
+                        }
                     }
                 }}
         } catch {
