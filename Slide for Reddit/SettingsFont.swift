@@ -181,8 +181,8 @@ class SettingsFont: UITableViewController {
         self.submissionSize.detailTextLabel?.text = fontSizes[SettingValues.postFontOffset] ?? "Default"
         self.commentSize.detailTextLabel?.text = fontSizes[SettingValues.commentFontOffset] ?? "Default"
 
-        self.submissionWeight.detailTextLabel?.text = SettingValues.submissionFontWeight ?? "Regular"
-        self.commentWeight.detailTextLabel?.text = SettingValues.commentFontWeight ?? "Regular"
+        self.submissionWeight.detailTextLabel?.text = FontGenerator.fontOfSize(size: 12, submission: true).fontName
+        self.commentWeight.detailTextLabel?.text = FontGenerator.fontOfSize(size: 12, submission: false).fontName
 
         self.tableView.reloadData()
     }
