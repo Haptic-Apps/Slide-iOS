@@ -2405,7 +2405,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                     strings.append(c.value)
                                 }
                                 cell.animateMore()
-                                try session?.getMoreChildren(strings, name: link.id, sort: sort == .suggested ? nil : sort, id: more.id, completion: { (result) -> Void in
+                                try session?.getMoreChildren(strings, name: link.id, sort: .top, id: more.id, completion: { (result) -> Void in
                                     switch result {
                                     case .failure(let error):
                                         print(error)
