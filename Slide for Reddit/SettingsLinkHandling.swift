@@ -50,6 +50,12 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         }
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        testBrowsers()
+        doImages()
+    }
+
     func doImages() {
         var first = GMColor.blue500Color()
         var second = first.add(overlay: UIColor.white.withAlphaComponent(0.4))

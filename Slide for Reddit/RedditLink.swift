@@ -17,6 +17,9 @@ class RedditLink {
         if !urlString.startsWith("http") && !urlString.startsWith("https") {
             urlString = "https://" + urlString
         }
+        if urlS.host == "google.com" {
+            urlString = urlString.replacingOccurrences(of: "google.com/amp/s/amp.", with: "")
+        }
         let oldUrl = URL(string: urlString)!
         var url = formatRedditUrl(urlS: urlS)
         var np = false

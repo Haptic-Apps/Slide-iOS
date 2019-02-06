@@ -538,7 +538,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 })
             }
             return true
-        } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("redd.it") {
+        } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("google.com/amp") || url.absoluteString.contains("redd.it") {
                 VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)
                 return true
         } else if url.query?.components(separatedBy: "&").count ?? 0 < 0 {

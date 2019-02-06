@@ -99,14 +99,7 @@ class SettingsUserTags: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let theme = ColorUtil.Theme.cases[indexPath.row]
-        UserDefaults.standard.set(theme.rawValue, forKey: "theme")
-        UserDefaults.standard.synchronize()
-        _ = ColorUtil.doInit()
-        SubredditReorderViewController.changed = true
-        self.tableView.reloadData(with: .automatic)
-        MainViewController.needsRestart = true
-        doLayout()
+        self.tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -114,7 +107,7 @@ class SettingsUserTags: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        let delete = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete") { (_, indexPath) in
             UserDefaults.standard.removeObject(forKey: "tag+" + self.tags[indexPath.row].key)
             self.tags.removeValue(forKey: self.tags[indexPath.row].key)
             tableView.deleteRows(at: [indexPath], with: .fade)

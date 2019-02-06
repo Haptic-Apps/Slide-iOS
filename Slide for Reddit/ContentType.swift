@@ -227,9 +227,6 @@ class ContentType {
         if hostContains(host: host, bases: ["tumblr.com"]) && (url?.path.contains("post"))! {
             return CType.TUMBLR
         }*/
-        if hostContains(host: host, bases: ["reddit.com", "redd.it"]) {
-            return CType.REDDIT
-        }
         if hostContains(host: host, bases: ["vid.me"]) {
             return CType.VID_ME
         }
