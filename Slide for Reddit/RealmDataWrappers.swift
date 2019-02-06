@@ -15,7 +15,7 @@ class RealmDataWrapper {
     //Takes a Link from reddift and turns it into a Realm model
     static func linkToRSubmission(submission: Link) -> RSubmission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
-        var bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        var bodyHtml = submission.selftextHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
         
         var json: JSONDictionary?
@@ -172,7 +172,7 @@ class RealmDataWrapper {
     //Takes a Link from reddift and turns it into a Realm model
     static func updateSubmission(_ rSubmission: RSubmission, _ submission: Link) -> RSubmission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
-        var bodyHtml = submission.selftextHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        var bodyHtml = submission.selftextHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
         
         var json: JSONDictionary?
@@ -330,7 +330,8 @@ class RealmDataWrapper {
     //Takes a Comment from reddift and turns it into a Realm model
     static func commentToRComment(comment: Comment, depth: Int) -> RComment {
         let flair = comment.authorFlairText.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText
-        var bodyHtml = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        var bodyHtml = comment.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
+
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
         let rComment = RComment()
         let json = comment.baseJson
@@ -384,7 +385,7 @@ class RealmDataWrapper {
     
     static func messageToRMessage(message: Message) -> RMessage {
         let title = message.baseJson["link_title"] as? String ?? ""
-        var bodyHtml = message.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+        var bodyHtml = message.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
         let rMessage = RMessage()
         rMessage.htmlBody = bodyHtml

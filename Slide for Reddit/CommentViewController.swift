@@ -1351,7 +1351,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 first = false
             }
             if let comment = thing.0 as? Comment {
-                let html = comment.bodyHtml.preprocessedHTMLStringBeforeNSAttributedStringParsing
+                let html = comment.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
                 self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
