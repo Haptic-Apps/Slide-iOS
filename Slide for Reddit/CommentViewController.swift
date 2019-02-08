@@ -618,7 +618,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                     if let tableHeaderView = self.headerCell {
-                                        var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true))
+                                        var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
                                         // Add safe area insets to left and right if available
                                         if #available(iOS 11.0, *) {
                                             frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
@@ -642,7 +642,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.headerCell?.aspectWidth = self.tableView.bounds.size.width
                                     self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                     
-                                    var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true))
+                                    var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
                                     // Add safe area insets to left and right if available
                                     if #available(iOS 11.0, *) {
                                         frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
@@ -977,7 +977,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 return
             }
 
-            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true))
+            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
             // Add safe area insets to left and right if available
             if #available(iOS 11.0, *) {
                 frame = frame.insetBy(dx: max(view.safeAreaInsets.left, view.safeAreaInsets.right), dy: 0)
@@ -1909,7 +1909,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
 
                     frame.size.width = size.width - (leftInset + rightInset)
-                    frame.size.height = self.headerCell!.estimateHeight(true, true)
+                    frame.size.height = self.headerCell!.estimateHeight(true, true, np: self.np)
 
                     self.headerCell!.contentView.frame = frame
                     self.tableView.tableHeaderView!.frame = frame

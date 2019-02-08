@@ -236,9 +236,9 @@ class SettingsLayout: UITableViewController {
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
-        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true, np: false))
         linkCell.contentView.addSubview(link.contentView)
-        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true))
+        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true, np: false))
         
         switch SettingValues.postViewMode {
         case .CARD:
@@ -544,7 +544,7 @@ class SettingsLayout: UITableViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            return link.estimateHeight(false)
+            return link.estimateHeight(false, np: false)
         }
         return 60
     }
