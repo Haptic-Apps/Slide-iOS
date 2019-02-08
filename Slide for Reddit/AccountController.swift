@@ -17,7 +17,6 @@ class AccountController {
 
     static func reload() {
         AccountController.names.removeAll(keepingCapacity: false)
-        AccountController.names += OAuth2TokenRepository.savedNames
         AccountController.names += LocalKeystore.savedNames
         print(AccountController.names)
     }
@@ -54,7 +53,6 @@ class AccountController {
 
     static func initialize() {
         names.removeAll(keepingCapacity: false)
-        names += OAuth2TokenRepository.savedNames
         names += LocalKeystore.savedNames
         
         names = names.unique()
