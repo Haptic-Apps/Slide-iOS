@@ -643,6 +643,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         approved.removeAll()
         removed.removeAll()
         content.removeAll()
+        self.liveTimer.invalidate()
         text.removeAll()
         dataArray.removeAll()
         cDepth.removeAll()
@@ -964,6 +965,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { _ -> Void in
                     self.sort = c
                     self.reset = true
+                    self.live = false
                     self.activityIndicator.removeFromSuperview()
                     let barButton = UIBarButtonItem(customView: self.activityIndicator)
                     self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, barButton]
