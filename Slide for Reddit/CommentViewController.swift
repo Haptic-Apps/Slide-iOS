@@ -46,7 +46,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: CommentDepthCell?
     var didDisappearCompletely = false
-    
+    var live = false
+    var liveTimer = Timer()
+
     func isMenuShown() -> Bool {
         return menuCell != nil
     }
@@ -57,6 +59,138 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func showFilterMenu(_ cell: LinkCellView) {
         //Not implemented
+    }
+    
+    func setLive() {
+        self.sort = .new
+        self.live = true
+        self.reset = true
+        self.activityIndicator.removeFromSuperview()
+        let barButton = UIBarButtonItem(customView: self.activityIndicator)
+        self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, barButton]
+        self.activityIndicator.startAnimating()
+        
+        self.refresh(self)
+    }
+    
+    var progressDot = UIView()
+    
+    func startPulse() {
+        self.progressDot = UIView()
+        progressDot.alpha = 0.7
+        progressDot.backgroundColor = .clear
+        
+        let startAngle = -CGFloat.pi / 2
+        
+        let center = CGPoint (x: 20 / 2, y: 20 / 2)
+        let radius = CGFloat(20 / 2)
+        let arc = CGFloat.pi * CGFloat(2) * 1
+        
+        let cPath = UIBezierPath()
+        cPath.move(to: center)
+        cPath.addLine(to: CGPoint(x: center.x + radius * cos(startAngle), y: center.y + radius * sin(startAngle)))
+        cPath.addArc(withCenter: center, radius: radius, startAngle: startAngle, endAngle: arc + startAngle, clockwise: true)
+        cPath.addLine(to: CGPoint(x: center.x, y: center.y))
+        
+        let circleShape = CAShapeLayer()
+        circleShape.path = cPath.cgPath
+        circleShape.strokeColor = GMColor.red500Color().cgColor
+        circleShape.fillColor = GMColor.red500Color().cgColor
+        circleShape.lineWidth = 1.5
+        // add sublayer
+        for layer in progressDot.layer.sublayers ?? [CALayer]() {
+            layer.removeFromSuperlayer()
+        }
+        progressDot.layer.removeAllAnimations()
+        progressDot.layer.addSublayer(circleShape)
+
+        let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
+        pulseAnimation.duration = 0.5
+        pulseAnimation.toValue = 1.2
+        pulseAnimation.fromValue = 0.2
+        pulseAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        pulseAnimation.autoreverses = false
+        pulseAnimation.repeatCount = Float.greatestFiniteMagnitude
+        
+        let fadeAnimation = CABasicAnimation(keyPath: "opacity")
+        fadeAnimation.duration = 0.5
+        fadeAnimation.toValue = 0
+        fadeAnimation.fromValue = 2.5
+        fadeAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        fadeAnimation.autoreverses = false
+        fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
+        
+        progressDot.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        
+        liveB = UIBarButtonItem.init(customView: progressDot)
+
+        self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, self.liveB]
+        
+        progressDot.layer.add(pulseAnimation, forKey: "scale")
+        progressDot.layer.add(fadeAnimation, forKey: "fade")
+    }
+    
+    @objc func loadNewComments() {
+        var name = submission!.name
+        if name.contains("t3_") {
+            name = name.replacingOccurrences(of: "t3_", with: "")
+        }
+        do {
+            try session?.getArticles(name, sort: .new, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let tuple):
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        
+                        var queue: [Object] = []
+                        let startDepth = 1
+                        let listing = tuple.1
+                        
+                        for child in listing.children {
+                            let incoming = self.extendKeepMore(in: child, current: startDepth)
+                            for i in incoming {
+                                if i.1 == 1 {
+                                    let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
+                                    if self.content[item.getIdentifier()] == nil {
+                                        self.content[item.getIdentifier()] = item
+                                        self.cDepth[item.getIdentifier()] = i.1
+                                        queue.append(item)
+                                        self.updateStrings([i])
+                                    }
+                                }
+                            }
+                        }
+
+                        let datasetPosition = 0
+                        let realPosition = 0
+                        var ids: [String] = []
+                        for item in queue {
+                            let id = item.getIdentifier()
+                            ids.append(id)
+                            self.content[id] = item
+                        }
+
+                        if queue.count != 0 {
+                            self.tableView.beginUpdates()
+                            self.dataArray.insert(contentsOf: ids, at: datasetPosition)
+                            self.comments.insert(contentsOf: ids, at: realPosition)
+                            self.doArrays()
+                            var paths: [IndexPath] = []
+                            for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1) {
+                                paths.append(IndexPath.init(row: i, section: 0))
+                            }
+                            self.tableView.insertRows(at: paths, with: .fade)
+                            self.tableView.endUpdates()
+                            
+                        }
+                    })
+                }
+            })
+
+        } catch {
+            
+        }
     }
     
     func applyFilters() {
@@ -656,7 +790,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 }
                                 self.refreshControl?.endRefreshing()
                                 self.activityIndicator.stopAnimating()
-                                self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
+                                if self.live {
+                                    self.liveTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.loadNewComments), userInfo: nil, repeats: true)
+                                    self.startPulse()
+                                } else {
+                                    self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
+                                }
                                 self.indicator.stopAnimating()
                                 self.indicator.isHidden = true
                                 
@@ -813,7 +952,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     @objc func sort(_ selector: UIButton?) {
         if !offline {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Default comment sorting", message: "", preferredStyle: .actionSheet)
+            let actionSheetController: UIAlertController = UIAlertController(title: "Comment sorting", message: "", preferredStyle: .actionSheet)
 
             let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
                 print("Cancel")
@@ -825,6 +964,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { _ -> Void in
                     self.sort = c
                     self.reset = true
+                    self.activityIndicator.removeFromSuperview()
+                    let barButton = UIBarButtonItem(customView: self.activityIndicator)
+                    self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, barButton]
+                    self.activityIndicator.startAnimating()
+
                     self.refresh(self)
                 }
                 if sort == c {
@@ -833,6 +977,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
                 actionSheetController.addAction(saveActionButton)
             }
+
+            let saveActionButton: UIAlertAction = UIAlertAction(title: "Live (beta)", style: .default) { _ -> Void in
+                self.setLive()
+            }
+            
+            actionSheetController.addAction(saveActionButton)
 
             if let presenter = actionSheetController.popoverPresentationController {
                 presenter.sourceView = selector!
@@ -1038,6 +1188,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     
     var sortB: UIBarButtonItem!
     var searchB: UIBarButtonItem!
+    var liveB: UIBarButtonItem!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -1661,6 +1812,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.isHiding = true
+        self.liveTimer.invalidate()
     }
 
     func collapseAll() {
@@ -1972,6 +2124,27 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func showUI() {
         (navigationController)?.setNavigationBarHidden(false, animated: true)
         (navigationController)?.setToolbarHidden(false, animated: true)
+        if live {
+            progressDot.layer.removeAllAnimations()
+            let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
+            pulseAnimation.duration = 0.5
+            pulseAnimation.toValue = 1.2
+            pulseAnimation.fromValue = 0.2
+            pulseAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            pulseAnimation.autoreverses = false
+            pulseAnimation.repeatCount = Float.greatestFiniteMagnitude
+            
+            let fadeAnimation = CABasicAnimation(keyPath: "opacity")
+            fadeAnimation.duration = 0.5
+            fadeAnimation.toValue = 0
+            fadeAnimation.fromValue = 2.5
+            fadeAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            fadeAnimation.autoreverses = false
+            fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
+            
+            progressDot.layer.add(pulseAnimation, forKey: "scale")
+            progressDot.layer.add(fadeAnimation, forKey: "fade")
+        }
         self.isToolbarHidden = false
     }
 
