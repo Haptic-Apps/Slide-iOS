@@ -2146,8 +2146,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
         if full {
-            for view in infoBox.subviews {
-                view.removeFromSuperview()
+            if !link.isCrosspost && infoBox.subviews.count == 1 {
+                for view in infoBox.subviews {
+                    view.removeFromSuperview()
+                }
             }
             
             var text = ""

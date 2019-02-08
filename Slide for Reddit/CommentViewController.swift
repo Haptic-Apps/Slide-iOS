@@ -655,6 +655,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.tableView.tableHeaderView = view
                                 }
                                 self.refreshControl?.endRefreshing()
+                                self.activityIndicator.stopAnimating()
+                                self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
                                 self.indicator.stopAnimating()
                                 self.indicator.isHidden = true
                                 
@@ -1033,6 +1035,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.isToolbarHidden = false
         }
     }
+    
+    var sortB: UIBarButtonItem!
+    var searchB: UIBarButtonItem!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -1044,17 +1049,25 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
             sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let sortB = UIBarButtonItem.init(customView: sort)
+            sortB = UIBarButtonItem.init(customView: sort)
             
             let search = UIButton.init(type: .custom)
             search.accessibilityLabel = "Search"
             search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControl.State.normal)
             search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
             search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let searchB = UIBarButtonItem.init(customView: search)
+            searchB = UIBarButtonItem.init(customView: search)
             
-            navigationItem.rightBarButtonItems = [sortB, searchB]
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
+            if !loaded {
+                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                activityIndicator.color = ColorUtil.navIconColor
+                let barButton = UIBarButtonItem(customView: activityIndicator)
+                navigationItem.rightBarButtonItems = [sortB, searchB, barButton]
+                activityIndicator.startAnimating()
+            } else {
+                navigationItem.rightBarButtonItems = [sortB, searchB]
+            }
         }
         
         doStartupItems()
@@ -1077,11 +1090,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
             self.updateToolbar()
         }
-        
-        if !loaded {
-            refreshControl?.beginRefreshing()
-        }
     }
+    
+    var activityIndicator = UIActivityIndicatorView()
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight() && SettingValues.reduceColor {
