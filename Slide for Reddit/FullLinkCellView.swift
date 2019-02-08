@@ -29,7 +29,9 @@ final class FullLinkCellView: LinkCellView {
         let bannerPadding = CFloat(5)
         
         constraintsForType = batch {
-            textView.bottomAnchor <= box.topAnchor - ctwelve
+            textView.bottomAnchor <= infoBox.topAnchor - ctwelve
+            infoBox.bottomAnchor <= box.topAnchor
+            infoBox.horizontalAnchors == contentView.horizontalAnchors + ctwelve
             textView.topAnchor == title.bottomAnchor + ceight
             textView.horizontalAnchors == contentView.horizontalAnchors + ctwelve
             title.topAnchor == contentView.topAnchor + ctwelve
@@ -41,7 +43,7 @@ final class FullLinkCellView: LinkCellView {
                 title.bottomAnchor <= bannerImage.topAnchor - ceight
                 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
-                bannerImage.bottomAnchor == box.topAnchor - ctwelve
+                bannerImage.bottomAnchor == infoBox.topAnchor - ctwelve
                 if type != ContentType.CType.IMAGE {
                     infoContainer.isHidden = false
                 }
@@ -60,7 +62,7 @@ final class FullLinkCellView: LinkCellView {
                 info.textColor = ColorUtil.fontColor
                 let ceight = CGFloat(8)
                 let ctwelve = CGFloat(12)
-                thumbImageContainer.bottomAnchor <= box.topAnchor - ceight
+                thumbImageContainer.bottomAnchor <= infoBox.topAnchor - ceight
                 
                 // Thumbnail sizing
                 thumbImageContainer.topAnchor == title.bottomAnchor + ctwelve

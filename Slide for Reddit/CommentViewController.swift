@@ -657,7 +657,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 self.refreshControl?.endRefreshing()
                                 self.indicator.stopAnimating()
                                 self.indicator.isHidden = true
-                                self.doBanner(self.submission!)
                                 
                                 var index = 0
                                 var loaded = true
@@ -754,90 +753,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             sideView.layer.cornerRadius = 7.5
             sideView.clipsToBounds = true
         }
-    }
-
-    var popup: UILabel!
-    
-    func doBanner(_ link: RSubmission) {
-        if popup != nil {
-            popup.removeFromSuperview()
-        }
-        var text = ""
-        if np {
-            text = "This is a no participation link.\nPlease don't vote or comment"
-        }
-        if link.archived {
-            text = "This is an archived post.\nYou won't be able to vote or comment"
-        } else if link.locked {
-            text = "This is a locked post.\nYou won't be able to comment"
-        }
-
-        if !text.isEmpty && self.navigationController != nil {
-            var top = CGFloat(64)
-            var bottom = CGFloat(45)
-            if #available(iOS 11.0, *) {
-                top = 0
-                bottom = 0
-            }
-            bottom += 64
-            normalInsets = UIEdgeInsets.init(top: top, left: 0, bottom: bottom, right: 0)
-
-            var width = UIScreen.main.bounds.width - 24
-            if width > 375 {
-                width = 375
-            }
-            popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: width, height: 48))
-            popup.backgroundColor = ColorUtil.accentColorForSub(sub: link.subreddit)
-            popup.textAlignment = .center
-            popup.isUserInteractionEnabled = true
-
-            let textParts = text.components(separatedBy: "\n")
-
-            let finalText: NSMutableAttributedString!
-            if textParts.count > 1 {
-                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
-                firstPart.append(secondPart)
-                finalText = firstPart
-            } else {
-                finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-            }
-            popup.attributedText = finalText
-
-            popup.numberOfLines = 0
-
-            popup.elevate(elevation: 2)
-            popup.layer.cornerRadius = 5
-            popup.clipsToBounds = true
-            popup.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
-            
-            if let view = self.navigationController?.view {
-                view.addSubview(popup)
-                let bottomHeight: CGFloat
-                if #available(iOS 11.0, *) {
-                    bottomHeight = self.additionalSafeAreaInsets.bottom
-                } else {
-                    bottomHeight = 0
-                }
-                popup.bottomAnchor == self.navigationController!.view.safeBottomAnchor - 8 - 48 - bottomHeight
-                popup.widthAnchor == width
-                popup.heightAnchor == 48
-                popup.centerXAnchor == self.navigationController!.view.centerXAnchor
-                self.navigationController!.view.bringSubviewToFront(popup)
-                
-                UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                    self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-                }, completion: nil)
-            }
-        } else {
-            var top = CGFloat(64)
-            let bottom = CGFloat(45)
-            if #available(iOS 11.0, *) {
-                top = 0
-            }
-            normalInsets = UIEdgeInsets.init(top: top, left: 0, bottom: bottom, right: 0)
-        }
-        self.tableView.contentInset = normalInsets
     }
     
     var savedBack: UIBarButtonItem?
@@ -1162,24 +1077,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if navigationController != nil && (didDisappearCompletely || !loaded) {
             self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
             self.updateToolbar()
-        }
-        
-        if popup != nil {
-            var width = UIScreen.main.bounds.width - 24
-            if width > 375 {
-                width = 375
-            }
-            self.navigationController!.view.addSubview(popup)
-            popup.transform = .identity
-            popup.bottomAnchor == self.navigationController!.view.safeBottomAnchor - 8
-            popup.widthAnchor == width
-            popup.heightAnchor == 48
-            popup.centerXAnchor == self.navigationController!.view.centerXAnchor
-            self.navigationController!.view.bringSubviewToFront(popup)
-            
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.popup.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-            }, completion: nil)
         }
         
         if !loaded {
@@ -1754,13 +1651,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.isHiding = true
-        if popup != nil {
-            UIView.animate(withDuration: 0.15, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.popup.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-            }, completion: { (_) in
-                self.popup.removeFromSuperview()
-            })
-        }
     }
 
     func collapseAll() {
@@ -2063,9 +1953,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !isGoingDown {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
             
-            if popup == nil {
-                (self.navigationController)?.setToolbarHidden(true, animated: true)
-            }
+            (self.navigationController)?.setToolbarHidden(true, animated: true)
         }
         self.isToolbarHidden = true
         isHiding = false

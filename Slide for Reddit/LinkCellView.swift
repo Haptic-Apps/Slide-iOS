@@ -101,6 +101,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var sideDownvote: UIButton!
     var sideScore: UILabel!
     
+    var infoBox: UIStackView!
+    
     var videoView: VideoView!
     var topVideoView: UIView!
     var progressDot: UIView!
@@ -222,6 +224,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
             $0.verticalAlignment = .top
+        }
+        
+        self.infoBox = UIStackView().then {
+            $0.accessibilityIdentifier = "Extra Info Stack Horizontal"
+            $0.axis = .vertical
+            $0.spacing = 4
         }
         
         self.hide = UIButton(type: .custom).then {
@@ -461,6 +469,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             buttons = UIStackView()
             box = UIStackView()
+        }
+        
+        if full {
+            self.contentView.addSubview(infoBox)
         }
         
         if SettingValues.actionBarMode.isSide() && !full {
@@ -1315,6 +1327,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             box.isHidden = true
         }
         
+        if full {
+            var text = ""
+            if false {
+                text = "This is a no participation link.\nPlease don't vote or comment"
+            }
+            if submission.archived {
+                text = "This is an archived post.\nYou won't be able to vote or comment"
+            } else if submission.locked {
+                text = "This is a locked post.\nYou won't be able to comment"
+            }
+            
+            if !text.isEmpty {
+                let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
+                popup.backgroundColor = ColorUtil.accentColorForSub(sub: submission.subreddit)
+                popup.textAlignment = .center
+                popup.isUserInteractionEnabled = true
+                
+                let textParts = text.components(separatedBy: "\n")
+                
+                let finalText: NSMutableAttributedString!
+                if textParts.count > 1 {
+                    let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                    let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                    firstPart.append(secondPart)
+                    finalText = firstPart
+                } else {
+                    finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                }
+                popup.attributedText = finalText
+                
+                popup.numberOfLines = 0
+                
+                popup.elevate(elevation: 2)
+                popup.layer.cornerRadius = 5
+                popup.clipsToBounds = true
+                
+                infoBox.addArrangedSubview(popup)
+                
+                popup.horizontalAnchors == infoBox.horizontalAnchors
+                popup.heightAnchor == 48
+            }
+        }
+        
         if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF && full {
             big = false
             thumb = false
@@ -1527,47 +1582,61 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             } else {
                 tagbody.isHidden = true
                 if submission.isCrosspost && full {
-                    let colorF = UIColor.white
-                    
-                    let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
-                    
+                    let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
+                    popup.backgroundColor = ColorUtil.backgroundColor
+                    popup.textAlignment = .center
+                    popup.isUserInteractionEnabled = true
+                    let textParts = text.components(separatedBy: "\n")
+                    let colorF = ColorUtil.fontColor
+                        
+                    let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
+                
                     let endString = NSMutableAttributedString(string: "\nOriginal submission by ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
                     let by = NSMutableAttributedString(string: " in ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                    
+                
                     let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                    
+                
                     let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
                     if AccountController.currentName == submission.author {
-                        authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+                        authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
                     } else if userColor != ColorUtil.baseColor {
-                        authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+                        authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
                     }
-                    
+                
                     endString.append(authorString)
                     endString.append(by)
-                    
-                    let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
-                    
+                
+                    let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
+                
                     let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
-                    
+                
                     let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
                     if color != ColorUtil.baseColor {
                         boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
                     }
-                    
+                
                     endString.append(boldString)
                     finalText.append(endString)
-                    
-                    infoContainer.addTapGestureRecognizer {
+                
+                    popup.addTapGestureRecognizer {
                         VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
                     }
-                    info.attributedText = finalText
+                    popup.attributedText = finalText
                     
-                } else {
-                    let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
-                    finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
-                    info.attributedText = finalText
+                    popup.numberOfLines = 0
+                    
+                    popup.elevate(elevation: 2)
+                    popup.layer.cornerRadius = 5
+                    popup.clipsToBounds = true
+                    
+                    infoBox.addArrangedSubview(popup)
+                    
+                    popup.horizontalAnchors == infoBox.horizontalAnchors
+                    popup.heightAnchor == 48
                 }
+                let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
+                finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
+                info.attributedText = finalText
             }
             
         } else {
@@ -2120,6 +2189,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 sideScore.attributedText = scoreString
             }
         }
+        if full {
+            var text = ""
+            if false {
+                text = "This is a no participation link.\nPlease don't vote or comment"
+            }
+            if link.archived {
+                text = "This is an archived post.\nYou won't be able to vote or comment"
+            } else if link.locked {
+                text = "This is a locked post.\nYou won't be able to comment"
+            }
+            
+            if !text.isEmpty {
+                let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
+                popup.backgroundColor = ColorUtil.accentColorForSub(sub: link.subreddit)
+                popup.textAlignment = .center
+                popup.isUserInteractionEnabled = true
+                
+                let textParts = text.components(separatedBy: "\n")
+                
+                let finalText: NSMutableAttributedString!
+                if textParts.count > 1 {
+                    let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                    let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                    firstPart.append(secondPart)
+                    finalText = firstPart
+                } else {
+                    finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                }
+                popup.attributedText = finalText
+                
+                popup.numberOfLines = 0
+                
+                popup.elevate(elevation: 2)
+                popup.layer.cornerRadius = 5
+                popup.clipsToBounds = true
+                
+                infoBox.addSubview(popup)
+                
+                popup.horizontalAnchors == infoBox.horizontalAnchors
+                popup.heightAnchor == 48
+                popup.topAnchor == infoBox.topAnchor
+            }
+        }
 
         if History.getSeen(s: link) && !full && !SettingValues.newIndicator {
             self.title.alpha = 0.3
@@ -2240,6 +2352,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     fullHeightExtras += 45 + 12 + 12
                 } else {
                     fullHeightExtras += imageHeight
+                }
+                
+                if link!.archived || link!.locked {
+                    fullHeightExtras += 56
+                }
+                if link!.isCrosspost {
+                    fullHeightExtras += 56
+                    if link!.archived || link!.locked {
+                        fullHeightExtras += 4
+                    }
                 }
             }
             
