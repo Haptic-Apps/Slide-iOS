@@ -132,7 +132,7 @@ class SettingsFont: UITableViewController {
             self?.submissionSizeCellWasTapped()
         }
 
-        submissionWeight.textLabel?.text = "Font weight"
+        submissionWeight.textLabel?.text = "Font variant"
         submissionWeight.addTapGestureRecognizer { [weak self] in
             self?.weightCellWasTapped(submission: true)
         }
@@ -154,7 +154,7 @@ class SettingsFont: UITableViewController {
             self?.commentFontCellWasTapped()
         }
 
-        commentWeight.textLabel?.text = "Font weight"
+        commentWeight.textLabel?.text = "Font variant"
         commentWeight.addTapGestureRecognizer { [weak self] in
             self?.weightCellWasTapped(submission: false)
         }
@@ -207,16 +207,16 @@ class SettingsFont: UITableViewController {
         case 0:
             switch indexPath.row {
             case 0: cell = self.submissionFont
-            case 1: cell = self.submissionSize
-            case 2: cell = self.submissionWeight
+            case 1: cell = self.submissionWeight
+            case 2: cell = self.submissionSize
             case 3: cell = self.submissionPreview
             default: fatalError("Unknown row in section \(indexPath.section)")
             }
         case 1:
             switch indexPath.row {
             case 0: cell = self.commentFont
-            case 1: cell = self.commentSize
-            case 2: cell = self.commentWeight
+            case 1: cell = self.commentWeight
+            case 2: cell = self.commentSize
             case 3: cell = self.commentPreview
             default: fatalError("Unknown row in section \(indexPath.section)")
             }
@@ -340,7 +340,7 @@ extension SettingsFont {
 
     func weightCellWasTapped(submission: Bool) {
 
-        let actionSheetController: UIAlertController = UIAlertController(title: submission ? "Submission font weight" : "Comment font weight", message: "", preferredStyle: .actionSheet)
+        let actionSheetController: UIAlertController = UIAlertController(title: submission ? "Submission font variant" : "Comment font variant", message: "", preferredStyle: .actionSheet)
 
         actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
@@ -360,7 +360,7 @@ extension SettingsFont {
                 self.refresh()
             }
             
-            if font == FontGenerator.fontOfSize(size: 16, submission: submission).familyName {
+            if font == FontGenerator.fontOfSize(size: 16, submission: submission).fontName {
                 let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
                 action.setValue(selected, forKey: "image")
             }
