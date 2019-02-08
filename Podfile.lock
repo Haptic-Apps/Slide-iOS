@@ -24,26 +24,26 @@ PODS:
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (76.0.0):
+  - MaterialComponents/ActivityIndicator (76.1.1):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (76.0.0)
-  - MaterialComponents/Ink (76.0.0):
+  - MaterialComponents/AnimationTiming (76.1.1)
+  - MaterialComponents/Ink (76.1.1):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (76.0.0)
-  - MaterialComponents/private/Application (76.0.0)
-  - MaterialComponents/private/Math (76.0.0)
-  - MaterialComponents/ProgressView (76.0.0):
+  - MaterialComponents/Palettes (76.1.1)
+  - MaterialComponents/private/Application (76.1.1)
+  - MaterialComponents/private/Math (76.1.1)
+  - MaterialComponents/ProgressView (76.1.1):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (76.0.0)
-  - MaterialComponents/ShadowLayer (76.0.0):
+  - MaterialComponents/ShadowElevations (76.1.1)
+  - MaterialComponents/ShadowLayer (76.1.1):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (76.0.0):
+  - MaterialComponents/Tabs (76.1.1):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -51,7 +51,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (76.0.0):
+  - MaterialComponents/Typography (76.1.1):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -105,7 +105,7 @@ DEPENDENCIES:
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
   - SDWebImage (~> 4.1.2)
-  - SloppySwiper (from `https://github.com/fastred/sloppySwiper`)
+  - SloppySwiper (from `https://github.com/ccrama/SloppySwiper`)
   - Starscream (~> 3.0.2)
   - SubtleVolume
   - SwiftLint
@@ -127,7 +127,7 @@ EXTERNAL SOURCES:
   RLBAlertsPickers:
     :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
-    :git: https://github.com/fastred/sloppySwiper
+    :git: https://github.com/ccrama/SloppySwiper
   XLActionController:
     :git: https://github.com/ccrama/XLActionController
 
@@ -148,8 +148,8 @@ CHECKOUT OPTIONS:
     :commit: ec1f42324ef72985799ac73cc477ca65251a6512
     :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
-    :commit: 90e1566555734d08a4c72619595f5a2157c104b3
-    :git: https://github.com/fastred/sloppySwiper
+    :commit: 4248d9ab7c5b34702564c0daa11760c997c11270
+    :git: https://github.com/ccrama/SloppySwiper
   XLActionController:
     :commit: 3adaa1008978e677d83c0c1f6a2a2862150aea9d
     :git: https://github.com/ccrama/XLActionController
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: a1a359d3915155be5dd462aaceb0cf9be7ac7148
+  MaterialComponents: fb5f66cf0c558b7b0040c9cecc580ac76e2253ef
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -188,6 +188,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: d2ab12a967ae0fee0b4563b8d809c8fb13ebc636
 
-PODFILE CHECKSUM: ba95534d5abe5364117708e789e3ed51c4023288
+PODFILE CHECKSUM: 6dc3acdd64b5ac2770a13fbd6972175f4671774a
 
 COCOAPODS: 1.4.0
