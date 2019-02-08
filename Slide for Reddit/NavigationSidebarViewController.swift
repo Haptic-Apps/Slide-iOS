@@ -350,6 +350,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.backgroundView.alpha = 1
+            strongSelf.searchBar.becomeFirstResponder()
             strongSelf.topView?.alpha = 0
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = strongSelf.headerView.backgroundColor
@@ -363,7 +364,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                 strongSelf.doneOnce = true
                 strongSelf.expanded = true
                 strongSelf.updateAccessibility()
-                strongSelf.searchBar.becomeFirstResponder()
             }
             strongSelf.searchBar.isUserInteractionEnabled = true
         }
