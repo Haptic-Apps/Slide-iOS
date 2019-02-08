@@ -301,7 +301,7 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission locked!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.locked = set
-                        cell.refreshLink(cell.link!)
+                        cell.refreshLink(cell.link!, np: false)
                     }
                 }
             })
@@ -328,7 +328,7 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Spoiler tag set!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.spoiler = set
-                        cell.refreshLink(cell.link!)
+                        cell.refreshLink(cell.link!, np: false)
                     }
                 }
             })
@@ -355,7 +355,7 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "NSFW tag set!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.nsfw = set
-                        cell.refreshLink(cell.link!)
+                        cell.refreshLink(cell.link!, np: false)
                     }
                 }
             })
@@ -380,7 +380,7 @@ class PostActions: NSObject {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
-                        cell.refreshLink(cell.link!)
+                        cell.refreshLink(cell.link!, np: false)
                         BannerUtil.makeBanner(text: "Submission approved!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
                 }
@@ -403,7 +403,7 @@ class PostActions: NSObject {
                 case .success:
                     DispatchQueue.main.async {
                         cell.link!.distinguished = "mod"
-                        cell.refreshLink(cell.link!)
+                        cell.refreshLink(cell.link!, np: false)
                         BannerUtil.makeBanner(text: "Submission distinguished!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                     }
                 }
@@ -427,7 +427,7 @@ class PostActions: NSObject {
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission \(sticky ? "" : "un-")stickied!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.stickied = sticky
-                        cell.refreshLink(cell.link!)
+                        cell.refreshLink(cell.link!, np: false)
                     }
                 }
             })

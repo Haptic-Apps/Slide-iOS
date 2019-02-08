@@ -614,7 +614,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.headerCell?.parentViewController = self
                                     self.hasDone = true
                                     self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-                                    self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width)
+                                    self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width, np: self.np)
                                     self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                     if let tableHeaderView = self.headerCell {
@@ -638,7 +638,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
                                 } else {
                                     
-                                    self.headerCell?.refreshLink(self.submission!)
+                                    self.headerCell?.refreshLink(self.submission!, np: self.np)
                                     self.headerCell?.aspectWidth = self.tableView.bounds.size.width
                                     self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                     
@@ -850,7 +850,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
         self.tableView.allowsSelection = false
         self.tableView.layer.speed = 1.5
-        self.extendedLayoutIncludesOpaqueBars = true
 
         tableView.backgroundColor = ColorUtil.backgroundColor
         refreshControl = UIRefreshControl()
@@ -901,7 +900,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
-        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width)
+        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
         headerCell!.showBody(width: self.view.frame.size.width - 24)
 
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))

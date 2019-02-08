@@ -994,9 +994,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0) {
+    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         self.link = submission
-        self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test, parentWidth: parentWidth)
+        self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test, parentWidth: parentWidth, np: np)
         layoutForContent()
     }
     
@@ -1043,7 +1043,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return viewWidth * ratio
     }
 
-    func refreshLink(_ submission: RSubmission) {
+    func refreshLink(_ submission: RSubmission, np: Bool) {
         self.link = submission
 
         if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
@@ -1063,7 +1063,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.addGestureRecognizer(comment)
         }
         
-        refresh()
+        refresh(np: np)
         let more = History.commentsSince(s: submission)
         comments.text = " \(submission.commentCount)\(more > 0 ? " (+\(more))" : "")"
     }
@@ -1226,7 +1226,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return !(touch.view is UIButton)
     }
     
-    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0) {
+    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if self is AutoplayBannerLinkCellView {
             self.endVideos()
             do {
@@ -1325,49 +1325,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         if !SettingValues.actionBarMode.isFull() && !full {
             buttons.isHidden = true
             box.isHidden = true
-        }
-        
-        if full {
-            var text = ""
-            if false {
-                text = "This is a no participation link.\nPlease don't vote or comment"
-            }
-            if submission.archived {
-                text = "This is an archived post.\nYou won't be able to vote or comment"
-            } else if submission.locked {
-                text = "This is a locked post.\nYou won't be able to comment"
-            }
-            
-            if !text.isEmpty {
-                let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
-                popup.backgroundColor = ColorUtil.accentColorForSub(sub: submission.subreddit)
-                popup.textAlignment = .center
-                popup.isUserInteractionEnabled = true
-                
-                let textParts = text.components(separatedBy: "\n")
-                
-                let finalText: NSMutableAttributedString!
-                if textParts.count > 1 {
-                    let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                    let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
-                    firstPart.append(secondPart)
-                    finalText = firstPart
-                } else {
-                    finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                }
-                popup.attributedText = finalText
-                
-                popup.numberOfLines = 0
-                
-                popup.elevate(elevation: 2)
-                popup.layer.cornerRadius = 5
-                popup.clipsToBounds = true
-                
-                infoBox.addArrangedSubview(popup)
-                
-                popup.horizontalAnchors == infoBox.horizontalAnchors
-                popup.heightAnchor == 48
-            }
         }
         
         if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF && full {
@@ -1537,7 +1494,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             self.contentView.addGestureRecognizer(force)
         }
         
-        refresh()
+        refresh(np: np)
         
         if (type != .IMAGE && type != .SELF && !thumb) || full {
             infoContainer.isHidden = false
@@ -1583,16 +1540,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 tagbody.isHidden = true
                 if submission.isCrosspost && full {
                     let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
-                    popup.backgroundColor = ColorUtil.backgroundColor
+                    popup.backgroundColor = ColorUtil.navIconColor
                     popup.textAlignment = .center
                     popup.isUserInteractionEnabled = true
-                    let textParts = text.components(separatedBy: "\n")
-                    let colorF = ColorUtil.fontColor
+                    let colorF = UIColor.white
                         
                     let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
                 
-                    let endString = NSMutableAttributedString(string: "\nOriginal submission by ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                    let by = NSMutableAttributedString(string: " in ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+                    let endString = NSMutableAttributedString(string: "\nOriginal submission by ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+                    let by = NSMutableAttributedString(string: "in ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
                 
                     let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
                 
@@ -1951,7 +1907,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     func editSelftext() {
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
-                self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
+                self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                 self.showBody(width: self.contentView.frame.size.width - 24)
             })
         }
@@ -2090,7 +2046,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentViewController)
                         self.link!.flair = (text != nil && !text!.isEmpty) ? text! : flair.text
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false)
-                        self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!)
+                        self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                         if self.textView != nil {
                             self.showBody(width: self.contentView.frame.size.width - 24)
                         }
@@ -2100,7 +2056,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         }
     }
     
-    func refresh() {
+    func refresh(np: Bool = false) {
         let link = self.link!
 
         upvote.setImage(LinkCellImageCache.upvote, for: .normal)
@@ -2190,8 +2146,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
         if full {
+            for view in infoBox.subviews {
+                view.removeFromSuperview()
+            }
+            
             var text = ""
-            if false {
+            if np {
                 text = "This is a no participation link.\nPlease don't vote or comment"
             }
             if link.archived {
@@ -2225,11 +2185,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 popup.layer.cornerRadius = 5
                 popup.clipsToBounds = true
                 
-                infoBox.addSubview(popup)
+                infoBox.addArrangedSubview(popup)
                 
                 popup.horizontalAnchors == infoBox.horizontalAnchors
                 popup.heightAnchor == 48
-                popup.topAnchor == infoBox.topAnchor
             }
         }
 
@@ -2291,7 +2250,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return nil
     }
     
-    func estimateHeight(_ full: Bool, _ reset: Bool = false) -> CGFloat {
+    func estimateHeight(_ full: Bool, _ reset: Bool = false, np: Bool) -> CGFloat {
         if estimatedHeight == 0 || reset {
             var paddingTop = CGFloat(0)
             var paddingBottom = CGFloat(2)
@@ -2354,7 +2313,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     fullHeightExtras += imageHeight
                 }
                 
-                if link!.archived || link!.locked {
+                if link!.archived || link!.locked || np {
                     fullHeightExtras += 56
                 }
                 if link!.isCrosspost {

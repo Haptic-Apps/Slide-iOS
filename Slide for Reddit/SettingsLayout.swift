@@ -232,7 +232,7 @@ class SettingsLayout: UITableViewController {
         }
         
         link.aspectWidth = self.tableView.frame.size.width
-        self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true)
+        self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true, np: false)
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.backgroundColor

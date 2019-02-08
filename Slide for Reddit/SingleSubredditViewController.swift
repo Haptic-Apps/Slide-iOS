@@ -2235,7 +2235,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         //cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
         //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
 
-        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub)
+        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub, np: false)
 
         return cell
     }

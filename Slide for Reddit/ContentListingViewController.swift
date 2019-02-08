@@ -248,7 +248,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
             
-            (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "")
+            (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "", np: false)
 
             c?.layer.shouldRasterize = true
             c?.layer.rasterizationScale = UIScreen.main.scale
