@@ -34,7 +34,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
 
     public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?) { //lq is should load lq and did load lq
         if saveHistory {
-            History.addSeen(s: lnk)
+            History.addSeen(s: lnk, skipDuplicates: true)
         }
         self.link = lnk
         let url = link.url!

@@ -2143,7 +2143,7 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
         }
         if !tableView.indexPathsForVisibleItems.contains(indexPath) {
             if SettingValues.markReadOnScroll && indexPath.row < links.count {
-                History.addSeen(s: links[indexPath.row], skipDuplicates: false)
+                History.addSeen(s: links[indexPath.row], skipDuplicates: true)
             }
         }
     }

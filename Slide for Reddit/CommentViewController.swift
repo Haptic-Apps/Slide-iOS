@@ -398,7 +398,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 }
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
-            History.addSeen(s: cell.link!)
+            History.addSeen(s: cell.link!, skipDuplicates: true)
             cell.refresh()
         } catch {
         }
@@ -479,7 +479,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
-            History.addSeen(s: cell.link!)
+            History.addSeen(s: cell.link!, skipDuplicates: true)
             cell.refresh()
         } catch {
 
@@ -522,7 +522,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
-            History.addSeen(s: cell.link!)
+            History.addSeen(s: cell.link!, skipDuplicates: true)
             cell.refresh()
         } catch {
 
@@ -741,7 +741,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             self.doArrays()
                             self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
                             History.setComments(s: link)
-                            History.addSeen(s: link)
+                            History.addSeen(s: link, skipDuplicates: false)
                             DispatchQueue.main.async(execute: { () -> Void in
                                 if !self.hasSubmission {
                                     self.headerCell = FullLinkCellView()
