@@ -55,7 +55,7 @@ class History {
         } else if SettingValues.saveHistory {
             let fullname = s.getId()
             currentSeen.append(fullname)
-            if !skipDuplicates {
+            if !skipDuplicates || seenTimes.object(forKey: fullname) == nil {
                 seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
             }
             currentVisits.append(s.getId())
