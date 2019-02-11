@@ -662,6 +662,12 @@ extension ContentListingViewController: LinkCellViewDelegate {
                     self.tableView.insertItems(at: [IndexPath.init(row: savedIndex, section: 0)])
                 }
             }
+        } else {
+            ReadLater.toggleReadLater(link: link)
+            if #available(iOS 10.0, *) {
+                HapticUtility.hapticActionComplete()
+            }
+            cell.refresh()
         }
 
         cell.refresh()

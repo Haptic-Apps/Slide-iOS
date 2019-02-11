@@ -352,8 +352,9 @@ public class TextDisplayStackView: UIStackView {
     
     public func createAttributedChunk(baseHTML: String, accent: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
+        let htmlBase = TextStackEstimator.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        print(baseHtml)
         let html = NSMutableAttributedString(attributedString: baseHtml)
         
         while html.mutableString.contains("\t•\t") {
@@ -375,6 +376,12 @@ public class TextDisplayStackView: UIStackView {
             }
         })
         
+        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
+            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
+                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
+            }
+        })
+
         return LinkParser.parse(html, accent)
     }
     

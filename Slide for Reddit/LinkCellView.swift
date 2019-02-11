@@ -1540,7 +1540,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 tagbody.isHidden = true
                 if submission.isCrosspost && full {
                     let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
-                    popup.backgroundColor = ColorUtil.navIconColor
+                    popup.backgroundColor = ColorUtil.backgroundColor
                     popup.textAlignment = .center
                     popup.isUserInteractionEnabled = true
                     let colorF = UIColor.white
@@ -2164,7 +2164,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             
             if !text.isEmpty {
                 let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
-                popup.backgroundColor = ColorUtil.accentColorForSub(sub: link.subreddit)
+                popup.backgroundColor = ColorUtil.getColorForSub(sub: link.subreddit)
                 popup.textAlignment = .center
                 popup.isUserInteractionEnabled = true
                 
