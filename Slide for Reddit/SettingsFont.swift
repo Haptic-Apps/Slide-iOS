@@ -184,6 +184,23 @@ class SettingsFont: UITableViewController {
         self.submissionWeight.detailTextLabel?.text = FontGenerator.fontOfSize(size: 12, submission: true).fontName
         self.commentWeight.detailTextLabel?.text = FontGenerator.fontOfSize(size: 12, submission: false).fontName
 
+        if self.submissionWeight.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).familyName || UIFont.fontNames(forFamilyName: FontGenerator.fontOfSize(size: 16, submission: true).familyName).count == 1 {
+            self.submissionWeight.detailTextLabel?.text = "Default"
+            self.submissionWeight.alpha = 0.7
+            self.submissionWeight.isUserInteractionEnabled = false
+        } else {
+            self.submissionWeight.alpha = 1
+            self.submissionWeight.isUserInteractionEnabled = true
+        }
+        if commentWeight.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).familyName || UIFont.fontNames(forFamilyName: FontGenerator.fontOfSize(size: 16, submission: false).familyName).count == 1 {
+            self.commentWeight.detailTextLabel?.text = "Default"
+            self.commentWeight.alpha = 0.7
+            self.commentWeight.isUserInteractionEnabled = false
+        } else {
+            self.commentWeight.alpha = 1
+            self.commentWeight.isUserInteractionEnabled = true
+        }
+
         self.tableView.reloadData()
     }
     
