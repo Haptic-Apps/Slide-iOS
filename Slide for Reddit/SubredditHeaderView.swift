@@ -8,10 +8,10 @@
 
 import Anchorage
 import reddift
-import TTTAttributedLabel
+import YYText
 import UIKit
 
-class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
+class SubredditHeaderView: UIView, YYTextViewDelegate {
 
     var subscribers: UILabel = UILabel()
     var here: UILabel = UILabel()
@@ -319,8 +319,10 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         return CGFloat(290) + (descHeight)
     }
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parentController?.doShow(url: url, heroView: nil, heroVC: nil)
+    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
+        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
+            parentController?.doShow(url: url, lq: nil, heroView: nil, heroVC: nil)
+        }
     }
 }
 

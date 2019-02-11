@@ -8,7 +8,7 @@
 
 import Anchorage
 import DTCoreText
-import TTTAttributedLabel
+import YYText
 import UIKit
 
 public class TextStackEstimator: NSObject {

@@ -25,7 +25,7 @@ target 'Slide for Reddit' do
   pod 'Starscream', '~> 3.0.2'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
   pod 'SloppySwiper', :git => 'https://github.com/ccrama/SloppySwiper'
-  pod 'TTTAttributedLabel'
+  pod 'YYText'
   pod 'ActionSheetPicker-3.0', :git => 'https://github.com/ccrama/ActionSheetPicker-3.0'
   pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON'

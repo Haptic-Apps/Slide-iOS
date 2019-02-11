@@ -13,11 +13,11 @@ import RealmSwift
 import reddift
 import RLBAlertsPickers
 import SloppySwiper
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
-class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate, UIPopoverPresentationControllerDelegate {
+class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, YYTextViewDelegate, SubmissionMoreDelegate, ReplyDelegate, UIPopoverPresentationControllerDelegate {
     
     func hide(index: Int) {
         if index >= 0 {

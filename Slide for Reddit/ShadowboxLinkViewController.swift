@@ -12,9 +12,9 @@ import AVKit
 import MaterialComponents.MaterialProgressView
 import RealmSwift
 import SDWebImage
-import TTTAttributedLabel
+import YYText
 
-class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
+class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, YYTextViewDelegate {
 
     var type: ContentType.CType = ContentType.CType.UNKNOWN
     
@@ -25,7 +25,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     var content: Object?
     var baseURL: URL?
 
-    var titleLabel = TTTAttributedLabel.init(frame: CGRect.zero)
+    var titleLabel = YYTextView.init(frame: CGRect.zero)
 
     var comment = UIImageView()
     var upvote = UIImageView()
@@ -57,9 +57,11 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             }
         }
     }
-
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        doShow(url: url, heroView: nil, heroVC: nil)
+    
+    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
+        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
+            self.doShow(url: url, lq: nil, heroView: nil, heroVC: nil)
+        }
     }
 
     init(url: URL?, content: Object?, parent: ShadowboxViewController) {
@@ -85,10 +87,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     func configureView() {
-        self.titleLabel = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        self.titleLabel = YYTextView(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Title"
-            $0.numberOfLines = 0
-            $0.lineBreakMode = .byWordWrapping
             $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
             $0.isOpaque = false
         }
@@ -241,7 +241,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             
             comments.text = "\(link.commentCount)"
             
-            titleLabel.setText(CachedTitle.getTitle(submission: link, full: true, false, true))
+            titleLabel.attributedText = CachedTitle.getTitle(submission: link, full: true, false, true)
         } else if let link = content as! RComment? {
             archived = link.archived
             upvote.image = LinkCellImageCache.upvote

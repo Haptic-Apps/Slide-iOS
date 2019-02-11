@@ -13,10 +13,10 @@ import RealmSwift
 import reddift
 import SwiftyJSON
 import Then
-import TTTAttributedLabel
+import YYText
 import UIKit
 
-class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttributedLabelDelegate {
+class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDelegate {
 
     public enum ReplyType {
         case NEW_MESSAGE
@@ -44,8 +44,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
     }
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        self.doShow(url: url, heroView: nil, heroVC: nil)
+    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
+        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
+            let urlClicked = url
+            self.doShow(url: urlClicked, heroView: nil, heroVC: nil)
+        }
     }
 
     var type = ReplyType.NEW_MESSAGE
@@ -269,7 +272,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
     }
 
-    func textViewDidChange(_ textView: UITextView) {
+    /* This is probably broken*/
+    @nonobjc func textViewDidChange(_ textView: UITextView) {
         textView.sizeToFitHeight()
         var height = CGFloat(8)
         for view in extras! {
@@ -444,26 +448,25 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         if type.isMessage() {
             if type == .REPLY_MESSAGE {
                 //two
-                let text1 = TTTAttributedLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                let text1 = YYTextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
                     $0.delegate = self
-                    $0.numberOfLines = 0
                     $0.font = UIFont.systemFont(ofSize: 16)
-                    $0.textInsets = UIEdgeInsets.init(top: 24, left: 8, bottom: 24, right: 8)
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RMessage).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
+                /* todo this
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
                 activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
                 text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-
-                text1.setText(content)
+*/
+                text1.attributedText = content
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -656,26 +659,26 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         } else if type.isComment() {
             if (toReplyTo as! RSubmission).type == .SELF {
                 //two
-                let text1 = TTTAttributedLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                let text1 = YYTextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
-                    $0.numberOfLines = 0
                     $0.delegate = self
                     $0.font = UIFont.systemFont(ofSize: 16)
-                    $0.textInsets = UIEdgeInsets.init(top: 24, left: 8, bottom: 24, right: 8)
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RSubmission).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
+                /* todo this
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
                 activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
                 text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-
-                text1.setText(content)
+*/
+                
+                text1.attributedText = content
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true

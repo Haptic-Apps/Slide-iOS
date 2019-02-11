@@ -7,17 +7,17 @@
 //
 
 import reddift
-import TTTAttributedLabel
+import YYText
 import UIKit
 
-class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
+class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, YYTextViewDelegate {
     
     var title = UILabel()
-    var textView = TTTAttributedLabel.init(frame: CGRect.zero)
+    var textView = YYTextView.init(frame: CGRect.zero)
     var info = UILabel()
     var image = UIImageView()
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+    func attributedLabel(_ label: YYTextView!, didSelectLinkWith url: URL!) {
         parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
     }
     
@@ -60,7 +60,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
         
         title.textColor = ColorUtil.fontColor
         
-        self.textView = TTTAttributedLabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.textView = YYTextView(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.delegate = self
         self.textView.isUserInteractionEnabled = true
         self.textView.backgroundColor = .clear
@@ -173,7 +173,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAt
                     let framesetterB = CTFramesetterCreateWithAttributedString(content!)
                     let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: width - 16, height: CGFloat.greatestFiniteMagnitude), nil)
 
-                    textView.setText(content)
+                    textView.attributedText = content
                     textView.frame.size.height = textSizeB.height
                     hasText = true
                 } catch {

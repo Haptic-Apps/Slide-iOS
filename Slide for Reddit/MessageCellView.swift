@@ -9,19 +9,24 @@
 import Anchorage
 import AudioToolbox
 import reddift
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
-class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
+class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, YYTextViewDelegate {
 
     var text = TextDisplayStackView()
     var single = false
 
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
+        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
+            if (parentViewController) != nil {
+                let urlClicked = url
+                parentViewController?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
+            }
+        }
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         let topmargin = 0

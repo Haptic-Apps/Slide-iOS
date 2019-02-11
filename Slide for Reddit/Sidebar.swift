@@ -8,7 +8,7 @@
 
 import Foundation
 import reddift
-import TTTAttributedLabel
+import YYText
 
 class Sidebar: NSObject, TTTAttributedLabelDelegate {
     

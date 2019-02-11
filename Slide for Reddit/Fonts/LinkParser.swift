@@ -7,7 +7,7 @@
 //
 
 import DTCoreText
-import TTTAttributedLabel
+import YYText
 import UIKit
 
 class LinkParser {

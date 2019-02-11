@@ -12,7 +12,7 @@ import reddift
 import SDWebImage
 import SwiftSpreadsheet
 import Then
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 

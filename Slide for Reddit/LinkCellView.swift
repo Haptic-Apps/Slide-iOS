@@ -15,7 +15,7 @@ import RLBAlertsPickers
 import SafariServices
 import SDWebImage
 import Then
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
@@ -36,7 +36,16 @@ enum CurrentType {
     case thumb, banner, text, autoplay, none
 }
 
-class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TTTAttributedLabelDelegate, UIGestureRecognizerDelegate {
+class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YYTextViewDelegate, UIGestureRecognizerDelegate {
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        //todo this
+        return nil
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        //todo this
+    }
+    
     
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
         //todo maybe? contentView.blink(color: GMColor.orange500Color())
@@ -74,7 +83,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     var bannerImage: UIImageView!
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
-    var title: TTTAttributedLabel!
+    var title: YYTextView!
     var score: UILabel!
     var box: UIStackView!
     var sideButtons: UIStackView!
@@ -148,30 +157,38 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         configureLayout()
     }
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if parentViewController != nil {
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = url.absoluteString
-            
-            alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(url)
-                }
-            }))
-            let open = OpenInChromeController.init()
-            if open.isChromeInstalled() {
-                alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
-                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+    func textView(_ textView: YYTextView, didLongPress highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
+        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
+            if parentViewController != nil {
+                let alertController: BottomSheetActionController = BottomSheetActionController()
+                alertController.headerData = url.absoluteString
+                
+                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
                 }))
+                
+                alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+                    if #available(iOS 10.0, *) {
+                        UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    } else {
+                        UIApplication.shared.openURL(url)
+                    }
+                }))
+                let open = OpenInChromeController.init()
+                if open.isChromeInstalled() {
+                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    }))
+                }
+                parentViewController?.present(alertController, animated: true, completion: nil)
             }
-            parentViewController?.present(alertController, animated: true, completion: nil)
         }
+    }
+    
+    func textView(_ textView: YYTextView, shouldLongPress highlight: YYTextHighlight, in characterRange: NSRange) -> Bool {
+        return highlight.attributes?.contains(where: { (tuple) -> Bool in
+            tuple.key == NSAttributedString.Key.link.rawValue
+        }) ?? false
     }
     
     func configureView() {
@@ -217,13 +234,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             $0.backgroundColor = UIColor.white
         }
         
-        self.title = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        self.title = YYTextView(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.numberOfLines = 0
-            $0.lineBreakMode = .byWordWrapping
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor
-            $0.verticalAlignment = .top
         }
         
         self.infoBox = UIStackView().then {
@@ -1001,21 +1015,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     }
     
     var linkClicked = false
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
-        let textClicked = label.attributedText.attributedSubstring(from: result.range).string
-        // TODO: This doesn't seem needed to handle user links
-//        if textClicked.contains("/u/") {
-//            VCPresenter.openRedditLink(textClicked, nil, nil)
-//            return
-//        }
-        if (parentViewController) != nil {
-            if textClicked.contains("[[s[") {
-                parentViewController?.showSpoiler(textClicked)
-            } else {
-                let urlClicked = result.url!
-                parentViewController?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
+    
+    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
+        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL, let textClicked = textView.attributedText?.attributedSubstring(from: characterRange).string {
+            if (parentViewController) != nil {
+                if textClicked.contains("[[s[") {
+                    parentViewController?.showSpoiler(textClicked)
+                } else {
+                    let urlClicked = url
+                    parentViewController?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
+                }
+                linkClicked = true
             }
-            linkClicked = true
         }
     }
     
@@ -1073,18 +1084,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             return
         }
 
-        title.setText(CachedTitle.getTitle(submission: link, full: full, true, false))
+        title.attributedText = CachedTitle.getTitle(submission: link, full: full, true, false)
         title.delegate = self
         
-        title.linkAttributes = [
+        title.linkTextAttributes = [
             convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
             convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
         ]
-        title.activeLinkAttributes = [
-            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
-            convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
-        ]
-        
+
+        /* todo this
         if let titleText = title.text as? NSString {
             // Add link to subreddit
             let subredditRange = titleText.range(of: "r/\(link.subreddit)")
@@ -1097,7 +1105,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             title.addLink(to: authorURL, with: authorRange)
         } else {
             NSLog("Could not cast title.text as NSString!")
-        }
+        }*/
     }
     
     @objc func doDTap(_ sender: AnyObject) {
@@ -1259,10 +1267,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         comments.textColor = ColorUtil.navIconColor
         title.textColor = ColorUtil.navIconColor
 
+        /* todo thi s
         let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
         activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
         title.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-        title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+        title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]*/
         activeSet = true
         
         refreshTitle()
@@ -1553,11 +1562,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
                 
                     let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
+                    /* Maybe enable this later
                     if AccountController.currentName == submission.author {
                         authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
                     } else if userColor != ColorUtil.baseColor {
                         authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
-                    }
+                    }*/
                 
                     endString.append(authorString)
                     endString.append(by)
@@ -2227,6 +2237,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
     
     var registered: Bool = false
     
+    /* todo this
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
         if full {
@@ -2250,7 +2261,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
             }
         }
         return nil
-    }
+    }*/
     
     func estimateHeight(_ full: Bool, _ reset: Bool = false, np: Bool) -> CGFloat {
         if estimatedHeight == 0 || reset {
@@ -2331,7 +2342,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //buttons horizontal margins
             }
             
-            let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText)
+            let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText!)
             let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
             
             let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras
@@ -2340,6 +2351,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         return estimatedHeight
     }
     
+    /* todo this
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
         if let attr = textView.firstTextView.link(at: locationInTextView) {
             return (attr.result.url!, attr.accessibilityFrame)
@@ -2357,7 +2369,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
         } else {
             VCPresenter.showVC(viewController: viewControllerToCommit, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
         }
-    }
+    }*/
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

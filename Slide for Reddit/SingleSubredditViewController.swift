@@ -15,7 +15,7 @@ import reddift
 import RLBAlertsPickers
 import SDWebImage
 import SloppySwiper
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 

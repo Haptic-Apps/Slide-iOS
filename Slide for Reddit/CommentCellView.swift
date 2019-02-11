@@ -8,16 +8,18 @@
 
 import Anchorage
 import reddift
-import TTTAttributedLabel
+import YYText
 import UIKit
 
-class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
+class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, YYTextViewDelegate {
     
     var text = TextDisplayStackView()
     var single = false
-
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+    
+    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
+        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
+            parentViewController?.doShow(url: url, lq: nil, heroView: nil, heroVC: nil)
+        }
     }
 
     override func layoutSubviews() {

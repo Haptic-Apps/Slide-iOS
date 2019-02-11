@@ -12,7 +12,7 @@ import reddift
 import SDWebImage
 import SwiftSpreadsheet
 import Then
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
@@ -25,9 +25,9 @@ class TableDisplayView: UIScrollView {
     var widths = [[CGFloat]]()
     var baseColor: UIColor
     var tColor: UIColor
-    var textDelegate: TTTAttributedLabelDelegate
+    var textDelegate: YYTextViewDelegate
 
-    init(baseHtml: String, color: UIColor, accentColor: UIColor, delegate: TTTAttributedLabelDelegate) {
+    init(baseHtml: String, color: UIColor, accentColor: UIColor, delegate: YYTextViewDelegate) {
         let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
@@ -142,7 +142,7 @@ class TableDisplayView: UIScrollView {
     }
     
     func addSubviews() {
-        let activeLinkAttributes = [kCTForegroundColorAttributeName: tColor]
+        let activeLinkAttributes = [NSAttributedString.Key.foregroundColor.rawValue: tColor]
         var odd = false
         for row in baseData {
             let rowStack = UIStackView().then({
@@ -153,13 +153,12 @@ class TableDisplayView: UIScrollView {
             globalHeight += 30
             globalWidth = 0
             for string in row {
-                let text = TTTAttributedLabel.init(frame: CGRect.zero).then({
+                let text = YYTextView.init(frame: CGRect.zero).then({
                     $0.heightAnchor == CGFloat(30)
                     $0.delegate = self.textDelegate
-                    $0.linkAttributes = activeLinkAttributes
-                    $0.activeLinkAttributes = activeLinkAttributes
+                    $0.linkTextAttributes = activeLinkAttributes
                 })
-                text.setText(string)
+                text.attributedText = string
                 if odd {
                     text.backgroundColor = ColorUtil.foregroundColor
                 }
