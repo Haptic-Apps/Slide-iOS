@@ -1426,6 +1426,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
+        title.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 1, right: 0)
 
         let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         let paragraphStyle = NSMutableParagraphStyle()
@@ -1540,7 +1541,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         paragraphStyle.lineSpacing = 1.5
-        infoString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: infoString.length))
+        infoString.yy_paragraphStyle = paragraphStyle
 
         title.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {

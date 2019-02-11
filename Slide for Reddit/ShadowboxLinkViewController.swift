@@ -25,7 +25,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     var content: Object?
     var baseURL: URL?
 
-    var titleLabel = YYTextView.init(frame: CGRect.zero)
+    var titleLabel = YYLabel.init(frame: CGRect.zero)
 
     var comment = UIImageView()
     var upvote = UIImageView()
@@ -87,10 +87,11 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     func configureView() {
-        self.titleLabel = YYTextView(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        self.titleLabel = YYLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Title"
             $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
             $0.isOpaque = false
+            $0.numberOfLines = 0
         }
         
         self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {

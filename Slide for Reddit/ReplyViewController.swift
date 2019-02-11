@@ -448,13 +448,13 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDe
         if type.isMessage() {
             if type == .REPLY_MESSAGE {
                 //two
-                let text1 = YYTextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
-                    $0.delegate = self
                     $0.font = UIFont.systemFont(ofSize: 16)
+                    $0.numberOfLines = 0
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RMessage).htmlBody
@@ -659,12 +659,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDe
         } else if type.isComment() {
             if (toReplyTo as! RSubmission).type == .SELF {
                 //two
-                let text1 = YYTextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.clipsToBounds = true
+                    $0.numberOfLines = 0
                     $0.layer.cornerRadius = 10
-                    $0.delegate = self
                     $0.font = UIFont.systemFont(ofSize: 16)
                 })
                 extras?.append(text1)

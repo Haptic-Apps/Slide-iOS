@@ -13,7 +13,7 @@ import UIKit
 class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, YYTextViewDelegate {
     
     var title = UILabel()
-    var textView = YYTextView.init(frame: CGRect.zero)
+    var textView = YYLabel.init(frame: CGRect.zero)
     var info = UILabel()
     var image = UIImageView()
     
@@ -60,10 +60,10 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, YYTex
         
         title.textColor = ColorUtil.fontColor
         
-        self.textView = YYTextView(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        self.textView.delegate = self
+        self.textView = YYLabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         self.textView.isUserInteractionEnabled = true
         self.textView.backgroundColor = .clear
+        self.textView.numberOfLines = 0
         
         self.info = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         info.numberOfLines = 0

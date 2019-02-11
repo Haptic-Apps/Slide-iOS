@@ -9,8 +9,9 @@
 import Foundation
 import reddift
 import YYText
+import XLActionController
 
-class Sidebar: NSObject, TTTAttributedLabelDelegate {
+class Sidebar: NSObject, YYTextViewDelegate {
     
     var parent: (UIViewController & MediaVCDelegate)?
     var subname = ""
@@ -20,52 +21,40 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
         self.subname = subname
     }
 
-    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if (url) != nil {
+    func textView(_ textView: YYTextView, didLongPress highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
+        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
             if parent != nil {
-                let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                sheet.addAction(
-                    UIAlertAction(title: "Close", style: .cancel) { (_) in
-                        sheet.dismiss(animated: true, completion: nil)
+                let alertController: BottomSheetActionController = BottomSheetActionController()
+                alertController.headerData = url.absoluteString
+                
+                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                }))
+                
+                alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+                    if #available(iOS 10.0, *) {
+                        UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    } else {
+                        UIApplication.shared.openURL(url)
                     }
-                )
+                }))
                 let open = OpenInChromeController.init()
                 if open.isChromeInstalled() {
-                    sheet.addAction(
-                        UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
-                            open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                        }
-                    )
+                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    }))
                 }
-                sheet.addAction(
-                    UIAlertAction(title: "Open in Safari", style: .default) { (_) in
-                        if #available(iOS 10.0, *) {
-                            UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                        } else {
-                            UIApplication.shared.openURL(url)
-                        }
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-                )
-                sheet.addAction(
-                    UIAlertAction(title: "Open", style: .default) { (_) in
-                        /* let controller = WebViewController(nibName: nil, bundle: nil)
-                         controller.url = url
-                         let nav = UINavigationController(rootViewController: controller)
-                         self.present(nav, animated: true, completion: nil)*/
-                    }
-                )
-                sheet.addAction(
-                    UIAlertAction(title: "Copy URL", style: .default) { (_) in
-                        UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-                )
-                
-                parent?.present(sheet, animated: true, completion: nil)
+                parent?.present(alertController, animated: true, completion: nil)
             }
         }
     }
+    
+    func textView(_ textView: YYTextView, shouldLongPress highlight: YYTextHighlight, in characterRange: NSRange) -> Bool {
+        return highlight.attributes?.contains(where: { (tuple) -> Bool in
+            tuple.key == NSAttributedString.Key.link.rawValue
+        }) ?? false
+    }
+    
 
     var inner: SubSidebarViewController?
     var subInfo: Subreddit?

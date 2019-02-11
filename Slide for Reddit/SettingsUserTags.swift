@@ -119,7 +119,7 @@ class SettingsUserTags: UITableViewController {
 }
 class TagCellView: UITableViewCell {
     
-    var title: YYTextView!
+    var title: YYLabel!
     var body = UIView()
     
     required init?(coder aDecoder: NSCoder) {
@@ -141,7 +141,8 @@ class TagCellView: UITableViewCell {
             $0.clipsToBounds = true
         }
         
-        self.title = YYTextView(frame: CGRect.zero).then {
+        self.title = YYLabel(frame: CGRect.zero).then {
+            $0.numberOfLines = 0
             $0.font = UIFont.systemFont(ofSize: 16)
         }
         

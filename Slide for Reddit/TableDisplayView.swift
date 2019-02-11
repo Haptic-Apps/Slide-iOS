@@ -153,10 +153,8 @@ class TableDisplayView: UIScrollView {
             globalHeight += 30
             globalWidth = 0
             for string in row {
-                let text = YYTextView.init(frame: CGRect.zero).then({
+                let text = YYLabel.init(frame: CGRect.zero).then({
                     $0.heightAnchor == CGFloat(30)
-                    $0.delegate = self.textDelegate
-                    $0.linkTextAttributes = activeLinkAttributes
                 })
                 text.attributedText = string
                 if odd {

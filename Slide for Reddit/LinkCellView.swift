@@ -83,7 +83,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
     var bannerImage: UIImageView!
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
-    var title: YYTextView!
+    var title: YYLabel!
     var score: UILabel!
     var box: UIStackView!
     var sideButtons: UIStackView!
@@ -234,9 +234,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
             $0.backgroundColor = UIColor.white
         }
         
-        self.title = YYTextView(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        self.title = YYLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Post Title"
             $0.isOpaque = false
+            $0.numberOfLines = 0
             $0.backgroundColor = ColorUtil.foregroundColor
         }
         
@@ -1085,12 +1086,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
         }
 
         title.attributedText = CachedTitle.getTitle(submission: link, full: full, true, false)
-        title.delegate = self
-        
-        title.linkTextAttributes = [
-            convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor,
-            convertFromNSAttributedStringKey(NSAttributedString.Key.underlineStyle): NSNumber(value: false),
-        ]
 
         /* todo this
         if let titleText = title.text as? NSString {

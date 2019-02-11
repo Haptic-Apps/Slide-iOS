@@ -21,7 +21,7 @@ public class TextDisplayStackView: UIStackView {
     var estimatedHeight = CGFloat(0)
     weak var parentLongPress: UILongPressGestureRecognizer?
     
-    let firstTextView: YYTextView
+    let firstTextView: YYLabel
     let delegate: YYTextViewDelegate?
     let overflow: UIStackView
     
@@ -42,7 +42,7 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = .black
         delegate = nil
         self.baseFontColor = .white
-        self.firstTextView = YYTextView.init(frame: CGRect.zero)
+        self.firstTextView = YYLabel.init(frame: CGRect.zero)
         self.overflow = UIStackView()
         self.overflow.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
@@ -59,15 +59,16 @@ public class TextDisplayStackView: UIStackView {
         self.delegate = delegate
         self.tColor = color
         self.baseFontColor = baseFontColor
-        self.firstTextView = YYTextView.init(frame: CGRect.zero).then({
+        self.firstTextView = YYLabel.init(frame: CGRect.zero).then({
             $0.accessibilityIdentifier = "Top title"
+            $0.numberOfLines = 0
+            $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         })
         self.overflow = UIStackView().then({
             $0.accessibilityIdentifier = "Text overflow"
             $0.axis = .vertical
             $0.spacing = 8
         })
-        firstTextView.delegate = delegate
         super.init(frame: CGRect.zero)
         self.axis = .vertical
         self.addArrangedSubviews(firstTextView, overflow)
@@ -96,13 +97,6 @@ public class TextDisplayStackView: UIStackView {
         removedSubviews.forEach({ $0.removeFromSuperview() })
         overflow.isHidden = true
         
-        if !activeSet {
-            activeSet = true
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.linkTextAttributes ?? [String: Any]())
-            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-            firstTextView.linkTextAttributes = activeLinkAttributes as NSDictionary as? [String: Any]
-        }
-        
         firstTextView.attributedText = string
         /* todo this
         if let long = parentLongPress {
@@ -110,9 +104,12 @@ public class TextDisplayStackView: UIStackView {
         }*/
         
         if !ignoreHeight {
-            let framesetterB = CTFramesetterCreateWithAttributedString(string)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
+            let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: string)!
+            firstTextView.textLayout = layout
+            estimatedHeight += layout.textBoundingSize.height
+            firstTextView.horizontalAnchors == horizontalAnchors
+            firstTextView.heightAnchor == layout.textBoundingSize.height
         }
     }
     
@@ -143,10 +140,6 @@ public class TextDisplayStackView: UIStackView {
                 startIndex = 1
             }
             
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.linkTextAttributes ?? [String: Any]())
-            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-            firstTextView.linkTextAttributes = activeLinkAttributes as NSDictionary as? [String: Any]
-            
             firstTextView.attributedText = newTitle
             
             /* todo this
@@ -155,9 +148,9 @@ public class TextDisplayStackView: UIStackView {
             }*/
 
             if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: newTitle)!
+                estimatedHeight += layout.textBoundingSize.height
             }
             
             if blocks.count > 1 {
@@ -178,21 +171,18 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor))
             }
             
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.linkTextAttributes ?? [String: Any]())
-            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-            firstTextView.linkTextAttributes = activeLinkAttributes as NSDictionary as? [String: Any]
-            
-            firstTextView.attributedText = newTitle
-            
             /* todo this
             if let long = parentLongPress {
                 long.require(toFail: firstTextView.longPressGestureRecognizer)
             }*/
 
             if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: newTitle)!
+                firstTextView.textLayout = layout
+                estimatedHeight += layout.textBoundingSize.height
+                firstTextView.heightAnchor == layout.textBoundingSize.height
+                firstTextView.horizontalAnchors == horizontalAnchors
             }
         }
         
@@ -219,13 +209,6 @@ public class TextDisplayStackView: UIStackView {
         if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
             let text = createAttributedChunk(baseHTML: blocks[0], accent: tColor)
             
-            if !activeSet {
-                activeSet = true
-                let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.linkTextAttributes ?? [String: Any]())
-                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-                firstTextView.linkTextAttributes = activeLinkAttributes as NSDictionary as? [String: Any]
-            }
-            
             firstTextView.attributedText = text
             
             /* todo this
@@ -234,9 +217,9 @@ public class TextDisplayStackView: UIStackView {
             }*/
 
             if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
             }
             startIndex = 1
         }
@@ -291,64 +274,57 @@ public class TextDisplayStackView: UIStackView {
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
                 body.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if block.startsWith("<cite>") {
-                let label = YYTextView.init(frame: CGRect.zero)
+                let label = YYLabel.init(frame: CGRect.zero)
+                label.numberOfLines = 0
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed(), accent: tColor)
-                label.delegate = delegate
                 
                 /* todo this
                 if let long = parentLongPress {
                     long.require(toFail: label.longPressGestureRecognizer)
                 }*/
                 label.alpha = 0.7
-                
-                let activeLinkAttributes = NSMutableDictionary(dictionary: label.linkTextAttributes ?? [String: Any]())
-                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-                label.linkTextAttributes = activeLinkAttributes as NSDictionary as? [String: Any]
 
                 label.attributedText = text
                 
                 let baseView = UIView()
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
-                
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+                let size = CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
+
                 baseView.addSubview(label)
                 label.leftAnchor == baseView.leftAnchor + CGFloat(8)
                 label.rightAnchor == baseView.rightAnchor - CGFloat(4)
-                label.heightAnchor == textSizeB.height
+                label.heightAnchor == layout.textBoundingSize.height
                 label.topAnchor == baseView.topAnchor
                 label.bottomAnchor == baseView.bottomAnchor
                 label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 overflow.addArrangedSubview(baseView)
                             
                 baseView.horizontalAnchors == overflow.horizontalAnchors
-                baseView.heightAnchor == textSizeB.height
+                baseView.heightAnchor == layout.textBoundingSize.height
             } else {
-                let label = YYTextView.init(frame: CGRect.zero)
+                let label = YYLabel.init(frame: CGRect.zero)
+                label.numberOfLines = 0
+                label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 label.accessibilityIdentifier = "New text"
                 let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor)
-                label.delegate = delegate
                 
                 /* todo this
                 if let long = parentLongPress {
                     long.require(toFail: label.longPressGestureRecognizer)
                 }*/
                 
-                let activeLinkAttributes = NSMutableDictionary(dictionary: label.linkTextAttributes ?? [String: Any]())
-                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-                label.linkTextAttributes = activeLinkAttributes as NSDictionary as? [String: Any]
-
                 label.attributedText = text
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+                let size = CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
                 label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 overflow.addArrangedSubview(label)
                 label.horizontalAnchors == overflow.horizontalAnchors
-                label.heightAnchor == textSizeB.height
+                label.heightAnchor == layout.textBoundingSize.height
             }
         }
         overflow.setNeedsLayout()
