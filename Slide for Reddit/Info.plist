@@ -326,6 +326,7 @@
 		<string>firefox</string>
 		<string>opera-http</string>
 		<string>firefox-focus</string>
+        <string>firefox-klar</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<false/>

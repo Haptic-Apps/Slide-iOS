@@ -41,6 +41,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     var internalIcon: UIImage?
     var firefoxIcon: UIImage?
     var focusIcon: UIImage?
+    var focusKlarIcon: UIImage?
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight() && SettingValues.reduceColor {
@@ -83,7 +84,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         second = GMColor.pink500Color()
         coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 40))
         focusIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
-
+        focusKlarIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -100,6 +101,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         let operaURL = URL(string: "opera-http://google.com")!
         let firefoxURL = URL(string: "firefox://google.com")!
         let focusURL = URL(string: "firefox-focus://google.com")!
+        let focusKlarURL = URL(string: "firefox-klar://google.com")!
 
         let sharedApplication = UIApplication.shared
         
@@ -128,6 +130,9 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         
         if sharedApplication.canOpenURL(focusURL) {
             browsers.append(SettingValues.BROWSER_FOCUS)
+        }
+        if sharedApplication.canOpenURL(focusKlarURL) {
+            browsers.append(SettingValues.BROWSER_FOCUS_KLAR)
         }
     }
     
@@ -253,6 +258,9 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             } else if text == SettingValues.BROWSER_FOCUS {
                 cell.textLabel?.text = "FireFox Focus"
                 cell.imageView?.image = focusIcon
+            } else if text == SettingValues.BROWSER_FOCUS_KLAR {
+                cell.textLabel?.text = "FireFox Klar"
+                cell.imageView?.image = focusKlarIcon
             } else if text == SettingValues.BROWSER_INTERNAL {
                 cell.textLabel?.text = "Internal browser (supports ad-blocking with Pro)"
                 cell.textLabel?.numberOfLines = 0

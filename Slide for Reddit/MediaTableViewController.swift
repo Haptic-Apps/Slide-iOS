@@ -202,8 +202,10 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 newUrl = URL(string: "firefox://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
             } else if browser == SettingValues.BROWSER_FOCUS {
                 newUrl = URL(string: "firefox-focus://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
+            } else if browser == SettingValues.BROWSER_FOCUS_KLAR {
+                newUrl = URL(string: "firefox-klar://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
             }
-            
+
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(newUrl, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
