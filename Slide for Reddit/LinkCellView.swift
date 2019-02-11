@@ -238,6 +238,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
             $0.accessibilityIdentifier = "Post Title"
             $0.isOpaque = false
             $0.numberOfLines = 0
+            $0.lineBreakMode = .byWordWrapping
+            $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             $0.backgroundColor = ColorUtil.foregroundColor
         }
         

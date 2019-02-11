@@ -105,7 +105,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.backgroundColor = ColorUtil.backgroundColor
-        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, delegate: self, width: contentView.frame.size.width).then({
+        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
             $0.ignoreHeight = true
@@ -428,13 +428,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent?.doAction(cell: self, action: item, indexPath: currentPath)
     }
 
+    /* ignored
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer.view == self.title {
             let link = self.title.link(at: touch.location(in: self.title), withTouch: touch)
             return link == nil
         }
         return true
-    }
+    }*/
 
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
 
@@ -1426,7 +1427,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
-        title.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 1, right: 0)
 
         let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         let paragraphStyle = NSMutableParagraphStyle()
@@ -1499,7 +1499,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(spacer)
             if comment.platinum > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "", attributes: [NSAttributedString.Key(rawValue: YYTextAttachmentAttributeName): YYTextAttachment(content: UIImage(named: "platinum"))])
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "platinum")!, fontSize: boldFont.pointSize)!
                 infoString.append(gild)
                 if comment.platinum > 1 {
                     let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.platinum) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
@@ -1508,7 +1508,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             if comment.gold > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "", attributes: [NSAttributedString.Key(rawValue: YYTextAttachmentAttributeName): YYTextAttachment(content: UIImage(named: "gold"))])
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: boldFont.pointSize)!
                 infoString.append(gild)
                 if comment.gold > 1 {
                     let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
@@ -1517,7 +1517,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             if comment.silver > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "", attributes: [NSAttributedString.Key(rawValue: YYTextAttachmentAttributeName): YYTextAttachment(content: UIImage(named: "silver"))])
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "silver")!, fontSize: boldFont.pointSize)!
                 infoString.append(gild)
                 if comment.silver > 1 {
                     let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.silver) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))

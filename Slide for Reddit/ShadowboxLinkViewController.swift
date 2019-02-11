@@ -145,7 +145,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             $0.elevate(elevation: 2.0)
         }
         
-        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
+        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, width: 100).then {
             $0.accessibilityIdentifier = "Self Text View"
         }
         

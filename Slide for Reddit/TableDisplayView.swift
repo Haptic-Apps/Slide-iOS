@@ -25,13 +25,11 @@ class TableDisplayView: UIScrollView {
     var widths = [[CGFloat]]()
     var baseColor: UIColor
     var tColor: UIColor
-    var textDelegate: YYTextViewDelegate
 
-    init(baseHtml: String, color: UIColor, accentColor: UIColor, delegate: YYTextViewDelegate) {
+    init(baseHtml: String, color: UIColor, accentColor: UIColor) {
         let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
-        self.textDelegate = delegate
         super.init(frame: CGRect.zero)
 
         parseHtml(newData.removingPercentEncoding ?? newData)

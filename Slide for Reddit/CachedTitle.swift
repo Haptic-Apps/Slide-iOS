@@ -79,7 +79,7 @@ class CachedTitle {
             attributedTitle.append(spacer)
             if submission.platinum > 0 {
                 attributedTitle.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "", attributes: [NSAttributedString.Key(rawValue: YYTextAttachmentAttributeName): YYTextAttachment(content: UIImage(named: "platinum"))])
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "platinum")!, fontSize: titleFont.pointSize)!
                 attributedTitle.append(gild)
                 if submission.platinum > 1 {
                     let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.platinum) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
@@ -88,7 +88,7 @@ class CachedTitle {
             }
             if submission.gold > 0 {
                 attributedTitle.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "", attributes: [NSAttributedString.Key(rawValue: YYTextAttachmentAttributeName): YYTextAttachment(content: UIImage(named: "gold"))])
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: titleFont.pointSize)!
                 attributedTitle.append(gild)
                 if submission.gold > 1 {
                     let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
@@ -97,7 +97,7 @@ class CachedTitle {
             }
             if submission.silver > 0 {
                 attributedTitle.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "", attributes: [NSAttributedString.Key(rawValue: YYTextAttachmentAttributeName): YYTextAttachment(content: UIImage(named: "silver"))])
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "silver")!, fontSize: titleFont.pointSize)!
                 attributedTitle.append(gild)
                 if submission.silver > 1 {
                     let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.silver) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
@@ -302,6 +302,9 @@ class CachedTitle {
                 infoString.append(attr)
             }
         }
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 1.5
+        infoString.yy_paragraphStyle = paragraphStyle
         return infoString
     }
 }

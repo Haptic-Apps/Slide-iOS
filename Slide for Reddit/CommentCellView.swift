@@ -41,7 +41,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, YYText
         super.init(frame: frame)
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
 
-        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), delegate: self, width: frame.width - 16)
+        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16)
         self.contentView.addSubview(text)
         
         text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)
