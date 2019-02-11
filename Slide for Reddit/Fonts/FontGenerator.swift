@@ -20,7 +20,10 @@ class FontGenerator {
     
     public static func boldFontOfSize(size: CGFloat, submission: Bool) -> UIFont {
         let normalFont = fontOfSize(size: size, submission: submission)
-        return normalFont.bold()
+        if normalFont.fontName == UIFont.systemFont(ofSize: 10).fontName {
+            return UIFont.boldSystemFont(ofSize: size)
+        }
+        return normalFont.makeBold()
     }
     
     public static var postFont = Font.SYSTEM
@@ -114,4 +117,17 @@ class FontGenerator {
         }
         
     }
+}
+extension UIFont {
+    
+    func withTraits(traits:UIFontDescriptor.SymbolicTraits...) -> UIFont {
+        let descriptor = self.fontDescriptor
+            .withSymbolicTraits(UIFontDescriptor.SymbolicTraits(traits)) ?? self.fontDescriptor
+        return UIFont(descriptor: descriptor, size: 0)
+    }
+    
+    func makeBold() -> UIFont {
+        return withTraits(.traitBold)
+    }
+    
 }

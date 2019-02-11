@@ -43,7 +43,9 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             let comment = CommentViewController.init(submission: self.link, single: true)
             VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
-        
+        if self is CommentViewController {
+            commentCallback = nil
+        }
         failureCallback = { (url: URL) in
             let vc: UIViewController
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {

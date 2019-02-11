@@ -1543,7 +1543,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                     popup.backgroundColor = ColorUtil.backgroundColor
                     popup.textAlignment = .center
                     popup.isUserInteractionEnabled = true
-                    let colorF = UIColor.white
+                    let colorF = ColorUtil.fontColor
                         
                     let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
                 
