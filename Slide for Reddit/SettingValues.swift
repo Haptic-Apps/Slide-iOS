@@ -779,6 +779,27 @@ class SettingValues {
             }
         }
 
+        func getTitleShort() -> String {
+            switch self {
+            case .HIDE_READ:
+                return "Hide read"
+            case .HIDE_PERMANENTLY:
+                return "Hide read"
+            case .NEW_POST:
+                return "Submit"
+            case .SHADOWBOX:
+                return "Shadowbox"
+            case .SIDEBAR:
+                return "Sidebar"
+            case .RELOAD:
+                return "Reload"
+            case .GALLERY:
+                return "Gallery"
+            case .SEARCH:
+                return "Search"
+            }
+        }
+
     }
 
     public enum AppMode: String {

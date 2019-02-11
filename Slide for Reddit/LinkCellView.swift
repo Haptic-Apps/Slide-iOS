@@ -2318,7 +2318,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, TT
                 if link!.archived || link!.locked || np {
                     fullHeightExtras += 56
                 }
-                fullHeightExtras += 4
+                
+                fullHeightExtras += 8
 
                 if link!.isCrosspost {
                     fullHeightExtras += 56

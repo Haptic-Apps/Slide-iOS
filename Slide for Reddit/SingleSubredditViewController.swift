@@ -601,7 +601,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             self.fab!.accessibilityHint = sub
             self.fab!.layer.cornerRadius = 22.5
             self.fab!.clipsToBounds = true
-            let title = "  " + SettingValues.fabType.getTitle()
+            let title = "  " + SettingValues.fabType.getTitleShort()
             self.fab!.setTitle(title, for: .normal)
             self.fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.navIcon(true))!, renderMode: UIImage.RenderingMode.alwaysOriginal)
             self.fab!.elevate(elevation: 2)
@@ -1007,16 +1007,18 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
         
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
-            var hideString = ""
-            for item in toRemove {
-                hideString.append(item.getId() + ",")
-            }
-            hideString = hideString.substring(0, length: hideString.length - 1)
-            do {
-                try session.setHide(true, name: hideString) { (result) in
-                    print(result)
+            if !indexPaths.isEmpty {
+                var hideString = ""
+                for item in toRemove {
+                    hideString.append(item.getId() + ",")
                 }
-            } catch {
+                hideString = hideString.substring(0, length: hideString.length - 1)
+                do {
+                    try session.setHide(true, name: hideString) { (result) in
+                        print(result)
+                    }
+                } catch {
+                }
             }
         }
     }

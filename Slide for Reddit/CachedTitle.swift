@@ -257,7 +257,7 @@ class CachedTitle {
         if submission.isCrosspost && !full {
             infoString.append(NSAttributedString.init(string: "\n\n"))
 
-            let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
+            let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)]))
             
             let endString = NSMutableAttributedString(string: "\nOriginal submission by ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
             let by = NSMutableAttributedString(string: "in ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
