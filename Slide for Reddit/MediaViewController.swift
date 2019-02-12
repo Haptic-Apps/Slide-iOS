@@ -46,7 +46,6 @@ class MediaViewController: UIViewController, MediaVCDelegate {
         self.link = lnk
         let url = link.url!
         
-        print("Setting comment callback")
         commentCallback = { () in
             let comment = CommentViewController.init(submission: self.link, single: true)
                 VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)

@@ -51,7 +51,10 @@ class RedditLink {
             parts.remove(at: parts.count - 1)
         }
                 
-        let safeURL = url.startsWith("/") ? "https://www.reddit.com" + url : url
+        var safeURL = url.startsWith("/") ? "https://www.reddit.com" + url : url
+        if safeURL.startsWith("reddit.com") {
+            safeURL = "https://www." + safeURL
+        }
         
         switch type {
         case .SHORTENED:
@@ -173,8 +176,8 @@ class RedditLink {
         if url.hasSuffix("/") { url = url.substring(0, length: url.length - 1) }
         
         // Converts links such as reddit.com/help to reddit.com/r/reddit.com/wiki
-        if url.matches(regex: "(?i)[^/]++/(?>wiki|help)(?>$|/.*)") {
-            url.stringByRemovingRegexMatches(pattern: "(?i)/(?>wiki|help)", replaceWith: "/r/reddit.com/wiki")
+        if url.matches(regex: "(?i)[^/]++/(?>w|wiki|help)(?>$|/.*)") {
+            url.stringByRemovingRegexMatches(pattern: "(?i)/(?>w|wiki|help)", replaceWith: "/r/reddit.com/wiki")
         }
         
         url = url.removingPercentEncoding ?? url

@@ -333,7 +333,7 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
     }
     
     func linkLongTapped(url: URL) {
-        print(url)
+        print("LONG")
     }
 }
 
