@@ -14,11 +14,19 @@ import RealmSwift
 import SDWebImage
 import YYText
 
-class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, YYTextViewDelegate {
+class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
+    func linkTapped(url: URL) {
+        self.doShow(url: url, heroView: nil, heroVC: nil)
+    }
+    
+    func linkLongTapped(url: URL) {
+        
+    }
+    
 
     var type: ContentType.CType = ContentType.CType.UNKNOWN
     
-    var textView = TextDisplayStackView()
+    var textView: TextDisplayStackView!
     var bodyScrollView = UIScrollView()
     var embeddedVC: EmbeddableMediaViewController!
     
@@ -145,7 +153,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             $0.elevate(elevation: 2.0)
         }
         
-        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, width: 100).then {
+        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, width: 100, delegate: self).then {
             $0.accessibilityIdentifier = "Self Text View"
         }
         

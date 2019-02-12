@@ -66,6 +66,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var menu: UIStackView!
     var menuBack: UIView!
     var reply: UIView!
+    var islink = false
     
     var sideViewSpace: UIView!
     var topViewSpace: UIView!
@@ -105,7 +106,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.backgroundColor = ColorUtil.backgroundColor
-        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width).then({
+        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width, delegate: self).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
             $0.ignoreHeight = true
@@ -203,6 +204,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     var timer: Timer?
+    var timerS: Timer?
+
     var cancelled = false
 
     @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
@@ -219,22 +222,35 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             cancelled = true
         }
     }
-
-    @objc func handleShortPress(_ sender: UIGestureRecognizer) {
-        if isMore {
-            self.pushedSingleTap(sender)
+    
+    @objc func doShortClick() {
+        timerS?.invalidate()
+        if islink {
+            islink = false
             return
         }
-
+        if isMore {
+            self.pushedSingleTap(nil)
+            return
+        }
+        
         if parent == nil || content == nil {
             return
         }
         
         if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! RComment).getId())) {
-            self.showMenu(sender)
+            self.showMenu(nil)
         } else {
-            self.pushedSingleTap(sender)
+            self.pushedSingleTap(nil)
         }
+    }
+
+    @objc func handleShortPress(_ sender: UIGestureRecognizer) {
+        timerS = Timer.scheduledTimer(timeInterval: 0.05,
+                                     target: self,
+                                     selector: #selector(self.doShortClick),
+                                     userInfo: nil,
+                                     repeats: false)
     }
     
     func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
@@ -1643,6 +1659,23 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     class func margin() -> UIEdgeInsets {
         return UIEdgeInsets(top: 4, left: 0, bottom: 2, right: 0)
+    }
+}
+
+extension CommentDepthCell: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL) {
+        self.islink = true
+        // if textClicked.contains("[[s[") {
+        //   parent?.showSpoiler(textClicked)
+        //} else {
+        //let urlClicked = result.url!
+        self.parent?.doShow(url: url, heroView: nil, heroVC: nil)
+        //}
+
+    }
+    
+    func linkLongTapped(url: URL) {
+        //todo this
     }
 }
 

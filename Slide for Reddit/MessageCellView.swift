@@ -13,9 +13,17 @@ import YYText
 import UIKit
 import XLActionController
 
-class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, YYTextViewDelegate {
+class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
+    func linkTapped(url: URL) {
+        
+    }
+    
+    func linkLongTapped(url: URL) {
+        
+    }
+    
 
-    var text = TextDisplayStackView()
+    var text: TextDisplayStackView!
     var single = false
 
     func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
@@ -48,7 +56,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, YYText
         super.init(frame: frame)
 
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16)
+        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
         self.contentView.addSubview(text)
         
         text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)

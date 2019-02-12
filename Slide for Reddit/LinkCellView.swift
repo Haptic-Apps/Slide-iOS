@@ -36,7 +36,7 @@ enum CurrentType {
     case thumb, banner, text, autoplay, none
 }
 
-class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YYTextViewDelegate, UIGestureRecognizerDelegate {
+class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate {
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         //todo this
         return nil
@@ -45,6 +45,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         //todo this
     }
+    
+    func linkTapped(url: URL) {
+        // if textClicked.contains("[[s[") {
+        //   parent?.showSpoiler(textClicked)
+        //} else {
+        //let urlClicked = result.url!
+        self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+        //}
+        
+    }
+    
+    func linkLongTapped(url: URL) {
+        //todo this
+    }
+
     
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
         //todo maybe? contentView.blink(color: GMColor.orange500Color())

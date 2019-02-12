@@ -11,11 +11,11 @@ import reddift
 import YYText
 import UIKit
 
-class SubredditHeaderView: UIView, YYTextViewDelegate {
+class SubredditHeaderView: UIView {
 
     var subscribers: UILabel = UILabel()
     var here: UILabel = UILabel()
-    var info = TextDisplayStackView()
+    var info: TextDisplayStackView!
     
     var submit = UITableViewCell()
     var sorting = UITableViewCell()
@@ -122,7 +122,7 @@ class SubredditHeaderView: UIView, YYTextViewDelegate {
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
-        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, width: self.frame.size.width - 24)
+        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, width: self.frame.size.width - 24, delegate: self)
         
         self.subscribers = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         subscribers.numberOfLines = 1
@@ -323,6 +323,22 @@ class SubredditHeaderView: UIView, YYTextViewDelegate {
         if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
             parentController?.doShow(url: url, lq: nil, heroView: nil, heroVC: nil)
         }
+    }
+}
+
+extension SubredditHeaderView: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL) {
+        // if textClicked.contains("[[s[") {
+        //   parent?.showSpoiler(textClicked)
+        //} else {
+        //let urlClicked = result.url!
+        self.parentController?.doShow(url: url, heroView: nil, heroVC: nil)
+        //}
+        
+    }
+    
+    func linkLongTapped(url: URL) {
+        //todo this
     }
 }
 

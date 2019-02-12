@@ -77,7 +77,7 @@ class LinkParser {
                             string.insert(typeString, at: range.location + range.length)
                             string.addAttributes(convertToNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]), range: NSRange.init(location: range.location + range.length, length: typeString.length))
                         }
-                        string.addAttribute(convertToNSAttributedStringKey(kCTForegroundColorAttributeName as String), value: color, range: range)
+                        string.yy_setTextHighlight(range, color: color, backgroundColor: nil, userInfo: ["url": url])
                         break
                     }
                 }

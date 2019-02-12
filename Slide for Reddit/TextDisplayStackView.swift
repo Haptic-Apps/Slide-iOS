@@ -12,6 +12,11 @@ import Then
 import UIKit
 import YYText
 
+public protocol TextDisplayStackViewDelegate: class {
+    func linkTapped(url: URL)
+    func linkLongTapped(url: URL)
+}
+
 public class TextDisplayStackView: UIStackView {
     var baseString: NSAttributedString?
     let TABLE_START_TAG = "<table>"
@@ -31,37 +36,56 @@ public class TextDisplayStackView: UIStackView {
     var baseFontColor: UIColor
     var tableCount = 0
     var tableData = [[[NSAttributedString]]]()
-    
+    var delegate: TextDisplayStackViewDelegate
+
     var ignoreHeight = false
+    var touchLinkAction: YYTextAction?
     
     var activeSet = false
     
-    init() {
+    init(delegate: TextDisplayStackViewDelegate) {
         self.fontSize = 0
         self.submission = false
         self.tColor = .black
         self.baseFontColor = .white
+        self.delegate = delegate
         self.firstTextView = YYLabel(frame: .zero)
         self.overflow = UIStackView()
         self.overflow.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
+        self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.delegate.linkTapped(url: url)
+                            return
+                        }
+                    }
+                }
+            })
+        }
+        self.firstTextView.highlightLongPressAction = touchLinkAction
+        self.firstTextView.highlightTapAction = touchLinkAction
     }
     
     func setColor(_ color: UIColor) {
         self.tColor = color
     }
     
-    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.fontColor) {
+    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.fontColor, delegate: TextDisplayStackViewDelegate) {
         self.fontSize = fontSize
         self.submission = submission
         self.estimatedWidth = width
         self.tColor = color
+        self.delegate = delegate
         self.baseFontColor = baseFontColor
         self.firstTextView = YYLabel(frame: CGRect.zero).then({
             $0.accessibilityIdentifier = "Top title"
             $0.numberOfLines = 0
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         })
+
         self.overflow = UIStackView().then({
             $0.accessibilityIdentifier = "Text overflow"
             $0.axis = .vertical
@@ -77,6 +101,20 @@ public class TextDisplayStackView: UIStackView {
         firstTextView.topAnchor == self.topAnchor
         overflow.bottomAnchor == self.bottomAnchor
         overflow.horizontalAnchors == self.horizontalAnchors
+        self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.delegate.linkTapped(url: url)
+                            return
+                        }
+                    }
+                }
+            })
+        }
+        self.firstTextView.highlightLongPressAction = touchLinkAction
+        self.firstTextView.highlightTapAction = touchLinkAction
     }
     
     required public init(coder: NSCoder) {
@@ -184,7 +222,6 @@ public class TextDisplayStackView: UIStackView {
             firstTextView.attributedText = newTitle
             firstTextView.preferredMaxLayoutWidth = estimatedWidth
             
-
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
 //                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
@@ -360,7 +397,6 @@ public class TextDisplayStackView: UIStackView {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
-        print(baseHtml)
         let html = NSMutableAttributedString(attributedString: baseHtml)
         
         while html.mutableString.contains("\t•\t") {
@@ -610,9 +646,6 @@ public class TextDisplayStackView: UIStackView {
                 }
             }
         }
-        
-        print(preSeperated)
-        
         return preSeperated
     }
     
