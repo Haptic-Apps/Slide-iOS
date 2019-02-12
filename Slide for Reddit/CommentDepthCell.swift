@@ -1689,7 +1689,39 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
     }
     
     func linkLongTapped(url: URL) {
-        //todo this
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = url.absoluteString
+        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.contentView
+            self.parent?.present(activityViewController, animated: true, completion: nil)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parent)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }))
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }))
+        }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        self.parent?.present(alertController, animated: true, completion: nil)
     }
 }
 

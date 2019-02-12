@@ -29,7 +29,7 @@ final class FullLinkCellView: LinkCellView {
         let bannerPadding = CFloat(5)
         
         constraintsForType = batch {
-            textView.bottomAnchor >= infoBox.topAnchor - (ctwelve / 2)
+            textView.bottomAnchor == infoBox.topAnchor - (ctwelve / 2)
             infoBox.bottomAnchor >= box.topAnchor - (ctwelve / 2)
             infoBox.horizontalAnchors == contentView.horizontalAnchors + ctwelve
             textView.topAnchor == title.bottomAnchor + ceight

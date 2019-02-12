@@ -749,7 +749,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.hasDone = true
                                     self.headerCell?.aspectWidth = self.tableView.bounds.size.width
                                     self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width, np: self.np)
-                                    self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                                    if self.submission!.isSelf {
+                                        self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                                    }
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                     if let tableHeaderView = self.headerCell {
                                         var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
@@ -771,11 +773,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.navigationItem.backBarButtonItem?.title = ""
                                     self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
                                 } else {
-                                    
-                                    self.headerCell?.refreshLink(self.submission!, np: self.np)
                                     self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-                                    self.headerCell?.showBody(width: self.view.frame.size.width - 24)
-                                    
+                                    self.headerCell?.refreshLink(self.submission!, np: self.np)
+                                    if self.submission!.isSelf {
+                                        self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                                    }
+
                                     var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
                                     // Add safe area insets to left and right if available
                                     if #available(iOS 11.0, *) {
@@ -1053,9 +1056,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
-        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
-        headerCell!.showBody(width: self.view.frame.size.width - 24)
-
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
@@ -1128,6 +1128,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             guard let headerCell = headerCell else {
                 return
+            }
+            headerCell.aspectWidth = self.view.frame.size.width
+            headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
+            if submission!.isSelf {
+                headerCell.showBody(width: self.view.frame.size.width - 24)
             }
 
             var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))

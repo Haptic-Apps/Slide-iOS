@@ -57,7 +57,39 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func linkLongTapped(url: URL) {
-        //todo this
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = url.absoluteString
+        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.contentView
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }))
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }))
+        }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        self.parentViewController?.present(alertController, animated: true, completion: nil)
     }
     
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
@@ -238,7 +270,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.infoBox = UIStackView().then {
             $0.accessibilityIdentifier = "Extra Info Stack Horizontal"
             $0.axis = .vertical
-            $0.spacing = 4
         }
         
         self.hide = UIButton(type: .custom).then {
@@ -1069,7 +1100,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
         title.textLayout = bounds
         
-        title.displaysAsynchronously = true
         title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
         title.attributedText = attText
         title.textVerticalAlignment = .top
@@ -1578,6 +1608,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     popup.clipsToBounds = true
                     
                     infoBox.addArrangedSubview(popup)
+                    infoBox.spacing = 4
                     
                     popup.horizontalAnchors == infoBox.horizontalAnchors
                     popup.heightAnchor == 48
@@ -2180,7 +2211,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 popup.clipsToBounds = true
                 
                 infoBox.addArrangedSubview(popup)
-                
+                infoBox.spacing = 4
+
                 popup.horizontalAnchors == infoBox.horizontalAnchors
                 popup.heightAnchor == 48
             }
