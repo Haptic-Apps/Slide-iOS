@@ -9,7 +9,7 @@
 import Anchorage
 import UIKit
 
-final class FullLinkCellView: LinkCellView, TextDisplayStackViewDelegate {
+final class FullLinkCellView: LinkCellView {
     
     override func configureView() {
         full = true

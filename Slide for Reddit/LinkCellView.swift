@@ -36,7 +36,7 @@ enum CurrentType {
     case thumb, banner, text, autoplay, none
 }
 
-class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate {
+class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         //todo this
         return nil
@@ -171,40 +171,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         configureLayout()
     }
     
-    func textView(_ textView: YYTextView, didLongPress highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            if parentViewController != nil {
-                let alertController: BottomSheetActionController = BottomSheetActionController()
-                alertController.headerData = url.absoluteString
-                
-                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                }))
-                
-                alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(url)
-                    }
-                }))
-                let open = OpenInChromeController.init()
-                if open.isChromeInstalled() {
-                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
-                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                    }))
-                }
-                parentViewController?.present(alertController, animated: true, completion: nil)
-            }
-        }
-    }
-    
-    func textView(_ textView: YYTextView, shouldLongPress highlight: YYTextHighlight, in characterRange: NSRange) -> Bool {
-        return highlight.attributes?.contains(where: { (tuple) -> Bool in
-            tuple.key == NSAttributedString.Key.link.rawValue
-        }) ?? false
-    }
-    
     func configureView() {
 
         accessibilityView.accessibilityIdentifier = "Link Cell View"
@@ -255,6 +221,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.lineBreakMode = .byWordWrapping
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             $0.backgroundColor = ColorUtil.foregroundColor
+            $0.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                    for attr in attrs {
+                        if attr.value is YYTextHighlight {
+                            if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                                self.linkTapped(url: url)
+                                return
+                            }
+                        }
+                    }
+                })
+            }
         }
         
         self.infoBox = UIStackView().then {
@@ -1032,20 +1010,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var linkClicked = false
-    
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL, let textClicked = textView.attributedText?.attributedSubstring(from: characterRange).string {
-            if (parentViewController) != nil {
-                if textClicked.contains("[[s[") {
-                    parentViewController?.showSpoiler(textClicked)
-                } else {
-                    let urlClicked = url
-                    parentViewController?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
-                }
-                linkClicked = true
-            }
-        }
-    }
     
     func showBody(width: CGFloat) {
         full = true
