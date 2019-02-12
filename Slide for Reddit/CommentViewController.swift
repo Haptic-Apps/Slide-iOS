@@ -67,7 +67,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.reset = true
         self.activityIndicator.removeFromSuperview()
         let barButton = UIBarButtonItem(customView: self.activityIndicator)
-        self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, barButton]
+        self.navigationItem.rightBarButtonItems = [barButton]
         self.activityIndicator.startAnimating()
         
         self.refresh(self)
@@ -121,7 +121,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
         
         progressDot.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-        
         liveB = UIBarButtonItem.init(customView: progressDot)
 
         self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, self.liveB]
@@ -843,7 +842,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.tableView.reloadData()
                                     self.collapseAll()
                                 } else {
-                                    self.tableView.reloadData()
+                                    self.tableView.reloadData(with: UITableView.RowAnimation.fade)
                                 }
                             })
                         }
@@ -968,7 +967,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     self.live = false
                     self.activityIndicator.removeFromSuperview()
                     let barButton = UIBarButtonItem(customView: self.activityIndicator)
-                    self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, barButton]
+                    self.navigationItem.rightBarButtonItems = [barButton]
                     self.activityIndicator.startAnimating()
 
                     self.refresh(self)
@@ -1216,7 +1215,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
                 activityIndicator.color = ColorUtil.navIconColor
                 let barButton = UIBarButtonItem(customView: activityIndicator)
-                navigationItem.rightBarButtonItems = [sortB, searchB, barButton]
+                navigationItem.rightBarButtonItems = [barButton]
                 activityIndicator.startAnimating()
             } else {
                 navigationItem.rightBarButtonItems = [sortB, searchB]

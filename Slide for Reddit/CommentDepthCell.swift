@@ -1447,7 +1447,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 2
+        paragraphStyle.lineSpacing = 2.75
         
         let spacerString = NSMutableAttributedString(string: (comment.controversiality > 0 ? "†  •  " : "  •  "), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
 
