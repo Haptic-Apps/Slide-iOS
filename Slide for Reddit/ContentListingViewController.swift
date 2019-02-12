@@ -327,7 +327,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     if message.wasComment {
                         title = NSMutableAttributedString.init(string: message.linkTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
                     } else {
-                        title = NSMutableAttributedString.init(string: message.subject, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
+                        title = NSMutableAttributedString.init(string: message.subject.escapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
                     }
 
                     let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")

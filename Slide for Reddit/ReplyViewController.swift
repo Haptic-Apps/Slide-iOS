@@ -479,7 +479,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDe
                         }
                     })
                 }
-                text1.preferredMaxLayoutWidth = self.view.frame.size.width
+                text1.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+                text1.preferredMaxLayoutWidth = self.view.frame.size.width - 16
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -535,7 +536,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDe
                 })
                 
                 if toReplyTo != nil {
-                    text1.text = "re: \((toReplyTo as! RMessage).subject)"
+                    text1.text = "re: \((toReplyTo as! RMessage).subject.escapeHTML)"
                     text1.isEditable = false
                     text2.text = ((toReplyTo as! RMessage).author)
                     text2.isEditable = false
@@ -704,7 +705,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDe
                         }
                     })
                 }
-                text1.preferredMaxLayoutWidth = self.view.frame.size.width
+                text1.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+                text1.preferredMaxLayoutWidth = self.view.frame.size.width - 16
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
