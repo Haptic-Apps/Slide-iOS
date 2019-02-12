@@ -35,9 +35,11 @@ public class TextStackEstimator: NSObject {
     }
     
     public func setAttributedString(_ string: NSAttributedString) {
-        let framesetterB = CTFramesetterCreateWithAttributedString(string)
-        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-        estimatedHeight += textSizeB.height
+        let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: string)!
+        let textSize = layout.textBoundingSize
+
+        estimatedHeight += textSize.height
     }
     
     public func setTextWithTitleHTML(_ title: NSMutableAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
@@ -54,10 +56,13 @@ public class TextStackEstimator: NSObject {
                 newTitle.append(createAttributedChunk(baseHTML: blocks[0]))
                 startIndex = 1
             }
-            let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
             
+            let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: newTitle)!
+            let textSize = layout.textBoundingSize
+            
+            estimatedHeight += textSize.height
+
             if blocks.count > 1 {
                 if startIndex == 0 {
                     setViews(blocks)
@@ -75,9 +80,11 @@ public class TextStackEstimator: NSObject {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString))
             }
-            let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
+            let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: newTitle)!
+            let textSize = layout.textBoundingSize
+            
+            estimatedHeight += textSize.height
         }
         
     }
@@ -91,9 +98,11 @@ public class TextStackEstimator: NSObject {
         
         if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<code>") {
             let text = createAttributedChunk(baseHTML: blocks[0])
-            let framesetterB = CTFramesetterCreateWithAttributedString(text)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
+            let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: text)!
+            let textSize = layout.textBoundingSize
+            
+            estimatedHeight += textSize.height
             startIndex = 1
         }
         
@@ -120,9 +129,11 @@ public class TextStackEstimator: NSObject {
                 estimatedHeight += body.globalHeight
             } else {
                 let text = createAttributedChunk(baseHTML: block)
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                let textSize = layout.textBoundingSize
+                
+                estimatedHeight += textSize.height
             }
         }
     }

@@ -467,6 +467,19 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDe
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 */
                 text1.attributedText = content
+                text1.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                        for attr in attrs {
+                            if attr.value is YYTextHighlight {
+                                if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                                    self.doShow(url: url, heroView: nil, heroVC: nil)
+                                    return
+                                }
+                            }
+                        }
+                    })
+                }
+                text1.preferredMaxLayoutWidth = self.view.frame.size.width
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -679,6 +692,19 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDe
 */
                 
                 text1.attributedText = content
+                text1.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                        for attr in attrs {
+                            if attr.value is YYTextHighlight {
+                                if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                                    self.doShow(url: url, heroView: nil, heroVC: nil)
+                                    return
+                                }
+                            }
+                        }
+                    })
+                }
+                text1.preferredMaxLayoutWidth = self.view.frame.size.width
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
