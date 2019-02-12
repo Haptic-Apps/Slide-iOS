@@ -40,7 +40,8 @@ public class TextDisplayStackView: UIStackView {
 
     var ignoreHeight = false
     var touchLinkAction: YYTextAction?
-    
+    var longTouchLinkAction: YYTextAction?
+
     var activeSet = false
     
     init(delegate: TextDisplayStackViewDelegate) {
@@ -54,7 +55,6 @@ public class TextDisplayStackView: UIStackView {
         self.overflow.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-            print("DOING")
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                 for attr in attrs {
                     if attr.value is YYTextHighlight {
@@ -66,8 +66,21 @@ public class TextDisplayStackView: UIStackView {
                 }
             })
         }
+        self.longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.delegate.linkLongTapped(url: url)
+                            return
+                        }
+                    }
+                }
+            })
+        }
+
         self.isUserInteractionEnabled = true
-        self.firstTextView.highlightLongPressAction = touchLinkAction
+        self.firstTextView.highlightLongPressAction = longTouchLinkAction
         self.firstTextView.highlightTapAction = touchLinkAction
     }
     
@@ -116,7 +129,7 @@ public class TextDisplayStackView: UIStackView {
                 }
             })
         }
-        self.firstTextView.highlightLongPressAction = touchLinkAction
+        self.firstTextView.highlightLongPressAction = longTouchLinkAction
         self.firstTextView.highlightTapAction = touchLinkAction
     }
     
@@ -305,7 +318,7 @@ public class TextDisplayStackView: UIStackView {
         for block in blocks {
             estimatedHeight += 8
             if block.startsWith("<table>") {
-                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, action: self.touchLinkAction)
+                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, action: self.touchLinkAction, longAction: self.longTouchLinkAction)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
@@ -343,7 +356,7 @@ public class TextDisplayStackView: UIStackView {
                 label.alpha = 0.7
                 label.numberOfLines = 0
                 label.lineBreakMode = .byWordWrapping
-                label.highlightLongPressAction = touchLinkAction
+                label.highlightLongPressAction = longTouchLinkAction
                 label.highlightTapAction = touchLinkAction
 
                 label.attributedText = text
@@ -376,7 +389,7 @@ public class TextDisplayStackView: UIStackView {
                     $0.attributedText = text
                     $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 }
-                label.highlightLongPressAction = touchLinkAction
+                label.highlightLongPressAction = longTouchLinkAction
                 label.highlightTapAction = touchLinkAction
 
                 let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)

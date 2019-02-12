@@ -26,12 +26,14 @@ class TableDisplayView: UIScrollView {
     var baseColor: UIColor
     var tColor: UIColor
     var action: YYTextAction?
+    var longAction: YYTextAction?
 
-    init(baseHtml: String, color: UIColor, accentColor: UIColor, action: YYTextAction?) {
+    init(baseHtml: String, color: UIColor, accentColor: UIColor, action: YYTextAction?, longAction: YYTextAction?) {
         let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
         self.action = action
+        self.longAction = longAction
         super.init(frame: CGRect.zero)
 
         parseHtml(newData.removingPercentEncoding ?? newData)
@@ -155,7 +157,7 @@ class TableDisplayView: UIScrollView {
                 let text = YYLabel.init(frame: CGRect.zero).then({
                     $0.heightAnchor == CGFloat(30)
                 })
-                text.highlightLongPressAction = action
+                text.highlightLongPressAction = longAction
                 text.highlightTapAction = action
                 text.attributedText = string
                 if odd {
