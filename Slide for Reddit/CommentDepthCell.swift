@@ -35,7 +35,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var oldHeight: CGFloat = -1
     
     /* probably an issue here */
-    @nonobjc func textViewDidChange(_ textView: UITextView) {
+    @objc func textViewDidChange(_ textView: UITextView) {
         let prevSize = textView.frame.size.height
         let size = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
         if oldHeight == size.height {
@@ -1643,42 +1643,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     class func margin() -> UIEdgeInsets {
         return UIEdgeInsets(top: 4, left: 0, bottom: 2, right: 0)
-    }
-}
-
-extension CommentDepthCell: YYTextViewDelegate {
-    func textView(_ textView: YYTextView, didLongPress highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            if parent != nil {
-                let alertController: BottomSheetActionController = BottomSheetActionController()
-                alertController.headerData = url.absoluteString
-                
-                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                }))
-                
-                alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(url)
-                    }
-                }))
-                let open = OpenInChromeController.init()
-                if open.isChromeInstalled() {
-                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
-                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                    }))
-                }
-                parent?.present(alertController, animated: true, completion: nil)
-            }
-        }
-    }
-    
-    func textView(_ textView: YYTextView, shouldLongPress highlight: YYTextHighlight, in characterRange: NSRange) -> Bool {
-        return highlight.attributes?.contains(where: { (tuple) -> Bool in
-            tuple.key == NSAttributedString.Key.link.rawValue
-        }) ?? false
     }
 }
 

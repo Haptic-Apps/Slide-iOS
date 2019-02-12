@@ -302,9 +302,6 @@ class CachedTitle {
                 infoString.append(attr)
             }
         }
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 1.5
-        infoString.yy_paragraphStyle = paragraphStyle
         return infoString
     }
 }

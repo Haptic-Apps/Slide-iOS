@@ -2719,6 +2719,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         if let cell2 = parentCell as? CommentDepthCell, let comment = contents as? RComment {
             cell2.contentView.layer.cornerRadius = 10
             cell2.contentView.clipsToBounds = true
+            cell2.title.ignoreHeight = false
             cell2.title.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
             if contents is RComment {
                 var count = 0

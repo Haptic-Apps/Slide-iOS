@@ -46,7 +46,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
         //todo this
     }
     
-    
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
         //todo maybe? contentView.blink(color: GMColor.orange500Color())
         del?.upvote(self)
@@ -1066,7 +1065,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
             self.addGestureRecognizer(dtap!)
         }
         
-        refreshTitle()
+        refreshTitle(np: np)
 
         if !full {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -1082,12 +1081,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
         comments.text = " \(submission.commentCount)\(more > 0 ? " (+\(more))" : "")"
     }
     
-    func refreshTitle() {
+    func refreshTitle(np: Bool = false) {
         guard let link = self.link else {
             return
         }
 
-        title.attributedText = CachedTitle.getTitle(submission: link, full: full, true, false)
+        let attText = CachedTitle.getTitle(submission: link, full: full, true, false)
+        let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
+        title.textLayout = bounds
+        
+        title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
+        title.attributedText = attText
 
         /* todo this
         if let titleText = title.text as? NSString {
@@ -1270,8 +1274,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
         title.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
         title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]*/
         activeSet = true
-        
-        refreshTitle()
 
         defer {
             refreshAccessibility(submission: submission)
@@ -1501,7 +1503,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
         }
         
         refresh(np: np)
-        
+        refreshTitle(np: np)
+
         if (type != .IMAGE && type != .SELF && !thumb) || full {
             infoContainer.isHidden = false
             var text = ""
@@ -2326,11 +2329,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
                 if link!.archived || link!.locked || np {
                     fullHeightExtras += 56
                 }
-                
-                fullHeightExtras += 8
-
+        
                 if link!.isCrosspost {
                     fullHeightExtras += 56
+                    if link!.archived || link!.locked || np {
+                        fullHeightExtras += 8
+                    }
                 }
             }
             
@@ -2339,14 +2343,91 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, YY
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //buttons horizontal margins
             }
             
-            let framesetter = CTFramesetterCreateWithAttributedString(title.attributedText!)
-            let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+            let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: title.attributedText!)!
+            title.textLayout = layout
+            let textSize = layout.textBoundingSize
             
             let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras
             estimatedHeight = totalHeight
         }
         return estimatedHeight
     }
+    
+    func estimateHeightSingle(_ full: Bool, np: Bool, attText: NSAttributedString) -> YYTextLayout {
+        var paddingLeft = CGFloat(0)
+        var paddingRight = CGFloat(0)
+        var innerPadding = CGFloat(0)
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
+            paddingLeft = 5
+            paddingRight = 5
+        }
+        var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
+        let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
+        
+        if thumb {
+            imageHeight = thumbheight
+            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between top and thumbnail
+            innerPadding += 18 - (SettingValues.postViewMode == .COMPACT && !full ? 4 : 0) //between label and bottom box
+            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
+        } else if big {
+            if SettingValues.postViewMode == .CENTER || full {
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //between label
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between banner and box
+            } else {
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and label
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label and box
+            }
+            
+            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
+        } else {
+            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8)
+            innerPadding += 5 //between label and body
+            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between body and box
+            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
+        }
+        
+        var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
+        var fullHeightExtras = CGFloat(0)
+        
+        if !full {
+            if thumb {
+                estimatedUsableWidth -= thumbheight //is the same as the width
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between thumb and label
+            } else {
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
+            }
+        } else {
+            fullHeightExtras += 12
+            estimatedUsableWidth -= (24) //12 padding on either side
+            if thumb {
+                fullHeightExtras += 45 + 12 + 12
+            } else {
+                fullHeightExtras += imageHeight
+            }
+            
+            if link!.archived || link!.locked || np {
+                fullHeightExtras += 56
+            }
+            
+            fullHeightExtras += 8
+            
+            if link!.isCrosspost {
+                fullHeightExtras += 56
+            }
+        }
+        
+        if SettingValues.actionBarMode.isSide() && !full {
+            estimatedUsableWidth -= 36
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //buttons horizontal margins
+        }
+        
+        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: attText)!
+        return layout
+    }
+
     
     /* todo this
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {

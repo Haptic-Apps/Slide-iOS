@@ -60,7 +60,6 @@ public class TextDisplayStackView: UIStackView {
         self.firstTextView = YYLabel(frame: CGRect.zero).then({
             $0.accessibilityIdentifier = "Top title"
             $0.numberOfLines = 0
-//            $0.lineBreakMode = .byWordWrapping
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         })
         self.overflow = UIStackView().then({
@@ -102,7 +101,8 @@ public class TextDisplayStackView: UIStackView {
         }
 
         firstTextView.attributedText = string
-        
+        firstTextView.preferredMaxLayoutWidth = estimatedWidth
+
         if !ignoreHeight {
 //            let framesetterB = CTFramesetterCreateWithAttributedString(string)
 //            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
@@ -146,6 +146,7 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = newTitle
+            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
@@ -181,6 +182,8 @@ public class TextDisplayStackView: UIStackView {
 //            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
             firstTextView.attributedText = newTitle
+            firstTextView.preferredMaxLayoutWidth = estimatedWidth
+            
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
@@ -229,6 +232,7 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = text
+            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(text)

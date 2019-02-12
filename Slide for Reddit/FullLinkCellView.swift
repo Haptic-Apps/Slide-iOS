@@ -29,8 +29,8 @@ final class FullLinkCellView: LinkCellView {
         let bannerPadding = CFloat(5)
         
         constraintsForType = batch {
-            textView.bottomAnchor <= infoBox.topAnchor - (ctwelve / 2)
-            infoBox.bottomAnchor <= box.topAnchor - (ctwelve / 2)
+            textView.bottomAnchor >= infoBox.topAnchor - (ctwelve / 2)
+            infoBox.bottomAnchor >= box.topAnchor - (ctwelve / 2)
             infoBox.horizontalAnchors == contentView.horizontalAnchors + ctwelve
             textView.topAnchor == title.bottomAnchor + ceight
             textView.horizontalAnchors == contentView.horizontalAnchors + ctwelve
@@ -40,7 +40,7 @@ final class FullLinkCellView: LinkCellView {
             if big {
                 bannerImage.isHidden = false
                 // Image goes between title and buttons
-                title.bottomAnchor == bannerImage.topAnchor - ceight
+                title.bottomAnchor >= bannerImage.topAnchor - ceight
                 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 bannerImage.bottomAnchor == infoBox.topAnchor - ctwelve
