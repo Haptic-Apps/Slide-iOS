@@ -1069,6 +1069,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
         title.textLayout = bounds
         
+        title.displaysAsynchronously = true
         title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
         title.attributedText = attText
 

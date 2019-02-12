@@ -356,7 +356,9 @@ class RealmDataWrapper {
         rComment.approvedBy = comment.baseJson["approved_by"] as? String ?? ""
         rComment.approved = !rComment.approvedBy.isEmpty()
         rComment.sticky = comment.stickied
-        
+        rComment.urlFlair = (json["author_flair_richtext"] as? [Any]) != nil && (json["author_flair_richtext"] as? [Any])!.count > 0 ? ((((json["author_flair_richtext"] as? [Any])?[0] as? [String: Any])?["u"] as? String) ?? "") : ""
+        rComment.urlFlair = rComment.urlFlair.decodeHTML()
+
         for item in comment.modReports {
             let array = item as! [Any]
             rComment.reports.append("\(array[0]): \(array[1])")
@@ -596,6 +598,8 @@ class RComment: Object {
     @objc dynamic var voted = false
     @objc dynamic var vote = false
     @objc dynamic var saved = false
+    
+    @objc dynamic var urlFlair = ""
     
     var likes: VoteDirection {
         if voted {

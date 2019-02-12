@@ -13,6 +13,7 @@ import reddift
 import RLBAlertsPickers
 import YYText
 import UIKit
+import SDWebImage
 import XLActionController
 
 protocol TTTAttributedCellDelegate: class {
@@ -1463,6 +1464,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         authorStringNoFlair.yy_setTextHighlight(NSRange(location: 0, length: authorStringNoFlair.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)")])
 
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: GMColor.green500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
@@ -1504,7 +1506,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         infoString.append(spacerString)
         infoString.append(endString)
 
-        if !comment.flair.isEmpty {
+        if !comment.urlFlair.isEmpty {
+            infoString.append(spacer)
+            let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+            flairView.sd_setImage(with: URL(string: comment.urlFlair), completed: nil)
+            let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize.square(size: 20), alignTo: boldFont, alignment: YYTextVerticalAlignment.center)
+
+            infoString.append(flairImage)
+        } else if !comment.flair.isEmpty {
             infoString.append(spacer)
             infoString.append(flairTitle)
         }
