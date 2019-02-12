@@ -1072,6 +1072,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         title.displaysAsynchronously = true
         title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
         title.attributedText = attText
+        title.textVerticalAlignment = .top
+        title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
 
         /* todo this
         if let titleText = title.text as? NSString {

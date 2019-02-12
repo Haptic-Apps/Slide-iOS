@@ -304,7 +304,7 @@ public class TextDisplayStackView: UIStackView {
         for block in blocks {
             estimatedHeight += 8
             if block.startsWith("<table>") {
-                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor)
+                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, action: self.touchLinkAction)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
@@ -342,6 +342,8 @@ public class TextDisplayStackView: UIStackView {
                 label.alpha = 0.7
                 label.numberOfLines = 0
                 label.lineBreakMode = .byWordWrapping
+                label.highlightLongPressAction = touchLinkAction
+                label.highlightTapAction = touchLinkAction
 
                 label.attributedText = text
                 
@@ -349,10 +351,6 @@ public class TextDisplayStackView: UIStackView {
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 
-//                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude), nil)
-//                estimatedHeight += textSizeB.height
-
                 let size = CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude)
                 let layout = YYTextLayout(containerSize: size, text: text)!
                 estimatedHeight += layout.textBoundingSize.height
@@ -377,10 +375,8 @@ public class TextDisplayStackView: UIStackView {
                     $0.attributedText = text
                     $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 }
-
-//                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-//                estimatedHeight += textSizeB.height
+                label.highlightLongPressAction = touchLinkAction
+                label.highlightTapAction = touchLinkAction
 
                 let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
                 let layout = YYTextLayout(containerSize: size, text: text)!

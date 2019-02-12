@@ -1513,7 +1513,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize.square(size: 20), alignTo: boldFont, alignment: YYTextVerticalAlignment.center)
 
             infoString.append(flairImage)
-        } else if !comment.flair.isEmpty {
+        }
+        
+        if !comment.flair.isEmpty {
             infoString.append(spacer)
             infoString.append(flairTitle)
         }

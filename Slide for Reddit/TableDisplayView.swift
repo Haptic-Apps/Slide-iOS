@@ -25,11 +25,13 @@ class TableDisplayView: UIScrollView {
     var widths = [[CGFloat]]()
     var baseColor: UIColor
     var tColor: UIColor
+    var action: YYTextAction?
 
-    init(baseHtml: String, color: UIColor, accentColor: UIColor) {
+    init(baseHtml: String, color: UIColor, accentColor: UIColor, action: YYTextAction?) {
         let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
+        self.action = action
         super.init(frame: CGRect.zero)
 
         parseHtml(newData.removingPercentEncoding ?? newData)
@@ -140,7 +142,6 @@ class TableDisplayView: UIScrollView {
     }
     
     func addSubviews() {
-        let activeLinkAttributes = [NSAttributedString.Key.foregroundColor.rawValue: tColor]
         var odd = false
         for row in baseData {
             let rowStack = UIStackView().then({
@@ -154,6 +155,8 @@ class TableDisplayView: UIScrollView {
                 let text = YYLabel.init(frame: CGRect.zero).then({
                     $0.heightAnchor == CGFloat(30)
                 })
+                text.highlightLongPressAction = action
+                text.highlightTapAction = action
                 text.attributedText = string
                 if odd {
                     text.backgroundColor = ColorUtil.foregroundColor

@@ -356,8 +356,20 @@ class RealmDataWrapper {
         rComment.approvedBy = comment.baseJson["approved_by"] as? String ?? ""
         rComment.approved = !rComment.approvedBy.isEmpty()
         rComment.sticky = comment.stickied
-        rComment.urlFlair = (json["author_flair_richtext"] as? [Any]) != nil && (json["author_flair_richtext"] as? [Any])!.count > 0 ? ((((json["author_flair_richtext"] as? [Any])?[0] as? [String: Any])?["u"] as? String) ?? "") : ""
-        rComment.urlFlair = rComment.urlFlair.decodeHTML()
+        rComment.flair = flair
+
+        let richtextFlairs = (json["author_flair_richtext"] as? [Any])
+        if richtextFlairs != nil && richtextFlairs!.count > 0 {
+            for flair in richtextFlairs! {
+                if let flairDict = flair as? [String: Any] {
+                    if flairDict["e"] != nil && flairDict["e"] as! String == "emoji" {
+                        rComment.urlFlair = ((flairDict["u"] as? String) ?? "").decodeHTML().trimmed()
+                    } else if flairDict["e"] != nil && flairDict["e"] as! String == "text" {
+                        rComment.flair = ((flairDict["t"] as? String) ?? "").decodeHTML().trimmed()
+                    }
+                }
+            }
+        }
 
         for item in comment.modReports {
             let array = item as! [Any]
@@ -370,7 +382,7 @@ class RealmDataWrapper {
         //todo rComment.pinned = comment.pinned
         rComment.score = comment.score
         rComment.depth = depth
-        rComment.flair = flair
+        
         rComment.canMod = comment.canMod
         rComment.linkid = comment.linkId
         rComment.archived = comment.archived
