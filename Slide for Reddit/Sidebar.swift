@@ -49,13 +49,6 @@ class Sidebar: NSObject, YYTextViewDelegate {
         }
     }
     
-    func textView(_ textView: YYTextView, shouldLongPress highlight: YYTextHighlight, in characterRange: NSRange) -> Bool {
-        return highlight.attributes?.contains(where: { (tuple) -> Bool in
-            tuple.key == NSAttributedString.Key.link.rawValue
-        }) ?? false
-    }
-    
-
     var inner: SubSidebarViewController?
     var subInfo: Subreddit?
 

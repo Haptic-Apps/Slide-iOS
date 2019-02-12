@@ -328,13 +328,7 @@ class SubredditHeaderView: UIView {
 
 extension SubredditHeaderView: TextDisplayStackViewDelegate {
     func linkTapped(url: URL) {
-        // if textClicked.contains("[[s[") {
-        //   parent?.showSpoiler(textClicked)
-        //} else {
-        //let urlClicked = result.url!
         self.parentController?.doShow(url: url, heroView: nil, heroVC: nil)
-        //}
-        
     }
     
     func linkLongTapped(url: URL) {

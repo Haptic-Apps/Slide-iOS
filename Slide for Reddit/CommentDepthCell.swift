@@ -110,6 +110,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
             $0.ignoreHeight = true
+            $0.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         })
 
         self.childrenCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15)).then({

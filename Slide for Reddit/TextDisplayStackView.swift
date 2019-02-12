@@ -65,6 +65,7 @@ public class TextDisplayStackView: UIStackView {
                 }
             })
         }
+        self.isUserInteractionEnabled = true
         self.firstTextView.highlightLongPressAction = touchLinkAction
         self.firstTextView.highlightTapAction = touchLinkAction
     }
@@ -96,6 +97,7 @@ public class TextDisplayStackView: UIStackView {
         self.axis = .vertical
         self.addArrangedSubviews(firstTextView, overflow)
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.isUserInteractionEnabled = true
 
         firstTextView.horizontalAnchors == self.horizontalAnchors
         firstTextView.topAnchor == self.topAnchor
