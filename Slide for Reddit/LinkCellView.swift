@@ -59,7 +59,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func linkLongTapped(url: URL) {
         //todo this
     }
-
     
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
         //todo maybe? contentView.blink(color: GMColor.orange500Color())
@@ -233,6 +232,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     }
                 })
             }
+            $0.isUserInteractionEnabled = true
         }
         
         self.infoBox = UIStackView().then {
