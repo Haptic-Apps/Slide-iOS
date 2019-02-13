@@ -166,8 +166,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var timeView: UILabel!
     var playView: UIImageView!
     
-    var avPlayerItem: AVPlayerItem?
-    
     var loadedImage: URL?
     var lq = false
     
@@ -1023,12 +1021,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     func endVideos() {
         if videoView != nil {
-            self.videoView!.player?.pause()
-            self.videoView?.player?.currentItem?.asset.cancelLoading()
-            self.videoView?.player?.currentItem?.cancelPendingSeeks()
             self.updater?.invalidate()
+            self.updater = nil
+            self.videoView!.player?.replaceCurrentItem(with: nil)
             self.videoView!.player = nil
-            self.avPlayerItem = nil
         }
     }
     
@@ -1416,6 +1412,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if big {
             bannerImage.isHidden = false
+            self.updater = nil
+            self.videoView?.player?.replaceCurrentItem(with: nil)
             updater?.invalidate()
             var videoOverride = false
             if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
@@ -1733,8 +1731,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             guard let strongSelf = self else { return }
             strongSelf.videoURL = URL(string: urlString)!
             DispatchQueue.main.async {
-                strongSelf.avPlayerItem = AVPlayerItem(url: strongSelf.videoURL!)
-                strongSelf.videoView?.player = AVPlayer(playerItem: strongSelf.avPlayerItem!)
+                strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
                 strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
 //                Is currently causing issues with not resuming after buffering
 //                if #available(iOS 10.0, *) {

@@ -636,7 +636,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
 
     }
-
+    
     @objc func refresh(_ sender: AnyObject) {
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()

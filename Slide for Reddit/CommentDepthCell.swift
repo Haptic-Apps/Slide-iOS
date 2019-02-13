@@ -105,7 +105,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
+        configureInit()
+    }
+    
+    func configureInit() {
         self.backgroundColor = ColorUtil.backgroundColor
         self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width, delegate: self).then({
             $0.isUserInteractionEnabled = true
@@ -113,7 +116,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.ignoreHeight = true
             $0.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         })
-
+        
         self.childrenCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15)).then({
             $0.numberOfLines = 1
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: false)
@@ -124,25 +127,25 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         })
         
         let padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-
+        
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.sideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.topViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 4))
         self.topViewSpace.accessibilityIdentifier = "Top view margin"
-
+        
         self.childrenCount = childrenCountLabel.withPadding(padding: padding).then({
             $0.alpha = 0
             $0.backgroundColor = ColorUtil.accentColorForSub(sub: "")
             $0.layer.cornerRadius = 4
             $0.clipsToBounds = true
         })
-
+        
         self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, childrenCount)
         
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.backgroundColor
         topViewSpace.backgroundColor = ColorUtil.backgroundColor
-
+        
         self.clipsToBounds = true
         
         self.menu = UIStackView().then {
@@ -156,7 +159,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menuBack = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 0))
         menuBack.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         menu.addSubview(menuBack)
-
+        
         self.contentView.addSubview(menu)
         
         self.reply = UIView().then {
@@ -180,6 +183,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         contentView.addSubview(reply)
         configureLayout()
+
     }
     
     var gesturesAdded = false
@@ -1257,6 +1261,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func setMore(more: RMore, depth: Int, depthColors: [UIColor], parent: CommentViewController) {
+        if title == nil {
+            configureInit()
+        }
         self.depth = depth
         self.comment = nil
         self.isMore = true
@@ -1337,7 +1344,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var dtap: UIShortTapGestureRecognizer?
 
     func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath) {
-
+        if title == nil {
+            configureInit()
+        }
         if SettingValues.commentActionForceTouch == .NONE { //todo change this
         }
         self.accessibilityValue = """

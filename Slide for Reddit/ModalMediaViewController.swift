@@ -267,10 +267,9 @@ class ModalMediaViewController: UIViewController {
     
     deinit {
         if videoView != nil {
-            videoView!.player?.pause()
-            videoView!.player?.currentItem?.asset.cancelLoading()
-            videoView!.player?.currentItem?.cancelPendingSeeks()
             displayLink?.invalidate()
+            displayLink = nil
+            videoView!.player?.replaceCurrentItem(with: nil)
             videoView!.player = nil
         }
     }
@@ -283,10 +282,9 @@ class ModalMediaViewController: UIViewController {
         }
 
         if videoView != nil {
-            videoView!.player?.pause()
-            videoView!.player?.currentItem?.asset.cancelLoading()
-            videoView!.player?.currentItem?.cancelPendingSeeks()
             displayLink?.invalidate()
+            displayLink = nil
+            videoView!.player?.replaceCurrentItem(with: nil)
             videoView!.player = nil
         }
         

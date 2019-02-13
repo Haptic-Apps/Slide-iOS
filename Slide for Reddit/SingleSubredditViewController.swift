@@ -1744,8 +1744,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
         }
         
-        let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
-        let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false))!
+        let textSize = layout.textBoundingSize
+
         let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
         return CGSize(width: itemWidth, height: totalHeight)
     }
@@ -2140,8 +2142,9 @@ extension SingleSubredditViewController {
 extension SingleSubredditViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
-            (cell as! LinkCellView).endVideos()
+        
+        if cell is AutoplayBannerLinkCellView && (cell as! AutoplayBannerLinkCellView).videoView != nil {
+            (cell as! AutoplayBannerLinkCellView).endVideos()
         }
         if !tableView.indexPathsForVisibleItems.contains(indexPath) {
             if SettingValues.markReadOnScroll && indexPath.row < links.count {
