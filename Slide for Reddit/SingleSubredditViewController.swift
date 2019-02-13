@@ -203,24 +203,21 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if #available(iOS 11.0, *) {
             self.tableView.contentInsetAdjustmentBehavior = .never
         }
-        
-//        if false && single && !isModal { //todo reimplement soon?
-//            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-//            self.navigationController!.delegate = swiper!
-//            for view in view.subviews {
-//                if view is UIScrollView {
-//                    let scrollView = view as! UIScrollView
-//                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
-//                    break
-//                }
-//            }
-//        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if single {
-            self.navigationController?.delegate = self
+        
+        if single && !isModal && !(self.navigationController!.delegate is SloppySwiper) {
+            swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            self.navigationController!.delegate = swiper!
+            for view in view.subviews {
+                if view is UIScrollView {
+                    let scrollView = view as! UIScrollView
+                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+                    break
+                }
+            }
         }
 
         server?.stop()

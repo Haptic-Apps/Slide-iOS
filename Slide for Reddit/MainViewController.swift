@@ -999,10 +999,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {
-        if vCs.isEmpty {
-            return nil
-        }
-        return (vCs[currentPage] as? SingleSubredditViewController)
+        return viewControllers?.count ?? 0 == 0 ? nil : viewControllers?[0] as? SingleSubredditViewController
     }
     
     var currentPage: Int {

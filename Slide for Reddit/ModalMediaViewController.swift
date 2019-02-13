@@ -263,6 +263,10 @@ class ModalMediaViewController: UIViewController {
         if #available(iOS 11.0, *) {
             self.setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
+        if videoView != nil {
+            videoView?.player?.play()
+            displayLink?.isPaused = false
+        }
     }
     
     deinit {
@@ -281,17 +285,18 @@ class ModalMediaViewController: UIViewController {
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
         }
 
-        if videoView != nil {
-            displayLink?.invalidate()
-            displayLink = nil
-            videoView!.player?.replaceCurrentItem(with: nil)
-            videoView!.player = nil
-        }
-        
         if SettingValues.reduceColor && ColorUtil.theme.isLight() {
             desiredStatusBarStyle = .default
         } else {
             desiredStatusBarStyle = .lightContent
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if videoView != nil {
+            displayLink?.isPaused = true
+            videoView!.player?.pause()
         }
     }
 
