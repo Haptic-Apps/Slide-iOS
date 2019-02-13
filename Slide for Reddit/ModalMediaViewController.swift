@@ -171,7 +171,9 @@ class ModalMediaViewController: UIViewController {
                 }.resume()
 
         } else {
-            let changedUrl = URL.init(string: baseUrl.absoluteString + ".png")!
+            var urlBase = baseUrl.absoluteString
+            urlBase = urlBase.replacingOccurrences(of: "m.imgur.com", with: "i.imgur.com")
+            var changedUrl = URL(string: "\(urlBase).png")!
             var request = URLRequest(url: changedUrl)
             request.httpMethod = "HEAD"
             let task = URLSession.shared.dataTask(with: request) { (_, response, _) -> Void in
