@@ -30,6 +30,9 @@ class GfycatVideoSource: VideoSource {
         if !(name.startsWith("/")) {
             name = "/" + name
         }
+        if name.contains("-max") {
+            name = name.split("-")[0]
+        }
         name = name.split(".")[0]
         let finalURL = URL(string: "https://api.gfycat.com/v1/gfycats\(name)")!
         URLSession.shared.dataTask(with: finalURL) { (data, _, error) in

@@ -1121,6 +1121,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var single = true
     var hasDone = false
+    var configuredOnce = false
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -1129,10 +1130,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             guard let headerCell = headerCell else {
                 return
             }
-            headerCell.aspectWidth = self.view.frame.size.width
-            headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
-            if submission!.isSelf {
-                headerCell.showBody(width: self.view.frame.size.width - 24)
+            if !configuredOnce {
+                headerCell.aspectWidth = self.view.frame.size.width
+                headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
+                if submission!.isSelf {
+                    headerCell.showBody(width: self.view.frame.size.width - 24)
+                }
+                configuredOnce = true
             }
 
             var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
