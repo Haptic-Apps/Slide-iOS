@@ -1473,7 +1473,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.bannerImage.heightAnchor == self.submissionHeight ~ .low
             }
         } else {
-            bannerImage.sd_setImage(with: URL.init(string: ""))
+            bannerImage.image = nil
             if self is FullLinkCellView {
                 self.videoView.isHidden = true
                 self.topVideoView.isHidden = true
@@ -1755,7 +1755,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     strongSelf.bannerImage.alpha = 1
                 })
             }
-            }, failure: {
+            }, failure: { [weak self] () in
                 
         })
     }

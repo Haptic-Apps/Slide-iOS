@@ -188,7 +188,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         SDWebImageManager.shared().imageCache?.config.maxCacheAge = 1209600 //2 weeks
         SDWebImageManager.shared().imageCache?.config.maxCacheSize = 250 * 1024 * 1024
-        
+        SDWebImageDownloader.shared().shouldDecompressImages = false
+
         UIApplication.shared.applicationIconBadgeNumber = 0
 
         self.window = UIWindow(frame: UIScreen.main.bounds)

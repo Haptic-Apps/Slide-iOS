@@ -47,7 +47,6 @@ class GfycatVideoSource: VideoSource {
                         return
                     }
                     
-                    print(json)
                     if json["errorMessage"] != nil {
                         DispatchQueue.main.async {
                             failure()
