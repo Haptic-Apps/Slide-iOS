@@ -1033,6 +1033,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             configureView()
             configureLayout()
         }
+        if videoTask != nil {
+            videoTask!.cancel()
+        }
         self.link = submission
         self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test, parentWidth: parentWidth, np: np)
         layoutForContent()
@@ -1403,10 +1406,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     thumbImage.image = LinkCellImageCache.web
                 }
             } else {
-                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.thumbnailUrl), withPlaceHolderImage: nil)
+                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.thumbnailUrl), withPlaceHolderImage: LinkCellImageCache.web)
             }
         } else {
-            thumbImage.sd_setImage(with: URL.init(string: ""))
+            thumbImage.image = nil
             self.thumbImage.frame.size.width = 0
         }
         
@@ -1717,6 +1720,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var videoURL: URL?
+    weak var videoTask: URLSessionDataTask?
     
     func doLoadVideo() {
         let baseUrl: URL
@@ -1727,7 +1731,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
         let videoType = VideoMediaViewController.VideoType.fromPath(url)
-        videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
+        self.videoTask = videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
             guard let strongSelf = self else { return }
             strongSelf.videoURL = URL(string: urlString)!
             DispatchQueue.main.async {
@@ -1755,9 +1759,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     strongSelf.bannerImage.alpha = 1
                 })
             }
-            }, failure: { [weak self] () in
-                
-        })
+            }, failure: nil)
     }
     
     public static var cachedInternet: Bool?
