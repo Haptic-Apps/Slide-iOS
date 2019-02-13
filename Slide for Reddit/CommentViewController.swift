@@ -1222,7 +1222,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
             if !loaded {
                 activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                activityIndicator.color = ColorUtil.navIconColor
+                activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight() ? ColorUtil.fontColor : .white
                 let barButton = UIBarButtonItem(customView: activityIndicator)
                 navigationItem.rightBarButtonItems = [barButton]
                 activityIndicator.startAnimating()

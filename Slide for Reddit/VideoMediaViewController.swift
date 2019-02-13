@@ -134,7 +134,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         videoView.player?.play()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         timer?.invalidate()
         request?.cancel()
         stopDisplayLink()
@@ -155,7 +155,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         } catch {
             
         }
-        super.viewWillDisappear(animated)
+        super.viewDidDisappear(animated)
+        UIApplication.shared.isIdleTimerDisabled = false
+        displayLink?.isPaused = true
+        
+        // Turn off forced fullscreen
+        if forcedFullscreen {
+            disableForcedFullscreen()
+        }
     }
 
     deinit {
@@ -164,18 +171,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         stopDisplayLink()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        // Re-enable screen dimming due to inactivity
-        UIApplication.shared.isIdleTimerDisabled = false
-        displayLink?.isPaused = true
-
-        // Turn off forced fullscreen
-        if forcedFullscreen {
-            disableForcedFullscreen()
-        }
-    }
-
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 

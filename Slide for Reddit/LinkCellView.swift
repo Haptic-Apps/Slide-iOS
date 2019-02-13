@@ -37,14 +37,6 @@ enum CurrentType {
 }
 
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        //todo this
-        return nil
-    }
-    
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        //todo this
-    }
     
     func linkTapped(url: URL) {
         // if textClicked.contains("[[s[") {
@@ -2236,10 +2228,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var registered: Bool = false
     
-    /* todo this
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
-        if full {
+        /* todo thisif full {
             let locationInTextView = textView.convert(location, to: textView)
             
             if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
@@ -2248,7 +2239,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     return controller
                 }
             }
-        } else {
+        } else {*/
             History.addSeen(s: link!)
             if History.getSeen(s: link!) && !SettingValues.newIndicator {
                 self.title.alpha = 0.3
@@ -2258,9 +2249,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if let controller = parentViewController?.getControllerForUrl(baseUrl: (link?.url)!) {
                 return controller
             }
-        }
+        //}
         return nil
-    }*/
+    }
     
     func estimateHeight(_ full: Bool, _ reset: Bool = false, np: Bool) -> CGFloat {
         if estimatedHeight == 0 || reset {
@@ -2366,7 +2357,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if thumb {
             imageHeight = thumbheight
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between top and thumbnail
+            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between top and thumbnail
             innerPadding += 18 - (SettingValues.postViewMode == .COMPACT && !full ? 4 : 0) //between label and bottom box
             innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
         } else if big {
@@ -2393,7 +2384,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if thumb {
                 estimatedUsableWidth -= thumbheight //is the same as the width
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between thumb and label
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between thumb and label
             } else {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
             }
@@ -2418,15 +2409,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if SettingValues.actionBarMode.isSide() && !full {
-            estimatedUsableWidth -= 36
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //buttons horizontal margins
+            estimatedUsableWidth -= 40
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
+            if thumb {
+                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
+            }
         }
         
         let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
         let layout = YYTextLayout(containerSize: size, text: attText)!
         return layout
     }
-
     
     /* todo this
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
@@ -2434,7 +2428,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             return (attr.result.url!, attr.accessibilityFrame)
         }
         return nil
-    }
+    }*/
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         if viewControllerToCommit is AlbumViewController {
@@ -2446,7 +2440,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else {
             VCPresenter.showVC(viewController: viewControllerToCommit, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
         }
-    }*/
+    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

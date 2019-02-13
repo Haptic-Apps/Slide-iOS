@@ -2385,7 +2385,6 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
             self.flowLayout.reset()
 
-            tableView.isUserInteractionEnabled = false
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
                 BannerUtil.makeBanner(text: "Submission hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
@@ -2396,9 +2395,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     } catch {
                     }
                 })
-            }, completion: { _ in
-                self.tableView.isUserInteractionEnabled = true
-            })
+            }, completion: nil)
 
         } catch {
 

@@ -421,7 +421,6 @@ public class TextDisplayStackView: UIStackView {
         let htmlBase = TextStackEstimator.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
-        
         while html.mutableString.contains("\t•\t") {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
@@ -453,7 +452,7 @@ public class TextDisplayStackView: UIStackView {
     public static func
         createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
+        let htmlBase = TextStackEstimator.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
         let options = [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName] as [String: Any]
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: options, documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
