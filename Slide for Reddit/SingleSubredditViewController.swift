@@ -373,7 +373,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return ColorUtil.theme.isLight() ? .default : .lightContent
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
     }
     
     static func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
