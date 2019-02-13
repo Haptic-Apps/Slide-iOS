@@ -316,7 +316,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             tableView.reloadData()
         }
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         

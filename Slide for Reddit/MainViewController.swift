@@ -66,7 +66,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     var isReload = false
     var readLaterBadge: BadgeSwift?
-    var vCs: [UIViewController] = []
+    var vCs: [String] = []
     public static var current: String = ""
     public static var needsRestart = false
     public var toolbar: UIView?
@@ -335,7 +335,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 if index == nil {
                     return
                 }
-                let firstViewController = self.vCs[index!]
+
+                let firstViewController = SingleSubredditViewController(subName: self.vCs[index!], parent: self)
                 
                 if SettingValues.subredditBar && !SettingValues.reduceColor {
                     self.color1 = ColorUtil.baseColor
@@ -364,7 +365,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func goToSubreddit(index: Int) {
-        let firstViewController = vCs[index]
+        let firstViewController = SingleSubredditViewController(subName: vCs[index], parent: self)
         
         setViewControllers([firstViewController],
                            direction: .forward,
@@ -545,14 +546,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         MainViewController.isOffline = false
         var subs = [UIMutableApplicationShortcutItem]()
         for subname in finalSubs {
-            if subname == savedPage {
-                vCs.append(saved!)
-                SingleSubredditViewController.firstPresented = false
-                saved!.reloadNeedingColor()
-                saved!.parentController = self
-            } else {
-                vCs.append(SingleSubredditViewController(subName: subname, parent: self))
-            }
+            vCs.append(subname)
             if subs.count < 2 && !subname.contains("/") {
                 subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
             }
@@ -582,7 +576,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         }
         
-        let firstViewController = vCs[newIndex]
+        let firstViewController = SingleSubredditViewController(subName: vCs[newIndex], parent: self)
         
         setViewControllers([firstViewController],
                            direction: .forward,
@@ -701,7 +695,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func doCurrentPage(_ page: Int) {
         guard page < vCs.count else { return }
-        let vc = vCs[page] as! SingleSubredditViewController
+        let vc = self.viewControllers![0] as! SingleSubredditViewController
         MainViewController.current = vc.sub
         UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
         self.menuNav?.setSubreddit(subreddit: MainViewController.current)
@@ -729,7 +723,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
         if !selected {
-            let page = vCs.index(of: self.viewControllers!.first!)
+            let page = vCs.index(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
             if !tabBar.items.isEmpty {
                 tabBar.setSelectedItem(tabBar.items[page!], animated: true)
             }
@@ -1042,7 +1036,7 @@ extension MainViewController: UIPageViewControllerDataSource {
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        var index = vCs.index(of: viewController)
+        var index = vCs.index(of: (viewController as! SingleSubredditViewController).sub)
         if let vc = viewController as? SingleSubredditViewController {
             index = finalSubs.firstIndex(of: vc.sub)
         }
@@ -1060,12 +1054,12 @@ extension MainViewController: UIPageViewControllerDataSource {
             return nil
         }
         
-        return vCs[previousIndex]
+        return SingleSubredditViewController(subName: vCs[previousIndex], parent: self)
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = vCs.index(of: viewController) else {
+        guard let viewControllerIndex = vCs.index(of: (viewController as! SingleSubredditViewController).sub) else {
             return nil
         }
         
@@ -1080,14 +1074,14 @@ extension MainViewController: UIPageViewControllerDataSource {
             return nil
         }
         
-        return vCs[nextIndex]
+        return SingleSubredditViewController(subName: vCs[nextIndex], parent: self)
     }
     
 }
 
 extension MainViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        let page = vCs.index(of: self.viewControllers!.first!)
+        let page = vCs.index(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
         //        let page = tabBar.items.index(of: tabBar.selectedItem!)
         // TODO: Crashes here
         guard page != nil else {
@@ -1166,8 +1160,8 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
 extension MainViewController: MDCTabBarDelegate {
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
-        let firstViewController = vCs[tabBar.items.index(of: item)!]
-        
+        let firstViewController = SingleSubredditViewController(subName: vCs[tabBar.items.index(of: item)!], parent: self)
+
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,
