@@ -129,6 +129,18 @@ public class TextDisplayStackView: UIStackView {
                 }
             })
         }
+        self.longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.delegate.linkLongTapped(url: url)
+                            return
+                        }
+                    }
+                }
+            })
+        }
         self.firstTextView.highlightLongPressAction = longTouchLinkAction
         self.firstTextView.highlightTapAction = touchLinkAction
     }
@@ -358,21 +370,20 @@ public class TextDisplayStackView: UIStackView {
                 label.lineBreakMode = .byWordWrapping
                 label.highlightLongPressAction = longTouchLinkAction
                 label.highlightTapAction = touchLinkAction
-
-                label.attributedText = text
                 
                 let baseView = UIView()
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 
-                let size = CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude)
+                let size = CGSize(width: estimatedWidth - 8, height: CGFloat.greatestFiniteMagnitude)
                 let layout = YYTextLayout(containerSize: size, text: text)!
                 estimatedHeight += layout.textBoundingSize.height
+                label.textLayout = layout
+                label.attributedText = text
 
                 baseView.addSubview(label)
                 label.leftAnchor == baseView.leftAnchor + CGFloat(8)
                 label.rightAnchor == baseView.rightAnchor - CGFloat(4)
-                label.heightAnchor == layout.textBoundingSize.height
                 label.topAnchor == baseView.topAnchor
                 label.bottomAnchor == baseView.bottomAnchor
                 label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)

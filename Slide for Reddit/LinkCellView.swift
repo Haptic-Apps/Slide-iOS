@@ -57,6 +57,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func linkLongTapped(url: URL) {
+        print("LONG TAPPED")
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = url.absoluteString
         alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
@@ -197,9 +198,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        configureView()
-        configureLayout()
     }
     
     func configureView() {
@@ -1035,6 +1033,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
+        if title == nil {
+            configureView()
+            configureLayout()
+        }
         self.link = submission
         self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test, parentWidth: parentWidth, np: np)
         layoutForContent()
@@ -1100,25 +1102,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
         title.textLayout = bounds
         
-        title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
+        title.preferredMaxLayoutWidth = aspectWidth
         title.attributedText = attText
         title.textVerticalAlignment = .top
         title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
-
-        /* todo this
-        if let titleText = title.text as? NSString {
-            // Add link to subreddit
-            let subredditRange = titleText.range(of: "r/\(link.subreddit)")
-            let subredditURL = URL(string: "/r/\(link.subreddit)")!
-            title.addLink(to: subredditURL, with: subredditRange)
-
-            // Add link to author profile
-            let authorRange = titleText.range(of: "u/\(link.author)")
-            let authorURL = URL(string: "/u/\(link.author)")!
-            title.addLink(to: authorURL, with: authorRange)
-        } else {
-            NSLog("Could not cast title.text as NSString!")
-        }*/
     }
     
     @objc func doDTap(_ sender: AnyObject) {
@@ -1606,9 +1593,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     popup.elevate(elevation: 2)
                     popup.layer.cornerRadius = 5
                     popup.clipsToBounds = true
-                    
-                    infoBox.addArrangedSubview(popup)
                     infoBox.spacing = 4
+                    infoBox.addArrangedSubview(popup)
                     
                     popup.horizontalAnchors == infoBox.horizontalAnchors
                     popup.heightAnchor == 48
@@ -2210,8 +2196,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 popup.layer.cornerRadius = 5
                 popup.clipsToBounds = true
                 
-                infoBox.addArrangedSubview(popup)
                 infoBox.spacing = 4
+                infoBox.addArrangedSubview(popup)
 
                 popup.horizontalAnchors == infoBox.horizontalAnchors
                 popup.heightAnchor == 48
