@@ -74,7 +74,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var title: TextDisplayStackView!
     
     var currentPath = IndexPath(row: 0, section: 0)
-    
+    var longBlocking = false
+
     var depthColors = [UIColor]()
     
     //Buttons for comment menu
@@ -189,6 +190,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var gesturesAdded = false
 
     @objc func doLongClick() {
+        if longBlocking {
+            self.longBlocking = false
+            return
+        }
         timer!.invalidate()
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
@@ -217,7 +222,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
-            timer = Timer.scheduledTimer(timeInterval: 0.25,
+            timer = Timer.scheduledTimer(timeInterval: 0.51,
                     target: self,
                     selector: #selector(self.doLongClick),
                     userInfo: nil,
@@ -226,6 +231,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if sender.state == UIGestureRecognizer.State.ended {
             timer!.invalidate()
             cancelled = true
+            longBlocking = false
         }
     }
     
@@ -1247,8 +1253,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.title.addGestureRecognizer(tapGestureRecognizer)
             
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
-            long.minimumPressDuration = 0.25
+            long.minimumPressDuration = 0.51
             long.delegate = self
+            long.cancelsTouchesInView = false
             title.parentLongPress = long
             self.addGestureRecognizer(long)
             
@@ -1698,6 +1705,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
     }
     
     func linkLongTapped(url: URL) {
+        longBlocking = true
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = url.absoluteString
         alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
