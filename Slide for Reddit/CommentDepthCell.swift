@@ -222,7 +222,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
-            timer = Timer.scheduledTimer(timeInterval: 0.51,
+            timer = Timer.scheduledTimer(timeInterval: 0.36,
                     target: self,
                     selector: #selector(self.doLongClick),
                     userInfo: nil,
@@ -265,19 +265,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                                      repeats: false)
     }
     
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL, let textClicked = textView.attributedText?.attributedSubstring(from: characterRange).string {
-            if (parent) != nil {
-                if textClicked.contains("[[s[") {
-                    parent?.showSpoiler(textClicked)
-                } else {
-                    let urlClicked = url
-                    parent?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
-                }
-            }
-        }
-    }
-
     var progressBar: ProgressBarView!
     var typeImage: UIImageView!
     var previousTranslation: CGFloat = 0
@@ -1253,7 +1240,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.title.addGestureRecognizer(tapGestureRecognizer)
             
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
-            long.minimumPressDuration = 0.51
+            long.minimumPressDuration = 0.36
             long.delegate = self
             long.cancelsTouchesInView = false
             title.parentLongPress = long

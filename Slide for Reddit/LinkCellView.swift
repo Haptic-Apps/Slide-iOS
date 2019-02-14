@@ -49,7 +49,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func linkLongTapped(url: URL) {
-        print("LONG TAPPED")
+        longBlocking = true
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = url.absoluteString
         alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
@@ -571,9 +571,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             if longPress == nil {
                 longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
-                longPress?.minimumPressDuration = 0.25
+                longPress?.minimumPressDuration = 0.36
                 longPress?.delegate = self
                 if full {
+                    longPress?.cancelsTouchesInView = false
                     textView.parentLongPress = longPress!
                 }
                 
@@ -1772,6 +1773,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func showMore() {
         timer!.invalidate()
+        if longBlocking {
+            self.longBlocking = false
+            return
+        }
         if !self.cancelled && LinkCellView.checkInternet() && parentViewController?.presentedViewController == nil {
             if #available(iOS 10.0, *) {
                 HapticUtility.hapticActionStrong()
@@ -1863,10 +1868,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
     }
     
+    var longBlocking = false
     @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
-            timer = Timer.scheduledTimer(timeInterval: 0.25,
+            timer = Timer.scheduledTimer(timeInterval: 0.36,
                                          target: self,
                                          selector: #selector(self.showMore),
                                          userInfo: nil,
@@ -1876,6 +1882,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if sender.state == UIGestureRecognizer.State.ended {
             timer!.invalidate()
             cancelled = true
+            longBlocking = false
         }
     }
     

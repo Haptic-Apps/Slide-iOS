@@ -14,14 +14,53 @@ import UIKit
 import XLActionController
 
 class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
+    
     func linkTapped(url: URL) {
+        // if textClicked.contains("[[s[") {
+        //   parent?.showSpoiler(textClicked)
+        //} else {
+        //let urlClicked = result.url!
+        self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+        //}
         
     }
     
     func linkLongTapped(url: URL) {
+        longBlocking = true
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = url.absoluteString
+        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.contentView
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+        }))
         
+        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }))
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }))
+        }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        self.parentViewController?.present(alertController, animated: true, completion: nil)
     }
-    
 
     var text: TextDisplayStackView!
     var single = false
@@ -35,6 +74,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         }
     }
 
+    var longBlocking = false
     override func layoutSubviews() {
         super.layoutSubviews()
         let topmargin = 0
@@ -76,8 +116,9 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
 
         let messageClick = UITapGestureRecognizer(target: self, action: #selector(MessageCellView.doReply(sender:)))
         let messageLongClick = UILongPressGestureRecognizer(target: self, action: #selector(MessageCellView.showMenu(_:)))
-        messageLongClick.minimumPressDuration = 0.25
+        messageLongClick.minimumPressDuration = 0.36
         messageLongClick.delegate = self
+        messageLongClick.cancelsTouchesInView = false
         messageClick.delegate = self
         self.addGestureRecognizer(messageClick)
         self.addGestureRecognizer(messageLongClick)
@@ -126,6 +167,10 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
 
     @objc func showLongMenu() {
         timer!.invalidate()
+        if longBlocking {
+            self.longBlocking = false
+            return
+        }
         if !self.cancelled {
             //todo show menu
             //read reply full thread
@@ -193,7 +238,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     @objc func showMenu(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
-            timer = Timer.scheduledTimer(timeInterval: 0.25,
+            timer = Timer.scheduledTimer(timeInterval: 0.36,
                     target: self,
                     selector: #selector(self.showLongMenu),
                     userInfo: nil,
@@ -202,6 +247,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         if sender.state == UIGestureRecognizer.State.ended {
             timer!.invalidate()
             cancelled = true
+            longBlocking = false
         }
     }
 
