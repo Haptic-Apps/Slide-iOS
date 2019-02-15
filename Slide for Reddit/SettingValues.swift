@@ -841,7 +841,7 @@ extension SettingValues {
 extension SettingValues {
     static var muteInlineVideos: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: "MUTE_INLINE_VIDEOS")
+            return UserDefaults.standard.object(forKey: "MUTE_INLINE_VIDEOS") as? Bool ?? true
         }
         set {
             UserDefaults.standard.set(newValue, forKey: "MUTE_INLINE_VIDEOS")
@@ -850,10 +850,19 @@ extension SettingValues {
 
     static var muteVideosInModal: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: "MUTE_VIDEOS_IN_MODAL")
+            return UserDefaults.standard.object(forKey: "MUTE_VIDEOS_IN_MODAL") as? Bool ?? false
         }
         set {
             UserDefaults.standard.set(newValue, forKey: "MUTE_VIDEOS_IN_MODAL")
+        }
+    }
+
+    static var modalVideosRespectHardwareMuteSwitch: Bool {
+        get {
+            return UserDefaults.standard.object(forKey: "MODAL_VIDEOS_RESPECT_HARDWARE_MUTE_SWITCH") as? Bool ?? true
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "MODAL_VIDEOS_RESPECT_HARDWARE_MUTE_SWITCH")
         }
     }
 }
