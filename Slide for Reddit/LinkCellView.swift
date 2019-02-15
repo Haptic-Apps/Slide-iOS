@@ -437,7 +437,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             sound.isUserInteractionEnabled = true
             if SettingValues.muteInlineVideos {
                 sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
-                sound.isHidden = false
+                sound.isHidden = true
             } else {
                 sound.isHidden = true
             }
