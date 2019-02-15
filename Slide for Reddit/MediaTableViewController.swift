@@ -163,8 +163,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     }
 
     func showSpoiler(_ string: String) {
-        let m = string.capturedGroups(withRegex: "\\[\\[s\\[(.*?)\\]s\\]\\]")
-        let controller = UIAlertController.init(title: "Spoiler", message: m[0][1], preferredStyle: .alert)
+        let controller = UIAlertController.init(title: "Spoiler", message: string, preferredStyle: .alert)
         controller.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(controller, animated: true, completion: nil)
     }
