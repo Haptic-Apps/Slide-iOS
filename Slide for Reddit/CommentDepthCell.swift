@@ -11,8 +11,9 @@ import AudioToolbox
 import RealmSwift
 import reddift
 import RLBAlertsPickers
-import TTTAttributedLabel
+import YYText
 import UIKit
+import SDWebImage
 import XLActionController
 
 protocol TTTAttributedCellDelegate: class {
@@ -33,7 +34,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var oldConstraints: [NSLayoutConstraint] = []
     var oldLocation: CGPoint = CGPoint.zero
     var oldHeight: CGFloat = -1
-    func textViewDidChange(_ textView: UITextView) {
+    
+    /* probably an issue here */
+    @objc func textViewDidChange(_ textView: UITextView) {
         let prevSize = textView.frame.size.height
         let size = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
         if oldHeight == size.height {
@@ -64,13 +67,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var menu: UIStackView!
     var menuBack: UIView!
     var reply: UIView!
+    var islink = false
     
     var sideViewSpace: UIView!
     var topViewSpace: UIView!
     var title: TextDisplayStackView!
     
     var currentPath = IndexPath(row: 0, section: 0)
-    
+    var longBlocking = false
+
     var depthColors = [UIColor]()
     
     //Buttons for comment menu
@@ -101,14 +106,18 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
+        configureInit()
+    }
+    
+    func configureInit() {
         self.backgroundColor = ColorUtil.backgroundColor
-        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, delegate: self, width: contentView.frame.size.width).then({
+        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width, delegate: self).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
             $0.ignoreHeight = true
+            $0.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         })
-
+        
         self.childrenCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15)).then({
             $0.numberOfLines = 1
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: false)
@@ -119,25 +128,25 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         })
         
         let padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-
+        
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.sideViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
         self.topViewSpace = UIView(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 4))
         self.topViewSpace.accessibilityIdentifier = "Top view margin"
-
+        
         self.childrenCount = childrenCountLabel.withPadding(padding: padding).then({
             $0.alpha = 0
             $0.backgroundColor = ColorUtil.accentColorForSub(sub: "")
             $0.layer.cornerRadius = 4
             $0.clipsToBounds = true
         })
-
+        
         self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, childrenCount)
         
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.backgroundColor
         topViewSpace.backgroundColor = ColorUtil.backgroundColor
-
+        
         self.clipsToBounds = true
         
         self.menu = UIStackView().then {
@@ -151,7 +160,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menuBack = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 0))
         menuBack.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         menu.addSubview(menuBack)
-
+        
         self.contentView.addSubview(menu)
         
         self.reply = UIView().then {
@@ -175,11 +184,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         contentView.addSubview(reply)
         configureLayout()
+
     }
     
     var gesturesAdded = false
 
     @objc func doLongClick() {
+        if longBlocking {
+            self.longBlocking = false
+            return
+        }
         timer!.invalidate()
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
@@ -201,12 +215,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     var timer: Timer?
+    var timerS: Timer?
+
     var cancelled = false
 
     @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
-            timer = Timer.scheduledTimer(timeInterval: 0.25,
+            timer = Timer.scheduledTimer(timeInterval: 0.36,
                     target: self,
                     selector: #selector(self.doLongClick),
                     userInfo: nil,
@@ -215,34 +231,38 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if sender.state == UIGestureRecognizer.State.ended {
             timer!.invalidate()
             cancelled = true
+            longBlocking = false
         }
     }
-
-    @objc func handleShortPress(_ sender: UIGestureRecognizer) {
-        if isMore {
-            self.pushedSingleTap(sender)
+    
+    @objc func doShortClick() {
+        timerS?.invalidate()
+        if islink {
+            islink = false
             return
         }
-
+        if isMore {
+            self.pushedSingleTap(nil)
+            return
+        }
+        
         if parent == nil || content == nil {
             return
         }
         
         if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! RComment).getId())) {
-            self.showMenu(sender)
+            self.showMenu(nil)
         } else {
-            self.pushedSingleTap(sender)
+            self.pushedSingleTap(nil)
         }
     }
-    
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith result: NSTextCheckingResult!) {
-        let textClicked = label.attributedText.attributedSubstring(from: result.range).string
-        if textClicked.contains("[[s[") {
-            parent?.showSpoiler(textClicked)
-        } else {
-            let urlClicked = result.url!
-            parent?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
-        }
+
+    @objc func handleShortPress(_ sender: UIGestureRecognizer) {
+        timerS = Timer.scheduledTimer(timeInterval: 0.05,
+                                     target: self,
+                                     selector: #selector(self.doShortClick),
+                                     userInfo: nil,
+                                     repeats: false)
     }
     
     var progressBar: ProgressBarView!
@@ -423,13 +443,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent?.doAction(cell: self, action: item, indexPath: currentPath)
     }
 
+    /* ignored
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer.view == self.title {
             let link = self.title.link(at: touch.location(in: self.title), withTouch: touch)
             return link == nil
         }
         return true
-    }
+    }*/
 
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
 
@@ -1219,8 +1240,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.title.addGestureRecognizer(tapGestureRecognizer)
             
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
-            long.minimumPressDuration = 0.25
+            long.minimumPressDuration = 0.36
             long.delegate = self
+            long.cancelsTouchesInView = false
             title.parentLongPress = long
             self.addGestureRecognizer(long)
             
@@ -1233,6 +1255,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func setMore(more: RMore, depth: Int, depthColors: [UIColor], parent: CommentViewController) {
+        if title == nil {
+            configureInit()
+        }
         self.depth = depth
         self.comment = nil
         self.isMore = true
@@ -1313,7 +1338,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var dtap: UIShortTapGestureRecognizer?
 
     func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath) {
-
+        if title == nil {
+            configureInit()
+        }
         if SettingValues.commentActionForceTouch == .NONE { //todo change this
         }
         self.accessibilityValue = """
@@ -1421,44 +1448,43 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
-        title.firstTextView.textInsets = UIEdgeInsets(top: 3, left: 0, bottom: 1, right: 0)
 
         let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 2
+        paragraphStyle.lineSpacing = 2.75
         
         let spacerString = NSMutableAttributedString(string: (comment.controversiality > 0 ? "†  •  " : "  •  "), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
 
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         
         if date != 0 && date < Double(comment.created.timeIntervalSince1970) {
-            endString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: ColorUtil.accentColorForSub(sub: comment.subreddit), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange(location: 0, length: endString.length))
+            endString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.accentColorForSub(sub: comment.subreddit), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: endString.length))
         }
 
         let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
+        authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)")])
         let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): parent?.authorColor ?? ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
+        authorStringNoFlair.yy_setTextHighlight(NSRange(location: 0, length: authorStringNoFlair.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)")])
 
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: ColorUtil.backgroundColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]))
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: GMColor.green500Color(), convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]))
-        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
-        let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.platinum) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
-        let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.silver) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: GMColor.green500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
         var authorSmall = false
         if comment.distinguished == "admin" {
-          authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#E57373"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: UIColor.init(hexString: "#E57373"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if comment.distinguished == "special" {
-            authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#F44336"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: UIColor.init(hexString: "#F44336"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if comment.distinguished == "moderator" {
-            authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#81C784"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: UIColor.init(hexString: "#81C784"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if AccountController.currentName == comment.author {
-            authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 1, length: authorString.length - 1))
-        } else if submissionAuthor != nil && comment.author == submissionAuthor {
-            authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#64B5F6"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 2, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: userColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+        } else if submissionAuthor != nil && comment.author == submissionAuthor {
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: UIColor.init(hexString: "#64B5F6"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else {
             authorSmall = true
         }
@@ -1473,8 +1499,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let tag = ColorUtil.getTagForUser(name: comment.author)
         if !tag.isEmpty {
-            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
-            tagString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: tagString.length))
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
             infoString.append(spacer)
             infoString.append(tagString)
         }
@@ -1484,6 +1509,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         infoString.append(spacerString)
         infoString.append(endString)
 
+        if !comment.urlFlair.isEmpty {
+            infoString.append(spacer)
+            let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+            flairView.sd_setImage(with: URL(string: comment.urlFlair), completed: nil)
+            let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize.square(size: 20), alignTo: boldFont, alignment: YYTextVerticalAlignment.center)
+
+            infoString.append(flairImage)
+        }
+        
         if !comment.flair.isEmpty {
             infoString.append(spacer)
             infoString.append(flairTitle)
@@ -1495,27 +1529,31 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         if comment.gilded {
+            infoString.append(spacer)
             if comment.platinum > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "P", attributes: convertToOptionalNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: GMColor.lightBlue500Color(), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]))
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "platinum")!, fontSize: boldFont.pointSize)!
                 infoString.append(gild)
                 if comment.platinum > 1 {
+                    let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.platinum) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
                     infoString.append(platinumed)
                 }
             }
             if comment.gold > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "G", attributes: convertToOptionalNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: GMColor.amber500Color(), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]))
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: boldFont.pointSize)!
                 infoString.append(gild)
                 if comment.gold > 1 {
+                    let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
                     infoString.append(gilded)
                 }
             }
             if comment.silver > 0 {
                 infoString.append(spacer)
-                let gild = NSMutableAttributedString.init(string: "S", attributes: convertToOptionalNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: GMColor.grey500Color(), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]))
+                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "silver")!, fontSize: boldFont.pointSize)!
                 infoString.append(gild)
                 if comment.silver > 1 {
+                    let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.silver) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
                     infoString.append(silvered)
                 }
             }
@@ -1536,7 +1574,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         paragraphStyle.lineSpacing = 1.5
-        infoString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: infoString.length))
+        infoString.yy_paragraphStyle = paragraphStyle
 
         title.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
@@ -1599,13 +1637,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
+        return nil
+        /* todo this
         if let attr = title.firstTextView.link(at: locationInTextView) {
             if let url = attr.result.url {
                 return (url, title.bounds)
             }
 
         }
-        return nil
+        return nil*/
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
@@ -1639,30 +1679,51 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 }
 
-extension CommentDepthCell: TTTAttributedLabelDelegate {
-    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if parent != nil {
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = url.absoluteString
-            
-            alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-            }))
-            alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(url)
-                }
-            }))
-            let open = OpenInChromeController.init()
-            if open.isChromeInstalled() {
-                alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
-                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                }))
-            }
-            parent?.present(alertController, animated: true, completion: nil)
+extension CommentDepthCell: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        islink = true
+        if !text.isEmpty {
+            self.parent?.showSpoiler(text)
+        } else {
+            self.parent?.doShow(url: url, heroView: nil, heroVC: nil)
         }
+    }
+
+    func linkLongTapped(url: URL) {
+        longBlocking = true
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = url.absoluteString
+        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.contentView
+            self.parent?.present(activityViewController, animated: true, completion: nil)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parent)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }))
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }))
+        }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        self.parent?.present(alertController, animated: true, completion: nil)
     }
 }
 

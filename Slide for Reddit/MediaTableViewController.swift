@@ -43,7 +43,9 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             let comment = CommentViewController.init(submission: self.link, single: true)
             VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
-        
+        if self is CommentViewController {
+            commentCallback = nil
+        }
         failureCallback = { (url: URL) in
             let vc: UIViewController
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
@@ -92,10 +94,13 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     
     func getControllerForUrl(baseUrl: URL, lq: URL? = nil) -> UIViewController? {
         contentUrl = baseUrl.absoluteString.startsWith("//") ? URL(string: "https:\(baseUrl.absoluteString)") ?? baseUrl : baseUrl
+        print(contentUrl?.absoluteString)
+
         if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
             contentUrl = URL.init(string: (content?.substring(to: content!.index(of: ".")!))!)
         }
+        print(contentUrl?.absoluteString)
 
         let type = ContentType.getContentType(baseUrl: contentUrl)
         
@@ -103,6 +108,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
+            print(contentUrl?.absoluteString)
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
         } else if type == .GIF && SettingValues.internalGifView || type == .STREAMABLE || type == .VID_ME {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
@@ -157,8 +163,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     }
 
     func showSpoiler(_ string: String) {
-        let m = string.capturedGroups(withRegex: "\\[\\[s\\[(.*?)\\]s\\]\\]")
-        let controller = UIAlertController.init(title: "Spoiler", message: m[0][1], preferredStyle: .alert)
+        let controller = UIAlertController.init(title: "Spoiler", message: string, preferredStyle: .alert)
         controller.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(controller, animated: true, completion: nil)
     }

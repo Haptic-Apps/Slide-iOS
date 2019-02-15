@@ -7,15 +7,17 @@
 //
 
 import Anchorage
+import AudioToolbox
 import reddift
-import TTTAttributedLabel
+import YYText
 import UIKit
+import XLActionController
 
-class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
+class SubredditHeaderView: UIView {
 
     var subscribers: UILabel = UILabel()
     var here: UILabel = UILabel()
-    var info = TextDisplayStackView()
+    var info: TextDisplayStackView!
     
     var submit = UITableViewCell()
     var sorting = UITableViewCell()
@@ -122,7 +124,8 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
-        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, delegate: self, width: self.frame.size.width - 24)
+        self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, width: self.frame.size.width - 24, delegate: self)
+        self.info.isUserInteractionEnabled = true
         
         self.subscribers = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         subscribers.numberOfLines = 1
@@ -318,9 +321,51 @@ class SubredditHeaderView: UIView, TTTAttributedLabelDelegate {
     func getEstHeight() -> CGFloat {
         return CGFloat(290) + (descHeight)
     }
+}
+
+extension SubredditHeaderView: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.parentController?.showSpoiler(text)
+        } else {
+            self.parentController?.doShow(url: url, heroView: nil, heroVC: nil)
+        }
+    }
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parentController?.doShow(url: url, heroView: nil, heroVC: nil)
+    func linkLongTapped(url: URL) {
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = url.absoluteString
+        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.info
+            self.parentController?.present(activityViewController, animated: true, completion: nil)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentController)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }))
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }))
+        }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        self.parentController?.present(alertController, animated: true, completion: nil)
     }
 }
 

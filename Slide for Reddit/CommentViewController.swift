@@ -13,11 +13,11 @@ import RealmSwift
 import reddift
 import RLBAlertsPickers
 import SloppySwiper
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
-class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, TTTAttributedLabelDelegate, SubmissionMoreDelegate, ReplyDelegate, UIPopoverPresentationControllerDelegate {
+class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate, UIPopoverPresentationControllerDelegate {
     
     func hide(index: Int) {
         if index >= 0 {
@@ -67,7 +67,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.reset = true
         self.activityIndicator.removeFromSuperview()
         let barButton = UIBarButtonItem(customView: self.activityIndicator)
-        self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, barButton]
+        self.navigationItem.rightBarButtonItems = [barButton]
         self.activityIndicator.startAnimating()
         
         self.refresh(self)
@@ -121,7 +121,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
         
         progressDot.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-        
         liveB = UIBarButtonItem.init(customView: progressDot)
 
         self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, self.liveB]
@@ -637,7 +636,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
 
     }
-
+    
     @objc func refresh(_ sender: AnyObject) {
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
@@ -750,7 +749,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.hasDone = true
                                     self.headerCell?.aspectWidth = self.tableView.bounds.size.width
                                     self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width, np: self.np)
-                                    self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                                    if self.submission!.isSelf {
+                                        self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                                    }
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                     if let tableHeaderView = self.headerCell {
                                         var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
@@ -772,11 +773,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.navigationItem.backBarButtonItem?.title = ""
                                     self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
                                 } else {
-                                    
-                                    self.headerCell?.refreshLink(self.submission!, np: self.np)
                                     self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-                                    self.headerCell?.showBody(width: self.view.frame.size.width - 24)
-                                    
+                                    self.headerCell?.refreshLink(self.submission!, np: self.np)
+                                    if self.submission!.isSelf {
+                                        self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                                    }
+
                                     var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
                                     // Add safe area insets to left and right if available
                                     if #available(iOS 11.0, *) {
@@ -843,7 +845,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.tableView.reloadData()
                                     self.collapseAll()
                                 } else {
-                                    self.tableView.reloadData()
+                                    self.tableView.reloadData(with: UITableView.RowAnimation.fade)
                                 }
                             })
                         }
@@ -968,7 +970,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     self.live = false
                     self.activityIndicator.removeFromSuperview()
                     let barButton = UIBarButtonItem(customView: self.activityIndicator)
-                    self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, barButton]
+                    self.navigationItem.rightBarButtonItems = [barButton]
                     self.activityIndicator.startAnimating()
 
                     self.refresh(self)
@@ -1054,9 +1056,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
-        headerCell!.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
-        headerCell!.showBody(width: self.view.frame.size.width - 24)
-
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
@@ -1122,6 +1121,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var single = true
     var hasDone = false
+    var configuredOnce = false
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -1129,6 +1129,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             guard let headerCell = headerCell else {
                 return
+            }
+            if !configuredOnce {
+                headerCell.aspectWidth = self.view.frame.size.width
+                headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
+                if submission!.isSelf {
+                    headerCell.showBody(width: self.view.frame.size.width - 24)
+                }
+                configuredOnce = true
             }
 
             var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
@@ -1214,9 +1222,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
             if !loaded {
                 activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                activityIndicator.color = ColorUtil.navIconColor
+                activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight() ? ColorUtil.fontColor : .white
                 let barButton = UIBarButtonItem(customView: activityIndicator)
-                navigationItem.rightBarButtonItems = [sortB, searchB, barButton]
+                navigationItem.rightBarButtonItems = [barButton]
                 activityIndicator.startAnimating()
             } else {
                 navigationItem.rightBarButtonItems = [sortB, searchB]
@@ -2717,9 +2725,9 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
 
         let parentCell = CommentDepthCell(style: .default, reuseIdentifier: "test")
         if let cell2 = parentCell as? CommentDepthCell, let comment = contents as? RComment {
-            cell2.title.ignoreHeight = false
             cell2.contentView.layer.cornerRadius = 10
             cell2.contentView.clipsToBounds = true
+            cell2.title.ignoreHeight = false
             cell2.title.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
             if contents is RComment {
                 var count = 0

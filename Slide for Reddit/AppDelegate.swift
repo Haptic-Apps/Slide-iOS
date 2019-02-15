@@ -117,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         readLaterFile = documentDirectory.appending("/readlater.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 13,
+                schemaVersion: 16,
                 migrationBlock: migrationBlock)
 
         Realm.Configuration.defaultConfiguration = config
@@ -188,7 +188,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         SDWebImageManager.shared().imageCache?.config.maxCacheAge = 1209600 //2 weeks
         SDWebImageManager.shared().imageCache?.config.maxCacheSize = 250 * 1024 * 1024
-        
+        SDWebImageDownloader.shared().shouldDecompressImages = false
+
         UIApplication.shared.applicationIconBadgeNumber = 0
 
         self.window = UIWindow(frame: UIScreen.main.bounds)

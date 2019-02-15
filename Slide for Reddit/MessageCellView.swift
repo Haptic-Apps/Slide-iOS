@@ -9,19 +9,61 @@
 import Anchorage
 import AudioToolbox
 import reddift
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
-class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
+class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
+    
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.parentViewController?.showSpoiler(text)
+        } else {
+            self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+        }
+    }
 
-    var text = TextDisplayStackView()
+    func linkLongTapped(url: URL) {
+        longBlocking = true
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = url.absoluteString
+        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.contentView
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }))
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }))
+        }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        self.parentViewController?.present(alertController, animated: true, completion: nil)
+    }
+
+    var text: TextDisplayStackView!
     var single = false
 
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
-    }
-    
+    var longBlocking = false
     override func layoutSubviews() {
         super.layoutSubviews()
         let topmargin = 0
@@ -43,10 +85,11 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         super.init(frame: frame)
 
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), delegate: self, width: frame.width - 16)
+        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
         self.contentView.addSubview(text)
         
-        text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)
+        text.topAnchor == contentView.topAnchor + CGFloat(8)
+        text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.rightAnchor == contentView.rightAnchor - CGFloat(8)
         
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -63,13 +106,15 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
         let messageClick = UITapGestureRecognizer(target: self, action: #selector(MessageCellView.doReply(sender:)))
         let messageLongClick = UILongPressGestureRecognizer(target: self, action: #selector(MessageCellView.showMenu(_:)))
-        messageLongClick.minimumPressDuration = 0.25
+        messageLongClick.minimumPressDuration = 0.36
         messageLongClick.delegate = self
+        messageLongClick.cancelsTouchesInView = false
         messageClick.delegate = self
         self.addGestureRecognizer(messageClick)
         self.addGestureRecognizer(messageLongClick)
 
-        let titleText = getTitleText(message: message)
+        let titleText = MessageCellView.getTitleText(message: message)
+        text.estimatedWidth = self.contentView.frame.size.width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)
         text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
 
         self.text.removeConstraints(lsC)
@@ -87,8 +132,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     var timer: Timer?
     var cancelled = false
     
-    func getTitleText(message: RMessage) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.fontColor]))
+    public static func getTitleText(message: RMessage) -> NSAttributedString {
+        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject.escapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.fontColor]))
         
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
         
@@ -113,6 +158,10 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
     @objc func showLongMenu() {
         timer!.invalidate()
+        if longBlocking {
+            self.longBlocking = false
+            return
+        }
         if !self.cancelled {
             //todo show menu
             //read reply full thread
@@ -146,7 +195,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
                     }
                     ActionStates.setRead(s: self.message!, read: false)
-                    let titleText = self.getTitleText(message: self.message!)
+                    let titleText = MessageCellView.getTitleText(message: self.message!)
                     self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
 
                 } else {
@@ -161,7 +210,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
 
                     }
                     ActionStates.setRead(s: self.message!, read: true)
-                    let titleText = self.getTitleText(message: self.message!)
+                    let titleText = MessageCellView.getTitleText(message: self.message!)
                     self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
                 }
             }))
@@ -180,7 +229,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
     @objc func showMenu(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
-            timer = Timer.scheduledTimer(timeInterval: 0.25,
+            timer = Timer.scheduledTimer(timeInterval: 0.36,
                     target: self,
                     selector: #selector(self.showLongMenu),
                     userInfo: nil,
@@ -189,6 +238,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
         if sender.state == UIGestureRecognizer.State.ended {
             timer!.invalidate()
             cancelled = true
+            longBlocking = false
         }
     }
 
@@ -215,7 +265,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TTTAtt
             } catch {
             }
             ActionStates.setRead(s: message!, read: true)
-            let titleText = self.getTitleText(message: self.message!)
+            let titleText = MessageCellView.getTitleText(message: self.message!)
             self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
 
         } else {

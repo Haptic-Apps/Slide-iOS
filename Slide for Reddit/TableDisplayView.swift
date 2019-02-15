@@ -12,7 +12,7 @@ import reddift
 import SDWebImage
 import SwiftSpreadsheet
 import Then
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
@@ -25,13 +25,15 @@ class TableDisplayView: UIScrollView {
     var widths = [[CGFloat]]()
     var baseColor: UIColor
     var tColor: UIColor
-    var textDelegate: TTTAttributedLabelDelegate
+    var action: YYTextAction?
+    var longAction: YYTextAction?
 
-    init(baseHtml: String, color: UIColor, accentColor: UIColor, delegate: TTTAttributedLabelDelegate) {
+    init(baseHtml: String, color: UIColor, accentColor: UIColor, action: YYTextAction?, longAction: YYTextAction?) {
         let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
-        self.textDelegate = delegate
+        self.action = action
+        self.longAction = longAction
         super.init(frame: CGRect.zero)
 
         parseHtml(newData.removingPercentEncoding ?? newData)
@@ -142,7 +144,6 @@ class TableDisplayView: UIScrollView {
     }
     
     func addSubviews() {
-        let activeLinkAttributes = [kCTForegroundColorAttributeName: tColor]
         var odd = false
         for row in baseData {
             let rowStack = UIStackView().then({
@@ -153,13 +154,12 @@ class TableDisplayView: UIScrollView {
             globalHeight += 30
             globalWidth = 0
             for string in row {
-                let text = TTTAttributedLabel.init(frame: CGRect.zero).then({
+                let text = YYLabel.init(frame: CGRect.zero).then({
                     $0.heightAnchor == CGFloat(30)
-                    $0.delegate = self.textDelegate
-                    $0.linkAttributes = activeLinkAttributes
-                    $0.activeLinkAttributes = activeLinkAttributes
                 })
-                text.setText(string)
+                text.highlightLongPressAction = longAction
+                text.highlightTapAction = action
+                text.attributedText = string
                 if odd {
                     text.backgroundColor = ColorUtil.foregroundColor
                 }

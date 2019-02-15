@@ -8,21 +8,26 @@
 
 import Anchorage
 import DTCoreText
-import TTTAttributedLabel
+import Then
 import UIKit
+import YYText
+
+public protocol TextDisplayStackViewDelegate: class {
+    func linkTapped(url: URL, text: String)
+    func linkLongTapped(url: URL)
+}
 
 public class TextDisplayStackView: UIStackView {
     var baseString: NSAttributedString?
-    let TABLE_START_TAG = "<table>"
-    let HR_TAG = "<hr/>"
-    let TABLE_END_TAG = "</table>"
+    static let TABLE_START_TAG = "<table>"
+    static let HR_TAG = "<hr/>"
+    static let TABLE_END_TAG = "</table>"
     
     var estimatedWidth = CGFloat(0)
     var estimatedHeight = CGFloat(0)
     weak var parentLongPress: UILongPressGestureRecognizer?
     
-    let firstTextView: TTTAttributedLabel
-    let delegate: TTTAttributedLabelDelegate?
+    let firstTextView: YYLabel
     let overflow: UIStackView
     
     let fontSize: CGFloat
@@ -31,53 +36,117 @@ public class TextDisplayStackView: UIStackView {
     var baseFontColor: UIColor
     var tableCount = 0
     var tableData = [[[NSAttributedString]]]()
-    
+    var delegate: TextDisplayStackViewDelegate
+
     var ignoreHeight = false
-    
+    var touchLinkAction: YYTextAction?
+    var longTouchLinkAction: YYTextAction?
+
     var activeSet = false
     
-    init() {
+    init(delegate: TextDisplayStackViewDelegate) {
         self.fontSize = 0
         self.submission = false
         self.tColor = .black
-        delegate = nil
         self.baseFontColor = .white
-        self.firstTextView = TTTAttributedLabel.init(frame: CGRect.zero)
+        self.delegate = delegate
+        self.firstTextView = YYLabel(frame: .zero)
         self.overflow = UIStackView()
         self.overflow.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
+        self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.delegate.linkTapped(url: url, text: "")
+                            return
+                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
+                            self.delegate.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
+                        }
+                    }
+                }
+            })
+        }
+        self.longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.delegate.linkLongTapped(url: url)
+                            return
+                        }
+                    }
+                }
+            })
+        }
+
+        self.isUserInteractionEnabled = true
+        self.firstTextView.highlightLongPressAction = longTouchLinkAction
+        self.firstTextView.highlightTapAction = touchLinkAction
     }
     
     func setColor(_ color: UIColor) {
         self.tColor = color
     }
     
-    init(fontSize: CGFloat, submission: Bool, color: UIColor, delegate: TTTAttributedLabelDelegate, width: CGFloat, baseFontColor: UIColor = ColorUtil.fontColor) {
+    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.fontColor, delegate: TextDisplayStackViewDelegate) {
         self.fontSize = fontSize
         self.submission = submission
         self.estimatedWidth = width
-        self.delegate = delegate
         self.tColor = color
+        self.delegate = delegate
         self.baseFontColor = baseFontColor
-        self.firstTextView = TTTAttributedLabel.init(frame: CGRect.zero).then({
+        self.firstTextView = YYLabel(frame: CGRect.zero).then({
             $0.accessibilityIdentifier = "Top title"
             $0.numberOfLines = 0
+            $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         })
+
         self.overflow = UIStackView().then({
             $0.accessibilityIdentifier = "Text overflow"
             $0.axis = .vertical
             $0.spacing = 8
         })
-        firstTextView.delegate = delegate
         super.init(frame: CGRect.zero)
+
         self.axis = .vertical
         self.addArrangedSubviews(firstTextView, overflow)
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.isUserInteractionEnabled = true
+
         firstTextView.horizontalAnchors == self.horizontalAnchors
         firstTextView.topAnchor == self.topAnchor
-        firstTextView.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         overflow.bottomAnchor == self.bottomAnchor
         overflow.horizontalAnchors == self.horizontalAnchors
+        self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.delegate.linkTapped(url: url, text: "")
+                            return
+                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
+                            self.delegate.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
+                        }
+                    }
+                }
+            })
+        }
+        self.longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.delegate.linkLongTapped(url: url)
+                            return
+                        }
+                    }
+                }
+            })
+        }
+        self.firstTextView.highlightLongPressAction = longTouchLinkAction
+        self.firstTextView.highlightTapAction = touchLinkAction
     }
     
     required public init(coder: NSCoder) {
@@ -99,23 +168,30 @@ public class TextDisplayStackView: UIStackView {
         
         if !activeSet {
             activeSet = true
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
         }
-        
-        firstTextView.setText(string)
-        if let long = parentLongPress {
-            long.require(toFail: firstTextView.longPressGestureRecognizer)
-        }
-        
+
+        firstTextView.attributedText = string
+        firstTextView.preferredMaxLayoutWidth = estimatedWidth
+
         if !ignoreHeight {
-            let framesetterB = CTFramesetterCreateWithAttributedString(string)
-            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-            estimatedHeight += textSizeB.height
+//            let framesetterB = CTFramesetterCreateWithAttributedString(string)
+//            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//            estimatedHeight += textSizeB.height
+
+            let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: string)!
+            firstTextView.textLayout = layout
+            estimatedHeight += layout.textBoundingSize.height
+            firstTextView.horizontalAnchors == horizontalAnchors
+            firstTextView.removeConstraints(addedConstraints)
+            addedConstraints = batch {
+                firstTextView.heightAnchor == layout.textBoundingSize.height
+            }
         }
+
     }
+    
+    var addedConstraints = [NSLayoutConstraint]()
     
     public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
         estimatedHeight = 0
@@ -131,7 +207,7 @@ public class TextDisplayStackView: UIStackView {
         overflow.isHidden = true
         
         if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
-            var blocks = getBlocks(htmlString)
+            var blocks = TextDisplayStackView.getBlocks(htmlString)
             
             var startIndex = 0
             
@@ -144,20 +220,17 @@ public class TextDisplayStackView: UIStackView {
                 startIndex = 1
             }
             
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-            
-            firstTextView.setText(newTitle)
-            if let long = parentLongPress {
-                long.require(toFail: firstTextView.longPressGestureRecognizer)
-            }
+            firstTextView.attributedText = newTitle
+            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+//                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
+//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//                estimatedHeight += textSizeB.height
+
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: newTitle)!
+                estimatedHeight += layout.textBoundingSize.height
             }
             
             if blocks.count > 1 {
@@ -178,21 +251,30 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor))
             }
             
-            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+//            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+//            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
+//            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+//            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+
+            firstTextView.attributedText = newTitle
+            firstTextView.preferredMaxLayoutWidth = estimatedWidth
             
-            firstTextView.setText(newTitle)
-            if let long = parentLongPress {
-                long.require(toFail: firstTextView.longPressGestureRecognizer)
+            if !ignoreHeight {
+//                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
+//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//                estimatedHeight += textSizeB.height
+
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: newTitle)!
+                firstTextView.textLayout = layout
+                estimatedHeight += layout.textBoundingSize.height
+                firstTextView.removeConstraints(addedConstraints)
+                addedConstraints = batch {
+                    firstTextView.heightAnchor == layout.textBoundingSize.height
+                }
+                firstTextView.horizontalAnchors == horizontalAnchors
             }
 
-            if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
-            }
         }
         
     }
@@ -211,7 +293,7 @@ public class TextDisplayStackView: UIStackView {
         overflow.isHidden = true
         
         //Start HTML parse
-        var blocks = getBlocks(htmlString)
+        var blocks = TextDisplayStackView.getBlocks(htmlString)
         
         var startIndex = 0
         
@@ -220,22 +302,25 @@ public class TextDisplayStackView: UIStackView {
             
             if !activeSet {
                 activeSet = true
-                let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+//                let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
+//                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
+//                firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
+//                firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
             }
             
-            firstTextView.setText(text)
-            if let long = parentLongPress {
-                long.require(toFail: firstTextView.longPressGestureRecognizer)
-            }
+            firstTextView.attributedText = text
+            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+//                let framesetterB = CTFramesetterCreateWithAttributedString(text)
+//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
+//                estimatedHeight += textSizeB.height
+
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
             }
+
             startIndex = 1
         }
         
@@ -257,7 +342,7 @@ public class TextDisplayStackView: UIStackView {
         for block in blocks {
             estimatedHeight += 8
             if block.startsWith("<table>") {
-                let table = TableDisplayView.init(baseHtml: block, color: baseFontColor, accentColor: tColor, delegate: delegate!)
+                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, action: self.touchLinkAction, longAction: self.longTouchLinkAction)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
@@ -289,74 +374,70 @@ public class TextDisplayStackView: UIStackView {
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
                 body.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if block.startsWith("<cite>") {
-                let label = TTTAttributedLabel.init(frame: CGRect.zero)
+                let label = YYLabel(frame: .zero)
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed(), accent: tColor)
-                label.delegate = delegate
-                if let long = parentLongPress {
-                    long.require(toFail: label.longPressGestureRecognizer)
-                }
                 label.alpha = 0.7
                 label.numberOfLines = 0
-                
-                let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
-                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-                label.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-
-                label.setText(text)
+                label.lineBreakMode = .byWordWrapping
+                label.highlightLongPressAction = longTouchLinkAction
+                label.highlightTapAction = touchLinkAction
                 
                 let baseView = UIView()
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
+                let size = CGSize(width: estimatedWidth - 8, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
+                label.textLayout = layout
+                label.attributedText = text
+
                 baseView.addSubview(label)
                 label.leftAnchor == baseView.leftAnchor + CGFloat(8)
                 label.rightAnchor == baseView.rightAnchor - CGFloat(4)
-                label.heightAnchor == textSizeB.height
                 label.topAnchor == baseView.topAnchor
                 label.bottomAnchor == baseView.bottomAnchor
                 label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 overflow.addArrangedSubview(baseView)
                             
                 baseView.horizontalAnchors == overflow.horizontalAnchors
-                baseView.heightAnchor == textSizeB.height
+                baseView.heightAnchor == layout.textBoundingSize.height
             } else {
-                let label = TTTAttributedLabel.init(frame: CGRect.zero)
-                label.accessibilityIdentifier = "New text"
                 let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor)
-                label.delegate = delegate
-                if let long = parentLongPress {
-                    long.require(toFail: label.longPressGestureRecognizer)
+                let label = YYLabel(frame: CGRect.zero).then {
+                    $0.accessibilityIdentifier = "Paragraph"
+                    $0.numberOfLines = 0
+                    $0.lineBreakMode = .byWordWrapping
+                    $0.attributedText = text
+                    $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 }
-                let activeLinkAttributes = NSMutableDictionary(dictionary: label.activeLinkAttributes)
-                activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-                label.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-                label.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-                label.numberOfLines = 0
-                label.setText(text)
-                let framesetterB = CTFramesetterCreateWithAttributedString(text)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-                estimatedHeight += textSizeB.height
-                label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+                label.highlightLongPressAction = longTouchLinkAction
+                label.highlightTapAction = touchLinkAction
+
+                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                estimatedHeight += layout.textBoundingSize.height
+
                 overflow.addArrangedSubview(label)
+
                 label.horizontalAnchors == overflow.horizontalAnchors
-                label.heightAnchor == textSizeB.height
+                label.heightAnchor == layout.textBoundingSize.height
             }
         }
         overflow.setNeedsLayout()
     }
     
     public func createAttributedChunk(baseHTML: String, accent: UIColor) -> NSAttributedString {
+        return TextDisplayStackView.createAttributedChunk(baseHTML: baseHTML, fontSize: fontSize, submission: submission, accentColor: accent)
+    }
+    
+    public static func
+        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextStackEstimator.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
+        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
-        print(baseHtml)
         let html = NSMutableAttributedString(attributedString: baseHtml)
-        
         while html.mutableString.contains("\t•\t") {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
@@ -370,75 +451,35 @@ public class TextDisplayStackView: UIStackView {
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
         }
         
-        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
-            }
-        })
-        
-        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
-            }
-        })
-
-        return LinkParser.parse(html, accent)
-    }
-    
-    public static func
-        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
-        let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextStackEstimator.addSpoilers(baseHTML)
-        let options = [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName] as [String: Any]
-        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: options, documentAttributes: nil).generatedAttributedString()!
-        let html = NSMutableAttributedString(attributedString: baseHtml)
-        while html.mutableString.contains("\t•\t") {
-            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
-            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
-        }
-        while html.mutableString.contains("\t◦\t") {
-            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t◦\t")
-            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "\t\t◦ ")
-        }
-        while html.mutableString.contains("\t▪\t") {
-            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t▪\t")
-            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "\t\t\t▪ ")
-        }
-
-        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
-            }
-        })
         return LinkParser.parse(html, accentColor)
     }
     
-    public func link(at: CGPoint, withTouch: UITouch) -> TTTAttributedLabelLink? {
-        if let link = firstTextView.link(at: at) {
-            return link
-        }
-        if overflow.isHidden {
-            return nil
-        }
+//    public func link(at: CGPoint, withTouch: UITouch) -> TTTAttributedLabelLink? {
+//        if let link = firstTextView.link(at: at) {
+//            return link
+//        }
+//        if overflow.isHidden {
+//            return nil
+//        }
+//
+//        for view in self.overflow.subviews {
+//            if view is TTTAttributedLabel {
+//                if let link = (view as! TTTAttributedLabel).link(at: withTouch.location(in: view)) {
+//                    return link
+//                }
+//            } else if view is TableDisplayView {
+//                //Dont pass any touches through Table
+//                if view.bounds.contains( withTouch.location(in: view)) {
+//                    return TTTAttributedLabelLink.init()
+//                }
+//            }
+//        }
+//        return nil
+//    }
+
+    public static func getBlocks(_ html: String) -> [String] {
         
-        for view in self.overflow.subviews {
-            if view is TTTAttributedLabel {
-                if let link = (view as! TTTAttributedLabel).link(at: withTouch.location(in: view)) {
-                    return link
-                }
-            } else if view is TableDisplayView {
-                //Dont pass any touches through Table
-                if view.bounds.contains( withTouch.location(in: view)) {
-                    return TTTAttributedLabelLink.init()
-                }
-            }
-        }
-        return nil
-    }
-    
-    public func getBlocks(_ html: String) -> [String] {
-        
-        var codeBlockSeperated = parseCodeTags(html)
+        var codeBlockSeperated = TextDisplayStackView.parseCodeTags(html)
         
         if html.contains(HR_TAG) {
             codeBlockSeperated = parseHR(codeBlockSeperated)
@@ -449,92 +490,13 @@ public class TextDisplayStackView: UIStackView {
         }
         
         if html.contains("<table") {
-            return parseTableTags(codeBlockSeperated)
+            return TextDisplayStackView.parseTableTags(codeBlockSeperated)
         } else {
             return codeBlockSeperated
         }
     }
     
-    /* Might add this in later, but iOS seems to handle this better than Android
-     public func parseLists(_ html: String){
-     var firstIndex = 0
-     var isNumbered = false
-     let firstOl = html.indexOf("<ol") ?? -1
-     let firstUl = html.indexOf("<ul") ?? -1
-     
-     if ((firstUl != -1 && firstOl > firstUl) || firstOl == -1) {
-     firstIndex = firstUl
-     isNumbered = false
-     } else {
-     firstIndex = firstOl
-     isNumbered = true
-     }
-     
-     var listNumbers = [Int]()
-     
-     var indent = -1
-     var i = firstIndex
-     
-     while (i < html.length - 4 && i != -1) {
-     if (html.substring(i, length: 3) == "<ol" || html.substring(i, length: 3) == "<ul") {
-     if (html.substring(i, length: 3) == "<ol") {
-     isNumbered = true
-     indent += 1
-     listNumbers.insert(1, at: indent)
-     } else {
-     isNumbered = false
-     }
-     i = html.indexOf("<li", i)
-     } else if (html.substring(i, length: 3) == "<li") {
-     var tagEnd = html.indexOf(">", i)
-     var itemClose = html.indexOf("</li", tagEnd)
-     var ulClose = html.indexOf("<ul", tagEnd)
-     var olClose = html.indexOf("<ol", tagEnd)
-     var closeTag = ""
-     
-     // Find what is closest: </li>, <ul>, or <ol>
-     if (((ulClose == -1 && itemClose != -1) || (itemClose != -1 && ulClose != -1 && itemClose < ulClose)) && ((olClose == -1 && itemClose != -1) || (itemClose != -1 && olClose != -1 && itemClose < olClose))) {
-     closeTag = itemClose;
-     } else if (((ulClose == -1 && olClose != -1) || (olClose != -1 && ulClose != -1 && olClose < ulClose)) && ((olClose == -1 && itemClose != -1) || (olClose != -1 && itemClose != -1 && olClose < itemClose))) {
-     closeTag = olClose;
-     } else {
-     closeTag = ulClose;
-     }
-     
-     String text = html.substring(tagEnd + 1, closeTag);
-     String indentSpacing = "";
-     for (int j = 0; j < indent; j++) {
-     indentSpacing += "&nbsp;&nbsp;&nbsp;&nbsp;";
-     }
-     if (isNumbered) {
-     html = html.substring(0, tagEnd + 1)
-     + indentSpacing +
-     listNumbers.get(indent)+ ". " +
-     text + "<br/>" +
-     html.substring(closeTag);
-     listNumbers.set(indent, listNumbers.get(indent) + 1);
-     i = closeTag + 3;
-     } else {
-     html = html.substring(0, tagEnd + 1) + indentSpacing + "• " + text + "<br/>" + html.substring(closeTag);
-     i = closeTag + 2;
-     }
-     } else {
-     i = html.indexOf("<", i + 1);
-     if (i != -1 && html.substring(i, i + 4).equals("</ol")) {
-     indent--;
-     if(indent == -1){
-     isNumbered = false;
-     }
-     }
-     }
-     }
-     
-     html = html.replace("<ol>","").replace("<ul>","").replace("<li>","").replace("</li>","").replace("</ol>", "").replace("</ul>",""); //Remove the tags, which actually work in Android 7.0 on
-     
-     return html
-     }*/
-    
-    public func parseCodeTags(_ html: String) -> [String] {
+    public static func parseCodeTags(_ html: String) -> [String] {
         let startTag = "<code>"
         let endTag = "</code>"
         var startSeperated = html.components(separatedBy: startTag)
@@ -561,7 +523,7 @@ public class TextDisplayStackView: UIStackView {
         return preSeperated
     }
     
-    public func parseHR(_ blocks: [String]) -> [String] {
+    public static func parseHR(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {
             if block.contains(HR_TAG) {
@@ -578,7 +540,7 @@ public class TextDisplayStackView: UIStackView {
         return newBlocks
     }
     
-    public func parseBlockquote(_ blocks: [String]) -> [String] {
+    public static func parseBlockquote(_ blocks: [String]) -> [String] {
         let startTag = "<cite>"
         let endTag = "</cite>"
         
@@ -604,13 +566,10 @@ public class TextDisplayStackView: UIStackView {
                 }
             }
         }
-        
-        print(preSeperated)
-        
         return preSeperated
     }
     
-    public func parseTableTags(_ blocks: [String]) -> [String] {
+    public static func parseTableTags(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {
             if block.contains(TABLE_START_TAG) {
@@ -632,7 +591,71 @@ public class TextDisplayStackView: UIStackView {
         return newBlocks
     }
     
-    public func addSpoilers(_ text: String) -> String {
+    public static func estimateHeight(fontSize: CGFloat, submission: Bool, width: CGFloat, titleString: NSAttributedString, htmlString: String) -> CGFloat {
+        var totalHeight = CGFloat(0)
+        let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: titleString)!
+        var blocks: [String]
+        if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
+            blocks = TextDisplayStackView.getBlocks(htmlString)
+            
+            var startIndex = 0
+            
+            let newTitle = NSMutableAttributedString(attributedString: titleString)
+            if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
+                if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
+                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white))
+                }
+                startIndex = 1
+            }
+            
+            let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: newTitle)!
+            totalHeight += layout.textBoundingSize.height
+            
+            if blocks.count > 1 {
+                if startIndex == 0 {
+                } else {
+                    blocks.remove(at: 0)
+                }
+            }
+        } else {
+            blocks = [String]()
+            let newTitle = NSMutableAttributedString(attributedString: titleString)
+            if !htmlString.isEmpty() {
+                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white))
+            }
+            
+            let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: newTitle)!
+            totalHeight += layout.textBoundingSize.height
+        }
+        
+        for block in blocks {
+            totalHeight += 8
+            if block.startsWith("<table>") {
+                let table = TableDisplayView.getEstimatedHeight(baseHtml: block)
+                totalHeight += table
+            } else if block.startsWith("<hr/>") {
+                totalHeight += 1
+            } else if block.startsWith("<code>") {
+                let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
+                totalHeight += body.globalHeight
+            } else {
+                let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white)
+                let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                let textSize = layout.textBoundingSize
+                
+                totalHeight += textSize.height
+            }
+        }
+        return totalHeight
+    }
+    
+    public static func addSpoilers(_ text: String) -> String {
         var base = text
         
         for match in base.capturedGroups(withRegex: "<a[^>]*title=\"([^\"]*)\"[^>]*>([^<]*)</a>") {
@@ -641,14 +664,14 @@ public class TextDisplayStackView: UIStackView {
             let spoilerTeaser = match[2]
             // Remove the last </a> tag, but keep the < for parsing.
             if !tag.contains("<a href=\"http") && !tag.contains("<a href=\"/r") {
-                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ")
+                base = base.replacingOccurrences(of: tag, with: (spoilerTeaser.isEmpty() ? "spoiler" : spoilerTeaser) + "[[s[\(spoilerText)]s]]")
             }
         }
         
         //match unconventional spoiler tags
         for match in base.capturedGroups(withRegex: "<a href=\"([#/](?:spoiler|sp|s))\">([^<]*)</a>") {
             let newPiece = match[0]
-            let inner = "<a href=\"/spoiler\">spoiler [[s[ \(newPiece.subsequence(newPiece.indexOf(">")! + 1, endIndex: newPiece.lastIndexOf("<")!))]s]]</a> "
+            let inner = "Spoiler [[s[\(newPiece.subsequence(newPiece.indexOf(">")! + 1, endIndex: newPiece.lastIndexOf("<")!))]s]]"
             base = base.replacingOccurrences(of: match[0], with: inner)
         }
         
@@ -656,25 +679,24 @@ public class TextDisplayStackView: UIStackView {
         for match in base.capturedGroups(withRegex: "<span class=\"[^\"]*md-spoiler-text+[^\"]*\">([^<]*)</span>") {
             let tag = match[0]
             let spoilerText = match[1]
-            base = base.replacingOccurrences(of: tag, with: "<a href=\"/spoiler\">spoiler  [[s[ \(spoilerText)]s]]</a> ")
+            base = base.replacingOccurrences(of: tag, with: "Spoiler [[s[\(spoilerText)]s]]")
         }
-        
         return base
     }
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

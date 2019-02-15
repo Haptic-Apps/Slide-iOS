@@ -171,7 +171,9 @@ class ModalMediaViewController: UIViewController {
                 }.resume()
 
         } else {
-            let changedUrl = URL.init(string: baseUrl.absoluteString + ".png")!
+            var urlBase = baseUrl.absoluteString
+            urlBase = urlBase.replacingOccurrences(of: "m.imgur.com", with: "i.imgur.com")
+            var changedUrl = URL(string: "\(urlBase).png")!
             var request = URLRequest(url: changedUrl)
             request.httpMethod = "HEAD"
             let task = URLSession.shared.dataTask(with: request) { (_, response, _) -> Void in
@@ -263,14 +265,17 @@ class ModalMediaViewController: UIViewController {
         if #available(iOS 11.0, *) {
             self.setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
+        if videoView != nil {
+            videoView?.player?.play()
+            displayLink?.isPaused = false
+        }
     }
     
     deinit {
         if videoView != nil {
-            videoView!.player?.pause()
-            videoView!.player?.currentItem?.asset.cancelLoading()
-            videoView!.player?.currentItem?.cancelPendingSeeks()
             displayLink?.invalidate()
+            displayLink = nil
+            videoView!.player?.replaceCurrentItem(with: nil)
             videoView!.player = nil
         }
     }
@@ -282,18 +287,18 @@ class ModalMediaViewController: UIViewController {
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
         }
 
-        if videoView != nil {
-            videoView!.player?.pause()
-            videoView!.player?.currentItem?.asset.cancelLoading()
-            videoView!.player?.currentItem?.cancelPendingSeeks()
-            displayLink?.invalidate()
-            videoView!.player = nil
-        }
-        
         if SettingValues.reduceColor && ColorUtil.theme.isLight() {
             desiredStatusBarStyle = .default
         } else {
             desiredStatusBarStyle = .lightContent
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if videoView != nil {
+            displayLink?.isPaused = true
+            videoView!.player?.pause()
         }
     }
 

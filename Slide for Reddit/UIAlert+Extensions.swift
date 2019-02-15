@@ -21,15 +21,15 @@ extension UIAlertController {
     private var visualEffectView: UIVisualEffectView? {
         if let presentationController = presentationController, presentationController.responds(to: Selector(("popoverView"))), let view = presentationController.value(forKey: "popoverView") as? UIView // We're on an iPad and visual effect view is in a different place.
         {
-            return view.recursiveSubviews.flatMap({$0 as? UIVisualEffectView}).first
+            return view.recursiveSubviews.compactMap({ $0 as? UIVisualEffectView }).first
         }
         
-        return view.recursiveSubviews.flatMap({$0 as? UIVisualEffectView}).first
+        return view.recursiveSubviews.compactMap({ $0 as? UIVisualEffectView }).first
     }
     
     private var cancelActionView: UIView? {
-        return view.recursiveSubviews.flatMap({
-            $0 as? UILabel}
+        return view.recursiveSubviews.compactMap({
+            $0 as? UILabel }
             ).first(where: {
                 $0.text == actions.first(where: { $0.style == .cancel })?.title
             })?.superview?.superview
@@ -63,7 +63,7 @@ extension UIAlertController {
 extension UIView {
     
     var recursiveSubviews: [UIView] {
-        var subviews = self.subviews.flatMap({$0})
+        var subviews = self.subviews.compactMap({ $0 })
         subviews.forEach { subviews.append(contentsOf: $0.recursiveSubviews) }
         return subviews
     }

@@ -24,26 +24,26 @@ PODS:
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (76.1.1):
+  - MaterialComponents/ActivityIndicator (76.1.2):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (76.1.1)
-  - MaterialComponents/Ink (76.1.1):
+  - MaterialComponents/AnimationTiming (76.1.2)
+  - MaterialComponents/Ink (76.1.2):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (76.1.1)
-  - MaterialComponents/private/Application (76.1.1)
-  - MaterialComponents/private/Math (76.1.1)
-  - MaterialComponents/ProgressView (76.1.1):
+  - MaterialComponents/Palettes (76.1.2)
+  - MaterialComponents/private/Application (76.1.2)
+  - MaterialComponents/private/Math (76.1.2)
+  - MaterialComponents/ProgressView (76.1.2):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (76.1.1)
-  - MaterialComponents/ShadowLayer (76.1.1):
+  - MaterialComponents/ShadowElevations (76.1.2)
+  - MaterialComponents/ShadowLayer (76.1.2):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (76.1.1):
+  - MaterialComponents/Tabs (76.1.2):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -51,7 +51,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (76.1.1):
+  - MaterialComponents/Typography (76.1.2):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -71,9 +71,9 @@ PODS:
     - HTMLSpecialCharacters
     - MiniKeychain
   - RLBAlertsPickers (1.1.1)
-  - SDWebImage (4.1.2):
-    - SDWebImage/Core (= 4.1.2)
-  - SDWebImage/Core (4.1.2)
+  - SDWebImage (4.4.5):
+    - SDWebImage/Core (= 4.4.5)
+  - SDWebImage/Core (4.4.5)
   - SloppySwiper (0.6)
   - Starscream (3.0.6)
   - SubtleVolume (1.0.2)
@@ -81,10 +81,10 @@ PODS:
   - SwiftSpreadsheet (1.2.0)
   - SwiftyJSON (4.2.0)
   - Then (2.4.0)
-  - TTTAttributedLabel (2.0.0)
   - XLActionController (4.1.1):
     - XLActionController/Core (= 4.1.1)
   - XLActionController/Core (4.1.1)
+  - YYText (1.0.7)
 
 DEPENDENCIES:
   - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
@@ -104,7 +104,7 @@ DEPENDENCIES:
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
-  - SDWebImage (~> 4.1.2)
+  - SDWebImage
   - SloppySwiper (from `https://github.com/ccrama/SloppySwiper`)
   - Starscream (~> 3.0.2)
   - SubtleVolume
@@ -112,8 +112,8 @@ DEPENDENCIES:
   - SwiftSpreadsheet
   - SwiftyJSON
   - Then
-  - TTTAttributedLabel
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
+  - YYText
 
 EXTERNAL SOURCES:
   ActionSheetPicker-3.0:
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: fb5f66cf0c558b7b0040c9cecc580ac76e2253ef
+  MaterialComponents: 1aef341d47fbaed37ddb5163a01af94cb6da8506
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -177,7 +177,7 @@ SPEC CHECKSUMS:
   RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: e8d2b6dd7d97d32e1f940a6b3bd3e8913bd6ad90
-  SDWebImage: cb6f9f266a9977741efcbc21e618e8be3734c774
+  SDWebImage: ecc03494e973b93b80213649d32175f8d2d17d4d
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SubtleVolume: 88618f8304a0e605d1adca14b95376dcbf9e03ce
@@ -185,9 +185,9 @@ SPEC CHECKSUMS:
   SwiftSpreadsheet: fa241abcd0c2e0bdfa641494413c3613d67efbca
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
   Then: 71866660c7af35a7343831f7668e7cd2b62ee0f2
-  TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   XLActionController: d2ab12a967ae0fee0b4563b8d809c8fb13ebc636
+  YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 6dc3acdd64b5ac2770a13fbd6972175f4671774a
+PODFILE CHECKSUM: 9cd0dcd98c872738e7bdd040f5f399c412f73ae8
 
 COCOAPODS: 1.4.0

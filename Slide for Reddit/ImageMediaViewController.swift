@@ -10,6 +10,7 @@ import Anchorage
 import SDWebImage
 import Then
 import UIKit
+import XLActionController
 
 class ImageMediaViewController: EmbeddableMediaViewController {
 
@@ -294,72 +295,58 @@ extension ImageMediaViewController {
         guard let baseURL = self.data.baseURL else {
             return
         }
-        let alert = UIAlertController.init(title: baseURL.absoluteString, message: "", preferredStyle: .actionSheet)
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = baseURL.absoluteString
+
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alert.addAction(
-                UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
-                    open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
-                }
-            )
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+                open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
+            }))
         }
-        alert.addAction(
-            UIAlertAction(title: "Open in Safari", style: .default) { (_) in
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(baseURL)
-                }
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(baseURL)
             }
-        )
-        alert.addAction(
-            UIAlertAction(title: "Share URL", style: .default) { (_) in
-                let shareItems: Array = [baseURL]
-                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                if let presenter = activityViewController.popoverPresentationController {
-                    presenter.sourceView = sender
-                    presenter.sourceRect = sender.bounds
-                }
-                let window = UIApplication.shared.keyWindow!
-                if let modalVC = window.rootViewController?.presentedViewController {
-                    modalVC.present(activityViewController, animated: true, completion: nil)
-                } else {
-                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
-                }
+        }))
+        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [baseURL]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = sender
+                presenter.sourceRect = sender.bounds
             }
-        )
-        alert.addAction(
-            UIAlertAction(title: "Share Image", style: .default) { (_) in
-                let shareItems: Array = [self.imageView.image!]
-                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                if let presenter = activityViewController.popoverPresentationController {
-                    presenter.sourceView = sender
-                    presenter.sourceRect = sender.bounds
-                }
-                let window = UIApplication.shared.keyWindow!
-                if let modalVC = window.rootViewController?.presentedViewController {
-                    modalVC.present(activityViewController, animated: true, completion: nil)
-                } else {
-                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
-                }
+            let window = UIApplication.shared.keyWindow!
+            if let modalVC = window.rootViewController?.presentedViewController {
+                modalVC.present(activityViewController, animated: true, completion: nil)
+            } else {
+                window.rootViewController!.present(activityViewController, animated: true, completion: nil)
             }
-        )
-        alert.addAction(
-            UIAlertAction(title: "Cancel", style: .cancel) { (_) in
-            }
-        )
-        let window = UIApplication.shared.keyWindow!
-        alert.modalPresentationStyle = .popover
+        }))
 
-        if let presenter = alert.popoverPresentationController {
-            presenter.sourceView = sender
-            presenter.sourceRect = sender.bounds
-        }
+        alertController.addAction(Action(ActionData(title: "Share image", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [self.imageView.image!]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = sender
+                presenter.sourceRect = sender.bounds
+            }
+            let window = UIApplication.shared.keyWindow!
+            if let modalVC = window.rootViewController?.presentedViewController {
+                modalVC.present(activityViewController, animated: true, completion: nil)
+            } else {
+                window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+            }
+        }))
+        
+        let window = UIApplication.shared.keyWindow!
 
         if let modalVC = window.rootViewController?.presentedViewController {
-            modalVC.present(alert, animated: true, completion: nil)
+            modalVC.present(alertController, animated: true, completion: nil)
         } else {
-            window.rootViewController!.present(alert, animated: true, completion: nil)
+            window.rootViewController!.present(alertController, animated: true, completion: nil)
         }
     }
 }

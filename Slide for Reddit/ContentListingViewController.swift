@@ -26,6 +26,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.baseData.getData(reload: true)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        for index in tableView.indexPathsForVisibleItems {
+            if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                cell.endVideos()
+            }
+        }
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight() && SettingValues.reduceColor {
             return .default
@@ -293,29 +303,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             } else if thing is RComment {
                 let comment = thing as! RComment
                 if estimatedHeights[comment.id] == nil {
-                    let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false)] as [String: Any]
-                    let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ")
+                    let titleText = CommentCellView.getTitle(comment)
 
-                    let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
-                    let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
-                    let color = ColorUtil.getColorForSub(sub: comment.subreddit)
-                    if color != ColorUtil.baseColor {
-                        subString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: subString.length))
-                    }
-
-                    let infoString = NSMutableAttributedString.init(string: "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false)]))
-                    infoString.append(boldString)
-                    infoString.append(endString)
-                    infoString.append(subString)
-
-                    let titleString = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: false)]))
-                    titleString.append(NSAttributedString.init(string: "\n", attributes: nil))
-                    titleString.append(infoString)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: comment.htmlText)
                     
-                    let height = TextStackEstimator.init(fontSize: 16, submission: false, color: .white, width: itemWidth - 16)
-                    height.setTextWithTitleHTML(titleString, htmlString: comment.htmlText)
-                    
-                    estimatedHeights[comment.id] = height.estimatedHeight + 20
+                    estimatedHeights[comment.id] = height + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else if thing is RFriend {
@@ -323,52 +315,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             } else {
                 let message = thing as! RMessage
                 if estimatedHeights[message.id] == nil {
-                    var title: NSMutableAttributedString = NSMutableAttributedString()
-                    if message.wasComment {
-                        title = NSMutableAttributedString.init(string: message.linkTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
-                    } else {
-                        title = NSMutableAttributedString.init(string: message.subject, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
-                    }
+                    let titleText = MessageCellView.getTitleText(message: message)
 
-                    let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
-
-                    let subString = NSMutableAttributedString(string: "r/\(message.subreddit)")
-                    let color = ColorUtil.getColorForSub(sub: message.subreddit)
-                    if color != ColorUtil.baseColor {
-                        subString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: subString.length))
-                    }
-
-                    let infoString = NSMutableAttributedString.init(string: "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)]))
-                    infoString.append(endString)
-                    if !message.subreddit.isEmpty {
-                        infoString.append(NSAttributedString.init(string: "  •  "))
-                        infoString.append(subString)
-                    }
-
-                    let html = message.htmlBody
-                    var content: NSMutableAttributedString?
-                    if !html.isEmpty() {
-                        do {
-                            let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary([convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html)]), documentAttributes: nil)
-                            let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                            content = LinkParser.parse(attr2, .white)
-                        } catch {
-                        }
-                    }
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16 - (message.subject.unescapeHTML.hasPrefix("re:") ? 30 : 0), titleString: titleText, htmlString: message.htmlBody)
                     
-                    let framesetterT = CTFramesetterCreateWithAttributedString(title)
-                    let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-                    let framesetterI = CTFramesetterCreateWithAttributedString(infoString)
-                    let textSizeI = CTFramesetterSuggestFrameSizeWithConstraints(framesetterI, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-                    if content != nil {
-                        let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-                        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-
-                        estimatedHeights[message.id] = CGFloat(36 + textSizeT.height + textSizeI.height + textSizeB.height)
-                    } else {
-                        estimatedHeights[message.id] = CGFloat(36 + textSizeT.height + textSizeI.height)
-                    }
+                    estimatedHeights[message.id] = height + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
             }
@@ -486,12 +437,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
-            (cell as! LinkCellView).videoView!.player?.pause()
-            (cell as! LinkCellView).videoView!.player?.currentItem?.asset.cancelLoading()
-            (cell as! LinkCellView).videoView!.player?.currentItem?.cancelPendingSeeks()
+            (cell as! LinkCellView).videoView!.player?.replaceCurrentItem(with: nil)
             (cell as! LinkCellView).videoView!.player = nil
             (cell as! LinkCellView).updater?.invalidate()
-            (cell as! LinkCellView).avPlayerItem = nil
+            (cell as! LinkCellView).updater = nil
         }
     }
 

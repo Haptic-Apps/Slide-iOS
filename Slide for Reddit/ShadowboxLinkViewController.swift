@@ -12,20 +12,32 @@ import AVKit
 import MaterialComponents.MaterialProgressView
 import RealmSwift
 import SDWebImage
-import TTTAttributedLabel
+import YYText
 
-class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TTTAttributedLabelDelegate {
+class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.showSpoiler(text)
+        } else {
+            self.doShow(url: url, heroView: nil, heroVC: nil)
+        }
+    }
+
+    func linkLongTapped(url: URL) {
+        
+    }
+    
 
     var type: ContentType.CType = ContentType.CType.UNKNOWN
     
-    var textView = TextDisplayStackView()
+    var textView: TextDisplayStackView!
     var bodyScrollView = UIScrollView()
     var embeddedVC: EmbeddableMediaViewController!
     
     var content: Object?
     var baseURL: URL?
 
-    var titleLabel = TTTAttributedLabel.init(frame: CGRect.zero)
+    var titleLabel = YYLabel.init(frame: CGRect.zero)
 
     var comment = UIImageView()
     var upvote = UIImageView()
@@ -57,11 +69,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             }
         }
     }
-
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        doShow(url: url, heroView: nil, heroVC: nil)
-    }
-
+    
     init(url: URL?, content: Object?, parent: ShadowboxViewController) {
         self.parentVC = parent
         self.baseURL = url
@@ -85,12 +93,11 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     func configureView() {
-        self.titleLabel = TTTAttributedLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        self.titleLabel = YYLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Title"
-            $0.numberOfLines = 0
-            $0.lineBreakMode = .byWordWrapping
             $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
             $0.isOpaque = false
+            $0.numberOfLines = 0
         }
         
         self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
@@ -144,7 +151,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             $0.elevate(elevation: 2.0)
         }
         
-        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
+        self.textView = TextDisplayStackView.init(fontSize: 16, submission: true, color: ColorUtil.baseAccent, width: 100, delegate: self).then {
             $0.accessibilityIdentifier = "Self Text View"
         }
         
@@ -241,7 +248,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             
             comments.text = "\(link.commentCount)"
             
-            titleLabel.setText(CachedTitle.getTitle(submission: link, full: true, false, true))
+            titleLabel.attributedText = CachedTitle.getTitle(submission: link, full: true, false, true)
         } else if let link = content as! RComment? {
             archived = link.archived
             upvote.image = LinkCellImageCache.upvote

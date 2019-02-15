@@ -126,6 +126,7 @@ class PostActions: NSObject {
                 presenter.sourceView = cell.contentView
                 presenter.sourceRect = cell.contentView.bounds
             }
+            activityViewController.setValue(link.title, forKey: "Subject")
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil)
         }))

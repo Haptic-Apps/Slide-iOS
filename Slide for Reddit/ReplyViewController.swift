@@ -13,10 +13,10 @@ import RealmSwift
 import reddift
 import SwiftyJSON
 import Then
-import TTTAttributedLabel
+import YYText
 import UIKit
 
-class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttributedLabelDelegate {
+class ReplyViewController: MediaViewController, UITextViewDelegate {
 
     public enum ReplyType {
         case NEW_MESSAGE
@@ -44,10 +44,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
     }
     
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        self.doShow(url: url, heroView: nil, heroVC: nil)
-    }
-
     var type = ReplyType.NEW_MESSAGE
     var text: [UITextView]?
     var extras: [UIView]?
@@ -269,7 +265,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         }
     }
 
-    func textViewDidChange(_ textView: UITextView) {
+    /* This is probably broken*/
+    @nonobjc func textViewDidChange(_ textView: UITextView) {
         textView.sizeToFitHeight()
         var height = CGFloat(8)
         for view in extras! {
@@ -444,26 +441,39 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         if type.isMessage() {
             if type == .REPLY_MESSAGE {
                 //two
-                let text1 = TTTAttributedLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
-                    $0.delegate = self
-                    $0.numberOfLines = 0
                     $0.font = UIFont.systemFont(ofSize: 16)
-                    $0.textInsets = UIEdgeInsets.init(top: 24, left: 8, bottom: 24, right: 8)
+                    $0.numberOfLines = 0
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RMessage).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
+                /* todo this
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
                 activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
                 text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-
-                text1.setText(content)
+*/
+                text1.attributedText = content
+                text1.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                        for attr in attrs {
+                            if attr.value is YYTextHighlight {
+                                if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                                    self.doShow(url: url, heroView: nil, heroVC: nil)
+                                    return
+                                }
+                            }
+                        }
+                    })
+                }
+                text1.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+                text1.preferredMaxLayoutWidth = self.view.frame.size.width - 16
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -519,7 +529,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
                 })
                 
                 if toReplyTo != nil {
-                    text1.text = "re: \((toReplyTo as! RMessage).subject)"
+                    text1.text = "re: \((toReplyTo as! RMessage).subject.escapeHTML)"
                     text1.isEditable = false
                     text2.text = ((toReplyTo as! RMessage).author)
                     text2.isEditable = false
@@ -656,26 +666,40 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, TTTAttribute
         } else if type.isComment() {
             if (toReplyTo as! RSubmission).type == .SELF {
                 //two
-                let text1 = TTTAttributedLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
+                let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
                     $0.backgroundColor = ColorUtil.foregroundColor
                     $0.clipsToBounds = true
-                    $0.layer.cornerRadius = 10
                     $0.numberOfLines = 0
-                    $0.delegate = self
+                    $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
-                    $0.textInsets = UIEdgeInsets.init(top: 24, left: 8, bottom: 24, right: 8)
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RSubmission).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
                 
+                /* todo this
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
                 activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
                 text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-
-                text1.setText(content)
+*/
+                
+                text1.attributedText = content
+                text1.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                        for attr in attrs {
+                            if attr.value is YYTextHighlight {
+                                if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                                    self.doShow(url: url, heroView: nil, heroVC: nil)
+                                    return
+                                }
+                            }
+                        }
+                    })
+                }
+                text1.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+                text1.preferredMaxLayoutWidth = self.view.frame.size.width - 16
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true

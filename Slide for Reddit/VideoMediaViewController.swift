@@ -13,8 +13,7 @@ import SDWebImage
 import SubtleVolume
 import Then
 import UIKit
-
-import AVFoundation
+import XLActionController
 
 class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecognizerDelegate, SubtleVolumeDelegate {
 
@@ -135,7 +134,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         videoView.player?.play()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         timer?.invalidate()
         request?.cancel()
         stopDisplayLink()
@@ -156,7 +155,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         } catch {
             
         }
-        super.viewWillDisappear(animated)
+        super.viewDidDisappear(animated)
+        UIApplication.shared.isIdleTimerDisabled = false
+        displayLink?.isPaused = true
+        
+        // Turn off forced fullscreen
+        if forcedFullscreen {
+            disableForcedFullscreen()
+        }
     }
 
     deinit {
@@ -165,18 +171,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         stopDisplayLink()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        // Re-enable screen dimming due to inactivity
-        UIApplication.shared.isIdleTimerDisabled = false
-        displayLink?.isPaused = true
-
-        // Turn off forced fullscreen
-        if forcedFullscreen {
-            disableForcedFullscreen()
-        }
-    }
-
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
@@ -1092,61 +1086,45 @@ extension VideoMediaViewController {
         guard let baseURL = self.data.baseURL else {
             return
         }
-        let alert = UIAlertController(title: baseURL.absoluteString, message: "", preferredStyle: .actionSheet)
-        let open = OpenInChromeController()
-        if open.isChromeInstalled() {
-            alert.addAction(
-                UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
-                    open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
-                }
-            )
-        }
-        alert.addAction(
-            UIAlertAction(title: "Open in Safari", style: .default) { (_) in
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(baseURL)
-                }
-            }
-        )
-        alert.addAction(
-            UIAlertAction(title: "Share URL", style: .default) { (_) in
-                let shareItems: Array = [baseURL]
-                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                if let presenter = activityViewController.popoverPresentationController {
-                    presenter.sourceView = sender
-                    presenter.sourceRect = sender.bounds
-                }
-                let window = UIApplication.shared.keyWindow!
-                if let modalVC = window.rootViewController?.presentedViewController {
-                    modalVC.present(activityViewController, animated: true, completion: nil)
-                } else {
-                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
-                }
-            }
-        )
-        /* alert.addAction(
-            UIAlertAction(title: "Share Video", style: .default) { (_) in
-                //TODO THIS
-            }
-        )*/
-        alert.addAction(
-            UIAlertAction(title: "Cancel", style: .cancel) { (_) in
-            }
-        )
-        let window = UIApplication.shared.keyWindow!
-        alert.modalPresentationStyle = .popover
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = baseURL.absoluteString
         
-        if let presenter = alert.popoverPresentationController {
-            presenter.sourceView = sender
-            presenter.sourceRect = sender.bounds
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+                open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
+            }))
         }
+        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(baseURL)
+            }
+        }))
+        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
+            let shareItems: Array = [baseURL]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = sender
+                presenter.sourceRect = sender.bounds
+            }
+            let window = UIApplication.shared.keyWindow!
+            if let modalVC = window.rootViewController?.presentedViewController {
+                modalVC.present(activityViewController, animated: true, completion: nil)
+            } else {
+                window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+            }
+        }))
+        
+        //todo share video
+        
+        let window = UIApplication.shared.keyWindow!
         
         if let modalVC = window.rootViewController?.presentedViewController {
-            modalVC.present(alert, animated: true, completion: nil)
+            modalVC.present(alertController, animated: true, completion: nil)
         } else {
-            window.rootViewController!.present(alert, animated: true, completion: nil)
+            window.rootViewController!.present(alertController, animated: true, completion: nil)
         }
     }
     

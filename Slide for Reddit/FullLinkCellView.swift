@@ -13,7 +13,7 @@ final class FullLinkCellView: LinkCellView {
     
     override func configureView() {
         full = true
-        self.textView = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.baseAccent, delegate: self, width: 100).then {
+        self.textView = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.baseAccent, width: 100, delegate: self).then {
             $0.accessibilityIdentifier = "Self Text View"
             $0.backgroundColor = ColorUtil.foregroundColor
             $0.isHidden = true
@@ -29,12 +29,12 @@ final class FullLinkCellView: LinkCellView {
         let bannerPadding = CFloat(5)
         
         constraintsForType = batch {
-            textView.bottomAnchor <= infoBox.topAnchor - (ctwelve / 2)
-            infoBox.bottomAnchor <= box.topAnchor - (ctwelve / 2)
+            textView.bottomAnchor == infoBox.topAnchor - (ctwelve / 2)
+            infoBox.bottomAnchor >= box.topAnchor - (ctwelve / 2)
             infoBox.horizontalAnchors == contentView.horizontalAnchors + ctwelve
             textView.topAnchor == title.bottomAnchor + ceight
             textView.horizontalAnchors == contentView.horizontalAnchors + ctwelve
-            title.topAnchor == contentView.topAnchor + ctwelve
+            title.topAnchor == contentView.topAnchor + ctwelve - 3
             title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
 
             if big {

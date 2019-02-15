@@ -7,7 +7,7 @@
 //
 
 import reddift
-import TTTAttributedLabel
+import YYText
 import UIKit
 
 class GalleryCellView: UITableViewCell {

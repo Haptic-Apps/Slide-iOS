@@ -8,9 +8,10 @@
 
 import Foundation
 import reddift
-import TTTAttributedLabel
+import YYText
+import XLActionController
 
-class Sidebar: NSObject, TTTAttributedLabelDelegate {
+class Sidebar: NSObject {
     
     var parent: (UIViewController & MediaVCDelegate)?
     var subname = ""
@@ -19,54 +20,7 @@ class Sidebar: NSObject, TTTAttributedLabelDelegate {
         self.parent = parent
         self.subname = subname
     }
-
-    func attributedLabel(_ label: TTTAttributedLabel!, didLongPressLinkWith url: URL!, at point: CGPoint) {
-        if (url) != nil {
-            if parent != nil {
-                let sheet = UIAlertController(title: url.absoluteString, message: nil, preferredStyle: .actionSheet)
-                sheet.addAction(
-                    UIAlertAction(title: "Close", style: .cancel) { (_) in
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-                )
-                let open = OpenInChromeController.init()
-                if open.isChromeInstalled() {
-                    sheet.addAction(
-                        UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
-                            open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                        }
-                    )
-                }
-                sheet.addAction(
-                    UIAlertAction(title: "Open in Safari", style: .default) { (_) in
-                        if #available(iOS 10.0, *) {
-                            UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                        } else {
-                            UIApplication.shared.openURL(url)
-                        }
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-                )
-                sheet.addAction(
-                    UIAlertAction(title: "Open", style: .default) { (_) in
-                        /* let controller = WebViewController(nibName: nil, bundle: nil)
-                         controller.url = url
-                         let nav = UINavigationController(rootViewController: controller)
-                         self.present(nav, animated: true, completion: nil)*/
-                    }
-                )
-                sheet.addAction(
-                    UIAlertAction(title: "Copy URL", style: .default) { (_) in
-                        UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                        sheet.dismiss(animated: true, completion: nil)
-                    }
-                )
-                
-                parent?.present(sheet, animated: true, completion: nil)
-            }
-        }
-    }
-
+    
     var inner: SubSidebarViewController?
     var subInfo: Subreddit?
 

@@ -12,7 +12,7 @@ import reddift
 import SDWebImage
 import SwiftSpreadsheet
 import Then
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
@@ -74,9 +74,10 @@ class CodeDisplayView: UIScrollView {
         }
         baseLabel.attributedText = finalString
         
-        let framesetterB = CTFramesetterCreateWithAttributedString(finalString)
-        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), nil)
-
+        let size = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: finalString)!
+        let textSizeB = layout.textBoundingSize
+        
         addSubview(baseLabel)
         contentInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 0, right: 8)
         baseLabel.widthAnchor == getWidestCell()

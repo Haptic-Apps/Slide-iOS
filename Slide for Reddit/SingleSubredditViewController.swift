@@ -15,7 +15,7 @@ import reddift
 import RLBAlertsPickers
 import SDWebImage
 import SloppySwiper
-import TTTAttributedLabel
+import YYText
 import UIKit
 import XLActionController
 
@@ -203,24 +203,21 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if #available(iOS 11.0, *) {
             self.tableView.contentInsetAdjustmentBehavior = .never
         }
-        
-//        if false && single && !isModal { //todo reimplement soon?
-//            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-//            self.navigationController!.delegate = swiper!
-//            for view in view.subviews {
-//                if view is UIScrollView {
-//                    let scrollView = view as! UIScrollView
-//                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
-//                    break
-//                }
-//            }
-//        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if single {
-            self.navigationController?.delegate = self
+        
+        if single && !isModal && !(self.navigationController!.delegate is SloppySwiper) {
+            swiper = SloppySwiper.init(navigationController: self.navigationController!)
+            self.navigationController!.delegate = swiper!
+            for view in view.subviews {
+                if view is UIScrollView {
+                    let scrollView = view as! UIScrollView
+                    scrollView.panGestureRecognizer.require(toFail: swiper!.panRecognizer)
+                    break
+                }
+            }
         }
 
         server?.stop()
@@ -316,7 +313,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             tableView.reloadData()
         }
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
@@ -376,7 +373,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return ColorUtil.theme.isLight() ? .default : .lightContent
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
     }
     
     static func getHeightFromAspectRatio(imageHeight: CGFloat, imageWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
@@ -1744,9 +1745,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
         }
         
-        let framesetter = CTFramesetterCreateWithAttributedString(CachedTitle.getTitle(submission: submission, full: false, false))
-        let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight
+        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false))!
+        let textSize = layout.textBoundingSize
+
+        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(3)
         return CGSize(width: itemWidth, height: totalHeight)
     }
     
@@ -2140,8 +2143,9 @@ extension SingleSubredditViewController {
 extension SingleSubredditViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
-            (cell as! LinkCellView).endVideos()
+        
+        if cell is AutoplayBannerLinkCellView && (cell as! AutoplayBannerLinkCellView).videoView != nil {
+            (cell as! AutoplayBannerLinkCellView).endVideos()
         }
         if !tableView.indexPathsForVisibleItems.contains(indexPath) {
             if SettingValues.markReadOnScroll && indexPath.row < links.count {
@@ -2385,7 +2389,6 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
             self.flowLayout.reset()
 
-            tableView.isUserInteractionEnabled = false
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
                 BannerUtil.makeBanner(text: "Submission hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
@@ -2396,9 +2399,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     } catch {
                     }
                 })
-            }, completion: { _ in
-                self.tableView.isUserInteractionEnabled = true
-            })
+            }, completion: nil)
 
         } catch {
 

@@ -9,7 +9,7 @@
 import Anchorage
 import Then
 import UIKit
-import TTTAttributedLabel
+import YYText
 
 class SettingsUserTags: UITableViewController {
     
@@ -119,7 +119,7 @@ class SettingsUserTags: UITableViewController {
 }
 class TagCellView: UITableViewCell {
     
-    var title: TTTAttributedLabel!
+    var title: YYLabel!
     var body = UIView()
     
     required init?(coder aDecoder: NSCoder) {
@@ -141,7 +141,7 @@ class TagCellView: UITableViewCell {
             $0.clipsToBounds = true
         }
         
-        self.title = TTTAttributedLabel(frame: CGRect.zero).then {
+        self.title = YYLabel(frame: CGRect.zero).then {
             $0.numberOfLines = 0
             $0.font = UIFont.systemFont(ofSize: 16)
         }
@@ -168,16 +168,13 @@ class TagCellView: UITableViewCell {
         var attributedTitle = NSMutableAttributedString(string: user, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
         if !tag.isEmpty {
             let spacer = NSMutableAttributedString.init(string: "  ")
-            let tagString = NSMutableAttributedString(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: UIColor.white])
-            
-            
-            tagString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor(rgb: 0x2196f3), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: tagString.length))
-            
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+
             attributedTitle.append(spacer)
             attributedTitle.append(tagString)
         }
 
-        title.setText(attributedTitle)
+        title.attributedText = attributedTitle
         body.backgroundColor = ColorUtil.foregroundColor
         self.backgroundColor = ColorUtil.backgroundColor
     }

@@ -7,7 +7,7 @@ target 'Slide for Reddit' do
   # Pods for Slide for Reddit
 
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
-  pod 'SDWebImage', '~> 4.1.2'
+  pod 'SDWebImage'
   pod 'MKColorPicker', :git => 'https://github.com/ccrama/MKColorPicker'
   pod 'BadgeSwift', '~> 7.0'
   pod 'LicensesViewController', '~> 0.7.0'
@@ -25,7 +25,7 @@ target 'Slide for Reddit' do
   pod 'Starscream', '~> 3.0.2'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
   pod 'SloppySwiper', :git => 'https://github.com/ccrama/SloppySwiper'
-  pod 'TTTAttributedLabel'
+  pod 'YYText'
   pod 'ActionSheetPicker-3.0', :git => 'https://github.com/ccrama/ActionSheetPicker-3.0'
   pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON'
