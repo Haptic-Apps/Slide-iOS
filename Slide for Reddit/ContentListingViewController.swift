@@ -26,6 +26,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.baseData.getData(reload: true)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        for index in tableView.indexPathsForVisibleItems {
+            if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                cell.endVideos()
+            }
+        }
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight() && SettingValues.reduceColor {
             return .default
@@ -312,7 +322,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     titleString.append(NSAttributedString.init(string: "\n", attributes: nil))
                     titleString.append(infoString)
                     
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, htmlString: comment.htmlText, color: .white)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleString, htmlString: htmlString)
                     
                     estimatedHeights[comment.id] = height
                 }
