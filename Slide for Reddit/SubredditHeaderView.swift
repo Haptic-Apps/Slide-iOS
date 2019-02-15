@@ -321,12 +321,6 @@ class SubredditHeaderView: UIView {
     func getEstHeight() -> CGFloat {
         return CGFloat(290) + (descHeight)
     }
-    
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            parentController?.doShow(url: url, lq: nil, heroView: nil, heroVC: nil)
-        }
-    }
 }
 
 extension SubredditHeaderView: TextDisplayStackViewDelegate {

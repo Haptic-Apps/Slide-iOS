@@ -80,7 +80,6 @@ class LinkParser {
             })
             string.highlightTarget(color: color)
         }
-        print(string)
         return string
     }
 

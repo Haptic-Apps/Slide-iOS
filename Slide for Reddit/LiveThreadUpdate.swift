@@ -10,7 +10,7 @@ import reddift
 import YYText
 import UIKit
 
-class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate, YYTextViewDelegate {
+class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     var title = UILabel()
     var textView = YYLabel.init(frame: CGRect.zero)

@@ -11,7 +11,7 @@ import reddift
 import YYText
 import XLActionController
 
-class Sidebar: NSObject, YYTextViewDelegate {
+class Sidebar: NSObject {
     
     var parent: (UIViewController & MediaVCDelegate)?
     var subname = ""
@@ -19,34 +19,6 @@ class Sidebar: NSObject, YYTextViewDelegate {
     init(parent: UIViewController & MediaVCDelegate, subname: String) {
         self.parent = parent
         self.subname = subname
-    }
-
-    func textView(_ textView: YYTextView, didLongPress highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            if parent != nil {
-                let alertController: BottomSheetActionController = BottomSheetActionController()
-                alertController.headerData = url.absoluteString
-                
-                alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                }))
-                
-                alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(url)
-                    }
-                }))
-                let open = OpenInChromeController.init()
-                if open.isChromeInstalled() {
-                    alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
-                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                    }))
-                }
-                parent?.present(alertController, animated: true, completion: nil)
-            }
-        }
     }
     
     var inner: SubSidebarViewController?

@@ -64,12 +64,6 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var text: TextDisplayStackView!
     var single = false
     
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            parentViewController?.doShow(url: url, lq: nil, heroView: nil, heroVC: nil)
-        }
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
         let topmargin = 0
@@ -92,24 +86,32 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
         self.contentView.addSubview(text)
         
-        text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)
+        text.topAnchor == contentView.topAnchor + CGFloat(8)
+        text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.horizontalAnchors == contentView.horizontalAnchors + CGFloat(8)
         self.contentView.backgroundColor = ColorUtil.foregroundColor
     }
     
     func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
         text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
+        text.estimatedWidth = self.contentView.frame.size.width - 16
         parentViewController = parent
         if navViewController == nil && nav != nil {
             navViewController = nav
         }
-        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        let titleText = CommentCellView.getTitle(comment)
         self.comment = comment
        
         let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
         commentClick.delegate = self
         self.addGestureRecognizer(commentClick)
         
+        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlText)
+    }
+    
+    public static func getTitle(_ comment: RComment) -> NSAttributedString {
+        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+                
         var uC: UIColor
         switch ActionStates.getVoteDirection(s: comment) {
         case .down:
@@ -123,7 +125,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): uC] as [String: Any]
         
         let attrs2 = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor] as [String: Any]
-
+        
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs2))
         
         let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
@@ -139,11 +141,11 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         infoString.append(boldString)
         infoString.append(endString)
         infoString.append(subString)
-
+        
         titleText.append(NSAttributedString.init(string: "\n", attributes: nil))
         titleText.append(infoString)
-        
-        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlText)
+
+        return titleText
     }
     
     var registered: Bool = false

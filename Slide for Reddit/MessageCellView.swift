@@ -63,15 +63,6 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var text: TextDisplayStackView!
     var single = false
 
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            if (parentViewController) != nil {
-                let urlClicked = url
-                parentViewController?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
-            }
-        }
-    }
-
     var longBlocking = false
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -97,7 +88,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
         self.contentView.addSubview(text)
         
-        text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)
+        text.topAnchor == contentView.topAnchor + CGFloat(8)
+        text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.rightAnchor == contentView.rightAnchor - CGFloat(8)
         
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -121,7 +113,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.addGestureRecognizer(messageClick)
         self.addGestureRecognizer(messageLongClick)
 
-        let titleText = getTitleText(message: message)
+        let titleText = MessageCellView.getTitleText(message: message)
+        text.estimatedWidth = self.contentView.frame.size.width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)
         text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
 
         self.text.removeConstraints(lsC)
@@ -139,7 +132,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var timer: Timer?
     var cancelled = false
     
-    func getTitleText(message: RMessage) -> NSAttributedString {
+    public static func getTitleText(message: RMessage) -> NSAttributedString {
         let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject.escapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.fontColor]))
         
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
@@ -202,7 +195,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
 
                     }
                     ActionStates.setRead(s: self.message!, read: false)
-                    let titleText = self.getTitleText(message: self.message!)
+                    let titleText = MessageCellView.getTitleText(message: self.message!)
                     self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
 
                 } else {
@@ -217,7 +210,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
 
                     }
                     ActionStates.setRead(s: self.message!, read: true)
-                    let titleText = self.getTitleText(message: self.message!)
+                    let titleText = MessageCellView.getTitleText(message: self.message!)
                     self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
                 }
             }))
@@ -272,7 +265,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             } catch {
             }
             ActionStates.setRead(s: message!, read: true)
-            let titleText = self.getTitleText(message: self.message!)
+            let titleText = MessageCellView.getTitleText(message: self.message!)
             self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
 
         } else {
