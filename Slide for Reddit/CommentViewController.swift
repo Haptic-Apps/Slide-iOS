@@ -797,7 +797,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.liveTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.loadNewComments), userInfo: nil, repeats: true)
                                     self.startPulse()
                                 } else {
-                                    self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
+                                    if self.sortB != nil && self.searchB != nil {
+                                        self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
+                                    }
                                 }
                                 self.indicator.stopAnimating()
                                 self.indicator.isHidden = true
@@ -1223,11 +1225,24 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if !loaded {
                 activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
                 activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight() ? ColorUtil.fontColor : .white
-                let barButton = UIBarButtonItem(customView: activityIndicator)
-                navigationItem.rightBarButtonItems = [barButton]
+                if self.navigationController == nil {
+                    self.view.addSubview(activityIndicator)
+                    activityIndicator.centerAnchors == self.view.centerAnchors
+                } else {
+                    let barButton = UIBarButtonItem(customView: activityIndicator)
+                    navigationItem.rightBarButtonItems = [barButton]
+                }
                 activityIndicator.startAnimating()
             } else {
                 navigationItem.rightBarButtonItems = [sortB, searchB]
+            }
+        } else {
+            if !loaded {
+                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                activityIndicator.color = ColorUtil.navIconColor
+                self.view.addSubview(activityIndicator)
+                activityIndicator.centerAnchors == self.view.centerAnchors
+                activityIndicator.startAnimating()
             }
         }
         
@@ -1282,7 +1297,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
             self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
         }
-
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
     var duringAnimation = false
