@@ -21,6 +21,8 @@
 		0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260C20E2989600EA53BE /* UITableView+Extensions.swift */; };
 		0965260F20E298BB00EA53BE /* Object+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260E20E298BB00EA53BE /* Object+Extensions.swift */; };
 		0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965261020E2AA5400EA53BE /* String+Extensions.swift */; };
+		096A7D152215D9AB0067106C /* AVAudioSession+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A7D142215D9AB0067106C /* AVAudioSession+Extensions.swift */; };
+		096A7D172215EC920067106C /* SettingsAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A7D162215EC920067106C /* SettingsAudio.swift */; };
 		0984BE4E2114C4040091C2E1 /* PostContentPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0984BE4D2114C4040091C2E1 /* PostContentPresentationManager.swift */; };
 		0984BE502114C4D50091C2E1 /* SlideInPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0984BE4F2114C4D50091C2E1 /* SlideInPresentationManager.swift */; };
 		0984BE532114CEA50091C2E1 /* SlideInPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0984BE522114CEA50091C2E1 /* SlideInPresentationController.swift */; };
@@ -393,6 +395,8 @@
 		0965260C20E2989600EA53BE /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
 		0965260E20E298BB00EA53BE /* Object+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Object+Extensions.swift"; sourceTree = "<group>"; };
 		0965261020E2AA5400EA53BE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		096A7D142215D9AB0067106C /* AVAudioSession+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioSession+Extensions.swift"; sourceTree = "<group>"; };
+		096A7D162215EC920067106C /* SettingsAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAudio.swift; sourceTree = "<group>"; };
 		0984BE4D2114C4040091C2E1 /* PostContentPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationManager.swift; sourceTree = "<group>"; };
 		0984BE4F2114C4D50091C2E1 /* SlideInPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationManager.swift; sourceTree = "<group>"; };
 		0984BE522114CEA50091C2E1 /* SlideInPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInPresentationController.swift; sourceTree = "<group>"; };
@@ -779,6 +783,7 @@
 				0924E524219C8EA700C31D5E /* NSDate+Extensions.swift */,
 				0924E526219E088800C31D5E /* UIWindow+RootViewController.swift */,
 				BE1DA5C5220803BB001C7DB4 /* UIAlert+Extensions.swift */,
+				096A7D142215D9AB0067106C /* AVAudioSession+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -946,6 +951,7 @@
 				BE8AE94021F919FF00E1C0D1 /* SettingsCustomTheme.swift */,
 				09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */,
 				BE1DA5E52208EC59001C7DB4 /* SettingsUserTags.swift */,
+				096A7D162215EC920067106C /* SettingsAudio.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1953,6 +1959,7 @@
 				BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */,
 				BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
+				096A7D152215D9AB0067106C /* AVAudioSession+Extensions.swift in Sources */,
 				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
 				0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */,
 				0984BE4E2114C4040091C2E1 /* PostContentPresentationManager.swift in Sources */,
@@ -1994,6 +2001,7 @@
 				BEE5BF841E14836E00E3C9AE /* MediaVCDelegate.swift in Sources */,
 				09D6603821E8F1A8003D632C /* CurrentAccountPresentationAnimator.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
+				096A7D172215EC920067106C /* SettingsAudio.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
 				09526EFA214C39F0005A3F6B /* CGPoint+Extensions.swift in Sources */,
 				BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */,

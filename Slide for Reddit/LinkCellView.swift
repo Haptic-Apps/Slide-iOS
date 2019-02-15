@@ -437,7 +437,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             progressDot.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
-            if SettingValues.muteVideos != .NEVER {
+            if SettingValues.muteInlineVideos {
                 sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
                 sound.isHidden = false
             } else {
@@ -1229,16 +1229,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if self is AutoplayBannerLinkCellView {
             self.endVideos()
             do {
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
-                } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
-                }
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             } catch {
+                NSLog(error.localizedDescription)
             }
         }
         
@@ -1735,7 +1728,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 //                }
                 strongSelf.setOnce = false
                 strongSelf.videoView?.player?.play()
-                if SettingValues.muteVideos != .NEVER {
+                if SettingValues.muteInlineVideos {
                     strongSelf.videoView?.player?.isMuted = true
                 } else {
                     strongSelf.videoView?.player?.isMuted = false
@@ -1812,56 +1805,38 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var setOnce = false
+    // TODO: This is problematic. We shouldn't be setting up a display link for individual cells.
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
-        let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
-        if (self.videoView.player?.isMuted ?? false) && tracks {
-            if sound.isHidden {
-                sound.isHidden = false
-            }
-        } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setOnce {
+        guard let player = videoView.player else {
+            return
+        }
+
+        if player.isMuted && sound.isHidden && SettingValues.muteInlineVideos {
+            sound.isHidden = false
+        }
+
+        if !setOnce {
             setOnce = true
             do {
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
-                } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
-                }
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             } catch {
-                
-            }
-        } else if tracks && SettingValues.muteVideos == .NEVER && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setOnce {
-            setOnce = true
-            do {
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-                } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
-                }
-            } catch {
-                
+                NSLog(error.localizedDescription)
             }
         }
-        
-        if let player = videoView.player {
+
+        if let currentItem = player.currentItem {
             let elapsedTime = player.currentTime()
             if CMTIME_IS_INVALID(elapsedTime) {
                 return
             }
-            let duration = Float(CMTimeGetSeconds(player.currentItem!.duration))
+            let duration = Float(CMTimeGetSeconds(currentItem.duration))
             let time = Float(CMTimeGetSeconds(elapsedTime))
-            
+
             if duration.isFinite && duration > 0 {
-                updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))", buffering: !(self.videoView.player?.currentItem?.isPlaybackLikelyToKeepUp ?? true))
+                updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))",
+                    buffering: !currentItem.isPlaybackLikelyToKeepUp)
             }
-            if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+            if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.999 {
                 handlingPlayerItemDidreachEnd = true
                 self.playerItemDidreachEnd()
             }
@@ -2016,19 +1991,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     @objc func unmute() {
+//        SettingValues.autoplayAudioMode.activate()
+        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
         self.videoView?.player?.isMuted = false
-        do {
-            if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-            } else {
-                // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
-                
-                // Set category without options (<= iOS 9) setCategory(_:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
-            }
-        } catch {
-        }
+        
         UIView.animate(withDuration: 0.5, animations: {
             self.sound.alpha = 0
         }, completion: { (_) in
