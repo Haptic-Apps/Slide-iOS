@@ -35,17 +35,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func subtleVolume(_ subtleVolume: SubtleVolume, willChange value: Double) {
         do {
-            if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-            } else {
-                // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
-                
-                // Set category without options (<= iOS 9) setCategory(_:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
-            }
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
         } catch {
-            
+            NSLog(error.localizedDescription)
         }
     }
     
@@ -138,27 +130,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         timer?.invalidate()
         request?.cancel()
         stopDisplayLink()
-        videoView.player?.pause()
-        videoView.player?.currentItem?.cancelPendingSeeks()
-        videoView.player?.currentItem?.asset.cancelLoading()
-        stopDisplayLink()
-        do {
-            if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
-            } else {
-                // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
-                
-                // Set category without options (<= iOS 9) setCategory(_:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
-            }
-        } catch {
-            
-        }
         super.viewDidDisappear(animated)
         UIApplication.shared.isIdleTimerDisabled = false
-        displayLink?.isPaused = true
-        
+        self.endVideos()
         // Turn off forced fullscreen
         if forcedFullscreen {
             disableForcedFullscreen()
@@ -166,10 +140,22 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
 
     deinit {
-        videoView.player?.currentItem?.cancelPendingSeeks()
-        videoView.player?.currentItem?.asset.cancelLoading()
-        stopDisplayLink()
+        self.endVideos()
     }
+    
+    func endVideos() {
+        self.displayLink?.invalidate()
+        self.displayLink = nil
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+        } catch {
+            NSLog(error.localizedDescription)
+        }
+        self.videoView.player?.replaceCurrentItem(with: nil)
+        self.videoView.player = nil
+    }
+
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
@@ -290,18 +276,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     @objc func unmute() {
         self.videoView.player?.isMuted = false
-        do {
-            if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-            } else {
-                // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
-                
-                // Set category without options (<= iOS 9) setCategory(_:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
-            }
-        } catch {
+
+        if SettingValues.modalVideosRespectHardwareMuteSwitch {
+            try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+        } else {
+            try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
         }
+
         UIView.animate(withDuration: 0.5, animations: {
             self.muteButton.alpha = 0
         }, completion: { (_) in
@@ -459,25 +440,12 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     func loadContent() {
 
         // Prevent video from stopping system background audio
-        do {
-            if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
-            } else {
-                // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
-                
-                // Set category without options (<= iOS 9) setCategory(_:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
-            }
-        } catch let error as NSError {
-            print(error)
-        }
-
-        do {
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch let error as NSError {
-            print(error)
-        }
+//        do {
+//            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+//            try AVAudioSession.sharedInstance().setActive(true)
+//        } catch let error as NSError {
+//            print(error)
+//        }
 
         // Load Youtube View
         if isYoutubeView {
@@ -487,28 +455,16 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
             do {
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-                } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
-                }
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
             } catch {
-                
+                NSLog(error.localizedDescription)
             }
             return
         } else {
             youtubeView.isHidden = true
         }
-        
-        if SettingValues.muteVideos == .ALWAYS {
-            self.videoView.player?.isMuted = true
-        } else {
-            self.videoView.player?.isMuted = false
-        }
+
+        self.videoView.player?.isMuted = SettingValues.muteVideosInModal
 
         // Otherwise load AVPlayer
         let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.shouldAutoPlay())
@@ -918,58 +874,54 @@ extension VideoMediaViewController {
 
 extension VideoMediaViewController {
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
-        let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
-        if (self.videoView.player?.isMuted ?? false) && tracks {
-            if muteButton.isHidden {
+        if isYoutubeView {
+            if !sliderBeingUsed {
+                self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000))
+            }
+        }
+
+        guard let player = videoView.player else {
+            return
+        }
+        let hasAudioTracks = (player.currentItem?.tracks.count ?? 1) > 1
+
+        if hasAudioTracks {
+            if player.isMuted && muteButton.isHidden && SettingValues.muteVideosInModal {
                 muteButton.isHidden = false
             }
-        } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setAudio {
-            do {
-                setAudio = true
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+        }
+
+        if !setOnce {
+            setOnce = true
+
+            if hasAudioTracks {
+                if !SettingValues.muteVideosInModal {
+                    if SettingValues.modalVideosRespectHardwareMuteSwitch {
+                        try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+                    } else {
+                        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                    }
                 } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+                    try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                 }
-            } catch {
-                
-            }
-        } else if tracks && SettingValues.muteVideos != .ALWAYS && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) && !setAudio {
-            do {
-                setAudio = true
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-                } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+            } else {
+                // If there's no audio track, set the category to ambient to prevent the player
+                // from silencing background audio
+                do {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                } catch {
+                    NSLog(error.localizedDescription)
                 }
-            } catch {
-                
             }
         }
 
         if !sliderBeingUsed {
-            if isYoutubeView {
-                if !sliderBeingUsed {
-                    self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000))
-                }
-            } else {
-                if let player = videoView.player {
-                    scrubber.updateWithTime(elapsedTime: player.currentTime())
-                    let duration = Float(CMTimeGetSeconds(player.currentItem!.duration))
-                    let time = Float(CMTimeGetSeconds(player.currentTime()))
-                    if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
-                        handlingPlayerItemDidreachEnd = true
-                        self.playerItemDidreachEnd()
-                    }
-                }
+            scrubber.updateWithTime(elapsedTime: player.currentTime())
+            let duration = Float(CMTimeGetSeconds(player.currentItem!.duration))
+            let time = Float(CMTimeGetSeconds(player.currentTime()))
+            if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+                handlingPlayerItemDidreachEnd = true
+                self.playerItemDidreachEnd()
             }
         }
     }

@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import AVFoundation
 import Foundation
 import reddift
 
@@ -113,7 +114,6 @@ class SettingValues {
     public static let pref_moreButton = "MORE_BUTTON"
     public static let pref_disableBanner = "DISABLE_BANNER"
     public static let pref_newIndicator = "NEW_INDICATOR"
-    public static let pref_muteAutoPlay = "MUTE_VIDEOS"
     public static let pref_totallyCollapse = "TOTALLY_COLLAPSE"
     public static let pref_fullyHideNavbar = "FULLY_HIDE_NAVBAR"
 
@@ -229,7 +229,6 @@ class SettingValues {
     public static var linkAlwaysThumbnail = false
     public static var autoKeyboard = true
     public static var appMode = AppMode.SINGLE
-    public static var muteVideos = VideoMute.ALWAYS
 
     enum PostViewType: String {
         case LIST = "list"
@@ -279,25 +278,6 @@ class SettingValues {
                 return "Autoplay only on WiFi"
             case .TAP:
                 return "Play videos on tap"
-            }
-        }
-    }
-    
-    enum VideoMute: String {
-        static let cases: [VideoMute] = [.ALWAYS, .NEVER, .AUTOPLAY]
-        
-        case NEVER = "never"
-        case AUTOPLAY = "autoplay"
-        case ALWAYS = "always"
-        
-        func description() -> String {
-            switch self {
-            case .NEVER:
-                return "Never mute videos"
-            case .ALWAYS:
-                return "Always mute videos"
-            case .AUTOPLAY:
-                return "Unmute videos when player opened"
             }
         }
     }
@@ -485,7 +465,6 @@ class SettingValues {
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
         SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (pad ? "split" : "single")) ?? (pad ? .SPLIT : .SINGLE)
-        SettingValues.muteVideos = VideoMute.init(rawValue: settings.string(forKey: SettingValues.pref_muteAutoPlay) ?? "autoplay") ?? .AUTOPLAY
 
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
@@ -837,6 +816,7 @@ class SettingValues {
 
 }
 
+// MARK: - Font Settings
 extension SettingValues {
     static var commentFontWeight: String? {
         get {
@@ -853,6 +833,36 @@ extension SettingValues {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: "SUBMISSION_FONT_WEIGHT")
+        }
+    }
+}
+
+// MARK: - Audio Settings
+extension SettingValues {
+    static var muteInlineVideos: Bool {
+        get {
+            return UserDefaults.standard.object(forKey: "MUTE_INLINE_VIDEOS") as? Bool ?? true
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "MUTE_INLINE_VIDEOS")
+        }
+    }
+
+    static var muteVideosInModal: Bool {
+        get {
+            return UserDefaults.standard.object(forKey: "MUTE_VIDEOS_IN_MODAL") as? Bool ?? false
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "MUTE_VIDEOS_IN_MODAL")
+        }
+    }
+
+    static var modalVideosRespectHardwareMuteSwitch: Bool {
+        get {
+            return UserDefaults.standard.object(forKey: "MODAL_VIDEOS_RESPECT_HARDWARE_MUTE_SWITCH") as? Bool ?? true
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "MODAL_VIDEOS_RESPECT_HARDWARE_MUTE_SWITCH")
         }
     }
 }

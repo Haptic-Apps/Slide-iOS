@@ -44,8 +44,8 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
     var backupCell: UITableViewCell = UITableViewCell()
     var gestureCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "gestures")
     var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
-    var muteCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "mute")
     var tagsCell: UITableViewCell = UITableViewCell()
+    var audioSettings = UITableViewCell()
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch().then {
@@ -385,17 +385,12 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.fontColor
 
-        muteCell.textLabel?.text = "Mute autoplaying videos"
-        muteCell.backgroundColor = ColorUtil.foregroundColor
-        muteCell.textLabel?.textColor = ColorUtil.fontColor
-        muteCell.selectionStyle = UITableViewCell.SelectionStyle.none
-        self.muteCell.imageView?.image = UIImage.init(named: "mute")?.toolbarIcon()
-        self.muteCell.imageView?.tintColor = ColorUtil.fontColor
-        self.muteCell.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.muteCell.detailTextLabel?.text = SettingValues.muteVideos.description()
-        self.muteCell.detailTextLabel?.numberOfLines = 0
-        self.muteCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.muteCell.accessoryType = .none
+        audioSettings.textLabel?.text = "Audio"
+        audioSettings.accessoryType = .disclosureIndicator
+        audioSettings.backgroundColor = ColorUtil.foregroundColor
+        audioSettings.textLabel?.textColor = ColorUtil.fontColor
+        audioSettings.imageView?.image = UIImage.init(named: "audio")?.toolbarIcon()
+        audioSettings.imageView?.tintColor = ColorUtil.fontColor
 
         if reset {
             self.tableView.reloadData()
@@ -474,7 +469,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
             case 1: return self.icon
             case 2: return self.postLayout
             case 3: return self.autoPlayCell
-            case 4: return self.muteCell
+            case 4: return self.audioSettings
             case 5: return self.subThemes
             case 6: return self.font
             case 7: return self.comments
@@ -586,8 +581,6 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 }
             case 2:
                 ch = SettingsLayout()
-            case 5:
-                ch = SubredditThemeViewController()
             case 3:
                 let alertController: BottomSheetActionController = BottomSheetActionController()
                 alertController.headerData = "AutoPlay Settings"
@@ -603,17 +596,9 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
                 }
                 VCPresenter.presentAlert(alertController, parentVC: self)
             case 4:
-                let alertController: BottomSheetActionController = BottomSheetActionController()
-                alertController.headerData = "Mute Settings"
-                for item in SettingValues.VideoMute.cases {
-                    alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
-                        UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_muteAutoPlay)
-                        SettingValues.muteVideos = item
-                        UserDefaults.standard.synchronize()
-                        self.muteCell.detailTextLabel?.text = SettingValues.muteVideos.description()
-                    }))
-                }
-                VCPresenter.presentAlert(alertController, parentVC: self)
+                ch = SettingsAudio()
+            case 5:
+                ch = SubredditThemeViewController()
             case 6:
                 ch = SettingsFont()
             case 7:
@@ -708,7 +693,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
 
         }
 
-            if let n = ch {
+        if let n = ch {
             VCPresenter.showVC(viewController: n, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
         }
     }

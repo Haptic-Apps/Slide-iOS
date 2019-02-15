@@ -290,6 +290,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         
         return cell!
     }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if cell is AutoplayBannerLinkCellView {
+            (cell as! AutoplayBannerLinkCellView).doLoadVideo()
+        }
+    }
 
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         let itemWidth = width
@@ -437,10 +443,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
-            (cell as! LinkCellView).videoView!.player?.replaceCurrentItem(with: nil)
-            (cell as! LinkCellView).videoView!.player = nil
-            (cell as! LinkCellView).updater?.invalidate()
-            (cell as! LinkCellView).updater = nil
+            (cell as! LinkCellView).endVideos()
         }
     }
 
