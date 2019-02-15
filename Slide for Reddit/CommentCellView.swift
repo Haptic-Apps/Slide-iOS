@@ -97,12 +97,20 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         if navViewController == nil && nav != nil {
             navViewController = nav
         }
-        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        let titleText = CommentCellView.getTitle(comment)
         self.comment = comment
        
         let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
         commentClick.delegate = self
         self.addGestureRecognizer(commentClick)
+        
+        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlText)
+    }
+    
+    public static func getTitle(_ comment: RComment) -> NSAttributedString {
+        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        
+        let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
         
         var uC: UIColor
         switch ActionStates.getVoteDirection(s: comment) {
@@ -117,7 +125,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): uC] as [String: Any]
         
         let attrs2 = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor] as [String: Any]
-
+        
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs2))
         
         let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
@@ -133,11 +141,11 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         infoString.append(boldString)
         infoString.append(endString)
         infoString.append(subString)
-
+        
         titleText.append(NSAttributedString.init(string: "\n", attributes: nil))
         titleText.append(infoString)
-        
-        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlText)
+
+        return titleText
     }
     
     var registered: Bool = false
