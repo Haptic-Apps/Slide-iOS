@@ -19,9 +19,9 @@ public protocol TextDisplayStackViewDelegate: class {
 
 public class TextDisplayStackView: UIStackView {
     var baseString: NSAttributedString?
-    let TABLE_START_TAG = "<table>"
-    let HR_TAG = "<hr/>"
-    let TABLE_END_TAG = "</table>"
+    static let TABLE_START_TAG = "<table>"
+    static let HR_TAG = "<hr/>"
+    static let TABLE_END_TAG = "</table>"
     
     var estimatedWidth = CGFloat(0)
     var estimatedHeight = CGFloat(0)
@@ -204,7 +204,7 @@ public class TextDisplayStackView: UIStackView {
         overflow.isHidden = true
         
         if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
-            var blocks = getBlocks(htmlString)
+            var blocks = TextDisplayStackView.getBlocks(htmlString)
             
             var startIndex = 0
             
@@ -289,7 +289,7 @@ public class TextDisplayStackView: UIStackView {
         overflow.isHidden = true
         
         //Start HTML parse
-        var blocks = getBlocks(htmlString)
+        var blocks = TextDisplayStackView.getBlocks(htmlString)
         
         var startIndex = 0
         
@@ -473,9 +473,9 @@ public class TextDisplayStackView: UIStackView {
 //        return nil
 //    }
 
-    public func getBlocks(_ html: String) -> [String] {
+    public static func getBlocks(_ html: String) -> [String] {
         
-        var codeBlockSeperated = parseCodeTags(html)
+        var codeBlockSeperated = TextDisplayStackView.parseCodeTags(html)
         
         if html.contains(HR_TAG) {
             codeBlockSeperated = parseHR(codeBlockSeperated)
@@ -486,13 +486,13 @@ public class TextDisplayStackView: UIStackView {
         }
         
         if html.contains("<table") {
-            return parseTableTags(codeBlockSeperated)
+            return TextDisplayStackView.parseTableTags(codeBlockSeperated)
         } else {
             return codeBlockSeperated
         }
     }
     
-    public func parseCodeTags(_ html: String) -> [String] {
+    public static func parseCodeTags(_ html: String) -> [String] {
         let startTag = "<code>"
         let endTag = "</code>"
         var startSeperated = html.components(separatedBy: startTag)
@@ -519,7 +519,7 @@ public class TextDisplayStackView: UIStackView {
         return preSeperated
     }
     
-    public func parseHR(_ blocks: [String]) -> [String] {
+    public static func parseHR(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {
             if block.contains(HR_TAG) {
@@ -536,7 +536,7 @@ public class TextDisplayStackView: UIStackView {
         return newBlocks
     }
     
-    public func parseBlockquote(_ blocks: [String]) -> [String] {
+    public static func parseBlockquote(_ blocks: [String]) -> [String] {
         let startTag = "<cite>"
         let endTag = "</cite>"
         
@@ -565,7 +565,7 @@ public class TextDisplayStackView: UIStackView {
         return preSeperated
     }
     
-    public func parseTableTags(_ blocks: [String]) -> [String] {
+    public static func parseTableTags(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {
             if block.contains(TABLE_START_TAG) {
@@ -585,6 +585,71 @@ public class TextDisplayStackView: UIStackView {
         }
         
         return newBlocks
+    }
+    
+    public static func estimateHeight(fontSize: CGFloat, submission: Bool, width: CGFloat, titleString: NSAttributedString, htmlString: String) -> CGFloat {
+        var totalHeight = CGFloat(0)
+        let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: titleString)!
+        let baseHeight = layout.textBoundingSize.height
+        var blocks: [String]
+        if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
+            blocks = TextDisplayStackView.getBlocks(htmlString)
+            
+            var startIndex = 0
+            
+            let newTitle = NSMutableAttributedString(attributedString: titleString)
+            if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
+                if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
+                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white))
+                }
+                startIndex = 1
+            }
+            
+            let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: newTitle)!
+            totalHeight += layout.textBoundingSize.height
+            
+            if blocks.count > 1 {
+                if startIndex == 0 {
+                } else {
+                    blocks.remove(at: 0)
+                }
+            }
+        } else {
+            blocks = [String]()
+            let newTitle = NSMutableAttributedString(attributedString: titleString)
+            if !htmlString.isEmpty() {
+                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white))
+            }
+            
+            let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: newTitle)!
+            totalHeight += layout.textBoundingSize.height
+        }
+        
+        for block in blocks {
+            totalHeight += 8
+            if block.startsWith("<table>") {
+                let table = TableDisplayView.getEstimatedHeight(baseHtml: block)
+                totalHeight += table
+            } else if block.startsWith("<hr/>") {
+                totalHeight += 1
+            } else if block.startsWith("<code>") {
+                let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
+                totalHeight += body.globalHeight
+            } else {
+                let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white)
+                let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+                let layout = YYTextLayout(containerSize: size, text: text)!
+                let textSize = layout.textBoundingSize
+                
+                totalHeight += textSize.height
+            }
+        }
+        return totalHeight
     }
     
     public static func addSpoilers(_ text: String) -> String {

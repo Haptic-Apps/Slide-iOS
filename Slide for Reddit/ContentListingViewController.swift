@@ -312,10 +312,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     titleString.append(NSAttributedString.init(string: "\n", attributes: nil))
                     titleString.append(infoString)
                     
-                    let height = TextStackEstimator.init(fontSize: 16, submission: false, color: .white, width: itemWidth - 16)
-                    height.setTextWithTitleHTML(titleString, htmlString: comment.htmlText)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, htmlString: comment.htmlText, color: .white)
                     
-                    estimatedHeights[comment.id] = height.estimatedHeight
+                    estimatedHeights[comment.id] = height
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else if thing is RFriend {

@@ -119,7 +119,6 @@
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
-		BE1CD01920F599C7007746B6 /* TextStackEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01820F599C7007746B6 /* TextStackEstimator.swift */; };
 		BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */; };
 		BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */; };
 		BE1DA5C6220803BB001C7DB4 /* UIAlert+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1DA5C5220803BB001C7DB4 /* UIAlert+Extensions.swift */; };
@@ -497,7 +496,6 @@
 		BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDisplayStackView.swift; sourceTree = "<group>"; };
 		BE1CD01420F51C37007746B6 /* RemovalReasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovalReasons.swift; sourceTree = "<group>"; };
 		BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDisplayView.swift; sourceTree = "<group>"; };
-		BE1CD01820F599C7007746B6 /* TextStackEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStackEstimator.swift; sourceTree = "<group>"; };
 		BE1DA3951E26AD5700EC0A04 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		BE1DA3971E26ADEA00EC0A04 /* SearchContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchContributionLoader.swift; sourceTree = "<group>"; };
 		BE1DA5C5220803BB001C7DB4 /* UIAlert+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlert+Extensions.swift"; sourceTree = "<group>"; };
@@ -1271,7 +1269,6 @@
 				BE9428E920C46B5600E1A33A /* PostActions.swift */,
 				BE36886120E5709300987320 /* FullLinkCellView.swift */,
 				BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */,
-				BE1CD01820F599C7007746B6 /* TextStackEstimator.swift */,
 			);
 			name = LinkCellViews;
 			sourceTree = "<group>";
@@ -2045,7 +2042,6 @@
 				B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */,
 				BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */,
 				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
-				BE1CD01920F599C7007746B6 /* TextStackEstimator.swift in Sources */,
 				09D6603621E8F199003D632C /* CurrentAccountPresentationController.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
 				09BBDBF621F977F900FC8BF9 /* FontSelectionTableViewController.swift in Sources */,
