@@ -183,10 +183,15 @@ public class TextDisplayStackView: UIStackView {
             firstTextView.textLayout = layout
             estimatedHeight += layout.textBoundingSize.height
             firstTextView.horizontalAnchors == horizontalAnchors
-            firstTextView.heightAnchor == layout.textBoundingSize.height
+            firstTextView.removeConstraints(addedConstraints)
+            addedConstraints = batch {
+                firstTextView.heightAnchor == layout.textBoundingSize.height
+            }
         }
 
     }
+    
+    var addedConstraints = [NSLayoutConstraint]()
     
     public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
         estimatedHeight = 0
@@ -263,7 +268,10 @@ public class TextDisplayStackView: UIStackView {
                 let layout = YYTextLayout(containerSize: size, text: newTitle)!
                 firstTextView.textLayout = layout
                 estimatedHeight += layout.textBoundingSize.height
-                firstTextView.heightAnchor == layout.textBoundingSize.height
+                firstTextView.removeConstraints(addedConstraints)
+                addedConstraints = batch {
+                    firstTextView.heightAnchor == layout.textBoundingSize.height
+                }
                 firstTextView.horizontalAnchors == horizontalAnchors
             }
 
