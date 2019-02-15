@@ -16,7 +16,7 @@ import Then
 import YYText
 import UIKit
 
-class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDelegate {
+class ReplyViewController: MediaViewController, UITextViewDelegate {
 
     public enum ReplyType {
         case NEW_MESSAGE
@@ -44,13 +44,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate, YYTextViewDe
         }
     }
     
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            let urlClicked = url
-            self.doShow(url: urlClicked, heroView: nil, heroVC: nil)
-        }
-    }
-
     var type = ReplyType.NEW_MESSAGE
     var text: [UITextView]?
     var extras: [UIView]?

@@ -63,15 +63,6 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var text: TextDisplayStackView!
     var single = false
 
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            if (parentViewController) != nil {
-                let urlClicked = url
-                parentViewController?.doShow(url: urlClicked, heroView: nil, heroVC: nil)
-            }
-        }
-    }
-
     var longBlocking = false
     override func layoutSubviews() {
         super.layoutSubviews()

@@ -17,7 +17,7 @@ import YYText
 import UIKit
 import XLActionController
 
-class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, YYTextViewDelegate, SubmissionMoreDelegate, ReplyDelegate, UIPopoverPresentationControllerDelegate {
+class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate, UIPopoverPresentationControllerDelegate {
     
     func hide(index: Int) {
         if index >= 0 {

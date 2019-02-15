@@ -324,7 +324,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleString, htmlString: comment.htmlText)
                     
-                    estimatedHeights[comment.id] = height
+                    estimatedHeights[comment.id] = height + 16
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else if thing is RFriend {
@@ -355,7 +355,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), titleString: titleText, htmlString: message.htmlBody)
                     
-                    estimatedHeights[message.id] = height
+                    estimatedHeights[message.id] = height + 16
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
             }

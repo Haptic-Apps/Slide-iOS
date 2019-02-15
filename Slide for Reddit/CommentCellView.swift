@@ -64,12 +64,6 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var text: TextDisplayStackView!
     var single = false
     
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            parentViewController?.doShow(url: url, lq: nil, heroView: nil, heroVC: nil)
-        }
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
         let topmargin = 0

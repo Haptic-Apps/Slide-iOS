@@ -70,12 +70,6 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
     
-    func textView(_ textView: YYTextView, didTap highlight: YYTextHighlight, in characterRange: NSRange, rect: CGRect) {
-        if let url = highlight.attributes?[NSAttributedString.Key.link.rawValue] as? URL {
-            self.doShow(url: url, lq: nil, heroView: nil, heroVC: nil)
-        }
-    }
-
     init(url: URL?, content: Object?, parent: ShadowboxViewController) {
         self.parentVC = parent
         self.baseURL = url
