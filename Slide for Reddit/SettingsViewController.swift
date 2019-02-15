@@ -389,7 +389,7 @@ class SettingsViewController: UITableViewController, MFMailComposeViewController
         audioSettings.accessoryType = .disclosureIndicator
         audioSettings.backgroundColor = ColorUtil.foregroundColor
         audioSettings.textLabel?.textColor = ColorUtil.fontColor
-        audioSettings.imageView?.image = UIImage.init(named: "mute")?.toolbarIcon()
+        audioSettings.imageView?.image = UIImage.init(named: "audio")?.toolbarIcon()
         audioSettings.imageView?.tintColor = ColorUtil.fontColor
 
         if reset {
