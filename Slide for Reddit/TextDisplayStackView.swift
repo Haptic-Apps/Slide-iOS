@@ -595,7 +595,6 @@ public class TextDisplayStackView: UIStackView {
         var totalHeight = CGFloat(0)
         let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
         let layout = YYTextLayout(containerSize: size, text: titleString)!
-        let baseHeight = layout.textBoundingSize.height
         var blocks: [String]
         if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
             blocks = TextDisplayStackView.getBlocks(htmlString)
