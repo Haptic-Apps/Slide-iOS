@@ -1815,7 +1815,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         inHeadView.removeFromSuperview()
-        headerCell.videoView?.player?.pause()
+        headerCell.endVideos()
         self.didDisappearCompletely = true
     }
 

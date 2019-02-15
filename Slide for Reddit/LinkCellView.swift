@@ -1223,6 +1223,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         return !(touch.view is UIButton)
     }
     
+    var shouldLoadVideo = false
+    
     private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if self is AutoplayBannerLinkCellView {
             self.endVideos()
@@ -1242,6 +1244,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             navViewController = nav
         }
 
+        self.shouldLoadVideo = false
         self.loadedImage = nil
         lq = false
 
@@ -1410,7 +1413,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.timeView.isHidden = true
                 self.updateProgress(-1, "", buffering: false)
                 self.contentView.bringSubviewToFront(topVideoView!)
-                doLoadVideo()
+                self.shouldLoadVideo = true
+                if full {
+                    doLoadVideo()
+                }
                 videoOverride = true
             } else if self is FullLinkCellView {
                 self.videoView.isHidden = true
@@ -1706,6 +1712,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     weak var videoTask: URLSessionDataTask?
     
     func doLoadVideo() {
+        if !shouldLoadVideo {
+            return
+        }
+        
         let baseUrl: URL
         if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!) {
             baseUrl = URL.init(string: link!.videoPreview)!
@@ -2443,6 +2453,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func openLinkVideo(sender: UITapGestureRecognizer? = nil) {
         if !playView.isHidden {
+            shouldLoadVideo = true
             doLoadVideo()
             playView.isHidden = true
             self.progressDot.isHidden = false

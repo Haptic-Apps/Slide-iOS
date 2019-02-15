@@ -133,6 +133,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         videoView.player?.pause()
         videoView.player?.currentItem?.cancelPendingSeeks()
         videoView.player?.currentItem?.asset.cancelLoading()
+        videoView.player?.replaceCurrentItem(with: nil)
         stopDisplayLink()
         do {
             try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])

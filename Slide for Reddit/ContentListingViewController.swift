@@ -290,6 +290,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         
         return cell!
     }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if cell is AutoplayBannerLinkCellView {
+            (cell as! AutoplayBannerLinkCellView).doLoadVideo()
+        }
+    }
 
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         let itemWidth = width

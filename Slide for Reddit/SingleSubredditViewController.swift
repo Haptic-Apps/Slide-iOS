@@ -301,9 +301,14 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 navigationController?.setToolbarHidden(true, animated: false)
             }
         }
-
     }
 
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if cell is AutoplayBannerLinkCellView {
+            (cell as! AutoplayBannerLinkCellView).doLoadVideo()
+        }
+    }
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 

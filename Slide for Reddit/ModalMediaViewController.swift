@@ -299,6 +299,7 @@ class ModalMediaViewController: UIViewController {
         if videoView != nil {
             displayLink?.isPaused = true
             videoView!.player?.pause()
+            videoView.player?.replaceCurrentItem(with: nil)
         }
     }
 
