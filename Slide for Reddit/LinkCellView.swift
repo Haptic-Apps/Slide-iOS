@@ -38,16 +38,14 @@ enum CurrentType {
 
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     
-    func linkTapped(url: URL) {
-        // if textClicked.contains("[[s[") {
-        //   parent?.showSpoiler(textClicked)
-        //} else {
-        //let urlClicked = result.url!
-        self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
-        //}
-        
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.parentViewController?.showSpoiler(text)
+        } else {
+            self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+        }
     }
-    
+
     func linkLongTapped(url: URL) {
         longBlocking = true
         let alertController: BottomSheetActionController = BottomSheetActionController()
@@ -245,7 +243,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     for attr in attrs {
                         if attr.value is YYTextHighlight {
                             if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                self.linkTapped(url: url)
+                                self.linkTapped(url: url, text: text.attributedSubstring(from: range).string)
                                 return
                             }
                         }

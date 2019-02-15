@@ -14,17 +14,16 @@ import UIKit
 import XLActionController
 
 class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    var longBlocking = false
-    func linkTapped(url: URL) {
-        // if textClicked.contains("[[s[") {
-        //   parent?.showSpoiler(textClicked)
-        //} else {
-        //let urlClicked = result.url!
-        self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
-        //}
-        
-    }
     
+    var longBlocking = false
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.parentViewController?.showSpoiler(text)
+        } else {
+            self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+        }
+    }
+
     func linkLongTapped(url: URL) {
         longBlocking = true
         let alertController: BottomSheetActionController = BottomSheetActionController()

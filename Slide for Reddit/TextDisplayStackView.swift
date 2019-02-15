@@ -13,7 +13,7 @@ import UIKit
 import YYText
 
 public protocol TextDisplayStackViewDelegate: class {
-    func linkTapped(url: URL)
+    func linkTapped(url: URL, text: String)
     func linkLongTapped(url: URL)
 }
 
@@ -55,12 +55,15 @@ public class TextDisplayStackView: UIStackView {
         self.overflow.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
                     if attr.value is YYTextHighlight {
+                        print("TAPPED \((attr.value as! YYTextHighlight).userInfo)")
                         if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                            self.delegate.linkTapped(url: url)
+                            self.delegate.linkTapped(url: url, text: "")
                             return
+                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
+                            self.delegate.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
                         }
                     }
                 }
@@ -118,12 +121,15 @@ public class TextDisplayStackView: UIStackView {
         overflow.bottomAnchor == self.bottomAnchor
         overflow.horizontalAnchors == self.horizontalAnchors
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
                     if attr.value is YYTextHighlight {
+                        print("TAPPED \((attr.value as! YYTextHighlight).userInfo)")
                         if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                            self.delegate.linkTapped(url: url)
+                            self.delegate.linkTapped(url: url, text: "")
                             return
+                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
+                            self.delegate.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
                         }
                     }
                 }
@@ -238,6 +244,8 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 newTitle.append(body!)
             } else if !htmlString.isEmpty() {
+                print("IS HTML")
+                print(htmlString)
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor))
             }
@@ -417,8 +425,13 @@ public class TextDisplayStackView: UIStackView {
     }
     
     public func createAttributedChunk(baseHTML: String, accent: UIColor) -> NSAttributedString {
+        return TextDisplayStackView.createAttributedChunk(baseHTML: baseHTML, fontSize: fontSize, submission: submission, accentColor: accent)
+    }
+    
+    public static func
+        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextStackEstimator.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
+        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
         while html.mutableString.contains("\t•\t") {
@@ -434,46 +447,6 @@ public class TextDisplayStackView: UIStackView {
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
         }
         
-        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
-            }
-        })
-        
-        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
-            }
-        })
-
-        return LinkParser.parse(html, accent)
-    }
-    
-    public static func
-        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
-        let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextStackEstimator.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>")
-        let options = [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName] as [String: Any]
-        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: options, documentAttributes: nil).generatedAttributedString()!
-        let html = NSMutableAttributedString(attributedString: baseHtml)
-        while html.mutableString.contains("\t•\t") {
-            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
-            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
-        }
-        while html.mutableString.contains("\t◦\t") {
-            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t◦\t")
-            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "\t\t◦ ")
-        }
-        while html.mutableString.contains("\t▪\t") {
-            let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t▪\t")
-            html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "\t\t\t▪ ")
-        }
-
-        html.enumerateAttribute(NSAttributedString.Key.strikethroughStyle, in: NSRange(location: 0, length: html.length), options: [], using: { (value: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) -> Void in
-            if value != nil && value is NSNumber && (value as! NSNumber) == 1 {
-                html.addAttributes(convertToNSAttributedStringKeyDictionary([kCTForegroundColorAttributeName as String: ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.baselineOffset): 0, "TTTStrikeOutAttribute": 1, convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: 1)]), range: range)
-            }
-        })
         return LinkParser.parse(html, accentColor)
     }
     
@@ -518,85 +491,6 @@ public class TextDisplayStackView: UIStackView {
             return codeBlockSeperated
         }
     }
-    
-    /* Might add this in later, but iOS seems to handle this better than Android
-     public func parseLists(_ html: String){
-     var firstIndex = 0
-     var isNumbered = false
-     let firstOl = html.indexOf("<ol") ?? -1
-     let firstUl = html.indexOf("<ul") ?? -1
-     
-     if ((firstUl != -1 && firstOl > firstUl) || firstOl == -1) {
-     firstIndex = firstUl
-     isNumbered = false
-     } else {
-     firstIndex = firstOl
-     isNumbered = true
-     }
-     
-     var listNumbers = [Int]()
-     
-     var indent = -1
-     var i = firstIndex
-     
-     while (i < html.length - 4 && i != -1) {
-     if (html.substring(i, length: 3) == "<ol" || html.substring(i, length: 3) == "<ul") {
-     if (html.substring(i, length: 3) == "<ol") {
-     isNumbered = true
-     indent += 1
-     listNumbers.insert(1, at: indent)
-     } else {
-     isNumbered = false
-     }
-     i = html.indexOf("<li", i)
-     } else if (html.substring(i, length: 3) == "<li") {
-     var tagEnd = html.indexOf(">", i)
-     var itemClose = html.indexOf("</li", tagEnd)
-     var ulClose = html.indexOf("<ul", tagEnd)
-     var olClose = html.indexOf("<ol", tagEnd)
-     var closeTag = ""
-     
-     // Find what is closest: </li>, <ul>, or <ol>
-     if (((ulClose == -1 && itemClose != -1) || (itemClose != -1 && ulClose != -1 && itemClose < ulClose)) && ((olClose == -1 && itemClose != -1) || (itemClose != -1 && olClose != -1 && itemClose < olClose))) {
-     closeTag = itemClose;
-     } else if (((ulClose == -1 && olClose != -1) || (olClose != -1 && ulClose != -1 && olClose < ulClose)) && ((olClose == -1 && itemClose != -1) || (olClose != -1 && itemClose != -1 && olClose < itemClose))) {
-     closeTag = olClose;
-     } else {
-     closeTag = ulClose;
-     }
-     
-     String text = html.substring(tagEnd + 1, closeTag);
-     String indentSpacing = "";
-     for (int j = 0; j < indent; j++) {
-     indentSpacing += "&nbsp;&nbsp;&nbsp;&nbsp;";
-     }
-     if (isNumbered) {
-     html = html.substring(0, tagEnd + 1)
-     + indentSpacing +
-     listNumbers.get(indent)+ ". " +
-     text + "<br/>" +
-     html.substring(closeTag);
-     listNumbers.set(indent, listNumbers.get(indent) + 1);
-     i = closeTag + 3;
-     } else {
-     html = html.substring(0, tagEnd + 1) + indentSpacing + "• " + text + "<br/>" + html.substring(closeTag);
-     i = closeTag + 2;
-     }
-     } else {
-     i = html.indexOf("<", i + 1);
-     if (i != -1 && html.substring(i, i + 4).equals("</ol")) {
-     indent--;
-     if(indent == -1){
-     isNumbered = false;
-     }
-     }
-     }
-     }
-     
-     html = html.replace("<ol>","").replace("<ul>","").replace("<li>","").replace("</li>","").replace("</ol>", "").replace("</ul>",""); //Remove the tags, which actually work in Android 7.0 on
-     
-     return html
-     }*/
     
     public func parseCodeTags(_ html: String) -> [String] {
         let startTag = "<code>"
@@ -693,7 +587,7 @@ public class TextDisplayStackView: UIStackView {
         return newBlocks
     }
     
-    public func addSpoilers(_ text: String) -> String {
+    public static func addSpoilers(_ text: String) -> String {
         var base = text
         
         for match in base.capturedGroups(withRegex: "<a[^>]*title=\"([^\"]*)\"[^>]*>([^<]*)</a>") {
@@ -702,14 +596,14 @@ public class TextDisplayStackView: UIStackView {
             let spoilerTeaser = match[2]
             // Remove the last </a> tag, but keep the < for parsing.
             if !tag.contains("<a href=\"http") && !tag.contains("<a href=\"/r") {
-                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ")
+                base = base.replacingOccurrences(of: tag, with: (spoilerTeaser.isEmpty() ? "spoiler" : spoilerTeaser) + "[[s[\(spoilerText)]s]]")
             }
         }
         
         //match unconventional spoiler tags
         for match in base.capturedGroups(withRegex: "<a href=\"([#/](?:spoiler|sp|s))\">([^<]*)</a>") {
             let newPiece = match[0]
-            let inner = "<a href=\"/spoiler\">spoiler [[s[ \(newPiece.subsequence(newPiece.indexOf(">")! + 1, endIndex: newPiece.lastIndexOf("<")!))]s]]</a> "
+            let inner = "Spoiler [[s[\(newPiece.subsequence(newPiece.indexOf(">")! + 1, endIndex: newPiece.lastIndexOf("<")!))]s]]"
             base = base.replacingOccurrences(of: match[0], with: inner)
         }
         
@@ -717,9 +611,8 @@ public class TextDisplayStackView: UIStackView {
         for match in base.capturedGroups(withRegex: "<span class=\"[^\"]*md-spoiler-text+[^\"]*\">([^<]*)</span>") {
             let tag = match[0]
             let spoilerText = match[1]
-            base = base.replacingOccurrences(of: tag, with: "<a href=\"/spoiler\">spoiler  [[s[ \(spoilerText)]s]]</a> ")
+            base = base.replacingOccurrences(of: tag, with: "Spoiler [[s[\(spoilerText)]s]]")
         }
-        
         return base
     }
 }

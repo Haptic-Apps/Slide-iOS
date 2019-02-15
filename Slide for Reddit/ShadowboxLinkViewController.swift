@@ -15,10 +15,14 @@ import SDWebImage
 import YYText
 
 class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    func linkTapped(url: URL) {
-        self.doShow(url: url, heroView: nil, heroVC: nil)
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.showSpoiler(text)
+        } else {
+            self.doShow(url: url, heroView: nil, heroVC: nil)
+        }
     }
-    
+
     func linkLongTapped(url: URL) {
         
     }
