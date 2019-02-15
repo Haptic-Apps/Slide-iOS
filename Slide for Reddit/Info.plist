@@ -314,7 +314,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>96</string>
+	<string>97</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -326,7 +326,7 @@
 		<string>firefox</string>
 		<string>opera-http</string>
 		<string>firefox-focus</string>
-        <string>firefox-klar</string>
+		<string>firefox-klar</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<false/>
