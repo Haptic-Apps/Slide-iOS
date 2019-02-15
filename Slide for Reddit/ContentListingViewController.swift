@@ -322,7 +322,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     titleString.append(NSAttributedString.init(string: "\n", attributes: nil))
                     titleString.append(infoString)
                     
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleString, htmlString: htmlString)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleString, htmlString: comment.htmlText)
                     
                     estimatedHeights[comment.id] = height
                 }
@@ -332,52 +332,30 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             } else {
                 let message = thing as! RMessage
                 if estimatedHeights[message.id] == nil {
-                    var title: NSMutableAttributedString = NSMutableAttributedString()
-                    if message.wasComment {
-                        title = NSMutableAttributedString.init(string: message.linkTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
-                    } else {
-                        title = NSMutableAttributedString.init(string: message.subject.escapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 18, submission: true)]))
-                    }
-
-                    let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)")
-
-                    let subString = NSMutableAttributedString(string: "r/\(message.subreddit)")
-                    let color = ColorUtil.getColorForSub(sub: message.subreddit)
-                    if color != ColorUtil.baseColor {
-                        subString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: subString.length))
-                    }
-
-                    let infoString = NSMutableAttributedString.init(string: "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)]))
-                    infoString.append(endString)
-                    if !message.subreddit.isEmpty {
-                        infoString.append(NSAttributedString.init(string: "  •  "))
-                        infoString.append(subString)
-                    }
-
-                    let html = message.htmlBody
-                    var content: NSMutableAttributedString?
-                    if !html.isEmpty() {
-                        do {
-                            let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary([convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html)]), documentAttributes: nil)
-                            let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                            let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                            content = LinkParser.parse(attr2, .white)
-                        } catch {
-                        }
+                    let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject.escapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.fontColor]))
+                    
+                    let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
+                    
+                    var color = ColorUtil.getColorForSub(sub: message.subreddit)
+                    if color == ColorUtil.baseColor {
+                        color = ColorUtil.fontColor
                     }
                     
-                    let framesetterT = CTFramesetterCreateWithAttributedString(title)
-                    let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-                    let framesetterI = CTFramesetterCreateWithAttributedString(infoString)
-                    let textSizeI = CTFramesetterSuggestFrameSizeWithConstraints(framesetterI, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-                    if content != nil {
-                        let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-                        let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), height: CGFloat.greatestFiniteMagnitude), nil)
-
-                        estimatedHeights[message.id] = CGFloat(36 + textSizeT.height + textSizeI.height + textSizeB.height)
-                    } else {
-                        estimatedHeights[message.id] = CGFloat(36 + textSizeT.height + textSizeI.height)
+                    let subString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
+                    
+                    let infoString = NSMutableAttributedString()
+                    infoString.append(endString)
+                    if !message.subreddit.isEmpty {
+                        infoString.append(NSAttributedString.init(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)])))
+                        infoString.append(subString)
                     }
+                    
+                    titleText.append(NSAttributedString(string: "\n"))
+                    titleText.append(infoString)
+
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16 - (message.subject.hasPrefix("re:") ? 30 : 0), titleString: titleText, htmlString: message.htmlBody)
+                    
+                    estimatedHeights[message.id] = height
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
             }
