@@ -1680,17 +1680,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 }
 
 extension CommentDepthCell: TextDisplayStackViewDelegate {
-    func linkTapped(url: URL) {
-        self.islink = true
-        // if textClicked.contains("[[s[") {
-        //   parent?.showSpoiler(textClicked)
-        //} else {
-        //let urlClicked = result.url!
-        self.parent?.doShow(url: url, heroView: nil, heroVC: nil)
-        //}
-
+    func linkTapped(url: URL, text: String) {
+        islink = true
+        if !text.isEmpty {
+            self.parent?.showSpoiler(text)
+        } else {
+            self.parent?.doShow(url: url, heroView: nil, heroVC: nil)
+        }
     }
-    
+
     func linkLongTapped(url: URL) {
         longBlocking = true
         let alertController: BottomSheetActionController = BottomSheetActionController()

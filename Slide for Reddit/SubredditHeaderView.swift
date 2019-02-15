@@ -330,8 +330,12 @@ class SubredditHeaderView: UIView {
 }
 
 extension SubredditHeaderView: TextDisplayStackViewDelegate {
-    func linkTapped(url: URL) {
-        self.parentController?.doShow(url: url, heroView: nil, heroVC: nil)
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.parentController?.showSpoiler(text)
+        } else {
+            self.parentController?.doShow(url: url, heroView: nil, heroVC: nil)
+        }
     }
     
     func linkLongTapped(url: URL) {

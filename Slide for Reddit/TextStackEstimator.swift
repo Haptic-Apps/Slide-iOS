@@ -49,7 +49,7 @@ public class TextStackEstimator: NSObject {
             
             var startIndex = 0
             
-            let newTitle = title
+            let newTitle = title.mutableCopy() as! NSMutableAttributedString
             
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<code>") {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
@@ -314,7 +314,7 @@ public class TextStackEstimator: NSObject {
             let spoilerTeaser = match[2]
             // Remove the last </a> tag, but keep the < for parsing.
             if !tag.contains("<a href=\"http") && !tag.contains("<a href=\"/r") {
-                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : "") + " [[s[ \(spoilerText)]s]]</a> ")
+                base = base.replacingOccurrences(of: tag, with: tag.substring(0, length: tag.length - 4) + (spoilerTeaser.isEmpty() ? "spoiler" : spoilerTeaser) + " [[s[ \(spoilerText)]s]]</a> ")
             }
         }
         

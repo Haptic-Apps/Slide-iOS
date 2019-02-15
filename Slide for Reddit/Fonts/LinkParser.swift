@@ -39,12 +39,7 @@ class LinkParser {
                         string.addAttribute(convertToNSAttributedStringKey(kCTUnderlineColorAttributeName as String), value: UIColor.clear, range: range)
                         let type = ContentType.getContentType(baseUrl: url)
 
-                        if type == .SPOILER {
-                            string.highlightTarget(color: color)
-                        }
-
                         if SettingValues.showLinkContentType {
-
                             let typeString = NSMutableAttributedString.init(string: "", attributes: convertToOptionalNSAttributedStringKeyDictionary([:]))
                             switch type {
                             case .ALBUM:
@@ -68,7 +63,7 @@ class LinkParser {
                             case .REDDIT:
                                 typeString.mutableString.setString("(Reddit link)")
                             case .SPOILER:
-                                typeString.mutableString.setString("(Spoiler)")
+                                typeString.mutableString.setString("")
                             default:
                                 if url.absoluteString != string.mutableString.substring(with: range) {
                                     typeString.mutableString.setString("(\(url.host!))")
@@ -77,12 +72,15 @@ class LinkParser {
                             string.insert(typeString, at: range.location + range.length)
                             string.addAttributes(convertToNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]), range: NSRange.init(location: range.location + range.length, length: typeString.length))
                         }
+                        
                         string.yy_setTextHighlight(range, color: color, backgroundColor: nil, userInfo: ["url": url])
                         break
                     }
                 }
             })
+            string.highlightTarget(color: color)
         }
+        print(string)
         return string
     }
 
@@ -94,11 +92,16 @@ extension NSMutableAttributedString {
     func highlightTarget(color: UIColor) {
         let regPattern = "\\[\\[s\\[(.*?)\\]s\\]\\]"
         if let regex = try? NSRegularExpression(pattern: regPattern, options: []) {
-            let matchesArray = regex.matches(in: self.string, options: [], range: NSRange(location: 0, length: self.length))
-            for match in matchesArray {
-                let attributedText = self.attributedSubstring(from: match.range).mutableCopy() as! NSMutableAttributedString
-                attributedText.addAttribute(NSAttributedString.Key.backgroundColor, value: color, range: NSRange(location: 0, length: attributedText.length))
-                attributedText.addAttribute(convertToNSAttributedStringKey(kCTForegroundColorAttributeName as String), value: color, range: NSRange(location: 0, length: attributedText.length))
+            let matchesArray = regex.matches(in: self.string, options: [], range: NSRange(location: 0, length: self.string.length))
+            for match in matchesArray.reversed() {
+                let copy = self.attributedSubstring(from: match.range)
+                let text = copy.string
+                let attributedText = NSMutableAttributedString(string: text.replacingOccurrences(of: "[[s[", with: "").replacingOccurrences(of: "]s]]", with: ""), attributes: copy.attributes(at: 0, effectiveRange: nil))
+                attributedText.yy_textBackgroundBorder = YYTextBorder(fill: color, cornerRadius: 3)
+                attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange(location: 0, length: attributedText.length))
+                let highlight = YYTextHighlight()
+                highlight.userInfo = ["spoiler":true]
+                attributedText.yy_setTextHighlight(highlight, range: NSRange(location: 0, length: attributedText.length))
                 self.replaceCharacters(in: match.range, with: attributedText)
             }
         }
