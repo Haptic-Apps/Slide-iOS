@@ -231,7 +231,11 @@ class AnyModalViewController: UIViewController {
         self.videoView.player?.isMuted = false
 
         //SettingValues.autoplayAudioMode.activate()
-        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+        if SettingValues.modalVideosRespectHardwareMuteSwitch {
+            try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+        } else {
+            try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+        }
 
         UIView.animate(withDuration: 0.5, animations: {
             self.muteButton.alpha = 0
@@ -749,8 +753,11 @@ extension AnyModalViewController {
 
             if hasAudioTracks {
                 if !SettingValues.muteVideosInModal {
-                    //SettingValues.autoplayAudioMode.activate()
-                    try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                    if SettingValues.modalVideosRespectHardwareMuteSwitch {
+                        try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+                    } else {
+                        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                    }
                     player.isMuted = false
                 } else {
                     try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
@@ -758,13 +765,11 @@ extension AnyModalViewController {
             } else {
                 // If there's no audio track, set the category to ambient to prevent the player
                 // from silencing background audio
-//                if AVAudioSession.sharedInstance().category != .ambient {
                 do {
                     try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                 } catch {
                     NSLog(error.localizedDescription)
                 }
-//                }
             }
         }
 
