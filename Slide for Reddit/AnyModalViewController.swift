@@ -115,6 +115,7 @@ class AnyModalViewController: UIViewController {
         // Re-enable screen dimming due to inactivity
         UIApplication.shared.isIdleTimerDisabled = false
         displayLink?.isPaused = true
+        setOnce = false
         
         // Turn off forced fullscreen
         if forcedFullscreen {
@@ -180,15 +181,7 @@ class AnyModalViewController: UIViewController {
                         strongSelf.embeddedPlayer = strongSelf.videoView!.player
                         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
                         do {
-                            if #available(iOS 10.0, *) {
-                                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
-                            } else {
-                                // Set category with options (iOS 9+) setCategory(_:options:)
-                                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
-                                
-                                // Set category without options (<= iOS 9) setCategory(_:)
-                                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
-                            }
+                            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                         } catch {
                             NSLog(error.localizedDescription)
                         }
@@ -231,22 +224,19 @@ class AnyModalViewController: UIViewController {
     func stopDisplayLink() {
         displayLink?.invalidate()
         displayLink = nil
+        setOnce = false
     }
     
     @objc func unmute() {
         self.videoView.player?.isMuted = false
-        do {
-            if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-            } else {
-                // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
-                
-                // Set category without options (<= iOS 9) setCategory(_:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
-            }
-        } catch {
+
+        //SettingValues.autoplayAudioMode.activate()
+        if SettingValues.modalVideosRespectHardwareMuteSwitch {
+            try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+        } else {
+            try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
         }
+
         UIView.animate(withDuration: 0.5, animations: {
             self.muteButton.alpha = 0
         }, completion: { (_) in
@@ -367,16 +357,13 @@ class AnyModalViewController: UIViewController {
             }
         }
 
+        setOnce = false
         displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
         displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
         displayLink?.isPaused = false
 
         videoView.player?.play()
-        if SettingValues.muteVideos == .ALWAYS && (self.videoView.player?.isMuted ?? true) {
-            self.videoView.player?.isMuted = true
-        } else {
-            self.videoView.player?.isMuted = false
-        }
+        self.videoView.player?.isMuted = SettingValues.muteInlineVideos
 
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: closeButton)
     }
@@ -423,25 +410,12 @@ class AnyModalViewController: UIViewController {
         
         // Prevent video from stopping system background audio
         do {
-            if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
-            } else {
-                // Set category with options (iOS 9+) setCategory(_:options:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
-                
-                // Set category without options (<= iOS 9) setCategory(_:)
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
-            }
-        } catch let error as NSError {
-            print(error)
-        }
-        
-        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
-        } catch let error as NSError {
-            print(error)
+        } catch {
+            NSLog(error.localizedDescription)
         }
-        
+
         view.addSubview(scrubber)
         scrubber.delegate = self
 
@@ -759,42 +733,46 @@ extension AnyModalViewController: UIGestureRecognizerDelegate {
     }
 }
 
+var setOnce = false
+
 extension AnyModalViewController {
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
-        let tracks = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1
-        if (self.videoView.player?.isMuted ?? false) && tracks {
-            if muteButton.isHidden {
+        guard let player = videoView.player else {
+            return
+        }
+        let hasAudioTracks = (player.currentItem?.tracks.count ?? 1) > 1
+
+        if hasAudioTracks {
+            if player.isMuted && muteButton.isHidden && SettingValues.muteVideosInModal {
                 muteButton.isHidden = false
             }
-        } else if !tracks && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) != convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) {
-            do {
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+        }
+
+        if !setOnce {
+            setOnce = true
+
+            if hasAudioTracks {
+                if !SettingValues.muteVideosInModal {
+                    if SettingValues.modalVideosRespectHardwareMuteSwitch {
+                        try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+                    } else {
+                        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                    }
+                    player.isMuted = false
                 } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.ambient, with: [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.ambient)
+                    try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                 }
-            } catch {
-                
-            }
-        } else if tracks && SettingValues.muteVideos != .ALWAYS && convertFromAVAudioSessionCategory(AVAudioSession.sharedInstance().category) == convertFromAVAudioSessionCategory(AVAudioSession.Category.ambient) {
-            do {
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-                } else {
-                    // Set category with options (iOS 9+) setCategory(_:options:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:withOptions:error:"), with: AVAudioSession.Category.playback, with: [])
-                    
-                    // Set category without options (<= iOS 9) setCategory(_:)
-                    AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
+            } else {
+                // If there's no audio track, set the category to ambient to prevent the player
+                // from silencing background audio
+                do {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                } catch {
+                    NSLog(error.localizedDescription)
                 }
-            } catch {
-                
             }
         }
+
         if !sliderBeingUsed {
             if let player = videoView.player {
                 scrubber.updateWithTime(elapsedTime: player.currentTime())
