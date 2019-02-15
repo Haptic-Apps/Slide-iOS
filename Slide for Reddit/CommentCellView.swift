@@ -86,13 +86,15 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
         self.contentView.addSubview(text)
         
-        text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)
+        text.topAnchor == contentView.topAnchor + CGFloat(8)
+        text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.horizontalAnchors == contentView.horizontalAnchors + CGFloat(8)
         self.contentView.backgroundColor = ColorUtil.foregroundColor
     }
     
     func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
         text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
+        text.estimatedWidth = self.contentView.frame.size.width - 16
         parentViewController = parent
         if navViewController == nil && nav != nil {
             navViewController = nav
@@ -109,9 +111,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     
     public static func getTitle(_ comment: RComment) -> NSAttributedString {
         let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
-        
-        let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
-        
+                
         var uC: UIColor
         switch ActionStates.getVoteDirection(s: comment) {
         case .down:

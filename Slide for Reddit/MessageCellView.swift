@@ -88,7 +88,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
         self.contentView.addSubview(text)
         
-        text.verticalAnchors == contentView.verticalAnchors + CGFloat(8)
+        text.topAnchor == contentView.topAnchor + CGFloat(8)
+        text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.rightAnchor == contentView.rightAnchor - CGFloat(8)
         
         self.contentView.backgroundColor = ColorUtil.foregroundColor
@@ -113,6 +114,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.addGestureRecognizer(messageLongClick)
 
         let titleText = MessageCellView.getTitleText(message: message)
+        text.estimatedWidth = self.contentView.frame.size.width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)
         text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
 
         self.text.removeConstraints(lsC)

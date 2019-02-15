@@ -58,7 +58,6 @@ public class TextDisplayStackView: UIStackView {
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
                     if attr.value is YYTextHighlight {
-                        print("TAPPED \((attr.value as! YYTextHighlight).userInfo)")
                         if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
                             self.delegate.linkTapped(url: url, text: "")
                             return
@@ -124,7 +123,6 @@ public class TextDisplayStackView: UIStackView {
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
                     if attr.value is YYTextHighlight {
-                        print("TAPPED \((attr.value as! YYTextHighlight).userInfo)")
                         if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
                             self.delegate.linkTapped(url: url, text: "")
                             return
@@ -244,8 +242,6 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 newTitle.append(body!)
             } else if !htmlString.isEmpty() {
-                print("IS HTML")
-                print(htmlString)
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor))
             }
