@@ -130,20 +130,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         timer?.invalidate()
         request?.cancel()
         stopDisplayLink()
-        videoView.player?.pause()
-        videoView.player?.currentItem?.cancelPendingSeeks()
-        videoView.player?.currentItem?.asset.cancelLoading()
-        videoView.player?.replaceCurrentItem(with: nil)
-        stopDisplayLink()
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-        } catch {
-            NSLog(error.localizedDescription)
-        }
         super.viewDidDisappear(animated)
         UIApplication.shared.isIdleTimerDisabled = false
-        displayLink?.isPaused = true
-        
+        self.endVideos()
         // Turn off forced fullscreen
         if forcedFullscreen {
             disableForcedFullscreen()
@@ -151,10 +140,22 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
 
     deinit {
-        videoView.player?.currentItem?.cancelPendingSeeks()
-        videoView.player?.currentItem?.asset.cancelLoading()
-        stopDisplayLink()
+        self.endVideos()
     }
+    
+    func endVideos() {
+        self.displayLink?.invalidate()
+        self.displayLink = nil
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+        } catch {
+            NSLog(error.localizedDescription)
+        }
+        self.videoView.player?.replaceCurrentItem(with: nil)
+        self.videoView.player = nil
+    }
+
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()

@@ -1016,6 +1016,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.updater = nil
             self.videoView!.player?.replaceCurrentItem(with: nil)
             self.videoView!.player = nil
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+            } catch {
+                NSLog(error.localizedDescription)
+            }
         }
     }
     

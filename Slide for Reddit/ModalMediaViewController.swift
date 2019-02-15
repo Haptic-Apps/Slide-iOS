@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import AVKit
 import Then
 import UIKit
 
@@ -272,12 +273,23 @@ class ModalMediaViewController: UIViewController {
     }
     
     deinit {
-        if videoView != nil {
-            displayLink?.invalidate()
-            displayLink = nil
-            videoView!.player?.replaceCurrentItem(with: nil)
-            videoView!.player = nil
+        endVideos()
+    }
+    
+    func endVideos() {
+        self.displayLink?.invalidate()
+        self.displayLink = nil
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+        } catch {
+            NSLog(error.localizedDescription)
         }
+        if videoView == nil {
+            return
+        }
+        self.videoView!.player?.replaceCurrentItem(with: nil)
+        self.videoView!.player = nil
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -296,11 +308,7 @@ class ModalMediaViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        if videoView != nil {
-            displayLink?.isPaused = true
-            videoView!.player?.pause()
-            videoView.player?.replaceCurrentItem(with: nil)
-        }
+        self.endVideos()
     }
 
     var desiredStatusBarStyle: UIStatusBarStyle = .default {
