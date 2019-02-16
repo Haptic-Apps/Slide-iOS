@@ -39,6 +39,7 @@ enum CurrentType {
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     
     func linkTapped(url: URL, text: String) {
+        linkClicked = true
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
@@ -561,6 +562,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if !full {
                 let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
                 comment.delegate = self
+                comment.cancelsTouchesInView = false
                 if dtap != nil {
                     comment.require(toFail: dtap!)
                 }
@@ -1016,12 +1018,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.updater = nil
             self.videoView!.player?.replaceCurrentItem(with: nil)
             self.videoView!.player = nil
-            do {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-                try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
-            } catch {
-                NSLog(error.localizedDescription)
-            }
         }
     }
     
@@ -1101,6 +1097,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
         title.attributedText = attText
         title.textVerticalAlignment = .top
+        title.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
+                for attr in attrs {
+                    if attr.value is YYTextHighlight {
+                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                            self.linkTapped(url: url, text: "")
+                            return
+                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
+                            self.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
+                        }
+                    }
+                }
+            })
+        }
     }
     
     @objc func doDTap(_ sender: AnyObject) {
@@ -1258,11 +1268,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         comments.textColor = ColorUtil.navIconColor
         title.textColor = ColorUtil.navIconColor
 
-        /* todo thi s
-        let activeLinkAttributes = NSMutableDictionary(dictionary: title.activeLinkAttributes)
-        activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.accentColorForSub(sub: submission.subreddit)
-        title.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-        title.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]*/
         activeSet = true
 
         defer {
@@ -2474,7 +2479,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
     }
     
+    var timerS: Timer?
+    
     @objc func openComment(sender: UITapGestureRecognizer? = nil) {
+        timerS = Timer.scheduledTimer(timeInterval: 0.05,
+                                      target: self,
+                                      selector: #selector(self.doOpenComment),
+                                      userInfo: nil,
+                                      repeats: false)
+    }
+    
+    @objc public func doOpenComment() {
+        timerS?.invalidate()
         if !full && !linkClicked {
             if let delegate = self.del {
                 if videoView != nil {

@@ -536,7 +536,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func readLater(_ cell: LinkCellView) {
         guard let link = cell.link else {
-            fatalError("Cell must have a link!")
+            return
         }
 
         ReadLater.toggleReadLater(link: link)
@@ -2442,14 +2442,24 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                         if !SettingValues.collapseFully {
                             cell.showMenu(nil)
                         } else if cell.isCollapsed {
-                            self.tableView.beginUpdates()
-                            cell.expandSingle()
-                            self.tableView.endUpdates()
                             if hiddenPersons.contains((id)) {
                                 hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
                             }
+                            if let oldHeight = oldHeights[id] {
+                                UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
+                                }, completion: { (_) in
+                                    cell.expandSingle()
+                                })
+                                tableView.beginUpdates()
+                                tableView.endUpdates()
+                            } else {
+                                cell.expandSingle()
+                                tableView.beginUpdates()
+                                tableView.endUpdates()
+                            }
                         } else {
-                            oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
+                            oldHeights[id] = cell.contentView.frame.size.height
                             if !hiddenPersons.contains(id) {
                                 hiddenPersons.insert(id)
                             }
@@ -2466,13 +2476,23 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                     } else {
                         if hiddenPersons.contains((id)) && childNumber > 0 {
                             hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
+                            if let oldHeight = oldHeights[id] {
+                                UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
+                                }, completion: { (_) in
+                                    cell.expand()
+                                })
+                            } else {
+                                cell.expand()
+                                tableView.beginUpdates()
+                                tableView.endUpdates()
+                            }
                             unhideAll(comment: comment.getId(), i: row!)
-                            cell.expand()
                             //todo hide child number
                         } else {
                             if childNumber > 0 {
                                 if childNumber > 0 {
-                                    oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
+                                    oldHeights[id] = cell.contentView.frame.size.height
                                     cell.collapse(childNumber: childNumber)
                                     /* disable for now
                                     if SettingValues.collapseFully, let path = tableView.indexPath(for: cell) {
@@ -2637,9 +2657,9 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
 
             guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
-            let cellPoint = recognizer.location(in: cell.title.overflow)
+            let cellPoint = recognizer.location(in: cell.commentBody.overflow)
             print(cellPoint)
-            for view in cell.title.overflow.subviews {
+            for view in cell.commentBody.overflow.subviews {
                 print("\(view.classForCoder): \(view.bounds)")
                 if (view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
                     recognizer.cancel()
@@ -2743,8 +2763,8 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         if let cell2 = parentCell as? CommentDepthCell, let comment = contents as? RComment {
             cell2.contentView.layer.cornerRadius = 10
             cell2.contentView.clipsToBounds = true
-            cell2.title.ignoreHeight = false
-            cell2.title.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
+            cell2.commentBody.ignoreHeight = false
+            cell2.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
             if contents is RComment {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(comment.getIdentifier())
@@ -2763,7 +2783,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             cell2.content = comment
             cell2.contentView.isUserInteractionEnabled = false
             let detailViewController = ParentCommentViewController(view: cell2.contentView)
-            detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 24)
+            detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.commentBody.estimatedHeight + 24) //todo this!!!
 
             previewingContext.sourceRect = cell.frame
             return detailViewController

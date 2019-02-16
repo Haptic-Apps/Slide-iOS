@@ -155,16 +155,7 @@ public class TextDisplayStackView: UIStackView {
     
     public func setAttributedString(_ string: NSAttributedString) {
         estimatedHeight = 0
-        //Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
-        let removedSubviews = overflow.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
-            overflow.removeArrangedSubview(subview)
-            return allSubviews + [subview]
-        }
-        
-        NSLayoutConstraint.deactivate(removedSubviews.flatMap({ $0.constraints }))
-        
-        removedSubviews.forEach({ $0.removeFromSuperview() })
-        overflow.isHidden = true
+        clearOverflow()
         
         if !activeSet {
             activeSet = true
@@ -193,8 +184,7 @@ public class TextDisplayStackView: UIStackView {
     
     var addedConstraints = [NSLayoutConstraint]()
     
-    public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
-        estimatedHeight = 0
+    func clearOverflow() {
         //Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
         let removedSubviews = overflow.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
             overflow.removeArrangedSubview(subview)
@@ -205,6 +195,11 @@ public class TextDisplayStackView: UIStackView {
         
         removedSubviews.forEach({ $0.removeFromSuperview() })
         overflow.isHidden = true
+    }
+    
+    public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
+        estimatedHeight = 0
+        clearOverflow()
         
         if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
             var blocks = TextDisplayStackView.getBlocks(htmlString)
@@ -214,7 +209,9 @@ public class TextDisplayStackView: UIStackView {
             let newTitle = NSMutableAttributedString(attributedString: title)
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
-                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                    if !newTitle.string.trimmed().isEmpty {
+                        newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                    }
                     newTitle.append(createAttributedChunk(baseHTML: blocks[0], accent: tColor))
                 }
                 startIndex = 1
@@ -244,10 +241,14 @@ public class TextDisplayStackView: UIStackView {
         } else {
             let newTitle = NSMutableAttributedString(attributedString: title)
             if body != nil {
-                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                if !newTitle.string.trimmed().isEmpty {
+                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                }
                 newTitle.append(body!)
             } else if !htmlString.isEmpty() {
-                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                if !newTitle.string.trimmed().isEmpty {
+                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                }
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor))
             }
             
@@ -281,16 +282,7 @@ public class TextDisplayStackView: UIStackView {
     
     public func setData(htmlString: String) {
         estimatedHeight = 0
-        //Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
-        let removedSubviews = overflow.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
-            overflow.removeArrangedSubview(subview)
-            return allSubviews + [subview]
-        }
-        
-        NSLayoutConstraint.deactivate(removedSubviews.flatMap({ $0.constraints }))
-        
-        removedSubviews.forEach({ $0.removeFromSuperview() })
-        overflow.isHidden = true
+        clearOverflow()
         
         //Start HTML parse
         var blocks = TextDisplayStackView.getBlocks(htmlString)

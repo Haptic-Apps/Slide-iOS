@@ -112,7 +112,7 @@ class PostActions: NSObject {
         }
         
         alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [link.url!], applicationActivities: nil)
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: link.url!)], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = cell.contentView
                 presenter.sourceRect = cell.contentView.bounds
@@ -121,12 +121,12 @@ class PostActions: NSObject {
             currentViewController.present(activityViewController, animated: true, completion: nil)
         }))
         alertController.addAction(Action(ActionData(title: "Share Reddit link", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [URL.init(string: "https://reddit.com" + link.permalink)!], applicationActivities: nil)
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + link.permalink)!)], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = cell.contentView
                 presenter.sourceRect = cell.contentView.bounds
             }
-            activityViewController.setValue(link.title, forKey: "Subject")
+
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil)
         }))
@@ -778,4 +778,26 @@ class PostActions: NSObject {
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+}
+
+
+class SubjectItemSource: NSObject, UIActivityItemSource {
+    var subject: String
+    var content: URL
+    init(subject: String, url: URL) {
+        self.subject = subject
+        self.content = url
+        super.init()
+    }
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
+        return content
+    }
+    
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
+        return content
+    }
+    
+    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
+        return subject
+    }
 }

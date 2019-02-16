@@ -933,7 +933,15 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         youtubeView.playVideo()
         scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000)
-        
+        if !SettingValues.muteVideosInModal {
+            if SettingValues.modalVideosRespectHardwareMuteSwitch {
+                try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+            } else {
+                try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+            }
+        } else {
+            try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+        }
         hideSpinner()
     }
     

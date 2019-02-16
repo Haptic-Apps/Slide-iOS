@@ -71,8 +71,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     var sideViewSpace: UIView!
     var topViewSpace: UIView!
-    var title: TextDisplayStackView!
-    
+    var title: YYLabel!
+    var commentBody: TextDisplayStackView!
+
     var currentPath = IndexPath(row: 0, section: 0)
     var longBlocking = false
 
@@ -111,11 +112,18 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func configureInit() {
         self.backgroundColor = ColorUtil.backgroundColor
-        self.title = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width, delegate: self).then({
+        self.commentBody = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width, delegate: self).then( {
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
             $0.ignoreHeight = true
             $0.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
+        })
+        
+        self.title = YYLabel().then({
+            $0.isUserInteractionEnabled = true
+            $0.accessibilityIdentifier = "Comment title"
+            $0.highlightTapAction = self.commentBody.touchLinkAction //todo this!!!
+            $0.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         })
         
         self.childrenCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15)).then({
@@ -141,7 +149,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.clipsToBounds = true
         })
         
-        self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, childrenCount)
+        self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, commentBody, childrenCount)
         
         self.contentView.backgroundColor = ColorUtil.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.backgroundColor
@@ -474,11 +482,25 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
+    var tempConstraints = [NSLayoutConstraint]()
     func hideMenuAnimated() {
         parent!.menuCell = nil
         parent!.menuId = nil
-        self.hideCommentMenu()
-        parent!.reloadHeights()
+        self.hideCommentMenu(false)
+        self.parent!.tableView.beginUpdates()
+        var newFrame = self.frame
+        newFrame.size.height -= 40
+        UIView.animate(withDuration: 0.05, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+            self.frame = newFrame
+            self.setNeedsLayout()
+            self.layoutIfNeeded()
+        }, completion: { (_) in
+            self.contentView.removeConstraints(self.tempConstraints)
+            self.tempConstraints = []
+            self.menuHeight.append(self.menu.heightAnchor == CGFloat(0))
+            self.menuHeight.append(self.commentBody.bottomAnchor == self.contentView.bottomAnchor - CGFloat(8))
+            self.parent!.tableView.endUpdates()
+        })
     }
     
     func showMenuAnimated() {
@@ -492,52 +514,62 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     self.parent!.menuCell!.hideCommentMenu()
                     self.parent!.reloadHeights()
                     self.showCommentMenu()
+                    self.parent!.tableView.beginUpdates()
+                    UIView.animate(withDuration: 0.05, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                        self.menu.frame.size.height += 45
+                    }, completion: { (_) in
+                        self.parent!.tableView.endUpdates()
+                    })
                     self.parent!.menuId = self.comment!.getIdentifier()
-                    self.parent!.reloadHeights()
                 }
             }
         } else {
             self.showCommentMenu()
+            self.parent!.tableView.beginUpdates()
+            UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                self.menu.frame.size.height += 45
+            }, completion: { (_) in
+                self.parent!.tableView.endUpdates()
+            })
             parent!.menuId = comment!.getIdentifier()
-            parent!.reloadHeights()
         }
     }
     
     func showCommentMenu() {
         upvoteButton = UIButton.init(type: .custom).then({
             if ActionStates.getVoteDirection(s: comment!) == .up {
-                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor), for: .normal)
+                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true), for: .normal)
+                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControl.Event.touchUpInside)
         })
         downvoteButton = UIButton.init(type: .custom).then({
             if ActionStates.getVoteDirection(s: comment!) == .down {
-                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor), for: .normal)
+                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true).getCopy(withColor: ColorUtil.downvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true), for: .normal)
+                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControl.Event.touchUpInside)
         })
         replyButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "reply")?.navIcon(true), for: .normal)
+            $0.setImage(UIImage.init(named: "reply")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControl.Event.touchUpInside)
         })
         moreButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(true), for: .normal)
+            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControl.Event.touchUpInside)
         })
         editButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "edit")?.navIcon(true), for: .normal)
+            $0.setImage(UIImage.init(named: "edit")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         })
         deleteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "delete")?.navIcon(true), for: .normal)
+            $0.setImage(UIImage.init(named: "delete")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControl.Event.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "mod")?.navIcon(true), for: .normal)
+            $0.setImage(UIImage.init(named: "mod")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControl.Event.touchUpInside)
         })
         
@@ -581,30 +613,45 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             updateDepth()
         }
         
-        NSLayoutConstraint.deactivate(menuHeight)
-        menuHeight = batch {
-            menu.heightAnchor == CGFloat(45)
-            menu.horizontalAnchors == contentView.horizontalAnchors
-            menu.bottomAnchor == contentView.bottomAnchor
-            title.bottomAnchor == menu.topAnchor - CGFloat(8)
-            menu.topAnchor == title.bottomAnchor + CGFloat(8)
-            if body != nil {
-                body!.heightAnchor == CGFloat(0)
+        NSLayoutConstraint.deactivate(self.menuHeight)
+        NSLayoutConstraint.deactivate(self.oldConstraints)
+        oldConstraints = []
+        self.menuHeight = batch {
+            self.menu.heightAnchor <= CGFloat(45)
+            self.menu.horizontalAnchors == self.contentView.horizontalAnchors
+            self.menu.bottomAnchor == self.contentView.bottomAnchor
+            self.menu.topAnchor == self.commentBody.bottomAnchor + CGFloat(8)
+            if self.body != nil {
+                self.body!.heightAnchor == CGFloat(0)
             }
-            reply.heightAnchor == CGFloat(0)
+            self.reply.heightAnchor == CGFloat(0)
         }
+        
         self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
         menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
     }
     
-    func hideCommentMenu() {
+    func hideCommentMenu(_ doBody: Bool = true) {
         depth = oldDepth
-        menu.isHidden = true
         reply.isHidden = true
         NSLayoutConstraint.deactivate(menuHeight)
+        NSLayoutConstraint.deactivate(oldConstraints)
+        menu.isHidden = true
+        if !doBody {
+            tempConstraints = batch {
+                self.menu.heightAnchor <= CGFloat(45)
+                self.menu.horizontalAnchors == self.contentView.horizontalAnchors
+                self.menu.bottomAnchor == self.contentView.bottomAnchor
+                self.menu.topAnchor == self.commentBody.bottomAnchor + CGFloat(8)
+            }
+        }
+        
+        oldConstraints = []
         menuHeight = batch {
-            title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
-            menu.heightAnchor == CGFloat(0)
+            if doBody {
+                commentBody.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
+                menu.heightAnchor == CGFloat(0)
+            }
             if body != nil {
                 body!.heightAnchor == CGFloat(0)
             }
@@ -813,8 +860,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
-            title.bottomAnchor == reply.topAnchor - CGFloat(8)
-            reply.topAnchor == title.bottomAnchor + CGFloat(8)
+            reply.topAnchor == commentBody.bottomAnchor + CGFloat(8)
             reply.bottomAnchor == contentView.bottomAnchor
             reply.horizontalAnchors == contentView.horizontalAnchors
             body!.horizontalAnchors == reply.horizontalAnchors + CGFloat(8)
@@ -842,8 +888,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             body!.text = comment!.body.decodeHTML()
         }
 
+        self.parent!.tableView.beginUpdates()
         body!.sizeToFitHeight()
-        parent!.prepareReply()
+        self.parent!.tableView.endUpdates()
+
         toolbar = ToolbarTextView.init(textView: body!, parent: parent!)
         body!.becomeFirstResponder()
     }
@@ -1193,7 +1241,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         title.leftAnchor == sideView.rightAnchor + CGFloat(12)
         title.rightAnchor == contentView.rightAnchor - CGFloat(4)
-        
+        commentBody.topAnchor == title.bottomAnchor
+        commentBody.leftAnchor == sideView.rightAnchor + CGFloat(12)
+        commentBody.rightAnchor == contentView.rightAnchor - CGFloat(4)
+
         childrenCount.topAnchor == topViewSpace.bottomAnchor + CGFloat(4)
         childrenCount.rightAnchor == contentView.rightAnchor - CGFloat(4)
         sideView.verticalAnchors == contentView.verticalAnchors
@@ -1202,6 +1253,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         updateDepth()
         menu.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         title.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+        commentBody.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         reply.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
     }
     
@@ -1239,11 +1291,19 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             self.title.addGestureRecognizer(tapGestureRecognizer)
             
+            let tapGestureRecognizer2 = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
+            tapGestureRecognizer2.cancelsTouchesInView = false
+            tapGestureRecognizer2.delegate = self
+            if dtap != nil {
+                tapGestureRecognizer2.require(toFail: dtap!)
+            }
+            self.commentBody.addGestureRecognizer(tapGestureRecognizer2)
+
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
             long.delegate = self
             long.cancelsTouchesInView = false
-            title.parentLongPress = long
+            commentBody.parentLongPress = long
             self.addGestureRecognizer(long)
             
             if SettingValues.commentActionForceTouch != .PARENT_PREVIEW && SettingValues.commentActionForceTouch != .NONE {
@@ -1294,7 +1354,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             marginTop = 8
         }
         
-        if !title.ignoreHeight {
+        if !commentBody.ignoreHeight {
             marginTop = 0
         }
         
@@ -1305,10 +1365,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Load \(more.count) more</p>", fontSize: 16, submission: false, accentColor: .white)
         }
         
-        title.setTextWithTitleHTML(attr, htmlString: "")
+        title.attributedText = attr
+        commentBody.clearOverflow()
+        commentBody.firstTextView.isHidden = true
         NSLayoutConstraint.deactivate(menuHeight)
+        NSLayoutConstraint.deactivate(oldConstraints)
+        oldConstraints = []
         menuHeight = batch {
-            title.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
+            commentBody.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
             menu.heightAnchor == CGFloat(0)
             if body != nil {
                 body!.heightAnchor == CGFloat(0)
@@ -1330,7 +1394,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func animateMore() {
         loading = true
         
-        title.setData(htmlString: "Loading...")
+        commentBody.setData(htmlString: "Loading...")
         //todo possibly animate?
     }
 
@@ -1396,15 +1460,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = 0
         }
         
-        if title.ignoreHeight {
-            title.estimatedWidth = (parent.view.frame.size.width ) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) - CGFloat(16)
+        if commentBody.ignoreHeight {
+            commentBody.estimatedWidth = (parent.view.frame.size.width ) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) - CGFloat(16)
         }
 
         if depth == 1 {
             marginTop = 8
         }
         
-        if !title.ignoreHeight {
+        if !commentBody.ignoreHeight {
             marginTop = 0
             self.depth = 0
             sideWidth = 8
@@ -1576,11 +1640,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         paragraphStyle.lineSpacing = 1.5
         infoString.yy_paragraphStyle = paragraphStyle
 
-        title.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
+        commentBody.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
-            title.setTextWithTitleHTML(infoString, text, htmlString: comment.htmlText)
+            title.attributedText = infoString
+            commentBody.firstTextView.isHidden = false
+            commentBody.clearOverflow()
+            commentBody.setTextWithTitleHTML(NSMutableAttributedString(), text, htmlString: comment.htmlText)
         } else {
-            title.setAttributedString(infoString)
+            title.attributedText = infoString
+            commentBody.clearOverflow()
+            commentBody.firstTextView.isHidden = true
         }
     }
 

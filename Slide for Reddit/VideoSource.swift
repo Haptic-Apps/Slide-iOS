@@ -30,7 +30,7 @@ class GfycatVideoSource: VideoSource {
         if !(name.startsWith("/")) {
             name = "/" + name
         }
-        if name.contains("-max") {
+        if name.contains("-") {
             name = name.split("-")[0]
         }
         name = name.split(".")[0]

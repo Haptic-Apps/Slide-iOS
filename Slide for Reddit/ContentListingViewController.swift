@@ -593,7 +593,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
 
     func readLater(_ cell: LinkCellView) {
         guard cell.link != nil else {
-            fatalError("Cell must have a link!")
+            return
         }
 
         if self is ReadLaterViewController {
@@ -615,13 +615,11 @@ extension ContentListingViewController: LinkCellViewDelegate {
                 }
             }
         } else {
-            ReadLater.toggleReadLater(link: link)
+            ReadLater.toggleReadLater(link: cell.link!)
             if #available(iOS 10.0, *) {
                 HapticUtility.hapticActionComplete()
             }
-            cell.refresh()
         }
-
         cell.refresh()
     }
 

@@ -151,6 +151,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        CachedTitle.titles.removeAll()
 
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
@@ -977,10 +978,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         //todo save realm
         DispatchQueue.main.async {
             if !indexPaths.isEmpty {
-                self.flowLayout.reset()
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
-                }, completion: nil)
+                }, completion: { (_) in
+                    self.flowLayout.reset()
+                })
             }
         }
     }
@@ -1008,7 +1010,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.flowLayout.reset()
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
-                }, completion: nil)
+                }, completion: { (_) in
+                    self.flowLayout.reset()
+                })
             }
         }
         
@@ -2393,6 +2397,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             }
 
             self.flowLayout.reset()
+            self.tableView.isUserInteractionEnabled = false
 
             tableView.performBatchUpdates({
                 self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
@@ -2404,7 +2409,9 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     } catch {
                     }
                 })
-            }, completion: nil)
+            }, completion: { (_) in
+                self.tableView.isUserInteractionEnabled = true
+            })
 
         } catch {
 
@@ -2417,7 +2424,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func readLater(_ cell: LinkCellView) {
         guard let link = cell.link else {
-            fatalError("Cell must have a link!")
+            return
         }
 
         ReadLater.toggleReadLater(link: link)
