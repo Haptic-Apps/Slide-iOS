@@ -610,16 +610,6 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                     let oldSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
                     let oldSubSectionName = self.subsSource.sortedSectionTitles[oldSubIndex.section]
                     self.subsSource.reload()
-                    let newSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
-                    let newSubSectionName = self.subsSource.sortedSectionTitles[newSubIndex.section]
-
-                    // Add new section if it doesn't exist
-                    if let newSection = self.subsSource.sections[newSubSectionName],
-                        newSection.count == 1,
-                        newSection[0] == sub {
-                        self.tableView.insertSections([newSubIndex.section], with: .automatic)
-                    }
-
                     self.tableView.deleteRows(at: [oldSubIndex], with: .automatic)
                     
                     // Remove old section if it's gone
@@ -627,12 +617,16 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                         self.tableView.deleteSections([oldSubIndex.section], with: .automatic)
                     }
                     self.tableView.endUpdates()
+                    self.tableView.reloadData()
                 }
             }
             pin.backgroundColor = GMColor.red500Color()
             return [pin]
         } else {
             let pin = UITableViewRowAction(style: .normal, title: "Pin") { _, _ in
+                if Subscriptions.pinned.filter({ $0.lowercased() == sub.lowercased() }).count > 0 {
+                    return
+                }
                 var newPinned = Subscriptions.pinned
                 newPinned.append(sub)
                 Subscriptions.setPinned(name: AccountController.currentName, subs: newPinned) {
@@ -659,6 +653,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
                     }
 
                     self.tableView.endUpdates()
+                    self.tableView.reloadData()
                 }
             }
             pin.backgroundColor = GMColor.yellow500Color()

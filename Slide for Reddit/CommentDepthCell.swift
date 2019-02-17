@@ -654,7 +654,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             tempConstraints = batch {
                 self.menu.heightAnchor <= CGFloat(45)
                 self.menu.horizontalAnchors == self.contentView.horizontalAnchors
-                self.menu.bottomAnchor == self.contentView.bottomAnchor
                 self.menu.topAnchor == self.commentBody.bottomAnchor + CGFloat(8)
             }
         }

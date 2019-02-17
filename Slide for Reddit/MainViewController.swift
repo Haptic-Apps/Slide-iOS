@@ -1146,10 +1146,10 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
         let bounds = context.bounds
         let attributes = MDCTabBarIndicatorAttributes()
         let underlineFrame = CGRect.init(x: bounds.minX,
-                                         y: bounds.height - 7,
+                                         y: bounds.height - (UIDevice.current.userInterfaceIdiom == .pad ? 9 : 7),
                                          width: bounds.width,
-                                         height: UIDevice.current.userInterfaceIdiom == .pad ? 8 : 5)
-        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIDevice.current.userInterfaceIdiom == .pad ? UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight, UIRectCorner.bottomLeft, UIRectCorner.bottomRight) : UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
+                                         height: UIDevice.current.userInterfaceIdiom == .pad ? 4 : 5)
+        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIDevice.current.userInterfaceIdiom == .pad ? UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight, UIRectCorner.bottomLeft, UIRectCorner.bottomRight) : UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: UIDevice.current.userInterfaceIdiom == .pad ? CGSize.init(width: 2, height: 2) : CGSize.init(width: 8, height: 8))
         return attributes
     }
 }
