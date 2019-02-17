@@ -489,12 +489,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let oldLocation = parent!.tableView.contentOffset
         parent!.menuId = nil
         self.hideCommentMenu(false)
-        var newFrame = self.frame
-        newFrame.size.height -= 40
+        var newFrame = self.menu.frame
+        newFrame.size.height = 0
         UIView.animate(withDuration: 0.05, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-            self.frame = newFrame
-            self.setNeedsLayout()
-            self.layoutIfNeeded()
+            self.menu.frame = newFrame
         }, completion: { (_) in
             self.contentView.removeConstraints(self.tempConstraints)
             self.tempConstraints = []
@@ -502,9 +500,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.menuHeight.append(self.commentBody.bottomAnchor == self.contentView.bottomAnchor - CGFloat(8))
             self.parent!.reloadHeightsNone()
             if oldLocation != CGPoint.zero {
-                var newLocation = oldLocation
                 UIView.performWithoutAnimation {
-                    self.parent!.tableView.contentOffset = newLocation
+                    self.parent!.tableView.contentOffset = oldLocation
                 }
             }
         })
@@ -530,20 +527,21 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func doAnimatedMenu() {
         let oldLocation = parent!.tableView.contentOffset
         self.showCommentMenu()
-        var newFrame = self.frame
+        self.parent!.reloadHeightsNone()
+        if oldLocation != CGPoint.zero {
+            UIView.performWithoutAnimation {
+                self.parent!.tableView.contentOffset = oldLocation
+            }
+        }
+        var newFrame = self.menu.frame
+        newFrame.size.height = 0
+        self.menu.frame = newFrame
         newFrame.size.height += 40
-        UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-            self.frame = newFrame
+        UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+            self.menu.frame = newFrame
         }, completion: { (_) in
         })
         parent!.menuId = comment!.getIdentifier()
-        parent!.reloadHeightsNone()
-        if oldLocation != CGPoint.zero {
-            var newLocation = oldLocation
-            UIView.performWithoutAnimation {
-                self.parent!.tableView.contentOffset = newLocation
-            }
-        }
     }
     
     func showCommentMenu() {
