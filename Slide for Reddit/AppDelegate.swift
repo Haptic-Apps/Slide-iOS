@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import AVKit
 import BiometricAuthentication
 import RealmSwift
 import reddift
@@ -222,6 +223,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
         UserDefaults.standard.synchronize()
         #endif
+        
+        //Stop first video from muting audio
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.ambient, options: [])
+        } catch {
+            
+        }
         
         return true
     }

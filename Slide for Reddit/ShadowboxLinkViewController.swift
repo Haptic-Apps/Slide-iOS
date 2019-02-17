@@ -37,7 +37,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     var content: Object?
     var baseURL: URL?
 
-    var titleLabel = YYLabel.init(frame: CGRect.zero)
+    var titleLabel: YYLabel!
 
     var comment = UIImageView()
     var upvote = UIImageView()
@@ -81,11 +81,6 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         } else {
             type = ContentType.getContentType(baseUrl: baseURL)
         }
-        configureView()
-        configureLayout()
-        
-        populateData()
-        doBackground()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -453,6 +448,14 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        if titleLabel == nil {
+            configureView()
+            configureLayout()
+            
+            populateData()
+            doBackground()
+            titleLabel.preferredMaxLayoutWidth = self.view.frame.size.width - 24
+        }
         super.viewWillAppear(animated)
         doBackground()
         if !populated {

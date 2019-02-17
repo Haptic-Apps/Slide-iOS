@@ -86,7 +86,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         configureLayout()
         connectActions()
 
-        loadContent()
         handleHideUI()
         
         volume.barTintColor = .white
@@ -119,11 +118,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var loaded = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if loaded {
+        if loaded && ((parent is ShadowboxLinkViewController) || (parent is AlbumViewController)) {
             displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
             displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
             displayLink?.isPaused = false
             videoView.player?.play()
+        } else {
+            loadContent()
         }
     }
 
@@ -149,11 +150,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.displayLink = nil
         self.videoView.player?.replaceCurrentItem(with: nil)
         self.videoView.player = nil
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
-        } catch {
-            NSLog(error.localizedDescription)
+        
+        if !(parent is ShadowboxLinkViewController) && !(parent is AlbumViewController) {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+            } catch {
+                NSLog(error.localizedDescription)
+            }
         }
     }
 
@@ -439,14 +443,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func loadContent() {
 
-        //Prevent video from stopping system background audio
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch let error as NSError {
-            print(error)
-        }
-
         // Load Youtube View
         if isYoutubeView {
             showSpinner()
@@ -570,6 +566,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
 
     func playVideo(_ url: String = "") {
+        //Prevent video from stopping system background audio
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let error as NSError {
+            print(error)
+        }
         self.setProgressViewVisible(false)
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true //todo maybe download videos in the future?
@@ -580,6 +583,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         videoView.player?.play()
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
+        self.loaded = true
     }
     
     var handlingPlayerItemDidreachEnd = false
@@ -907,7 +911,6 @@ extension VideoMediaViewController {
                     NSLog(error.localizedDescription)
                 }
             }
-            self.loaded = true
         }
 
         if !sliderBeingUsed {
