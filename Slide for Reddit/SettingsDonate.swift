@@ -153,7 +153,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
 
         bagel.topAnchor == about.bottomAnchor + 16
         coffee.topAnchor == bagel.bottomAnchor + 12
-        lunch.topAnchor == lunch.bottomAnchor + 12
+        lunch.topAnchor == coffee.bottomAnchor + 12
         bagel.heightAnchor == 45
         coffee.heightAnchor == 45
         lunch.heightAnchor == 45
@@ -164,7 +164,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         let rect = about.textRect(forBounds: CGRect(x: 0, y: 0, width: self.view.frame.size.width - 24, height: CGFloat.greatestFiniteMagnitude), limitedToNumberOfLines: 0)
         
         self.view.addSubview(aboutArea)
-        self.preferredContentSize = 45 * 3 + 12 * 3 + 16
+        self.preferredContentSize = CGSize(width: self.view.frame.size.width, height: CGFloat(45 * 3 + 12 * 3 + 16 + rect.height + 16))
         aboutArea.edgeAnchors == self.view.edgeAnchors
     }
     
