@@ -26,6 +26,9 @@ class IAPHandler: NSObject {
     
     let PRO = "me.ccrama.pro.base"
     let PRO_DONATE = "me.ccrama.pro.donate"
+    let TIPA = "3tip"
+    let TIPB = "5tip"
+    let TIPC = "10tip"
 
     private var productID = ""
     private var productsRequest = SKProductsRequest()
@@ -67,7 +70,7 @@ class IAPHandler: NSObject {
     func fetchAvailableProducts() {
         
         // Put here your IAP Products ID's
-        let productIdentifiers = NSSet(objects: PRO, PRO_DONATE)
+        let productIdentifiers = NSSet(objects: PRO, PRO_DONATE, TIPA, TIPB, TIPC)
         
         productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers as! Set<String>)
         productsRequest.delegate = self
