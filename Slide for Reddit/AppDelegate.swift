@@ -241,7 +241,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     var statusBar = UIView()
-    var splitVC = UISplitViewController()
+    var splitVC = CustomSplitController()
 
     /**
      Rebuilds the nav stack for the currently selected App Mode (split, multi column, etc.)
@@ -769,4 +769,14 @@ extension Session {
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
 	return input.rawValue
+}
+
+class CustomSplitController: UISplitViewController {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
 }

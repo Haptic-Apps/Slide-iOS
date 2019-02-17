@@ -625,7 +625,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         tabBar.backgroundColor = .clear
         tabBar.sizeToFit()
         //self.viewToMux = self.tabBar
-        
         self.navigationItem.titleView = tabBar
         
         for item in tabBar.items {
@@ -1149,8 +1148,8 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
         let underlineFrame = CGRect.init(x: bounds.minX,
                                          y: bounds.height - 7,
                                          width: bounds.width,
-                                         height: 5)
-        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
+                                         height: UIDevice.current.userInterfaceIdiom == .pad ? 8 : 5)
+        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIDevice.current.userInterfaceIdiom == .pad ? UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight, UIRectCorner.bottomLeft, UIRectCorner.bottomRight) : UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: CGSize.init(width: 8, height: 8))
         return attributes
     }
 }
