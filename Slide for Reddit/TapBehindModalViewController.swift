@@ -13,6 +13,8 @@ import Foundation
 
 class TapBehindModalViewController: UINavigationController, UIGestureRecognizerDelegate {
     private var tapOutsideRecognizer: UITapGestureRecognizer!
+    
+    public var closeCallback: (() -> Void)?
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -26,9 +28,9 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
         }
     }
     
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        closeCallback?()
         
         if self.tapOutsideRecognizer != nil {
             self.view.window?.removeGestureRecognizer(self.tapOutsideRecognizer)

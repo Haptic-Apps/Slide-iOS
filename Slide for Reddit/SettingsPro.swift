@@ -6,6 +6,7 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import BiometricAuthentication
 import LicensesViewController
 import MessageUI
@@ -32,6 +33,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        tableView?.reloadData()
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -46,17 +48,25 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         navigationController?.setToolbarHidden(true, animated: false)
-        doCells()
     }
 
     override func loadView() {
         super.loadView()
     }
     
+    var cellsDone = false
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !cellsDone {
+            cellsDone = true
+            doCells()
+            tableView?.reloadData()
+        }
+    }
+    
     var three = UILabel()
     var six = UILabel()
-    var purchasePro = UILabel()
-    var purchaseBundle = UILabel()
 
     func doCells(_ reset: Bool = true) {
         self.view.backgroundColor = ColorUtil.backgroundColor
@@ -100,8 +110,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.custom.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon()
         self.custom.imageView?.tintColor = ColorUtil.fontColor
         
-        self.themes.textLabel?.text = "More base themes"
-        self.themes.detailTextLabel?.text = "Unlocks Sepia and Deep themes"
+        self.themes.textLabel?.text = "Custom base themes"
+        self.themes.detailTextLabel?.text = "Unlocks powerful theme customization options"
         self.themes.backgroundColor = ColorUtil.Theme.DEEP.backgroundColor
         self.themes.detailTextLabel?.numberOfLines = 0
         self.themes.detailTextLabel?.textColor = .white
@@ -118,36 +128,38 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.restore.detailTextLabel?.textColor = GMColor.lightGreen300Color()
         self.restore.detailTextLabel?.text = "Restore your purchase!"
         
-        let about = PaddingLabel(frame: CGRect.init(x: 0, y: 200, width: self.tableView.frame.size.width, height: 30))
-        about.font = UIFont.systemFont(ofSize: 16)
-        about.backgroundColor = ColorUtil.foregroundColor
+        let aboutArea = UIView()
+        let about = UILabel(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 30))
+        about.font = UIFont.systemFont(ofSize: 14)
+        aboutArea.backgroundColor = ColorUtil.foregroundColor
         about.textColor = ColorUtil.fontColor
-        about.text = "Upgrade to Slide Pro to enjoy awesome new features while supporting ad-free and open source software!\n\nI'm an indie software developer currently studying at university, and every donation helps keep Slide going :)\n\n\n\n"
+        about.text = "Upgrade to Slide Pro to enjoy some awesome new features while supporting ad-free and open source software!\n\nSlide is my side project while attending university full-time, and every donation helps keep Slide going 😊"
         about.numberOfLines = 0
         about.textAlignment = .center
         about.lineBreakMode = .byClipping
         about.sizeToFit()
-        three = UILabel(frame: CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
+        
+        three = UILabel(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45))
 
-        three.text = "..."
+        three.text = "Go pro for $4.99"
         three.backgroundColor = GMColor.lightGreen300Color()
         three.layer.cornerRadius = 22.5
         three.clipsToBounds = true
         three.numberOfLines = 0
         three.lineBreakMode = .byWordWrapping
         three.textColor = .white
-        three.font = UIFont.boldSystemFont(ofSize: 20)
+        three.font = UIFont.boldSystemFont(ofSize: 16)
         three.textAlignment = .center
         
-        six = UILabel(frame: CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 160, width: 100, height: 45))
-        six.text = "..."
+        six = UILabel(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45))
+        six.text = "Go pro and donate for $7.99"
         six.backgroundColor = GMColor.lightBlue300Color()
         six.layer.cornerRadius = 22.5
         six.clipsToBounds = true
         six.textColor = .white
         six.numberOfLines = 0
         six.lineBreakMode = .byWordWrapping
-        six.font = UIFont.boldSystemFont(ofSize: 20)
+        six.font = UIFont.boldSystemFont(ofSize: 16)
         six.textAlignment = .center
         
         self.shadowbox.textLabel?.text = "Shadowbox mode"
@@ -195,27 +207,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.autocache.imageView?.tintColor = ColorUtil.fontColor
         self.autocache.detailTextLabel?.textColor = ColorUtil.fontColor
         
-        purchasePro = UILabel(frame: CGRect.init(x: 0, y: -30, width: (self.view.frame.size.width / 2), height: 200))
-        purchasePro.backgroundColor = ColorUtil.foregroundColor
-        purchasePro.text = "Purchase\nPro"
-        purchasePro.textAlignment = .center
-        purchasePro.textColor = ColorUtil.fontColor
-        purchasePro.font = UIFont.boldSystemFont(ofSize: 18)
-        purchasePro.numberOfLines = 0
-        purchasePro.addSubview(three)
-        purchasePro.isUserInteractionEnabled = true
-        
-        purchaseBundle = UILabel(frame: CGRect.init(x: (self.view.frame.size.width / 2), y: -30, width: (self.view.frame.size.width / 2), height: 200))
-        purchaseBundle.backgroundColor = ColorUtil.foregroundColor
-        purchaseBundle.text = "Purchase Pro\nWith $3 Donation"
-        purchaseBundle.textAlignment = .center
-        purchaseBundle.textColor = ColorUtil.fontColor
-        purchaseBundle.numberOfLines = 0
-        purchaseBundle.font = UIFont.boldSystemFont(ofSize: 18)
-        purchaseBundle.addSubview(six)
-        purchaseBundle.isUserInteractionEnabled = true
-        
-        purchasePro.addTapGestureRecognizer {
+        three.addTapGestureRecognizer {
             IAPHandler.shared.purchaseMyProduct(index: 0)
             self.alertController = UIAlertController(title: "Upgrading you to Pro!\n\n\n", message: nil, preferredStyle: .alert)
 
@@ -228,7 +220,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             self.present(self.alertController!, animated: true, completion: nil)
         }
         
-        purchaseBundle.addTapGestureRecognizer {
+        six.addTapGestureRecognizer {
             IAPHandler.shared.purchaseMyProduct(index: 1)
             self.alertController = UIAlertController(title: "Upgrading you to Pro!\n\n\n", message: nil, preferredStyle: .alert)
 
@@ -241,18 +233,44 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             self.present(self.alertController!, animated: true, completion: nil)
         }
 
-        about.frame.size.height += 200
-        about.addSubview(purchasePro)
-        about.addSubview(purchaseBundle)
-        tableView.tableHeaderView = about
-        tableView.tableHeaderView?.isUserInteractionEnabled = true
+        aboutArea.addSubview(three)
+        aboutArea.addSubview(six)
+        aboutArea.addSubview(about)
+        three.horizontalAnchors == aboutArea.horizontalAnchors + 8
+        six.horizontalAnchors == aboutArea.horizontalAnchors + 8
+        
+        three.topAnchor == aboutArea.topAnchor + 16
+        six.topAnchor == three.bottomAnchor + 12
+        three.heightAnchor == 45
+        six.heightAnchor == 45
+        
+        about.horizontalAnchors == aboutArea.horizontalAnchors + 12
+        about.topAnchor == six.bottomAnchor + 12
+        about.bottomAnchor == aboutArea.bottomAnchor - 16
+        
+        let rect = about.textRect(forBounds: CGRect(x: 0, y: 0, width: self.tableView.frame.size.width - 24, height: CGFloat.greatestFiniteMagnitude), limitedToNumberOfLines: 0)
 
+        aboutArea.heightAnchor == 45 + 45 + 16 + 12 + 18 + 12 + rect.size.height
+        aboutArea.widthAnchor == self.tableView.frame.width
+        
+        self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
+        
+        let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: 45 + 45 + 16 + 12 + 16 + 12 + rect.size.height)
+        aboutArea.frame = frame
+        aboutArea.layoutIfNeeded()
+        let view = UIView(frame: aboutArea.frame)
+        view.addSubview(aboutArea)
+        self.tableView.tableHeaderView = view
+
+        tableView.tableHeaderView?.isUserInteractionEnabled = true
     }
     
     var alertController: UIAlertController?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.estimatedRowHeight = 200
+        self.tableView.rowHeight = UITableView.automaticDimension
         IAPHandler.shared.fetchAvailableProducts()
         IAPHandler.shared.getItemsBlock = {(items) in
             
@@ -271,9 +289,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 let price1Str = numberFormatter.string(from: items[0].price)
                 let price2Str = numberFormatter.string(from: items[1].price)
                 
-                let priceOldStr = "$4.99"
-                let priceOldStr2 = "$7.99"
-                if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
+                let priceOldStr = "Go pro for \(price1Str)"
+                let priceOldStr2 = "Go pro and donate for \(price2Str)"
+                /* todo this if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
                     //Is a sale
                     
                     let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
@@ -296,10 +314,10 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     
                     self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
                     self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                } else {
+                } else {*/
                     self.three.text = price1Str
                     self.six.text = price2Str
-                }
+                //}
             }
         }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
@@ -308,7 +326,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 strongSelf.alertController?.dismiss(animated: true, completion: nil)
                 let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                    strongSelf.navigationController?.dismiss(animated: true)
+                    self?.dismiss(animated: true, completion: nil)
                 })
                 alertView.addAction(action)
                 strongSelf.present(alertView, animated: true, completion: nil)
@@ -369,6 +387,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 SettingsPro.changed = true
                 let alertView = UIAlertController(title: "", message: "Slide has been successfully restored on your device! Thank you for supporting Slide :)", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                    self?.dismiss(animated: true, completion: nil)
                 })
                 alertView.addAction(action)
                 strongSelf.present(alertView, animated: true, completion: nil)
@@ -395,15 +414,15 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 0 : 70
+        return section == 0 ? 0 : 40
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return UITableView.automaticDimension
     }
 
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -414,16 +433,20 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         case 0:
             switch indexPath.row {
             case 0: return self.restore
-            case 1: return self.multicolumn
-            case 2: return self.shadowbox
-            case 3: return self.backup
-            case 4: return self.night
+            default: fatalError("Unknown row in section 0")
+            }
+        case 1:
+            switch indexPath.row {
+            case 0: return self.multicolumn
+            case 1: return self.shadowbox
+            case 2: return self.backup
+            case 3: return self.night
             case 5: return self.biometric
-            case 6: return self.themes
-//            case 7: return self.gallery
-            case 7: return self.autocache
-            case 8: return self.username
-
+            case 4: return self.themes
+            //            case 7: return self.gallery
+            case 6: return self.autocache
+            case 7: return self.username
+                
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -445,13 +468,13 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
+        label.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
         switch section {
-        case 0: label.text = "Slide Pro"
-        case 1: label.text = "Already a Slide supporter?"
+        case 0: label.text = "Already a Slide supporter?"
+        case 1: label.text = "Pro features"
         default: label.text = ""
         }
         return toReturn
@@ -459,23 +482,12 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 9
+        case 0: return 1
+        case 1: return 8
         default: fatalError("Unknown number of sections")
         }
     }
 
-}
-class PaddingLabel: UILabel {
-    
-    var topInset: CGFloat = 220.0
-    var bottomInset: CGFloat = 20.0
-    var leftInset: CGFloat = 20.0
-    var rightInset: CGFloat = 20.0
-    
-    override func drawText(in rect: CGRect) {
-        let insets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
-        super.drawText(in: rect.inset(by: insets))
-    }
 }
 
 // Helper function inserted by Swift 4.2 migrator.

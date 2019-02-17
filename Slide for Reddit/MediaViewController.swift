@@ -12,8 +12,29 @@ import SafariServices
 import SDWebImage
 import UIKit
 
-class MediaViewController: UIViewController, MediaVCDelegate {
+class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentationControllerDelegate {
     
+    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+        // Return no adaptive presentation style, use default presentation behavior
+        return .none
+    }
+    
+    func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
+        setAlphaOfBackgroundViews(alpha: 1)
+    }
+    
+    func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
+        setAlphaOfBackgroundViews(alpha: 0.25)
+    }
+    
+    func setAlphaOfBackgroundViews(alpha: CGFloat) {
+        let statusBarWindow = UIApplication.shared.value(forKey: "statusBarWindow") as? UIWindow
+        UIView.animate(withDuration: 0.2) {
+            statusBarWindow?.alpha = alpha
+            self.navigationController?.view.alpha = alpha
+        }
+    }
+
     override var prefersStatusBarHidden: Bool {
         return false
     }

@@ -16,7 +16,7 @@ import SloppySwiper
 import UIKit
 import XLActionController
 
-class SettingsViewController: UITableViewController, MFMailComposeViewControllerDelegate {
+class SettingsViewController: MediaTableViewController, MFMailComposeViewControllerDelegate {
     var swiper: SloppySwiper?
     var goPro: UITableViewCell = UITableViewCell()
 

@@ -89,9 +89,16 @@ public class VCPresenter {
             let newParent = TapBehindModalViewController.init(rootViewController: viewController)
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
-            
+            newParent.closeCallback = {
+                if parentViewController is MediaViewController {
+                    (parentViewController as! MediaViewController).setAlphaOfBackgroundViews(alpha: 1)
+                } else if parentViewController is MediaTableViewController {
+                    (parentViewController as! MediaTableViewController).setAlphaOfBackgroundViews(alpha: 1)
+                }
+            }
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = newParent
+            button.contextController = parentViewController
             button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
             button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -99,17 +106,20 @@ public class VCPresenter {
             
             let barButton = UIBarButtonItem.init(customView: button)
             
-            if parentViewController is MediaVCDelegate && false {
-                newParent.modalPresentationStyle = .custom
-                newParent.modalTransitionStyle = .crossDissolve
-                newParent.transitioningDelegate = parentViewController as! MediaVCDelegate
-                newParent.view.layer.cornerRadius = 15
-                newParent.view.clipsToBounds = true
-            } else {
-                newParent.modalPresentationStyle = .formSheet
-                newParent.modalTransitionStyle = .crossDissolve
+            newParent.modalPresentationStyle = .popover
+            newParent.view.backgroundColor = ColorUtil.backgroundColor
+            if let popover = newParent.popoverPresentationController {
+                popover.sourceView = parentViewController.view
+                popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+                
+                popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
+                if parentViewController is MediaViewController {
+                    popover.delegate = (parentViewController as! MediaViewController)
+                } else if parentViewController is MediaTableViewController {
+                    popover.delegate = (parentViewController as! MediaTableViewController)
+                }
             }
-
+            
             viewController.navigationItem.leftBarButtonItems = [barButton]
         
             parentViewController.present(newParent, animated: true, completion: nil)
@@ -123,6 +133,11 @@ public class VCPresenter {
     }
 
     @objc public static func handleCloseNav(controller: UIButtonWithContext) {
+        if controller.contextController is MediaViewController {
+            (controller.contextController as! MediaViewController).setAlphaOfBackgroundViews(alpha: 1)
+        } else if controller.contextController is MediaTableViewController {
+            (controller.contextController as! MediaTableViewController).setAlphaOfBackgroundViews(alpha: 1)
+        }
         controller.parentController!.dismiss(animated: true)
     }
 
@@ -146,4 +161,5 @@ public class DefaultGestureDelegate: NSObject, UIGestureRecognizerDelegate {
 
 public class UIButtonWithContext: UIButton {
     public var parentController: UINavigationController?
+    public var contextController: UIViewController?
 }

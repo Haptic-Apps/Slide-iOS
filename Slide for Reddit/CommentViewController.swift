@@ -17,7 +17,7 @@ import YYText
 import UIKit
 import XLActionController
 
-class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate, UIPopoverPresentationControllerDelegate {
+class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate {
     
     func hide(index: Int) {
         if index >= 0 {
@@ -55,6 +55,21 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func getMenuShown() -> String? {
         return menuId
+    }
+    
+    override func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
+        self.setBackgroundView()
+    }
+    
+    func popoverPresentationControllerShouldDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) -> Bool {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.blackView.alpha = 0
+            self.blurView?.alpha = 0
+        }) { (_) in
+            self.blackView.removeFromSuperview()
+            self.blurView?.removeFromSuperview()
+        }
+        return true
     }
 
     func showFilterMenu(_ cell: LinkCellView) {
@@ -243,11 +258,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.contextNumber = context
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
-    }
-    
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        // Return no adaptive presentation style, use default presentation behavior
-        return .none
     }
     
     var parents: [String: String] = [:]
@@ -2711,20 +2721,6 @@ class ParentCommentViewController: UIViewController {
 
 extension CommentViewController: UIViewControllerPreviewingDelegate {
     
-    func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
-        self.setBackgroundView()
-    }
-    
-    func popoverPresentationControllerShouldDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) -> Bool {
-        UIView.animate(withDuration: 0.2, animations: {
-            self.blackView.alpha = 0
-            self.blurView?.alpha = 0
-        }) { (_) in
-            self.blackView.removeFromSuperview()
-            self.blurView?.removeFromSuperview()
-        }
-        return true
-    }
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         
         guard let indexPath = self.tableView.indexPathForRow(at: location) else {
@@ -2808,5 +2804,3 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         })
     }
 }
-
-

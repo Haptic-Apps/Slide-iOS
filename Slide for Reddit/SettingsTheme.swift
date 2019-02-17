@@ -10,7 +10,7 @@ import MKColorPicker
 import RLBAlertsPickers
 import UIKit
 
-class SettingsTheme: UITableViewController, ColorPickerViewDelegate {
+class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
     var tochange: SettingsViewController?
     var primary: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "primary")

@@ -219,7 +219,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         #if DEBUG
-        SettingValues.isPro = true
+        SettingValues.isPro = false
         UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
         UserDefaults.standard.synchronize()
         #endif
@@ -249,7 +249,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Window must exist when resetting the stack!")
         }
         let rootController: UIViewController!
-        if !UserDefaults.standard.bool(forKey: "firstOpen") {
+        if false && !UserDefaults.standard.bool(forKey: "firstOpen") { //disable this for now
             rootController = UINavigationController(rootViewController: SettingsWelcome())
         } else {
             if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
