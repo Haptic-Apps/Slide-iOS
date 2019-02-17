@@ -389,12 +389,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             AccountController.switchAccount(name: token.name)
             (UIApplication.shared.delegate as! AppDelegate).syncColors(subredditController: self)
         } else {
-            alertController = UIAlertController(title: nil, message: "Syncing subscriptions...\n\n", preferredStyle: .alert)
+            alertController = UIAlertController(title: "Syncing subscriptions...\n\n\n", message: nil, preferredStyle: .alert)
             
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             UserDefaults.standard.setValue(true, forKey: "done" + token.name)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.color = ColorUtil.fontColor
             spinnerIndicator.startAnimating()
             
             alertController?.view.addSubview(spinnerIndicator)

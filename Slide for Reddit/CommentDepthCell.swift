@@ -210,7 +210,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             AudioServicesPlaySystemSound(1519)
         }
         if !self.cancelled {
-            if SettingValues.swapLongPress {
+            if SettingValues.swapLongPress || self.isCollapsed {
                 //todo this is probably wrong
                 self.pushedSingleTap(nil)
             } else {
@@ -491,8 +491,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.hideCommentMenu(false)
         var newFrame = self.menu.frame
         newFrame.size.height = 0
-        UIView.animate(withDuration: 0.05, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
             self.menu.frame = newFrame
+            self.contentView.backgroundColor = ColorUtil.foregroundColor
         }, completion: { (_) in
             self.contentView.removeConstraints(self.tempConstraints)
             self.tempConstraints = []
@@ -526,7 +527,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func doAnimatedMenu() {
         let oldLocation = parent!.tableView.contentOffset
-        self.showCommentMenu()
+        self.showCommentMenu(false)
         self.parent!.reloadHeightsNone()
         if oldLocation != CGPoint.zero {
             UIView.performWithoutAnimation {
@@ -539,12 +540,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         newFrame.size.height += 40
         UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
             self.menu.frame = newFrame
+            self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((self.comment)!.subreddit)).withAlphaComponent(0.25))
         }, completion: { (_) in
         })
         parent!.menuId = comment!.getIdentifier()
     }
     
-    func showCommentMenu() {
+    func showCommentMenu(_ animate: Bool = true) {
         upvoteButton = UIButton.init(type: .custom).then({
             if ActionStates.getVoteDirection(s: comment!) == .up {
                 $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
@@ -636,7 +638,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.reply.heightAnchor == CGFloat(0)
         }
         
-        self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
+        if animate {
+            self.contentView.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
+        }
         menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
     }
     
@@ -645,7 +649,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         reply.isHidden = true
         NSLayoutConstraint.deactivate(menuHeight)
         NSLayoutConstraint.deactivate(oldConstraints)
-        menu.isHidden = true
+        menu.isHidden = doBody
         if !doBody {
             tempConstraints = batch {
                 self.menu.heightAnchor <= CGFloat(45)
@@ -667,7 +671,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             reply.heightAnchor == CGFloat(0)
         }
         updateDepth()
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        if doBody {
+            self.contentView.backgroundColor = ColorUtil.foregroundColor
+        }
     }
 
     var parent: CommentViewController?
@@ -738,11 +744,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     @objc func doEdit(_ sender: AnyObject) {
-        alertController = UIAlertController(title: nil, message: "Editing comment...\n\n", preferredStyle: .alert)
+        alertController = UIAlertController(title: "Editing comment...\n\n\n", message: nil, preferredStyle: .alert)
         
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.color = ColorUtil.fontColor
         spinnerIndicator.startAnimating()
         
         alertController?.view.addSubview(spinnerIndicator)
@@ -769,11 +775,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         let session = (UIApplication.shared.delegate as! AppDelegate).session
-        alertController = UIAlertController(title: nil, message: "Sending reply...\n\n", preferredStyle: .alert)
+        alertController = UIAlertController(title: "Sending reply...\n\n\n", message: nil, preferredStyle: .alert)
         
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.color = ColorUtil.fontColor
         spinnerIndicator.startAnimating()
         
         alertController?.view.addSubview(spinnerIndicator)

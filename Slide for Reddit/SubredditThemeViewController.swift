@@ -124,11 +124,11 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     @objc func sync(_ selector: AnyObject) {
         let defaults = UserDefaults.standard
-        alertController = UIAlertController(title: nil, message: "Syncing colors...\n\n", preferredStyle: .alert)
+        alertController = UIAlertController(title: "Syncing colors...\n\n\n", message: nil, preferredStyle: .alert)
 
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.color = ColorUtil.fontColor
         spinnerIndicator.startAnimating()
 
         alertController?.view.addSubview(spinnerIndicator)

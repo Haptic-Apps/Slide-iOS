@@ -819,16 +819,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text = [text1, text3]
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
         }
-        var first = false
-        for textField in text! {
-            if textField.isEditable && !first {
-                first = true
-                textField.becomeFirstResponder()
-            }
-            if ColorUtil.theme != .LIGHT {
-                textField.keyboardAppearance = .dark
-            }
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -868,6 +858,19 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
         let barButton = UIBarButtonItem.init(customView: button)
         navigationItem.leftBarButtonItem = barButton
+        
+        var first = false
+        for textField in text! {
+            if textField.isEditable && !first {
+                first = true
+                textField.becomeFirstResponder()
+            }
+            if !ColorUtil.theme.isLight() {
+                textField.keyboardAppearance = .dark
+            }
+        }
+        let bottomOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.size.height)
+        scrollView.setContentOffset(bottomOffset, animated: true)
     }
 
     @objc func close(_ sender: AnyObject) {
@@ -956,11 +959,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
 
         if type == .EDIT_SELFTEXT {
-            alertController = UIAlertController(title: nil, message: "Editing submission...\n\n", preferredStyle: .alert)
+            alertController = UIAlertController(title: "Editing submission...\n\n\n", message: nil, preferredStyle: .alert)
 
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.color = ColorUtil.fontColor
             spinnerIndicator.startAnimating()
 
             alertController?.view.addSubview(spinnerIndicator)
@@ -978,11 +981,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
 
         } else {
-            alertController = UIAlertController(title: nil, message: "Posting submission...\n\n", preferredStyle: .alert)
+            alertController = UIAlertController(title: "Posting submission...\n\n\n", message: nil, preferredStyle: .alert)
 
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.color = ColorUtil.fontColor
             spinnerIndicator.startAnimating()
 
             alertController?.view.addSubview(spinnerIndicator)
@@ -1064,10 +1067,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
         }
 
-        alertController = UIAlertController(title: nil, message: "Sending message...\n\n", preferredStyle: .alert)
+        alertController = UIAlertController(title: "Sending message...\n\n\n", message: nil, preferredStyle: .alert)
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.color = ColorUtil.fontColor
         spinnerIndicator.startAnimating()
 
         alertController?.view.addSubview(spinnerIndicator)
@@ -1111,10 +1114,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     func submitComment() {
         let body = text!.last!
 
-        alertController = UIAlertController(title: nil, message: "Posting comment...\n\n", preferredStyle: .alert)
+        alertController = UIAlertController(title: "Posting comment...\n\n\n", message: nil, preferredStyle: .alert)
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = UIColor.black
+        spinnerIndicator.color = ColorUtil.fontColor
         spinnerIndicator.startAnimating()
 
         alertController?.view.addSubview(spinnerIndicator)

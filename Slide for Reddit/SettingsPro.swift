@@ -217,11 +217,11 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         purchasePro.addTapGestureRecognizer {
             IAPHandler.shared.purchaseMyProduct(index: 0)
-            self.alertController = UIAlertController(title: nil, message: "Purchasing pro...\n\n", preferredStyle: .alert)
-            
+            self.alertController = UIAlertController(title: "Upgrading you to Pro!\n\n\n", message: nil, preferredStyle: .alert)
+
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = UIColor.black
+            spinnerIndicator.color = ColorUtil.fontColor
             spinnerIndicator.startAnimating()
             
             self.alertController?.view.addSubview(spinnerIndicator)
@@ -230,8 +230,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         purchaseBundle.addTapGestureRecognizer {
             IAPHandler.shared.purchaseMyProduct(index: 1)
-            self.alertController = UIAlertController(title: nil, message: "Purchasing pro with donation...\n\n", preferredStyle: .alert)
-            
+            self.alertController = UIAlertController(title: "Upgrading you to Pro!\n\n\n", message: nil, preferredStyle: .alert)
+
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
             spinnerIndicator.color = UIColor.black
