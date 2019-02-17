@@ -1090,7 +1090,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             return
         }
 
-        let attText = CachedTitle.getTitle(submission: link, full: full, true, false)
+        let attText = CachedTitle.getTitle(submission: link, full: full, false, false)
         let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
         title.textLayout = bounds
         title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
