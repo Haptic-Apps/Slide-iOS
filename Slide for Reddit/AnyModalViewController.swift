@@ -43,6 +43,7 @@ class AnyModalViewController: UIViewController {
     var baseURL: URL?
     var urlToLoad: URL?
     var spinnerIndicator = UIActivityIndicatorView()
+    var setOnce = false
 
     var menuButton = UIButton()
     var downloadButton = UIButton()
@@ -168,6 +169,14 @@ class AnyModalViewController: UIViewController {
                 showSpinner()
             }
             
+            //Prevent video from stopping system background audio
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch let error as NSError {
+                print(error)
+            }
+
             DispatchQueue.global(qos: .userInteractive).async {
                 videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
                     guard let strongSelf = self else { return }
@@ -179,12 +188,8 @@ class AnyModalViewController: UIViewController {
                         let avPlayerItem = AVPlayerItem(url: strongSelf.baseURL!)
                         strongSelf.videoView?.player = AVPlayer(playerItem: avPlayerItem)
                         strongSelf.embeddedPlayer = strongSelf.videoView!.player
+                        strongSelf.videoView?.player?.isMuted = SettingValues.muteVideosInModal
                         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
-                        do {
-                            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-                        } catch {
-                            NSLog(error.localizedDescription)
-                        }
                         strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
                         strongSelf.hideSpinner()
                         strongSelf.videoView?.player?.play()
@@ -388,6 +393,12 @@ class AnyModalViewController: UIViewController {
         self.embeddedPlayer?.isMuted = true
         toReturnTo?.videoView.player = self.embeddedPlayer
         stopDisplayLink()
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+        } catch {
+            NSLog(error.localizedDescription)
+        }
     }
     
     deinit {
@@ -413,6 +424,7 @@ class AnyModalViewController: UIViewController {
             try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
+            print(error.localizedDescription)
             NSLog(error.localizedDescription)
         }
 
@@ -733,8 +745,6 @@ extension AnyModalViewController: UIGestureRecognizerDelegate {
     }
 }
 
-var setOnce = false
-
 extension AnyModalViewController {
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         guard let player = videoView.player else {
@@ -747,7 +757,7 @@ extension AnyModalViewController {
                 muteButton.isHidden = false
             }
         }
-
+        
         if !setOnce {
             setOnce = true
 

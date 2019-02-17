@@ -266,10 +266,6 @@ class ModalMediaViewController: UIViewController {
         if #available(iOS 11.0, *) {
             self.setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
-        if videoView != nil {
-            videoView?.player?.play()
-            displayLink?.isPaused = false
-        }
     }
     
     deinit {
@@ -279,17 +275,16 @@ class ModalMediaViewController: UIViewController {
     func endVideos() {
         self.displayLink?.invalidate()
         self.displayLink = nil
+        if videoView != nil {
+            self.videoView!.player?.replaceCurrentItem(with: nil)
+            self.videoView!.player = nil
+        }
         do {
             try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
         } catch {
             NSLog(error.localizedDescription)
         }
-        if videoView == nil {
-            return
-        }
-        self.videoView!.player?.replaceCurrentItem(with: nil)
-        self.videoView!.player = nil
     }
 
     override func viewWillDisappear(_ animated: Bool) {

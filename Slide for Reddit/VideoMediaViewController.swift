@@ -23,7 +23,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
     let volumeHeight: CGFloat = 3
-    var setAudio = false
+    var setOnce = false
 
     var safeAreaInsets: UIEdgeInsets {
         if #available(iOS 11.0, tvOS 11.0, *) {
@@ -34,10 +34,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func subtleVolume(_ subtleVolume: SubtleVolume, willChange value: Double) {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-        } catch {
-            NSLog(error.localizedDescription)
+        if !self.muteButton.isHidden {
+            self.unmute()
         }
     }
     
@@ -83,7 +81,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         // Disable screen dimming due to inactivity
         UIApplication.shared.isIdleTimerDisabled = true
-
+        loaded = false
         configureViews()
         configureLayout()
         connectActions()
@@ -118,12 +116,15 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         displayLink = nil
     }
 
+    var loaded = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
-        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
-        displayLink?.isPaused = false
-        videoView.player?.play()
+        if loaded {
+            displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
+            displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
+            displayLink?.isPaused = false
+            videoView.player?.play()
+        }
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -146,17 +147,16 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     func endVideos() {
         self.displayLink?.invalidate()
         self.displayLink = nil
+        self.videoView.player?.replaceCurrentItem(with: nil)
+        self.videoView.player = nil
         do {
             try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
         } catch {
             NSLog(error.localizedDescription)
         }
-        self.videoView.player?.replaceCurrentItem(with: nil)
-        self.videoView.player = nil
     }
 
-    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
@@ -439,13 +439,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func loadContent() {
 
-        // Prevent video from stopping system background audio
-//        do {
-//            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-//            try AVAudioSession.sharedInstance().setActive(true)
-//        } catch let error as NSError {
-//            print(error)
-//        }
+        //Prevent video from stopping system background audio
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let error as NSError {
+            print(error)
+        }
 
         // Load Youtube View
         if isYoutubeView {
@@ -454,17 +454,10 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             youtubeView.isHidden = false
             progressView.isHidden = true
             loadYoutube(url: data.baseURL!.absoluteString)
-            do {
-                try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-            } catch {
-                NSLog(error.localizedDescription)
-            }
             return
         } else {
             youtubeView.isHidden = true
         }
-
-        self.videoView.player?.isMuted = SettingValues.muteVideosInModal
 
         // Otherwise load AVPlayer
         let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.shouldAutoPlay())
@@ -583,6 +576,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         let playerItem = AVPlayerItem(url: SettingValues.shouldAutoPlay() ? URL(string: url)! : URL(fileURLWithPath: getKeyFromURL()))
         videoView.player = AVPlayer(playerItem: playerItem)
         videoView.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
+        self.videoView.player?.isMuted = SettingValues.muteVideosInModal
         videoView.player?.play()
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
@@ -913,6 +907,7 @@ extension VideoMediaViewController {
                     NSLog(error.localizedDescription)
                 }
             }
+            self.loaded = true
         }
 
         if !sliderBeingUsed {
@@ -933,14 +928,11 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         youtubeView.playVideo()
         scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000)
-        if !SettingValues.muteVideosInModal {
-            if SettingValues.modalVideosRespectHardwareMuteSwitch {
-                try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
-            } else {
-                try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-            }
-        } else {
-            try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            NSLog(error.localizedDescription)
         }
         hideSpinner()
     }

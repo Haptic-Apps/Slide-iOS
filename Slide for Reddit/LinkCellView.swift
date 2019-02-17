@@ -239,6 +239,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.lineBreakMode = .byWordWrapping
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             $0.backgroundColor = ColorUtil.foregroundColor
+            $0.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
             $0.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
                 text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
                     for attr in attrs {
@@ -1830,8 +1831,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             return
         }
 
-        if player.isMuted && sound.isHidden && SettingValues.muteInlineVideos {
-            sound.isHidden = false
+        let hasAudioTracks = (player.currentItem?.tracks.count ?? 1) > 1
+        
+        if hasAudioTracks {
+            if player.isMuted && sound.isHidden && SettingValues.muteInlineVideos {
+                sound.isHidden = false
+            }
         }
 
         if !setOnce {

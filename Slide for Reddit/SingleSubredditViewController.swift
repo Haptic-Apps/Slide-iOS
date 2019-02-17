@@ -1260,6 +1260,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     
     var page = 0
     var reset = false
+    var tries = 0
 
     func load(reset: Bool) {
         self.reset = reset
@@ -1358,10 +1359,15 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         
                                         self.tableView.contentOffset = CGPoint.init(x: 0, y: -64)
 
-                                        if self.links.isEmpty {
-                                            BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
+                                        if self.tries < 1 {
+                                            self.tries += 1
+                                            self.load(reset: true)
                                         } else {
-                                            BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
+                                            if self.links.isEmpty {
+                                                BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
+                                            } else {
+                                                BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
+                                            }
                                         }
                                         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
                                     } catch {
@@ -1370,7 +1376,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
                                 }
                     case .success(let listing):
-
+                        self.tries = 0
                         if reset {
                             self.links = []
                             self.page = 0
