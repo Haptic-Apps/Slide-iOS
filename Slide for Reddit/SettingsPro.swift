@@ -130,7 +130,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         let aboutArea = UIView()
         let about = UILabel(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 30))
-        about.font = UIFont.systemFont(ofSize: 14)
+        about.font = UIFont.systemFont(ofSize: 15)
         aboutArea.backgroundColor = ColorUtil.foregroundColor
         about.textColor = ColorUtil.fontColor
         about.text = "Upgrade to Slide Pro to enjoy some awesome new features while supporting ad-free and open source software!\n\nSlide is my side project while attending university full-time, and every donation helps keep Slide going 😊"
@@ -140,7 +140,6 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         about.sizeToFit()
         
         three = UILabel(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45))
-
         three.text = "Go pro for $4.99"
         three.backgroundColor = GMColor.lightGreen300Color()
         three.layer.cornerRadius = 22.5
@@ -385,7 +384,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                 UserDefaults.standard.synchronize()
                 SettingsPro.changed = true
-                let alertView = UIAlertController(title: "", message: "Slide has been successfully restored on your device! Thank you for supporting Slide :)", preferredStyle: .alert)
+                let alertView = UIAlertController(title: "", message: "Slide has been successfully restored on your device! Thank you for supporting Slide 🍻", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                     self?.dismiss(animated: true, completion: nil)
                 })

@@ -123,7 +123,11 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
     
     @objc func didPro(_ sender: AnyObject) {
-        let alert = UIAlertController.init(title: "Pro Supporter", message: "Thank you for supporting my work and going Pro :)\n\nIf you need any assistance with pro features, feel free to send me a message!", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: "Pro Supporter", message: "Thank you for supporting my work and going Pro 😊\n\nIf you need any assistance with pro features, feel free to send me a message!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Buy me a coffee!", style: .default, handler: { (_) in
+            VCPresenter.donateDialog(self)
+        }))
+        
         alert.addAction(UIAlertAction.init(title: "Email", style: .default, handler: { (_) in
             if MFMailComposeViewController.canSendMail() {
                 let mail = MFMailComposeViewController()

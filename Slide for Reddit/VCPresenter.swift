@@ -128,6 +128,47 @@ public class VCPresenter {
         return false
     }
 
+    public static func donateDialog(_ parentViewController: UIViewController) {
+        let viewController = SettingsDonate()
+        let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+        newParent.navigationBar.shadowImage = UIImage()
+        newParent.navigationBar.isTranslucent = false
+        newParent.closeCallback = {
+            if parentViewController is MediaViewController {
+                (parentViewController as! MediaViewController).setAlphaOfBackgroundViews(alpha: 1)
+            } else if parentViewController is MediaTableViewController {
+                (parentViewController as! MediaTableViewController).setAlphaOfBackgroundViews(alpha: 1)
+            }
+        }
+        let button = UIButtonWithContext.init(type: .custom)
+        button.parentController = newParent
+        button.contextController = parentViewController
+        button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
+        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
+        
+        let barButton = UIBarButtonItem.init(customView: button)
+        
+        newParent.modalPresentationStyle = .popover
+        newParent.view.backgroundColor = ColorUtil.backgroundColor
+        if let popover = newParent.popoverPresentationController {
+            popover.sourceView = parentViewController.view
+            popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+            
+            popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
+            if parentViewController is MediaViewController {
+                popover.delegate = (parentViewController as! MediaViewController)
+            } else if parentViewController is MediaTableViewController {
+                popover.delegate = (parentViewController as! MediaTableViewController)
+            }
+        }
+        
+        viewController.navigationItem.leftBarButtonItems = [barButton]
+        
+        parentViewController.present(newParent, animated: true, completion: nil)
+    }
+
     @objc public static func handleBackButton(controller: UIButtonWithContext) {
         controller.parentController!.popViewController(animated: true)
     }

@@ -110,6 +110,7 @@
 		BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE17A24D215FFE76002C6CE6 /* readlater.plist */; };
 		BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */; };
 		BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */; };
+		BE17EE172219FD7B0043185B /* SettingsDonate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE17EE162219FD7B0043185B /* SettingsDonate.swift */; };
 		BE1B57DE21CE965000FF6F98 /* ic_cottoncandy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */; };
 		BE1B57DF21CE965000FF6F98 /* ic_cottoncandy@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */; };
 		BE1B57E221CEFA9800FF6F98 /* ic_outrun@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E021CEFA9800FF6F98 /* ic_outrun@3x.png */; };
@@ -489,6 +490,7 @@
 		BE17A24D215FFE76002C6CE6 /* readlater.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = readlater.plist; sourceTree = "<group>"; };
 		BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterContributionLoader.swift; sourceTree = "<group>"; };
 		BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterViewController.swift; sourceTree = "<group>"; };
+		BE17EE162219FD7B0043185B /* SettingsDonate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDonate.swift; sourceTree = "<group>"; };
 		BE1B57DC21CE965000FF6F98 /* ic_cottoncandy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_cottoncandy@2x.png"; sourceTree = "<group>"; };
 		BE1B57DD21CE965000FF6F98 /* ic_cottoncandy@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_cottoncandy@3x.png"; sourceTree = "<group>"; };
 		BE1B57E021CEFA9800FF6F98 /* ic_outrun@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_outrun@3x.png"; sourceTree = "<group>"; };
@@ -950,6 +952,7 @@
 				09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */,
 				BE1DA5E52208EC59001C7DB4 /* SettingsUserTags.swift */,
 				096A7D162215EC920067106C /* SettingsAudio.swift */,
+				BE17EE162219FD7B0043185B /* SettingsDonate.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1917,6 +1920,7 @@
 				0984BE502114C4D50091C2E1 /* SlideInPresentationManager.swift in Sources */,
 				BE3B74372107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift in Sources */,
 				BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */,
+				BE17EE172219FD7B0043185B /* SettingsDonate.swift in Sources */,
 				0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */,
 				BE6EA6D91E1C1FC700E9E709 /* Video.swift in Sources */,
 				BE6EA6E61E1DA5CE00E9E709 /* ProfileContributionLoader.swift in Sources */,
