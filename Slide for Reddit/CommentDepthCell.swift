@@ -909,8 +909,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             var newLocation = oldLocation
             newLocation.y += 40
             UIView.performWithoutAnimation {
-                parent!.tableView.contentOffset = newLocation
                 body!.becomeFirstResponder()
+                parent!.tableView.contentOffset = newLocation
             }
         } else {
             body!.becomeFirstResponder()

@@ -269,9 +269,9 @@ class CachedTitle {
             let by = NSMutableAttributedString(string: "in ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
             
             let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-            authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(submission.crosspostAuthor)")])
+            authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(submission.crosspostAuthor)")!])
 
-            let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
+           // let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
             
             /* maybe enable this later
             if AccountController.currentName == submission.author {
@@ -298,12 +298,11 @@ class CachedTitle {
         }
 
         if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.nsfw && !full && !submission.body.trimmed().isEmpty {
-            let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
-            var text = submission.htmlBody.substring(0, length: length).trimmed()
+            let length = submission.body.indexOf("\n") ?? submission.body.length
+            let text = submission.body.substring(0, length: length).trimmed()
 
-            text = text.replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: "").trimmed()
-            let attr = TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit))
             if !text.isEmpty() {
+                let attr = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 14, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
                 infoString.append(NSAttributedString.init(string: "\n\n"))
                 infoString.append(attr)
             }

@@ -2450,6 +2450,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                     cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
                                 }, completion: { (_) in
                                     cell.expandSingle()
+                                    self.oldHeights.removeValue(forKey: id)
                                 })
                                 tableView.beginUpdates()
                                 tableView.endUpdates()
@@ -2481,6 +2482,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                     cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
                                 }, completion: { (_) in
                                     cell.expand()
+                                    self.oldHeights.removeValue(forKey: id)
                                 })
                             } else {
                                 cell.expand()

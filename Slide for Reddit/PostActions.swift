@@ -260,16 +260,14 @@ class PostActions: NSObject {
             }))
         }
         
-        if cell.link!.author == AccountController.currentName {
-            if cell.link!.stickied {
-                alertController.addAction(Action(ActionData(title: "Un-sticky", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
-                    self.modSticky(cell, sticky: false)
-                }))
-            } else {
-                alertController.addAction(Action(ActionData(title: "Sticky and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
-                    self.modSticky(cell, sticky: true)
-                }))
-            }
+        if cell.link!.stickied {
+            alertController.addAction(Action(ActionData(title: "Un-sticky", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+                self.modSticky(cell, sticky: false)
+            }))
+        } else {
+            alertController.addAction(Action(ActionData(title: "Sticky and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+                self.modSticky(cell, sticky: true)
+            }))
         }
         
         alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
