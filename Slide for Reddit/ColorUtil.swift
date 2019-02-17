@@ -31,8 +31,8 @@ extension UIColor {
 }
 
 public class ColorUtil {
-    static var theme = Theme.DARK
-    static var defaultTheme = Theme.DARK
+    static var theme = Theme.DEEP
+    static var defaultTheme = Theme.DEEP
     static var CUSTOM_FOREGROUND = "customForeground"
     static var CUSTOM_FONT = "customFont"
     static var CUSTOM_BACKGROUND = "customBackground"

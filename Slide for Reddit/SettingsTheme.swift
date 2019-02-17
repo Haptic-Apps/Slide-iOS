@@ -406,8 +406,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
-        setupViews()
-        UserDefaults.standard.synchronize()
+        self.setupViews()
         if SettingValues.reduceColor {
             self.primary.isUserInteractionEnabled = false
             self.primary.textLabel?.isEnabled = false
@@ -425,7 +424,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = ""
         }
-        self.tableView.reloadData(with: .automatic)
+        self.setupBaseBarColors()
+        self.tableView.reloadData()
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {

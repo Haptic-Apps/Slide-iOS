@@ -9,6 +9,7 @@
 import Anchorage
 import AVKit
 import BiometricAuthentication
+import DTCoreText
 import RealmSwift
 import reddift
 import SDWebImage
@@ -174,6 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
 
         SettingValues.initialize()
+        DTCoreTextFontDescriptor.asyncPreloadFontLookupTable()
         FontGenerator.initialize()
         AccountController.initialize()
         PostFilter.initialize()
