@@ -122,6 +122,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.title = YYLabel().then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment title"
+            $0.numberOfLines = 0
             $0.highlightTapAction = self.commentBody.touchLinkAction //todo this!!!
             $0.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         })
@@ -485,9 +486,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var tempConstraints = [NSLayoutConstraint]()
     func hideMenuAnimated() {
         parent!.menuCell = nil
+        let oldLocation = parent!.tableView.contentOffset
         parent!.menuId = nil
         self.hideCommentMenu(false)
-        self.parent!.tableView.beginUpdates()
         var newFrame = self.frame
         newFrame.size.height -= 40
         UIView.animate(withDuration: 0.05, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
@@ -499,7 +500,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.tempConstraints = []
             self.menuHeight.append(self.menu.heightAnchor == CGFloat(0))
             self.menuHeight.append(self.commentBody.bottomAnchor == self.contentView.bottomAnchor - CGFloat(8))
-            self.parent!.tableView.endUpdates()
+            self.parent!.reloadHeightsNone()
+            if oldLocation != CGPoint.zero {
+                var newLocation = oldLocation
+                UIView.performWithoutAnimation {
+                    self.parent!.tableView.contentOffset = newLocation
+                }
+            }
         })
     }
     
@@ -512,26 +519,30 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 self.contentView.endEditing(true)
                 if finished {
                     self.parent!.menuCell!.hideCommentMenu()
-                    self.parent!.reloadHeights()
-                    self.showCommentMenu()
-                    self.parent!.tableView.beginUpdates()
-                    UIView.animate(withDuration: 0.05, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-                        self.menu.frame.size.height += 45
-                    }, completion: { (_) in
-                        self.parent!.tableView.endUpdates()
-                    })
-                    self.parent!.menuId = self.comment!.getIdentifier()
+                    self.doAnimatedMenu()
                 }
             }
         } else {
-            self.showCommentMenu()
-            self.parent!.tableView.beginUpdates()
-            UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-                self.menu.frame.size.height += 45
-            }, completion: { (_) in
-                self.parent!.tableView.endUpdates()
-            })
-            parent!.menuId = comment!.getIdentifier()
+            doAnimatedMenu()
+        }
+    }
+    
+    func doAnimatedMenu() {
+        let oldLocation = parent!.tableView.contentOffset
+        self.showCommentMenu()
+        var newFrame = self.frame
+        newFrame.size.height += 40
+        UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+            self.frame = newFrame
+        }, completion: { (_) in
+        })
+        parent!.menuId = comment!.getIdentifier()
+        parent!.reloadHeightsNone()
+        if oldLocation != CGPoint.zero {
+            var newLocation = oldLocation
+            UIView.performWithoutAnimation {
+                self.parent!.tableView.contentOffset = newLocation
+            }
         }
     }
     
@@ -677,8 +688,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if completed {
                 self.parent?.isReply = false
                 self.replyDelegate!.discard()
-                self.showCommentMenu()
-                self.parent!.reloadHeights()
+                self.showMenuAnimated()
             }
         }
     }
@@ -837,6 +847,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     var replyDelegate: ReplyDelegate?
     @objc func reply(_ s: AnyObject) {
+        oldLocation = parent!.tableView.contentOffset
         if menu.isHidden {
             showMenu(s)
         }
@@ -888,12 +899,24 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             body!.text = comment!.body.decodeHTML()
         }
 
-        self.parent!.tableView.beginUpdates()
         body!.sizeToFitHeight()
-        self.parent!.tableView.endUpdates()
 
         toolbar = ToolbarTextView.init(textView: body!, parent: parent!)
-        body!.becomeFirstResponder()
+        oldConstraints = batch {
+            body!.heightAnchor == 40
+        }
+        
+        parent!.reloadHeightsNone()
+        if oldLocation != CGPoint.zero {
+            var newLocation = oldLocation
+            newLocation.y += 40
+            UIView.performWithoutAnimation {
+                parent!.tableView.contentOffset = newLocation
+                body!.becomeFirstResponder()
+            }
+        } else {
+            body!.becomeFirstResponder()
+        }
     }
 
     @objc func menu(_ s: AnyObject) {
@@ -1462,6 +1485,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         if commentBody.ignoreHeight {
             commentBody.estimatedWidth = (parent.view.frame.size.width ) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) - CGFloat(16)
+            title.preferredMaxLayoutWidth = commentBody.estimatedWidth
         }
 
         if depth == 1 {

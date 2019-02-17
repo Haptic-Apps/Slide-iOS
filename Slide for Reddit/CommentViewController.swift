@@ -379,7 +379,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.tableView.endUpdates()
         UIView.setAnimationsEnabled(true)
     }
-
+    
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
 
     }
