@@ -267,10 +267,8 @@ class SubredditReorderViewController: UITableViewController {
 
             let actionSheetController: UIAlertController = UIAlertController(title: "Remove subscriptions", message: "", preferredStyle: .alert)
 
-            var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
+            actionSheetController.addCancelButton()
+            var cancelActionButton = UIAlertAction()
 
             if AccountController.isLoggedIn {
                 cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { _ -> Void in

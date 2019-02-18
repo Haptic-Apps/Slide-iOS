@@ -1032,7 +1032,7 @@ extension VideoMediaViewController {
     }
     @objc func showTitle(_ sender: AnyObject) {
         let alertController = UIAlertController(title: "Caption", message: nil, preferredStyle: .alert)
-        alertController.addTextViewer(text: .text(data.text!))
+        alertController.addTextViewer(attributedText: NSAttributedString(string: data.text!, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]))
         alertController.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
     }

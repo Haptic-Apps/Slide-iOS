@@ -26,7 +26,7 @@ class VideoMediaDownloader {
     
     func getVideoWithCompletion(completion: @escaping (_ fileURL: URL?) -> Void, parent: UIViewController) {
         alertView = UIAlertController(title: "Downloading...", message: "Your video is downloading", preferredStyle: .alert)
-        alertView!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alertView!.addCancelButton()
         
         parent.present(alertView!, animated: true, completion: {
             let margin: CGFloat = 8.0

@@ -58,17 +58,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     override func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
-        self.setBackgroundView()
+        self.setAlphaOfBackgroundViews(alpha: 0.25)
+       // self.setBackgroundView()
     }
     
     func popoverPresentationControllerShouldDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) -> Bool {
-        UIView.animate(withDuration: 0.2, animations: {
-            self.blackView.alpha = 0
-            self.blurView?.alpha = 0
-        }) { (_) in
-            self.blackView.removeFromSuperview()
-            self.blurView?.removeFromSuperview()
-        }
+        self.setAlphaOfBackgroundViews(alpha: 1)
         return true
     }
 
@@ -969,10 +964,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !offline {
             let actionSheetController: UIAlertController = UIAlertController(title: "Comment sorting", message: "", preferredStyle: .actionSheet)
 
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
+            actionSheetController.addCancelButton()
             let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
             for c in CommentSort.cases {
@@ -1805,9 +1797,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             alertController.addAction(removeAction)
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
-        }
-
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
             textField.textColor = .black
@@ -1830,7 +1819,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         alertController.addOneTextField(configuration: config)
 
         alertController.addAction(confirmAction)
-        alertController.addAction(cancelAction)
+        alertController.addCancelButton()
 
         self.present(alertController, animated: true, completion: nil)
 
@@ -2701,19 +2690,37 @@ private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -
 
 class ParentCommentViewController: UIViewController {
     var childView = UIView()
-    init(view: UIView) {
+    var scrollView = UIScrollView()
+    var estimatedSize: CGSize
+    var dismissHandler: (()-> Void)?
+    init(view: UIView, size: CGSize) {
+        self.estimatedSize = size
         super.init(nibName: nil, bundle: nil)
         self.childView = view
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(childView)
-        childView.horizontalAnchors == self.view.horizontalAnchors
-        childView.topAnchor == self.view.topAnchor
-        childView.bottomAnchor == self.view.bottomAnchor
+        scrollView = UIScrollView().then {
+            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.isUserInteractionEnabled = true
+        }
+        self.view.addSubview(scrollView)
+        scrollView.edgeAnchors == self.view.edgeAnchors
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        scrollView.addSubview(childView)
+        childView.widthAnchor == estimatedSize.width
+        childView.heightAnchor == estimatedSize.height
+        childView.topAnchor == scrollView.topAnchor
+        scrollView.contentSize = estimatedSize
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        dismissHandler?()
+    }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -2730,6 +2737,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         guard let cell = self.tableView.cellForRow(at: indexPath) as? CommentDepthCell else {
             return nil
         }
+        self.setAlphaOfBackgroundViews(alpha: 0.5)
         
         if SettingValues.commentActionForceTouch != .PARENT_PREVIEW {
             //todo maybe
@@ -2780,24 +2788,34 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             }
             cell2.content = comment
             cell2.contentView.isUserInteractionEnabled = false
-            let detailViewController = ParentCommentViewController(view: cell2.contentView)
-            detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.commentBody.estimatedHeight + 24) //todo this!!!
+
+            var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: cell2.title.attributedText!)!
+            let textSize = layout.textBoundingSize
+
+            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.commentBody.estimatedHeight + 24 + textSize.height) //todo fix height
+            let detailViewController = ParentCommentViewController(view: cell2.contentView, size: size)
+            detailViewController.preferredContentSize = CGSize(width: size.width, height: min(size.height, 300))
 
             previewingContext.sourceRect = cell.frame
+            detailViewController.dismissHandler = {() in
+                self.setAlphaOfBackgroundViews(alpha: 1)
+            }
             return detailViewController
         }
         return nil
     }
-    
+        
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         viewControllerToCommit.modalPresentationStyle = .popover
         if let popover = viewControllerToCommit.popoverPresentationController {
             popover.sourceView = self.tableView
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            
+            popover.backgroundColor = ColorUtil.foregroundColor
             popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
             //detailViewController.frame = CGRect(x: (self.view.frame.bounds.width / 2 - (UIScreen.main.bounds.size.width * 0.85)), y: (self.view.frame.bounds.height / 2 - (cell2.title.estimatedHeight + 12)), width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 12)
             popover.delegate = self
+            viewControllerToCommit.preferredContentSize = (viewControllerToCommit as! ParentCommentViewController).estimatedSize
         }
 
         self.present(viewControllerToCommit, animated: true, completion: {

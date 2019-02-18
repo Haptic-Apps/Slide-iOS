@@ -286,7 +286,7 @@ extension ImageMediaViewController {
 
     @objc func showTitle(_ sender: AnyObject) {
         let alertController = UIAlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
-        alertController.addTextViewer(text: .text(data.text!))
+        alertController.addTextViewer(attributedText: NSAttributedString(string: data.text!, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]))
         alertController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
     }

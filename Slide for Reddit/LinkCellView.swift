@@ -2004,7 +2004,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.submitFlairChange(flair, text: self.flairText ?? "")
             }))
             
-            alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+            alert.addCancelButton()
             
             //todo make this work on ipad
             parentViewController?.present(alert, animated: true, completion: nil)

@@ -54,12 +54,8 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             ColorUtil.setColorForUser(name: self.name, color: self.newColor)
         })
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(_: UIAlertAction!) in
-            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : ColorUtil.getColorForUser(name: self.name)
-        })
-        
         alertController.addAction(somethingAction)
-        alertController.addAction(cancelAction)
+        alertController.addCancelButton()
         
         alertController.modalPresentationStyle = .popover
         if let presenter = alertController.popoverPresentationController {
@@ -95,7 +91,6 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             alertController.addAction(removeAction)
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
 
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
@@ -119,7 +114,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         alertController.addOneTextField(configuration: config)
 
         alertController.addAction(confirmAction)
-        alertController.addAction(cancelAction)
+        alertController.addCancelButton()
         
         alertController.modalPresentationStyle = .popover
         if let presenter = alertController.popoverPresentationController {

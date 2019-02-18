@@ -317,10 +317,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             self.tableView.reloadData()
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
-        })
-
-        alertController.addAction(cancelAction)
+        alertController.addCancelButton()
         alertController.modalPresentationStyle = .popover
         if let presenter = alertController.popoverPresentationController {
             presenter.sourceView = savedView
@@ -372,10 +369,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             presenter.sourceRect = savedView.bounds
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
-        })
-
-        alertController.addAction(cancelAction)
+        alertController.addCancelButton()
 
         present(alertController, animated: true, completion: nil)
     }

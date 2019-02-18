@@ -48,10 +48,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if baseData is ProfileContributionLoader {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
             
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
+            actionSheetController.addCancelButton()
             
             let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
             
@@ -349,10 +346,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func showMenu(sender: UIButton?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        actionSheetController.addCancelButton()
 
         for link in LinkSortType.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
@@ -377,10 +371,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Time Period", message: "", preferredStyle: .actionSheet)
             
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
+            actionSheetController.addCancelButton()
             
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
@@ -408,10 +399,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         } else {
             let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-                print("Cancel")
-            }
-            actionSheetController.addAction(cancelActionButton)
+            actionSheetController.addCancelButton()
 
             for t in TimeFilterWithin.cases {
                 let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in

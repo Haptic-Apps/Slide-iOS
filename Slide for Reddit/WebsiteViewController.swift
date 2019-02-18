@@ -87,10 +87,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                 }
             }
         )
-        alert.addAction(
-            UIAlertAction(title: "Cancel", style: .cancel) { (_) in
-            }
-        )
+        alert.addCancelButton()
         let window = UIApplication.shared.keyWindow!
         alert.modalPresentationStyle = .popover
         

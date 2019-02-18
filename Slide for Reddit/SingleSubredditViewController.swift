@@ -708,10 +708,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         
         let actionSheetController: UIAlertController = UIAlertController(title: "Change button type", message: "", preferredStyle: .alert)
 
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        actionSheetController.addCancelButton()
 
         for t in SettingValues.FabType.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: t.getTitle(), style: .default) { _ -> Void in
@@ -889,9 +886,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         //somethingAction = UIAlertAction(title: "Delete multireddit", style: UIAlertActionStyle.destructive, handler: { (_: UIAlertAction!) in print("something") })
         //alrController.addAction(somethingAction)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
-
-        alrController.addAction(cancelAction)
+        alrController.addCancelButton()
 
         //todo make this work on ipad
         self.present(alrController, animated: true, completion: {})
@@ -924,9 +919,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             })
             alrController.addAction(somethingAction)
 
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
 
-            alrController.addAction(cancelAction)
+            alrController.addCancelButton()
 
             alrController.modalPresentationStyle = .fullScreen
             if let presenter = alrController.popoverPresentationController {
@@ -1101,7 +1095,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }))
         }
 
-        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        alert.addCancelButton()
 
         present(alert, animated: true, completion: nil)
 
@@ -1168,10 +1162,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     @objc func showSortMenu(_ selector: UIView?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
 
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        actionSheetController.addCancelButton()
 
         let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
@@ -2008,11 +1999,7 @@ extension SingleSubredditViewController {
             }
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
-            self.resetColors()
-        })
-
-        alertController.addAction(cancelAction)
+        alertController.addCancelButton()
 
         alertController.modalPresentationStyle = .popover
         if let presenter = alertController.popoverPresentationController {
@@ -2453,11 +2440,9 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         let link = cell.link!
         let actionSheetController: UIAlertController = UIAlertController(title: "What would you like to filter?", message: "", preferredStyle: .alert)
 
-        var cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
-
+        actionSheetController.addCancelButton()
+        
+        var cancelActionButton = UIAlertAction()
         cancelActionButton = UIAlertAction(title: "Posts by u/\(link.author)", style: .default) { _ -> Void in
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()

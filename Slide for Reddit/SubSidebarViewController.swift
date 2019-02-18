@@ -100,10 +100,8 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
                 BannerUtil.makeBanner(text: "r/\(self.subreddit!.displayName) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
             })
             alrController.addAction(somethingAction)
-            
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
-            
-            alrController.addAction(cancelAction)
+                        
+            alrController.addCancelButton()
             
             alrController.modalPresentationStyle = .fullScreen
             if let presenter = alrController.popoverPresentationController {

@@ -493,10 +493,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     func selectTheme() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Select a night theme", message: "", preferredStyle: .actionSheet)
         
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        actionSheetController.addCancelButton()
         
         for theme in ColorUtil.Theme.cases {
             if theme != .LIGHT && theme != .MINT && theme != .CREAM {
@@ -572,7 +569,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     self.tableView.reloadData()
                     self.setupBaseBarColors()
                 }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                alert.addCancelButton()
                 self.present(alert, animated: true)
             }
         }
@@ -687,10 +684,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     func showBaseTheme() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "", preferredStyle: .actionSheet)
 
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        actionSheetController.addCancelButton()
 
         for theme in ColorUtil.Theme.cases {
             if !SettingValues.isPro && (theme == ColorUtil.Theme.SEPIA || theme == ColorUtil.Theme.DEEP) {

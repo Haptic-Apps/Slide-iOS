@@ -140,7 +140,7 @@ class SearchViewController: ContentListingViewController {
             VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }))
 
-        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        alert.addCancelButton()
 
         present(alert, animated: true, completion: nil)
 

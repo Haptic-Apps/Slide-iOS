@@ -148,7 +148,7 @@ class PostActions: NSObject {
         if link.isSelf {
             alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
                 let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
-                alert.addTextViewer(text: .text(cell.link!.body))
+                alert.addTextViewer(attributedText: NSAttributedString(string: cell.link!.body.decodeHTML(), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]))
                 alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (_) in
                     UIPasteboard.general.string = cell.link!.body
                 }))
@@ -655,7 +655,7 @@ class PostActions: NSObject {
             }
         }))
         
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addCancelButton()
         
         parent.present(alert, animated: true, completion: nil)
     }
@@ -674,9 +674,7 @@ class PostActions: NSObject {
                 alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
                     MainViewController.doAddAccount(register: true)
                 }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
-                    
-                }))
+                alert.addCancelButton()
                 VCPresenter.presentAlert(alert, parentVC: parent)
             }))
             alert.addAction(UIAlertAction(title: "Remove post (log in later)", style: .default, handler: { (_) in
@@ -684,8 +682,7 @@ class PostActions: NSObject {
                     delegate?.hide(index: index)
                 }
             }))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
-            }))
+            alert.addCancelButton()
             VCPresenter.presentAlert(alert, parentVC: parent)
         } else {
             let config: TextField.Config = { textField in
@@ -726,7 +723,7 @@ class PostActions: NSObject {
                 }
             }))
             
-            alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+            alert.addCancelButton()
             
             VCPresenter.presentAlert(alert, parentVC: parent)
 
@@ -741,7 +738,7 @@ class PostActions: NSObject {
             PostFilter.saveAndUpdate()
             callback()
         }))
-        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        alert.addCancelButton()
             
         VCPresenter.presentAlert(alert, parentVC: parent)
     }
@@ -777,7 +774,6 @@ class PostActions: NSObject {
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
-
 
 class SubjectItemSource: NSObject, UIActivityItemSource {
     var subject: String

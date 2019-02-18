@@ -76,9 +76,7 @@ class Sidebar: NSObject {
             })
             alrController.addAction(somethingAction)
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (_: UIAlertAction!) in print("cancel") })
-            
-            alrController.addAction(cancelAction)
+            alrController.addCancelButton()
             alrController.modalPresentationStyle = .popover
             if let presenter = alrController.popoverPresentationController {
                 presenter.sourceView = parent!.view

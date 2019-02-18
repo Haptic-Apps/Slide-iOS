@@ -268,18 +268,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     /* This is probably broken*/
     @objc func textViewDidChange(_ textView: UITextView) {
         textView.sizeToFitHeight()
-        var height = CGFloat(8)
-        for view in extras! {
-            height += CGFloat(8)
-            height += view.frame.size.height
-        }
-        for textView in text! {
-            height += CGFloat(8)
-            height += textView.frame.size.height
-        }
-        if replyButtons != nil {
-            height += CGFloat(46)
-        }
         let split = textView.text.split("\n").suffix(1)
         if split.first != nil && split.first!.startsWith("* ") && textView.text.endsWith("\n") {
             if split.first == "* " {
@@ -296,6 +284,19 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 textView.text += "\(num). "
                 textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
             }
+        }
+        
+        var height = CGFloat(8)
+        for view in extras! {
+            height += CGFloat(8)
+            height += view.frame.size.height
+        }
+        for textView in text! {
+            height += CGFloat(8)
+            height += textView.frame.size.height
+        }
+        if replyButtons != nil {
+            height += CGFloat(46)
         }
         
         scrollView.contentSize = CGSize.init(width: scrollView.frame.size.width, height: height)
@@ -447,6 +448,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         self.scrollView.backgroundColor = ColorUtil.backgroundColor
         self.scrollView.isUserInteractionEnabled = true
         self.scrollView.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 0, right: 0)
+        self.scrollView.bottomAnchor == self.view.bottomAnchor - 64
+        self.scrollView.topAnchor == self.view.topAnchor
+        self.scrollView.edgeAnchors == self.view.edgeAnchors
 
         let stack = UIStackView().then {
             $0.accessibilityIdentifier = "Reply Stack Vertical"

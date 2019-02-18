@@ -24,26 +24,26 @@ PODS:
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (76.1.2):
+  - MaterialComponents/ActivityIndicator (77.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (76.1.2)
-  - MaterialComponents/Ink (76.1.2):
+  - MaterialComponents/AnimationTiming (77.0.0)
+  - MaterialComponents/Ink (77.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (76.1.2)
-  - MaterialComponents/private/Application (76.1.2)
-  - MaterialComponents/private/Math (76.1.2)
-  - MaterialComponents/ProgressView (76.1.2):
+  - MaterialComponents/Palettes (77.0.0)
+  - MaterialComponents/private/Application (77.0.0)
+  - MaterialComponents/private/Math (77.0.0)
+  - MaterialComponents/ProgressView (77.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (76.1.2)
-  - MaterialComponents/ShadowLayer (76.1.2):
+  - MaterialComponents/ShadowElevations (77.0.0)
+  - MaterialComponents/ShadowLayer (77.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (76.1.2):
+  - MaterialComponents/Tabs (77.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -51,7 +51,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (76.1.2):
+  - MaterialComponents/Typography (77.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -145,7 +145,7 @@ CHECKOUT OPTIONS:
     :commit: a788132d0cf7081bd60a1de074b1da6a2703dba0
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
-    :commit: ec1f42324ef72985799ac73cc477ca65251a6512
+    :commit: 8a5ecb09650a68bc20f29ba321dad4725482fb56
     :git: https://github.com/ccrama/Alerts-Pickers
   SloppySwiper:
     :commit: 4248d9ab7c5b34702564c0daa11760c997c11270
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 1aef341d47fbaed37ddb5163a01af94cb6da8506
+  MaterialComponents: 1dc805d52502bd9d5692c2ffcc8a169c8b65b916
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc

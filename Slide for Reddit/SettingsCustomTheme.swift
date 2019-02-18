@@ -164,10 +164,7 @@ class SettingsCustomTheme: UITableViewController {
     @objc func reset() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "Will overwrite your current custom settings", preferredStyle: .actionSheet)
         
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { _ -> Void in
-            print("Cancel")
-        }
-        actionSheetController.addAction(cancelActionButton)
+        actionSheetController.addCancelButton()
         
         for theme in ColorUtil.Theme.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
@@ -280,7 +277,7 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.cleanup()
             }
-            alert.addAction(title: "Cancel", style: .cancel)
+            alert.addCancelButton()
             self.present(alert, animated: true)
         } else if indexPath.row == 1 {
             //background
@@ -291,7 +288,7 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.cleanup()
             }
-            alert.addAction(title: "Cancel", style: .cancel)
+            alert.addCancelButton()
             self.present(alert, animated: true)
         } else if indexPath.row == 2 {
             //font
@@ -302,7 +299,7 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.cleanup()
             }
-            alert.addAction(title: "Cancel", style: .cancel)
+            alert.addCancelButton()
             self.present(alert, animated: true)
         } else if indexPath.row == 3 {
             //navicon
@@ -313,7 +310,7 @@ class SettingsCustomTheme: UITableViewController {
                 UserDefaults.standard.synchronize()
                 self.cleanup()
             }
-            alert.addAction(title: "Cancel", style: .cancel)
+            alert.addCancelButton()
             self.present(alert, animated: true)
         }
     }

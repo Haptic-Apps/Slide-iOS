@@ -919,13 +919,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             body!.text = comment!.body.decodeHTML()
         }
 
-        body!.sizeToFitHeight()
-
         toolbar = ToolbarTextView.init(textView: body!, parent: parent!)
         oldConstraints = batch {
-            body!.heightAnchor == 40
+            body!.heightAnchor >= 40
         }
         
+        body!.sizeToFitHeight()
+
         parent!.reloadHeightsNone()
         if oldLocation != CGPoint.zero {
             var newLocation = oldLocation
@@ -1160,7 +1160,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
             let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
-            alert.addTextViewer(text: .text(self.comment!.body.decodeHTML()))
+            alert.addTextViewer(attributedText: NSAttributedString(string: self.comment!.body.decodeHTML(), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]))
             alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (_) in
                 UIPasteboard.general.string = self.comment!.body.decodeHTML()
             }))

@@ -10,6 +10,16 @@ import Anchorage
 import Foundation
 extension UIAlertController {
     
+    public func addCancelButton() {
+        if self.preferredStyle == .actionSheet {
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            self.addAction(cancelAction)
+        } else {
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            self.addAction(cancelAction)
+        }
+    }
+    
     private struct AssociatedKeys {
         static var blurStyleKey = "UIAlertController.blurStyleKey"
     }
@@ -43,20 +53,26 @@ extension UIAlertController {
             view.setNeedsLayout()
             view.layoutIfNeeded()
             self.view.tintColor = ColorUtil.baseAccent
-            let titleFont = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]
-            let messageFont = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]
+            let titleFont = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]
+            let messageFont = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]
             
             let titleAttrString = NSMutableAttributedString(string: title ?? "", attributes: titleFont)
             let messageAttrString = NSMutableAttributedString(string: message ?? "", attributes: messageFont)
             
             self.setValue(titleAttrString, forKey: "attributedTitle")
-            self.setValue(messageAttrString, forKey: "attributedMessage")
-            let backView = self.view.subviews.last?.subviews.last
-            backView?.layer.cornerRadius = 8
-            backView?.backgroundColor = ColorUtil.backgroundColor
+            if !(message?.isEmpty ?? true) {
+                self.setValue(messageAttrString, forKey: "attributedMessage")
+            }
+            if let firstSubview = self.view.subviews.first, let alertContentView = firstSubview.subviews.first {
+                for view in alertContentView.subviews {
+                    view.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.6)
+                }
+            }
         }
         visualEffectView?.effect = UIBlurEffect(style: ColorUtil.theme.isLight() ? UIBlurEffect.Style.light : UIBlurEffect.Style.dark)
-        //cancelActionView?.superview?.backgroundColor = cancelButtonColor
+        if self.preferredStyle == .actionSheet && UIDevice.current.userInterfaceIdiom != .pad {
+            cancelActionView?.backgroundColor = ColorUtil.foregroundColor
+        }
     }
 }
 
@@ -65,5 +81,21 @@ extension UIView {
         var subviews = self.subviews.compactMap({ $0 })
         subviews.forEach { subviews.append(contentsOf: $0.recursiveSubviews) }
         return subviews
+    }
+}
+
+class CancelButtonViewController: UIViewController {
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let cancelView = UILabel().then {
+            $0.text = "Cancel"
+            $0.font = UIFont.boldSystemFont(ofSize: 20)
+            $0.textColor = ColorUtil.baseAccent
+            $0.clipsToBounds = true
+            $0.backgroundColor = ColorUtil.foregroundColor  
+            $0.textAlignment = .center
+        }
+        self.view.addSubview(cancelView)
+        cancelView.edgeAnchors == self.view.edgeAnchors
     }
 }

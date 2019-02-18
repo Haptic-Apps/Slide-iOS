@@ -532,7 +532,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let title = colorString.split("#")[1]
                 UserDefaults.standard.set(colorString, forKey: "Theme+" + title)
             }))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.addCancelButton()
             let themeView = ThemeCellView().then {
                 $0.setTheme(colors: url.absoluteString.removingPercentEncoding!)
             }

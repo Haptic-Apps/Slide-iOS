@@ -307,8 +307,8 @@ extension SettingsFont {
     func commentSizeCellWasTapped() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Comment font size", message: "", preferredStyle: .actionSheet)
 
-        actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
+        actionSheetController.addCancelButton()
+        
         for key in fontSizes.keys.sorted() {
             let description = fontSizes[key]!
             let action = UIAlertAction(title: description, style: .default) { _ in
@@ -333,7 +333,7 @@ extension SettingsFont {
     func submissionSizeCellWasTapped() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Submission font size", message: "", preferredStyle: .actionSheet)
 
-        actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheetController.addCancelButton()
 
         for key in fontSizes.keys.sorted() {
             let description = fontSizes[key]!
@@ -359,7 +359,7 @@ extension SettingsFont {
 
         let actionSheetController: UIAlertController = UIAlertController(title: submission ? "Submission font variant" : "Comment font variant", message: "", preferredStyle: .actionSheet)
 
-        actionSheetController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheetController.addCancelButton()
 
         let currentFamily = FontGenerator.fontOfSize(size: 16, submission: submission).familyName
         let fontsInFamily = UIFont.fontNames(forFamilyName: currentFamily)

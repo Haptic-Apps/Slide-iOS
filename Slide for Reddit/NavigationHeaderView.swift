@@ -336,7 +336,7 @@ extension NavigationHeaderView {
             }
         }))
 
-        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        alert.addCancelButton()
 
         parentController?.present(alert, animated: true, completion: nil)
     }

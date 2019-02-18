@@ -149,7 +149,7 @@ public class ToolbarTextView: NSObject {
 
     func uploadAsync(_ assets: [PHAsset]) {
         alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
-        alertView!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alertView!.addCancelButton()
 
         parent.present(alertView!, animated: true, completion: {
             //  Add your progressbar after alert is shown (and measured)
@@ -217,7 +217,7 @@ public class ToolbarTextView: NSObject {
                                                     }
                                                 }))
 
-                                                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+                                                alert.addCancelButton()
                                                 self.parent.present(alert, animated: true, completion: nil)
                                             }
                                         } else {
@@ -271,7 +271,7 @@ public class ToolbarTextView: NSObject {
                                     }
                                 }))
 
-                                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+                                alert.addCancelButton()
                                 self.parent.present(alert, animated: true, completion: nil)
                             }
                         } else {
@@ -391,7 +391,7 @@ public class ToolbarTextView: NSObject {
             }
         }))
 
-        alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil))
+        alert.addCancelButton()
         self.parent.present(alert, animated: true, completion: nil)
 
     }
