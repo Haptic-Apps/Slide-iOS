@@ -266,7 +266,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
 
     /* This is probably broken*/
-    @nonobjc func textViewDidChange(_ textView: UITextView) {
+    @objc func textViewDidChange(_ textView: UITextView) {
         textView.sizeToFitHeight()
         var height = CGFloat(8)
         for view in extras! {
@@ -280,6 +280,24 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         if replyButtons != nil {
             height += CGFloat(46)
         }
+        let split = textView.text.split("\n").suffix(1)
+        if split.first != nil && split.first!.startsWith("* ") && textView.text.endsWith("\n") {
+            if split.first == "* " {
+                textView.text = textView.text.substring(0, length: textView.text.length - 3) + "\n"
+            } else {
+                textView.text += "* "
+                textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
+            }
+        } else if split.first != nil && split.first!.length > 1 && split.first!.substring(0, length: 1).isNumeric() && split.first!.substring(1, length: 1) == "." && textView.text.endsWith("\n") {
+            let num = (Int(split.first!.substring(0, length: 1)) ?? 0) + 1
+            if split.first?.length ?? 0 < 4 {
+                textView.text = textView.text.substring(0, length: textView.text.length - 4) + "\n"
+            } else {
+                textView.text += "\(num). "
+                textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
+            }
+        }
+        
         scrollView.contentSize = CGSize.init(width: scrollView.frame.size.width, height: height)
     }
 

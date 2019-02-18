@@ -67,7 +67,13 @@ public class ToolbarTextView: NSObject {
     }
 
     func wrapIn(_ value: String) {
-        text!.replace(text!.selectedTextRange!, withText: value + text!.text(in: text!.selectedTextRange!)! + value)
+        let wrapped = value + text!.text(in: text!.selectedTextRange!)! + value
+        text!.replace(text!.selectedTextRange!, withText: wrapped)
+        
+        if wrapped.length == value.length * 2 {
+            let newPosition = text!.position(from: text!.selectedTextRange!.end, offset: -(value.length)) ?? text!.selectedTextRange!.end
+            text!.selectedTextRange = text!.textRange(from: newPosition, to: newPosition)
+        }
     }
 
     func replaceIn(_ value: String, with: String) {
