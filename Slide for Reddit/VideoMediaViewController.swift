@@ -580,10 +580,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         videoView.player = AVPlayer(playerItem: playerItem)
         videoView.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
         self.videoView.player?.isMuted = SettingValues.muteVideosInModal
-        videoView.player?.play()
         
         scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
         self.loaded = true
+        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
+        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
+        displayLink?.isPaused = false
+        videoView.player?.play()
     }
     
     var handlingPlayerItemDidreachEnd = false
@@ -929,6 +932,9 @@ extension VideoMediaViewController {
 extension VideoMediaViewController: YTPlayerViewDelegate {
     
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
+        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
+        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
+        displayLink?.isPaused = false
         youtubeView.playVideo()
         scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000)
         do {
