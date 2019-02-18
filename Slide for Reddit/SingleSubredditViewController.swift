@@ -1712,7 +1712,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             }
         } else {
-            innerPadding += (SettingValues.postViewMode == .COMPACT ? 12 : 16) //between top and title
+            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and title
             if SettingValues.actionBarMode.isFull() {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
@@ -1726,7 +1726,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             estimatedUsableWidth -= thumbheight //is the same as the width
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
-        } else if SettingValues.actionBarMode.isFull() {
+        } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title label padding
         }
         

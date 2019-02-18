@@ -43,12 +43,14 @@ class CachedTitle {
         if white {
             colorF = .white
         }
+        let brightF = colorF
+        colorF = colorF.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.25))
 
-        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+        let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): brightF]))
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         if !submission.flair.isEmpty {
-            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: colorF])
+            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: brightF])
 
             attributedTitle.append(spacer)
             attributedTitle.append(flairTitle)
@@ -120,7 +122,7 @@ class CachedTitle {
             attributedTitle.append(locked)
         }
         if submission.archived {
-            let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: colorF])
+            let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: brightF])
 
             attributedTitle.append(archived)
         }
@@ -200,7 +202,7 @@ class CachedTitle {
                 infoString.append(NSAttributedString.init(string: "\n"))
             }
             if SettingValues.scoreInTitle {
-                var sColor = ColorUtil.fontColor
+                var sColor = ColorUtil.fontColor.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.15))
                 switch ActionStates.getVoteDirection(s: submission) {
                 case .down:
                     sColor = ColorUtil.downvoteColor

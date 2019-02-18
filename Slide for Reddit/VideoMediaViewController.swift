@@ -35,8 +35,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func subtleVolume(_ subtleVolume: SubtleVolume, willChange value: Double) {
-        if !self.muteButton.isHidden {
-            self.unmute()
+        if !self.muteButton.isHidden && !SettingValues.modalVideosRespectHardwareMuteSwitch {
+       //disable for now     self.unmute()
         }
     }
     
@@ -286,11 +286,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
         self.videoView.player?.isMuted = false
 
-        if SettingValues.modalVideosRespectHardwareMuteSwitch {
-            try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
-        } else {
-            try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-        }
+        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
 
         UIView.animate(withDuration: 0.5, animations: {
             self.muteButton.alpha = 0

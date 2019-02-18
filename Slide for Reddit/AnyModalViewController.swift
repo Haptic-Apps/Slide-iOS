@@ -236,11 +236,7 @@ class AnyModalViewController: UIViewController {
         self.videoView.player?.isMuted = false
 
         //SettingValues.autoplayAudioMode.activate()
-        if SettingValues.modalVideosRespectHardwareMuteSwitch {
-            try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
-        } else {
-            try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-        }
+        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
 
         UIView.animate(withDuration: 0.5, animations: {
             self.muteButton.alpha = 0

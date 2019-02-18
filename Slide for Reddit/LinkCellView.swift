@@ -2299,7 +2299,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     estimatedUsableWidth -= thumbheight //is the same as the width
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between thumb and label
-                } else {
+                } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
                 }
             } else {

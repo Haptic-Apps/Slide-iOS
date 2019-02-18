@@ -58,7 +58,12 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                 animated: true,
                                 completion: nil)
         self.navItem?.title = "1/\(self.urlStringKeys.count)"
-        let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon(true), style: .plain, target: self, action: #selector(overview(_:)))
+        let overview = UIButton.init(type: .custom)
+        overview.setImage(UIImage.init(named: "grid")?.navIcon(true), for: UIControl.State.normal)
+        overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
+        overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let gridB = UIBarButtonItem.init(customView: overview)
+
         navItem?.rightBarButtonItem = gridB
     }
     
@@ -145,8 +150,12 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                             animated: true,
                                             completion: nil)
                     self.navItem?.title = "\(self.urlStringKeys.index(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
-                    let gridB = UIBarButtonItem(image: UIImage(named: "grid")?.navIcon(true).withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(self.overview(_:)))
-                    
+                    let overview = UIButton.init(type: .custom)
+                    overview.setImage(UIImage.init(named: "grid")?.navIcon(true), for: UIControl.State.normal)
+                    overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
+                    overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                    let gridB = UIBarButtonItem.init(customView: overview)
+
                     self.navItem?.rightBarButtonItem = gridB
                 }
                 let prefetcher = SDWebImagePrefetcher.shared()
@@ -284,7 +293,12 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
     
     @objc func overview(_ sender: UIBarButtonItem) {
-        let alert = UIAlertController(style: .actionSheet)
+        let alert: UIAlertController
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            alert = UIAlertController(style: .alert)
+        } else {
+            alert = UIAlertController(style: .actionSheet)
+        }
         alert.addAsyncImagePicker(
             flow: .vertical,
             paging: false,
@@ -301,10 +315,6 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             }))
         
         alert.addAction(title: "Close", style: .cancel)
-        if let presenter = alert.popoverPresentationController {
-            presenter.sourceView = sender.customView
-            presenter.sourceRect = sender.customView!.bounds
-        }
         alert.showWindowless()
     }
     
