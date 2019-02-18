@@ -321,7 +321,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             bodyScrollView.contentSize = CGSize(width: bodyScrollView.bounds.width, height: textView.estimatedHeight + 100)
             parentVC.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
-        } else if type != .ALBUM && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) {
+        } else if type != .ALBUM && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is RSubmission && !(content as! RSubmission).nsfw) || SettingValues.nsfwPreviews) {
             let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false))
             if embed != nil {
                 self.embeddedVC = embed
@@ -335,7 +335,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             } else {
                 //Shouldn't be here
             }
-        } else if type == .LINK || type == .NONE || type == .ALBUM {
+        } else if type == .LINK || type == .NONE || type == .ALBUM || ((content is RSubmission && (content as! RSubmission).nsfw) && !SettingValues.nsfwPreviews) {
             topBody.addSubviews(thumbImageContainer, infoContainer)
             thumbImageContainer.centerAnchors == topBody.centerAnchors
             infoContainer.horizontalAnchors == topBody.horizontalAnchors
@@ -379,7 +379,9 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             info.attributedText = finalText
             if content is RSubmission {
                 let submission = content as! RSubmission
-                if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                if submission.nsfw {
+                    thumbImage.image = LinkCellImageCache.nsfw
+                } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
                     if type == .REDDIT {
                         thumbImage.image = LinkCellImageCache.reddit
                     } else {

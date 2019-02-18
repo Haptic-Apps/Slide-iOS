@@ -48,13 +48,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         self.baseSubmissions = submissions
-        
-        for s in baseSubmissions {
-            if !(s.nsfw && !SettingValues.nsfwPreviews) {
-                self.vCs.append(ShadowboxLinkViewController(url: getURLToLoad(s), content: s, parent: self))
-            }
-        }
-        
+                
         let firstViewController = self.vCs[index]
         currentVc = firstViewController
         
