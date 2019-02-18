@@ -283,7 +283,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         SDImageCache.shared().clearMemory()
     }
     
-    @objc func overview(_ sender: AnyObject) {
+    @objc func overview(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(style: .actionSheet)
         alert.addAsyncImagePicker(
             flow: .vertical,
@@ -299,7 +299,12 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 self.navItem?.title = "\((image ?? 0) + 1)/\(self.urlStringKeys.count)"
                 alert.dismiss(animated: true, completion: nil)
             }))
+        
         alert.addAction(title: "Close", style: .cancel)
+        if let presenter = alert.popoverPresentationController {
+            presenter.sourceView = sender.customView
+            presenter.sourceRect = sender.customView!.bounds
+        }
         alert.showWindowless()
     }
     

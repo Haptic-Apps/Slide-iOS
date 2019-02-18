@@ -21,6 +21,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         return contentType == ContentType.CType.VIDEO
     }
     
+    var youtubeMute = false
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
     let volumeHeight: CGFloat = 3
     var setOnce = false
@@ -231,7 +232,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         muteButton = UIButton().then {
             $0.accessibilityIdentifier = "Un-mute video"
-            $0.setImage(UIImage(named: "mute")?.navIcon(true), for: [])
+            $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
             $0.isHidden = true // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
@@ -279,6 +280,10 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     @objc func unmute() {
+        if isYoutubeView {
+            youtubeView.webView?.stringByEvaluatingJavaScript(from: "player.unMute();")
+            youtubeMute = false
+        }
         self.videoView.player?.isMuted = false
 
         if SettingValues.modalVideosRespectHardwareMuteSwitch {
@@ -876,25 +881,25 @@ extension VideoMediaViewController {
 extension VideoMediaViewController {
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if isYoutubeView {
+            if youtubeMute && muteButton.isHidden && SettingValues.muteVideosInModal {
+                muteButton.isHidden = false
+            }
             if !sliderBeingUsed {
                 self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000))
             }
         }
 
-        guard let player = videoView.player else {
-            return
-        }
-        let hasAudioTracks = (player.currentItem?.tracks.count ?? 1) > 1
-
+        let hasAudioTracks = isYoutubeView || (videoView.player?.currentItem?.tracks.count ?? 1) > 1
+        
         if hasAudioTracks {
-            if player.isMuted && muteButton.isHidden && SettingValues.muteVideosInModal {
+            if (videoView.player?.isMuted ?? youtubeMute) && muteButton.isHidden && SettingValues.muteVideosInModal {
                 muteButton.isHidden = false
             }
         }
 
         if !setOnce {
             setOnce = true
-
+            
             if hasAudioTracks {
                 if !SettingValues.muteVideosInModal {
                     if SettingValues.modalVideosRespectHardwareMuteSwitch {
@@ -915,6 +920,11 @@ extension VideoMediaViewController {
                 }
             }
         }
+        
+
+        guard let player = videoView.player else {
+            return
+        }
 
         if !sliderBeingUsed {
             scrubber.updateWithTime(elapsedTime: player.currentTime())
@@ -932,17 +942,26 @@ extension VideoMediaViewController {
 extension VideoMediaViewController: YTPlayerViewDelegate {
     
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
+        scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let error as NSError {
+            print(error)
+        }
+        self.setProgressViewVisible(false)
+        //        self.downloadButton.isHidden = true //todo maybe download videos in the future?
+        if isYoutubeView && SettingValues.muteVideosInModal {
+            self.youtubeMute = true
+            playerView.webView?.stringByEvaluatingJavaScript(from: "player.mute();")
+        }
+        
+        self.loaded = true
         displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
         displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
         displayLink?.isPaused = false
+        
         youtubeView.playVideo()
-        scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000)
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            NSLog(error.localizedDescription)
-        }
         hideSpinner()
     }
     
