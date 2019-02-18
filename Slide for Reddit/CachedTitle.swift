@@ -44,7 +44,7 @@ class CachedTitle {
             colorF = .white
         }
         let brightF = colorF
-        colorF = colorF.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.25))
+        colorF = colorF.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.20))
 
         let attributedTitle = NSMutableAttributedString(string: submission.title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): brightF]))
 
