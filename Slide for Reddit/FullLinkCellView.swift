@@ -34,7 +34,7 @@ final class FullLinkCellView: LinkCellView {
             infoBox.horizontalAnchors == contentView.horizontalAnchors + ctwelve
             textView.topAnchor == title.bottomAnchor + ceight
             textView.horizontalAnchors == contentView.horizontalAnchors + ctwelve
-            title.topAnchor == contentView.topAnchor + ctwelve - 3
+            title.topAnchor == contentView.topAnchor + ctwelve - 5
             title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
 
             if big {

@@ -793,7 +793,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
             
-            navigationItem.rightBarButtonItems = [sortB, subbB]
+            navigationItem.rightBarButtonItems = [sortB]
             let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
             
             toolbarItems = [infoB, flexButton, moreB]
@@ -1755,7 +1755,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false))!
         let textSize = layout.textBoundingSize
 
-        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(3)
+        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5)
         return CGSize(width: itemWidth, height: totalHeight)
     }
     
@@ -2075,10 +2075,16 @@ extension SingleSubredditViewController {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "r/\(sub)"
-
+        
         alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { _ in
             self.search()
         }))
+        
+        if single {
+            alertController.addAction(Action(ActionData(title: Subscriptions.isSubscriber(self.sub) ? "Un-subscribe" : "Subscribe", image: UIImage(named: Subscriptions.isSubscriber(self.sub) ? "subbed" : "addcircle")!.menuIcon()), style: .default, handler: { _ in
+                self.subscribeSingle(sender)
+            }))
+        }
 
         alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
             self.showSortMenu(self.more)
