@@ -320,6 +320,12 @@ extension CurrentAccountViewController {
                 ]
             )
         }()
+        
+        accountNameLabel.addTapGestureRecognizer {
+            [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.accountHeaderView(strongSelf.header, didRequestProfilePageAtIndex: 0)
+        }
 
         modButton.isHidden = !(AccountController.current?.isMod ?? false)
 

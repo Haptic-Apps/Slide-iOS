@@ -1548,7 +1548,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 taglabel.text = " \(text.uppercased()) "
             } else {
                 tagbody.isHidden = true
-                if submission.isCrosspost && full {
+                if submission.isCrosspost && full && !crosspostDone {
+                    crosspostDone = true
                     let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
                     popup.backgroundColor = ColorUtil.backgroundColor
                     popup.textAlignment = .center
@@ -1935,6 +1936,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
     }
     
+    var lockDone = false
+    var crosspostDone = false
+
     func flairSelf() {
         //todo this
         var list: [FlairTemplate] = []
@@ -2146,12 +2150,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 sideScore.attributedText = scoreString
             }
         }
-        if full {
-            if !link.isCrosspost && infoBox.subviews.count == 1 {
-                for view in infoBox.subviews {
-                    view.removeFromSuperview()
-                }
-            }
+        if full && !lockDone {
+            lockDone = true
             
             var text = ""
             if np {

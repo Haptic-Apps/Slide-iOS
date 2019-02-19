@@ -299,6 +299,16 @@ class RealmDataWrapper {
         rSubmission.permalink = submission.permalink
         rSubmission.videoPreview = try! (videoPreview ?? "").convertHtmlSymbols() ?? ""
         
+        if json?["crosspost_parent_list"] != nil {
+            rSubmission.isCrosspost = true
+            let sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
+            let author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
+            let permalink = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["permalink"] as? String ?? ""
+            rSubmission.crosspostSubreddit = sub
+            rSubmission.crosspostAuthor = author
+            rSubmission.crosspostPermalink = permalink
+        }
+
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
             let array = item as! [Any]
             rSubmission.reports.append("\(array[0]): \(array[1])")
