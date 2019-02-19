@@ -48,7 +48,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         self.baseSubmissions = submissions
-                
+        
         let firstViewController = self.vCs[index]
         currentVc = firstViewController
         

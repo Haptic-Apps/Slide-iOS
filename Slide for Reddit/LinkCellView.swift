@@ -2065,18 +2065,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         mod.setImage(link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted, for: .normal)
         readLater.setImage(ReadLater.isReadLater(id: link.getId()) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater, for: .normal)
         
-        var attrs: [String: Any] = [:]
+        var attrs: [NSAttributedString.Key: Any] = [:]
         switch ActionStates.getVoteDirection(s: link) {
         case .down:
             downvote.setImage(LinkCellImageCache.downvoteTinted, for: .normal)
             sideDownvote.setImage(LinkCellImageCache.downvoteTintedSmall, for: .normal)
-            attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.downvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.downvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         case .up:
             upvote.setImage(LinkCellImageCache.upvoteTinted, for: .normal)
             sideUpvote.setImage(LinkCellImageCache.upvoteTintedSmall, for: .normal)
-            attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
-            attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.navIconColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
+            attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         }
         
         var scoreInt = link.score
@@ -2101,7 +2101,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
         if full {
-            let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
                     " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): comments.font, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): comments.textColor]))
@@ -2133,7 +2133,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             subScore.append(scoreRatio)
             score.attributedText = subScore
         } else {
-            let scoreString = NSAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            let sideText = (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)"
+            var attrsCopy = attrs
+            if !SettingValues.actionBarMode.isFull() && sideText.length > 5 && !full {
+                attrsCopy[NSAttributedString.Key.font] = FontGenerator.boldFontOfSize(size: 10, submission: true)
+            }
+            let scoreString = NSAttributedString(string: sideText, attributes: attrsCopy)
             
             if SettingValues.actionBarMode.isFull() {
                 score.attributedText = scoreString

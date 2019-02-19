@@ -90,7 +90,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary([convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html)]), documentAttributes: nil)
                     let font = FontGenerator.fontOfSize(size: 16, submission: false)
                     let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                    content = LinkParser.parse(attr2, .white)
+                    content = LinkParser.parse(attr2, .white, font: font)
                 } catch {
                     content = NSAttributedString()
                 }
