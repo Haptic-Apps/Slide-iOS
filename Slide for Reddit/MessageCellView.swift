@@ -260,6 +260,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
                 try session?.markMessagesAsRead([(message?.name.contains("_"))! ? (message?.name)! : ((message?.wasComment)! ? "t1_" : "t4_") + (message?.name)!], completion: { (result) in
                     if result.error != nil {
                         print(result.error!.description)
+                    } else {
+                        NotificationCenter.default.post(name: .accountRefreshRequested, object: nil, userInfo: nil)
                     }
                 })
             } catch {

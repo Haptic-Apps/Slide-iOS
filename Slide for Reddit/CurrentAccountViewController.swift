@@ -14,11 +14,6 @@ import Then
 import UIKit
 import XLActionController
 
-/**
- TODO:
- - Inbox badging isn't being updated when messages are marked as read (this means the Account object isn't being updated by the cell)
- */
-
 protocol CurrentAccountViewControllerDelegate: AnyObject {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String)
