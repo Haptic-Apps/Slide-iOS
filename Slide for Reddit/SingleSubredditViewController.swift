@@ -1462,6 +1462,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     self.flowLayout.invalidateLayout()
                                     self.tableView.insertItems(at: paths)
                                 }
+                                self.tableView.isUserInteractionEnabled = true
 
                                 self.indicator?.stopAnimating()
                                 self.indicator?.isHidden = true
@@ -2360,8 +2361,8 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             History.addSeen(s: cell.link!)
             cell.refresh()
             cell.refreshTitle()
-        } catch {
-
+        } catch  {
+            
         }
     }
 
@@ -2388,30 +2389,36 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             for submission in links {
                 if submission.getId() == id {
                     item = links[location]
-                    print("Removing link")
                     links.remove(at: location)
                     break
                 }
                 location += 1
             }
 
-            self.flowLayout.reset()
             self.tableView.isUserInteractionEnabled = false
 
-            tableView.performBatchUpdates({
-                self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
-                BannerUtil.makeBanner(text: "Submission hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
-                    self.links.insert(item, at: location)
-                    self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
-                    do {
-                        try self.session?.setHide(true, name: cell.link!.getId(), completion: { (_) in })
-                    } catch {
-                    }
+            if !loading {
+                tableView.performBatchUpdates({
+                    self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
+                }, completion: { (_) in
+                    self.tableView.isUserInteractionEnabled = true
+                    self.flowLayout.reset()
+                    self.tableView.reloadData()
                 })
-            }, completion: { (_) in
-                self.tableView.isUserInteractionEnabled = true
+            } else {
+                self.flowLayout.reset()
+                tableView.reloadData()
+            }
+            BannerUtil.makeBanner(text: "Submission hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
+                self.links.insert(item, at: location)
+                self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
+                self.flowLayout.reset()
+                self.tableView.reloadData()
+                do {
+                    try self.session?.setHide(false, name: cell.link!.getId(), completion: { (_) in })
+                } catch {
+                }
             })
-
         } catch {
 
         }

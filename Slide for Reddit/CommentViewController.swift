@@ -2736,7 +2736,6 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         guard let cell = self.tableView.cellForRow(at: indexPath) as? CommentDepthCell else {
             return nil
         }
-        self.setAlphaOfBackgroundViews(alpha: 0.5)
         
         if SettingValues.commentActionForceTouch != .PARENT_PREVIEW {
             //todo maybe
@@ -2755,7 +2754,8 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         if cell.depth == 1 {
             return nil
         }
-        
+        self.setAlphaOfBackgroundViews(alpha: 0.5)
+
         var topCell = (indexPath as NSIndexPath).row
         var contents = content[dataArray[topCell]]
         

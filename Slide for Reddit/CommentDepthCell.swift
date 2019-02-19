@@ -216,6 +216,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var gesturesAdded = false
 
     @objc func doLongClick() {
+        if parent?.isReply ?? false {
+            return
+        }
         if longBlocking {
             self.longBlocking = false
             return
@@ -508,7 +511,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.hideCommentMenu(false)
         var newFrame = self.menu.frame
         newFrame.size.height = 0
-        UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.12, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
             self.menu.frame = newFrame
             self.contentView.backgroundColor = ColorUtil.foregroundColor
         }, completion: { (_) in
