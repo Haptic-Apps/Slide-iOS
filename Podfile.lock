@@ -151,7 +151,7 @@ CHECKOUT OPTIONS:
     :commit: 4248d9ab7c5b34702564c0daa11760c997c11270
     :git: https://github.com/ccrama/SloppySwiper
   XLActionController:
-    :commit: 77af0fcb1633728e0dfc29f75217beee0e222387
+    :commit: c43fdb0570aedb7309d73ee3c4d7549e14eac9a9
     :git: https://github.com/ccrama/XLActionController
 
 SPEC CHECKSUMS:
