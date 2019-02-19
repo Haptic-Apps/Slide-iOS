@@ -111,6 +111,7 @@ public class VCPresenter {
             if let popover = newParent.popoverPresentationController {
                 popover.sourceView = parentViewController.view
                 popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+                popover.backgroundColor = ColorUtil.backgroundColor
                 
                 popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
                 if parentViewController is MediaViewController {
@@ -155,7 +156,8 @@ public class VCPresenter {
         if let popover = newParent.popoverPresentationController {
             popover.sourceView = parentViewController.view
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            
+            popover.backgroundColor = ColorUtil.backgroundColor
+
             popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
             if parentViewController is MediaViewController {
                 popover.delegate = (parentViewController as! MediaViewController)

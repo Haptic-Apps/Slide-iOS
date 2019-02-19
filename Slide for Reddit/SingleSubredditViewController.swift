@@ -976,6 +976,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     self.tableView.deleteItems(at: indexPaths)
                 }, completion: { (_) in
                     self.flowLayout.reset()
+                    self.tableView.reloadData()
                 })
             }
         }
@@ -1006,6 +1007,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     self.tableView.deleteItems(at: indexPaths)
                 }, completion: { (_) in
                     self.flowLayout.reset()
+                    self.tableView.reloadData()
                 })
             }
         }
