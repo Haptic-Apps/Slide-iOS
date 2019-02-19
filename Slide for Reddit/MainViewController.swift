@@ -203,6 +203,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
         }
     }
+
+    @objc func onAccountRefreshRequested(_ notification: NSNotification) {
+        DispatchQueue.main.async { [weak self] in
+            self?.checkForMail()
+        }
+    }
     
     var checkedClipboardOnce = false
     func checkForMail() {
@@ -242,6 +248,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                     case .failure(let error):
                         print(error)
                     case .success(let profile):
+                        AccountController.current = profile
                         SettingValues.nsfwEnabled = profile.over18
                         if let nsfw = UserDefaults.standard.object(forKey: SettingValues.pref_hideNSFWCollection + AccountController.currentName) {
                             SettingValues.hideNSFWCollection = nsfw as! Bool
@@ -830,6 +837,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         toolbar?.addTapGestureRecognizer(action: {
             self.showDrawer(self.drawerButton)
         })
+
+        NotificationCenter.default.addObserver(self, selector: #selector(onAccountRefreshRequested), name: .accountRefreshRequested, object: nil)
         
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
         swipe.direction = .up
