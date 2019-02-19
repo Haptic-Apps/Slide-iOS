@@ -11,7 +11,7 @@ import YYText
 import UIKit
 
 class LinkParser {
-    public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont) -> NSMutableAttributedString {
+    public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, fontColor: UIColor) -> NSMutableAttributedString {
         let string = NSMutableAttributedString.init(attributedString: attributedString)
         string.removeAttribute(convertToNSAttributedStringKey(kCTForegroundColorFromContextAttributeName as String), range: NSRange.init(location: 0, length: string.length))
         if string.length > 0 {
@@ -22,7 +22,7 @@ class LinkParser {
                     if matchRange.location != NSNotFound {
                         let attributedText = string.attributedSubstring(from: match.range).mutableCopy() as! NSMutableAttributedString
                         let newText = NSMutableAttributedString(string: "Slide Theme", attributes: attributedText.attributes(at: 0, effectiveRange: nil))
-                        newText.addAttribute(NSAttributedString.Key.link, value: URL(string: attributedText.string), range: NSRange(location: 0, length: newText.length))
+                        newText.addAttribute(NSAttributedString.Key.link, value: URL(string: attributedText.string)!, range: NSRange(location: 0, length: newText.length))
                         string.replaceCharacters(in: match.range, with: newText)
                     }
                 } catch {
@@ -32,8 +32,8 @@ class LinkParser {
             string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
                 for attr in attrs {
                     if let isColor = attr.value as? UIColor {
-                        if isColor.hexString() == UIColor.red.hexString() {
-                            string.setAttributes([NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key(rawValue: YYTextStrikethroughAttributeName): YYTextDecoration(style: YYTextLineStyle.single, width: 1, color: color), NSAttributedString.Key.font: font], range: range)
+                        if isColor.hexString() == "#008000" {
+                            string.setAttributes([NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key(rawValue: YYTextStrikethroughAttributeName): YYTextDecoration(style: YYTextLineStyle.single, width: 1, color: fontColor), NSAttributedString.Key.font: font], range: range)
                         }
                     } else if let url = attr.value as? URL {
                         if SettingValues.enlargeLinks {

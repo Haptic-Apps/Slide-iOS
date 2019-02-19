@@ -46,7 +46,7 @@ class CodeDisplayView: UIScrollView {
             }
             let baseHtml = DTHTMLAttributedStringBuilder.init(html: string.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: baseColor, DTDefaultFontFamily: "Courier", DTDefaultFontSize: FontGenerator.fontOfSize(size: 16, submission: false).pointSize, DTDefaultFontName: "Courier"], documentAttributes: nil).generatedAttributedString()!
             let attr = NSMutableAttributedString(attributedString: baseHtml)
-            let cell = LinkParser.parse(attr, baseColor, font: UIFont(name: "Courier", size: 16)!)
+            let cell = LinkParser.parse(attr, baseColor, font: UIFont(name: "Courier", size: 16)!, fontColor: ColorUtil.fontColor)
             baseData.append(cell)
         }
     }

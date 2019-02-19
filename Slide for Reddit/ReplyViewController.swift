@@ -473,7 +473,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RMessage).htmlBody
-                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
+                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor)
                 
                 /* todo this
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
@@ -698,7 +698,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RSubmission).htmlBody
-                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent)
+                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor)
                 
                 /* todo this
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)

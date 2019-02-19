@@ -421,14 +421,14 @@ public class TextDisplayStackView: UIStackView {
     }
     
     public func createAttributedChunk(baseHTML: String, accent: UIColor) -> NSAttributedString {
-        return TextDisplayStackView.createAttributedChunk(baseHTML: baseHTML, fontSize: fontSize, submission: submission, accentColor: accent)
+        return TextDisplayStackView.createAttributedChunk(baseHTML: baseHTML, fontSize: fontSize, submission: submission, accentColor: accent, fontColor: baseFontColor)
     }
     
     public static func
-        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor) -> NSAttributedString {
+        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"red\">").replacingOccurrences(of: "</del>", with: "</font>")
-        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: ColorUtil.fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>")
+        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
         while html.mutableString.contains("\t•\t") {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
@@ -443,7 +443,7 @@ public class TextDisplayStackView: UIStackView {
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
         }
         
-        return LinkParser.parse(html, accentColor, font: font)
+        return LinkParser.parse(html, accentColor, font: font, fontColor: fontColor)
     }
     
 //    public func link(at: CGPoint, withTouch: UITouch) -> TTTAttributedLabelLink? {
@@ -597,7 +597,7 @@ public class TextDisplayStackView: UIStackView {
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
                     newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
-                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white))
+                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white))
                 }
                 startIndex = 1
             }
@@ -617,7 +617,7 @@ public class TextDisplayStackView: UIStackView {
             let newTitle = NSMutableAttributedString(attributedString: titleString)
             if !htmlString.isEmpty() {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
-                newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white))
+                newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white))
             }
             
             let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
@@ -636,7 +636,7 @@ public class TextDisplayStackView: UIStackView {
                 let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
                 totalHeight += body.globalHeight
             } else {
-                let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white)
+                let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white)
                 let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
                 let layout = YYTextLayout(containerSize: size, text: text)!
                 let textSize = layout.textBoundingSize

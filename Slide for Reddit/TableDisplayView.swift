@@ -105,7 +105,7 @@ class TableDisplayView: UIScrollView {
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }
                 columnStarted = false
-                currentRow.append(TextDisplayStackView.createAttributedChunk(baseHTML: currentString.trimmed(), fontSize: CGFloat((isHeader ? 3 : 0) + 16 ), submission: false, accentColor: tColor))
+                currentRow.append(TextDisplayStackView.createAttributedChunk(baseHTML: currentString.trimmed(), fontSize: CGFloat((isHeader ? 3 : 0) + 16 ), submission: false, accentColor: tColor, fontColor: baseColor))
                 currentString = ""
             } else {
                 currentString.append(current)
