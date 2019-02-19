@@ -70,7 +70,7 @@ class SettingsCustomTheme: UITableViewController {
         super.loadView()
         setupBaseBarColors()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.Theme.CUSTOM.backgroundColor
         // set the title
         self.title = "Edit Custom Theme"
         self.tableView.separatorStyle = .none
@@ -79,8 +79,12 @@ class SettingsCustomTheme: UITableViewController {
         self.foreground.accessoryType = .none
         self.foreground.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
         self.foreground.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.foreground.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.navIconColor)
-        
+        self.foreground.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.foregroundColor)
+        self.foreground.imageView?.layer.masksToBounds = true
+        self.foreground.imageView?.layer.borderWidth = 1.5
+        self.foreground.imageView?.layer.borderColor = UIColor.white.cgColor
+        self.foreground.imageView?.layer.cornerRadius = self.foreground.imageView!.bounds.width / 2
+
         self.background.textLabel?.text = "Background color"
         self.background.accessoryType = .none
         self.background.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor

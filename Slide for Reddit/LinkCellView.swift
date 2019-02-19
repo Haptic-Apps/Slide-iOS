@@ -377,7 +377,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.comments = UILabel().then {
             $0.accessibilityIdentifier = "Comment Count Label"
             $0.numberOfLines = 1
-            $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
+            $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.fontColor
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.foregroundColor

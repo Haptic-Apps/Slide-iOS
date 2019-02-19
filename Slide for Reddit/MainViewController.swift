@@ -613,6 +613,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
         tabBar.unselectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor.withAlphaComponent(0.45) : UIColor.white.withAlphaComponent(0.45)
         
+        tabBar.selectedItemTitleFont = UIFont.boldSystemFont(ofSize: 14)
+        tabBar.unselectedItemTitleFont = UIFont.boldSystemFont(ofSize: 14)
+        
         tabBar.items = subs.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }

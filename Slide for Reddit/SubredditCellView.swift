@@ -42,7 +42,7 @@ class SubredditCellView: UITableViewCell {
 
         self.title = UILabel().then {
             $0.numberOfLines = 0
-            $0.font = UIFont.systemFont(ofSize: 16)
+            $0.font = UIFont.boldSystemFont(ofSize: 16)
         }
 
         self.sideView = UIView().then {
