@@ -93,7 +93,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         coffee.textAlignment = .center
         
         lunch = UILabel(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45))
-        lunch.text = "Buy me a lunch! (tip $9.99)"
+        lunch.text = "Buy me lunch! (tip $9.99)"
         lunch.backgroundColor = GMColor.red300Color()
         lunch.layer.cornerRadius = 22.5
         lunch.clipsToBounds = true

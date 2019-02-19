@@ -36,7 +36,7 @@ open class BottomSheetCell: ActionCell {
     
     open lazy var animatableBackgroundView: UIView = { [weak self] in
         let view = UIView(frame: self?.frame ?? CGRect.zero)
-        view.backgroundColor = ColorUtil.backgroundColor
+        view.backgroundColor = ColorUtil.foregroundColor
         return view
         }()
     
@@ -127,10 +127,10 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         
         collectionViewLayout.minimumLineSpacing = 0
         settings.cancelView.showCancel = true
-        settings.cancelView.fontColor = ColorUtil.fontColor
-        settings.cancelView.height = 52
+        settings.cancelView.fontColor = ColorUtil.navIconColor
+        settings.cancelView.height = 96
         //collectionView.contentInset = UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 12)
-        settings.cancelView.backgroundColor = ColorUtil.backgroundColor
+        settings.cancelView.backgroundColor = ColorUtil.foregroundColor
         settings.behavior.hideOnScrollDown = false
         settings.behavior.bounces = true
         settings.behavior.hideNavigationBarOnShow = false
@@ -138,7 +138,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         settings.animation.scale = nil
         settings.behavior.useDynamics = false
         settings.behavior.scrollEnabled = true
-        settings.animation.present.duration = 0.3
+        settings.animation.present.duration = 0.45
         settings.animation.dismiss.duration = 0.3
         settings.animation.dismiss.offset = 30
         
@@ -148,11 +148,12 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             settings.collectionView.lateralMargin = 250
         }
         
-        cellSpec = .nibFile(nibName: "BSCell", bundle: Bundle(for: BottomSheetCell.self), height: { _ in 52 })
+        cellSpec = .nibFile(nibName: "BSCell", bundle: Bundle(for: BottomSheetCell.self), height: { _ in 56 })
         headerSpec = .cellClass(height: { _ -> CGFloat in return 52 })
         
         onConfigureHeader = { header, title in
             header.label.text = title
+            header.label.font = UIFont.boldSystemFont(ofSize: 20)
         }
         
         //todo this self.header = ButtonsHeader.init(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width - 24, height: 52))
@@ -162,7 +163,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             cell.alpha = action.enabled ? 1.0 : 0.5
             cell.actionTitleLabel?.textColor = ColorUtil.fontColor
             cell.actionTitleLabel?.font = UIFont.systemFont(ofSize: 16)
-            cell.backgroundColor = ColorUtil.foregroundColor
+            cell.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.6)
             
             self.collectionView.backgroundColor = ColorUtil.foregroundColor
             self.collectionView.layer.cornerRadius = 15

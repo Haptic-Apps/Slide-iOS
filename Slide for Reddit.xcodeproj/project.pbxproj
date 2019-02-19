@@ -1351,6 +1351,7 @@
 				0991C18B2108CDC600B6BA16 /* Run SwiftLint */,
 				0984BE512114C9490091C2E1 /* Integrate Reveal Server */,
 				BE20853621588F3B00D8F33C /* Embed Watch Content */,
+				BE85916B221BC9A7009ACF9E /* ShellScript */,
 				BDF8985ECC061CEA9427169B /* [CP] Embed Pods Frameworks */,
 				8AFCADD18405A0E848C716C6 /* [CP] Copy Pods Resources */,
 			);
@@ -1858,6 +1859,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./credits.py -s \"$SRCROOT\" -o \"$SRCROOT/Slide for Reddit/Credits.plist\"";
+		};
+		BE85916B221BC9A7009ACF9E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "find \"${SRCROOT}/Pods\" -type f -name *frameworks.sh -exec bash -c \"touch \\\"{}\\\"\" \\;\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

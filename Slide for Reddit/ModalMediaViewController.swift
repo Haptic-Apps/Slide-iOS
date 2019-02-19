@@ -268,25 +268,6 @@ class ModalMediaViewController: UIViewController {
         }
     }
     
-    deinit {
-        endVideos()
-    }
-    
-    func endVideos() {
-        self.displayLink?.invalidate()
-        self.displayLink = nil
-        if videoView != nil {
-            self.videoView!.player?.replaceCurrentItem(with: nil)
-            self.videoView!.player = nil
-        }
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
-        } catch {
-            NSLog(error.localizedDescription)
-        }
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         UIApplication.shared.statusBarView?.isHidden = false
@@ -303,7 +284,6 @@ class ModalMediaViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.endVideos()
     }
 
     var desiredStatusBarStyle: UIStatusBarStyle = .default {
