@@ -354,6 +354,11 @@ extension SettingsFont {
         }
         self.present(actionSheetController, animated: true, completion: nil)
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        CachedTitle.titles.removeAll()
+    }
 
     func weightCellWasTapped(submission: Bool) {
 

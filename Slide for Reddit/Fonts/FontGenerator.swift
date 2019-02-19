@@ -12,7 +12,7 @@ import UIKit
 class FontGenerator {
     
     public static func fontOfSize(size: CGFloat, submission: Bool) -> UIFont {
-        let fontName = UserDefaults.standard.string(forKey: submission ? "postfont" : "commentfont") ?? "system"
+        let fontName = UserDefaults.standard.string(forKey: submission ? "postfont" : "commentfont") ?? ( submission ? "AvenirNext-DemiBold" : "AvenirNext-Medium")
         let adjustedSize = size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset)
         let font = UIFont(name: fontName, size: adjustedSize) ?? UIFont.systemFont(ofSize: adjustedSize)
         return font

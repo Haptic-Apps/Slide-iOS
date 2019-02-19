@@ -376,7 +376,7 @@ class SettingValues {
             }
         }
 
-        SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? -2 : settings.integer(forKey: SettingValues.pref_postFontSize)
+        SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? -2 : settings.integer(forKey: SettingValues.pref_commentFontSize)
 
         if let time = UserDefaults.standard.string(forKey: pref_defaultTimePeriod) {
