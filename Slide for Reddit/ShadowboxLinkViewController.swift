@@ -259,7 +259,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             
             titleLabel.attributedText = CachedTitle.getTitle(submission: link, full: true, false, true)
 
-            let size = CGSize(width: self.view.frame.size.width - 24, height: CGFloat.greatestFiniteMagnitude)
+            let size = CGSize(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude)
             let layout = YYTextLayout(containerSize: size, text: titleLabel.attributedText!)!
             titleLabel.textLayout = layout
             titleLabel.heightAnchor == layout.textBoundingSize.height
@@ -330,7 +330,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             topBody.addSubview(bodyScrollView)
             bodyScrollView.horizontalAnchors == topBody.horizontalAnchors + 12
             bodyScrollView.verticalAnchors == topBody.verticalAnchors + 12
-            textView.estimatedWidth = UIScreen.main.bounds.width - 48
+            textView.estimatedWidth = UIScreen.main.bounds.width - 24
             textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: (content as! RSubmission).htmlBody)
             bodyScrollView.addSubview(textView)
             textView.leftAnchor == bodyScrollView.leftAnchor
