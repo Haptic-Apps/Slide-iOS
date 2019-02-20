@@ -1086,6 +1086,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         comments.text = " \(submission.commentCount)\(more > 0 ? " (+\(more))" : "")"
     }
     
+   // var titleAttrs: [NSLayoutConstraint] = []
+    
     func refreshTitle(np: Bool = false) {
         guard let link = self.link else {
             return
@@ -1097,6 +1099,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
         title.attributedText = attText
+        /*title.removeConstraints(titleAttrs)
+        titleAttrs = batch {
+            title.heightAnchor == bounds.textBoundingSize.height
+        }*/
         title.textVerticalAlignment = .top
         title.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in

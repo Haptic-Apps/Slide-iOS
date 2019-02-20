@@ -1670,11 +1670,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 submissionHeight = 200
             }
         }
+        
         var paddingTop = CGFloat(0)
         var paddingBottom = CGFloat(2)
         var paddingLeft = CGFloat(0)
         var paddingRight = CGFloat(0)
         var innerPadding = CGFloat(0)
+        
         if SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER {
             paddingTop = 5
             paddingBottom = 5

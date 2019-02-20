@@ -58,7 +58,7 @@ final class BannerLinkCellView: LinkCellView {
                 }
                 
                 if !SettingValues.actionBarMode.isFull() {
-                    title.bottomAnchor >= contentView.bottomAnchor - ceight
+                    title.bottomAnchor <= contentView.bottomAnchor - ceight
                 } else {
                     title.bottomAnchor == box.topAnchor - ceight
                 }
