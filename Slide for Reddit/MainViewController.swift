@@ -239,6 +239,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 }
             }
             
+            if !AccountController.isLoggedIn {
+                return
+            }
+            
             let lastMail = UserDefaults.standard.integer(forKey: "mail")
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             

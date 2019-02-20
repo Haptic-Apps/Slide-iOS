@@ -687,14 +687,14 @@ class PostActions: NSObject {
         } else {
             let config: TextField.Config = { textField in
                 textField.becomeFirstResponder()
-                textField.textColor = .black
-                textField.placeholder = "Reason (optional)"
-                textField.left(image: UIImage.init(named: "flag"), color: .black)
+                textField.textColor = ColorUtil.fontColor
+                textField.attributedPlaceholder = NSAttributedString(string: "Reason (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
+                textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.fontColor)
+                textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+                textField.backgroundColor = ColorUtil.foregroundColor
                 textField.leftViewPadding = 12
                 textField.layer.borderWidth = 1
                 textField.layer.cornerRadius = 8
-                textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
-                textField.backgroundColor = .white
                 textField.keyboardAppearance = .default
                 textField.keyboardType = .default
                 textField.returnKeyType = .done

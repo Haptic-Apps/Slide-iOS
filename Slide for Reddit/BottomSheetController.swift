@@ -122,13 +122,20 @@ open class ActionControllerHeader: UICollectionReusableView {
 
 open class BottomSheetActionController: ActionController<BottomSheetCell, ActionData, ActionControllerHeader, String, UICollectionReusableView, Void> {
     
+    public func hasHomebar() -> Bool {
+        if #available(iOS 11.0, *), UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? CGFloat(0) > CGFloat(0) {
+            return true
+        }
+        return false
+    }
+    
     public override init(nibName nibNameOrNil: String? = nil, bundle nibBundleOrNil: Bundle? = nil) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
         collectionViewLayout.minimumLineSpacing = 0
         settings.cancelView.showCancel = true
         settings.cancelView.fontColor = ColorUtil.navIconColor
-        settings.cancelView.height = 96
+        settings.cancelView.height = 96 - (hasHomebar() ? 0 : 25)
         //collectionView.contentInset = UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 12)
         settings.cancelView.backgroundColor = ColorUtil.foregroundColor
         settings.behavior.hideOnScrollDown = false

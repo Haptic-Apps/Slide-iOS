@@ -348,12 +348,12 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = .black
-            textField.placeholder = "Theme name"
+            textField.textColor = ColorUtil.fontColor
+            textField.attributedPlaceholder = NSAttributedString(string: "Theme name...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
+            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.foregroundColor
             textField.layer.borderWidth = 1
             textField.autocorrectionType = UITextAutocorrectionType.no
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
-            textField.backgroundColor = .white
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done

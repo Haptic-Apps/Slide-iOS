@@ -62,6 +62,11 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         
         self.baseSubmissions = submissions
         
+        if self.vCs.isEmpty {
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+        
         let firstViewController = self.vCs[index]
         currentVc = firstViewController
         

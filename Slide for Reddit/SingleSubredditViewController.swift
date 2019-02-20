@@ -1053,14 +1053,14 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = .black
-            textField.placeholder = "Search for a post..."
-            textField.left(image: UIImage.init(named: "search"), color: .black)
+            textField.textColor = ColorUtil.fontColor
+            textField.backgroundColor = ColorUtil.foregroundColor
+            textField.attributedPlaceholder = NSAttributedString(string: "Search for a post...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
+            textField.left(image: UIImage.init(named: "search"), color: ColorUtil.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
-            textField.backgroundColor = .white
+            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done
