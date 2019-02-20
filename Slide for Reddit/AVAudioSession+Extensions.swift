@@ -26,6 +26,5 @@ extension AVAudioSession {
             session.perform(NSSelectorFromString("setCategory:withOptions:error:"), with: category, with: options)
         }
         print("Set audio mode to \(category.rawValue)")
-        try session.setActive(true)
     }
 }

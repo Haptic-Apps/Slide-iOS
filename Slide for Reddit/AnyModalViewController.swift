@@ -169,12 +169,14 @@ class AnyModalViewController: UIViewController {
                 showSpinner()
             }
             
-            //Prevent video from stopping system background audio
-            do {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-                try AVAudioSession.sharedInstance().setActive(true)
-            } catch let error as NSError {
-                print(error)
+            DispatchQueue.global(qos: .background).async {
+                //Prevent video from stopping system background audio
+                do {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                    try AVAudioSession.sharedInstance().setActive(true)
+                } catch let error as NSError {
+                    print(error)
+                }
             }
 
             DispatchQueue.global(qos: .userInteractive).async {
@@ -389,11 +391,12 @@ class AnyModalViewController: UIViewController {
         self.embeddedPlayer?.isMuted = true
         toReturnTo?.videoView.player = self.embeddedPlayer
         stopDisplayLink()
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
-        } catch {
-            NSLog(error.localizedDescription)
+        DispatchQueue.global(qos: .background).async {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            } catch {
+                NSLog(error.localizedDescription)
+            }
         }
     }
     
@@ -414,14 +417,15 @@ class AnyModalViewController: UIViewController {
         if videoView.player?.currentItem != nil {
             scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
         }
-        
-        // Prevent video from stopping system background audio
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print(error.localizedDescription)
-            NSLog(error.localizedDescription)
+        DispatchQueue.global(qos: .background).async {
+            // Prevent video from stopping system background audio
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch {
+                print(error.localizedDescription)
+                NSLog(error.localizedDescription)
+            }
         }
 
         view.addSubview(scrubber)

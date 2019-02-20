@@ -153,11 +153,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.videoView.player = nil
         
         if !(parent is ShadowboxLinkViewController) && !(parent is AlbumViewController) {
-            do {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-                try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
-            } catch {
-                NSLog(error.localizedDescription)
+            DispatchQueue.global(qos: .background).async {
+                do {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                    try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+                } catch {
+                    NSLog(error.localizedDescription)
+                }
             }
         }
     }
@@ -568,12 +570,16 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
     func playVideo(_ url: String = "") {
         //Prevent video from stopping system background audio
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch let error as NSError {
-            print(error)
+        DispatchQueue.global(qos: .background).async {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch let error as NSError {
+                print(error)
+            }
         }
+
+        
         self.setProgressViewVisible(false)
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true //todo maybe download videos in the future?
@@ -939,12 +945,15 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
     
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000)
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch let error as NSError {
-            print(error)
+        DispatchQueue.global(qos: .background).async {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch let error as NSError {
+                print(error)
+            }
         }
+        
         self.setProgressViewVisible(false)
         //        self.downloadButton.isHidden = true //todo maybe download videos in the future?
         if isYoutubeView && SettingValues.muteVideosInModal {

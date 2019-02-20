@@ -1133,7 +1133,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     func shadowboxMode() {
-        if !VCPresenter.proDialogShown(feature: true, self) && !links.isEmpty {
+        if !VCPresenter.proDialogShown(feature: true, self) && !links.isEmpty && !self.loading && self.loaded {
             let visibleRect = CGRect(origin: tableView.contentOffset, size: tableView.bounds.size)
             let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
             let visibleIndexPath = tableView.indexPathForItem(at: visiblePoint)

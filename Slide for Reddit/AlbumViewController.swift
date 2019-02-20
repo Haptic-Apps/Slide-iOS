@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import AVKit
 import RLBAlertsPickers
 import SDWebImage
 import UIKit
@@ -290,6 +291,14 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         SDImageCache.shared().clearMemory()
+        DispatchQueue.global(qos: .background).async {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+            } catch {
+                NSLog(error.localizedDescription)
+            }
+        }
     }
     
     @objc func overview(_ sender: UIBarButtonItem) {

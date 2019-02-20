@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import AVKit
 import reddift
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
@@ -36,6 +37,18 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             }
         } else {
             return url
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        DispatchQueue.global(qos: .background).async {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+            } catch {
+                NSLog(error.localizedDescription)
+            }
         }
     }
     
@@ -181,11 +194,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty
                         
                         DispatchQueue.main.async {
-                            for s in values {
-                                if !(s.nsfw && !SettingValues.nsfwPreviews) {
-                                    self.vCs.append(ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self))
-                                }
-                            }
                             self.setViewControllers([self.currentVc],
                                                     direction: .forward,
                                                     animated: false ,
