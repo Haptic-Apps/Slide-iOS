@@ -55,7 +55,7 @@ class ModalMediaViewController: UIViewController {
 
             self.loadTypeAsync(url, type)
         } else {
-            self.setModel(model: EmbeddableMediaDataModel(baseURL: url, lqURL: lq, text: nil, inAlbum: false))
+            self.setModel(model: EmbeddableMediaDataModel(baseURL: url, lqURL: lq, text: nil, inAlbum: false, buttons: true))
         }
     }
     
@@ -119,7 +119,7 @@ class ModalMediaViewController: UIViewController {
                     }
                     DispatchQueue.main.async {
                         if url != nil {
-                            self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: nil, inAlbum: false))
+                            self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: nil, inAlbum: false, buttons: true))
                         }
                     }
                 }
@@ -164,7 +164,7 @@ class ModalMediaViewController: UIViewController {
                     }
                     DispatchQueue.main.async {
                         if url != nil {
-                            self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: text, inAlbum: false))
+                            self.setModel(model: EmbeddableMediaDataModel(baseURL: URL(string: url!), lqURL: nil, text: text, inAlbum: false, buttons: true))
                         }
                     }
                 }
@@ -182,16 +182,16 @@ class ModalMediaViewController: UIViewController {
                     if response!.mimeType ?? "" == "image/gif" {
                         let finalUrl = URL.init(string: baseUrl.absoluteString + ".mp4")!
                         DispatchQueue.main.async {
-                            self.setModel(model: EmbeddableMediaDataModel(baseURL: finalUrl, lqURL: nil, text: nil, inAlbum: false))
+                            self.setModel(model: EmbeddableMediaDataModel(baseURL: finalUrl, lqURL: nil, text: nil, inAlbum: false, buttons: true))
                         }
                     } else {
                         DispatchQueue.main.async {
-                            self.setModel(model: EmbeddableMediaDataModel(baseURL: changedUrl, lqURL: nil, text: nil, inAlbum: false))
+                            self.setModel(model: EmbeddableMediaDataModel(baseURL: changedUrl, lqURL: nil, text: nil, inAlbum: false, buttons: true))
                         }
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.setModel(model: EmbeddableMediaDataModel(baseURL: baseUrl, lqURL: nil, text: nil, inAlbum: false))
+                        self.setModel(model: EmbeddableMediaDataModel(baseURL: baseUrl, lqURL: nil, text: nil, inAlbum: false, buttons: true))
                     }
                 }
             }

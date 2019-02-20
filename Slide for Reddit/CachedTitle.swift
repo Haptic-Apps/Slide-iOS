@@ -186,7 +186,7 @@ class CachedTitle {
         if SettingValues.infoBelowTitle {
             infoString.append(readString)
             infoString.append(attributedTitle)
-            infoString.append(NSAttributedString.init(string: "\n\n"))
+            infoString.append(NSAttributedString.init(string: "\n"))
             infoString.append(boldString)
             infoString.append(endString)
         } else {

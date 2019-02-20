@@ -46,7 +46,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 baseURL: URL.init(string: urlStringkey)!,
                 lqURL: URL.init(string: "https://imgur.com/\(hash)m.png"),
                 text: nil,
-                inAlbum: true
+                inAlbum: true,
+                buttons: true
             )
         }
         let prefetcher = SDWebImagePrefetcher.shared()
@@ -115,7 +116,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                     baseURL: URL.init(string: urlStringkey)!,
                     lqURL: URL.init(string: "https://imgur.com/\(self.albumHash)m.png"),
                     text: nil,
-                    inAlbum: false
+                    inAlbum: false,
+                    buttons: true
                 )
                 let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)
                 
@@ -141,7 +143,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                             baseURL: URL.init(string: urlStringkey)!,
                             lqURL: URL.init(string: "https://imgur.com/\(image.hash!)\(image.ext! != ".gif" ? "m":"")\(image.ext!)"),
                             text: image.description,
-                            inAlbum: true
+                            inAlbum: true,
+                            buttons: true
                         )
                     }
                     let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)

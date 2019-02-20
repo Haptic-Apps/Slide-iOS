@@ -36,6 +36,10 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     
     var content: Object?
     var baseURL: URL?
+    
+    var submission: RSubmission! {
+        return content as! RSubmission
+    }
 
     var titleLabel: YYLabel!
 
@@ -81,6 +85,16 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         } else {
             type = ContentType.getContentType(baseUrl: baseURL)
         }
+        
+        if titleLabel == nil {
+            configureView()
+            configureLayout()
+            
+            populateData()
+            doBackground()
+            titleLabel.preferredMaxLayoutWidth = self.view.frame.size.width - 48
+        }
+        doBackground()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -244,6 +258,11 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             comments.text = "\(link.commentCount)"
             
             titleLabel.attributedText = CachedTitle.getTitle(submission: link, full: true, false, true)
+
+            let size = CGSize(width: self.view.frame.size.width - 24, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: titleLabel.attributedText!)!
+            titleLabel.textLayout = layout
+            titleLabel.heightAnchor == layout.textBoundingSize.height
         } else if let link = content as! RComment? {
             archived = link.archived
             upvote.image = LinkCellImageCache.upvote
@@ -311,7 +330,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             topBody.addSubview(bodyScrollView)
             bodyScrollView.horizontalAnchors == topBody.horizontalAnchors + 12
             bodyScrollView.verticalAnchors == topBody.verticalAnchors + 12
-            textView.estimatedWidth = UIScreen.main.bounds.width - 24
+            textView.estimatedWidth = UIScreen.main.bounds.width - 48
             textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: (content as! RSubmission).htmlBody)
             bodyScrollView.addSubview(textView)
             textView.leftAnchor == bodyScrollView.leftAnchor
@@ -322,7 +341,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             parentVC.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
         } else if type != .ALBUM && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is RSubmission && !(content as! RSubmission).nsfw) || SettingValues.nsfwPreviews) {
-            let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false))
+            let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false, buttons: false))
             if embed != nil {
                 self.embeddedVC = embed
                 self.addChild(embed!)
@@ -331,7 +350,6 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 embed!.view.horizontalAnchors == topBody.horizontalAnchors
                 embed!.view.topAnchor == topBody.safeTopAnchor
                 embed!.view.bottomAnchor == topBody.bottomAnchor
-                embed!.bottomButtons.isHidden = true
             } else {
                 //Shouldn't be here
             }
@@ -450,16 +468,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        if titleLabel == nil {
-            configureView()
-            configureLayout()
-            
-            populateData()
-            doBackground()
-            titleLabel.preferredMaxLayoutWidth = self.view.frame.size.width - 24
-        }
         super.viewWillAppear(animated)
-        doBackground()
         if !populated {
             populateContent()
             populated = true

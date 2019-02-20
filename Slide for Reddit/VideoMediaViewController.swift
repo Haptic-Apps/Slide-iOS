@@ -144,13 +144,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
     deinit {
         self.endVideos()
+        self.videoView.player?.replaceCurrentItem(with: nil)
+        self.videoView.player = nil
     }
     
     func endVideos() {
         self.displayLink?.invalidate()
         self.displayLink = nil
-        self.videoView.player?.replaceCurrentItem(with: nil)
-        self.videoView.player = nil
         
         if !(parent is ShadowboxLinkViewController) && !(parent is AlbumViewController) {
             DispatchQueue.global(qos: .background).async {
@@ -219,55 +219,57 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
         view.addSubview(bottomButtons)
         
-        menuButton = UIButton().then {
-            $0.accessibilityIdentifier = "More Button"
-            $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        if data.buttons {
+            menuButton = UIButton().then {
+                $0.accessibilityIdentifier = "More Button"
+                $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            downloadButton = UIButton().then {
+                $0.accessibilityIdentifier = "Download Button"
+                $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
+                $0.isHidden = true // The button will be unhidden once the content has loaded.
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            muteButton = UIButton().then {
+                $0.accessibilityIdentifier = "Un-mute video"
+                $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+                $0.isHidden = true // The button will be unhidden once the content has loaded.
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            ytButton = UIButton().then {
+                $0.accessibilityIdentifier = "Open in YouTube"
+                $0.setImage(UIImage(named: "youtube")?.navIcon(true), for: [])
+                $0.isHidden = true // The button will be unhidden once the content has loaded.
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            goToCommentsButton = UIButton().then {
+                $0.accessibilityIdentifier = "Go to Comments Button"
+                $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
+                $0.isHidden = commentCallback == nil
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            showTitleButton = UIButton().then {
+                $0.accessibilityIdentifier = "Show Title Button"
+                $0.setImage(UIImage(named: "size")?.navIcon(true), for: [])
+                $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            size = UILabel().then {
+                $0.accessibilityIdentifier = "File size"
+                $0.font = UIFont.boldSystemFont(ofSize: 12)
+                $0.textAlignment = .center
+                $0.textColor = .white
+            }
+            
+            bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), ytButton, muteButton, downloadButton, menuButton)
         }
-        
-        downloadButton = UIButton().then {
-            $0.accessibilityIdentifier = "Download Button"
-            $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
-            $0.isHidden = true // The button will be unhidden once the content has loaded.
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-
-        muteButton = UIButton().then {
-            $0.accessibilityIdentifier = "Un-mute video"
-            $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
-            $0.isHidden = true // The button will be unhidden once the content has loaded.
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-
-        ytButton = UIButton().then {
-            $0.accessibilityIdentifier = "Open in YouTube"
-            $0.setImage(UIImage(named: "youtube")?.navIcon(true), for: [])
-            $0.isHidden = true // The button will be unhidden once the content has loaded.
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-        
-        goToCommentsButton = UIButton().then {
-            $0.accessibilityIdentifier = "Go to Comments Button"
-            $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
-            $0.isHidden = commentCallback == nil
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-                
-        showTitleButton = UIButton().then {
-            $0.accessibilityIdentifier = "Show Title Button"
-            $0.setImage(UIImage(named: "size")?.navIcon(true), for: [])
-            $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-        
-        size = UILabel().then {
-            $0.accessibilityIdentifier = "File size"
-            $0.font = UIFont.boldSystemFont(ofSize: 12)
-            $0.textAlignment = .center
-            $0.textColor = .white
-        }
-
-        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), ytButton, muteButton, downloadButton, menuButton)
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

@@ -97,49 +97,50 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         }
         view.addSubview(bottomButtons)
 
-        menuButton = UIButton().then {
-            $0.accessibilityIdentifier = "More Button"
-            $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        if data.buttons {
+            menuButton = UIButton().then {
+                $0.accessibilityIdentifier = "More Button"
+                $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            downloadButton = UIButton().then {
+                $0.accessibilityIdentifier = "Download Button"
+                $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
+                $0.isHidden = true // The button will be unhidden once the content has loaded.
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            goToCommentsButton = UIButton().then {
+                $0.accessibilityIdentifier = "Go to Comments Button"
+                $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
+                $0.isHidden = commentCallback == nil
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            viewInHDButton = UIButton().then {
+                $0.accessibilityIdentifier = "View in HD Button"
+                $0.setImage(UIImage(named: "hd")?.navIcon(true), for: [])
+                $0.isHidden = true // The button will be unhidden if we load lq content
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            showTitleButton = UIButton().then {
+                $0.accessibilityIdentifier = "Show Title Button"
+                $0.setImage(UIImage(named: "size")?.navIcon(true), for: [])
+                $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+            
+            size = UILabel().then {
+                $0.accessibilityIdentifier = "File size"
+                $0.font = UIFont.boldSystemFont(ofSize: 12)
+                $0.textAlignment = .center
+                $0.textColor = .white
+            }
+            
+            bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, viewInHDButton, size, UIView.flexSpace(), downloadButton, menuButton)
         }
-
-        downloadButton = UIButton().then {
-            $0.accessibilityIdentifier = "Download Button"
-            $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
-            $0.isHidden = true // The button will be unhidden once the content has loaded.
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-
-        goToCommentsButton = UIButton().then {
-            $0.accessibilityIdentifier = "Go to Comments Button"
-            $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
-            $0.isHidden = commentCallback == nil
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-
-        viewInHDButton = UIButton().then {
-            $0.accessibilityIdentifier = "View in HD Button"
-            $0.setImage(UIImage(named: "hd")?.navIcon(true), for: [])
-            $0.isHidden = true // The button will be unhidden if we load lq content
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-
-        showTitleButton = UIButton().then {
-            $0.accessibilityIdentifier = "Show Title Button"
-            $0.setImage(UIImage(named: "size")?.navIcon(true), for: [])
-            $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
-            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        }
-        
-        size = UILabel().then {
-            $0.accessibilityIdentifier = "File size"
-            $0.font = UIFont.boldSystemFont(ofSize: 12)
-            $0.textAlignment = .center
-            $0.textColor = .white
-        }
-
-        bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, viewInHDButton, size, UIView.flexSpace(), downloadButton, menuButton)
-
     }
 
     func configureLayout() {

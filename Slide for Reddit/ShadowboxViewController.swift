@@ -14,7 +14,6 @@ import UIKit.UIGestureRecognizerSubclass
 
 class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
-    var vCs: [UIViewController] = []
     var baseSubmissions: [RSubmission] = []
     var paginator: Paginator
     var sort: LinkSortType
@@ -62,12 +61,8 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         
         self.baseSubmissions = submissions
         
-        if self.vCs.isEmpty {
-            self.dismiss(animated: true, completion: nil)
-            return
-        }
-        
-        let firstViewController = self.vCs[index]
+        let s = baseSubmissions[index]
+        let firstViewController = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         currentVc = firstViewController
         
         self.setViewControllers([firstViewController],
@@ -127,11 +122,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         } else {
             (currentVc as! ShadowboxLinkViewController).doBackground()
         }
-        for vc in vCs {
-            if let shadowbox = vc as? ShadowboxLinkViewController {
-                shadowbox.doBackground()
-            }
-        }
     }
     
     func doButtons() {
@@ -159,9 +149,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
         
         currentVc = self.viewControllers!.first!
-        if vCs.lastIndex(of: currentVc) == vCs.count - 2 {
-            loadMore()
-        }
     }
     
     var loading = false
@@ -215,7 +202,17 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = vCs.index(of: viewController) else {
+        let id = (viewController as! ShadowboxLinkViewController).submission.getId()
+        var viewControllerIndex = -1
+        
+        for item in baseSubmissions {
+            viewControllerIndex += 1
+            if item.getId() == id {
+                break
+            }
+        }
+        
+        if viewControllerIndex < 0 || viewControllerIndex > baseSubmissions.count {
             return nil
         }
         
@@ -225,31 +222,59 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             return nil
         }
         
-        guard vCs.count > previousIndex else {
+        guard baseSubmissions.count > previousIndex else {
             return nil
         }
         
-        return vCs[previousIndex]
+        let s = baseSubmissions[previousIndex]
+        let shadowbox = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
+        if !shadowbox.populated {
+            shadowbox.populateContent()
+            shadowbox.populated = true
+        }
+        
+        return shadowbox
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = vCs.index(of: viewController) else {
+        let id = (viewController as! ShadowboxLinkViewController).submission.getId()
+        var viewControllerIndex = -1
+        
+        for item in baseSubmissions {
+            viewControllerIndex += 1
+            if item.getId() == id {
+                break
+            }
+        }
+        
+        if viewControllerIndex < 0 || viewControllerIndex > baseSubmissions.count {
             return nil
         }
         
         let nextIndex = viewControllerIndex + 1
-        let orderedViewControllersCount = vCs.count
+        let orderedViewControllersCount = baseSubmissions.count
         
         guard orderedViewControllersCount != nextIndex else {
             return nil
         }
-
+        
         guard orderedViewControllersCount > nextIndex else {
             return nil
         }
         
-        return vCs[nextIndex]
+        if nextIndex == baseSubmissions.count - 2 && !loading {
+            loadMore()
+        }
+        
+        let s = baseSubmissions[nextIndex]
+        let shadowbox = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
+        if !shadowbox.populated {
+            shadowbox.populateContent()
+            shadowbox.populated = true
+        }
+
+        return shadowbox
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

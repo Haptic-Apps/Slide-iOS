@@ -2329,8 +2329,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             
             if SettingValues.actionBarMode.isSide() && !full {
-                estimatedUsableWidth -= 36
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //buttons horizontal margins
+                estimatedUsableWidth -= 40
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //buttons horizontal margins
             }
             
             let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)

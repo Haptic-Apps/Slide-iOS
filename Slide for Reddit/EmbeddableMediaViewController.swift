@@ -16,6 +16,7 @@ struct EmbeddableMediaDataModel {
     var lqURL: URL?
     var text: String?
     var inAlbum: Bool = false
+    var buttons: Bool = true
 }
 
 class EmbeddableMediaViewController: UIViewController {
