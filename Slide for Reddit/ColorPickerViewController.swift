@@ -477,7 +477,7 @@ import UIKit
         let center = _thumbLayer.position
         let diameter = max(thumbSize,44.0)
         let r = CGRect(x: center.x - diameter/2.0, y: center.y - diameter/2.0, width: diameter, height: diameter)
-        if r.contains(pt){
+        if r.contains(pt) {
             sendActions(for: .touchDown)
             return true
         }

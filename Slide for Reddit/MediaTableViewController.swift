@@ -115,13 +115,11 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     
     func getControllerForUrl(baseUrl: URL, lq: URL? = nil) -> UIViewController? {
         contentUrl = baseUrl.absoluteString.startsWith("//") ? URL(string: "https:\(baseUrl.absoluteString)") ?? baseUrl : baseUrl
-        print(contentUrl?.absoluteString)
 
         if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
             contentUrl = URL.init(string: (content?.substring(to: content!.index(of: ".")!))!)
         }
-        print(contentUrl?.absoluteString)
 
         let type = ContentType.getContentType(baseUrl: contentUrl)
         
@@ -129,7 +127,6 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
-            print(contentUrl?.absoluteString)
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
         } else if type == .GIF && SettingValues.internalGifView || type == .STREAMABLE || type == .VID_ME {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {

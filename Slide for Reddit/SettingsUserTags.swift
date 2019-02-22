@@ -165,10 +165,11 @@ class TagCellView: UITableViewCell {
 
     func setTag(user: String, tag: String) {
         
-        var attributedTitle = NSMutableAttributedString(string: user, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
+        let attributedTitle = NSMutableAttributedString(string: user, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
         if !tag.isEmpty {
             let spacer = NSMutableAttributedString.init(string: "  ")
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             attributedTitle.append(spacer)
             attributedTitle.append(tagString)

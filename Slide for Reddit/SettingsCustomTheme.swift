@@ -6,9 +6,11 @@
 //  Copyright © 2019 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import MKColorPicker
 import RLBAlertsPickers
 import UIKit
+import SDCAlertView
 
 class SettingsCustomTheme: UITableViewController {
     
@@ -272,51 +274,94 @@ class SettingsCustomTheme: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 0 {
-            //foreground
-            
-            let alert = UIAlertController(style: .actionSheet)
-            alert.addColorPicker(color: ColorUtil.Theme.CUSTOM.foregroundColor) { color in
-                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FOREGROUND)
-                UserDefaults.standard.synchronize()
-                self.cleanup()
-            }
-            alert.addCancelButton()
-            self.present(alert, animated: true)
-        } else if indexPath.row == 1 {
-            //background
-            
-            let alert = UIAlertController(style: .actionSheet)
-            alert.addColorPicker(color: ColorUtil.Theme.CUSTOM.backgroundColor) { color in
-                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_BACKGROUND)
-                UserDefaults.standard.synchronize()
-                self.cleanup()
-            }
-            alert.addCancelButton()
-            self.present(alert, animated: true)
-        } else if indexPath.row == 2 {
-            //font
-            
-            let alert = UIAlertController(style: .actionSheet)
-            alert.addColorPicker(color: ColorUtil.Theme.CUSTOM.fontColor) { color in
-                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FONT)
-                UserDefaults.standard.synchronize()
-                self.cleanup()
-            }
-            alert.addCancelButton()
-            self.present(alert, animated: true)
-        } else if indexPath.row == 3 {
-            //navicon
-            
-            let alert = UIAlertController(style: .actionSheet)
-            alert.addColorPicker(color: ColorUtil.Theme.CUSTOM.navIconColor) { color in
-                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_NAVICON)
-                UserDefaults.standard.synchronize()
-                self.cleanup()
-            }
-            alert.addCancelButton()
-            self.present(alert, animated: true)
+        if indexPath.row == 4 {
+            return
         }
+        let alert = AlertController(title: "", message: "", preferredStyle: .alert)
+        var color: UIColor
+        switch indexPath.row {
+        case 0:
+            color = ColorUtil.Theme.CUSTOM.foregroundColor
+            alert.attributedMessage = NSAttributedString(string:  "Foreground color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        case 1:
+            color = ColorUtil.Theme.CUSTOM.backgroundColor
+            alert.attributedMessage = NSAttributedString(string:  "Background color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        case 2:
+            color = ColorUtil.Theme.CUSTOM.fontColor
+            alert.attributedMessage = NSAttributedString(string:  "Font color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        default:
+            color = ColorUtil.Theme.CUSTOM.navIconColor
+            alert.attributedMessage = NSAttributedString(string:  "Icons color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        }
+
+        let selection: ColorPickerViewController.Selection? = { color in
+            switch indexPath.row {
+            case 0:
+                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FOREGROUND)
+            case 1:
+                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_BACKGROUND)
+            case 2:
+                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FONT)
+            default:
+                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_NAVICON)
+            }
+            UserDefaults.standard.synchronize()
+            self.cleanup()
+        }
+        
+        let buttonSelection = AlertAction(title: "Save", style: .normal) { _ in
+            selection?(color)
+        }
+        buttonSelection.isEnabled = true
+        alert.addAction(buttonSelection)
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "ColorPicker") as? ColorPickerViewController else { return }
+        
+        alert.addChild(vc)
+        let vcv = vc.view!
+        
+        let view = UIView()
+        alert.contentView.addSubview(view)
+        view.edgeAnchors == alert.contentView.edgeAnchors
+        view.heightAnchor == 400
+
+        vcv.isUserInteractionEnabled = true
+        vcv.backgroundColor = UIColor.clear
+        
+        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
+        alert.visualStyle.normalTextColor = ColorUtil.baseAccent
+        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        
+        alert.attributedTitle = NSAttributedString(string:  color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        vc.set(color: color) { new in
+            color = new
+            alert.attributedTitle = NSAttributedString(string:  color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        }
+        
+        alert.addCancelButton()
+        
+        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(8, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        
+        alert.view.subviews[0].insertSubview(blurView, at: 0)
+        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+        blurView.layer.cornerRadius = 13
+        blurView.clipsToBounds = true
+        
+        self.present(alert, animated: true) {
+        }
+        alert.view!.addSubview(vcv)
+        vc.didMove(toParent: alert)
+        vcv.horizontalAnchors == alert.contentView.superview!.horizontalAnchors
+        vcv.topAnchor == alert.contentView.superview!.topAnchor + 70
+        vcv.bottomAnchor == alert.contentView.superview!.bottomAnchor
+        vcv.heightAnchor == 400
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

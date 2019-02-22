@@ -180,7 +180,7 @@ class AnyModalViewController: UIViewController {
             }
 
             DispatchQueue.global(qos: .userInteractive).async {
-                videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
+                _ = videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
                     guard let strongSelf = self else { return }
                     strongSelf.baseURL = URL(string: urlString)!
                     DispatchQueue.main.async {
