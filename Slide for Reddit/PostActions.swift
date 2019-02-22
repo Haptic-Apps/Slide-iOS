@@ -615,8 +615,8 @@ class PostActions: NSObject {
         
         let textField = TwoTextFieldsViewController(height: 58, hInset: 0, vInset: 0, textFieldOne: configS, textFieldTwo: configT).view!
         
-        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
-        alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
+        alert.visualStyle.normalTextColor = ColorUtil.baseAccent
         alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
         alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
         alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
@@ -729,8 +729,8 @@ class PostActions: NSObject {
             
             let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
             
-            alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
-            alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+            alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
+            alert.visualStyle.normalTextColor = ColorUtil.baseAccent
             alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
             alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
             alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
