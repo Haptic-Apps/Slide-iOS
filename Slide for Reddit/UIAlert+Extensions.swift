@@ -8,6 +8,19 @@
 
 import Anchorage
 import Foundation
+import SDCAlertView
+
+extension AlertController {
+    public func addCancelButton() {
+        if self.preferredStyle == .actionSheet {
+            let cancelAction = AlertAction(title: "Cancel", style: .preferred, handler: nil)
+            self.addAction(cancelAction)
+        } else {
+            let cancelAction = AlertAction(title: "Cancel", style: .preferred, handler: nil)
+            self.addAction(cancelAction)
+        }
+    }
+}
 extension UIAlertController {
     
     public func addCancelButton() {

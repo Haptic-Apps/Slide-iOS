@@ -17,6 +17,7 @@ target 'Slide for Reddit' do
   pod 'MaterialComponents/Tabs'
   pod 'MaterialComponents/ProgressView'
   pod 'SubtleVolume'
+  pod 'SDCAlertView'
   pod 'Embassy', '~> 4.0.8'
   pod 'MTColorDistance'
   pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'

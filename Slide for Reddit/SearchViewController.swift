@@ -6,9 +6,11 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import reddift
 import RLBAlertsPickers
 import UIKit
+import SDCAlertView
 
 class SearchViewController: ContentListingViewController {
 
@@ -110,7 +112,7 @@ class SearchViewController: ContentListingViewController {
     var searchText: String?
 
     @objc func edit(_ sender: AnyObject) {
-        let alert = UIAlertController(title: "Edit search", message: "", preferredStyle: .actionSheet)
+        let alert = AlertController(title: "Edit search", message: "", preferredStyle: .alert)
 
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
@@ -130,10 +132,26 @@ class SearchViewController: ContentListingViewController {
                 self.searchText = textField.text
             }
         }
-
-        alert.addOneTextField(configuration: config)
-
-        alert.addAction(UIAlertAction(title: "Search again", style: .default, handler: { (_) in
+        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+        
+        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+        alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        
+        alert.attributedTitle = NSAttributedString(string: "Edit search", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        alert.contentView.addSubview(textField)
+        
+        textField.edgeAnchors == alert.contentView.edgeAnchors
+        textField.heightAnchor == CGFloat(44 + 12)
+        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(8, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        
+        alert.addAction(AlertAction(title: "Search again", style: .preferred, handler: { (_) in
             let text = self.searchText ?? ""
             let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
             self.navigationController?.popViewController(animated: true)
@@ -141,7 +159,11 @@ class SearchViewController: ContentListingViewController {
         }))
 
         alert.addCancelButton()
-
+        alert.view.subviews[0].insertSubview(blurView, at: 0)
+        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+        blurView.layer.cornerRadius = 13
+        blurView.clipsToBounds = true
+        
         present(alert, animated: true, completion: nil)
 
     }

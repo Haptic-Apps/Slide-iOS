@@ -24,26 +24,26 @@ PODS:
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (77.0.0):
+  - MaterialComponents/ActivityIndicator (78.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (77.0.0)
-  - MaterialComponents/Ink (77.0.0):
+  - MaterialComponents/AnimationTiming (78.0.0)
+  - MaterialComponents/Ink (78.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (77.0.0)
-  - MaterialComponents/private/Application (77.0.0)
-  - MaterialComponents/private/Math (77.0.0)
-  - MaterialComponents/ProgressView (77.0.0):
+  - MaterialComponents/Palettes (78.0.0)
+  - MaterialComponents/private/Application (78.0.0)
+  - MaterialComponents/private/Math (78.0.0)
+  - MaterialComponents/ProgressView (78.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (77.0.0)
-  - MaterialComponents/ShadowLayer (77.0.0):
+  - MaterialComponents/ShadowElevations (78.0.0)
+  - MaterialComponents/ShadowLayer (78.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (77.0.0):
+  - MaterialComponents/Tabs (78.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -51,7 +51,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (77.0.0):
+  - MaterialComponents/Typography (78.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -71,6 +71,7 @@ PODS:
     - HTMLSpecialCharacters
     - MiniKeychain
   - RLBAlertsPickers (1.1.1)
+  - SDCAlertView (9.0.1)
   - SDWebImage (4.4.5):
     - SDWebImage/Core (= 4.4.5)
   - SDWebImage/Core (4.4.5)
@@ -104,6 +105,7 @@ DEPENDENCIES:
   - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
+  - SDCAlertView
   - SDWebImage
   - SloppySwiper (from `https://github.com/ccrama/SloppySwiper`)
   - Starscream (~> 3.0.2)
@@ -165,7 +167,7 @@ SPEC CHECKSUMS:
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 1dc805d52502bd9d5692c2ffcc8a169c8b65b916
+  MaterialComponents: f50582fcff415a2459e62a29310fb3ec70a70234
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -177,6 +179,7 @@ SPEC CHECKSUMS:
   RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: e8d2b6dd7d97d32e1f940a6b3bd3e8913bd6ad90
+  SDCAlertView: f24c447279278dca39d41562b414276980b066d8
   SDWebImage: ecc03494e973b93b80213649d32175f8d2d17d4d
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
@@ -188,6 +191,6 @@ SPEC CHECKSUMS:
   XLActionController: d2ab12a967ae0fee0b4563b8d809c8fb13ebc636
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 9cd0dcd98c872738e7bdd040f5f399c412f73ae8
+PODFILE CHECKSUM: c420b668ae7ccae31decc124c57391c638e81fc7
 
 COCOAPODS: 1.4.0

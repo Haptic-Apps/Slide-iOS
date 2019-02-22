@@ -7,10 +7,12 @@
 //
 
 import ActionSheetPicker_3_0
+import Anchorage
 import RealmSwift
 import reddift
 import RLBAlertsPickers
 import UIKit
+import SDCAlertView
 import XLActionController
 
 protocol SubmissionMoreDelegate: class {
@@ -565,18 +567,18 @@ class PostActions: NSObject {
     
     static func crosspost(_ thing: RSubmission, _ parent: UIViewController, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
         
-        let alert = UIAlertController.init(style: .actionSheet)
+        let alert = AlertController(title: "Crosspost", message: nil, preferredStyle: .alert)
         
         let configS: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = .black
+            textField.textColor = ColorUtil.fontColor
             textField.placeholder = "Subreddit"
-            textField.left(image: UIImage.init(named: "subs"), color: .black)
+            textField.left(image: UIImage.init(named: "subs"), color: ColorUtil.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
-            textField.backgroundColor = .white
+            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.foregroundColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.leftViewPadding = 16
@@ -590,14 +592,14 @@ class PostActions: NSObject {
         }
         
         let configT: TextField.Config = { textField in
-            textField.textColor = .black
+            textField.textColor = ColorUtil.fontColor
             textField.placeholder = "Enter a new title"
-            textField.left(image: UIImage.init(named: "size"), color: .black)
+            textField.left(image: UIImage.init(named: "size"), color: ColorUtil.fontColor)
             textField.leftViewPadding = 16
             textField.layer.borderWidth = 0
             textField.layer.cornerRadius = 0
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
-            textField.backgroundColor = .white
+            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.foregroundColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done
@@ -611,9 +613,27 @@ class PostActions: NSObject {
             }
         }
         
-        alert.addTwoTextFields(textFieldOne: configS, textFieldTwo: configT)
+        let textField = TwoTextFieldsViewController(height: 58, hInset: 0, vInset: 0, textFieldOne: configS, textFieldTwo: configT).view!
         
-        alert.addAction(UIAlertAction(title: "Crosspost", style: .default, handler: { [weak alert] (_) in
+        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+        alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        
+        alert.attributedTitle = NSAttributedString(string: "Crosspost", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        alert.contentView.addSubview(textField)
+        
+        textField.edgeAnchors == alert.contentView.edgeAnchors
+        textField.heightAnchor == CGFloat(58 * 2)
+        
+        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(8, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        
+        alert.addAction(AlertAction(title: "Crosspost", style: .normal, handler: { [weak alert] (_) in
             let subField = self.subText ?? ""
             let titleField = self.titleText ?? ""
             
@@ -656,20 +676,24 @@ class PostActions: NSObject {
         }))
         
         alert.addCancelButton()
-        
+        alert.view.subviews[0].insertSubview(blurView, at: 0)
+        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+        blurView.layer.cornerRadius = 13
+        blurView.clipsToBounds = true
+
         parent.present(alert, animated: true, completion: nil)
     }
     
     static var reportText: String?
     
     static func report(_ thing: Object, parent: UIViewController, index: Int, delegate: SubmissionMoreDelegate?) {
-        let alert = UIAlertController(title: "Report this content", message: "", preferredStyle: .alert)
+        let alert = AlertController(title: "Report this content", message: "", preferredStyle: .alert)
         
         if !AccountController.isLoggedIn {
-            alert.addAction(UIAlertAction(title: "Log in to report this content", style: .default, handler: { (_) in
+            alert.addAction(AlertAction(title: "Log in to report this content", style: .normal, handler: { (_) in
                 MainViewController.doAddAccount(register: false)
             }))
-            alert.addAction(UIAlertAction(title: "Create a Reddit account", style: .default, handler: { (_) in
+            alert.addAction(AlertAction(title: "Create a Reddit account", style: .normal, handler: { (_) in
                 let alert = UIAlertController(title: "Create a new Reddit account", message: "After finishing the process on the next screen, click the 'back' arrow to finish setting up your account!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
                     MainViewController.doAddAccount(register: true)
@@ -677,7 +701,7 @@ class PostActions: NSObject {
                 alert.addCancelButton()
                 VCPresenter.presentAlert(alert, parentVC: parent)
             }))
-            alert.addAction(UIAlertAction(title: "Remove post (log in later)", style: .default, handler: { (_) in
+            alert.addAction(AlertAction(title: "Remove post (log in later)", style: .normal, handler: { (_) in
                 DispatchQueue.main.async {
                     delegate?.hide(index: index)
                 }
@@ -703,9 +727,27 @@ class PostActions: NSObject {
                 }
             }
             
-            alert.addOneTextField(configuration: config)
+            let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
             
-            alert.addAction(UIAlertAction(title: "Report", style: .destructive, handler: { (_) in
+            alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+            alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+            alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+            alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+            alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+            
+            alert.attributedTitle = NSAttributedString(string: "Report this content", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            
+            alert.contentView.addSubview(textField)
+            
+            textField.edgeAnchors == alert.contentView.edgeAnchors
+            textField.heightAnchor == CGFloat(44 + 12)
+            
+            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+            let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+            blurEffect.setValue(8, forKeyPath: "blurRadius")
+            blurView.effect = blurEffect
+            
+            alert.addAction(AlertAction(title: "Report", style: .destructive, handler: { (_) in
                 let text = self.reportText ?? ""
                 do {
                     let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
@@ -724,7 +766,10 @@ class PostActions: NSObject {
             }))
             
             alert.addCancelButton()
-            
+            alert.view.subviews[0].insertSubview(blurView, at: 0)
+            blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+            blurView.layer.cornerRadius = 13
+            blurView.clipsToBounds = true
             VCPresenter.presentAlert(alert, parentVC: parent)
 
         }

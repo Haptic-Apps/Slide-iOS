@@ -11,6 +11,7 @@ import MaterialComponents.MDCTabBar
 import MKColorPicker
 import reddift
 import RLBAlertsPickers
+import SDCAlertView
 import UIKit
 
 class ProfileViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, ColorPickerViewDelegate, UIScrollViewDelegate {
@@ -75,8 +76,8 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     var tagText: String?
 
     func tagUser() {
-        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertController.Style.alert)
-        let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
+        let alert = AlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: .alert)
+        let confirmAction = AlertAction(title: "Set", style: .normal) { (_) in
             if let text = self.tagText {
                 ColorUtil.setTagForUser(name: self.name, tag: text)
             } else {
@@ -85,12 +86,11 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         }
         
         if !ColorUtil.getTagForUser(name: name).isEmpty {
-        let removeAction = UIAlertAction(title: "Remove tag", style: .default) { (_) in
+        let removeAction = AlertAction(title: "Remove tag", style: .destructive) { (_) in
             ColorUtil.removeTagForUser(name: self.name)
         }
-            alertController.addAction(removeAction)
+            alert.addAction(removeAction)
         }
-
 
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
@@ -111,18 +111,34 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             }
         }
 
-        alertController.addOneTextField(configuration: config)
-
-        alertController.addAction(confirmAction)
-        alertController.addCancelButton()
+        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
         
-        alertController.modalPresentationStyle = .popover
-        if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
-            presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
-        }
+        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+        alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        
+        alert.attributedTitle = NSAttributedString(string: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        alert.contentView.addSubview(textField)
+        
+        textField.edgeAnchors == alert.contentView.edgeAnchors
+        textField.heightAnchor == CGFloat(44 + 12)
+        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(8, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        
+        alert.addAction(confirmAction)
+        alert.addCancelButton()
+        
+        alert.view.subviews[0].insertSubview(blurView, at: 0)
+        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+        blurView.layer.cornerRadius = 13
+        blurView.clipsToBounds = true
 
-        self.present(alertController, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
 
     }
 

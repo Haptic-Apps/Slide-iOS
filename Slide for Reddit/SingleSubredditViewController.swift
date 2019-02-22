@@ -17,6 +17,7 @@ import SDWebImage
 import SloppySwiper
 import YYText
 import UIKit
+import SDCAlertView
 import XLActionController
 
 // MARK: - Base
@@ -1049,13 +1050,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     var oldPosition: CGPoint = CGPoint.zero
 
     func search() {
-        let alert = UIAlertController(title: "Search", message: "", preferredStyle: .alert)
+        let alert = AlertController(title: "Search", message: "", preferredStyle: .alert)
 
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
             textField.textColor = ColorUtil.fontColor
             textField.backgroundColor = ColorUtil.foregroundColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Search for a post...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
+            textField.attributedPlaceholder = NSAttributedString(string: "Search...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
             textField.left(image: UIImage.init(named: "search"), color: ColorUtil.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
@@ -1068,10 +1069,22 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.searchText = textField.text
             }
         }
+        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+        
+        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+        alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        
+        alert.attributedTitle = NSAttributedString(string: "Search", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
 
-        alert.addOneTextField(configuration: config)
+        alert.contentView.addSubview(textField)
+        
+        textField.edgeAnchors == alert.contentView.edgeAnchors
+        textField.heightAnchor == CGFloat(44 + 12)
 
-        alert.addAction(UIAlertAction(title: "Search All", style: .default, handler: { (_) in
+        alert.addAction(AlertAction(title: "Search All", style: .normal, handler: { (_) in
             if !AccountController.isLoggedIn {
                 let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
@@ -1084,7 +1097,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }))
 
         if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
-            alert.addAction(UIAlertAction(title: "Search \(sub)", style: .default, handler: { (_) in
+            alert.addAction(AlertAction(title: "Search \(sub)", style: .normal, handler: { (_) in
                 let text = self.searchText ?? ""
                 if !AccountController.isLoggedIn {
                     let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
@@ -1098,6 +1111,16 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
 
         alert.addCancelButton()
+
+        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(8, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        
+        alert.view.subviews[0].insertSubview(blurView, at: 0)
+        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+        blurView.layer.cornerRadius = 13
+        blurView.clipsToBounds = true
 
         present(alert, animated: true, completion: nil)
 

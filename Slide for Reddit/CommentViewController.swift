@@ -13,6 +13,7 @@ import RealmSwift
 import reddift
 import RLBAlertsPickers
 import SloppySwiper
+import SDCAlertView
 import YYText
 import UIKit
 import XLActionController
@@ -1778,8 +1779,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var tagText: String?
 
     func tagUser(name: String) {
-        let alertController = UIAlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: UIAlertController.Style.alert)
-        let confirmAction = UIAlertAction(title: "Set", style: .default) { (_) in
+        let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
+        let confirmAction = AlertAction(title: "Set", style: .preferred) { (_) in
             if let text = self.tagText {
                 ColorUtil.setTagForUser(name: name, tag: text)
                 self.tableView.reloadData()
@@ -1789,11 +1790,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
 
         if !ColorUtil.getTagForUser(name: name).isEmpty {
-            let removeAction = UIAlertAction(title: "Remove tag", style: .default) { (_) in
+            let removeAction = AlertAction(title: "Remove tag", style: .destructive) { (_) in
                 ColorUtil.removeTagForUser(name: name)
                 self.tableView.reloadData()
             }
-            alertController.addAction(removeAction)
+            alert.addAction(removeAction)
         }
 
         let config: TextField.Config = { textField in
@@ -1815,12 +1816,35 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             }
         }
 
-        alertController.addOneTextField(configuration: config)
+        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+        
+        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+        alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        
+        alert.attributedTitle = NSAttributedString(string: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        alert.contentView.addSubview(textField)
+        
+        textField.edgeAnchors == alert.contentView.edgeAnchors
+        textField.heightAnchor == CGFloat(44 + 12)
+        
+        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(8, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        
+        alert.addAction(confirmAction)
+        alert.addCancelButton()
 
-        alertController.addAction(confirmAction)
-        alertController.addCancelButton()
-
-        self.present(alertController, animated: true, completion: nil)
+        alert.view.subviews[0].insertSubview(blurView, at: 0)
+        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+        blurView.layer.cornerRadius = 13
+        blurView.clipsToBounds = true
+        
+        self.present(alert, animated: true, completion: nil)
 
     }
 

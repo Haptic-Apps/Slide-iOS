@@ -14,6 +14,7 @@ import reddift
 import RLBAlertsPickers
 import SafariServices
 import SDWebImage
+import SDCAlertView
 import Then
 import YYText
 import UIKit
@@ -1987,7 +1988,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     func setFlair(_ flair: FlairTemplate) {
         if flair.editable {
-            let alert = UIAlertController(title: "Edit flair text", message: "", preferredStyle: .alert)
+            let alert = AlertController(title: "Edit flair text", message: "", preferredStyle: .alert)
             
             let config: TextField.Config = { textField in
                 textField.becomeFirstResponder()
@@ -2007,15 +2008,38 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     self.flairText = textField.text
                 }
             }
+
+            let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
             
-            alert.addOneTextField(configuration: config)
+            alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+            alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+            alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+            alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+            alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
             
-            alert.addAction(UIAlertAction(title: "Set flair", style: .default, handler: { (_) in
+            alert.attributedTitle = NSAttributedString(string: "Edit flair text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            
+            alert.contentView.addSubview(textField)
+            
+            textField.edgeAnchors == alert.contentView.edgeAnchors
+            textField.heightAnchor == CGFloat(44 + 12)
+            
+            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+            let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+            blurEffect.setValue(8, forKeyPath: "blurRadius")
+            blurView.effect = blurEffect
+            
+
+            alert.addAction(AlertAction(title: "Set flair", style: .preferred, handler: { (_) in
                 self.submitFlairChange(flair, text: self.flairText ?? "")
             }))
             
             alert.addCancelButton()
-            
+            alert.view.subviews[0].insertSubview(blurView, at: 0)
+            blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+            blurView.layer.cornerRadius = 13
+            blurView.clipsToBounds = true
+
             //todo make this work on ipad
             parentViewController?.present(alert, animated: true, completion: nil)
             

@@ -8,6 +8,7 @@
 
 import Anchorage
 import AVKit
+import SDCAlertView
 import Then
 import UIKit
 
@@ -470,6 +471,6 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
 }
 extension UINavigationController {
     open override var preferredStatusBarStyle: UIStatusBarStyle {
-        return presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? (SettingValues.reduceColor && ColorUtil.theme.isLight() ? .default : .lightContent)
+        return (presentedViewController is AlertController) ? .lightContent : (presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? (SettingValues.reduceColor && ColorUtil.theme.isLight() ? .default : .lightContent))
     }
 }

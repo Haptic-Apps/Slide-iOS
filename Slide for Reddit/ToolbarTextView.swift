@@ -3,6 +3,7 @@
 // Copyright (c) 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import ActionSheetPicker_3_0
 import Alamofire
 import MobileCoreServices
@@ -10,6 +11,7 @@ import OpalImagePicker
 import Photos
 import RLBAlertsPickers
 import SwiftyJSON
+import SDCAlertView
 import UIKit
 
 public class ToolbarTextView: NSObject {
@@ -186,7 +188,7 @@ public class ToolbarTextView: NSObject {
                                             if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
                                                 (self.parent as! ReplyViewController).text!.last!.text = url
                                             } else {
-                                                let alert = UIAlertController(title: "Link text", message: url, preferredStyle: .alert)
+                                                let alert = AlertController(title: "Link text", message: url, preferredStyle: .alert)
 
                                                 let config: TextField.Config = { textField in
                                                     textField.becomeFirstResponder()
@@ -206,9 +208,26 @@ public class ToolbarTextView: NSObject {
                                                     }
                                                 }
 
-                                                alert.addOneTextField(configuration: config)
-
-                                                alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
+                                                let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+                                                
+                                                alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+                                                alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+                                                alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+                                                alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+                                                alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+                                                
+                                                alert.attributedTitle = NSAttributedString(string: "Link Text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+                                                
+                                                alert.contentView.addSubview(textField)
+                                                
+                                                textField.edgeAnchors == alert.contentView.edgeAnchors
+                                                textField.heightAnchor == CGFloat(44 + 12)
+                                                let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+                                                let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+                                                blurEffect.setValue(8, forKeyPath: "blurRadius")
+                                                blurView.effect = blurEffect
+                                                
+                                                alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
                                                     let text = self.insertText ?? ""
                                                     if text.isEmpty() {
                                                         self.text!.insertText("\(url)")
@@ -218,6 +237,12 @@ public class ToolbarTextView: NSObject {
                                                 }))
 
                                                 alert.addCancelButton()
+                                                
+                                                alert.view.subviews[0].insertSubview(blurView, at: 0)
+                                                blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+                                                blurView.layer.cornerRadius = 13
+                                                blurView.clipsToBounds = true
+
                                                 self.parent.present(alert, animated: true, completion: nil)
                                             }
                                         } else {
@@ -240,7 +265,7 @@ public class ToolbarTextView: NSObject {
                             if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
                                 (self.parent as! ReplyViewController).text!.last!.text = link
                             } else {
-                                let alert = UIAlertController(title: "Link text", message: link, preferredStyle: .alert)
+                                let alert = AlertController(title: "Link text", message: link, preferredStyle: .alert)
 
                                 let config: TextField.Config = { textField in
                                     textField.becomeFirstResponder()
@@ -260,9 +285,26 @@ public class ToolbarTextView: NSObject {
                                     }
                                 }
 
-                                alert.addOneTextField(configuration: config)
-
-                                alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
+                                let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+                                
+                                alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+                                alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+                                alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+                                alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+                                alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+                                
+                                alert.attributedTitle = NSAttributedString(string: "Link Text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+                                
+                                alert.contentView.addSubview(textField)
+                                
+                                textField.edgeAnchors == alert.contentView.edgeAnchors
+                                textField.heightAnchor == CGFloat(44 + 12)
+                                let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+                                let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+                                blurEffect.setValue(8, forKeyPath: "blurRadius")
+                                blurView.effect = blurEffect
+                                
+                                alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
                                     let text = self.insertText ?? ""
                                     if text.isEmpty() {
                                         self.text!.insertText("\(link)")
@@ -272,6 +314,12 @@ public class ToolbarTextView: NSObject {
                                 }))
 
                                 alert.addCancelButton()
+
+                                alert.view.subviews[0].insertSubview(blurView, at: 0)
+                                blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+                                blurView.layer.cornerRadius = 13
+                                blurView.clipsToBounds = true
+
                                 self.parent.present(alert, animated: true, completion: nil)
                             }
                         } else {
@@ -341,18 +389,18 @@ public class ToolbarTextView: NSObject {
     var insertLink: String?
 
     @objc func link(_ sender: UIButton!) {
-        let alert = UIAlertController(title: "Insert Link", message: "", preferredStyle: .alert)
+        let alert = AlertController(title: "Insert Link", message: "", preferredStyle: .alert)
 
         let configU: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = .black
+            textField.textColor = ColorUtil.fontColor
             textField.placeholder = "URL"
-            textField.left(image: UIImage.init(named: "link"), color: .black)
+            textField.left(image: UIImage.init(named: "link"), color: ColorUtil.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
-            textField.backgroundColor = .white
+            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.foregroundColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done
@@ -363,14 +411,14 @@ public class ToolbarTextView: NSObject {
 
         let configT: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = .black
+            textField.textColor = ColorUtil.fontColor
             textField.placeholder = "Caption (optional)"
-            textField.left(image: UIImage.init(named: "size"), color: .black)
+            textField.left(image: UIImage.init(named: "size"), color: ColorUtil.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5) .cgColor
-            textField.backgroundColor = .white
+            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.foregroundColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done
@@ -379,9 +427,27 @@ public class ToolbarTextView: NSObject {
             }
         }
 
-        alert.addTwoTextFields(height: CGFloat(58), hInset: CGFloat(10), vInset: CGFloat(0), textFieldOne: configU, textFieldTwo: configT)
+        let textField = TwoTextFieldsViewController(height: 58, hInset: 0, vInset: 0, textFieldOne: configU, textFieldTwo: configT).view!
+        
+        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.80)
+        alert.visualStyle.normalTextColor = ColorUtil.navIconColor
+        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        
+        alert.attributedTitle = NSAttributedString(string: "Insert link", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        alert.contentView.addSubview(textField)
+        
+        textField.edgeAnchors == alert.contentView.edgeAnchors
+        textField.heightAnchor == CGFloat(58 * 2)
+        
+        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(8, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
 
-        alert.addAction(UIAlertAction(title: "Insert", style: .default, handler: { (_) in
+        alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
             let text = self.insertText ?? ""
             let link = self.insertLink ?? ""
             if text.isEmpty() {
@@ -392,6 +458,11 @@ public class ToolbarTextView: NSObject {
         }))
 
         alert.addCancelButton()
+        alert.view.subviews[0].insertSubview(blurView, at: 0)
+        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
+        blurView.layer.cornerRadius = 13
+        blurView.clipsToBounds = true
+        
         self.parent.present(alert, animated: true, completion: nil)
 
     }
