@@ -1,32 +1,21 @@
 //
-//  IAPHandler.swift
+//  IAPHandlerTip.swift
+//  Slide for Reddit
 //
-//  Created by Dejan Atanasov on 13/07/2017.
-//  Copyright © 2017 Dejan Atanasov. All rights reserved.
+//  Created by Carlos Crane on 2/23/19.
+//  Copyright © 2019 Haptic Apps. All rights reserved.
 //
+
 import StoreKit
 import UIKit
 
-enum IAPHandlerAlertType {
-    case disabled
-    case restored
-    case purchased
-    
-    func message() -> String {
-        switch self {
-        case .disabled: return "Purchases are disabled on your device!"
-        case .restored: return "You've successfully restored your purchase, thank you for supporting Slide!"
-        case .purchased: return "Thank you for going Pro and supporting Slide for Reddit!\n\nAll pro features will now be enabled."
-        }
-    }
-}
-
-class IAPHandler: NSObject {
+class IAPHandlerTip: NSObject {
     static let shared = IAPHandler()
     
-    let PRO = "me.ccrama.pro.base"
-    let PRO_DONATE = "me.ccrama.pro.donate"
-
+    let TIPA = "3tip"
+    let TIPB = "5tip"
+    let TIPC = "10tip"
+    
     private var productID = ""
     private var productsRequest = SKProductsRequest()
     public var iapProducts = [SKProduct]()
@@ -34,9 +23,9 @@ class IAPHandler: NSObject {
     var purchaseStatusBlock: ((IAPHandlerAlertType) -> Void)?
     var restoreBlock: ((Bool) -> Void)?
     var errorBlock: ((String?) -> Void)?
-
+    
     var getItemsBlock: (([SKProduct]) -> Void)?
-
+    
     // MARK: - MAKE PURCHASE OF A PRODUCT
     func canMakePurchases() -> Bool { return SKPaymentQueue.canMakePayments() }
     
@@ -67,7 +56,7 @@ class IAPHandler: NSObject {
     func fetchAvailableProducts() {
         
         // Put here your IAP Products ID's
-        let productIdentifiers = NSSet(objects: PRO, PRO_DONATE)
+        let productIdentifiers = NSSet(objects: TIPA, TIPB, TIPC)
         
         productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers as! Set<String>)
         productsRequest.delegate = self
@@ -75,7 +64,7 @@ class IAPHandler: NSObject {
     }
 }
 
-extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
+extension IAPHandlerTip: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     // MARK: - REQUEST IAP PRODUCTS
     func productsRequest (_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         getItemsBlock?(response.products)

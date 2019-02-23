@@ -300,13 +300,12 @@ class CachedTitle {
         }
 
         if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.nsfw && !full && !submission.body.trimmed().isEmpty {
-            let length = submission.body.indexOf("\n") ?? submission.body.length
-            let text = submission.body.substring(0, length: length).trimmed()
+            let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
+            let text = submission.htmlBody.substring(0, length: length).trimmed()
 
             if !text.isEmpty() {
-                let attr = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 14, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
                 infoString.append(NSAttributedString.init(string: "\n\n"))
-                infoString.append(attr)
+                infoString.append(TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit), fontColor: ColorUtil.fontColor))
             }
         }
         return infoString

@@ -104,7 +104,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         lunch.textAlignment = .center
 
         bagel.addTapGestureRecognizer {
-            IAPHandler.shared.purchaseMyProduct(index: 2)
+            IAPHandlerTip.shared.purchaseMyProduct(index: 0)
             self.alertController = UIAlertController(title: "Processing your tip!\n\n\n", message: nil, preferredStyle: .alert)
             
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -117,7 +117,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         }
         
         coffee.addTapGestureRecognizer {
-            IAPHandler.shared.purchaseMyProduct(index: 3)
+            IAPHandlerTip.shared.purchaseMyProduct(index: 1)
             self.alertController = UIAlertController(title: "Processing your tip!\n\n\n", message: nil, preferredStyle: .alert)
             
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -130,7 +130,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         }
 
         lunch.addTapGestureRecognizer {
-            IAPHandler.shared.purchaseMyProduct(index: 4)
+            IAPHandlerTip.shared.purchaseMyProduct(index: 2)
             self.alertController = UIAlertController(title: "Processing your tip!\n\n\n", message: nil, preferredStyle: .alert)
             
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -172,8 +172,8 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        IAPHandler.shared.fetchAvailableProducts()
-        IAPHandler.shared.getItemsBlock = {(items) in
+        IAPHandlerTip.shared.fetchAvailableProducts()
+        IAPHandlerTip.shared.getItemsBlock = {(items) in
             
             if items.isEmpty || items.count != 2 {
                 let alertView = UIAlertController(title: "Slide could not connect to Apple's servers", message: "Something went wrong connecting to Apple, please try again soon! Sorry for any inconvenience this may have caused", preferredStyle: .alert)
@@ -183,7 +183,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
                 self.present(alertView, animated: true, completion: nil)
             }
         }
-        IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
+        IAPHandlerTip.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else { return }
             if type == .purchased {
                 strongSelf.alertController?.dismiss(animated: true, completion: nil)
@@ -200,7 +200,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
             }
         }
         
-        IAPHandler.shared.errorBlock = {[weak self] (error) in
+        IAPHandlerTip.shared.errorBlock = {[weak self] (error) in
             guard let strongSelf = self else { return }
             strongSelf.alertController?.dismiss(animated: true, completion: nil)
             if error != nil {
@@ -240,7 +240,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
             }
         }
         
-        IAPHandler.shared.restoreBlock = {[weak self] (restored) in
+        IAPHandlerTip.shared.restoreBlock = {[weak self] (restored) in
             guard let strongSelf = self else { return }
             strongSelf.alertController?.dismiss(animated: true, completion: nil)
             if restored {

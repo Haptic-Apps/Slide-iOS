@@ -270,6 +270,7 @@
 		BEB81A6021432C6C007E326B /* AnyModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */; };
 		BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */; };
 		BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A6721445FE4007E326B /* FriendCellView.swift */; };
+		BEBE0C6F222199DA0044FF55 /* IAPHandlerTip.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE0C6E222199DA0044FF55 /* IAPHandlerTip.swift */; };
 		BEBF45C81E230CC900764BB8 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45C71E230CC900764BB8 /* History.swift */; };
 		BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DA1E23383D00764BB8 /* seen.plist */; };
 		BEBF45DD1E23384500764BB8 /* comments.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DC1E23384500764BB8 /* comments.plist */; };
@@ -661,6 +662,7 @@
 		BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModalViewController.swift; sourceTree = "<group>"; };
 		BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsContributionLoader.swift; sourceTree = "<group>"; };
 		BEB81A6721445FE4007E326B /* FriendCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendCellView.swift; sourceTree = "<group>"; };
+		BEBE0C6E222199DA0044FF55 /* IAPHandlerTip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandlerTip.swift; sourceTree = "<group>"; };
 		BEBF45C71E230CC900764BB8 /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		BEBF45DA1E23383D00764BB8 /* seen.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = seen.plist; sourceTree = "<group>"; };
 		BEBF45DC1E23384500764BB8 /* comments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = comments.plist; sourceTree = "<group>"; };
@@ -953,6 +955,7 @@
 				BE1DA5E52208EC59001C7DB4 /* SettingsUserTags.swift */,
 				096A7D162215EC920067106C /* SettingsAudio.swift */,
 				BE17EE162219FD7B0043185B /* SettingsDonate.swift */,
+				BEBE0C6E222199DA0044FF55 /* IAPHandlerTip.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1974,6 +1977,7 @@
 				BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */,
 				0965260B20E2987800EA53BE /* UISearchBar+Extensions.swift in Sources */,
 				BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */,
+				BEBE0C6F222199DA0044FF55 /* IAPHandlerTip.swift in Sources */,
 				BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				096A7D152215D9AB0067106C /* AVAudioSession+Extensions.swift in Sources */,

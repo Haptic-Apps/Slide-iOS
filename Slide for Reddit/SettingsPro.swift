@@ -285,8 +285,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 numberFormatter.formatterBehavior = .behavior10_4
                 numberFormatter.numberStyle = .currency
                 numberFormatter.locale = items[0].priceLocale
-                let price1Str = numberFormatter.string(from: items[0].price)
-                let price2Str = numberFormatter.string(from: items[1].price)
+                let price1Str = "Go pro for \(numberFormatter.string(from: items[0].price) ?? "$4.99")"
+                let price2Str = "Go pro for \(numberFormatter.string(from: items[1].price) ?? "$7.99")"
                 
                 let priceOldStr = "Go pro for \(price1Str)"
                 let priceOldStr2 = "Go pro and donate for \(price2Str)"
