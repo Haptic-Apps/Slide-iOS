@@ -189,7 +189,7 @@ public class VCPresenter {
     }
 
     public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {
-        let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: link)!)
+        let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: link.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!)
         showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
 
     }
