@@ -516,6 +516,129 @@ class SettingValues {
         })
     }
     
+    public enum PostOverflowAction: String {
+        case PROFILE = "profile"
+        case SUBREDDIT = "sub"
+        case REPORT = "report"
+        case BLOCK = "block"
+        case SAVE = "save"
+        case CROSSPOST = "crosspost"
+        case READ_LATER = "readlater"
+        case SHARE_CONTENT = "sharecontent"
+        case SHARE_REDDIT = "sharereddit"
+        case CHROME = "openchrome"
+        case SAFARI = "opensafari"
+        case FILTER = "filter"
+        case COPY = "copy"
+        case HIDE = "hide"
+        case UPVOTE = "upvote"
+        case DOWNVOTE = "downvote"
+        case MODERATE = "moderate"
+        
+        public static func getMenu(_ link: RSubmission, mutableList: Bool) -> [PostOverflowAction] {
+            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "openchrome", "opensafari", "filter", "copy", "hide"]
+            var toReturn = [PostOverflowAction]()
+            for item in menu {
+                if item == "openchrome" {
+                    let open = OpenInChromeController.init()
+                    if !open.isChromeInstalled() {
+                        continue
+                    }
+                }
+                if !AccountController.isLoggedIn && (item == "upvote" || item == "downvote" || item == "save" || item == "crosspost") {
+                    continue
+                }
+                if !AccountController.modSubs.contains(link.subreddit) && item == "moderate" {
+                    continue
+                }
+                if !mutableList && (item == "filter" || item == "hide") {
+                    continue
+                }
+                toReturn.append(PostOverflowAction(rawValue: item)!)
+            }
+            return toReturn
+        }
+        
+        public func getTitle(_ link: RSubmission) -> String {
+            switch self {
+            case .PROFILE:
+                return "\(AccountController.formatUsernamePosessive(input: link.author, small: false)) profile"
+            case .SUBREDDIT:
+                return "r/\(link.subreddit)"
+            case .REPORT:
+                return "Report content"
+            case .BLOCK:
+                return "Block user"
+            case .SAVE:
+                return "Save"
+            case .CROSSPOST:
+                return "Crosspost submission"
+            case .READ_LATER:
+                return ReadLater.isReadLater(id: link.getIdentifier()) ? "Remove from Read Later" : "Add to Read Later"
+            case .SHARE_CONTENT:
+                return "Share content link"
+            case .SHARE_REDDIT:
+                return "Share reddit link"
+            case .CHROME:
+                return "Open in Chrome"
+            case .SAFARI:
+                return "Open in Safari"
+            case .FILTER:
+                return "Filter this content"
+            case .COPY:
+                return "Copy self text"
+            case .HIDE:
+                return "Hide"
+            case .UPVOTE:
+                return "Upvote"
+            case .DOWNVOTE:
+                return "Downvote"
+            case .MODERATE:
+                return "Mod Actions"
+            }
+        }
+        
+        public func getImage(_ link: RSubmission) -> UIImage {
+            switch self {
+            case .PROFILE:
+                return UIImage(named: "profile")!.menuIcon()
+            case .SUBREDDIT:
+                return UIImage(named: "subs")!.menuIcon()
+            case .REPORT:
+                return UIImage(named: "flag")!.menuIcon()
+            case .BLOCK:
+                return UIImage(named: "block")!.menuIcon()
+            case .SAVE:
+                return UIImage(named: "save")!.menuIcon()
+            case .CROSSPOST:
+                return UIImage(named: "crosspost")!.menuIcon()
+            case .READ_LATER:
+                return ReadLater.isReadLater(id: link.getIdentifier()) ? UIImage(named: "restore")!.menuIcon() : UIImage(named: "readLater")!.menuIcon()
+            case .SHARE_CONTENT:
+                return UIImage(named: "share")!.menuIcon()
+            case .SHARE_REDDIT:
+                return UIImage(named: "comments")!.menuIcon()
+            case .CHROME:
+                return UIImage(named: "link")!.menuIcon()
+            case .SAFARI:
+                return UIImage(named: "world")!.menuIcon()
+            case .FILTER:
+                return UIImage(named: "filter")!.menuIcon()
+            case .COPY:
+                return UIImage(named: "copy")!.menuIcon()
+            case .HIDE:
+                return UIImage(named: "hide")!.menuIcon()
+            case .UPVOTE:
+                return UIImage(named: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)
+            case .DOWNVOTE:
+                return UIImage(named: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)
+            case .MODERATE:
+                return UIImage(named: "profile")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
+            }
+        }
+
+    }
+    
     public enum CommentAction: String {
         public static let cases: [CommentAction] = [.UPVOTE, .DOWNVOTE, .MENU, .COLLAPSE, .SAVE, .REPLY, .EXIT, .NEXT, .NONE]
         public static let cases3D: [CommentAction] = [.PARENT_PREVIEW, .UPVOTE, .DOWNVOTE, .MENU, .COLLAPSE, .SAVE, .REPLY, .EXIT, .NEXT, .NONE]

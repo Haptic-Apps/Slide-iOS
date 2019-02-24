@@ -50,70 +50,34 @@ class PostActions: NSObject {
 
     }
     
-    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
+    public static func handleAction(action: SettingValues.PostOverflowAction, cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
-        
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Submission by \(AccountController.formatUsername(input: link.author, small: true))"
-        
-        alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: link.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
-            
+        switch action {
+        case .PROFILE:
             let prof = ProfileViewController.init(name: link.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
-        }))
-        alertController.addAction(Action(ActionData(title: "r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { _ in
-            
+        case .SUBREDDIT:
             let sub = SingleSubredditViewController.init(subName: link.subreddit, single: true)
             VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
-            
-        }))
-        alertController.addAction(Action(ActionData(title: "Report content", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+        case .REPORT:
             PostActions.report(cell.link!, parent: parent, index: index, delegate: delegate)
-        }))
-        alertController.addAction(Action(ActionData(title: "Block user", image: UIImage(named: "block")!.menuIcon()), style: .default, handler: { _ in
+        case .BLOCK:
             PostActions.block(cell.link!.author, parent: parent) { () in
                 delegate.applyFilters()
             }
-        }))
-
-        if AccountController.isLoggedIn {
-            if !SettingValues.actionBarMode.isFull() && AccountController.modSubs.contains(link.subreddit) {
-                alertController.addAction(Action(ActionData(title: "Moderate", image: UIImage(named: "mod")!.menuIcon()), style: .default, handler: { _ in
-                    PostActions.showModMenu(cell, parent: parent)
-                }))
-            }
-            
-            if SettingValues.actionBarMode == .NONE {
-                alertController.addAction(Action(ActionData(title: "Upvote", image: UIImage(named: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)), style: .default, handler: { _ in
-                    cell.upvote()
-                }))
-                alertController.addAction(Action(ActionData(title: "Downvote", image: UIImage(named: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)), style: .default, handler: { _ in
-                    cell.downvote()
-                }))
-            }
-            
-            alertController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
-                delegate.save(cell)
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Crosspost", image: UIImage(named: "crosspost")!.menuIcon()), style: .default, handler: { _ in
-                PostActions.crosspost(cell.link!, parent)
-            }))
-        }
-        
-        if ReadLater.isReadLater(id: cell.link!.getIdentifier()) {
-            alertController.addAction(Action(ActionData(title: "Remove from Read Later", image: UIImage(named: "restore")!.menuIcon()), style: .default, handler: { _ in
-                ReadLater.removeReadLater(id: cell.link!.getIdentifier())
-                BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
-            }))
-        } else {
-            alertController.addAction(Action(ActionData(title: "Add to Read Later", image: UIImage(named: "readLater")!.menuIcon()), style: .default, handler: { _ in
+        case .SAVE:
+            delegate.save(cell)
+        case .CROSSPOST:
+            PostActions.crosspost(cell.link!, parent)
+        case .READ_LATER:
+            if !ReadLater.isReadLater(id: link.getIdentifier()) {
                 ReadLater.addReadLater(id: cell.link!.getIdentifier(), subreddit: cell.link!.subreddit)
                 BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
-            }))
-        }
-        
-        alertController.addAction(Action(ActionData(title: "Share content", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            } else {
+                ReadLater.removeReadLater(id: cell.link!.getIdentifier())
+                BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
+            }
+        case .SHARE_CONTENT:
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: link.url!)], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = cell.contentView
@@ -121,71 +85,75 @@ class PostActions: NSObject {
             }
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil)
-        }))
-        alertController.addAction(Action(ActionData(title: "Share Reddit link", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
+        case .SHARE_REDDIT:
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + link.permalink)!)], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = cell.contentView
                 presenter.sourceRect = cell.contentView.bounds
             }
-
+            
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil)
-        }))
-        
-        let open = OpenInChromeController.init()
-        if open.isChromeInstalled() {
-            
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { _ in
-                open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
-            }))
-        }
-        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+        case .CHROME:
+            let open = OpenInChromeController.init()
+            open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
+        case .SAFARI:
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(link.url!)
             }
-        }))
-        if link.isSelf {
-            alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-                let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
-                
-                alert.setupTheme()
-                
-                alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
-                
-                let text = UITextView().then {
-                    $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = .clear
-                    $0.isEditable = false
-                    $0.text = cell.link!.body.decodeHTML()
-                }
-                
-                alert.contentView.addSubview(text)
-                text.edgeAnchors == alert.contentView.edgeAnchors
-                
-                let height = text.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
-                text.heightAnchor == height
-                
-                alert.addCloseButton()
-                alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
-                    UIPasteboard.general.string = cell.link!.body.decodeHTML()
-                }))
-                
-                alert.addBlurView()
-                
-                parent.present(alert, animated: true)
+        case .FILTER:
+            delegate.showFilterMenu(cell)
+        case .COPY:
+            let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
+            
+            alert.setupTheme()
+            
+            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            
+            let text = UITextView().then {
+                $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = .clear
+                $0.isEditable = false
+                $0.text = cell.link!.body.decodeHTML()
+            }
+            
+            alert.contentView.addSubview(text)
+            text.edgeAnchors == alert.contentView.edgeAnchors
+            
+            let height = text.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
+            text.heightAnchor == height
+            
+            alert.addCloseButton()
+            alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
+                UIPasteboard.general.string = cell.link!.body.decodeHTML()
             }))
+            
+            alert.addBlurView()
+            
+            parent.present(alert, animated: true)
+        case .HIDE:
+            delegate.hide(cell)
+        case .UPVOTE:
+            cell.upvote()
+        case .DOWNVOTE:
+            cell.downvote()
+        case .MODERATE:
+            PostActions.showModMenu(cell, parent: parent)
         }
+    }
+    
+    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
+        let link = cell.link!
         
-        if mutableList {
-            alertController.addAction(Action(ActionData(title: "Filter this content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
-                delegate.showFilterMenu(cell)
-            }))
-            alertController.addAction(Action(ActionData(title: "Hide", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
-                delegate.hide(cell)
+        let alertController: BottomSheetActionController = BottomSheetActionController()
+        alertController.headerData = "Submission by \(AccountController.formatUsername(input: link.author, small: true))"
+        
+        for item in SettingValues.PostOverflowAction.getMenu(link, mutableList: mutableList) {
+            alertController.addAction(Action(ActionData(title: item.getTitle(link), image: item.getImage(link)), style: .default, handler: { _ in
+                handleAction(action: item, cell: cell, parent: parent, nav: nav, mutableList: mutableList, delegate: delegate, index: index)
             }))
         }
         
