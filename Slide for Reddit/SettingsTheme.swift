@@ -367,11 +367,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         
         let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
         
-        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
-        alert.visualStyle.normalTextColor = ColorUtil.baseAccent
-        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
-        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
-        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.setupTheme()
         
         alert.attributedTitle = NSAttributedString(string: "Name your theme", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         
@@ -393,12 +389,10 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             UserDefaults.standard.synchronize()
             self.tableView.reloadData()
         }))
-        alert.addCancelButton()
         
-        alert.view.subviews[0].insertSubview(blurView, at: 0)
-        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
-        blurView.layer.cornerRadius = 13
-        blurView.clipsToBounds = true
+        alert.addCancelButton()
+        alert.addBlurView()
+        
         self.present(alert, animated: true, completion: nil)
     }
 
@@ -642,11 +636,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         initialSelection.append((1, SettingValues.nightStartMin / 5))
         initialSelection.append((3, SettingValues.nightEnd))
         initialSelection.append((4, SettingValues.nightEndMin / 5))
-        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
-        alert.visualStyle.normalTextColor = ColorUtil.baseAccent
-        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
-        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
-        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.setupTheme()
         
         alert.attributedTitle = NSAttributedString(string: "Select night hours", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         
@@ -681,17 +671,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         pv.heightAnchor == CGFloat(216)
         pickerView.didMove(toParent: alert)
         
-        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(8, forKeyPath: "blurRadius")
-        blurView.effect = blurEffect
-        
         alert.addCancelButton()
-        
-        alert.view.subviews[0].insertSubview(blurView, at: 0)
-        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
-        blurView.layer.cornerRadius = 13
-        blurView.clipsToBounds = true
+        alert.addBlurView()
 
         self.present(alert, animated: true, completion: nil)
     }

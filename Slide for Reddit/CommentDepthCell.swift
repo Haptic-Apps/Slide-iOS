@@ -14,6 +14,7 @@ import RLBAlertsPickers
 import YYText
 import UIKit
 import SDWebImage
+import SDCAlertView
 import XLActionController
 
 protocol TTTAttributedCellDelegate: class {
@@ -1162,14 +1163,33 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }))
 
         alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-            let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
-            alert.addTextViewer(attributedText: NSAttributedString(string: self.comment!.body.decodeHTML(), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]))
-            alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (_) in
+            
+            let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
+            
+            alert.setupTheme()
+            
+            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            
+            let text = UITextView().then {
+                $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
+                $0.textColor = ColorUtil.fontColor
+                $0.backgroundColor = .clear
+                $0.isEditable = false
+                $0.text = self.comment!.body.decodeHTML()
+            }
+            
+            alert.contentView.addSubview(text)
+            text.edgeAnchors == alert.contentView.edgeAnchors
+            
+            let height = text.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
+            text.heightAnchor == height
+            
+            alert.addCloseButton()
+            alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
                 UIPasteboard.general.string = self.comment!.body.decodeHTML()
             }))
-            alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
-                
-            }))
+            
+            alert.addBlurView()
             par.present(alert, animated: true)
         }))
 

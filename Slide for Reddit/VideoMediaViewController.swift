@@ -10,6 +10,7 @@ import Alamofire
 import Anchorage
 import AVFoundation
 import SDWebImage
+import SDCAlertView
 import SubtleVolume
 import Then
 import UIKit
@@ -1063,10 +1064,16 @@ extension VideoMediaViewController {
 
     }
     @objc func showTitle(_ sender: AnyObject) {
-        let alertController = UIAlertController(title: "Caption", message: nil, preferredStyle: .alert)
-        alertController.addTextViewer(attributedText: NSAttributedString(string: data.text!, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]))
-        alertController.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
-        present(alertController, animated: true, completion: nil)
+        let alert = AlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
+        
+        alert.setupTheme()
+        alert.attributedTitle = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: data.text!.trimmed(), fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor)
+        
+        alert.addCloseButton()
+        alert.addBlurView()
+        present(alert, animated: true, completion: nil)
     }
     
     @objc func showContextMenu(_ sender: UIButton) {

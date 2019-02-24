@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import SDCAlertView
 
-public extension UIAlertController {
+public extension AlertController {
     func showWindowless() {
         let win = UIWindow(frame: UIScreen.main.bounds)
         let vc = UIViewController()

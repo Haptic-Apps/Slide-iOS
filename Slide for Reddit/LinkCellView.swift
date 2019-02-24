@@ -2011,11 +2011,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
             let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
             
-            alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
-            alert.visualStyle.normalTextColor = ColorUtil.baseAccent
-            alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
-            alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
-            alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+            alert.setupTheme()
             
             alert.attributedTitle = NSAttributedString(string: "Edit flair text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
             
@@ -2023,26 +2019,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             textField.edgeAnchors == alert.contentView.edgeAnchors
             textField.heightAnchor == CGFloat(44 + 12)
-            
-            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-            let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-            blurEffect.setValue(8, forKeyPath: "blurRadius")
-            blurView.effect = blurEffect
-            
 
             alert.addAction(AlertAction(title: "Set flair", style: .preferred, handler: { (_) in
                 self.submitFlairChange(flair, text: self.flairText ?? "")
             }))
             
             alert.addCancelButton()
-            alert.view.subviews[0].insertSubview(blurView, at: 0)
-            blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
-            blurView.layer.cornerRadius = 13
-            blurView.clipsToBounds = true
+            alert.addBlurView()
 
-            //todo make this work on ipad
             parentViewController?.present(alert, animated: true, completion: nil)
-            
         } else {
             submitFlairChange(flair)
         }

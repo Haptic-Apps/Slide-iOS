@@ -10,6 +10,7 @@ import Anchorage
 import AVKit
 import RLBAlertsPickers
 import SDWebImage
+import SDCAlertView
 import UIKit
 
 class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
@@ -305,12 +306,9 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
     
     @objc func overview(_ sender: UIBarButtonItem) {
-        let alert: UIAlertController
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            alert = UIAlertController(style: .alert)
-        } else {
-            alert = UIAlertController(style: .actionSheet)
-        }
+        let alert = AlertController(title: nil, message: nil, preferredStyle: .alert)
+
+        alert.setupTheme()
         alert.addAsyncImagePicker(
             flow: .vertical,
             paging: false,
@@ -326,8 +324,9 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 alert.dismiss(animated: true, completion: nil)
             }))
         
-        alert.addAction(title: "Close", style: .cancel)
+        alert.addCloseButton()
         alert.showWindowless()
+        alert.addBlurView()
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {

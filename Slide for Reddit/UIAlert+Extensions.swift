@@ -20,6 +20,15 @@ extension AlertController {
             self.addAction(cancelAction)
         }
     }
+    public func addCloseButton() {
+        if self.preferredStyle == .actionSheet {
+            let cancelAction = AlertAction(title: "Close", style: .preferred, handler: nil)
+            self.addAction(cancelAction)
+        } else {
+            let cancelAction = AlertAction(title: "Close", style: .preferred, handler: nil)
+            self.addAction(cancelAction)
+        }
+    }
 }
 extension UIAlertController {
     

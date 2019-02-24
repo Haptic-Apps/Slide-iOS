@@ -149,16 +149,34 @@ class PostActions: NSObject {
         }))
         if link.isSelf {
             alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-                let alert = UIAlertController.init(title: "Copy text", message: "", preferredStyle: .alert)
-                alert.addTextViewer(attributedText: NSAttributedString(string: cell.link!.body.decodeHTML(), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor]))
-                alert.addAction(UIAlertAction.init(title: "Copy all", style: .default, handler: { (_) in
-                    UIPasteboard.general.string = cell.link!.body
+                let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
+                
+                alert.setupTheme()
+                
+                alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+                
+                let text = UITextView().then {
+                    $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
+                    $0.textColor = ColorUtil.fontColor
+                    $0.backgroundColor = .clear
+                    $0.isEditable = false
+                    $0.text = cell.link!.body.decodeHTML()
+                }
+                
+                alert.contentView.addSubview(text)
+                text.edgeAnchors == alert.contentView.edgeAnchors
+                
+                let height = text.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
+                text.heightAnchor == height
+                
+                alert.addCloseButton()
+                alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
+                    UIPasteboard.general.string = cell.link!.body.decodeHTML()
                 }))
-                alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
-                    
-                }))
-                let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
-                currentViewController.present(alert, animated: true, completion: nil)
+                
+                alert.addBlurView()
+                
+                parent.present(alert, animated: true)
             }))
         }
         
@@ -615,11 +633,7 @@ class PostActions: NSObject {
         
         let textField = TwoTextFieldsViewController(height: 58, hInset: 0, vInset: 0, textFieldOne: configS, textFieldTwo: configT).view!
         
-        alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
-        alert.visualStyle.normalTextColor = ColorUtil.baseAccent
-        alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
-        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
-        alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        alert.setupTheme()
         
         alert.attributedTitle = NSAttributedString(string: "Crosspost", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         
@@ -627,11 +641,6 @@ class PostActions: NSObject {
         
         textField.edgeAnchors == alert.contentView.edgeAnchors
         textField.heightAnchor == CGFloat(58 * 2)
-        
-        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(8, forKeyPath: "blurRadius")
-        blurView.effect = blurEffect
         
         alert.addAction(AlertAction(title: "Crosspost", style: .normal, handler: { [weak alert] (_) in
             let subField = self.subText ?? ""
@@ -676,10 +685,7 @@ class PostActions: NSObject {
         }))
         
         alert.addCancelButton()
-        alert.view.subviews[0].insertSubview(blurView, at: 0)
-        blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
-        blurView.layer.cornerRadius = 13
-        blurView.clipsToBounds = true
+        alert.addBlurView()
 
         parent.present(alert, animated: true, completion: nil)
     }
@@ -729,11 +735,7 @@ class PostActions: NSObject {
             
             let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
             
-            alert.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
-            alert.visualStyle.normalTextColor = ColorUtil.baseAccent
-            alert.visualStyle.textFieldBorderColor = ColorUtil.fontColor
-            alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
-            alert.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+            alert.setupTheme()
             
             alert.attributedTitle = NSAttributedString(string: "Report this content", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
             
@@ -741,11 +743,6 @@ class PostActions: NSObject {
             
             textField.edgeAnchors == alert.contentView.edgeAnchors
             textField.heightAnchor == CGFloat(44 + 12)
-            
-            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-            let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-            blurEffect.setValue(8, forKeyPath: "blurRadius")
-            blurView.effect = blurEffect
             
             alert.addAction(AlertAction(title: "Report", style: .destructive, handler: { (_) in
                 let text = self.reportText ?? ""
@@ -766,10 +763,8 @@ class PostActions: NSObject {
             }))
             
             alert.addCancelButton()
-            alert.view.subviews[0].insertSubview(blurView, at: 0)
-            blurView.edgeAnchors == alert.view.subviews[0].edgeAnchors
-            blurView.layer.cornerRadius = 13
-            blurView.clipsToBounds = true
+            alert.addBlurView()
+            
             VCPresenter.presentAlert(alert, parentVC: parent)
 
         }

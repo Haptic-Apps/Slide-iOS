@@ -6,11 +6,13 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import RLBAlertsPickers
 import SDWebImage
+import SDCAlertView
 import UIKit
 
-extension UIAlertController {
+extension AlertController {
     
     /// Add Image Picker
     ///
@@ -30,7 +32,33 @@ extension UIAlertController {
             vc.preferredContentSize.height = vc.preferredSize.height
         }
         
-        setValue(vc, forKey: "contentViewController")
+        self.addChild(vc)
+        
+        let vcView = vc.view!
+        self.contentView.addSubview(vcView)
+        vc.didMove(toParent: self)
+        
+        vcView.heightAnchor == vc.preferredContentSize.height
+        vcView.edgeAnchors == self.contentView.edgeAnchors
+    }
+    
+    func addBlurView() {
+        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+        blurEffect.setValue(8, forKeyPath: "blurRadius")
+        blurView.effect = blurEffect
+        self.view.subviews[0].insertSubview(blurView, at: 0)
+        blurView.edgeAnchors == self.view.subviews[0].edgeAnchors
+        blurView.layer.cornerRadius = 13
+        blurView.clipsToBounds = true
+    }
+    
+    func setupTheme() {
+        self.visualStyle.backgroundColor = ColorUtil.foregroundColor.withAlphaComponent(0.92)
+        self.visualStyle.normalTextColor = ColorUtil.baseAccent
+        self.visualStyle.textFieldBorderColor = ColorUtil.fontColor
+        self.visualStyle.actionHighlightColor = ColorUtil.navIconColor
+        self.visualStyle.actionHighlightColor = ColorUtil.navIconColor
     }
 }
 
