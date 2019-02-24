@@ -46,6 +46,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
     var tagsCell: UITableViewCell = UITableViewCell()
     var audioSettings = UITableViewCell()
+    var postActionCell: UITableViewCell = UITableViewCell()
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch().then {
@@ -182,6 +183,13 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.manageSubs.detailTextLabel?.textColor = ColorUtil.fontColor
         self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange your subreddits"
         self.manageSubs.detailTextLabel?.numberOfLines = 0
+
+        self.postActionCell.textLabel?.text = "Reorder post actions"
+        self.postActionCell.accessoryType = .disclosureIndicator
+        self.postActionCell.backgroundColor = ColorUtil.foregroundColor
+        self.postActionCell.textLabel?.textColor = ColorUtil.fontColor
+        self.postActionCell.imageView?.image = UIImage.init(named: "compact")?.toolbarIcon()
+        self.postActionCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.mainTheme.textLabel?.text = "Main theme"
         self.mainTheme.accessoryType = .disclosureIndicator
@@ -477,6 +485,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 5: return self.subThemes
             case 6: return self.font
             case 7: return self.comments
+            case 8: return self.postActionCell
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -607,6 +616,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SettingsFont()
             case 7:
                 ch = SettingsComments()
+            case 8:
+                ch = SettingsPostMenu()
             default:
                 break
             }
@@ -722,7 +733,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return (SettingValues.isPro) ? 5 : 6
-        case 1: return 8
+        case 1: return 9
         case 2: return 9
         case 3: return 5
         default: fatalError("Unknown number of sections")

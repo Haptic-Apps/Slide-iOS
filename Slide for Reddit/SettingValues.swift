@@ -517,6 +517,8 @@ class SettingValues {
     }
     
     public enum PostOverflowAction: String {
+        public static let cases: [PostOverflowAction] = [.PROFILE, .SUBREDDIT, .REPORT, .BLOCK, .SAVE, .CROSSPOST, .READ_LATER, .SHARE_CONTENT, .SHARE_REDDIT, .CHROME, .SAFARI, .FILTER, .COPY, .HIDE, .UPVOTE, .DOWNVOTE, .MODERATE]
+
         case PROFILE = "profile"
         case SUBREDDIT = "sub"
         case REPORT = "report"
@@ -536,35 +538,49 @@ class SettingValues {
         case MODERATE = "moderate"
         
         public static func getMenu(_ link: RSubmission, mutableList: Bool) -> [PostOverflowAction] {
-            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "openchrome", "opensafari", "filter", "copy", "hide"]
             var toReturn = [PostOverflowAction]()
-            for item in menu {
-                if item == "openchrome" {
+            for item in getMenuNone() {
+                if item == .CHROME {
                     let open = OpenInChromeController.init()
                     if !open.isChromeInstalled() {
                         continue
                     }
                 }
-                if !AccountController.isLoggedIn && (item == "upvote" || item == "downvote" || item == "save" || item == "crosspost") {
+                if !AccountController.isLoggedIn && (item == .UPVOTE || item == .DOWNVOTE || item == .SAVE || item == .CROSSPOST) {
                     continue
                 }
-                if !AccountController.modSubs.contains(link.subreddit) && item == "moderate" {
+                if !AccountController.modSubs.contains(link.subreddit) && item == .MODERATE {
                     continue
                 }
-                if !mutableList && (item == "filter" || item == "hide") {
+                if !mutableList && (item == .FILTER || item == .HIDE) {
                     continue
                 }
-                toReturn.append(PostOverflowAction(rawValue: item)!)
+                toReturn.append(item)
             }
             return toReturn
         }
         
-        public func getTitle(_ link: RSubmission) -> String {
+        public static func getMenuNone() -> [PostOverflowAction] {
+            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "openchrome", "opensafari", "filter", "copy", "hide"]
+            var toReturn = [PostOverflowAction]()
+            for item in menu {
+                toReturn.append(PostOverflowAction(rawValue: item)!)
+            }
+            return toReturn
+        }
+
+        public func getTitle(_ link: RSubmission? = nil) -> String {
             switch self {
             case .PROFILE:
-                return "\(AccountController.formatUsernamePosessive(input: link.author, small: false)) profile"
+                if link == nil {
+                    return "User profile"
+                }
+                return "\(AccountController.formatUsernamePosessive(input: link!.author, small: false)) profile"
             case .SUBREDDIT:
-                return "r/\(link.subreddit)"
+                if link == nil {
+                    return "Subreddit"
+                }
+                return "r/\(link!.subreddit)"
             case .REPORT:
                 return "Report content"
             case .BLOCK:
@@ -574,7 +590,10 @@ class SettingValues {
             case .CROSSPOST:
                 return "Crosspost submission"
             case .READ_LATER:
-                return ReadLater.isReadLater(id: link.getIdentifier()) ? "Remove from Read Later" : "Add to Read Later"
+                if link == nil {
+                    return "Read Later"
+                }
+                return ReadLater.isReadLater(id: link!.getIdentifier()) ? "Remove from Read Later" : "Add to Read Later"
             case .SHARE_CONTENT:
                 return "Share content link"
             case .SHARE_REDDIT:
@@ -598,7 +617,7 @@ class SettingValues {
             }
         }
         
-        public func getImage(_ link: RSubmission) -> UIImage {
+        public func getImage(_ link: RSubmission? = nil) -> UIImage {
             switch self {
             case .PROFILE:
                 return UIImage(named: "profile")!.menuIcon()
@@ -613,7 +632,10 @@ class SettingValues {
             case .CROSSPOST:
                 return UIImage(named: "crosspost")!.menuIcon()
             case .READ_LATER:
-                return ReadLater.isReadLater(id: link.getIdentifier()) ? UIImage(named: "restore")!.menuIcon() : UIImage(named: "readLater")!.menuIcon()
+                if link == nil {
+                    return UIImage(named: "readLater")!.menuIcon()
+                }
+                return ReadLater.isReadLater(id: link!.getIdentifier()) ? UIImage(named: "restore")!.menuIcon() : UIImage(named: "readLater")!.menuIcon()
             case .SHARE_CONTENT:
                 return UIImage(named: "share")!.menuIcon()
             case .SHARE_REDDIT:
@@ -633,7 +655,7 @@ class SettingValues {
             case .DOWNVOTE:
                 return UIImage(named: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)
             case .MODERATE:
-                return UIImage(named: "profile")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
+                return UIImage(named: "mod")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
             }
         }
 

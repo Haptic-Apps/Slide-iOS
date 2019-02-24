@@ -271,6 +271,7 @@
 		BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */; };
 		BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A6721445FE4007E326B /* FriendCellView.swift */; };
 		BEBE0C6F222199DA0044FF55 /* IAPHandlerTip.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE0C6E222199DA0044FF55 /* IAPHandlerTip.swift */; };
+		BEBE0C71222330010044FF55 /* SettingsPostMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE0C70222330010044FF55 /* SettingsPostMenu.swift */; };
 		BEBF45C81E230CC900764BB8 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45C71E230CC900764BB8 /* History.swift */; };
 		BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DA1E23383D00764BB8 /* seen.plist */; };
 		BEBF45DD1E23384500764BB8 /* comments.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DC1E23384500764BB8 /* comments.plist */; };
@@ -663,6 +664,7 @@
 		BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsContributionLoader.swift; sourceTree = "<group>"; };
 		BEB81A6721445FE4007E326B /* FriendCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendCellView.swift; sourceTree = "<group>"; };
 		BEBE0C6E222199DA0044FF55 /* IAPHandlerTip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandlerTip.swift; sourceTree = "<group>"; };
+		BEBE0C70222330010044FF55 /* SettingsPostMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPostMenu.swift; sourceTree = "<group>"; };
 		BEBF45C71E230CC900764BB8 /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		BEBF45DA1E23383D00764BB8 /* seen.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = seen.plist; sourceTree = "<group>"; };
 		BEBF45DC1E23384500764BB8 /* comments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = comments.plist; sourceTree = "<group>"; };
@@ -956,6 +958,7 @@
 				096A7D162215EC920067106C /* SettingsAudio.swift */,
 				BE17EE162219FD7B0043185B /* SettingsDonate.swift */,
 				BEBE0C6E222199DA0044FF55 /* IAPHandlerTip.swift */,
+				BEBE0C70222330010044FF55 /* SettingsPostMenu.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1914,6 +1917,7 @@
 			files = (
 				BE6EA6E41E1DA24700E9E709 /* ContentListingViewController.swift in Sources */,
 				09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */,
+				BEBE0C71222330010044FF55 /* SettingsPostMenu.swift in Sources */,
 				BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
 				BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */,
