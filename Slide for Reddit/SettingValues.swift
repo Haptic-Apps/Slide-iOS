@@ -573,7 +573,7 @@ class SettingValues {
             switch self {
             case .PROFILE:
                 if link == nil {
-                    return "User profile"
+                    return "Author profile"
                 }
                 return "\(AccountController.formatUsernamePosessive(input: link!.author, small: false)) profile"
             case .SUBREDDIT:

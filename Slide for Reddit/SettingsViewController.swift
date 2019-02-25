@@ -47,6 +47,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     var tagsCell: UITableViewCell = UITableViewCell()
     var audioSettings = UITableViewCell()
     var postActionCell: UITableViewCell = UITableViewCell()
+    var coffeeCell: UITableViewCell = UITableViewCell()
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch().then {
@@ -125,7 +126,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     
     @objc func didPro(_ sender: AnyObject) {
         let alert = UIAlertController.init(title: "Pro Supporter", message: "Thank you for supporting my work and going Pro 😊\n\nIf you need any assistance with pro features, feel free to send me a message!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Buy me a coffee!", style: .default, handler: { (_) in
+        alert.addAction(UIAlertAction.init(title: "Tip jar", style: .default, handler: { (_) in
             VCPresenter.donateDialog(self)
         }))
         
@@ -219,6 +220,13 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.goPro.textLabel?.textColor = ColorUtil.fontColor
         self.goPro.imageView?.image = UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color())
         self.goPro.imageView?.tintColor = ColorUtil.fontColor
+
+        self.coffeeCell.textLabel?.text = "Tip Jar"
+        self.coffeeCell.accessoryType = .disclosureIndicator
+        self.coffeeCell.backgroundColor = ColorUtil.foregroundColor
+        self.coffeeCell.textLabel?.textColor = ColorUtil.fontColor
+        self.coffeeCell.imageView?.image = UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.lightGreen500Color())
+        self.coffeeCell.imageView?.tintColor = ColorUtil.fontColor
 
         self.clearCell.textLabel?.text = "Clear cache"
         self.clearCell.accessoryType = .none
@@ -506,8 +514,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 0: return self.aboutCell
             case 1: return self.subCell
             case 2: return self.contributorsCell
-            case 3: return self.githubCell
-            case 4: return self.licenseCell
+            case 3: return self.coffeeCell
+            case 4: return self.githubCell
+            case 5: return self.licenseCell
             default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
@@ -690,13 +699,15 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                     UIApplication.shared.openURL(url)
                 }
             case 3:
+                VCPresenter.donateDialog(self)
+            case 4:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
-            case 4:
+            case 5:
                 ch = LicensesViewController()
                 let file = Bundle.main.path(forResource: "Credits", ofType: "plist")!
                 (ch as! LicensesViewController).loadPlist(NSDictionary(contentsOfFile: file)!)
@@ -735,7 +746,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         case 0: return (SettingValues.isPro) ? 5 : 6
         case 1: return 9
         case 2: return 9
-        case 3: return 5
+        case 3: return 6
         default: fatalError("Unknown number of sections")
         }
     }
