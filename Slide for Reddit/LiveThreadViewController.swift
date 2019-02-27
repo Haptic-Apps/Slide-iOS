@@ -253,9 +253,21 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                         DispatchQueue.main.async {
                             self.content.insert(data, at: 0)
                             self.flowLayout.reset()
-                            self.tableView.performBatchUpdates({
+                            let contentHeight = self.tableView.contentSize.height
+                            let offsetY = self.tableView.contentOffset.y
+                            let bottomOffset = contentHeight - offsetY
+                            if #available(iOS 11.0, *) {
+                                CATransaction.begin()
+                                CATransaction.setDisableActions(true)
+                                self.tableView.performBatchUpdates({
+                                    self.tableView.insertItems(at: [IndexPath(row: 0, section: 0)])
+                                }, completion: { (done) in
+                                    self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
+                                    CATransaction.commit()
+                                })
+                            } else {
                                 self.tableView.insertItems(at: [IndexPath(row: 0, section: 0)])
-                            })
+                            }
                         }
                     }
                 }
