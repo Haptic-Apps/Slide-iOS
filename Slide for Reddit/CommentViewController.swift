@@ -182,7 +182,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                         }
 
                         if queue.count != 0 {
-                            self.tableView.beginUpdates()
                             self.dataArray.insert(contentsOf: ids, at: datasetPosition)
                             self.comments.insert(contentsOf: ids, at: realPosition)
                             self.doArrays()
@@ -190,9 +189,21 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1) {
                                 paths.append(IndexPath.init(row: i, section: 0))
                             }
-                            self.tableView.insertRows(at: paths, with: .fade)
-                            self.tableView.endUpdates()
-                            
+                            let contentHeight = self.tableView.contentSize.height
+                            let offsetY = self.tableView.contentOffset.y
+                            let bottomOffset = contentHeight - offsetY
+                            if #available(iOS 11.0, *) {
+                                CATransaction.begin()
+                                CATransaction.setDisableActions(true)
+                                self.tableView.performBatchUpdates({
+                                    self.tableView.insertRows(at: paths, with: .fade)
+                                }, completion: { (done) in
+                                    self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
+                                    CATransaction.commit()
+                                })
+                            } else {
+                                self.tableView.insertRows(at: paths, with: .fade)
+                            }
                         }
                     })
                 }

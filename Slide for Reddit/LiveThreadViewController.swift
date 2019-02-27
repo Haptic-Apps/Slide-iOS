@@ -32,6 +32,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         super.viewWillAppear(animated)
         self.navigationController?.setToolbarHidden(true, animated: false)
         socket?.connect()
+        UIApplication.shared.isIdleTimerDisabled = true
     }
 
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
@@ -73,6 +74,77 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         socket?.disconnect()
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
+    
+    deinit {
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
+    
+    var doneOnce = false
+    func startPulse(_ complete: Bool) {
+        if !doneOnce {
+            doneOnce = true
+            var progressDot = UIView()
+            progressDot.alpha = 0.7
+            progressDot.backgroundColor = .clear
+            
+            let startAngle = -CGFloat.pi / 2
+            
+            let center = CGPoint (x: 20 / 2, y: 20 / 2)
+            let radius = CGFloat(20 / 2)
+            let arc = CGFloat.pi * CGFloat(2) * 1
+            
+            let cPath = UIBezierPath()
+            cPath.move(to: center)
+            cPath.addLine(to: CGPoint(x: center.x + radius * cos(startAngle), y: center.y + radius * sin(startAngle)))
+            cPath.addArc(withCenter: center, radius: radius, startAngle: startAngle, endAngle: arc + startAngle, clockwise: true)
+            cPath.addLine(to: CGPoint(x: center.x, y: center.y))
+            
+            let circleShape = CAShapeLayer()
+            circleShape.path = cPath.cgPath
+            circleShape.strokeColor = GMColor.red500Color().cgColor
+            circleShape.fillColor = GMColor.red500Color().cgColor
+            circleShape.lineWidth = 1.5
+            // add sublayer
+            for layer in progressDot.layer.sublayers ?? [CALayer]() {
+                layer.removeFromSuperlayer()
+            }
+            progressDot.layer.removeAllAnimations()
+            progressDot.layer.addSublayer(circleShape)
+            
+            let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
+            pulseAnimation.duration = 0.5
+            pulseAnimation.toValue = 1.2
+            pulseAnimation.fromValue = 0.2
+            pulseAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            pulseAnimation.autoreverses = false
+            pulseAnimation.repeatCount = Float.greatestFiniteMagnitude
+            
+            let fadeAnimation = CABasicAnimation(keyPath: "opacity")
+            fadeAnimation.duration = 0.5
+            fadeAnimation.toValue = 0
+            fadeAnimation.fromValue = 2.5
+            fadeAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            fadeAnimation.autoreverses = false
+            fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
+            
+            progressDot.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            let liveB = UIBarButtonItem.init(customView: progressDot)
+            let more = UIButton.init(type: .custom)
+            more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControl.State.normal)
+            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+            more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+            let moreB = UIBarButtonItem.init(customView: more)
+            if complete {
+                navigationItem.rightBarButtonItem = moreB
+            } else {
+                self.navigationItem.rightBarButtonItems = [moreB, liveB]
+            }
+            
+            progressDot.layer.add(pulseAnimation, forKey: "scale")
+            progressDot.layer.add(fadeAnimation, forKey: "fade")
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
@@ -132,12 +204,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     func doInfo(_ json: JSONDictionary) {
         self.baseData = json
         self.title = (json["title"] as? String) ?? ""
-        let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControl.State.normal)
-        more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let moreB = UIBarButtonItem.init(customView: more)
-        navigationItem.rightBarButtonItem = moreB
+        self.startPulse(json["state"] as? String ?? "complete" != "complete")
     }
     
     var baseData: JSONDictionary?

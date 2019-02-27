@@ -10,7 +10,7 @@ import StoreKit
 import UIKit
 
 class IAPHandlerTip: NSObject {
-    static let shared = IAPHandler()
+    static let shared = IAPHandlerTip()
     
     let TIPA = "3tip"
     let TIPB = "5tip"
