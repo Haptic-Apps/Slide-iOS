@@ -11,6 +11,7 @@ import SDWebImage
 import Starscream
 import UIKit
 import XLActionController
+import YYText
 
 class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource {
 
@@ -30,6 +31,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setToolbarHidden(true, animated: false)
+        socket?.connect()
     }
 
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
@@ -78,44 +80,30 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         let itemWidth = width - 10
         let id = data["id"] as! String
         if estimatedHeights[id] == nil {
-            let titleString = NSMutableAttributedString.init(string: data["author"] as! String, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 14, submission: true)]))
+            var content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
             
-            var content: NSAttributedString?
-            if !(data["body_html"] as? String ?? "").isEmpty() {
-                var html = (data["body_html"] as! String).unescapeHTML
-                html = html.trimmed()
-                do {
-                    html = WrapSpoilers.addSpoilers(html)
-                    html = WrapSpoilers.addTables(html)
-                    let attr = try NSMutableAttributedString(data: (html.data(using: .unicode)!), options: convertToNSAttributedStringDocumentReadingOptionKeyDictionary([convertFromNSAttributedStringDocumentAttributeKey(NSAttributedString.DocumentAttributeKey.documentType): convertFromNSAttributedStringDocumentType(NSAttributedString.DocumentType.html)]), documentAttributes: nil)
-                    let font = FontGenerator.fontOfSize(size: 16, submission: false)
-                    let attr2 = attr.reconstruct(with: font, color: ColorUtil.fontColor, linkColor: .white)
-                    content = LinkParser.parse(attr2, .white, font: font, fontColor: ColorUtil.fontColor)
-                } catch {
-                    content = NSAttributedString()
+            if let body = data["body_html"] as? String {
+                if !body.isEmpty() {
+                    let html = body.unescapeHTML
+                    content.append(NSAttributedString(string: "\n\n"))
+                    content.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor))
                 }
-            } else {
-                content = NSAttributedString()
             }
+
             var imageHeight = 0
             if data["mobile_embeds"] != nil && !(data["mobile_embeds"] as? JSONArray)!.isEmpty {
-                if let embedsB = data["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int {
+                if let embedsB = data["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int, let url = embeds["url"] as? String {
+                    print(embedsB)
                     let ratio = Double(height) / Double(width)
                     let width = Double(itemWidth)
                     imageHeight = Int(width * ratio)
                 }
             }
 
-            let framesetterT = CTFramesetterCreateWithAttributedString(titleString)
-            let textSizeT = CTFramesetterSuggestFrameSizeWithConstraints(framesetterT, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
-            if content != nil {
-                let framesetterB = CTFramesetterCreateWithAttributedString(content!)
-                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: itemWidth - 16, height: CGFloat.greatestFiniteMagnitude), nil)
-                
-                estimatedHeights[id] = CGFloat(34 + textSizeT.height + textSizeB.height + CGFloat(imageHeight))
-            } else {
-                estimatedHeights[id] = CGFloat(34 + textSizeT.height + CGFloat(imageHeight))
-            }
+            let size = CGSize(width: width - 18, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: content)!
+            let infoHeight = layout.textBoundingSize.height
+            estimatedHeights[id] = CGFloat(24 + infoHeight + CGFloat(imageHeight))
         }
         return CGSize(width: itemWidth, height: estimatedHeights[id]!)
     }
@@ -198,7 +186,9 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                         DispatchQueue.main.async {
                             self.content.insert(data, at: 0)
                             self.flowLayout.reset()
-                            self.tableView.reloadData()
+                            self.tableView.performBatchUpdates({
+                                self.tableView.insertItems(at: [IndexPath(row: 0, section: 0)])
+                            })
                         }
                     }
                 }

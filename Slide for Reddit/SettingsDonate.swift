@@ -187,16 +187,12 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
             guard let strongSelf = self else { return }
             if type == .purchased {
                 strongSelf.alertController?.dismiss(animated: true, completion: nil)
-                let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                let alertView = UIAlertController(title: "", message: "Thank you for supporting Slide development with your donation!", preferredStyle: .alert)
                 let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                     self?.dismiss(animated: true, completion: nil)
                 })
                 alertView.addAction(action)
                 strongSelf.present(alertView, animated: true, completion: nil)
-                SettingValues.isPro = true
-                UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
-                UserDefaults.standard.synchronize()
-                SettingsPro.changed = true
             }
         }
         
@@ -239,40 +235,5 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
                 strongSelf.present(alertView, animated: true, completion: nil)
             }
         }
-        
-        IAPHandlerTip.shared.restoreBlock = {[weak self] (restored) in
-            guard let strongSelf = self else { return }
-            strongSelf.alertController?.dismiss(animated: true, completion: nil)
-            if restored {
-                SettingValues.isPro = true
-                UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
-                UserDefaults.standard.synchronize()
-                SettingsPro.changed = true
-                let alertView = UIAlertController(title: "", message: "Thank you for the tip!", preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                    self?.dismiss(animated: true, completion: nil)
-                })
-                alertView.addAction(action)
-                strongSelf.present(alertView, animated: true, completion: nil)
-            } else {
-                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro could not be restored! Make sure you purchased Slide on the same Apple ID as you purchased Slide Pro on. Please send me an email if this issue persists!", preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                })
-                alertView.addAction(action)
-                alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
-                    if MFMailComposeViewController.canSendMail() {
-                        let mail = MFMailComposeViewController()
-                        mail.mailComposeDelegate = strongSelf
-                        mail.setToRecipients(["hapticappsdev@gmail.com"])
-                        mail.setSubject("Slide Pro Restsore")
-                        mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
-                        
-                        strongSelf.present(mail, animated: true)
-                    }
-                }))
-                strongSelf.present(alertView, animated: true, completion: nil)
-            }
-        }
-        
     }
 }
