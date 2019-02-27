@@ -92,7 +92,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
 
             var imageHeight = 0
             if data["mobile_embeds"] != nil && !(data["mobile_embeds"] as? JSONArray)!.isEmpty {
-                if let embedsB = data["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int, let url = embeds["url"] as? String {
+                if let embedsB = data["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int {
                     print(embedsB)
                     let ratio = Double(height) / Double(width)
                     let width = Double(itemWidth)

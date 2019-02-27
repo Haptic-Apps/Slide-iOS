@@ -17,6 +17,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     var title: YYLabel!
     var image = UIImageView()
+    var web = UIWebView()
     
     func attributedLabel(_ label: YYTextView!, didSelectLinkWith url: URL!) {
         parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
@@ -67,13 +68,19 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             image.layer.cornerRadius = 15
             image.clipsToBounds = true
             
+            web.layer.cornerRadius = 15
+            web.clipsToBounds = true
+            
             self.contentView.addSubview(title)
             self.contentView.addSubview(image)
-            
+            self.contentView.addSubview(web)
+
             self.contentView.backgroundColor = ColorUtil.foregroundColor
             title.horizontalAnchors == self.contentView.horizontalAnchors + 8
             image.horizontalAnchors == self.contentView.horizontalAnchors + 8
             image.topAnchor == self.contentView.topAnchor + 4
+            web.horizontalAnchors == image.horizontalAnchors
+            web.verticalAnchors == image.verticalAnchors
             self.title.topAnchor == self.image.bottomAnchor + 4
             self.title.bottomAnchor == self.contentView.bottomAnchor - 4
             
@@ -181,11 +188,29 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         
         imageHeight = 0
         image.alpha = 0
+        web.alpha = 0
+        web.loadHTMLString("about://blank", baseURL: nil)
 
         if json["mobile_embeds"] != nil && !(json["mobile_embeds"] as? JSONArray)!.isEmpty {
-            if let embedsB = json["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int, let url = embeds["url"] as? String {
-                print(url)
+            if let embedsB = json["mobile_embeds"] as? JSONArray, let embeds = embedsB[0] as? JSONDictionary, let height = embeds["height"] as? Int, let width = embeds["width"] as? Int {
                 image.alpha = 0
+                if let url = embeds["url"] as? String {
+                    image.isUserInteractionEnabled = true
+                    image.sd_setImage(with: URL.init(string: url), completed: { (image, _, cache, _) in
+                        self.image.contentMode = .scaleAspectFill
+                        if cache == .none {
+                            UIView.animate(withDuration: 0.3, animations: {
+                                self.image.alpha = 1
+                            })
+                        } else {
+                            self.image.alpha = 1
+                        }
+                    })
+                } else if let web = embeds["html"] as? String {
+                    self.web.alpha = 1
+                    self.web.allowsInlineMediaPlayback = true
+                    self.web.loadHTMLString(web.decodeHTML().replacingOccurrences(of: "//", with: "https://") , baseURL:  URL(string: "https://"))
+                }
                 let imageSize = CGSize.init(width: width, height: height)
                 var aspect = imageSize.width / imageSize.height
                 if aspect == 0 || aspect > 10000 || aspect.isNaN {
@@ -198,18 +223,6 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                 } else {
                     imageHeight = h
                 }
-
-                image.isUserInteractionEnabled = true
-                image.sd_setImage(with: URL.init(string: url), completed: { (image, _, cache, _) in
-                    self.image.contentMode = .scaleAspectFill
-                    if cache == .none {
-                        UIView.animate(withDuration: 0.3, animations: {
-                            self.image.alpha = 1
-                        })
-                    } else {
-                        self.image.alpha = 1
-                    }
-                })
             }
         }
         self.contentView.removeConstraints(imageAnchors)
