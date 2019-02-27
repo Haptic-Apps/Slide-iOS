@@ -157,7 +157,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             if let body = data["body_html"] as? String {
                 if !body.isEmpty() {
                     let html = body.unescapeHTML
-                    content.append(NSAttributedString(string: "\n\n"))
+                    content.append(NSAttributedString(string: "\n"))
                     content.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor))
                 }
             }
@@ -204,7 +204,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     func doInfo(_ json: JSONDictionary) {
         self.baseData = json
         self.title = (json["title"] as? String) ?? ""
-        self.startPulse(json["state"] as? String ?? "complete" != "complete")
+        self.startPulse((json["state"] as? String ?? "complete") == "complete")
     }
     
     var baseData: JSONDictionary?

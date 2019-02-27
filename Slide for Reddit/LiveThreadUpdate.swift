@@ -166,7 +166,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         if let body = json["body_html"] as? String {
             if !body.isEmpty() {
                 let html = body.unescapeHTML
-                content?.append(NSAttributedString(string: "\n\n"))
+                content?.append(NSAttributedString(string: "\n"))
                 content?.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor))
                 let size = CGSize(width: self.contentView.frame.size.width - 18, height: CGFloat.greatestFiniteMagnitude)
 
