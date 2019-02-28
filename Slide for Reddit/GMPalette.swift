@@ -27,7 +27,7 @@ class GMPalette {
                 lightBlue(), cyan(), teal(),
                 green(), lightGreen(), lime(),
                 yellow(), amber(), orange(),
-                deepOrange(), brown(),
+                deepOrange(), brown(), grey(),
                 [GMColor.blueGrey300Color(),
                  GMColor.blueGrey400Color(),
                  GMColor.blueGrey500Color(),
@@ -66,11 +66,7 @@ class GMPalette {
     }
     
     static func allColorNoBlack() -> [UIColor] {
-        var toReturn: [UIColor] = []
-        for i in allNoBlack() {
-            toReturn.append(contentsOf: i)
-        }
-        return toReturn
+        return allNoBlack().flatMap({ return $0 })
     }
 
     static func allColorAccent() -> [UIColor] {
