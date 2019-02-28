@@ -14,6 +14,10 @@ import XLActionController
 import YYText
 
 class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource {
+    func headerOffset() -> Int {
+        return 0
+    }
+    
 
     var tableView: UICollectionView!
     var id: String

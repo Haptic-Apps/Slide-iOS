@@ -126,9 +126,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     
     @objc func didPro(_ sender: AnyObject) {
         let alert = UIAlertController.init(title: "Pro Supporter", message: "Thank you for supporting my work and going Pro 😊\n\nIf you need any assistance with pro features, feel free to send me a message!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Tip jar", style: .default, handler: { (_) in
+        /*alert.addAction(UIAlertAction.init(title: "Tip jar", style: .default, handler: { (_) in
             VCPresenter.donateDialog(self)
-        }))
+        }))*/
         
         alert.addAction(UIAlertAction.init(title: "Email", style: .default, handler: { (_) in
             if MFMailComposeViewController.canSendMail() {
@@ -514,9 +514,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 0: return self.aboutCell
             case 1: return self.subCell
             case 2: return self.contributorsCell
-            case 3: return self.coffeeCell
-            case 4: return self.githubCell
-            case 5: return self.licenseCell
+            //case 4: return self.coffeeCell
+            case 3: return self.githubCell
+            case 4: return self.licenseCell
             default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
@@ -746,7 +746,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         case 0: return (SettingValues.isPro) ? 5 : 6
         case 1: return 9
         case 2: return 9
-        case 3: return 6
+        case 3: return 5
         default: fatalError("Unknown number of sections")
         }
     }

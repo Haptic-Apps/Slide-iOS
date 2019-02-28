@@ -10,6 +10,7 @@ import Foundation
 
 protocol WrappingFlowLayoutDelegate: class {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize
+    func headerOffset() -> Int
 }
 
 class WrappingFlowLayout: UICollectionViewLayout {

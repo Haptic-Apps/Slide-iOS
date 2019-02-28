@@ -14,6 +14,11 @@ import UIKit
 import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate, UINavigationControllerDelegate {
+    
+    func headerOffset() -> Int {
+        return 0
+    }
+    
     var swiper: SloppySwiper?
 
     func hide(index: Int) {

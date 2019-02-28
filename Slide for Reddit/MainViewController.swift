@@ -723,6 +723,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 vc.indicator?.isHidden = false
                 vc.indicator?.startAnimating()
                 vc.refresh(false)
+                vc.loadBubbles()
             } else {
                 (vc).load(reset: true)
             }

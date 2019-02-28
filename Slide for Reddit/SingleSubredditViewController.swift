@@ -84,7 +84,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     var loaded = false
     var sideView: UIView = UIView()
     var subb: UIButton = UIButton()
-
     var subInfo: Subreddit?
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
 
@@ -122,6 +121,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     var savedIndex: IndexPath?
     var realmListing: RListing?
+    var hasHeader = false
+    var subLinks = [SubLinkItem]()
 
     var oldsize = CGFloat(0)
 
@@ -701,6 +702,57 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
     }
     
+    func loadBubbles() {
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.getStyles(sub, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                    return
+                case .success(let r):
+                    if let baseData = r as? JSONDictionary, let data = baseData["data"] as? [String: Any],
+                        let content = data["content"] as? [String: Any],
+                        let widgets = content["widgets"] as? [String: Any],
+                        let items = widgets["items"] as? [String: Any] {
+                        for item in items.values {
+                            if let body = item as? [String: Any] {
+                                if let kind = body["kind"] as? String, kind == "menu" {
+                                    if let data = body["data"] as? JSONArray {
+                                        for link in data {
+                                            if let children = link["children"] as? JSONArray {
+                                                for subItem in children {
+                                                    if let content = subItem as? JSONDictionary {
+                                                        self.subLinks.append(SubLinkItem(content["text"] as? String, link: URL(string: content["url"] as! String)))
+                                                    }
+                                                }
+                                            } else {
+                                                self.subLinks.append(SubLinkItem(link["text"] as? String, link: URL(string: link["url"] as! String)))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if !self.subLinks.isEmpty {
+                        DispatchQueue.main.async {
+                            self.hasHeader = true
+                            if self.loaded {
+                                self.flowLayout.reset()
+                                self.tableView.reloadData()
+                                var newOffset = self.tableView.contentOffset
+                                newOffset.y -= 30
+                                self.tableView.setContentOffset(newOffset, animated: false)
+                            }
+                        }
+                    }
+                    
+                }
+            })
+        } catch {
+        }
+    }
+    
     func changeFab() {
         if !UserDefaults.standard.bool(forKey: "FAB_SHOWN") {
             UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
@@ -748,6 +800,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         self.tableView.register(LoadingCell.classForCoder(), forCellWithReuseIdentifier: "loading")
         self.tableView.register(ReadLaterCell.classForCoder(), forCellWithReuseIdentifier: "readlater")
         self.tableView.register(PageCell.classForCoder(), forCellWithReuseIdentifier: "page")
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header")
         lastVersion = SingleSubredditViewController.cellVersion
 
         var top = 68
@@ -762,6 +815,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if (SingleSubredditViewController.firstPresented && !single && self.links.count == 0) || (self.links.count == 0 && !single && !SettingValues.subredditBar) {
             load(reset: true)
             SingleSubredditViewController.firstPresented = false
+            self.loadBubbles()
         }
 
         self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
@@ -809,6 +863,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             DispatchQueue.main.async {
                                 if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
                                     self.load(reset: true)
+                                    self.loadBubbles()
                                 } else {
                                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
                                         let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
@@ -844,8 +899,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                             }
                                         }
                                     }
-                                    print("Loading")
                                     self.load(reset: true)
+                                    self.loadBubbles()
                                 }
                                 
                             }
@@ -1474,7 +1529,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             } else {
                                 var paths = [IndexPath]()
                                 for i in before..<self.links.count {
-                                    paths.append(IndexPath.init(item: i, section: 0))
+                                    paths.append(IndexPath.init(item: i + self.headerOffset(), section: 0))
                                 }
 
                                 if before == 0 {
@@ -1487,8 +1542,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                             top -= 18
                                         }
                                     }
-                                
-                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
+                                    
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top + (self.headerOffset() == 1 ? 32 : 0))
                                 } else {
                                     self.flowLayout.invalidateLayout()
                                     self.tableView.insertItems(at: paths)
@@ -1964,7 +2019,7 @@ extension SingleSubredditViewController {
         self.flowLayout.reset()
         tableView.reloadData()
     }
-
+    
     @objc func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -2214,11 +2269,19 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return links.count + (loaded && !reset ? 1 : 0)
+        return (loaded && !loading ? headerOffset() : 0) + links.count + (loaded && !reset ? 1 : 0)
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let row = indexPath.row
+        var row = indexPath.row
+        if row == 0 && hasHeader {
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "header", for: indexPath) as! LinksHeaderCellView
+            cell.setLinks(links: self.subLinks, sub: self.sub, delegate: self)
+            return cell
+        }
+        if hasHeader {
+            row -= 1
+        }
         if row >= self.links.count {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
             cell.loader.color = ColorUtil.fontColor
@@ -2348,8 +2411,16 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
 
 // MARK: - Wrapping Flow Layout Delegate
 extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
+    func headerOffset() -> Int {
+        return hasHeader ? 1 : 0
+    }
+    
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
-        let row = indexPath.row
+        var row = indexPath.row
+        if row == 0 && hasHeader {
+            return CGSize(width: width, height: 30)
+        }
+        row -= self.headerOffset()
         if row < links.count {
             let submission = links[row]
             if submission.author == "PAGE_SEPARATOR" {
@@ -2444,7 +2515,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             }
             BannerUtil.makeBanner(text: "Submission hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
                 self.links.insert(item, at: location)
-                self.tableView.insertItems(at: [IndexPath.init(item: location, section: 0)])
+                self.tableView.insertItems(at: [IndexPath.init(item: location + self.headerOffset(), section: 0)])
                 self.flowLayout.reset()
                 self.tableView.reloadData()
                 do {
@@ -2701,4 +2772,81 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
 	return input.rawValue
+}
+
+public class LinksHeaderCellView: UICollectionViewCell {
+    var scroll: TouchUIScrollView!
+    var links = [SubLinkItem]()
+    var sub = ""
+    weak var del: SingleSubredditViewController?
+    
+    func setLinks(links: [SubLinkItem], sub: String, delegate: SingleSubredditViewController) {
+        self.links = links
+        self.sub = sub
+        self.del = delegate
+        setupViews()
+    }
+    
+    func setupViews() {
+        if scroll == nil {
+            scroll = TouchUIScrollView()
+            
+            let buttonBase = UIStackView().then {
+                $0.accessibilityIdentifier = "Subreddit links"
+                $0.axis = .horizontal
+                $0.spacing = 8
+            }
+            
+            var finalWidth = CGFloat(0)
+            
+            for link in self.links {
+                let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
+                    $0.layer.cornerRadius = 15
+                    $0.clipsToBounds = true
+                    $0.setTitle(link.title, for: .normal)
+                    $0.setTitleColor(UIColor.white, for: .normal)
+                    $0.setTitleColor(.white, for: .selected)
+                    $0.titleLabel?.textAlignment = .center
+                    $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+                    $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+                    $0.addTapGestureRecognizer(action: {
+                        self.del?.doShow(url: link.link!, heroView: nil, heroVC: nil)
+                    })
+                }
+                
+                let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(45)
+                
+                view.heightAnchor == CGFloat(30)
+                view.widthAnchor == widthS
+                
+                finalWidth += widthS
+                finalWidth += 8
+                
+                buttonBase.addArrangedSubview(view)
+            }
+            
+            self.contentView.addSubview(scroll)
+            self.scroll.isUserInteractionEnabled = true
+            self.contentView.isUserInteractionEnabled = true
+            
+            scroll.heightAnchor == CGFloat(30)
+            scroll.horizontalAnchors == self.contentView.horizontalAnchors + CGFloat(8)
+            
+            scroll.addSubview(buttonBase)
+            buttonBase.heightAnchor == CGFloat(30)
+            buttonBase.leftAnchor == scroll.leftAnchor
+            buttonBase.verticalAnchors == scroll.verticalAnchors
+            scroll.contentSize = CGSize.init(width: finalWidth, height: CGFloat(30))
+        }
+    }
+}
+
+public class SubLinkItem {
+    var title = ""
+    var link: URL?
+    
+    init(_ title: String?, link: URL?) {
+        self.title = title ?? "LINK"
+        self.link = link
+    }
 }
