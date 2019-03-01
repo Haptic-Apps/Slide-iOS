@@ -366,11 +366,20 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         self.setupFab(size)
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
-
+        let offset = self.tableView.contentOffset
+        let width = self.tableView.bounds.size.width
+        
+        let index = round(offset.x / width)
+        let newOffset = CGPoint(x: index * size.width, y: offset.y)
+        
+        self.tableView.setContentOffset(newOffset, animated: false)
+        
         oldsize = self.view.bounds.width
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
                 self.flowLayout.reset()
+                self.tableView.reloadData()
+                self.tableView.setContentOffset(newOffset, animated: false)
                 self.view.setNeedsLayout()
             }, completion: nil
         )
@@ -2828,6 +2837,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             self.contentView.addSubview(scroll)
             self.scroll.isUserInteractionEnabled = true
             self.contentView.isUserInteractionEnabled = true
+            buttonBase.isUserInteractionEnabled = true
             
             scroll.heightAnchor == CGFloat(30)
             scroll.horizontalAnchors == self.contentView.horizontalAnchors + CGFloat(8)
