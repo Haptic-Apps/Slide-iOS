@@ -2806,7 +2806,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 $0.spacing = 8
             }
             
-            var finalWidth = CGFloat(0)
+            var finalWidth = CGFloat(8)
             
             for link in self.links {
                 let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
@@ -2847,6 +2847,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             buttonBase.leftAnchor == scroll.leftAnchor
             buttonBase.verticalAnchors == scroll.verticalAnchors
             scroll.contentSize = CGSize.init(width: finalWidth, height: CGFloat(30))
+            scroll.canCancelContentTouches = true
         }
     }
 }
