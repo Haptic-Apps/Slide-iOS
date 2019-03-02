@@ -2439,7 +2439,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         var row = indexPath.row
         if row == 0 && hasHeader {
-            return CGSize(width: width, height: 30 + (headerImage != nil ? 100 : 0))
+            return CGSize(width: width, height: headerHeight())
         }
         row -= self.headerOffset()
         if row < links.count {
