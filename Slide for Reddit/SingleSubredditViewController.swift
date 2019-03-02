@@ -711,7 +711,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
     }
     
+    var headerImage: URL?
+    
     func loadBubbles() {
+        self.subLinks.removeAll()
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.getStyles(sub, completion: { (result) in
                 switch result {
@@ -719,38 +722,44 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     print(error)
                     return
                 case .success(let r):
-                    if let baseData = r as? JSONDictionary, let data = baseData["data"] as? [String: Any],
-                        let content = data["content"] as? [String: Any],
-                        let widgets = content["widgets"] as? [String: Any],
-                        let items = widgets["items"] as? [String: Any] {
-                        for item in items.values {
-                            if let body = item as? [String: Any] {
-                                if let kind = body["kind"] as? String, kind == "menu" {
-                                    if let data = body["data"] as? JSONArray {
-                                        for link in data {
-                                            if let children = link["children"] as? JSONArray {
-                                                for subItem in children {
-                                                    if let content = subItem as? JSONDictionary {
-                                                        self.subLinks.append(SubLinkItem(content["text"] as? String, link: URL(string: content["url"] as! String)))
+                    if let baseData = r as? JSONDictionary, let data = baseData["data"] as? [String: Any] {
+                        if let content = data["content"] as? [String: Any],
+                            let widgets = content["widgets"] as? [String: Any],
+                            let items = widgets["items"] as? [String: Any] {
+                            for item in items.values {
+                                if let body = item as? [String: Any] {
+                                    if let kind = body["kind"] as? String, kind == "menu" {
+                                        if let data = body["data"] as? JSONArray {
+                                            for link in data {
+                                                if let children = link["children"] as? JSONArray {
+                                                    for subItem in children {
+                                                        if let content = subItem as? JSONDictionary {
+                                                            self.subLinks.append(SubLinkItem(content["text"] as? String, link: URL(string: content["url"] as! String)))
+                                                        }
                                                     }
+                                                } else {
+                                                    self.subLinks.append(SubLinkItem(link["text"] as? String, link: URL(string: link["url"] as! String)))
                                                 }
-                                            } else {
-                                                self.subLinks.append(SubLinkItem(link["text"] as? String, link: URL(string: link["url"] as! String)))
                                             }
                                         }
                                     }
                                 }
                             }
                         }
+                        if let styles = data["style"] as? [String: Any] {
+                            if let headerUrl = styles["bannerBackgroundImage"] as? String {
+                                self.headerImage = URL(string: headerUrl.unescapeHTML)
+                            }
+                        }
                     }
                     if !self.subLinks.isEmpty {
                         DispatchQueue.main.async {
                             self.hasHeader = true
-                            if self.loaded {
+                            if self.loaded && !self.loading {
                                 self.flowLayout.reset()
                                 self.tableView.reloadData()
                                 var newOffset = self.tableView.contentOffset
-                                newOffset.y -= 30
+                                newOffset.y -= self.headerHeight()
                                 self.tableView.setContentOffset(newOffset, animated: false)
                             }
                         }
@@ -824,7 +833,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if (SingleSubredditViewController.firstPresented && !single && self.links.count == 0) || (self.links.count == 0 && !single && !SettingValues.subredditBar) {
             load(reset: true)
             SingleSubredditViewController.firstPresented = false
-            self.loadBubbles()
         }
 
         self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
@@ -1552,7 +1560,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         }
                                     }
                                     
-                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top + (self.headerOffset() == 1 ? 32 : 0))
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top + self.headerHeight())
                                 } else {
                                     self.flowLayout.invalidateLayout()
                                     self.tableView.insertItems(at: paths)
@@ -2424,10 +2432,14 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
         return hasHeader ? 1 : 0
     }
     
+    func headerHeight() -> CGFloat {
+        return CGFloat(hasHeader ? (headerImage != nil ? 134 : 36) : 0)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         var row = indexPath.row
         if row == 0 && hasHeader {
-            return CGSize(width: width, height: 30)
+            return CGSize(width: width, height: 30 + (headerImage != nil ? 100 : 0))
         }
         row -= self.headerOffset()
         if row < links.count {
@@ -2787,12 +2799,15 @@ public class LinksHeaderCellView: UICollectionViewCell {
     var scroll: TouchUIScrollView!
     var links = [SubLinkItem]()
     var sub = ""
+    var header = UIView()
+    var hasHeader = false
     weak var del: SingleSubredditViewController?
     
     func setLinks(links: [SubLinkItem], sub: String, delegate: SingleSubredditViewController) {
         self.links = links
         self.sub = sub
         self.del = delegate
+        self.hasHeader = delegate.headerImage != nil
         setupViews()
     }
     
@@ -2808,6 +2823,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
             
             var finalWidth = CGFloat(8)
             
+            var spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
+            buttonBase.addArrangedSubview(spacerView)
+
             for link in self.links {
                 let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
                     $0.layer.cornerRadius = 15
@@ -2834,20 +2852,46 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 buttonBase.addArrangedSubview(view)
             }
             
+            spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
+            buttonBase.addArrangedSubview(spacerView)
+            
             self.contentView.addSubview(scroll)
             self.scroll.isUserInteractionEnabled = true
             self.contentView.isUserInteractionEnabled = true
             buttonBase.isUserInteractionEnabled = true
             
             scroll.heightAnchor == CGFloat(30)
-            scroll.horizontalAnchors == self.contentView.horizontalAnchors + CGFloat(8)
+            scroll.horizontalAnchors == self.contentView.horizontalAnchors
             
             scroll.addSubview(buttonBase)
             buttonBase.heightAnchor == CGFloat(30)
-            buttonBase.leftAnchor == scroll.leftAnchor
-            buttonBase.verticalAnchors == scroll.verticalAnchors
-            scroll.contentSize = CGSize.init(width: finalWidth, height: CGFloat(30))
-            scroll.canCancelContentTouches = true
+            buttonBase.edgeAnchors == scroll.edgeAnchors
+            buttonBase.centerYAnchor == scroll.centerYAnchor
+            buttonBase.widthAnchor == finalWidth
+            scroll.alwaysBounceHorizontal = true
+            scroll.showsHorizontalScrollIndicator = false
+            
+            if hasHeader && del != nil {
+                let imageView = UIImageView()
+                imageView.contentMode = .scaleToFill
+                header.addSubview(imageView)
+                imageView.edgeAnchors == header.edgeAnchors
+                
+                self.contentView.addSubview(header)
+                header.heightAnchor == 94
+                header.horizontalAnchors == self.contentView.horizontalAnchors + 8
+                header.layer.cornerRadius = 15
+                header.clipsToBounds = true
+                header.topAnchor == self.contentView.topAnchor + 4
+                scroll.topAnchor == self.header.bottomAnchor + 4
+                
+                imageView.sd_setImage(with: del!.headerImage!)
+                scroll.bottomAnchor == self.contentView.bottomAnchor
+            } else {
+                scroll.topAnchor == self.contentView.topAnchor + 4
+                scroll.bottomAnchor == self.contentView.bottomAnchor
+            }
+            scroll.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
         }
     }
 }
