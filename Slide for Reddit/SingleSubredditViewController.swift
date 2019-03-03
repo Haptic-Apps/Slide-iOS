@@ -2286,7 +2286,7 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (loaded && !loading ? headerOffset() : 0) + links.count + (loaded && !reset ? 1 : 0)
+        return (loaded && (!loading || self.links.count > 0) ? headerOffset() : 0) + links.count + (loaded && !reset ? 1 : 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
