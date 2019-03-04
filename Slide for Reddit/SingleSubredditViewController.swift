@@ -734,11 +734,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                                 if let children = link["children"] as? JSONArray {
                                                     for subItem in children {
                                                         if let content = subItem as? JSONDictionary {
-                                                            self.subLinks.append(SubLinkItem(content["text"] as? String, link: URL(string: content["url"] as! String)))
+                                                            self.subLinks.append(SubLinkItem(content["text"] as? String, link: URL(string: (content["url"] as! String).decodeHTML())))
                                                         }
                                                     }
                                                 } else {
-                                                    self.subLinks.append(SubLinkItem(link["text"] as? String, link: URL(string: link["url"] as! String)))
+                                                    self.subLinks.append(SubLinkItem(link["text"] as? String, link: URL(string: (link["url"] as! String).decodeHTML())))
                                                 }
                                             }
                                         }
@@ -2433,7 +2433,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     }
     
     func headerHeight() -> CGFloat {
-        return CGFloat(hasHeader ? (headerImage != nil ? 134 : 36) : 0)
+        return CGFloat(hasHeader ? (headerImage != nil ? 136 : 38) : 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
@@ -2886,10 +2886,8 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 scroll.topAnchor == self.header.bottomAnchor + 4
                 
                 imageView.sd_setImage(with: del!.headerImage!)
-                scroll.bottomAnchor == self.contentView.bottomAnchor
             } else {
                 scroll.topAnchor == self.contentView.topAnchor + 4
-                scroll.bottomAnchor == self.contentView.bottomAnchor
             }
             scroll.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
         }
