@@ -651,7 +651,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             
             if type != .SUBMIT_TEXT && type != .EDIT_SELFTEXT {
                 text3.placeholder = "Link"
-                text3.textContainer.maximumNumberOfLines = 1
+                text3.textContainer.maximumNumberOfLines = 0
                 
                 if type == .SUBMIT_IMAGE {
                     text3.addTapGestureRecognizer {
@@ -686,7 +686,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text = [text1, text2, text3]
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
         } else if type.isComment() {
-            if (toReplyTo as! RSubmission).type == .SELF {
+            if (toReplyTo as! RSubmission).type == .SELF && !(toReplyTo as! RSubmission).htmlBody.trimmed().isEmpty {
                 //two
                 let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.fontColor
@@ -886,7 +886,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if textField.isEditable && !first {
                 first = true
                 textField.becomeFirstResponder()
-                textField.insertText("")
             }
             if !ColorUtil.theme.isLight() {
                 textField.keyboardAppearance = .dark
@@ -933,6 +932,17 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             toolbar?.uploadImage(UIButton())
             doneOnce = true
         }
+        var first = false
+        for textField in text! {
+            if textField.isEditable && !first {
+                first = true
+                textField.becomeFirstResponder()
+                UIView.animate(withDuration: 0.25) {
+                    textField.insertText("")
+                }
+            }
+        }
+        
     }
     
     func completeGetSubmission(_ name: String) {
