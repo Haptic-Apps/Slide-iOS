@@ -6,8 +6,6 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import Foundation
-
 import CoreGraphics
 import Foundation
 import UIKit

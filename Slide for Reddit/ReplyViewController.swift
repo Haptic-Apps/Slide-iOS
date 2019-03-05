@@ -886,13 +886,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if textField.isEditable && !first {
                 first = true
                 textField.becomeFirstResponder()
+                textField.insertText("")
             }
             if !ColorUtil.theme.isLight() {
                 textField.keyboardAppearance = .dark
             }
         }
-        let bottomOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.size.height)
-        scrollView.setContentOffset(bottomOffset, animated: true)
     }
 
     @objc func close(_ sender: AnyObject) {

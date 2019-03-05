@@ -42,7 +42,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     let maxHeaderHeight: CGFloat = 120
     let minHeaderHeight: CGFloat = 56
     public var inHeadView: UIView?
-
+    var lastTopItem: Int = 0
+    
     let margin: CGFloat = 10
     let cellsPerRow = 3
     var readLaterCount: Int {
@@ -758,9 +759,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             if self.loaded && !self.loading {
                                 self.flowLayout.reset()
                                 self.tableView.reloadData()
-                                var newOffset = self.tableView.contentOffset
-                                newOffset.y -= self.headerHeight()
-                                self.tableView.setContentOffset(newOffset, animated: false)
+                                if UIDevice.current.userInterfaceIdiom != .pad {
+                                    var newOffset = self.tableView.contentOffset
+                                    newOffset.y -= self.headerHeight()
+                                    self.tableView.setContentOffset(newOffset, animated: false)
+                                }
                             }
                         }
                     }
@@ -1560,7 +1563,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         }
                                     }
                                     
-                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top + self.headerHeight())
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top + (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight()))
                                 } else {
                                     self.flowLayout.invalidateLayout()
                                     self.tableView.insertItems(at: paths)
@@ -2261,11 +2264,6 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
         if cell is AutoplayBannerLinkCellView && (cell as! AutoplayBannerLinkCellView).videoView != nil {
             (cell as! AutoplayBannerLinkCellView).endVideos()
         }
-        if !tableView.indexPathsForVisibleItems.contains(indexPath) {
-            if SettingValues.markReadOnScroll && indexPath.row < links.count {
-                History.addSeen(s: links[indexPath.row], skipDuplicates: true)
-            }
-        }
     }
 }
 
@@ -2279,6 +2277,21 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
             oldPosition = CGPoint.zero
         }
         return false
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if SettingValues.markReadOnScroll {
+            let top = tableView.indexPathsForVisibleItems
+            if !top.isEmpty {
+                let topItem = top[0].row - 1
+                if topItem > lastTopItem && topItem < links.count {
+                    for item in lastTopItem..<topItem {
+                        History.addSeen(s: links[item], skipDuplicates: true)
+                    }
+                    lastTopItem = topItem
+                }
+            }
+        }
     }
 }
 

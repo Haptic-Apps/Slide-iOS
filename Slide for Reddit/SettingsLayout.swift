@@ -43,6 +43,11 @@ class SettingsLayout: UITableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
+    var typeTitleCell: UITableViewCell = UITableViewCell()
+    var typeTitle = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var infoBelowTitleCell: UITableViewCell = UITableViewCell()
     var infoBelowTitle = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -151,6 +156,9 @@ class SettingsLayout: UITableViewController {
         } else if changed == commentTitle {
             SettingValues.commentsInTitle = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentsInTitle)
+        } else if changed == typeTitle {
+            SettingValues.typeInTitle = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_typeInTitle)
         } else if changed == thumbLink {
             SettingValues.linkAlwaysThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_linkAlwaysThumbnail)
@@ -474,6 +482,7 @@ class SettingsLayout: UITableViewController {
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
+        createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Show content type in title")
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Show comment count under title")
@@ -568,10 +577,11 @@ class SettingsLayout: UITableViewController {
         case 2:
             switch indexPath.row {
             case 0: return self.infoBelowTitleCell
-            case 1: return self.commentTitleCell
-            case 2: return self.scoreTitleCell
-            case 3: return self.abbreviateScoreCell
-            case 4: return self.domainInfoCell
+            case 1: return self.typeTitleCell
+            case 2: return self.commentTitleCell
+            case 3: return self.scoreTitleCell
+            case 4: return self.abbreviateScoreCell
+            case 5: return self.domainInfoCell
                 
             default: fatalError("Unknown row in section 2")
             }
@@ -602,7 +612,7 @@ class SettingsLayout: UITableViewController {
         switch section {
         case 0: return 1
         case 1: return 4
-        case 2: return 5
+        case 2: return 6
         case 3: return 3
         case 4: return 6
         default: fatalError("Unknown number of sections")

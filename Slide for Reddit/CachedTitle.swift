@@ -261,6 +261,12 @@ class CachedTitle {
             infoString.append(spacer)
             infoString.append(NSMutableAttributedString.init(string: "Approved\(!submission.approvedBy.isEmpty() ? " by \(submission.approvedBy)":"")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
         }
+        
+        if SettingValues.typeInTitle {
+            let info = NSMutableAttributedString.init(string: "\u{00A0}\u{00A0}\(submission.type.rawValue)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.fontColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.foregroundColor])
+            infoString.append(spacer)
+            infoString.append(info)
+        }
 
         if submission.isCrosspost && !full {
             infoString.append(NSAttributedString.init(string: "\n\n"))

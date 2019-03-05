@@ -150,6 +150,9 @@
 		BE20852921588F3B00D8F33C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE20852821588F3B00D8F33C /* Assets.xcassets */; };
 		BE20852E21588F3B00D8F33C /* Slide for Apple Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BE20851121588F3900D8F33C /* Slide for Apple Watch.app */; };
 		BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20853921589FD600D8F33C /* SubmissionRowController.swift */; };
+		BE232695222DE429005CA83A /* ic_ghost@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE232693222DE428005CA83A /* ic_ghost@2x.png */; };
+		BE232696222DE429005CA83A /* ic_ghost@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE232694222DE428005CA83A /* ic_ghost@3x.png */; };
+		BE232698222DE433005CA83A /* ic_ghost@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BE232697222DE433005CA83A /* ic_ghost@2x~ipad.png */; };
 		BE25402621CCC03E003BD547 /* ForceTouchGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */; };
 		BE257A6E21F64AA30082A47E /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE257A6D21F64AA30082A47E /* Media.xcassets */; };
 		BE257A7021F64AA30082A47E /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A6F21F64AA30082A47E /* ActionViewController.swift */; };
@@ -535,6 +538,9 @@
 		BE20852A21588F3B00D8F33C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE20852B21588F3B00D8F33C /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
 		BE20853921589FD600D8F33C /* SubmissionRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionRowController.swift; sourceTree = "<group>"; };
+		BE232693222DE428005CA83A /* ic_ghost@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_ghost@2x.png"; sourceTree = "<group>"; };
+		BE232694222DE428005CA83A /* ic_ghost@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_ghost@3x.png"; sourceTree = "<group>"; };
+		BE232697222DE433005CA83A /* ic_ghost@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_ghost@2x~ipad.png"; sourceTree = "<group>"; };
 		BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceTouchGestureRecognizer.swift; sourceTree = "<group>"; };
 		BE257A6B21F64AA30082A47E /* Open in Slide.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Open in Slide.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE257A6D21F64AA30082A47E /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
@@ -1006,6 +1012,9 @@
 		BE4AB49C21BC4DAE001092C4 /* App Icons */ = {
 			isa = PBXGroup;
 			children = (
+				BE232697222DE433005CA83A /* ic_ghost@2x~ipad.png */,
+				BE232693222DE428005CA83A /* ic_ghost@2x.png */,
+				BE232694222DE428005CA83A /* ic_ghost@3x.png */,
 				BE1DA5CF2208AC7F001C7DB4 /* ic_black@2x~ipad.png */,
 				BE1DA5D02208AC7F001C7DB4 /* ic_blue@2x~ipad.png */,
 				BE1DA5CC2208AC7F001C7DB4 /* ic_green@2x~ipad.png */,
@@ -1540,8 +1549,10 @@
 				BE1DA5DA2208AC80001C7DB4 /* ic_pink@2x~ipad.png in Resources */,
 				BE1DA5D72208AC80001C7DB4 /* ic_retroapple@2x~ipad.png in Resources */,
 				BE0C4F9021BCBE83006C54FF /* ic_green@3x.png in Resources */,
+				BE232696222DE429005CA83A /* ic_ghost@3x.png in Resources */,
 				BE0C4F8821BCBE83006C54FF /* ic_tronteal@3x.png in Resources */,
 				BE0C4F9221BCBE83006C54FF /* ic_purple@3x.png in Resources */,
+				BE232695222DE429005CA83A /* ic_ghost@2x.png in Resources */,
 				BE0C4F8521BCBE83006C54FF /* ic_retroapple@2x.png in Resources */,
 				BE0C4F8721BCBE83006C54FF /* ic_retroapple@3x.png in Resources */,
 				BE0C4F8F21BCBE83006C54FF /* ic_tronblue@2x.png in Resources */,
@@ -1590,6 +1601,7 @@
 				BE1DA5E22208AC80001C7DB4 /* ic_lightblue@2x~ipad.png in Resources */,
 				BE1B57E221CEFA9800FF6F98 /* ic_outrun@3x.png in Resources */,
 				BE35216E1E3D22B000C30B8D /* RobotoCondensed-Regular.ttf in Resources */,
+				BE232698222DE433005CA83A /* ic_ghost@2x~ipad.png in Resources */,
 				BE3521771E3D2E3300C30B8D /* Roboto-BoldItalic.ttf in Resources */,
 				BE0C4F8A21BCBE83006C54FF /* ic_yellow@2x.png in Resources */,
 				BE0C4F8C21BCBE83006C54FF /* ic_blue@2x.png in Resources */,

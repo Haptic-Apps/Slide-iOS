@@ -116,6 +116,7 @@ class SettingValues {
     public static let pref_newIndicator = "NEW_INDICATOR"
     public static let pref_totallyCollapse = "TOTALLY_COLLAPSE"
     public static let pref_fullyHideNavbar = "FULLY_HIDE_NAVBAR"
+    public static let pref_typeInTitle = "TYPE_IN_TITLE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -176,6 +177,7 @@ class SettingValues {
     public static var menuButton = true
     public static var disableBanner = false
     public static var newIndicator = false
+    public static var typeInTitle = true
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -417,6 +419,7 @@ class SettingValues {
         SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)
         SettingValues.disableNavigationBar = settings.bool(forKey: SettingValues.pref_disableNavigationBar)
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
+        SettingValues.typeInTitle = settings.bool(forKey: SettingValues.pref_typeInTitle)
         SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)

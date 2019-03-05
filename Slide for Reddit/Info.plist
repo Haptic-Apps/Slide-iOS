@@ -21,6 +21,15 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
+            <key>ghost</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_ghost</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -162,6 +171,15 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
+            <key>ghost</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_ghost</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -314,7 +332,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>109</string>
+	<string>110</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>

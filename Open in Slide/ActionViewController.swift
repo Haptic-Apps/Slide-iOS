@@ -106,4 +106,3 @@ extension String {
         return self.count
     }
 }
-
