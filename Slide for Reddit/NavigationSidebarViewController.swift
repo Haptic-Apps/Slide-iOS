@@ -120,7 +120,11 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         configureBackground()
 
         headerView.addTapGestureRecognizer {
-            self.expand()
+            if self.expanded {
+                self.collapse()
+            } else {
+                self.expand()
+            }
         }
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
@@ -185,7 +189,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return tableView.contentOffset.y == 0 && !self.view.isHidden
+        return (tableView.contentOffset.y == 0 || headerView.bounds.contains(touch.location(in: headerView))) && !self.view.isHidden
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
