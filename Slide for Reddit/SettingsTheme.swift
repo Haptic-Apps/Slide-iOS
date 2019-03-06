@@ -640,7 +640,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         
         alert.attributedTitle = NSAttributedString(string: "Select night hours", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         
-        let pickerView = PickerViewViewController(values: values, initialSelection: initialSelection, action: { _, _, index, _ in
+        let pickerView = PickerViewViewControllerColored(values: values, initialSelection: initialSelection, action: { _, _, index, _ in
             switch index.column {
             case 0:
                 SettingValues.nightStart = index.row
@@ -776,4 +776,99 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
      }
      */
 
+}
+final public class PickerViewViewControllerColored: UIViewController {
+    
+    public typealias Values = [[String]]
+    public typealias Index = (column: Int, row: Int)
+    public typealias Action = (_ vc: UIViewController, _ picker: UIPickerView, _ index: Index, _ values: Values) -> ()
+    
+    fileprivate var action: Action?
+    fileprivate var values: Values = [[]]
+    fileprivate var initialSelection: [Index]?
+    
+    fileprivate lazy var pickerView: UIPickerView = {
+        return $0
+    }(UIPickerView())
+    
+    public init(values: Values, initialSelection: [Index]? = nil, action: Action?) {
+        super.init(nibName: nil, bundle: nil)
+        self.values = values
+        self.initialSelection = initialSelection
+        self.action = action
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        Log("has deinitialized")
+    }
+    
+    override public func loadView() {
+        view = pickerView
+    }
+    
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+        pickerView.dataSource = self
+        pickerView.delegate = self
+    }
+    
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        if let initialSelection = initialSelection {
+            for index in initialSelection {
+                if values.count > index.column && values[index.column].count > index.row {
+                    pickerView.selectRow(index.row, inComponent: index.column, animated: true)
+                }
+            }
+        }
+        
+    }
+}
+
+extension PickerViewViewControllerColored: UIPickerViewDataSource, UIPickerViewDelegate {
+    
+    // returns the number of 'columns' to display.
+    public func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return values.count
+    }
+    
+    
+    // returns the # of rows in each component..
+    public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return values[component].count
+    }
+    /*
+     // returns width of column and height of row for each component.
+     public func pickerView(_ pickerView: UIPickerView, widthForComponent component: Int) -> CGFloat {
+     
+     }
+     
+     public func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
+     
+     }
+     */
+    
+    // these methods return either a plain NSString, a NSAttributedString, or a view (e.g UILabel) to display the row for the component.
+    // for the view versions, we cache any hidden and thus unused views and pass them back for reuse.
+    // If you return back a different object, the old one will be released. the view will be centered in the row rect
+    public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10)])
+    }
+    /*
+     public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+     // attributed title is favored if both methods are implemented
+     }
+     
+     
+     public func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+     
+     }
+     */
+    public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        action?(self, pickerView, Index(column: component, row: row), values)
+    }
 }
