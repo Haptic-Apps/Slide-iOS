@@ -20,3 +20,14 @@ public extension AlertController {
         vc.present(self, animated: true, completion: nil)
     }
 }
+public extension UIAlertController {
+    func showWindowless() {
+        let win = UIWindow(frame: UIScreen.main.bounds)
+        let vc = UIViewController()
+        vc.view.backgroundColor = .clear
+        win.rootViewController = vc
+        win.windowLevel = UIWindow.Level.alert + 1
+        win.makeKeyAndVisible()
+        vc.present(self, animated: true, completion: nil)
+    }
+}

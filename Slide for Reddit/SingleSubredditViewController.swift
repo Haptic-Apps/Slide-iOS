@@ -1405,6 +1405,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 if reset {
                     paginator = Paginator()
                     self.page = 0
+                    self.lastTopItem = 0
                 }
                 if reset || !loaded {
                     self.startTime = Date()

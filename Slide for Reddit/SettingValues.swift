@@ -117,6 +117,7 @@ class SettingValues {
     public static let pref_totallyCollapse = "TOTALLY_COLLAPSE"
     public static let pref_fullyHideNavbar = "FULLY_HIDE_NAVBAR"
     public static let pref_typeInTitle = "TYPE_IN_TITLE"
+    public static let pref_muteYouTube = "MUTE_YOU_TUBE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -164,6 +165,7 @@ class SettingValues {
     public static var rightThumbnail = true
     public static var multiColumnCount = 2
     public static var nameScrubbing = true
+    public static var muteYouTube = true
     public static var autoCache = false
     public static var pinToolbar = false
     public static var hapticFeedback = true
@@ -408,6 +410,7 @@ class SettingValues {
             }
         }
         
+        SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
         SettingValues.smallerTag = settings.object(forKey: SettingValues.pref_smallTag) == nil ? true : settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.blackShadowbox = settings.bool(forKey: SettingValues.pref_blackShadowbox)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)

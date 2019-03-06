@@ -253,13 +253,13 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
                 cell.textLabel?.text = "Opera"
                 cell.imageView?.image = UIImage.init(named: "world")?.toolbarIcon()
             } else if text == SettingValues.BROWSER_FIREFOX {
-                cell.textLabel?.text = "FireFox"
+                cell.textLabel?.text = "Firefox"
                 cell.imageView?.image = firefoxIcon
             } else if text == SettingValues.BROWSER_FOCUS {
-                cell.textLabel?.text = "FireFox Focus"
+                cell.textLabel?.text = "Firefox Focus"
                 cell.imageView?.image = focusIcon
             } else if text == SettingValues.BROWSER_FOCUS_KLAR {
-                cell.textLabel?.text = "FireFox Klar"
+                cell.textLabel?.text = "Firefox Klar"
                 cell.imageView?.image = focusKlarIcon
             } else if text == SettingValues.BROWSER_INTERNAL {
                 cell.textLabel?.text = "Internal browser (supports ad-blocking with Pro)"

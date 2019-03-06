@@ -543,11 +543,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             cv.topAnchor == alert.view.topAnchor + 90
             cv.heightAnchor == 60
         
-            if let parent = window?.rootViewController {
-                parent.present(alert, animated: true, completion: {
-                    //  Add your progressbar after alert is shown (and measured)
-                })
-            }
+            alert.showWindowless()
             return true
         } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("google.com/amp") || url.absoluteString.contains("redd.it") {
                 VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)

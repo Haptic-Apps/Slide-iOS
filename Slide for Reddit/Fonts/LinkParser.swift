@@ -17,12 +17,15 @@ class LinkParser {
         if string.length > 0 {
             while string.string.contains("slide://") {
                 do {
-                    let match = try NSRegularExpression(pattern: ".*?(slide:\\/\\/[a-zA-Z%?#0-9]+).*?", options: []).matches(in: string.string, options: NSRegularExpression.MatchingOptions.init(rawValue: 0), range: NSRange(location: 0, length: string.length))[0]
+                    let match = try NSRegularExpression(pattern: "(slide:\\/\\/[a-zA-Z%?#0-9]+)", options: []).matches(in: string.string, options: NSRegularExpression.MatchingOptions.init(rawValue: 0), range: NSRange(location: 0, length: string.length))[0]
                     let matchRange: NSRange = match.range(at: 1)
                     if matchRange.location != NSNotFound {
                         let attributedText = string.attributedSubstring(from: match.range).mutableCopy() as! NSMutableAttributedString
-                        let newText = NSMutableAttributedString(string: "Slide Theme", attributes: attributedText.attributes(at: 0, effectiveRange: nil))
-                        newText.addAttribute(NSAttributedString.Key.link, value: URL(string: attributedText.string)!, range: NSRange(location: 0, length: newText.length))
+                        let oldAttrs = attributedText.attributes(at: 0, effectiveRange: nil)
+                        print(attributedText.string)
+                        let newAttrs = [ NSAttributedString.Key.link: URL(string: attributedText.string)!] as [NSAttributedString.Key: Any]
+                        let allParams = newAttrs.reduce(into: oldAttrs) { (r, e) in r[e.0] = e.1 }
+                        let newText = NSMutableAttributedString(string: "Slide Theme", attributes: allParams)
                         string.replaceCharacters(in: match.range, with: newText)
                     }
                 } catch {

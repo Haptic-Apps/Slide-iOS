@@ -269,7 +269,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 $0.textColor = .white
             }
             
-            bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), ytButton, muteButton, downloadButton, menuButton)
+            bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), muteButton, ytButton, downloadButton, menuButton)
         }
     }
     
@@ -886,7 +886,7 @@ extension VideoMediaViewController {
 extension VideoMediaViewController {
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if isYoutubeView {
-            if youtubeMute && muteButton.isHidden && SettingValues.muteVideosInModal {
+            if youtubeMute && muteButton.isHidden && SettingValues.muteYouTube {
                 muteButton.isHidden = false
             }
             if !sliderBeingUsed {
@@ -897,7 +897,7 @@ extension VideoMediaViewController {
         let hasAudioTracks = isYoutubeView || (videoView.player?.currentItem?.tracks.count ?? 1) > 1
         
         if hasAudioTracks {
-            if (videoView.player?.isMuted ?? youtubeMute) && muteButton.isHidden && SettingValues.muteVideosInModal {
+            if (videoView.player?.isMuted ?? youtubeMute) && muteButton.isHidden && (isYoutubeView ? SettingValues.muteYouTube : SettingValues.muteVideosInModal) {
                 muteButton.isHidden = false
             }
         }
@@ -906,7 +906,7 @@ extension VideoMediaViewController {
             setOnce = true
             
             if hasAudioTracks {
-                if !SettingValues.muteVideosInModal {
+                if isYoutubeView ? !SettingValues.muteYouTube : !SettingValues.muteVideosInModal {
                     if SettingValues.modalVideosRespectHardwareMuteSwitch {
                         try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
                     } else {
@@ -959,7 +959,7 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         
         self.setProgressViewVisible(false)
         //        self.downloadButton.isHidden = true //todo maybe download videos in the future?
-        if isYoutubeView && SettingValues.muteVideosInModal {
+        if isYoutubeView && SettingValues.muteYouTube {
             self.youtubeMute = true
             playerView.webView?.stringByEvaluatingJavaScript(from: "player.mute();")
         }

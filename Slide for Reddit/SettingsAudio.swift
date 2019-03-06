@@ -33,6 +33,11 @@ class SettingsAudio: UITableViewController {
     }
     var muteModalVideoSwitch = UISwitch()
 
+    var muteYTCell = UITableViewCell().then {
+        $0.selectionStyle = .none
+    }
+    var muteYTSwitch = UISwitch()
+
     var modalVideoFollowsMuteSwitchCell = UITableViewCell().then {
         $0.selectionStyle = .none
     }
@@ -53,7 +58,7 @@ class SettingsAudio: UITableViewController {
 
         muteModalVideoSwitch = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
-            $0.isOn = SettingValues.enlargeLinks
+            $0.isOn = SettingValues.muteVideosInModal
         }
         muteModalVideoSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         muteModalVideoCell.textLabel?.text = "Start muted"
@@ -63,7 +68,7 @@ class SettingsAudio: UITableViewController {
 
         modalVideoFollowsMuteSwitchSwitch = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
-            $0.isOn = SettingValues.enlargeLinks
+            $0.isOn = SettingValues.modalVideosRespectHardwareMuteSwitch
         }
         modalVideoFollowsMuteSwitchSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         modalVideoFollowsMuteSwitchCell.textLabel?.text = "Respect mute switch"
@@ -71,16 +76,27 @@ class SettingsAudio: UITableViewController {
         modalVideoFollowsMuteSwitchCell.textLabel?.numberOfLines = 0
         modalVideoFollowsMuteSwitchCell.selectionStyle = UITableViewCell.SelectionStyle.none
 
+        muteYTSwitch = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+            $0.isOn = SettingValues.muteYouTube
+        }
+        muteYTSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
+        muteYTCell.textLabel?.text = "Start YouTube videos muted"
+        muteYTCell.accessoryView = muteYTSwitch
+        muteYTCell.textLabel?.numberOfLines = 0
+        muteYTCell.selectionStyle = UITableViewCell.SelectionStyle.none
+
         sectionTitles.append("Popup Video Player")
         cells.append([
             muteModalVideoCell,
             modalVideoFollowsMuteSwitchCell,
+            muteYTCell,
             ])
 
         #if DEBUG
         muteInlineVideoSwitch = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
-            $0.isOn = SettingValues.enlargeLinks
+            $0.isOn = SettingValues.muteInlineVideos
         }
         muteInlineVideoSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         muteInlineVideoCell.textLabel?.text = "(Debug) Start inline videos muted"
@@ -153,6 +169,8 @@ private extension SettingsAudio {
             SettingValues.muteVideosInModal = changed.isOn
         case modalVideoFollowsMuteSwitchSwitch:
             SettingValues.modalVideosRespectHardwareMuteSwitch = changed.isOn
+        case muteYTSwitch:
+            SettingValues.muteYouTube = changed.isOn
         default:
             break
         }
