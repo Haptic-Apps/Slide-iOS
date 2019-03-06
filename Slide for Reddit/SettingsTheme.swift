@@ -522,7 +522,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     UserDefaults.standard.synchronize()
                     _ = ColorUtil.doInit()
                     self.setupViews()
-                    self.tableView.reloadData(with: .automatic)
+                    self.tableView.reloadData()
                     self.tochange!.doCells()
                     self.tochange!.tableView.reloadData()
                 }
@@ -667,7 +667,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         let pv = pickerView.view!
         alert.contentView.addSubview(pv)
         
-        pv.edgeAnchors == alert.contentView.edgeAnchors
+        pv.edgeAnchors == alert.contentView.edgeAnchors - 14
         pv.heightAnchor == CGFloat(216)
         pickerView.didMove(toParent: alert)
         
@@ -841,22 +841,12 @@ extension PickerViewViewControllerColored: UIPickerViewDataSource, UIPickerViewD
     public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return values[component].count
     }
-    /*
-     // returns width of column and height of row for each component.
-     public func pickerView(_ pickerView: UIPickerView, widthForComponent component: Int) -> CGFloat {
-     
-     }
-     
-     public func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
-     
-     }
-     */
     
     // these methods return either a plain NSString, a NSAttributedString, or a view (e.g UILabel) to display the row for the component.
     // for the view versions, we cache any hidden and thus unused views and pass them back for reuse.
     // If you return back a different object, the old one will be released. the view will be centered in the row rect
     public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
-        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10)])
+        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 8)])
     }
     /*
      public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {

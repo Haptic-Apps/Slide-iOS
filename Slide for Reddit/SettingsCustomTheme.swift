@@ -272,6 +272,8 @@ class SettingsCustomTheme: UITableViewController {
         loadView()
     }
     
+    var tagText: String?
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.row == 4 {
@@ -312,8 +314,70 @@ class SettingsCustomTheme: UITableViewController {
         let buttonSelection = AlertAction(title: "Save", style: .normal) { _ in
             selection?(color)
         }
+        
         buttonSelection.isEnabled = true
         alert.addAction(buttonSelection)
+        
+        let hexSelection = AlertAction(title: "Enter HEX code", style: .normal) { _ in
+            alert.dismiss()
+            let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
+            let confirmAction = AlertAction(title: "Set", style: .preferred) { (_) in
+                if let text = self.tagText {
+                    let color = UIColor(hexString: text)
+                    switch indexPath.row {
+                    case 0:
+                        UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FOREGROUND)
+                    case 1:
+                        UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_BACKGROUND)
+                    case 2:
+                        UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FONT)
+                    default:
+                        UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_NAVICON)
+                    }
+                    UserDefaults.standard.synchronize()
+                    self.cleanup()
+                } else {
+                }
+            }
+            
+            let config: TextField.Config = { textField in
+                textField.becomeFirstResponder()
+                textField.textColor = ColorUtil.fontColor
+                textField.attributedPlaceholder = NSAttributedString(string: "HEX String", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
+                textField.left(image: UIImage.init(named: "pallete"), color: ColorUtil.fontColor)
+                textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+                textField.backgroundColor = ColorUtil.foregroundColor
+                textField.leftViewPadding = 12
+                textField.layer.borderWidth = 1
+                textField.layer.cornerRadius = 8
+                textField.keyboardAppearance = .default
+                textField.keyboardType = .default
+                textField.returnKeyType = .done
+                textField.text = color.hexString()
+                textField.action { textField in
+                    self.tagText = textField.text
+                }
+            }
+            
+            let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+            
+            alert.setupTheme()
+            
+            alert.attributedTitle = NSAttributedString(string: "Enter HEX color code", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            
+            alert.contentView.addSubview(textField)
+            
+            textField.edgeAnchors == alert.contentView.edgeAnchors
+            textField.heightAnchor == CGFloat(44 + 12)
+            
+            alert.addAction(confirmAction)
+            alert.addCancelButton()
+            
+            alert.addBlurView()
+            self.present(alert, animated: true, completion: nil)
+        }
+        
+        alert.addAction(hexSelection)
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let vc = storyboard.instantiateViewController(withIdentifier: "ColorPicker") as? ColorPickerViewController else { return }

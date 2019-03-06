@@ -21,15 +21,6 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-            <key>ghost</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_ghost</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -44,6 +35,15 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>ic_cottoncandy</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>ghost</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_ghost</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -171,15 +171,6 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-            <key>ghost</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>ic_ghost</string>
-                </array>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -194,6 +185,15 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>ic_cottoncandy</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>ghost</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_ghost</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -332,7 +332,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>110</string>
+	<string>111</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
