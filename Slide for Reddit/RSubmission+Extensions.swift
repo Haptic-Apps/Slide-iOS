@@ -32,7 +32,7 @@ extension RSubmission {
 
         let fullImage = ContentType.fullImage(t: type)
 
-        if !fullImage && height < 50 {
+        if !fullImage && height < 75 {
             big = false
             thumb = true
         }
@@ -42,7 +42,7 @@ extension RSubmission {
             thumb = false
         }
 
-        if height < 50 {
+        if height < 75 {
             thumb = true
             big = false
         }

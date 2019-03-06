@@ -101,10 +101,10 @@ class RealmDataWrapper {
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
         rSubmission.isEdited = submission.edited > 0
         rSubmission.edited = NSDate(timeIntervalSince1970: TimeInterval(submission.edited))
-        rSubmission.gilded = submission.gilded > 0
         rSubmission.silver = ((json?["gildings"] as? [String: Any])?["gid_1"] as? Int) ?? 0
         rSubmission.gold = ((json?["gildings"] as? [String: Any])?["gid_2"] as? Int) ?? 0
         rSubmission.platinum = ((json?["gildings"] as? [String: Any])?["gid_3"] as? Int) ?? 0
+        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum > 0
         rSubmission.htmlBody = bodyHtml
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived

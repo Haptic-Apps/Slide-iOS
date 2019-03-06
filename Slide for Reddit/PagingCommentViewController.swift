@@ -77,6 +77,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             self.navigationController!.delegate = swiper!
         }
     }
+    
     var first = true
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,7 +114,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
 
         setViewControllers([firstViewController],
                            direction: .forward,
-                           animated: true,
+                           animated: false,
                            completion: nil)
 
     }

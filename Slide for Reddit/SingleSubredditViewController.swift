@@ -1335,7 +1335,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         links = []
         flowLayout.reset()
         flowLayout.invalidateLayout()
-        tableView.reloadData()
+        UIView.transition(with: self.tableView, duration: 0.10, options: .transitionCrossDissolve, animations: {
+            self.tableView.reloadData()
+        }, completion: nil)
         load(reset: true)
     }
 
@@ -1555,7 +1557,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
                                 if before == 0 {
                                     self.flowLayout.invalidateLayout()
-                                    self.tableView.reloadData()
+                                    UIView.transition(with: self.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+                                        self.tableView.reloadData()
+                                    }, completion: nil)
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {
                                         top += 26
@@ -1618,7 +1622,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
             let fullImage = ContentType.fullImage(t: type)
 
-            if !fullImage && height < 50 {
+            if !fullImage && height < 75 {
                 big = false
                 thumb = true
             } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
@@ -1630,7 +1634,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 thumb = false
             }
 
-            if height < 50 {
+            if height < 75 {
                 thumb = true
                 big = false
             }
@@ -1697,7 +1701,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         
         let fullImage = ContentType.fullImage(t: type)
         
-        if !fullImage && submissionHeight < 50 {
+        if !fullImage && submissionHeight < 75 {
             big = false
             thumb = true
         } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
@@ -1716,7 +1720,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             thumb = false
         }
         
-        if submissionHeight < 50 {
+        if submissionHeight < 75 {
             thumb = true
             big = false
         }
@@ -1889,7 +1893,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         let fullImage = ContentType.fullImage(t: type)
 
-        if !fullImage && height < 50 {
+        print(submission.title)
+        print(height)
+        if !fullImage && height < 75 {
             big = false
             thumb = true
         }
@@ -1899,7 +1905,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             thumb = false
         }
 
-        if height < 50 {
+        if height < 75 {
             thumb = true
             big = false
         }
@@ -2184,13 +2190,15 @@ extension SingleSubredditViewController {
     @objc func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
 
         let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "r/\(sub)"
+        alertController.headerData = sub == "frontpage" ? "frontpage" : "r/\(sub)"
+        
+        let special = !(sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/"))
         
         alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { _ in
             self.search()
         }))
         
-        if single {
+        if single && !special {
             alertController.addAction(Action(ActionData(title: Subscriptions.isSubscriber(self.sub) ? "Un-subscribe" : "Subscribe", image: UIImage(named: Subscriptions.isSubscriber(self.sub) ? "subbed" : "addcircle")!.menuIcon()), style: .default, handler: { _ in
                 self.subscribeSingle(sender)
             }))
@@ -2204,7 +2212,7 @@ extension SingleSubredditViewController {
             alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
                 self.displayMultiredditSidebar()
             }))
-        } else {
+        } else if !special {
             alertController.addAction(Action(ActionData(title: "Sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
                 self.doDisplaySidebar()
             }))
@@ -2235,7 +2243,7 @@ extension SingleSubredditViewController {
             }
         }))
 
-        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
+        if !special {
             alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { _ in
                 self.newPost(sender)
             }))

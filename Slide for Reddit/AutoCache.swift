@@ -182,7 +182,7 @@ public class AutoCache: NSObject {
 
             let fullImage = ContentType.fullImage(t: type)
 
-            if !fullImage && height < 50 {
+            if !fullImage && height < 75 {
                 big = false
                 thumb = true
             } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
@@ -194,7 +194,7 @@ public class AutoCache: NSObject {
                 thumb = false
             }
 
-            if height < 50 {
+            if height < 75 {
                 thumb = true
                 big = false
             }

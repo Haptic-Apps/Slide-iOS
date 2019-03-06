@@ -1319,7 +1319,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let overrideFull = ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || self is FullLinkCellView) && shouldAutoplay
 
-        if !fullImage && submissionHeight < 50 {
+        if !fullImage && submissionHeight < 75 {
             big = false
             thumb = true
         } else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) && !overrideFull {
@@ -1343,7 +1343,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             thumb = false
         }
         
-        if submissionHeight < 50 {
+        if submissionHeight < 75 {
             thumb = true
             big = false
         }
