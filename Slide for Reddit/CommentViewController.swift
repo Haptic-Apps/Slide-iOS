@@ -863,7 +863,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.tableView.reloadData()
                                     self.collapseAll()
                                 } else {
-                                    self.tableView.reloadData(with: UITableView.RowAnimation.fade)
+                                    UIView.transition(with: self.tableView, duration: 0.25, options: .transitionCrossDissolve, animations: {
+                                        self.tableView.reloadData()
+                                    }, completion: nil)
                                 }
                                 self.loaded = true
                             })

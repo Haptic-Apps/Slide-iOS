@@ -37,9 +37,14 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.tableView.allowsMultipleSelectionDuringEditing = true
         subs = Subscriptions.subreddits
         
-        self.subs = self.subs.sorted() {
-            $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
+        self.subs = self.subs.sorted {
+            if UserDefaults.standard.colorForKey(key: "color+" + $0) != nil && UserDefaults.standard.colorForKey(key: "color+" + $1) == nil {
+                return true
+            } else {
+                return $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
+            }
         }
+
         tableView.reloadData()
 
         self.title = "Subreddit themes"
@@ -51,13 +56,13 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let add = UIButton.init(type: .custom)
-        add.setImage(UIImage.init(named: "edit")!.navIcon(), for: UIControl.State.normal)
+        add.setImage(UIImage.init(named: "palette")!.navIcon(), for: UIControl.State.normal)
         add.addTarget(self, action: #selector(self.add(_:)), for: UIControl.Event.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
 
         let delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage.init(named: "delete")!.navIcon(), for: UIControl.State.normal)
+        delete.setImage(UIImage.init(named: "nocolors")!.navIcon(), for: UIControl.State.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControl.Event.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
@@ -98,14 +103,15 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             for i in tableView.indexPathsForSelectedRows! {
                 doDelete(subs[i.row])
             }
-            var toRemove = [String]()
-            for i in tableView.indexPathsForSelectedRows! {
-                toRemove.append(subs[i.row])
+            self.subs = self.subs.sorted {
+                if UserDefaults.standard.colorForKey(key: "color+" + $0) != nil && UserDefaults.standard.colorForKey(key: "color+" + $1) == nil {
+                    return true
+                } else {
+                    return $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
+                }
             }
-            self.subs = self.subs.filter({ (input) -> Bool in
-                return !toRemove.contains(input)
-            })
             self.tableView.reloadData()
+            self.navigationItem.rightBarButtonItems = regularButtons
         }
     }
 
@@ -204,16 +210,13 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         alertController!.dismiss(animated: true, completion: nil)
         BannerUtil.makeBanner(text: "\(count) subs colored", seconds: 5, context: self)
         count = 0
-        subs.removeAll()
-        for sub in Subscriptions.subreddits {
-            if UserDefaults.standard.colorForKey(key: "color+" + sub) != nil || UserDefaults.standard.colorForKey(key: "accent+" + sub) != nil {
-                subs.append(sub)
+        self.subs = self.subs.sorted {
+            if UserDefaults.standard.colorForKey(key: "color+" + $0) != nil && UserDefaults.standard.colorForKey(key: "color+" + $1) == nil {
+                return true
+            } else {
+                return $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
             }
         }
-        self.subs = self.subs.sorted() {
-            $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
-        }
-
         tableView.reloadData()
     }
 
@@ -239,6 +242,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
         cell?.backgroundColor = ColorUtil.foregroundColor
+        cell?.sideView.isHidden = UserDefaults.standard.colorForKey(key: "color+" + thing) == nil
         return cell!
     }
 
@@ -315,6 +319,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                 }
             }
             self.tableView.reloadData()
+            self.navigationItem.rightBarButtonItems = self.regularButtons
         }
 
         alertController.addCancelButton()
@@ -362,6 +367,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
                 }
             }
             self.tableView.reloadData()
+            self.navigationItem.rightBarButtonItems = self.regularButtons
         }
 
         if let presenter = alertController.popoverPresentationController {

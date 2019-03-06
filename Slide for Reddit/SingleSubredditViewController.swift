@@ -2887,7 +2887,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             
             if hasHeader && del != nil {
                 let imageView = UIImageView()
-                imageView.contentMode = .scaleToFill
+                imageView.contentMode = .scaleAspectFill
                 header.addSubview(imageView)
                 imageView.edgeAnchors == header.edgeAnchors
                 
