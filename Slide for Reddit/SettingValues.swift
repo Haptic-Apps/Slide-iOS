@@ -128,6 +128,8 @@ class SettingValues {
     public static let BROWSER_OPERA = "opera"
     public static let BROWSER_FOCUS = "focus"
     public static let BROWSER_FOCUS_KLAR = "focusklar"
+    public static let BROWSER_DDG = "duckduckgo"
+    public static let BROWSER_BRAVE = "brave"
 
     public static var commentActionRightRight = CommentAction.UPVOTE
     public static var commentActionRightLeft = CommentAction.DOWNVOTE

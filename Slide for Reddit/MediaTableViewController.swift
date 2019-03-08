@@ -219,6 +219,10 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             if browser == SettingValues.BROWSER_SAFARI {
             } else if browser == SettingValues.BROWSER_CHROME {
                 newUrl = URL(string: "googlechrome://" + sanitized) ?? oldUrl
+            } else if browser == SettingValues.BROWSER_DDG {
+                newUrl = URL(string: "ddgQuickLink://" + sanitized) ?? oldUrl
+            } else if browser == SettingValues.BROWSER_BRAVE {
+                newUrl = URL(string: "brave://open-url?url=" + (oldUrl.absoluteString.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? oldUrl.absoluteString)) ?? oldUrl
             } else if browser == SettingValues.BROWSER_OPERA {
                 newUrl = URL(string: "opera-http://" + sanitized) ?? oldUrl
             } else if browser == SettingValues.BROWSER_FIREFOX {

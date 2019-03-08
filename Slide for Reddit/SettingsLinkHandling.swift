@@ -42,6 +42,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     var firefoxIcon: UIImage?
     var focusIcon: UIImage?
     var focusKlarIcon: UIImage?
+    var duckIcon: UIImage?
+    var braveIcon: UIImage?
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight() && SettingValues.reduceColor {
@@ -85,6 +87,16 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 40))
         focusIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
         focusKlarIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
+        
+        first = GMColor.orange800Color()
+        second = GMColor.lightGreen500Color()
+        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 40))
+        duckIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
+
+        first = GMColor.orange400Color()
+        second = GMColor.red500Color()
+        coloredIcon = UIImage.convertGradientToImage(colors: [first, second], frame: CGSize.square(size: 40))
+        braveIcon = coloredIcon.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 20), withColor: .white), posX: 10, posY: 10)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -102,6 +114,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         let firefoxURL = URL(string: "firefox://google.com")!
         let focusURL = URL(string: "firefox-focus://google.com")!
         let focusKlarURL = URL(string: "firefox-klar://google.com")!
+        let ddgURL = URL(string: "ddgQuickLink://google.com")!
+        let braveURL = URL(string: "brave://google.com")!
 
         let sharedApplication = UIApplication.shared
         
@@ -133,6 +147,12 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         }
         if sharedApplication.canOpenURL(focusKlarURL) {
             browsers.append(SettingValues.BROWSER_FOCUS_KLAR)
+        }
+        if sharedApplication.canOpenURL(ddgURL) {
+            browsers.append(SettingValues.BROWSER_DDG)
+        }
+        if sharedApplication.canOpenURL(braveURL) {
+            browsers.append(SettingValues.BROWSER_BRAVE)
         }
     }
     
@@ -261,6 +281,12 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             } else if text == SettingValues.BROWSER_FOCUS_KLAR {
                 cell.textLabel?.text = "Firefox Klar"
                 cell.imageView?.image = focusKlarIcon
+            } else if text == SettingValues.BROWSER_DDG {
+                cell.textLabel?.text = "Duck Duck Go"
+                cell.imageView?.image = duckIcon
+            } else if text == SettingValues.BROWSER_BRAVE {
+                cell.textLabel?.text = "Brave Browser"
+                cell.imageView?.image = braveIcon
             } else if text == SettingValues.BROWSER_INTERNAL {
                 cell.textLabel?.text = "Internal browser (supports ad-blocking with Pro)"
                 cell.textLabel?.numberOfLines = 0

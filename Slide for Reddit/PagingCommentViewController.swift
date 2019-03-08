@@ -37,7 +37,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     func next() {
         if currentIndex + 1 < vCs.count {
             currentIndex += 1
-            let vc = CommentViewController(submission: vCs[currentIndex], single: false) as! CommentViewController
+            let vc = CommentViewController(submission: vCs[currentIndex], single: false)
             setViewControllers([vc],
                                    direction: .forward,
                                    animated: true,
@@ -116,7 +116,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                            direction: .forward,
                            animated: false,
                            completion: nil)
-
     }
     
     //From https://stackoverflow.com/a/25167681/3697225

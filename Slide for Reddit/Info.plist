@@ -344,7 +344,9 @@
 		<string>firefox</string>
 		<string>opera-http</string>
 		<string>firefox-focus</string>
-		<string>firefox-klar</string>
+        <string>firefox-klar</string>
+        <string>ddgQuickLink</string>
+        <string>brave</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<false/>
