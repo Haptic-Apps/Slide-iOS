@@ -6,8 +6,10 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import reddift
 import UIKit
+import SDCAlertView
 
 class SettingsViewMode: UITableViewController {
     
@@ -228,27 +230,33 @@ class SettingsViewMode: UITableViewController {
     
     func showMultiColumn() {
         let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-        let actionSheetController: UIAlertController = UIAlertController(title: "Column count", message: "", preferredStyle: .actionSheet)
+        let actionSheetController = AlertController(title: "Column count", message: nil, preferredStyle: .alert)
 
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-        }
-        actionSheetController.addAction(cancelActionButton)
+        actionSheetController.addCloseButton()
 
         let values = pad ? [["1", "2", "3", "4", "5"]] : [["1", "2", "3"]]
-        actionSheetController.addPickerView(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)]) { (_, _, chosen, _) in
+        let pickerView = PickerViewViewControllerColored(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)], action: { (_, _, chosen, _) in
             SettingValues.multiColumnCount = chosen.row + 1
             UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
             UserDefaults.standard.synchronize()
             SubredditReorderViewController.changed = true
             self.setSelected()
-        }
+        })
 
-        actionSheetController.modalPresentationStyle = .popover
-
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = self.multicolumnCount.contentView
-            presenter.sourceRect = self.multicolumnCount.contentView.bounds
-        }
+        actionSheetController.setupTheme()
+        
+        actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        
+        actionSheetController.addChild(pickerView)
+        
+        let pv = pickerView.view!
+        actionSheetController.contentView.addSubview(pv)
+        
+        pv.edgeAnchors == actionSheetController.contentView.edgeAnchors - 14
+        pv.heightAnchor == CGFloat(216)
+        pickerView.didMove(toParent: actionSheetController)
+        
+        actionSheetController.addBlurView()
 
         self.present(actionSheetController, animated: true, completion: nil)
     }
