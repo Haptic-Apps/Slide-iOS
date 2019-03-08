@@ -171,6 +171,7 @@ private extension SettingsAudio {
             SettingValues.modalVideosRespectHardwareMuteSwitch = changed.isOn
         case muteYTSwitch:
             SettingValues.muteYouTube = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_muteYouTube)
         default:
             break
         }

@@ -364,8 +364,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         info = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 30)).then {
             $0.layer.cornerRadius = 15
             $0.clipsToBounds = true
-            $0.setTitle("Sidebar", for: .selected)
-            $0.setTitle("Sidebar", for: .normal)
+            $0.setTitle("Subreddit sidebar", for: .selected)
+            $0.setTitle("Subreddit sidebar", for: .normal)
             $0.setTitleColor(GMColor.blue500Color(), for: .normal)
             $0.setTitleColor(.white, for: .selected)
             $0.titleLabel?.textAlignment = .center
@@ -426,11 +426,101 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
 
         replyButtons!.addSubview(buttonBase)
-        buttonBase.widthAnchor == finalWidth
         buttonBase.heightAnchor == CGFloat(30)
-        buttonBase.leftAnchor == replyButtons!.leftAnchor
-        buttonBase.verticalAnchors == replyButtons!.verticalAnchors
+        buttonBase.edgeAnchors == replyButtons!.edgeAnchors
+        buttonBase.centerYAnchor == replyButtons!.centerYAnchor
         replyButtons?.contentSize = CGSize.init(width: finalWidth, height: CGFloat(30))
+        replyButtons?.alwaysBounceHorizontal = true
+        replyButtons?.showsHorizontalScrollIndicator = false
+        
+        if type == .SUBMIT_LINK || type == .SUBMIT_TEXT || type == .SUBMIT_IMAGE {
+            do {
+                self.session = (UIApplication.shared.delegate as! AppDelegate).session
+                try session?.getSubmitFlairs(subreddit, completion: { (result) in
+                    switch result {
+                    case .failure(let error):
+                        //do nothing
+                        print(error)
+                        DispatchQueue.main.async {
+                            buttonBase.widthAnchor == finalWidth
+                        }
+                    case .success(let json):
+                        if json is JSONArray {
+                            for item in json as! JSONArray {
+                                let flair = item as! [String: Any]
+                                if let type = flair["type"] as? String, type == "richtext" {
+                                    if let text = flair["text"] as? String {
+                                        if let id = flair["id"] as? String {
+                                            let fo = FlairObject()
+                                            fo.title = text
+                                            fo.id = id
+                                            self.flairs.append(fo)
+                                        }
+                                    }
+                                } else if let type = flair["type"] as? String, type == "text" {
+                                    if let text = flair["text"] as? String {
+                                        if let id = flair["id"] as? String {
+                                            let fo = FlairObject()
+                                            fo.title = text
+                                            fo.id = id
+                                            self.flairs.append(fo)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if !self.flairs.isEmpty {
+                            DispatchQueue.main.async {
+                                let flairs = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
+                                    $0.layer.cornerRadius = 15
+                                    $0.clipsToBounds = true
+                                    $0.setTitle("Submission flair", for: .selected)
+                                    $0.setTitle("Submission flair", for: .normal)
+                                    $0.setTitleColor(.white, for: .normal)
+                                    $0.setTitleColor(.white, for: .selected)
+                                    $0.titleLabel?.textAlignment = .center
+                                    $0.backgroundColor = ColorUtil.getColorForSub(sub: self.subreddit)
+                                    $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+                                }
+                                flairs.addTarget(self, action: #selector(self.flairs(_:)), for: .touchUpInside)
+                                let widthF = flairs.currentTitle!.size(with: flairs.titleLabel!.font).width + CGFloat(45)
+                                flairs.widthAnchor == widthS
+                                buttonBase.widthAnchor == finalWidth + CGFloat(8) + widthF
+                                buttonBase.addArrangedSubview(flairs)
+                                self.replyButtons?.contentSize = CGSize.init(width: finalWidth + CGFloat(8) + widthF, height: CGFloat(30))
+                            }
+                        }
+                    }
+                })
+            } catch let error {
+                print(error)
+                buttonBase.widthAnchor == finalWidth
+            }
+        } else {
+            buttonBase.widthAnchor == finalWidth
+        }
+    }
+    
+    @objc func flairs(_ sender: AnyObject) {
+        let alert = UIAlertController(title: "Select post flair", message: nil, preferredStyle: .alert)
+        for item in flairs {
+            alert.addAction(UIAlertAction(title: item.title, style: .default, handler: { (_) in
+                self.selectedFlair = item.id
+                self.text?[0].placeholder = item.title
+            }))
+        }
+        alert.addAction(UIAlertAction(title: "No flair", style: .cancel, handler: { (_) in
+            self.selectedFlair = nil
+        }))
+        alert.showWindowless()
+    }
+    
+    var flairs = [FlairObject]()
+    var selectedFlair: String?
+    
+    class FlairObject {
+        var title = ""
+        var id = ""
     }
     
     @objc func changeState(_ sender: UIStateButton) {
@@ -1026,7 +1116,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             do {
                 if type == .SUBMIT_TEXT {
-                    try self.session?.submitText(Subreddit.init(subreddit: subreddit.text), title: title.text, text: body.text, sendReplies: replies!.isSelected, captcha: "", captchaIden: "", completion: { (result) -> Void in
+                    try self.session?.submitText(Subreddit.init(subreddit: subreddit.text), title: title.text, text: body.text ?? "", sendReplies: replies!.isSelected, captcha: "", captchaIden: "", flairID: self.selectedFlair, completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error.description)
@@ -1042,7 +1132,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     })
 
                 } else {
-                    try self.session?.submitLink(Subreddit.init(subreddit: subreddit.text), title: title.text, URL: body.text, sendReplies: replies!.isSelected, captcha: "", captchaIden: "", completion: { (result) -> Void in
+                    try self.session?.submitLink(Subreddit.init(subreddit: subreddit.text), title: title.text, URL: body.text, sendReplies: replies!.isSelected, captcha: "", captchaIden: "", flairID: self.selectedFlair, completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error.description)

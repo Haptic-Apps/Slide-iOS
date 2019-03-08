@@ -24,26 +24,26 @@ PODS:
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (78.0.1):
+  - MaterialComponents/ActivityIndicator (79.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (78.0.1)
-  - MaterialComponents/Ink (78.0.1):
+  - MaterialComponents/AnimationTiming (79.0.0)
+  - MaterialComponents/Ink (79.0.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (78.0.1)
-  - MaterialComponents/private/Application (78.0.1)
-  - MaterialComponents/private/Math (78.0.1)
-  - MaterialComponents/ProgressView (78.0.1):
+  - MaterialComponents/Palettes (79.0.0)
+  - MaterialComponents/private/Application (79.0.0)
+  - MaterialComponents/private/Math (79.0.0)
+  - MaterialComponents/ProgressView (79.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/ShadowElevations (78.0.1)
-  - MaterialComponents/ShadowLayer (78.0.1):
+  - MaterialComponents/ShadowElevations (79.0.0)
+  - MaterialComponents/ShadowLayer (79.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (78.0.1):
+  - MaterialComponents/Tabs (79.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/private/Math
@@ -51,7 +51,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (78.0.1):
+  - MaterialComponents/Typography (79.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -144,7 +144,7 @@ CHECKOUT OPTIONS:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
-    :commit: a56c11895d9fa411efbc07265450404c2ff2a5bb
+    :commit: f037c69b64e56c307c8caff36510455ab5af7292
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 8a5ecb09650a68bc20f29ba321dad4725482fb56
@@ -167,7 +167,7 @@ SPEC CHECKSUMS:
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 1e1d1a8356bbf2b80f6a0aa32018cda8ac8065a5
+  MaterialComponents: 8fcdd4efb1f262423ce9bf922d9f29250812fd03
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
