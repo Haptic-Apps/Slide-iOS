@@ -40,6 +40,9 @@ enum CurrentType {
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     
     func linkTapped(url: URL, text: String) {
+        if !full {
+            return
+        }
         linkClicked = true
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
@@ -1089,12 +1092,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
    // var titleAttrs: [NSLayoutConstraint] = []
     
-    func refreshTitle(np: Bool = false) {
+    func refreshTitle(np: Bool = false, force: Bool = false) {
         guard let link = self.link else {
             return
         }
 
-        let attText = CachedTitle.getTitle(submission: link, full: full, false, false)
+        let attText = CachedTitle.getTitle(submission: link, full: full, force, false)
         let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
         title.textLayout = bounds
         title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
@@ -2504,19 +2507,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
     }
     
-    var timerS: Timer?
-    
     @objc func openComment(sender: UITapGestureRecognizer? = nil) {
-        timerS = Timer.scheduledTimer(timeInterval: 0.05,
-                                      target: self,
-                                      selector: #selector(self.doOpenComment),
-                                      userInfo: nil,
-                                      repeats: false)
+        doOpenComment()
     }
     
     @objc public func doOpenComment() {
-        timerS?.invalidate()
-        if !full && !linkClicked {
+        if !full {
             if let delegate = self.del {
                 if videoView != nil {
                     videoView?.player?.pause()
@@ -2529,8 +2525,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     self.title.alpha = 1
                 }
             }
-        } else {
-            linkClicked = false
         }
     }
     

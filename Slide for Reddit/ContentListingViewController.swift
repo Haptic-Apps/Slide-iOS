@@ -542,6 +542,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
             History.addSeen(s: cell.link!)
             cell.refresh()
+            cell.refreshTitle(force: true)
         } catch {
 
         }
@@ -555,6 +556,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
             History.addSeen(s: cell.link!)
             cell.refresh()
+            cell.refreshTitle(force: true)
         } catch {
 
         }
