@@ -189,7 +189,7 @@ public class VCPresenter {
     }
 
     public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {
-        let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: link.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!)
+        let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: link)!)
         showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
 
     }
@@ -205,4 +205,12 @@ public class DefaultGestureDelegate: NSObject, UIGestureRecognizerDelegate {
 public class UIButtonWithContext: UIButton {
     public var parentController: UINavigationController?
     public var contextController: UIViewController?
+}
+
+extension URL {
+    static func initPercent(string: String) -> URL? {
+        let urlwithPercentEscapes = string.addingPercentEncoding( withAllowedCharacters: .urlQueryAllowed)
+        let url = URL.init(string: urlwithPercentEscapes!)
+        return url
+    }
 }

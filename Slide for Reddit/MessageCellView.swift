@@ -217,7 +217,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             if self.message!.wasComment {
                 alertController.addAction(Action(ActionData(title: "Full thread", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
                     let url = "https://www.reddit.com\(self.message!.context)"
-                    VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+                    VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }))
             }
 
@@ -273,7 +273,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         } else {
             if (message?.wasComment)! {
                 let url = "https://www.reddit.com\(message!.context)"
-                let vc = RedditLink.getViewControllerForURL(urlS: URL.init(string: url)!)
+                let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!)
                 VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
             } else {
                 VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(_) in
