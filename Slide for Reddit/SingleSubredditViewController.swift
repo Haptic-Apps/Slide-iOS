@@ -753,21 +753,18 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             }
                         }
                     }
-                    if !self.subLinks.isEmpty {
-                        DispatchQueue.main.async {
-                            self.hasHeader = true
-                            if self.loaded && !self.loading {
-                                self.flowLayout.reset()
-                                self.tableView.reloadData()
-                                if UIDevice.current.userInterfaceIdiom != .pad {
-                                    var newOffset = self.tableView.contentOffset
-                                    newOffset.y -= self.headerHeight()
-                                    self.tableView.setContentOffset(newOffset, animated: false)
-                                }
+                    DispatchQueue.main.async {
+                        self.hasHeader = true
+                        if self.loaded && !self.loading {
+                            self.flowLayout.reset()
+                            self.tableView.reloadData()
+                            if UIDevice.current.userInterfaceIdiom != .pad {
+                                var newOffset = self.tableView.contentOffset
+                                newOffset.y -= self.headerHeight()
+                                self.tableView.setContentOffset(newOffset, animated: false)
                             }
                         }
                     }
-                    
                 }
             })
         } catch {
@@ -2833,6 +2830,73 @@ public class LinksHeaderCellView: UICollectionViewCell {
         setupViews()
     }
     
+    func addSubscribe(_ stack: UIStackView, _ scroll: UIScrollView) -> CGFloat {
+        let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = 15
+            $0.setImage(UIImage(named: "add")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.imageView?.contentMode = .center
+        }
+        view.addTapGestureRecognizer(action: {
+            self.del?.subscribeSingle(view)
+            stack.removeArrangedSubview(view)
+            var oldSize = scroll.contentSize
+            oldSize.width -= 38
+            stack.widthAnchor == oldSize.width
+            scroll.contentSize = oldSize
+            view.removeFromSuperview()
+        })
+
+        let widthS = CGFloat(30)
+
+        view.heightAnchor == CGFloat(30)
+        view.widthAnchor == widthS
+        
+        stack.addArrangedSubview(view)
+        return 30
+    }
+    func addSubmit(_ stack: UIStackView) -> CGFloat {
+        let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = 15
+            $0.setImage(UIImage(named: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.imageView?.contentMode = .center
+            $0.addTapGestureRecognizer(action: {
+                PostActions.showPostMenu(self.del!, sub: self.sub)
+            })
+        }
+        
+        let widthS = CGFloat(30)
+        
+        view.heightAnchor == CGFloat(30)
+        view.widthAnchor == widthS
+        
+        stack.addArrangedSubview(view)
+        return 30
+    }
+    func addSidebar(_ stack: UIStackView) -> CGFloat {
+        let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = 15
+            $0.setImage(UIImage(named: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.imageView?.contentMode = .center
+            $0.addTapGestureRecognizer(action: {
+                self.del?.doDisplaySidebar()
+            })
+        }
+        
+        let widthS = CGFloat(30)
+
+        view.heightAnchor == CGFloat(30)
+        view.widthAnchor == widthS
+        
+        stack.addArrangedSubview(view)
+        return 30
+    }
+
     func setupViews() {
         if scroll == nil {
             scroll = TouchUIScrollView()
@@ -2847,6 +2911,14 @@ public class LinksHeaderCellView: UICollectionViewCell {
             
             var spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
+
+            if Subscriptions.subreddits.contains(sub) {
+                finalWidth += self.addSubmit(buttonBase) + 8
+            } else {
+                finalWidth += self.addSubscribe(buttonBase, scroll) + 8
+            }
+            
+            finalWidth += self.addSidebar(buttonBase) + 8
 
             for link in self.links {
                 let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {

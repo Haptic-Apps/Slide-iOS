@@ -309,6 +309,7 @@ class RealmDataWrapper {
             rSubmission.crosspostPermalink = permalink
         }
 
+        rSubmission.reports.removeAll()
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
             let array = item as! [Any]
             rSubmission.reports.append("\(array[0]): \(array[1])")

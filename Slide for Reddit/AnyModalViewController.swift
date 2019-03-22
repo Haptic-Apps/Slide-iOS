@@ -16,6 +16,7 @@ import XLActionController
 class AnyModalViewController: UIViewController {
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
     let volumeHeight: CGFloat = 3
+    static var linkID = ""
     
     var safeAreaInsets: UIEdgeInsets {
         if #available(iOS 11.0, tvOS 11.0, *) {
@@ -83,6 +84,7 @@ class AnyModalViewController: UIViewController {
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
     
+    
     init(cellView: LinkCellView, _ commentCallback: (() -> Void)?, failure: ((_ url: URL) -> Void)?) {
         super.init(nibName: nil, bundle: nil)
         self.commentCallback = commentCallback
@@ -93,6 +95,7 @@ class AnyModalViewController: UIViewController {
         if VideoMediaViewController.VideoType.fromPath(self.baseURL!.absoluteString) == .REDDIT {
             self.baseURL = URL(string: cellView.link!.videoPreview)
         }
+        AnyModalViewController.linkID = cellView.link!.getId()
     }
     
     init(baseUrl: URL, _ commentCallback: (() -> Void)?, failure: ((_ url: URL) -> Void)?) {
@@ -100,6 +103,7 @@ class AnyModalViewController: UIViewController {
         self.commentCallback = commentCallback
         self.failureCallback = failure
         self.urlToLoad = baseUrl
+        AnyModalViewController.linkID = ""
     }
 
     override var prefersHomeIndicatorAutoHidden: Bool {
@@ -389,8 +393,12 @@ class AnyModalViewController: UIViewController {
         videoView.player?.play()
         
         self.embeddedPlayer?.isMuted = true
-        toReturnTo?.videoView.player = self.embeddedPlayer
-        stopDisplayLink()
+        if toReturnTo == nil || AnyModalViewController.linkID.isEmpty {
+            self.endVideos()
+        } else {
+            toReturnTo?.videoView.player = self.embeddedPlayer
+            stopDisplayLink()
+        }
         DispatchQueue.global(qos: .background).async {
             do {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
@@ -398,10 +406,29 @@ class AnyModalViewController: UIViewController {
                 NSLog(error.localizedDescription)
             }
         }
+        AnyModalViewController.linkID = ""
+    }
+    
+    func endVideos() {
+        self.displayLink?.invalidate()
+        self.displayLink = nil
+        self.videoView.player?.replaceCurrentItem(with: nil)
+        self.videoView.player = nil
+        if !(parent is ShadowboxLinkViewController) && !(parent is AlbumViewController) {
+            DispatchQueue.global(qos: .background).async {
+                do {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                    try AVAudioSession.sharedInstance().setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+                } catch {
+                    NSLog(error.localizedDescription)
+                }
+            }
+        }
     }
     
     deinit {
         stopDisplayLink()
+        AnyModalViewController.linkID = ""
     }
     
     //    override func didReceiveMemoryWarning() {
