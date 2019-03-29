@@ -80,14 +80,16 @@ public class BannerUtil {
             if #available(iOS 11, *) {
                 popup.bottomAnchor == toView.safeBottomAnchor - 12
                 if context is MainViewController {
-                    popup.bottomAnchor == toView.bottomAnchor - ((context as! MainViewController).menuNav?.bottomOffset ?? 0) - 12 - (!SettingValues.hiddenFAB ? 12 : 0)
+                    let bottomOffset = ((context as! MainViewController).menuNav?.bottomOffset ?? 0)
+                    popup.bottomAnchor == toView.bottomAnchor - bottomOffset - 12 - (!SettingValues.hiddenFAB ? 12 : 0)
                 } else if context is SingleSubredditViewController && !(context as! SingleSubredditViewController).single {
                     popup.bottomAnchor == toView.bottomAnchor - 64 - 12 - (SettingValues.hiddenFAB ? 12 : 0)
                 }
             } else {
                 popup.bottomAnchor == toView.safeBottomAnchor - 56
                 if context is MainViewController {
-                    popup.bottomAnchor == toView.bottomAnchor - ((context as! MainViewController).menuNav?.bottomOffset ?? 0) - 56 - (!SettingValues.hiddenFAB ? 12 : 0)
+                    let bottomOffset = ((context as! MainViewController).menuNav?.bottomOffset ?? 0)
+                    popup.bottomAnchor == toView.bottomAnchor - bottomOffset - 56 - (!SettingValues.hiddenFAB ? 12 : 0)
                 } else if context is SingleSubredditViewController && !(context as! SingleSubredditViewController).single {
                     popup.bottomAnchor == toView.bottomAnchor - 64 - 56 - (SettingValues.hiddenFAB ? 12 : 0)
                 }

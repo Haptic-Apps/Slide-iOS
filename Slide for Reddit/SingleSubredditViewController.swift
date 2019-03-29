@@ -1564,8 +1564,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                             top -= 18
                                         }
                                     }
-                                    
-                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top + (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight()))
+                                    let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
+                                    let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight())
+                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top + headerHeight)
                                 } else {
                                     self.flowLayout.invalidateLayout()
                                     self.tableView.insertItems(at: paths)

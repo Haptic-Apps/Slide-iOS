@@ -532,6 +532,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         return false
     }
     
+    var shouldAnimateLoad = false
+    
     func downvote(_ cell: LinkCellView) {
         do {
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.id)!, completion: { (_) in
@@ -637,7 +639,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             var time = timeval(tv_sec: 0, tv_usec: 0)
                             gettimeofday(&time, nil)
                             
-                            self.tableView.reloadData(with: .fade)
+                            self.tableView.reloadData()
                         }
                         if self.comments.isEmpty {
                             BannerUtil.makeBanner(text: "No cached comments found!\nYou can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
@@ -658,6 +660,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
+        self.shouldAnimateLoad = false
         content.removeAll()
         self.liveTimer.invalidate()
         text.removeAll()
@@ -863,9 +866,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     self.tableView.reloadData()
                                     self.collapseAll()
                                 } else {
-                                    UIView.transition(with: self.tableView, duration: 0.25, options: .transitionCrossDissolve, animations: {
-                                        self.tableView.reloadData()
-                                    }, completion: nil)
+                                    if self.finishedPush {
+                                        self.reloadTableViewAnimated()
+                                    } else {
+                                        self.shouldAnimateLoad = true
+                                    }
                                 }
                                 self.loaded = true
                             })
@@ -1024,8 +1029,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
         self.tableView.allowsSelection = false
         self.tableView.layer.speed = 1.5
-
-        tableView.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.backgroundColor
         refreshControl = UIRefreshControl()
         self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl!.frame.size.height)
         refreshControl?.tintColor = ColorUtil.fontColor
@@ -1080,6 +1085,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         
 //        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
 //        pan.direction = .horizontal
+        if !loaded && (single || forceLoad) {
+            refresh(self)
+        }
         
         self.tableView.addGestureRecognizer(panGesture)
         if navigationController != nil {
@@ -1264,10 +1272,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         
         doStartupItems()
 
-        if !loaded && (single || forceLoad) {
-            refresh(self)
-        }
-
         if headerCell.videoView != nil {
             headerCell.videoView?.player?.play()
         }
@@ -1315,9 +1319,31 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
+        
+        if self.shouldAnimateLoad {
+            self.reloadTableViewAnimated()
+        }
+        self.finishedPush = true
     }
 
     var duringAnimation = false
+    var finishedPush = false
+    
+    func reloadTableViewAnimated() {
+        self.tableView.reloadData()
+
+        let cells = self.tableView.visibleCells
+        for cell in cells {
+            cell.alpha = 0
+        }
+        var row = Double(0)
+        for cell in cells {
+            UIView.animate(withDuration: 0.5, delay: 0.05 * row ,usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                cell.alpha = 1
+            }, completion: nil)
+            row += 1
+        }
+    }
 
     @objc func close(_ sender: AnyObject) {
         self.navigationController?.popViewController(animated: true)

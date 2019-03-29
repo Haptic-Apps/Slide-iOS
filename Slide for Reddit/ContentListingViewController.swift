@@ -504,7 +504,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     top += 22
                 }
                 
-                self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + (-1 * (((self.baseData is FriendsContributionLoader || self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0) + (self.navigationController?.navigationBar.frame.size.height ?? 64))) - top)
+                //New xcode is complaining about computation times...
+                let headerOffset = CGFloat((self.baseData is FriendsContributionLoader || self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0)
+                let totalOffset = (-1 * (headerOffset + (self.navigationController?.navigationBar.frame.size.height ?? 64)))
+                self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + totalOffset - top)
             } else {
                 var paths = [IndexPath]()
                 for i in before..<self.baseData.content.count {
