@@ -1338,7 +1338,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         var row = Double(0)
         for cell in cells {
-            UIView.animate(withDuration: 0.5, delay: 0.05 * row ,usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.5, delay: 0.05 * row, options: .curveEaseInOut, animations: {
                 cell.alpha = 1
             }, completion: nil)
             row += 1
