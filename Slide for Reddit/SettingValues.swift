@@ -525,7 +525,7 @@ class SettingValues {
     }
     
     public enum PostOverflowAction: String {
-        public static let cases: [PostOverflowAction] = [.PROFILE, .SUBREDDIT, .REPORT, .BLOCK, .SAVE, .CROSSPOST, .READ_LATER, .SHARE_CONTENT, .SHARE_REDDIT, .CHROME, .SAFARI, .FILTER, .COPY, .HIDE, .UPVOTE, .DOWNVOTE, .MODERATE]
+        public static let cases: [PostOverflowAction] = [.PROFILE, .SUBREDDIT, .SUBSCRIBE, .REPORT, .BLOCK, .SAVE, .CROSSPOST, .READ_LATER, .SHARE_CONTENT, .SHARE_REDDIT, .CHROME, .SAFARI, .FILTER, .COPY, .HIDE, .UPVOTE, .DOWNVOTE, .MODERATE]
 
         case PROFILE = "profile"
         case SUBREDDIT = "sub"
@@ -544,6 +544,7 @@ class SettingValues {
         case UPVOTE = "upvote"
         case DOWNVOTE = "downvote"
         case MODERATE = "moderate"
+        case SUBSCRIBE = "subscribe"
         
         public static func getMenu(_ link: RSubmission, mutableList: Bool) -> [PostOverflowAction] {
             var toReturn = [PostOverflowAction]()
@@ -561,6 +562,9 @@ class SettingValues {
                     continue
                 }
                 if !mutableList && (item == .FILTER || item == .HIDE) {
+                    continue
+                }
+                if Subscriptions.isSubscriber(link.subreddit) && item == .SUBSCRIBE {
                     continue
                 }
                 toReturn.append(item)
@@ -589,6 +593,11 @@ class SettingValues {
                     return "Subreddit"
                 }
                 return "r/\(link!.subreddit)"
+            case .SUBSCRIBE:
+                if link == nil {
+                    return "Subscribe"
+                }
+                return "Subscribe to r/\(link!.subreddit)"
             case .REPORT:
                 return "Report content"
             case .BLOCK:
@@ -637,6 +646,8 @@ class SettingValues {
                 return UIImage(named: "block")!.menuIcon()
             case .SAVE:
                 return UIImage(named: "save")!.menuIcon()
+            case .SUBSCRIBE:
+                return UIImage(named: "add")!.menuIcon()
             case .CROSSPOST:
                 return UIImage(named: "crosspost")!.menuIcon()
             case .READ_LATER:
@@ -666,7 +677,6 @@ class SettingValues {
                 return UIImage(named: "mod")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
             }
         }
-
     }
     
     public enum CommentAction: String {

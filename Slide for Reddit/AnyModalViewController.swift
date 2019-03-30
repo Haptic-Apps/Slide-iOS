@@ -84,7 +84,6 @@ class AnyModalViewController: UIViewController {
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
     
-    
     init(cellView: LinkCellView, _ commentCallback: (() -> Void)?, failure: ((_ url: URL) -> Void)?) {
         super.init(nibName: nil, bundle: nil)
         self.commentCallback = commentCallback

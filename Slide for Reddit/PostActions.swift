@@ -21,6 +21,7 @@ protocol SubmissionMoreDelegate: class {
     func showFilterMenu(_ cell: LinkCellView)
     func applyFilters()
     func hide(index: Int)
+    func subscribe(link: RSubmission)
 }
 
 class PostActions: NSObject {
@@ -85,6 +86,8 @@ class PostActions: NSObject {
             }
             let currentViewController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
             currentViewController.present(activityViewController, animated: true, completion: nil)
+        case .SUBSCRIBE:
+            delegate.subscribe(link: cell.link!)
         case .SHARE_REDDIT:
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + link.permalink)!)], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {

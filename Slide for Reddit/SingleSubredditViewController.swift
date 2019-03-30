@@ -2481,6 +2481,32 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         tableView.reloadData()
     }
 
+    func subscribe(link: RSubmission) {
+        let sub = link.subreddit
+        let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
+        if AccountController.isLoggedIn {
+            let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+                Subscriptions.subscribe(sub, true, session: self.session!)
+                self.subChanged = true
+                BannerUtil.makeBanner(text: "Subscribed to r/\(sub)", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+            })
+            alrController.addAction(somethingAction)
+        }
+        
+        let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+            Subscriptions.subscribe(sub, false, session: self.session!)
+            self.subChanged = true
+            BannerUtil.makeBanner(text: "r/\(sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+        })
+        alrController.addAction(somethingAction)
+        
+        
+        alrController.addCancelButton()
+        
+        alrController.modalPresentationStyle = .fullScreen
+        self.present(alrController, animated: true, completion: {})
+    }
+
     func reply(_ cell: LinkCellView) {
 
     }
