@@ -53,7 +53,7 @@ class NavigationHeaderView: UIView, UISearchBarDelegate {
         $0.autocapitalizationType = .none
         $0.spellCheckingType = .no
         $0.returnKeyType = .search
-        if ColorUtil.theme != .LIGHT {
+        if !ColorUtil.theme.isLight() {
             $0.keyboardAppearance = .dark
         }
     }

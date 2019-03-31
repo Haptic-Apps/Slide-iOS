@@ -52,7 +52,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         $0.autocapitalizationType = .none
         $0.spellCheckingType = .no
         $0.returnKeyType = .search
-        if ColorUtil.theme != .LIGHT {
+        if !ColorUtil.theme.isLight() {
             $0.keyboardAppearance = .dark
         }
         $0.searchBarStyle = UISearchBar.Style.minimal

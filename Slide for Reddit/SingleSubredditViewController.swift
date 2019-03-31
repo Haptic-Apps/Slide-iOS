@@ -1891,8 +1891,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         let fullImage = ContentType.fullImage(t: type)
 
-        print(submission.title)
-        print(height)
         if !fullImage && height < 75 {
             big = false
             thumb = true

@@ -339,8 +339,15 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
     
     func doButtons() {
-        replyButtons = TouchUIScrollView().then {
-            $0.accessibilityIdentifier = "Reply Extra Buttons"
+        
+        if replyButtons != nil {
+            for view in replyButtons!.subviews {
+                view.removeFromSuperview()
+            }
+        } else {
+            replyButtons = TouchUIScrollView().then {
+                $0.accessibilityIdentifier = "Reply Extra Buttons"
+            }
         }
         
         replies = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 30)).then {
@@ -731,7 +738,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             text2.addTapGestureRecognizer {
                 let search = SubredditFindReturnViewController(includeSubscriptions: true, includeCollections: false, includeTrending: false, subscribe: false, callback: { (subreddit) in
                     text2.text = subreddit
-                    //todo update flairs and rules
+                    self.subreddit = subreddit
+                    self.doButtons()
                 })
                 VCPresenter.presentModally(viewController: search, self)
             }

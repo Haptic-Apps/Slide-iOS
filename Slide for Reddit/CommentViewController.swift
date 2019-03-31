@@ -966,7 +966,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         UIView.animate(withDuration: 0.5, animations: {
             self.searchBar.alpha = 1
         }, completion: { _ in
-            if ColorUtil.theme != .LIGHT {
+            if !ColorUtil.theme.isLight() {
                 self.searchBar.keyboardAppearance = .dark
             }
             self.searchBar.becomeFirstResponder()
@@ -1079,6 +1079,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         searchBar.searchBarStyle = UISearchBar.Style.minimal
         searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight() ? ColorUtil.fontColor : .white
         searchBar.showsCancelButton = true
+        if !ColorUtil.theme.isLight() {
+            searchBar.keyboardAppearance = .dark
+        }
+
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
 
         tableView.estimatedRowHeight = 200
@@ -1872,7 +1876,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.keyboardAppearance = .default
+            textField.keyboardAppearance = ColorUtil.theme.isLight() ? .default : .dark
             textField.keyboardType = .default
             textField.returnKeyType = .done
             textField.text = ColorUtil.getTagForUser(name: name)

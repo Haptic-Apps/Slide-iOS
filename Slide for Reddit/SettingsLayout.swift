@@ -23,6 +23,11 @@ class SettingsLayout: UITableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
+    var hideImageSelftextCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "hide")
+    var hideImageSelftext = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var largerThumbnailCell: UITableViewCell = UITableViewCell()
     var largerThumbnail = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -162,6 +167,9 @@ class SettingsLayout: UITableViewController {
         } else if changed == thumbLink {
             SettingValues.linkAlwaysThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_linkAlwaysThumbnail)
+        } else if changed == hideImageSelftext {
+            SettingValues.hideImageSelftext = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hideImageSelftext)
         } else if changed == domainInfo {
             SettingValues.domainInInfo = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_domainInInfo)
@@ -482,6 +490,12 @@ class SettingsLayout: UITableViewController {
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
+        createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Show selftext image preview")
+        hideImageSelftextCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show selftext image previews"
+        hideImageSelftextCell.detailTextLabel?.numberOfLines = 0
+        hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+
         createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Show content type in title")
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
@@ -582,7 +596,7 @@ class SettingsLayout: UITableViewController {
             case 3: return self.scoreTitleCell
             case 4: return self.abbreviateScoreCell
             case 5: return self.domainInfoCell
-                
+            case 6: return self.hideImageSelftextCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
@@ -612,7 +626,7 @@ class SettingsLayout: UITableViewController {
         switch section {
         case 0: return 1
         case 1: return 4
-        case 2: return 6
+        case 2: return 7
         case 3: return 3
         case 4: return 6
         default: fatalError("Unknown number of sections")

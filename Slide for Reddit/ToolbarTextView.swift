@@ -57,7 +57,7 @@ public class ToolbarTextView: NSObject {
         } else {
             text!.tintColor = ColorUtil.fontColor
         }
-        if ColorUtil.theme != .LIGHT {
+        if !ColorUtil.theme.isLight() {
             text!.keyboardAppearance = .dark
         }
     }
