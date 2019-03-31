@@ -392,10 +392,11 @@ class AnyModalViewController: UIViewController {
         videoView.player?.play()
         
         self.embeddedPlayer?.isMuted = true
-        if toReturnTo == nil || AnyModalViewController.linkID.isEmpty {
+        if toReturnTo == nil || toReturnTo!.videoID != AnyModalViewController.linkID || AnyModalViewController.linkID.isEmpty {
             self.endVideos()
         } else {
             toReturnTo?.videoView.player = self.embeddedPlayer
+            toReturnTo?.playView?.isHidden = true
             stopDisplayLink()
         }
         DispatchQueue.global(qos: .background).async {

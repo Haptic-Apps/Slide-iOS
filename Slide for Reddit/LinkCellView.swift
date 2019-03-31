@@ -184,6 +184,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var constraintsForType: [NSLayoutConstraint] = []
     var constraintsForContent: [NSLayoutConstraint] = []
     var bannerHeightConstraint: [NSLayoutConstraint] = []
+    
+    var videoID: String = ""
 
     var accessibilityView: UIView {
         return full ? contentView : self
@@ -1018,7 +1020,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func endVideos() {
-        if videoView != nil {
+        if videoView != nil && AnyModalViewController.linkID.isEmpty {
+            videoView?.player?.pause()
             self.updater?.invalidate()
             self.updater = nil
             self.videoView!.player?.replaceCurrentItem(with: nil)
@@ -1423,12 +1426,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if big {
             bannerImage.isHidden = false
-            self.updater = nil
-            self.videoView?.player?.replaceCurrentItem(with: nil)
-            updater?.invalidate()
+            self.endVideos()
             var videoOverride = false
             if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
-                videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
                 sound.isHidden = true
@@ -1448,7 +1448,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             
             if (self is AutoplayBannerLinkCellView || self is FullLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay)) {
-                videoView?.player?.pause()
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
                 sound.isHidden = true
@@ -1735,7 +1734,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     weak var videoTask: URLSessionDataTask?
     
     func doLoadVideo() {
-        if !shouldLoadVideo {
+        if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
+            if playView != nil {
+                playView.isHidden = false
+            }
             return
         }
         
@@ -1759,6 +1761,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 //                }
                 strongSelf.setOnce = false
                 strongSelf.videoView?.player?.play()
+                strongSelf.videoID = strongSelf.link?.getId() ?? ""
                 if SettingValues.muteInlineVideos {
                     strongSelf.videoView?.player?.isMuted = true
                 } else {
