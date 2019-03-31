@@ -11,6 +11,7 @@ import MobileCoreServices
 import Photos
 import RealmSwift
 import reddift
+import SDCAlertView
 import SwiftyJSON
 import Then
 import YYText
@@ -724,7 +725,15 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             
             if !subreddit.isEmpty() && subreddit != "all" && subreddit != "frontpage" && subreddit != "popular" && subreddit != "friends" && subreddit != "mod" && !subreddit.contains("m/") {
                 text2.text = subreddit
-                text2.isEditable = false
+            }
+            text2.isEditable = false
+
+            text2.addTapGestureRecognizer {
+                let search = SubredditFindReturnViewController(includeSubscriptions: true, includeCollections: false, includeTrending: false, subscribe: false, callback: { (subreddit) in
+                    text2.text = subreddit
+                    //todo update flairs and rules
+                })
+                VCPresenter.presentModally(viewController: search, self)
             }
             let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true

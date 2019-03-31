@@ -16,6 +16,7 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
     
     var baseSubs: [String] = []
     var popular: [String] = []
+    var subscribe: Bool
 
     var filteredContent: [String] = []
     var callback: (_ sub: String) -> Void?
@@ -23,8 +24,9 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
     var includeCollections = false
     var includeSubscriptions = false
 
-    init(includeSubscriptions: Bool, includeCollections: Bool, includeTrending: Bool, callback: @escaping (_ sub: String) -> Void) {
+    init(includeSubscriptions: Bool, includeCollections: Bool, includeTrending: Bool, subscribe: Bool, callback: @escaping (_ sub: String) -> Void) {
         self.callback = callback
+        self.subscribe = subscribe
         super.init(nibName: nil, bundle: nil)
         self.includeTrending = includeTrending
         self.includeCollections = includeCollections
@@ -32,6 +34,12 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         
         if includeSubscriptions {
             baseSubs.append(contentsOf: Subscriptions.subreddits)
+            if !includeCollections {
+                baseSubs = baseSubs.filter({ (sub) -> Bool in
+                    let contained = sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") && !sub.contains("+")
+                    return contained
+                })
+            }
         }
         if includeCollections {
             baseSubs.append(contentsOf: ["all", "friends", "frontpage", "popular", "random", "myrandom", "randnsfw"])
@@ -86,6 +94,13 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         
         let cell = tableView.cellForRow(at: indexPath) as! SubredditCellView
         let sub = cell.subreddit
+        
+        if !subscribe {
+            self.navigationController?.popViewController(animated: true)
+            self.dismiss(animated: true, completion: nil)
+            self.callback(sub)
+            return
+        }
 
         if Subscriptions.isCollection(sub) {
             self.navigationController?.popViewController(animated: true)
@@ -217,6 +232,7 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         searchBar.barStyle = .blackTranslucent
         searchBar.delegate = self
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        self.title = "Search for a Subreddit"
     }
     
     func reloadData() {

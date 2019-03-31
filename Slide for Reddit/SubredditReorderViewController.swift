@@ -107,7 +107,7 @@ class SubredditReorderViewController: UITableViewController {
     }
     
     @objc func add(_ selector: AnyObject) {
-        let searchVC = SubredditFindReturnViewController(includeSubscriptions: false, includeCollections: true, includeTrending: true) { (sub) in
+        let searchVC = SubredditFindReturnViewController(includeSubscriptions: false, includeCollections: true, includeTrending: true, subscribe: true, callback: { (sub) in
             if !self.subs.contains(sub) {
                 self.subs.append(sub)
                 self.subs = self.subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
@@ -119,7 +119,7 @@ class SubredditReorderViewController: UITableViewController {
                                                at: UITableView.ScrollPosition.top, animated: true)
                 }
             }
-        }
+        })
         VCPresenter.showVC(viewController: searchVC, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
     }
     

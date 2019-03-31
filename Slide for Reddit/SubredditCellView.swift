@@ -63,6 +63,7 @@ class SubredditCellView: UITableViewCell {
         }
 
         self.contentView.addSubviews(sideView, title, pin, icon)
+        self.backgroundColor = ColorUtil.backgroundColor
     }
 
     func configureLayout() {
