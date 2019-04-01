@@ -107,6 +107,12 @@ class CachedTitle {
                 }
             }
         }
+        
+        if submission.cakeday {
+            attributedTitle.append(spacer)
+            let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "cakeday")!, fontSize: titleFont.pointSize * 0.75)!
+            attributedTitle.append(gild)
+        }
 
         if submission.stickied {
             let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: GMColor.green500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])

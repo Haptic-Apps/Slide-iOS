@@ -145,7 +145,8 @@ class RealmDataWrapper {
         rSubmission.removalReason = submission.baseJson["ban_note"] as? String ?? ""
         rSubmission.removalNote = submission.baseJson["mod_note"] as? String ?? ""
         rSubmission.removed = !rSubmission.removedBy.isEmpty()
-        
+        rSubmission.cakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
+
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
             let array = item as! [Any]
             rSubmission.reports.append("\(array[0]): \(array[1])")
@@ -298,7 +299,8 @@ class RealmDataWrapper {
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
         rSubmission.videoPreview = try! (videoPreview ?? "").convertHtmlSymbols() ?? ""
-        
+        rSubmission.cakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
+
         if json?["crosspost_parent_list"] != nil {
             rSubmission.isCrosspost = true
             let sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
@@ -368,6 +370,7 @@ class RealmDataWrapper {
         rComment.approved = !rComment.approvedBy.isEmpty()
         rComment.sticky = comment.stickied
         rComment.flair = flair
+        rComment.cakeday = comment.baseJson["author_cakeday"] as? Bool ?? false
 
         let richtextFlairs = (json["author_flair_richtext"] as? [Any])
         if richtextFlairs != nil && richtextFlairs!.count > 0 {
@@ -489,6 +492,7 @@ class RSubmission: Object {
     @objc dynamic var crosspostAuthor = ""
     @objc dynamic var crosspostSubreddit = ""
     @objc dynamic var crosspostPermalink = ""
+    @objc dynamic var cakeday = false
     
     var type: ContentType.CType {
         if isSelf {
@@ -621,6 +625,7 @@ class RComment: Object {
     @objc dynamic var voted = false
     @objc dynamic var vote = false
     @objc dynamic var saved = false
+    @objc dynamic var cakeday = false
     
     @objc dynamic var urlFlair = ""
     

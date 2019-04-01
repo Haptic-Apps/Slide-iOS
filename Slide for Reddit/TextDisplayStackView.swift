@@ -201,13 +201,13 @@ public class TextDisplayStackView: UIStackView {
         estimatedHeight = 0
         clearOverflow()
         
-        if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
+        if htmlString.contains("<table") || htmlString.contains("<pre><code") || htmlString.contains("<cite") {
             var blocks = TextDisplayStackView.getBlocks(htmlString)
             
             var startIndex = 0
             
             let newTitle = NSMutableAttributedString(attributedString: title)
-            if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
+            if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<pre><code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
                     if !newTitle.string.trimmed().isEmpty {
                         newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
@@ -289,7 +289,7 @@ public class TextDisplayStackView: UIStackView {
         
         var startIndex = 0
         
-        if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
+        if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<pre><code>") {
             let text = createAttributedChunk(baseHTML: blocks[0], accent: tColor)
             
             if !activeSet {
@@ -353,7 +353,7 @@ public class TextDisplayStackView: UIStackView {
                 estimatedHeight += 1
                 line.heightAnchor == CGFloat(1)
                 line.horizontalAnchors == overflow.horizontalAnchors
-            } else if block.startsWith("<code>") {
+            } else if block.startsWith("<pre><code>") {
                 let body = CodeDisplayView.init(baseHtml: block, color: baseFontColor)
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
@@ -427,7 +427,7 @@ public class TextDisplayStackView: UIStackView {
     public static func
         createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>")
+        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>").replacingOccurrences(of: "<code>", with: "<font color=\"blue\">").replacingOccurrences(of: "</code>", with: "</font>")
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
         while html.mutableString.contains("\t•\t") {
@@ -489,8 +489,8 @@ public class TextDisplayStackView: UIStackView {
     }
     
     public static func parseCodeTags(_ html: String) -> [String] {
-        let startTag = "<code>"
-        let endTag = "</code>"
+        let startTag = "<pre><code>"
+        let endTag = "</code></pre>"
         var startSeperated = html.components(separatedBy: startTag)
         var preSeperated = [String]()
         
@@ -588,13 +588,13 @@ public class TextDisplayStackView: UIStackView {
         let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
         let layout = YYTextLayout(containerSize: size, text: titleString)!
         var blocks: [String]
-        if htmlString.contains("<table") || htmlString.contains("<code") || htmlString.contains("<cite") {
+        if htmlString.contains("<table") || htmlString.contains("<pre><code") || htmlString.contains("<cite") {
             blocks = TextDisplayStackView.getBlocks(htmlString)
             
             var startIndex = 0
             
             let newTitle = NSMutableAttributedString(attributedString: titleString)
-            if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<code>") {
+            if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<pre><code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
                     newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                     newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white))
@@ -632,7 +632,7 @@ public class TextDisplayStackView: UIStackView {
                 totalHeight += table
             } else if block.startsWith("<hr/>") {
                 totalHeight += 1
-            } else if block.startsWith("<code>") {
+            } else if block.startsWith("<pre><code>") {
                 let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
                 totalHeight += body.globalHeight
             } else {

@@ -119,7 +119,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         readLaterFile = documentDirectory.appending("/readlater.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 16,
+                schemaVersion: 17,
                 migrationBlock: migrationBlock)
 
         Realm.Configuration.defaultConfiguration = config
