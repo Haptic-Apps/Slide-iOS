@@ -2998,9 +2998,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 
                 self.contentView.addSubview(header)
                 header.heightAnchor == 94
-                header.horizontalAnchors == self.contentView.horizontalAnchors + 8
-                header.layer.cornerRadius = 15
-                header.clipsToBounds = true
+                header.horizontalAnchors == self.contentView.horizontalAnchors
                 header.topAnchor == self.contentView.topAnchor + 4
                 scroll.topAnchor == self.header.bottomAnchor + 4
                 

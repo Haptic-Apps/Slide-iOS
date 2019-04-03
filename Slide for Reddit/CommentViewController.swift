@@ -75,6 +75,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var didDisappearCompletely = false
     var live = false
     var liveTimer = Timer()
+    
+    var jump: UIView!
 
     func isMenuShown() -> Bool {
         return menuCell != nil
@@ -82,6 +84,51 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func getMenuShown() -> String? {
         return menuId
+    }
+    
+    func createJumpButton() {
+        if self.navigationController?.view != nil {
+            let view = self.navigationController!.view!
+            if jump == nil {
+                jump = UIView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
+                    $0.clipsToBounds = true
+                    $0.backgroundColor = ColorUtil.backgroundColor
+                    $0.layer.cornerRadius = 25
+                }
+                
+                let image = UIImageView.init(frame: CGRect.init(x: 50, y: 50, width: 0, height: 0)).then {
+                    $0.image = UIImage(named: "down")?.getCopy(withSize: CGSize.square(size: 30), withColor: ColorUtil.navIconColor)
+                    $0.contentMode = .center
+                }
+                jump.addSubview(image)
+                image.edgeAnchors == jump.edgeAnchors
+                jump.addTapGestureRecognizer {
+                    self.goDown(self.jump)
+                }
+            }
+            
+            view.addSubview(jump)
+            jump.bottomAnchor == view.bottomAnchor - 24
+            jump.rightAnchor == view.rightAnchor - 24
+            jump.widthAnchor == 40
+            jump.heightAnchor == 40
+            jump.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+            
+            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
+                self.jump?.transform = .identity
+            }, completion: nil)
+
+        }
+    }
+    
+    func removeJumpButton() {
+        if self.jump != nil {
+            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
+                self.jump?.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+            }, completion: {finished in
+                self.jump?.removeFromSuperview()
+            })
+        }
     }
     
     override func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
@@ -1916,6 +1963,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         super.viewWillDisappear(animated)
         self.isHiding = true
         self.liveTimer.invalidate()
+        self.removeJumpButton()
     }
 
     func collapseAll() {
@@ -2219,6 +2267,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             (navigationController)?.setNavigationBarHidden(true, animated: true)
             
             (self.navigationController)?.setToolbarHidden(true, animated: true)
+            self.createJumpButton()
         }
         self.isToolbarHidden = true
         isHiding = false
@@ -2249,6 +2298,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             progressDot.layer.add(fadeAnimation, forKey: "fade")
         }
         self.isToolbarHidden = false
+        self.removeJumpButton()
     }
 
 override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
