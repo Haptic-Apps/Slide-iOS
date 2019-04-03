@@ -93,7 +93,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 jump = UIView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
                     $0.clipsToBounds = true
                     $0.backgroundColor = ColorUtil.backgroundColor
-                    $0.layer.cornerRadius = 25
+                    $0.layer.cornerRadius = 20
                 }
                 
                 let image = UIImageView.init(frame: CGRect.init(x: 50, y: 50, width: 0, height: 0)).then {

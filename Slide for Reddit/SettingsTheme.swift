@@ -36,9 +36,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     var accentChosen: UIColor?
     var primaryChosen: UIColor?
     
-    var customThemes: [String] {
-        return UserDefaults.standard.dictionaryRepresentation().keys.filter({$0.startsWith("Theme+")})
-    }
+    var customThemes: [String] = []
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
@@ -214,6 +212,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
     
     func setupViews() {
+        self.customThemes = UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("Theme+") })
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
