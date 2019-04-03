@@ -15,7 +15,7 @@ import XLActionController
 
 class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     
-    var title = UILabel()
+    var title = YYLabel()
     var icon = UIImageView()
     
     override func layoutSubviews() {
@@ -34,7 +34,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         super.init(frame: frame)
         
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.title = UILabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        self.title = YYLabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
