@@ -1029,7 +1029,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
     }
     
-    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
+    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if title == nil {
             configureView()
             configureLayout()
@@ -1038,7 +1038,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             videoTask!.cancel()
         }
         self.link = submission
-        self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test, parentWidth: parentWidth, np: np)
+        self.setLink(submission: submission, parent: parent, nav: nav, baseSub: baseSub, test: test, embedded: embedded, parentWidth: parentWidth, np: np)
         layoutForContent()
     }
     
@@ -1255,7 +1255,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var shouldLoadVideo = false
     
-    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
+    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if self is AutoplayBannerLinkCellView {
             self.endVideos()
             do {
@@ -1311,6 +1311,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         submissionHeight = CGFloat(submission.height)
         
         type = test && SettingValues.linkAlwaysThumbnail ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
+        
+        if embedded && !submission.isSelf {
+            type = .LINK
+        }
+        
         if submission.isSelf {
             type = .SELF
         }
@@ -1371,6 +1376,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if type == .LINK && SettingValues.linkAlwaysThumbnail && !test {
+            thumb = true
+            big = false
+        }
+        
+        if embedded {
             thumb = true
             big = false
         }
@@ -1495,7 +1505,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
         
-        if !full && !test {
+        if !full && !test && !embedded {
             aspectWidth = self.contentView.frame.size.width
         }
         

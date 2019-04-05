@@ -27,6 +27,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         case SUBMIT_TEXT
         case EDIT_SELFTEXT
         case REPLY_SUBMISSION
+        case CROSSPOST
 
         func isEdit() -> Bool {
             return self == ReplyType.EDIT_SELFTEXT
@@ -37,7 +38,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
 
         func isSubmission() -> Bool {
-            return self == ReplyType.SUBMIT_IMAGE || self == ReplyType.SUBMIT_LINK || self == ReplyType.SUBMIT_TEXT || self == ReplyType.EDIT_SELFTEXT
+            return self == ReplyType.SUBMIT_IMAGE || self == ReplyType.SUBMIT_LINK || self == ReplyType.SUBMIT_TEXT || self == ReplyType.EDIT_SELFTEXT || self == ReplyType.CROSSPOST
         }
 
         func isMessage() -> Bool {
@@ -171,6 +172,38 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
         }
     }
+    
+    //Crosspost
+    init(submission: RSubmission, completion: @escaping (Link?) -> Void) {
+        type = .CROSSPOST
+        toReplyTo = submission
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
+        self.submissionCallback = { (link, error) in
+            DispatchQueue.main.async {
+                if error == nil && link == nil {
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Reddit did not allow this post to be made.\nError message: \(self.errorText)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                    
+                } else if error != nil {
+                    self.alertController?.dismiss(animated: false, completion: {
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your post has not been created, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    })
+                } else {
+                    self.alertController?.dismiss(animated: false, completion: {
+                        self.dismiss(animated: true, completion: {
+                            completion(link)
+                        })
+                    })
+                }
+            }
+        }
+    }
 
     //Reply to submission
     init(submission: RSubmission, sub: String, delegate: ReplyDelegate) {
@@ -265,6 +298,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
         }
     }
+    
+    var crosspostHeight = CGFloat(0)
 
     /* This is probably broken*/
     @objc func textViewDidChange(_ textView: UITextView) {
@@ -296,6 +331,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             height += CGFloat(8)
             height += textView.frame.size.height
         }
+        
+        height += CGFloat(8)
+        height += crosspostHeight
+        
         if replyButtons != nil {
             height += CGFloat(46)
         }
@@ -319,7 +358,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        layoutForType()
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -441,7 +479,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         replyButtons?.alwaysBounceHorizontal = true
         replyButtons?.showsHorizontalScrollIndicator = false
         
-        if type == .SUBMIT_LINK || type == .SUBMIT_TEXT || type == .SUBMIT_IMAGE {
+        if type == .SUBMIT_LINK || type == .SUBMIT_TEXT || type == .SUBMIT_IMAGE || type == .CROSSPOST {
             do {
                 self.session = (UIApplication.shared.delegate as! AppDelegate).session
                 try session?.getSubmitFlairs(subreddit, completion: { (result) in
@@ -720,7 +758,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
             })
 
-            if toReplyTo != nil {
+            if toReplyTo != nil && type != .CROSSPOST {
                 text1.text = "\((toReplyTo as! RSubmission).title)"
                 text1.isEditable = false
                 text2.text = ((toReplyTo as! RSubmission).subreddit)
@@ -740,6 +778,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     text2.text = subreddit
                     self.subreddit = subreddit
                     self.doButtons()
+                    self.setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
                 })
                 VCPresenter.presentModally(viewController: search, self)
             }
@@ -756,7 +795,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.delegate = self
             })
             
-            if type != .SUBMIT_TEXT && type != .EDIT_SELFTEXT {
+            if type != .SUBMIT_TEXT && type != .EDIT_SELFTEXT && type != .CROSSPOST {
                 text3.placeholder = "Link"
                 text3.textContainer.maximumNumberOfLines = 0
                 
@@ -770,28 +809,72 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             if type != .EDIT_SELFTEXT {
                 doButtons()
-                stack.addArrangedSubviews(text1, text2, replyButtons!, text3)
-                replyButtons!.heightAnchor == CGFloat(30)
-                replyButtons!.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                if type == .CROSSPOST {
+                    let linkCV = ThumbnailLinkCellView(frame: CGRect.zero)
+                    print("FRAME IS \(self.view.frame.size.width)")
+                    linkCV.aspectWidth = self.view.frame.size.width - 16
+                    linkCV.configure(submission: toReplyTo as! RSubmission, parent: self, nav: nil, baseSub: "all", embedded: true, parentWidth: self.view.frame.size.width - 16, np: false)
+                    let linkView = linkCV.contentView
+                    linkView.isUserInteractionEnabled = false
+                    let height = linkCV.estimateHeight(false, true, np: false)
+                    
+                    stack.addArrangedSubviews(linkView, text1, text2, replyButtons!)
+                    replyButtons!.heightAnchor == CGFloat(30)
+                    replyButtons!.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                    
+                    linkView.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                    linkView.heightAnchor == CGFloat(height)
+                    self.crosspostHeight = CGFloat(height)
+
+                    text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                    text1.heightAnchor >= CGFloat(70)
+                    text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                    text2.heightAnchor == CGFloat(70)
+                    
+                    scrollView.addSubview(stack)
+                    stack.widthAnchor == scrollView.widthAnchor
+                    stack.verticalAnchors == scrollView.verticalAnchors
+                    
+                    text = [text1, text2]
+                    toolbar = ToolbarTextView.init(textView: text2, parent: self)
+                } else {
+                    stack.addArrangedSubviews(text1, text2, replyButtons!, text3)
+                    replyButtons!.heightAnchor == CGFloat(30)
+                    replyButtons!.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                    text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                    text1.heightAnchor >= CGFloat(70)
+                    text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                    text2.heightAnchor == CGFloat(70)
+                    text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                    
+                    text3.heightAnchor >= CGFloat(70)
+                    
+                    scrollView.addSubview(stack)
+                    stack.widthAnchor == scrollView.widthAnchor
+                    stack.verticalAnchors == scrollView.verticalAnchors
+                    
+                    text = [text1, text2, text3]
+                    toolbar = ToolbarTextView.init(textView: text3, parent: self)
+                }
             } else {
                 stack.addArrangedSubviews(text1, text2, text3)
                 text3.text = (toReplyTo as! RSubmission).body
+                text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                text1.heightAnchor >= CGFloat(70)
+                text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                text2.heightAnchor == CGFloat(70)
+                text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
+                
+                text3.heightAnchor >= CGFloat(70)
+                
+                scrollView.addSubview(stack)
+                stack.widthAnchor == scrollView.widthAnchor
+                stack.verticalAnchors == scrollView.verticalAnchors
+                
+                text = [text1, text2, text3]
+                toolbar = ToolbarTextView.init(textView: text3, parent: self)
             }
 
-            text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-            text1.heightAnchor >= CGFloat(70)
-            text2.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-            text2.heightAnchor == CGFloat(70)
-            text3.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
-
-            text3.heightAnchor >= CGFloat(70)
-
-            scrollView.addSubview(stack)
-            stack.widthAnchor == scrollView.widthAnchor
-            stack.verticalAnchors == scrollView.verticalAnchors
-
-            text = [text1, text2, text3]
-            toolbar = ToolbarTextView.init(textView: text3, parent: self)
         } else if type.isComment() {
             if (toReplyTo as! RSubmission).type == .SELF && !(toReplyTo as! RSubmission).htmlBody.trimmed().isEmpty {
                 //two
@@ -949,6 +1032,25 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             toolbar = ToolbarTextView.init(textView: text3, parent: self)
         }
     }
+    
+    var doneOnceLayout = false
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !doneOnceLayout {
+            layoutForType()
+            doneOnceLayout = true
+            var first = false
+            for textField in text! {
+                if textField.isEditable && !first {
+                    first = true
+                    textField.becomeFirstResponder()
+                }
+                if !ColorUtil.theme.isLight() {
+                    textField.keyboardAppearance = .dark
+                }
+            }
+        }
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -988,16 +1090,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         let barButton = UIBarButtonItem.init(customView: button)
         navigationItem.leftBarButtonItem = barButton
         
-        var first = false
-        for textField in text! {
-            if textField.isEditable && !first {
-                first = true
-                textField.becomeFirstResponder()
-            }
-            if !ColorUtil.theme.isLight() {
-                textField.keyboardAppearance = .dark
-            }
-        }
     }
 
     @objc func close(_ sender: AnyObject) {
@@ -1171,6 +1263,53 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
     }
 
+    func crosspost() {
+        let title = text![0]
+        let subreddit = text![1]
+        let cLink = toReplyTo as! RSubmission
+        
+        if title.text.isEmpty() {
+            BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+            return
+        }
+        
+        if subreddit.text.isEmpty() {
+            BannerUtil.makeBanner(text: "Subreddit cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+            return
+        }
+        
+        alertController = UIAlertController(title: "Crossposting...\n\n\n", message: nil, preferredStyle: .alert)
+        
+        let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
+        spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
+        spinnerIndicator.color = ColorUtil.fontColor
+        spinnerIndicator.startAnimating()
+        
+        alertController?.view.addSubview(spinnerIndicator)
+        self.present(alertController!, animated: true, completion: nil)
+        
+        session = (UIApplication.shared.delegate as! AppDelegate).session
+            
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.crosspost(Link.init(id: cLink.id), subreddit: subreddit.text, newTitle: title.text) { result in
+                switch result {
+                case .failure(let error):
+                    print(error.description)
+                    self.submissionCallback(nil, error)
+                case .success(let submission):
+                    if let string = self.getIDString(submission).value {
+                        self.getSubmissionEdited(string)
+                    } else {
+                        self.errorText = self.getError(submission)
+                        self.submissionCallback(nil, nil)
+                    }
+                }
+            }
+        } catch {
+            
+        }
+    }
+
     func submitMessage() {
         let body: String
         let user: String
@@ -1330,6 +1469,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             fallthrough
         case .REPLY_MESSAGE:
             submitMessage()
+        case .CROSSPOST:
+            crosspost()
         }
     }
 
