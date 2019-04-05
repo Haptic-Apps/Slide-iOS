@@ -87,6 +87,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     func createJumpButton() {
+        if !SettingValues.commentJumpButton {
+            return
+        }
         if self.navigationController?.view != nil {
             let view = self.navigationController!.view!
             if jump == nil {
@@ -122,6 +125,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     func removeJumpButton() {
+        if !SettingValues.commentJumpButton {
+            return
+        }
         if self.jump != nil {
             UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
                 self.jump?.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)

@@ -1066,6 +1066,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 title = "Editing"
             } else if type.isComment() {
                 title = "Replying to \((toReplyTo as! RSubmission).author)"
+            } else if type == .CROSSPOST {
+                title = "Crosspost submission"
             } else {
                 title = "New submission"
             }

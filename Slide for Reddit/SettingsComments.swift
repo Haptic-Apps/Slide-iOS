@@ -25,7 +25,12 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     var wideIndicator = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
-    
+
+    var floatingJumpCell: UITableViewCell = UITableViewCell()
+    var floatingJump = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var collapseDefaultCell: UITableViewCell = UITableViewCell()
     var collapseDefault = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -82,6 +87,9 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         } else if changed == collapseDefault {
             SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
+        } else if changed == floatingJump {
+            SettingValues.commentJumpButton = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentJumpButton)
         } else if changed == swapLongPress {
             SettingValues.swapLongPress = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_swapLongPress)
@@ -305,6 +313,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments with a purple depth indicator")
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
         createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Move top AutoModerator comment to a button (if it is not your submission)")
+        createCell(floatingJumpCell, floatingJump, isOn: SettingValues.commentJumpButton, text: "Show floating jump button when bottom toolbar is collapsed")
 
         updateThemeCell()
         updateDepthsCell()
@@ -374,6 +383,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             switch indexPath.row {
             case 0: return self.fullscreenImageCell
             case 1: return self.hideAutomodCell
+            case 2: return self.floatingJumpCell
             default: fatalError("Unkown row in section 0")
             }
         case 1:
@@ -398,7 +408,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 2
+        case 0: return 3
         case 1: return 3
         case 2: return 4
         default: fatalError("Unknown number of sections")
