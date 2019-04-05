@@ -2451,7 +2451,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
     }
     
     func headerHeight() -> CGFloat {
-        return CGFloat(hasHeader ? (headerImage != nil ? 136 : 38) : 0)
+        return CGFloat(hasHeader ? (headerImage != nil ? 180 : 38) : 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
@@ -2989,21 +2989,23 @@ public class LinksHeaderCellView: UICollectionViewCell {
             buttonBase.widthAnchor == finalWidth
             scroll.alwaysBounceHorizontal = true
             scroll.showsHorizontalScrollIndicator = false
-            
+            self.contentView.addSubview(header)
+
             if hasHeader && del != nil {
                 let imageView = UIImageView()
                 imageView.contentMode = .scaleAspectFill
                 header.addSubview(imageView)
                 imageView.edgeAnchors == header.edgeAnchors
                 
-                self.contentView.addSubview(header)
-                header.heightAnchor == 94
+                header.heightAnchor == 180
                 header.horizontalAnchors == self.contentView.horizontalAnchors
                 header.topAnchor == self.contentView.topAnchor + 4
                 scroll.topAnchor == self.header.bottomAnchor + 4
-                
                 imageView.sd_setImage(with: del!.headerImage!)
+                header.heightAnchor == 140
             } else {
+                header.heightAnchor == 38
+                header.horizontalAnchors == self.contentView.horizontalAnchors
                 scroll.topAnchor == self.contentView.topAnchor + 4
             }
             scroll.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
