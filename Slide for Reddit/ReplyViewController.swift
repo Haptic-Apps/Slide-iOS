@@ -810,10 +810,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if type != .EDIT_SELFTEXT {
                 doButtons()
                 if type == .CROSSPOST {
-                    let linkCV = ThumbnailLinkCellView(frame: CGRect.zero)
-                    print("FRAME IS \(self.view.frame.size.width)")
+                    let link = toReplyTo as! RSubmission
+                    let linkCV = link.isSelf ? TextLinkCellView(frame: CGRect.zero) : ThumbnailLinkCellView(frame: CGRect.zero)
                     linkCV.aspectWidth = self.view.frame.size.width - 16
-                    linkCV.configure(submission: toReplyTo as! RSubmission, parent: self, nav: nil, baseSub: "all", embedded: true, parentWidth: self.view.frame.size.width - 16, np: false)
+                    linkCV.configure(submission: link, parent: self, nav: nil, baseSub: "all", embedded: true, parentWidth: self.view.frame.size.width - 16, np: false)
                     let linkView = linkCV.contentView
                     linkView.isUserInteractionEnabled = false
                     let height = linkCV.estimateHeight(false, true, np: false)
