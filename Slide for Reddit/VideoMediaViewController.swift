@@ -1112,12 +1112,20 @@ extension VideoMediaViewController {
                 presenter.sourceView = sender
                 presenter.sourceRect = sender.bounds
             }
-            activityViewController.showWindowless()
+            if let topController = UIApplication.topViewController(base: self) {
+                topController.present(activityViewController, animated: true, completion: nil)
+            } else {
+                self.present(activityViewController, animated: true, completion: nil)
+            }
         }))
         
         //todo share video
         
-        alertController.showWindowless()
+        if let topController = UIApplication.topViewController(base: self) {
+            topController.present(alertController, animated: true, completion: nil)
+        } else {
+            self.present(alertController, animated: true, completion: nil)
+        }
     }
     
     @objc func downloadVideoToLibrary(_ sender: AnyObject) {
