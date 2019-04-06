@@ -55,7 +55,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     var isUpvoted = false
     var failureCallback: ((_ url: URL) -> Void)?
 
-    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?) { //lq is should load lq and did load lq
+    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil) { //lq is should load lq and did load lq
         if saveHistory {
             History.addSeen(s: lnk, skipDuplicates: true)
         }

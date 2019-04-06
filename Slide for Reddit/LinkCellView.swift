@@ -2494,7 +2494,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 url = URL(string: VideoMediaViewController.format(sS: baseUrl!.absoluteString, true))
             }
             
-            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController) //todo check this
+            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
+                if let strongSelf = self {
+                    strongSelf.upvote()
+                }
+            }) //todo check this
             if History.getSeen(s: link) && !full && !SettingValues.newIndicator {
                 self.title.alpha = 0.3
             } else {

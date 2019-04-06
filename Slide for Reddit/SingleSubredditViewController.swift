@@ -760,7 +760,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             self.tableView.reloadData()
                             if UIDevice.current.userInterfaceIdiom != .pad {
                                 var newOffset = self.tableView.contentOffset
-                                newOffset.y -= self.headerHeight()
+                                newOffset.y -= self.headerHeight(false)
                                 self.tableView.setContentOffset(newOffset, animated: false)
                             }
                         }
@@ -1565,7 +1565,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         }
                                     }
                                     let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-                                    let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight())
+                                    let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight(false))
                                     self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top + headerHeight)
                                 } else {
                                     self.flowLayout.invalidateLayout()
@@ -2450,7 +2450,10 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
         return hasHeader ? 1 : 0
     }
     
-    func headerHeight() -> CGFloat {
+    func headerHeight(_ estimate: Bool = true) -> CGFloat {
+        if !estimate && SettingValues.alwaysShowHeader {
+            return CGFloat(0)
+        }
         return CGFloat(hasHeader ? (headerImage != nil ? 180 : 38) : 0)
     }
     

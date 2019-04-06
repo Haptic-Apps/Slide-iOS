@@ -62,7 +62,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         return true
     }
 
-    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?) { //lq is should load lq and did load lq
+    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil ) { //lq is should load lq and did load lq
         if saveHistory {
             History.addSeen(s: lnk, skipDuplicates: true)
         }
@@ -76,16 +76,20 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         
         isUpvoted = ActionStates.getVoteDirection(s: lnk) == VoteDirection.up
 
-        upvoteCallback = { () in
-            do {
-                try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up, name: (lnk.getId()), completion: { (_) in
+        if upvoteCallbackIn == nil {
+            upvoteCallback = { () in
+                do {
+                    try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up, name: (lnk.getId()), completion: { (_) in
+                        
+                    })
+                    ActionStates.setVoteDirection(s: lnk, direction: ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up)
+                    History.addSeen(s: lnk)
+                } catch {
                     
-                })
-                ActionStates.setVoteDirection(s: lnk, direction: ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up)
-                History.addSeen(s: lnk)
-            } catch {
-                
+                }
             }
+        } else {
+            upvoteCallback = upvoteCallbackIn
         }
         
         if link.archived || !AccountController.isLoggedIn {

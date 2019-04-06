@@ -120,6 +120,7 @@ class SettingValues {
     public static let pref_typeInTitle = "TYPE_IN_TITLE"
     public static let pref_muteYouTube = "MUTE_YOU_TUBE"
     public static let pref_commentJumpButton = "COMMENT_JUMP_BUTTON"
+    public static let pref_alwaysShowHeader = "ALWAYS_SHOW_HEADER"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -239,6 +240,7 @@ class SettingValues {
     public static var autoKeyboard = true
     public static var appMode = AppMode.SINGLE
     public static var commentJumpButton = true
+    public static var alwaysShowHeader = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -429,6 +431,7 @@ class SettingValues {
         SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
         SettingValues.smallerTag = settings.object(forKey: SettingValues.pref_smallTag) == nil ? true : settings.bool(forKey: SettingValues.pref_smallTag)
         SettingValues.blackShadowbox = settings.bool(forKey: SettingValues.pref_blackShadowbox)
+        SettingValues.alwaysShowHeader = settings.bool(forKey: SettingValues.pref_alwaysShowHeader)
         SettingValues.markReadOnScroll = settings.bool(forKey: SettingValues.pref_markReadOnScroll)
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)

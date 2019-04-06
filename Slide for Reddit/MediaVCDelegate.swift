@@ -18,7 +18,7 @@ protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
     var link: RSubmission! { get set }
     var commentCallback: (() -> Void)? { get set }
 
-    func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?)
+    func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)?)
 
     func getControllerForUrl(baseUrl: URL, lq: URL?) -> UIViewController?
     var contentUrl: URL? { get set }

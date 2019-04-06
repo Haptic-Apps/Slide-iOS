@@ -21,6 +21,7 @@ class SettingsGeneral: UITableViewController {
     var showPages: UITableViewCell = UITableViewCell()
     var totallyCollapse: UITableViewCell = UITableViewCell()
     var fullyHideNavbar: UITableViewCell = UITableViewCell()
+    var alwaysShowHeader: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "head")
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -51,6 +52,9 @@ class SettingsGeneral: UITableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
     var showPagesSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var alwaysShowHeaderSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     var notificationsSwitch = UISwitch().then {
@@ -96,6 +100,9 @@ class SettingsGeneral: UITableViewController {
         } else if changed == fullyHideNavbarSwitch {
             SettingValues.fullyHideNavbar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_fullyHideNavbar)
+        } else if changed == alwaysShowHeaderSwitch {
+            SettingValues.alwaysShowHeader = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_alwaysShowHeader)
         } else if changed == hapticFeedbackSwitch {
             SettingValues.hapticFeedback = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hapticFeedback)
@@ -208,7 +215,11 @@ class SettingsGeneral: UITableViewController {
         createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators between loads of new submissions")
         createCell(totallyCollapse, totallyCollapseSwitch, isOn: SettingValues.totallyCollapse, text: "Hide bottom navigation bar on scroll")
         createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.fullyHideNavbar, text: "Hide status bar on scroll")
-
+        createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Show header image and buttons by default")
+        self.alwaysShowHeader.detailTextLabel?.text = "When off, scrolling up past the first post will display the header"
+        self.alwaysShowHeader.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.alwaysShowHeader.detailTextLabel?.numberOfLines = 0
+        
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
         self.postSorting.detailTextLabel?.textColor = ColorUtil.fontColor
@@ -292,6 +303,7 @@ class SettingsGeneral: UITableViewController {
             case 4: return self.totallyCollapse
             case 5: return self.fullyHideNavbar
             case 6: return self.scrubUsername
+            case 7: return self.alwaysShowHeader
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -460,8 +472,9 @@ class SettingsGeneral: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let pad = UIDevice.current.userInterfaceIdiom == .pad
         switch section {
-        case 0: return 7
+        case 0: return 7 + (pad ? 1 : 0)
         case 1: return 1
         case 2: return 1
         case 3: return 3

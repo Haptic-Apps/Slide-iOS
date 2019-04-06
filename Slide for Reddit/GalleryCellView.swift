@@ -41,7 +41,7 @@ class GalleryCellView: UITableViewCell {
             VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: self.link!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
         }
         bannerImage.addTapGestureRecognizer {
-            parent.setLink(lnk: self.link!, shownURL: nil, lq: false, saveHistory: true, heroView: self.bannerImage, heroVC: parent)
+            parent.setLink(lnk: self.link!, shownURL: nil, lq: false, saveHistory: true, heroView: self.bannerImage, heroVC: parent, upvoteCallbackIn: nil)
         }
 
         self.contentView.backgroundColor = UIColor.black
