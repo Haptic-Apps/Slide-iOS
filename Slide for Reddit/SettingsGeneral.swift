@@ -216,7 +216,7 @@ class SettingsGeneral: UITableViewController {
         self.postSorting.textLabel?.textColor = ColorUtil.fontColor
 
         self.searchSorting.textLabel?.text = "Default search sorting"
-        self.searchSorting.detailTextLabel?.text = SettingValues.defaultSearchSorting.path.capitalize()
+        self.searchSorting.detailTextLabel?.text = "Sort by \(SettingValues.defaultSearchSorting.path.capitalize())"
         self.searchSorting.detailTextLabel?.textColor = ColorUtil.fontColor
         self.searchSorting.backgroundColor = ColorUtil.foregroundColor
         self.searchSorting.textLabel?.textColor = ColorUtil.fontColor
@@ -354,11 +354,11 @@ class SettingsGeneral: UITableViewController {
         let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
         
         for link in SearchSortBy.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.path.capitalize(), style: .default) { _ -> Void in
+            let saveActionButton: UIAlertAction = UIAlertAction(title: "Sort by \(link.path.capitalize())", style: .default) { _ -> Void in
                 SettingValues.defaultSearchSorting = link
                 UserDefaults.standard.set(link.path, forKey: SettingValues.pref_defaultSearchSort)
                 UserDefaults.standard.synchronize()
-                self.searchSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
+                self.searchSorting.detailTextLabel?.text = "Sort by \(SettingValues.defaultSearchSorting.path.capitalize())"
             }
             if SettingValues.defaultSearchSorting == link {
                 saveActionButton.setValue(selected, forKey: "image")

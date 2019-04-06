@@ -341,17 +341,21 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             parentVC.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
         } else if type != .ALBUM && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is RSubmission && !(content as! RSubmission).nsfw) || SettingValues.nsfwPreviews) {
-            let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false, buttons: false))
-            if embed != nil {
-                self.embeddedVC = embed
-                self.addChild(embed!)
-                embed!.didMove(toParent: self)
-                self.topBody.addSubview(embed!.view)
-                embed!.view.horizontalAnchors == topBody.horizontalAnchors
-                embed!.view.topAnchor == topBody.safeTopAnchor
-                embed!.view.bottomAnchor == topBody.bottomAnchor
+            if !ContentType.displayVideo(t: type) || !populated {
+                let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false, buttons: false))
+                if embed != nil {
+                    self.embeddedVC = embed
+                    self.addChild(embed!)
+                    embed!.didMove(toParent: self)
+                    self.topBody.addSubview(embed!.view)
+                    embed!.view.horizontalAnchors == topBody.horizontalAnchors
+                    embed!.view.topAnchor == topBody.safeTopAnchor
+                    embed!.view.bottomAnchor == topBody.bottomAnchor
+                } else {
+                    //Shouldn't be here
+                }
             } else {
-                //Shouldn't be here
+                populated = false
             }
         } else if type == .LINK || type == .NONE || type == .ALBUM || ((content is RSubmission && (content as! RSubmission).nsfw) && !SettingValues.nsfwPreviews) {
             topBody.addSubviews(thumbImageContainer, infoContainer)
@@ -469,11 +473,18 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if populated && embeddedVC is VideoMediaViewController {
+            let video = embeddedVC as! VideoMediaViewController
+            video.videoView.player?.play()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         if !populated {
             populateContent()
             populated = true
         }
-        //self.baseView.backgroundColor = .clear
     }
 
     var first = true
@@ -481,7 +492,10 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //todo pause if is video
+        if embeddedVC is VideoMediaViewController {
+            let video = embeddedVC as! VideoMediaViewController
+            video.videoView.player?.pause()
+        }
     }
     func horizontalSpace(_ space: CGFloat) -> UIView {
         return UIView().then {
