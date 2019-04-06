@@ -24,6 +24,7 @@ class SettingsGeneral: UITableViewController {
 
     var postSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "comment")
+    var searchSorting: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "search")
     var notifications: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "notif")
     var hideFABSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -214,6 +215,12 @@ class SettingsGeneral: UITableViewController {
         self.postSorting.backgroundColor = ColorUtil.foregroundColor
         self.postSorting.textLabel?.textColor = ColorUtil.fontColor
 
+        self.searchSorting.textLabel?.text = "Default search sorting"
+        self.searchSorting.detailTextLabel?.text = SettingValues.defaultSearchSorting.path.capitalize()
+        self.searchSorting.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.searchSorting.backgroundColor = ColorUtil.foregroundColor
+        self.searchSorting.textLabel?.textColor = ColorUtil.fontColor
+
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { (settings) in
                 DispatchQueue.main.async {
@@ -302,6 +309,7 @@ class SettingsGeneral: UITableViewController {
             switch indexPath.row {
             case 0: return self.postSorting
             case 1: return self.commentSorting
+            case 2: return self.searchSorting
             default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
@@ -311,11 +319,11 @@ class SettingsGeneral: UITableViewController {
 
     func showMenuComments(_ selector: UIView?) {
         let actionSheetController: UIAlertController = UIAlertController(title: "Comment sorting", message: "", preferredStyle: .actionSheet)
-
+        
         actionSheetController.addCancelButton()
-
+        
         let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-
+        
         for link in CommentSort.cases {
             let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
                 SettingValues.defaultCommentSorting = link
@@ -328,14 +336,43 @@ class SettingsGeneral: UITableViewController {
             }
             actionSheetController.addAction(saveActionButton)
         }
-
+        
         if let presenter = actionSheetController.popoverPresentationController {
             presenter.sourceView = selector!
             presenter.sourceRect = selector!.bounds
         }
-
+        
         self.present(actionSheetController, animated: true, completion: nil)
+        
+    }
 
+    func showMenuSearch(_ selector: UIView?) {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Search sorting", message: "", preferredStyle: .actionSheet)
+        
+        actionSheetController.addCancelButton()
+        
+        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        
+        for link in SearchSortBy.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: link.path.capitalize(), style: .default) { _ -> Void in
+                SettingValues.defaultSearchSorting = link
+                UserDefaults.standard.set(link.path, forKey: SettingValues.pref_defaultSearchSort)
+                UserDefaults.standard.synchronize()
+                self.searchSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
+            }
+            if SettingValues.defaultSearchSorting == link {
+                saveActionButton.setValue(selected, forKey: "image")
+            }
+            actionSheetController.addAction(saveActionButton)
+        }
+        
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = selector!
+            presenter.sourceRect = selector!.bounds
+        }
+        
+        self.present(actionSheetController, animated: true, completion: nil)
+        
     }
 
     func showMenu(_ selector: UIView?) {
@@ -416,6 +453,8 @@ class SettingsGeneral: UITableViewController {
             showMenu(tableView.cellForRow(at: indexPath))
         } else if indexPath.section == 3 && indexPath.row == 1 {
             showMenuComments(tableView.cellForRow(at: indexPath))
+        } else if indexPath.section == 3 && indexPath.row == 2 {
+            showMenuSearch(tableView.cellForRow(at: indexPath))
         }
 
     }
@@ -425,7 +464,7 @@ class SettingsGeneral: UITableViewController {
         case 0: return 7
         case 1: return 1
         case 2: return 1
-        case 3: return 2
+        case 3: return 3
         default: fatalError("Unknown number of sections")
         }
     }

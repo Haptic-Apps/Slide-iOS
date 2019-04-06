@@ -15,6 +15,7 @@ class SettingValues {
     public static let pref_viewType = "VIEW_TYPE"
     public static let pref_hiddenFAB = "HIDDEN_FAB"
     public static let pref_defaultSorting = "DEFAULT_SORT"
+    public static let pref_defaultSearchSort = "DEFAULT_SORT_SEARCH"
     public static let pref_defaultTimePeriod = "DEFAULT_TIME"
     public static let pref_defaultCommentSorting = "DEFAULT_SORT_COMMENT"
     public static let pref_tintingMode = "TINTING_MODE"
@@ -151,6 +152,7 @@ class SettingValues {
     public static var hiddenFAB = true
     public static var upvotePercentage = true
     public static var defaultSorting = LinkSortType.hot
+    public static var defaultSearchSorting = SearchSortBy.top
     public static var defaultTimePeriod = TimeFilterWithin.day
     public static var defaultCommentSorting = CommentSort.suggested
     public static var tintingMode = "TINTING_MODE"
@@ -371,7 +373,15 @@ class SettingValues {
                 break
             }
         }
-
+        
+        basePath = settings.string(forKey: SettingValues.pref_defaultSearchSort)
+        for sort in SearchSortBy.cases {
+            if sort.path == basePath {
+                SettingValues.defaultSearchSorting = sort
+                break
+            }
+        }
+        
         SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
         SettingValues.submissionGesturesEnabled = settings.object(forKey: SettingValues.pref_submissionGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_submissionGesturesEnabled)
         SettingValues.menuButton = settings.object(forKey: SettingValues.pref_moreButton) == nil ? true : settings.bool(forKey: SettingValues.pref_moreButton)
