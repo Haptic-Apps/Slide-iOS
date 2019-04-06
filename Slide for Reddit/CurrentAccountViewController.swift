@@ -146,7 +146,7 @@ class CurrentAccountViewController: UIViewController {
         $0.attributedText = {
             var font = UIFont.boldSystemFont(ofSize: 20)
             let attributedString = NSMutableAttributedString.init(string: "You are logged out.\n", attributes: [NSAttributedString.Key.font: font])
-            attributedString.append(NSMutableAttributedString.init(string: "Tap here to sign in!", attributes: [NSAttributedString.Key.font: font.bold()]))
+            attributedString.append(NSMutableAttributedString.init(string: "Tap here to sign in!", attributes: [NSAttributedString.Key.font: font.makeBold()]))
             return attributedString
         }()
     }

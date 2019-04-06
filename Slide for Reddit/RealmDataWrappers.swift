@@ -72,7 +72,6 @@ class RealmDataWrapper {
         case .URL:
             thumb = true
             turl = submission.thumbnail.removingPercentEncoding ?? submission.thumbnail
-            print(turl)
         }
         
         if big { //check for low quality image

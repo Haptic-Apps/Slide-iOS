@@ -119,13 +119,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         
         configureBackground()
 
-        headerView.addTapGestureRecognizer {
-            if self.expanded {
-                self.collapse()
-            } else {
-                self.expand()
-            }
-        }
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
@@ -134,6 +127,14 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                                                name: UIResponder.keyboardWillHideNotification, object: nil)
 
         updateAccessibility()
+        searchBar.isUserInteractionEnabled = false
+        headerView.addTapGestureRecognizer {
+            if self.expanded {
+                self.collapse()
+            } else {
+                self.expand()
+            }
+        }
     }
     
     struct Callbacks {
