@@ -2510,7 +2510,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             playView.isHidden = true
             self.progressDot.isHidden = false
         } else if self.videoView.player != nil && self.videoView.player?.currentItem != nil && self.videoView.player!.currentItem!.presentationSize.width != 0 {
-            let controller = AnyModalViewController(cellView: self, nil, failure: nil)
+            let upvoted = ActionStates.getVoteDirection(s: link!) == VoteDirection.up
+            let controller = AnyModalViewController(cellView: self, full ? nil : {[weak self] in
+                if let strongSelf = self {
+                    strongSelf.doOpenComment()
+                }
+            }, upvoteCallback: {[weak self] in
+                if let strongSelf = self {
+                    strongSelf.upvote()
+                }
+            }, isUpvoted: upvoted, failure: nil)
             let postContentTransitioningDelegate = PostContentPresentationManager()
             postContentTransitioningDelegate.sourceImageView = self.videoView
             controller.transitioningDelegate = postContentTransitioningDelegate

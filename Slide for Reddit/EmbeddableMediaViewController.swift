@@ -27,6 +27,8 @@ class EmbeddableMediaViewController: UIViewController {
     var bottomButtons = UIStackView()
 
     var commentCallback: (() -> Void)?
+    var upvoteCallback: (() -> Void)?
+    var isUpvoted = false
     var failureCallback: ((_ url: URL) -> Void)? 
 
     init(model: EmbeddableMediaDataModel, type: ContentType.CType) {
@@ -117,8 +119,40 @@ extension EmbeddableMediaViewController {
     
     @objc func openComments(_ sender: AnyObject) {
         if commentCallback != nil {
-            self.dismiss(animated: true) {
+            var viewToMove: UIView
+            if self is ImageMediaViewController {
+                viewToMove = (self as! ImageMediaViewController).imageView
+            } else {
+                viewToMove = (self as! VideoMediaViewController).isYoutubeView ? (self as! VideoMediaViewController).youtubeView : (self as! VideoMediaViewController).videoView
+            }
+            var newFrame = viewToMove.frame
+            newFrame.origin.y = -newFrame.size.height * 0.2
+            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                viewToMove.frame = newFrame
+                self.parent?.view.alpha = 0
+                self.dismiss(animated: true)
+            }) { (_) in
                 self.commentCallback!()
+            }
+        }
+    }
+    
+    @objc func upvote(_ sender: AnyObject) {
+        if upvoteCallback != nil {
+            self.upvoteCallback!()
+            var viewToMove: UIView
+            if self is ImageMediaViewController {
+                viewToMove = (self as! ImageMediaViewController).imageView
+            } else {
+                viewToMove = (self as! VideoMediaViewController).isYoutubeView ? (self as! VideoMediaViewController).youtubeView : (self as! VideoMediaViewController).videoView
+            }
+            var newFrame = viewToMove.frame
+            newFrame.origin.y = -newFrame.size.height * 0.2
+            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                viewToMove.frame = newFrame
+                self.parent?.view.alpha = 0
+                self.dismiss(animated: true)
+            }) { (_) in
             }
         }
     }

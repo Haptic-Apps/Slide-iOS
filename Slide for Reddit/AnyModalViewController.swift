@@ -51,6 +51,7 @@ class AnyModalViewController: UIViewController {
     var muteButton = UIButton()
     var bottomButtons = UIStackView()
     var goToCommentsButton = UIButton()
+    var upvoteButton = UIButton()
 
     var closeButton = UIButton().then {
         $0.accessibilityIdentifier = "Close Button"
@@ -83,11 +84,15 @@ class AnyModalViewController: UIViewController {
     private var savedColor: UIColor?
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
-    
-    init(cellView: LinkCellView, _ commentCallback: (() -> Void)?, failure: ((_ url: URL) -> Void)?) {
+    var upvoteCallback: (() -> Void)?
+    var isUpvoted = false
+
+    init(cellView: LinkCellView, _ commentCallback: (() -> Void)?, upvoteCallback: (() -> Void)?, isUpvoted: Bool, failure: ((_ url: URL) -> Void)?) {
         super.init(nibName: nil, bundle: nil)
         self.commentCallback = commentCallback
         self.failureCallback = failure
+        self.upvoteCallback = upvoteCallback
+        self.isUpvoted = isUpvoted
         self.embeddedPlayer = cellView.videoView.player
         self.toReturnTo = cellView
         self.baseURL = cellView.videoURL ?? cellView.link?.url
@@ -97,10 +102,12 @@ class AnyModalViewController: UIViewController {
         AnyModalViewController.linkID = cellView.link!.getId()
     }
     
-    init(baseUrl: URL, _ commentCallback: (() -> Void)?, failure: ((_ url: URL) -> Void)?) {
+    init(baseUrl: URL, _ commentCallback: (() -> Void)?, upvoteCallback: (() -> Void)?, isUpvoted: Bool, failure: ((_ url: URL) -> Void)?) {
         super.init(nibName: nil, bundle: nil)
         self.commentCallback = commentCallback
         self.failureCallback = failure
+        self.upvoteCallback = upvoteCallback
+        self.isUpvoted = isUpvoted
         self.urlToLoad = baseUrl
         AnyModalViewController.linkID = ""
     }
@@ -255,6 +262,7 @@ class AnyModalViewController: UIViewController {
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
         muteButton.addTarget(self, action: #selector(unmute), for: .touchUpInside)
+        upvoteButton.addTarget(self, action: #selector(upvote(_:)), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
 
         dTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
@@ -494,6 +502,13 @@ class AnyModalViewController: UIViewController {
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
+        upvoteButton = UIButton().then {
+            $0.accessibilityIdentifier = "Upvote Button"
+            $0.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+            $0.isHidden = upvoteCallback == nil // The button will be unhidden once the content has loaded.
+            $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
+
         muteButton = UIButton().then {
             $0.accessibilityIdentifier = "Un-Mute video"
             $0.isHidden = true
@@ -512,11 +527,35 @@ class AnyModalViewController: UIViewController {
         closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         self.view.addSubview(closeButton)
 
-        bottomButtons.addArrangedSubviews(goToCommentsButton, UIView.flexSpace(), muteButton, downloadButton, menuButton)
+        bottomButtons.addArrangedSubviews(goToCommentsButton, upvoteButton, UIView.flexSpace(), muteButton, downloadButton, menuButton)
+    }
+    
+    
+    @objc func upvote(_ sender: AnyObject) {
+        if upvoteCallback != nil {
+            self.upvoteCallback!()
+            var viewToMove = videoView ?? self.view
+            var newFrame = viewToMove!.frame
+            newFrame.origin.y = -newFrame.size.height * 0.2
+            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                viewToMove!.frame = newFrame
+                self.view.alpha = 0
+                self.dismiss(animated: true)
+            }) { (_) in
+            }
+        }
     }
     
     @objc func exit() {
-        self.dismiss(animated: true, completion: nil)
+        var viewToMove = videoView ?? self.view
+        var newFrame = viewToMove!.frame
+        newFrame.origin.y = -newFrame.size.height * 0.2
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            viewToMove!.frame = newFrame
+            self.view.alpha = 0
+            self.dismiss(animated: true)
+        }) { (_) in
+        }
     }
     
     func configureLayout() {

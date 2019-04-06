@@ -57,6 +57,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var youtubeURL: URL?
 
     var goToCommentsButton = UIButton()
+    var upvoteButton = UIButton()
     var showTitleButton = UIButton()
 
     var scrubber = VideoScrubberView()
@@ -234,6 +235,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
             
+            upvoteButton = UIButton().then {
+                $0.accessibilityIdentifier = "Upvote Button"
+                $0.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+                $0.isHidden = upvoteCallback == nil // The button will be unhidden once the content has loaded.
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+
             muteButton = UIButton().then {
                 $0.accessibilityIdentifier = "Un-mute video"
                 $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
@@ -269,7 +277,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 $0.textColor = .white
             }
             
-            bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, size, UIView.flexSpace(), muteButton, ytButton, downloadButton, menuButton)
+            bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, upvoteButton, size, UIView.flexSpace(), muteButton, ytButton, downloadButton, menuButton)
         }
     }
     
@@ -305,6 +313,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
         muteButton.addTarget(self, action: #selector(unmute), for: .touchUpInside)
+        upvoteButton.addTarget(self, action: #selector(upvote(_:)), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
         ytButton.addTarget(self, action: #selector(openInYoutube(_:)), for: .touchUpInside)

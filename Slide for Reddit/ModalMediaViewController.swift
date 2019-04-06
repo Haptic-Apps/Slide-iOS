@@ -39,12 +39,16 @@ class ModalMediaViewController: UIViewController {
     private var savedColor: UIColor?
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
+    var upvoteCallback: (() -> Void)?
+    var isUpvoted = false
 
-    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
+    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
         super.init(nibName: nil, bundle: nil)
 
         self.failureCallback = failureCallback
         self.commentCallback = commentCallback
+        self.upvoteCallback = upvoteCallback
+        self.isUpvoted = isUpvoted
         
         let type = ContentType.getContentType(baseUrl: url)
         if ContentType.isImgurLink(uri: url) || type == .DEVIANTART || type == .XKCD {
@@ -74,6 +78,16 @@ class ModalMediaViewController: UIViewController {
             }
         }
         
+        if self.upvoteCallback != nil {
+            embeddedVC.upvoteCallback = { [weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                strongSelf.upvoteCallback!()
+            }
+            embeddedVC.isUpvoted = isUpvoted
+        }
+
         embeddedVC.failureCallback = { [weak self] (url) in
             guard let strongSelf = self else {
                 return
@@ -319,7 +333,22 @@ class ModalMediaViewController: UIViewController {
     }
     
     @objc func exit() {
-        self.dismiss(animated: true, completion: nil)
+        var viewToMove: UIView
+        if embeddedVC is ImageMediaViewController {
+            viewToMove = (embeddedVC as! ImageMediaViewController).imageView
+        } else if embeddedVC != nil {
+            viewToMove = (embeddedVC as! VideoMediaViewController).isYoutubeView ? (embeddedVC as! VideoMediaViewController).youtubeView : (embeddedVC as! VideoMediaViewController).videoView
+        } else {
+            viewToMove = self.view
+        }
+        var newFrame = viewToMove.frame
+        newFrame.origin.y = -newFrame.size.height * 0.2
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            viewToMove.frame = newFrame
+            self.view.alpha = 0
+            self.dismiss(animated: true)
+        }) { (_) in
+        }
     }
 
     func configureLayout() {

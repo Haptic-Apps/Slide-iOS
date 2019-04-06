@@ -21,7 +21,8 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     var menuButton = UIButton()
     var downloadButton = UIButton()
-    
+    var upvoteButton = UIButton()
+
     var viewInHDButton = UIButton()
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()
@@ -112,6 +113,13 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
             
+            upvoteButton = UIButton().then {
+                $0.accessibilityIdentifier = "Upvote Button"
+                $0.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+                $0.isHidden = upvoteCallback == nil // The button will be unhidden once the content has loaded.
+                $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            }
+
             goToCommentsButton = UIButton().then {
                 $0.accessibilityIdentifier = "Go to Comments Button"
                 $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
@@ -140,7 +148,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 $0.textColor = .white
             }
             
-            bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, viewInHDButton, size, UIView.flexSpace(), downloadButton, menuButton)
+            bottomButtons.addArrangedSubviews(showTitleButton, goToCommentsButton, upvoteButton, viewInHDButton, size, UIView.flexSpace(), downloadButton, menuButton)
         }
     }
 
@@ -172,6 +180,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadImageToLibrary(_:)), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
+        upvoteButton.addTarget(self, action: #selector(upvote(_:)), for: .touchUpInside)
         viewInHDButton.addTarget(self, action: #selector(viewInHD(_:)), for: .touchUpInside)
         showTitleButton.addTarget(self, action: #selector(showTitle(_:)), for: .touchUpInside)
     }

@@ -54,6 +54,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
 
     var link: RSubmission!
     var commentCallback: (() -> Void)?
+    var isUpvoted = false
+    var upvoteCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
     
     override var prefersHomeIndicatorAutoHidden: Bool {
@@ -70,6 +72,24 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         commentCallback = { () in
             let comment = CommentViewController.init(submission: self.link, single: true)
                 VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+        
+        isUpvoted = ActionStates.getVoteDirection(s: lnk) == VoteDirection.up
+
+        upvoteCallback = { () in
+            do {
+                try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up, name: (lnk.getId()), completion: { (_) in
+                    
+                })
+                ActionStates.setVoteDirection(s: lnk, direction: ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up)
+                History.addSeen(s: lnk)
+            } catch {
+                
+            }
+        }
+        
+        if link.archived || !AccountController.isLoggedIn {
+            upvoteCallback = nil
         }
 
         failureCallback = { (url: URL) in
@@ -130,7 +150,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback)
         } else if contentUrl != nil && type == .GIF && SettingValues.internalGifView || type == .STREAMABLE || type == .VID_ME {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
                 if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
@@ -145,7 +165,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 }
                 return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
             }
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, failureCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)

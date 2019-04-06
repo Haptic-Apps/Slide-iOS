@@ -2892,6 +2892,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         self.setAlphaOfBackgroundViews(alpha: 0.5)
 
         var topCell = (indexPath as NSIndexPath).row
+        
         var contents = content[dataArray[topCell]]
         
         while (contents is RComment ? (contents as! RComment).depth >= cell.depth : true) && dataArray.count > topCell && topCell - 1 >= 0 {
