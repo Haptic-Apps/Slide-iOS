@@ -474,7 +474,7 @@ class SettingsGeneral: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let pad = UIDevice.current.userInterfaceIdiom == .pad
         switch section {
-        case 0: return 7 + (pad ? 1 : 0)
+        case 0: return 7 + (!pad ? 1 : 0)
         case 1: return 1
         case 2: return 1
         case 3: return 3

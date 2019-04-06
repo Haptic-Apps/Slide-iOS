@@ -256,7 +256,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     if let payload = (text as! JSONDictionary)["payload"] as? JSONDictionary, let data = payload["data"] as? JSONDictionary {
                         DispatchQueue.main.async {
                             self.content.insert(data, at: 0)
-                            self.flowLayout.reset()
+                            self.flowLayout.reset(modal: self.presentingViewController != nil)
                             let contentHeight = self.tableView.contentSize.height
                             let offsetY = self.tableView.contentOffset.y
                             let bottomOffset = contentHeight - offsetY
@@ -289,7 +289,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
 
     func doneLoading() {
         DispatchQueue.main.async {
-            self.flowLayout.reset()
+            self.flowLayout.reset(modal: self.presentingViewController != nil)
             self.tableView.reloadData()
         }
     }

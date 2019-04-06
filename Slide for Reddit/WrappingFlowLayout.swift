@@ -38,7 +38,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
     override var collectionViewContentSize: CGSize {
         return CGSize(width: contentWidth, height: contentHeight)
     }
-    func reset() {
+    func reset(modal: Bool) {
         cache = []
         contentHeight = 0
         var portraitCount = SettingValues.multiColumnCount / 2
@@ -67,6 +67,11 @@ class WrappingFlowLayout: UICollectionViewLayout {
         
         if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds {
             numberOfColumns = 1
+        }
+        
+        //If is in popover half view
+        if modal {
+            numberOfColumns = portraitCount
         }
         
         cellPadding = (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT)) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))

@@ -350,21 +350,10 @@ extension ImageMediaViewController {
                 presenter.sourceView = sender
                 presenter.sourceRect = sender.bounds
             }
-            let window = UIApplication.shared.keyWindow!
-            if let modalVC = window.rootViewController?.presentedViewController {
-                modalVC.present(activityViewController, animated: true, completion: nil)
-            } else {
-                window.rootViewController!.present(activityViewController, animated: true, completion: nil)
-            }
+            activityViewController.showWindowless()
         }))
         
-        let window = UIApplication.shared.keyWindow!
-
-        if let modalVC = window.rootViewController?.presentedViewController {
-            modalVC.present(alertController, animated: true, completion: nil)
-        } else {
-            window.rootViewController!.present(alertController, animated: true, completion: nil)
-        }
+        alertController.showWindowless()
     }
 }
 

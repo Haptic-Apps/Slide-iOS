@@ -49,7 +49,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
     func hide(index: Int) {
         baseData.content.remove(at: index)
-        flowLayout.reset()
+        flowLayout.reset(modal: presentingViewController != nil)
         tableView.reloadData()
     }
     
@@ -227,7 +227,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
-        flowLayout.reset()
+        flowLayout.reset(modal: presentingViewController != nil)
         tableView.reloadData()
     }
     
@@ -238,7 +238,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
         if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
-            flowLayout.reset()
+            flowLayout.reset(modal: presentingViewController != nil)
             tableView.reloadData()
         }
     }
@@ -249,7 +249,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         oldsize = self.view.bounds.width
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
-                self.flowLayout.reset()
+                self.flowLayout.reset(modal: self.presentingViewController != nil)
                 self.view.setNeedsLayout()
             }, completion: nil
         )
@@ -473,7 +473,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         emptyStateView.isHidden = true
         baseData.reset()
         refreshControl.beginRefreshing()
-        flowLayout.reset()
+        flowLayout.reset(modal: presentingViewController != nil)
         flowLayout.invalidateLayout()
         tableView.reloadData()
         baseData.getData(reload: true)
@@ -522,7 +522,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             }
 
             if before == 0 || before > self.baseData.content.count {
-                self.flowLayout.reset()
+                self.flowLayout.reset(modal: self.presentingViewController != nil)
                 self.tableView.reloadData()
                 
                 var top = CGFloat(0)
@@ -540,7 +540,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     paths.append(IndexPath.init(item: i, section: 0))
                 }
 
-                self.flowLayout.reset()
+                self.flowLayout.reset(modal: self.presentingViewController != nil)
                 self.tableView.insertItems(at: paths)
             }
             self.endAndResetRefresh()

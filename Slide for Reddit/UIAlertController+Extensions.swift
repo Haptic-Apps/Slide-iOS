@@ -31,3 +31,25 @@ public extension UIAlertController {
         vc.present(self, animated: true, completion: nil)
     }
 }
+public extension BottomSheetActionController {
+    func showWindowless() {
+        let win = UIWindow(frame: UIScreen.main.bounds)
+        let vc = UIViewController()
+        vc.view.backgroundColor = .clear
+        win.rootViewController = vc
+        win.windowLevel = UIWindow.Level.alert + 1
+        win.makeKeyAndVisible()
+        vc.present(self, animated: true, completion: nil)
+    }
+}
+public extension UIActivityViewController {
+    func showWindowless() {
+        let win = UIWindow(frame: UIScreen.main.bounds)
+        let vc = UIViewController()
+        vc.view.backgroundColor = .clear
+        win.rootViewController = vc
+        win.windowLevel = UIWindow.Level.alert + 1
+        win.makeKeyAndVisible()
+        vc.present(self, animated: true, completion: nil)
+    }
+}
