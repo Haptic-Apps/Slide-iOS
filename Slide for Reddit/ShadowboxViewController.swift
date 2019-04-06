@@ -64,6 +64,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         let s = baseSubmissions[index]
         let firstViewController = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         currentVc = firstViewController
+        (currentVc as! ShadowboxLinkViewController).populateContent()
         
         self.setViewControllers([firstViewController],
                                 direction: .forward,
@@ -270,8 +271,8 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         let s = baseSubmissions[nextIndex]
         let shadowbox = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         if !shadowbox.populated {
-            shadowbox.populateContent()
             shadowbox.populated = true
+            shadowbox.populateContent()
         }
 
         return shadowbox
