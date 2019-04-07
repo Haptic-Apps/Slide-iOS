@@ -215,7 +215,7 @@ class SettingsGeneral: UITableViewController {
         createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators between loads of new submissions")
         createCell(totallyCollapse, totallyCollapseSwitch, isOn: SettingValues.totallyCollapse, text: "Hide bottom navigation bar on scroll")
         createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.fullyHideNavbar, text: "Hide status bar on scroll")
-        createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Show header image and buttons by default")
+        createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Always show header image and buttons")
         self.alwaysShowHeader.detailTextLabel?.text = "When off, scrolling up past the first post will display the header"
         self.alwaysShowHeader.detailTextLabel?.textColor = ColorUtil.fontColor
         self.alwaysShowHeader.detailTextLabel?.numberOfLines = 0

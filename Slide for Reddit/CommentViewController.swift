@@ -495,6 +495,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
             History.addSeen(s: cell.link!, skipDuplicates: true)
             cell.refresh()
+            if parent is PagingCommentViewController {
+                (parent as! PagingCommentViewController).reloadCallback?()
+            }
         } catch {
         }
     }
@@ -576,6 +579,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
             History.addSeen(s: cell.link!, skipDuplicates: true)
             cell.refresh()
+            if parent is PagingCommentViewController {
+                (parent as! PagingCommentViewController).reloadCallback?()
+            }
         } catch {
 
         }
@@ -621,6 +627,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
             History.addSeen(s: cell.link!, skipDuplicates: true)
             cell.refresh()
+            if parent is PagingCommentViewController {
+                (parent as! PagingCommentViewController).reloadCallback?()
+            }
         } catch {
 
         }
@@ -638,6 +647,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
 
         ReadLater.toggleReadLater(link: link)
+        if parent is PagingCommentViewController {
+            (parent as! PagingCommentViewController).reloadCallback?()
+        }
         cell.refresh()
     }
 

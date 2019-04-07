@@ -120,7 +120,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     var refreshControl: UIRefreshControl!
 
-    var savedIndex: IndexPath?
     var realmListing: RListing?
     var hasHeader = false
     var subLinks = [SubLinkItem]()
@@ -236,12 +235,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         first = false
         tableView.delegate = self
-
-        if savedIndex != nil {
-            tableView.reloadItems(at: [savedIndex!])
-        } else {
-            tableView.reloadData()
-        }
 
         if single {
             setupBaseBarColors()
@@ -716,6 +709,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     
     func loadBubbles() {
         self.subLinks.removeAll()
+        if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
+            return
+        }
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.getStyles(sub, completion: { (result) in
                 switch result {
@@ -2277,7 +2273,7 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
         return false
     }
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func markReadScroll() {
         if SettingValues.markReadOnScroll {
             let top = tableView.indexPathsForVisibleItems
             if !top.isEmpty {
@@ -2290,6 +2286,14 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
                 }
             }
         }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        markReadScroll()
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        markReadScroll()
     }
 }
 
@@ -2408,8 +2412,12 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
         for i in index ..< links.count {
             newLinks.append(links[i])
         }
-
-        let comment = PagingCommentViewController.init(submissions: newLinks, offline: self.offline)
+        let comment = PagingCommentViewController.init(submissions: newLinks, offline: self.offline, reloadCallback: { [weak self] in
+            if let strongSelf = self {
+                strongSelf.tableView.reloadData()
+            }
+            return true
+        })
         VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
@@ -2985,9 +2993,10 @@ public class LinksHeaderCellView: UICollectionViewCell {
             buttonBase.widthAnchor == finalWidth
             scroll.alwaysBounceHorizontal = true
             scroll.showsHorizontalScrollIndicator = false
-            self.contentView.addSubview(header)
 
             if hasHeader && del != nil {
+                self.contentView.addSubview(header)
+
                 let imageView = UIImageView()
                 imageView.contentMode = .scaleAspectFill
                 header.addSubview(imageView)
@@ -3008,8 +3017,6 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 imageView.sd_setImage(with: del!.headerImage!)
                 header.heightAnchor == 140
             } else {
-                header.heightAnchor == 38
-                header.horizontalAnchors == self.contentView.horizontalAnchors
                 scroll.topAnchor == self.contentView.topAnchor + 4
             }
             scroll.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))

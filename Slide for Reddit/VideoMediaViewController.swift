@@ -297,6 +297,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             youtubeView.webView?.stringByEvaluatingJavaScript(from: "player.unMute();")
             youtubeMute = false
         }
+        
         self.videoView.player?.isMuted = false
 
         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
@@ -501,6 +502,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.spinnerIndicator.stopAnimating()
         self.spinnerIndicator.isHidden = true
     }
+    
+    var lastTracks = false
     
     func getVideo(_ toLoad: String) {
         self.hideSpinner()
@@ -911,8 +914,9 @@ extension VideoMediaViewController {
             }
         }
 
-        if !setOnce {
+        if !setOnce || lastTracks != hasAudioTracks {
             setOnce = true
+            lastTracks = hasAudioTracks
             
             if hasAudioTracks {
                 if isYoutubeView ? !SettingValues.muteYouTube : !SettingValues.muteVideosInModal {
@@ -935,7 +939,6 @@ extension VideoMediaViewController {
             }
         }
         
-
         guard let player = videoView.player else {
             return
         }

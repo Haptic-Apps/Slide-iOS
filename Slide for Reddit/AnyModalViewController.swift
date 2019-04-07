@@ -605,6 +605,8 @@ class AnyModalViewController: UIViewController {
         }
     }
     
+    var lastTracks = false
+    
     func showSpinner() {
         spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = self.view.center
@@ -824,8 +826,9 @@ extension AnyModalViewController {
             }
         }
         
-        if !setOnce {
+        if !setOnce || lastTracks != hasAudioTracks {
             setOnce = true
+            lastTracks = hasAudioTracks
 
             if hasAudioTracks {
                 if !SettingValues.muteVideosInModal {

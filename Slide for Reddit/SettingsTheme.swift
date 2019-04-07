@@ -386,6 +386,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             colorString += (ColorUtil.foregroundColor.toHexString() + ColorUtil.backgroundColor.toHexString() + ColorUtil.fontColor.toHexString() + ColorUtil.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(ColorUtil.theme.isLight())).addPercentEncoding
             UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string).replacingOccurrences(of: "#", with: "<H>").addPercentEncoding)
             UserDefaults.standard.synchronize()
+            self.customThemes = UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("Theme+") })
             self.tableView.reloadData()
         }))
         
@@ -500,6 +501,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, b) in
             UserDefaults.standard.removeObject(forKey: self.customThemes[indexPath.row])
+            UserDefaults.standard.synchronize()
+            self.customThemes = UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("Theme+") })
             self.tableView.reloadData()
             b(true)
         }

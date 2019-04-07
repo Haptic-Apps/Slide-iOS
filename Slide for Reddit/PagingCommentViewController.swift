@@ -20,10 +20,12 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     }
     
     var offline = false
+    var reloadCallback: (() -> Bool)?
 
-    public init(submissions: [RSubmission], offline: Bool) {
+    public init(submissions: [RSubmission], offline: Bool, reloadCallback: @escaping () -> Bool) {
         self.submissions = submissions
         self.offline = offline
+        self.reloadCallback = reloadCallback
         for sub in submissions {
             self.vCs.append(sub)
         }
