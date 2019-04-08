@@ -313,7 +313,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func getSecondAction(left: Bool) -> SettingValues.CommentAction {
         return !left ? (SettingValues.commentActionLeftRight != .NONE ? SettingValues.commentActionLeftRight : SettingValues.commentActionLeftLeft) : (SettingValues.commentActionRightLeft != .NONE ? SettingValues.commentActionRightLeft : SettingValues.commentActionRightRight) //Setting is for right swipe, left here is right side. So needs to be flipped (!left)
     }
-
+    
     @objc func handlePan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began || progressBar == nil {
             dragCancelled = false

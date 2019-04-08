@@ -342,6 +342,23 @@ class ContentType {
         case TUMBLR = "Tumblr"
         case VID_ME = "Vid.me"
         case TABLE = "Table"
+        
+        func getImage() -> String {
+            switch self {
+            case .UNKNOWN, .LINK, .NONE, .SPOILER, .TABLE, .EMBEDDED:
+                return "world"
+            case .ALBUM, .DEVIANTART, .IMAGE, .IMGUR, .TUMBLR, .XKCD:
+                return "image"
+            case .EXTERNAL:
+                return "crosspost"
+            case .GIF, .STREAMABLE, .VIDEO, .VID_ME:
+                return "play"
+            case .REDDIT:
+                return "reddit"
+            case .SELF:
+                return "size"
+            }
+        }
     }
     
     static func getThumbnailType(submission: Link) -> ThumbnailType {

@@ -29,6 +29,7 @@ public class TextDisplayStackView: UIStackView {
     
     let firstTextView: YYLabel
     let overflow: UIStackView
+    let links: UIScrollView
     
     let fontSize: CGFloat
     let submission: Bool
@@ -53,6 +54,8 @@ public class TextDisplayStackView: UIStackView {
         self.firstTextView = YYLabel(frame: .zero)
         self.overflow = UIStackView()
         self.overflow.isUserInteractionEnabled = true
+        self.links = TouchUIScrollView()
+        self.links.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
@@ -102,7 +105,8 @@ public class TextDisplayStackView: UIStackView {
             $0.numberOfLines = 0
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         })
-
+        self.links = TouchUIScrollView()
+        self.links.isUserInteractionEnabled = true
         self.overflow = UIStackView().then({
             $0.accessibilityIdentifier = "Text overflow"
             $0.axis = .vertical
@@ -111,14 +115,14 @@ public class TextDisplayStackView: UIStackView {
         super.init(frame: CGRect.zero)
 
         self.axis = .vertical
-        self.addArrangedSubviews(firstTextView, overflow)
+        self.addArrangedSubviews(firstTextView, overflow, links)
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.isUserInteractionEnabled = true
 
         firstTextView.horizontalAnchors == self.horizontalAnchors
-        firstTextView.topAnchor == self.topAnchor
-        overflow.bottomAnchor == self.bottomAnchor
         overflow.horizontalAnchors == self.horizontalAnchors
+        links.horizontalAnchors == self.horizontalAnchors
+
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
@@ -195,6 +199,11 @@ public class TextDisplayStackView: UIStackView {
         
         removedSubviews.forEach({ $0.removeFromSuperview() })
         overflow.isHidden = true
+        
+        NSLayoutConstraint.deactivate(links.subviews.flatMap({ $0.constraints }))
+        
+        links.subviews.forEach({ $0.removeFromSuperview() })
+        links.isHidden = true
     }
     
     public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
@@ -278,6 +287,74 @@ public class TextDisplayStackView: UIStackView {
 
         }
         
+        let types: NSTextCheckingResult.CheckingType = .link
+        
+        let detector = try? NSDataDetector(types: types.rawValue)
+        
+        guard let detect = detector else {
+            return
+        }
+        
+        let matches = detect.matches(in: body?.string ?? "", options: .reportCompletion, range: NSMakeRange(0, (body?.string ?? "").count))
+        
+        let buttonBase = UIStackView().then {
+            $0.accessibilityIdentifier = "Content links"
+            $0.axis = .horizontal
+            $0.spacing = 8
+        }
+        
+        var finalWidth = CGFloat(8)
+        
+        if !matches.isEmpty {
+            for link in matches {
+                if let url = link.url {
+                    let type = ContentType.getContentType(baseUrl: url)
+                    let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
+                        $0.layer.cornerRadius = 12.5
+                        $0.clipsToBounds = true
+                        $0.setTitle("    \(url.host ?? url.absoluteString)", for: .normal)
+                        $0.setTitleColor(ColorUtil.fontColor, for: .normal)
+                        $0.setTitleColor(.white, for: .selected)
+                        $0.titleLabel?.textAlignment = .center
+                        $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.fontColor), for: .normal)
+                        //todo icon
+                        $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
+                        $0.backgroundColor = ColorUtil.foregroundColor
+                        $0.addTapGestureRecognizer(action: {
+                            self.delegate.linkTapped(url: url, text: "")
+                        })
+                    }
+                    
+                    view.layer.borderWidth = 1
+                    view.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.7).cgColor
+
+                    let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(35)
+                    
+                    view.heightAnchor == CGFloat(25)
+                    view.widthAnchor == widthS
+                    
+                    finalWidth += widthS
+                    finalWidth += 8
+                    
+                    buttonBase.addArrangedSubview(view)
+                }
+            }
+            
+            buttonBase.isUserInteractionEnabled = true
+            links.heightAnchor == CGFloat(30)
+            links.horizontalAnchors == self.horizontalAnchors
+            
+            links.addSubview(buttonBase)
+            links.isHidden = false
+            buttonBase.heightAnchor == CGFloat(30)
+            buttonBase.edgeAnchors == links.edgeAnchors
+            buttonBase.centerYAnchor == links.centerYAnchor
+            buttonBase.widthAnchor == finalWidth
+            links.alwaysBounceHorizontal = true
+            links.showsHorizontalScrollIndicator = false
+            links.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
+            estimatedHeight += 25
+        }
     }
     
     public func setData(htmlString: String) {
@@ -417,6 +494,7 @@ public class TextDisplayStackView: UIStackView {
                 label.heightAnchor == layout.textBoundingSize.height
             }
         }
+        
         overflow.setNeedsLayout()
     }
     
