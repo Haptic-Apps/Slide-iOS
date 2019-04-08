@@ -1460,7 +1460,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func animateMore() {
         loading = true
         
-        commentBody.setData(htmlString: "Loading...")
+        title.attributedText = TextDisplayStackView.createAttributedChunk(baseHTML: "Loading...", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
         //todo possibly animate?
     }
 

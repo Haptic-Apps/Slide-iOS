@@ -678,7 +678,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         case OTHER
 
         static func fromPath(_ url: String) -> VideoType {
-            if url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com") {
+            if url.contains(".mp4") || url.contains("webm") || url.contains("redditmedia.com") || (url.contains("preview.redd.it") && url.contains("format=mp4")) {
                 return VideoType.DIRECT
             }
             if url.contains("gfycat") && !url.contains("mp4") {

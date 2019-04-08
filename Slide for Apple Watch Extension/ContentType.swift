@@ -68,7 +68,7 @@ class ContentType {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
         
-        return hostContains(host: host, bases: ["gfycat.com", "v.redd.it"]) || (hostContains(host: host, bases: ["redditmedia.com", "imgur.com"]) && path.endsWith(".gif") || path.endsWith(".gifv") || path.endsWith(".webm")) || path.endsWith(".mp4")
+        return hostContains(host: host, bases: ["gfycat.com", "v.redd.it"]) || ((hostContains(host: host, bases: ["preview.redd.it", "external-preview.redd.it"]) && path.contains("format=mp4"))) || (hostContains(host: host, bases: ["redditmedia.com", "imgur.com"]) && path.endsWith(".gif") || path.endsWith(".gifv") || path.endsWith(".webm")) || path.endsWith(".mp4")
         
     }
     
