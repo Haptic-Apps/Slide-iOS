@@ -61,7 +61,8 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         }
         self.link = lnk
         let url = link.url!
-        
+        let type = ContentType.getContentType(submission: link)
+
         commentCallback = { () in
             let comment = CommentViewController.init(submission: self.link, single: true)
             VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
@@ -103,8 +104,6 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
             VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         }
-        
-        let type = ContentType.getContentType(submission: lnk)
         
         if type == .EXTERNAL {
             if #available(iOS 10.0, *) {

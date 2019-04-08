@@ -2483,18 +2483,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
-            var url = link.url
-            let type = ContentType.getContentType(submission: link)
-            if self is ThumbnailLinkCellView && (ContentType.displayVideo(t: type) && type != .VIDEO) {
-                var baseUrl = link.url
-                if !link.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link.url!) {
-                    baseUrl = URL.init(string: link.videoPreview)!
-                } else {
-                    baseUrl = link.url!
-                }
-                url = URL(string: VideoMediaViewController.format(sS: baseUrl!.absoluteString, true))
-            }
-            
             (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
