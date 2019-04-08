@@ -389,7 +389,8 @@ extension UIView {
     private struct AssociatedObjectKeys {
         static var tapGestureRecognizer = "tapGR"
         static var longTapGestureRecognizer = "longTapGR"
-
+        static var longTapGestureTimer = "longTapTimer"
+        static var longTapGestureCancelled = "longTapCancelled"
     }
 
     private typealias Action = (() -> Void)?
@@ -421,6 +422,32 @@ extension UIView {
         }
     }
 
+    private var timer: Timer? {
+        set {
+            if let newValue = newValue {
+                // Computed properties get stored as associated objects
+                objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureTimer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            }
+        }
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureTimer) as? Timer
+            return tapGestureRecognizerActionInstance
+        }
+    }
+
+    private var cancelled: Bool? {
+        set {
+            if let newValue = newValue {
+                // Computed properties get stored as associated objects
+                objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureCancelled, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            }
+        }
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureCancelled) as? Bool
+            return tapGestureRecognizerActionInstance
+        }
+    }
+
     // This is the meat of the sauce, here we create the tap gesture recognizer and
     // store the closure the user passed to us in the associated object we declared above
     public func addTapGestureRecognizer(action: (() -> Void)?) {
@@ -434,6 +461,7 @@ extension UIView {
         self.isUserInteractionEnabled = true
         self.longTapGestureRecognizerAction = action
         let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTapGesture))
+        tapGestureRecognizer.minimumPressDuration = 0.36
         self.addGestureRecognizer(tapGestureRecognizer)
     }
 
@@ -444,11 +472,36 @@ extension UIView {
             action?()
         }
     }
+    
+    @objc private func doLongGesture() {
+        timer?.invalidate()
+        if cancelled ?? false {
+            return
+        }
+        if let action = self.longTapGestureRecognizerAction {
+            if #available(iOS 10.0, *) {
+                HapticUtility.hapticActionStrong()
+            } else if SettingValues.hapticFeedback {
+                AudioServicesPlaySystemSound(1519)
+            }
+            action?()
+        }
+    }
 
     @objc private func handleLongTapGesture(sender: UITapGestureRecognizer) {
-        if sender.state == UIGestureRecognizer.State.ended {
-            if let action = self.longTapGestureRecognizerAction {
-                action?()
+        if sender.state == UIGestureRecognizer.State.began {
+            if sender.state == UIGestureRecognizer.State.began {
+                cancelled = false
+                timer = Timer.scheduledTimer(timeInterval: 0.36,
+                                             target: self,
+                                             selector: #selector(self.doLongGesture),
+                                             userInfo: nil,
+                                             repeats: false)
+                
+            }
+            if sender.state == UIGestureRecognizer.State.ended {
+                timer?.invalidate()
+                cancelled? = true
             }
         }
     }

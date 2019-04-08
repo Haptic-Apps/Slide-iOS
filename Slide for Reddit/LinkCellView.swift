@@ -1892,6 +1892,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var longBlocking = false
+    
     @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         if sender.state == UIGestureRecognizer.State.began {
             cancelled = false
