@@ -2841,7 +2841,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
 
             guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
-            let cellPoint = recognizer.location(in: cell.commentBody.overflow)
+            let cellPoint = recognizer.location(in: cell.commentBody)
             for view in cell.commentBody.subviews {
                 print("\(view.classForCoder): \(view.bounds)")
                 if (view is UIScrollView) && view.bounds.contains(cellPoint) {

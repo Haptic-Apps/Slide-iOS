@@ -303,7 +303,7 @@ public class TextDisplayStackView: UIStackView {
             $0.spacing = 8
         }
         
-        var finalWidth = CGFloat(8)
+        var finalWidth = CGFloat(0)
         
         if !matches.isEmpty {
             for link in matches {
@@ -340,19 +340,21 @@ public class TextDisplayStackView: UIStackView {
                 }
             }
             
+            finalWidth -= 8
+            
             buttonBase.isUserInteractionEnabled = true
-            links.heightAnchor == CGFloat(30)
+            links.heightAnchor == CGFloat(25)
             links.horizontalAnchors == self.horizontalAnchors
             
             links.addSubview(buttonBase)
             links.isHidden = false
-            buttonBase.heightAnchor == CGFloat(30)
+            buttonBase.heightAnchor == CGFloat(25)
             buttonBase.edgeAnchors == links.edgeAnchors
             buttonBase.centerYAnchor == links.centerYAnchor
             buttonBase.widthAnchor == finalWidth
             links.alwaysBounceHorizontal = true
             links.showsHorizontalScrollIndicator = false
-            links.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
+            links.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(25))
             estimatedHeight += 25
         }
     }
