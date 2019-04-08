@@ -84,7 +84,7 @@ class LinkParser {
                         }
                         
                         if let value = indexCallback?() {
-                            let positionString = NSMutableAttributedString.init(string: " †\(value)", attributes: [NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
+                            let positionString = NSMutableAttributedString.init(string: "†\(value)", attributes: [NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
                             string.insert(positionString, at: range.location + range.length)
                         }
                         

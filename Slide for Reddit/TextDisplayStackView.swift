@@ -215,7 +215,7 @@ public class TextDisplayStackView: UIStackView {
             allLinks.append(link)
         }
         let indexCallback: () -> Int = {
-            return allLinks.count + 1
+            return allLinks.count
         }
         if htmlString.contains("<table") || htmlString.contains("<pre><code") || htmlString.contains("<cite") {
             var blocks = TextDisplayStackView.getBlocks(htmlString)
@@ -266,7 +266,7 @@ public class TextDisplayStackView: UIStackView {
                         for attr in attrs {
                             if let url = attr.value as? URL {
                                 linkCallback(url)
-                                let positionString = NSMutableAttributedString.init(string: " †\(indexCallback())", attributes: [NSAttributedString.Key.foregroundColor: baseFontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
+                                let positionString = NSMutableAttributedString.init(string: "†\(indexCallback())", attributes: [NSAttributedString.Key.foregroundColor: baseFontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
                                 mutableBody.insert(positionString, at: range.location + range.length)
                                 break
                             }

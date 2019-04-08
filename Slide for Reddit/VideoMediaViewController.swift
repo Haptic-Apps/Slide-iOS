@@ -95,7 +95,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         volume.animation = .slideDown
         view.addSubview(volume)
         volume.delegate = self
-
+        
         if !((parent?.parent) is ShadowboxLinkViewController) {
             NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
@@ -1121,7 +1121,9 @@ extension VideoMediaViewController {
             }
         }))
         
-        //todo share video
+        alertController.addAction(Action(ActionData(title: "Share Video", image: UIImage(named: "play")!.menuIcon()), style: .default, handler: { _ in
+            self.shareVideo(baseURL, sender: sender)
+        }))
         
         if let topController = UIApplication.topViewController(base: self) {
             topController.present(alertController, animated: true, completion: nil)
@@ -1130,6 +1132,27 @@ extension VideoMediaViewController {
         }
     }
     
+    func shareVideo(_ baseURL: URL, sender: UIView) {
+        VideoMediaDownloader.init(urlToLoad: baseURL).getVideoWithCompletion(completion: { (fileURL) in
+            DispatchQueue.main.async {
+                if fileURL != nil {
+                    let shareItems: [Any] = [fileURL!]
+                    let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                    if let presenter = activityViewController.popoverPresentationController {
+                        presenter.sourceView = sender
+                        presenter.sourceRect = sender.bounds
+                    }
+                    let window = UIApplication.shared.keyWindow!
+                    if let modalVC = window.rootViewController?.presentedViewController {
+                        modalVC.present(activityViewController, animated: true, completion: nil)
+                    } else {
+                        window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                    }
+                }
+            }
+        }, parent: self)
+    }
+
     @objc func downloadVideoToLibrary(_ sender: AnyObject) {
         CustomAlbum.shared.saveMovieToLibrary(movieURL: URL(fileURLWithPath: getKeyFromURL()), parent: self)
     }

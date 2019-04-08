@@ -174,6 +174,10 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             tap.require(toFail: dtap)
             view.addGestureRecognizer(tap)
         }
+        
+        imageView.addLongTapGestureRecognizer {
+            self.shareImage(sender: self.menuButton)
+        }
 
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadImageToLibrary(_:)), for: .touchUpInside)
@@ -342,23 +346,26 @@ extension ImageMediaViewController {
         }))
 
         alertController.addAction(Action(ActionData(title: "Share image", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { _ in
-            let shareItems: Array = [self.imageView.image!]
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            if let presenter = activityViewController.popoverPresentationController {
-                presenter.sourceView = sender
-                presenter.sourceRect = sender.bounds
-            }
-            if let topController = UIApplication.topViewController(base: self) {
-                topController.present(activityViewController, animated: true, completion: nil)
-            } else {
-                self.present(activityViewController, animated: true, completion: nil)
-            }
+            self.shareImage(sender: sender)
         }))
         
         if let topController = UIApplication.topViewController(base: self) {
             topController.present(alertController, animated: true, completion: nil)
         } else {
             self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    func shareImage(sender: UIView) {
+        let shareItems: Array = [self.imageView.image!]
+        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        if let presenter = activityViewController.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        if let topController = UIApplication.topViewController(base: self) {
+            topController.present(activityViewController, animated: true, completion: nil)
+        } else {
+            self.present(activityViewController, animated: true, completion: nil)
         }
     }
 }

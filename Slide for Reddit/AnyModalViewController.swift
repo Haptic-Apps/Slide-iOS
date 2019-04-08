@@ -313,24 +313,7 @@ class AnyModalViewController: UIViewController {
             }
         }))
         alertController.addAction(Action(ActionData(title: "Share Video", image: UIImage(named: "play")!.menuIcon()), style: .default, handler: { _ in
-            VideoMediaDownloader.init(urlToLoad: baseURL).getVideoWithCompletion(completion: { (fileURL) in
-                DispatchQueue.main.async {
-                    if fileURL != nil {
-                        let shareItems: [Any] = [fileURL!]
-                        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                        if let presenter = activityViewController.popoverPresentationController {
-                            presenter.sourceView = sender
-                            presenter.sourceRect = sender.bounds
-                        }
-                        let window = UIApplication.shared.keyWindow!
-                        if let modalVC = window.rootViewController?.presentedViewController {
-                            modalVC.present(activityViewController, animated: true, completion: nil)
-                        } else {
-                            window.rootViewController!.present(activityViewController, animated: true, completion: nil)
-                        }
-                    }
-                }
-            }, parent: self)
+            self.shareVideo(baseURL, sender: sender)
         }))
 
         let window = UIApplication.shared.keyWindow!
@@ -340,7 +323,27 @@ class AnyModalViewController: UIViewController {
         } else {
             window.rootViewController!.present(alertController, animated: true, completion: nil)
         }
-
+    }
+    
+    func shareVideo(_ baseURL: URL, sender: UIView) {
+        VideoMediaDownloader.init(urlToLoad: baseURL).getVideoWithCompletion(completion: { (fileURL) in
+            DispatchQueue.main.async {
+                if fileURL != nil {
+                    let shareItems: [Any] = [fileURL!]
+                    let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                    if let presenter = activityViewController.popoverPresentationController {
+                        presenter.sourceView = sender
+                        presenter.sourceRect = sender.bounds
+                    }
+                    let window = UIApplication.shared.keyWindow!
+                    if let modalVC = window.rootViewController?.presentedViewController {
+                        modalVC.present(activityViewController, animated: true, completion: nil)
+                    } else {
+                        window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                    }
+                }
+            }
+        }, parent: self)
     }
     
     @objc func openComments(_ sender: AnyObject) {
