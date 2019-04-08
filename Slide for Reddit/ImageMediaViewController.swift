@@ -25,8 +25,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()
 
-    var presentedShare: UIViewController?
-
     var forceHD = false
 
     override func viewDidLoad() {
@@ -359,18 +357,16 @@ extension ImageMediaViewController {
     }
     
     func shareImage(sender: UIView) {
-        if presentedShare == nil {
-            let shareItems: Array = [self.imageView.image!]
-            presentedShare = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            if let presenter = presentedShare!.popoverPresentationController {
-                presenter.sourceView = sender
-                presenter.sourceRect = sender.bounds
-            }
-            if let topController = UIApplication.topViewController(base: self) {
-                topController.present(presentedShare!, animated: true, completion: nil)
-            } else {
-                self.present(presentedShare!, animated: true, completion: nil)
-            }
+        let shareItems: Array = [self.imageView.image!]
+        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        if let presenter = activityViewController.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        if let topController = UIApplication.topViewController(base: self) {
+            topController.present(activityViewController, animated: true, completion: nil)
+        } else {
+            self.present(activityViewController, animated: true, completion: nil)
         }
     }
 }

@@ -446,8 +446,10 @@ extension UIView {
     }
 
     @objc private func handleLongTapGesture(sender: UITapGestureRecognizer) {
-        if let action = self.longTapGestureRecognizerAction {
-            action?()
+        if sender.state == UIGestureRecognizer.State.ended {
+            if let action = self.longTapGestureRecognizerAction {
+                action?()
+            }
         }
     }
 }
