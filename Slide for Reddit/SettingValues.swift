@@ -119,7 +119,7 @@ class SettingValues {
     public static let pref_fullyHideNavbar = "FULLY_HIDE_NAVBAR"
     public static let pref_typeInTitle = "TYPE_IN_TITLE"
     public static let pref_muteYouTube = "MUTE_YOU_TUBE"
-    public static let pref_commentJumpButton = "COMMENT_JUMP_BUTTON"
+    public static let pref_commentJumpMode = "COMMENT_JUMP_MODE"
     public static let pref_alwaysShowHeader = "ALWAYS_SHOW_HEADER"
 
     public static let BROWSER_INTERNAL = "internal"
@@ -239,7 +239,7 @@ class SettingValues {
     public static var linkAlwaysThumbnail = false
     public static var autoKeyboard = true
     public static var appMode = AppMode.SINGLE
-    public static var commentJumpButton = true
+    public static var commentJumpButton = CommentJumpMode.RIGHT
     public static var alwaysShowHeader = false
 
     enum PostViewType: String {
@@ -426,6 +426,15 @@ class SettingValues {
             }
         }
         
+        if let sort = UserDefaults.standard.string(forKey: pref_commentJumpMode) {
+            for t in CommentJumpMode.cases {
+                if t.rawValue == sort {
+                    commentJumpButton = t
+                    break
+                }
+            }
+        }
+        
         SettingValues.hideImageSelftext = settings.object(forKey: SettingValues.pref_hideImageSelftext) == nil ? true : settings.bool(forKey: SettingValues.pref_hideImageSelftext)
 
         SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
@@ -451,7 +460,6 @@ class SettingValues {
         SettingValues.hideAutomod = settings.bool(forKey: SettingValues.pref_hideAutomod)
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
-        SettingValues.commentJumpButton = settings.object(forKey: SettingValues.pref_commentJumpButton) == nil ? true : settings.bool(forKey: SettingValues.pref_commentJumpButton)
         SettingValues.commentFullScreen = settings.object(forKey: SettingValues.pref_commentFullScreen) == nil ? !pad : settings.bool(forKey: SettingValues.pref_commentFullScreen)
         SettingValues.showLinkContentType = settings.object(forKey: SettingValues.pref_showLinkContentType) == nil ? true : settings.bool(forKey: SettingValues.pref_showLinkContentType)
         SettingValues.nameScrubbing = settings.bool(forKey: SettingValues.pref_nameScrubbing)
@@ -964,7 +972,6 @@ class SettingValues {
     }
 
     public enum AppMode: String {
-        
         public static let cases: [AppMode] = [.SPLIT, .SINGLE, .MULTI_COLUMN]
         
         case SPLIT = "split"
@@ -992,7 +999,26 @@ class SettingValues {
                 return "Multiple column display of submissions (requires Pro)"
             }
         }
+    }
 
+    public enum CommentJumpMode: String {
+        
+        public static let cases: [CommentJumpMode] = [.DISABLED, .LEFT, .RIGHT]
+        
+        case DISABLED = "disabled"
+        case LEFT = "left"
+        case RIGHT = "right"
+        
+        func getTitle() -> String {
+            switch self {
+            case .DISABLED:
+                return "Disabled"
+            case .LEFT:
+                return "Left side"
+            case .RIGHT:
+                return "Right side"
+            }
+        }
     }
 
 }

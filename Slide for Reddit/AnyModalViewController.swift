@@ -530,24 +530,16 @@ class AnyModalViewController: UIViewController {
         bottomButtons.addArrangedSubviews(goToCommentsButton, upvoteButton, UIView.flexSpace(), muteButton, downloadButton, menuButton)
     }
     
-    
     @objc func upvote(_ sender: AnyObject) {
         if upvoteCallback != nil {
             self.upvoteCallback!()
-            var viewToMove = videoView ?? self.view
-            var newFrame = viewToMove!.frame
-            newFrame.origin.y = -newFrame.size.height * 0.2
-            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-                viewToMove!.frame = newFrame
-                self.view.alpha = 0
-                self.dismiss(animated: true)
-            }) { (_) in
-            }
+            self.isUpvoted = !self.isUpvoted
+            self.upvoteButton.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
         }
     }
     
     @objc func exit() {
-        var viewToMove = videoView ?? self.view
+        let viewToMove = videoView ?? self.view
         var newFrame = viewToMove!.frame
         newFrame.origin.y = -newFrame.size.height * 0.2
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {

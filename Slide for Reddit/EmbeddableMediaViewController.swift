@@ -25,6 +25,7 @@ class EmbeddableMediaViewController: UIViewController {
     var contentType: ContentType.CType!
     var progressView: VerticalAlignedLabel = VerticalAlignedLabel()
     var bottomButtons = UIStackView()
+    var upvoteButton = UIButton()
 
     var commentCallback: (() -> Void)?
     var upvoteCallback: (() -> Void)?
@@ -140,20 +141,8 @@ extension EmbeddableMediaViewController {
     @objc func upvote(_ sender: AnyObject) {
         if upvoteCallback != nil {
             self.upvoteCallback!()
-            var viewToMove: UIView
-            if self is ImageMediaViewController {
-                viewToMove = (self as! ImageMediaViewController).imageView
-            } else {
-                viewToMove = (self as! VideoMediaViewController).isYoutubeView ? (self as! VideoMediaViewController).youtubeView : (self as! VideoMediaViewController).videoView
-            }
-            var newFrame = viewToMove.frame
-            newFrame.origin.y = -newFrame.size.height * 0.2
-            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
-                viewToMove.frame = newFrame
-                self.parent?.view.alpha = 0
-                self.dismiss(animated: true)
-            }) { (_) in
-            }
+            isUpvoted = !isUpvoted
+            self.upvoteButton.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
         }
     }
 }

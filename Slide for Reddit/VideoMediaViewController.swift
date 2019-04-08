@@ -57,7 +57,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var youtubeURL: URL?
 
     var goToCommentsButton = UIButton()
-    var upvoteButton = UIButton()
     var showTitleButton = UIButton()
 
     var scrubber = VideoScrubberView()

@@ -87,7 +87,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     func createJumpButton() {
-        if !SettingValues.commentJumpButton {
+        if SettingValues.commentJumpButton == .DISABLED {
             return
         }
         if self.navigationController?.view != nil {
@@ -108,11 +108,18 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 jump.addTapGestureRecognizer {
                     self.goDown(self.jump)
                 }
+                jump.addLongTapGestureRecognizer {
+                    self.goUp(self.jump)
+                }
             }
             
             view.addSubview(jump)
             jump.bottomAnchor == view.bottomAnchor - 24
-            jump.rightAnchor == view.rightAnchor - 24
+            if SettingValues.commentJumpButton == .RIGHT {
+                jump.rightAnchor == view.rightAnchor - 24
+            } else {
+                jump.leftAnchor == view.leftAnchor + 24
+            }
             jump.widthAnchor == 40
             jump.heightAnchor == 40
             jump.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
@@ -125,7 +132,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     func removeJumpButton() {
-        if !SettingValues.commentJumpButton {
+        if SettingValues.commentJumpButton == .DISABLED {
             return
         }
         if self.jump != nil {
@@ -582,6 +589,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if parent is PagingCommentViewController {
                 (parent as! PagingCommentViewController).reloadCallback?()
             }
+            CachedTitle.getTitle(submission: cell.link!, full: false, true)
         } catch {
 
         }
@@ -1479,8 +1487,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
             }))
 
-            alertController.addAction(Action(ActionData(title: "Collapse child comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
-                self.collapseAll()
+            alertController.addAction(Action(ActionData(title: allCollapsed ? "Expand child comments" : "Collapse child comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
+                if self.allCollapsed {
+                    self.expandAll()
+                } else {
+                    self.collapseAll()
+                }
             }))
 
             VCPresenter.presentAlert(alertController, parentVC: self)
@@ -1488,6 +1500,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     var sub: String = ""
+    var allCollapsed = false
 
     var subInfo: Subreddit?
 
@@ -1711,6 +1724,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        self.goingToCell = false
+        self.isGoingDown = false
+    }
+    
+    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         self.goingToCell = false
         self.isGoingDown = false
     }
@@ -1985,6 +2003,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     func collapseAll() {
+        self.allCollapsed = true
         if dataArray.count > 0 {
             for i in 0...dataArray.count - 1 {
                 if content[dataArray[i]] is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS) {
@@ -1993,6 +2012,24 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     let id = (t is RComment) ? (t as! RComment).getIdentifier() : (t as! RMore).getIdentifier()
                     if !hiddenPersons.contains(id) {
                         hiddenPersons.insert(id)
+                    }
+                }
+            }
+            doArrays()
+            tableView.reloadData()
+        }
+    }
+    
+    func expandAll() {
+        self.allCollapsed = false
+        if dataArray.count > 0 {
+            for i in 0...dataArray.count - 1 {
+                if content[dataArray[i]] is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS) {
+                    _ = unhideNumber(n: dataArray[i], iB: i)
+                    let t = content[dataArray[i]]
+                    let id = (t is RComment) ? (t as! RComment).getIdentifier() : (t as! RMore).getIdentifier()
+                    if hiddenPersons.contains(id) {
+                        hiddenPersons.remove(id)
                     }
                 }
             }
@@ -2245,7 +2282,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
                     self.headerCell!.contentView.frame = frame
                     self.tableView.tableHeaderView!.frame = frame
-                    self.tableView.reloadData(with: .none)
+                    //self.tableView.reloadData(with: .none)
                     self.doHeadView(size)
                     self.view.setNeedsLayout()
                 }

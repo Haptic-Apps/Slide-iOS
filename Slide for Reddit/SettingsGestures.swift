@@ -182,7 +182,7 @@ class SettingsGestures: UITableViewController {
         let alertController: BottomSheetActionController = BottomSheetActionController()
         alertController.headerData = "Select a submission gesture"
         for action in SettingValues.SubmissionAction.cases {
-            alertController.addAction(Action(ActionData(title: action == .NONE ? "Peek content" : action.getTitle(), image: action == .NONE ? UIImage(named: "fullscreen")!.menuIcon() : UIImage(named: action.getPhoto())!.menuIcon() ), style: .default, handler: { _ in
+            alertController.addAction(Action(ActionData(title: action == .NONE && cell == forceTouchSubmissionCell ? "Peek content" : action.getTitle(), image: action == .NONE && cell == forceTouchSubmissionCell ? UIImage(named: "fullscreen")!.menuIcon() : UIImage(named: action.getPhoto())!.menuIcon() ), style: .default, handler: { _ in
                 if cell == self.doubleTapSubActionCell {
                     SettingValues.submissionActionDoubleTap = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionDoubleTap)

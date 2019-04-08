@@ -39,7 +39,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             
             readLaterBadge!.text = "\(count)"
             readLaterBadge!.insets = CGSize.zero
-            readLaterBadge!.font = UIFont.systemFont(ofSize: 12)
+            readLaterBadge!.font = UIFont.boldSystemFont(ofSize: 10)
             readLaterBadge!.textColor = SettingValues.reduceColor ? ColorUtil.navIconColor : UIColor.white
             readLaterBadge!.badgeColor = .clear
             readLaterBadge!.shadowOpacityBadge = 0

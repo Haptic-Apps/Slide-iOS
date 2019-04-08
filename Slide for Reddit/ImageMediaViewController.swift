@@ -21,8 +21,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     var menuButton = UIButton()
     var downloadButton = UIButton()
-    var upvoteButton = UIButton()
-
     var viewInHDButton = UIButton()
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()

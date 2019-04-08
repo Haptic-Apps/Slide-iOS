@@ -959,16 +959,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     internal func layoutForType() {
-        
         thumbImageContainer.isHidden = true
         bannerImage.isHidden = true
         
         // Remove all constraints previously applied by this method
         NSLayoutConstraint.deactivate(constraintsForType)
         constraintsForType = []
-        
         // Deriving classes will populate constraintsForType in the override for this method.
-        
     }
     
     internal func layoutForContent() {
@@ -1094,7 +1091,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
    // var titleAttrs: [NSLayoutConstraint] = []
-    
+    var oldBounds = CGSize.zero
     func refreshTitle(np: Bool = false, force: Bool = false) {
         guard let link = self.link else {
             return
@@ -1102,9 +1099,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         let attText = CachedTitle.getTitle(submission: link, full: full, force, false)
         let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
-        title.textLayout = bounds
-        title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
-        title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
+        if oldBounds.width != bounds.textBoundingSize.width || oldBounds.height != bounds.textBoundingSize.height {
+            oldBounds = bounds.textBoundingSize
+            title.textLayout = bounds
+            title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
+            title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
+        }
         title.attributedText = attText
         /*title.removeConstraints(titleAttrs)
         titleAttrs = batch {

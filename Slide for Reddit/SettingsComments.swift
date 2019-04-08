@@ -26,10 +26,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var floatingJumpCell: UITableViewCell = UITableViewCell()
-    var floatingJump = UISwitch().then {
-        $0.onTintColor = ColorUtil.baseAccent
-    }
+    var floatingJumpCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "jump")
 
     var collapseDefaultCell: UITableViewCell = UITableViewCell()
     var collapseDefault = UISwitch().then {
@@ -87,9 +84,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         } else if changed == collapseDefault {
             SettingValues.collapseDefault = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_collapseDefault)
-        } else if changed == floatingJump {
-            SettingValues.commentJumpButton = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_commentJumpButton)
         } else if changed == swapLongPress {
             SettingValues.swapLongPress = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_swapLongPress)
@@ -133,7 +127,31 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             showAuthorChooser()
         } else if indexPath.section == 1 && indexPath.row == 1 {
             showDepthChooser()
+        } else if indexPath.section == 0 && indexPath.row == 2 {
+            showJumpChooser()
         }
+    }
+    
+    func showJumpChooser() {
+        let actionSheetController: UIAlertController = UIAlertController(title: "Floating jump button mode", message: "Tip: long pressing jumps up!", preferredStyle: .actionSheet)
+        
+        actionSheetController.addCancelButton()
+        
+        for t in SettingValues.CommentJumpMode.cases {
+            let saveActionButton: UIAlertAction = UIAlertAction(title: t.getTitle(), style: .default) { _ -> Void in
+                SettingValues.commentJumpButton = t
+                UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_commentJumpMode)
+                self.floatingJumpCell.detailTextLabel?.text = t.getTitle()
+            }
+            actionSheetController.addAction(saveActionButton)
+        }
+        
+        if let presenter = actionSheetController.popoverPresentationController {
+            presenter.sourceView = floatingJumpCell.contentView
+            presenter.sourceRect = floatingJumpCell.contentView.bounds
+        }
+        
+        self.present(actionSheetController, animated: true, completion: nil)
     }
     
     func setDepthColors(_ colors: [UIColor]) {
@@ -313,7 +331,10 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments with a purple depth indicator")
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
         createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Move top AutoModerator comment to a button (if it is not your submission)")
-        createCell(floatingJumpCell, floatingJump, isOn: SettingValues.commentJumpButton, text: "Show floating jump button when bottom toolbar is collapsed")
+        createCell(floatingJumpCell, nil, isOn: false, text: "Floating jump button")
+        floatingJumpCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        floatingJumpCell.detailTextLabel?.numberOfLines = 0
+        floatingJumpCell.detailTextLabel?.text = SettingValues.commentJumpButton.getTitle()
 
         updateThemeCell()
         updateDepthsCell()
