@@ -24,8 +24,12 @@ class CodeDisplayView: UIScrollView {
     var baseColor: UIColor
     var baseLabel: UILabel
     var globalHeight: CGFloat
+    var linksCallback: ((URL) -> Void)?
+    var indexCallback: (() -> Int)?
     
-    init(baseHtml: String, color: UIColor) {
+    init(baseHtml: String, color: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) {
+        self.linksCallback = linksCallback
+        self.indexCallback = indexCallback
         self.baseColor = color
         globalHeight = CGFloat(0)
         baseLabel = UILabel()
@@ -46,7 +50,7 @@ class CodeDisplayView: UIScrollView {
             }
             let baseHtml = DTHTMLAttributedStringBuilder.init(html: string.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: baseColor, DTDefaultFontFamily: "Courier", DTDefaultFontSize: FontGenerator.fontOfSize(size: 16, submission: false).pointSize, DTDefaultFontName: "Courier"], documentAttributes: nil).generatedAttributedString()!
             let attr = NSMutableAttributedString(attributedString: baseHtml)
-            let cell = LinkParser.parse(attr, baseColor, font: UIFont(name: "Courier", size: 16)!, fontColor: ColorUtil.fontColor)
+            let cell = LinkParser.parse(attr, baseColor, font: UIFont(name: "Courier", size: 16)!, fontColor: ColorUtil.fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
             baseData.append(cell)
         }
     }

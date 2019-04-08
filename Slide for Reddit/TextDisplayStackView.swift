@@ -210,6 +210,13 @@ public class TextDisplayStackView: UIStackView {
         estimatedHeight = 0
         clearOverflow()
         
+        var allLinks = [URL]()
+        let linkCallback = { link in
+            allLinks.append(link)
+        }
+        let indexCallback: () -> Int = {
+            return allLinks.count + 1
+        }
         if htmlString.contains("<table") || htmlString.contains("<pre><code") || htmlString.contains("<cite") {
             var blocks = TextDisplayStackView.getBlocks(htmlString)
             
@@ -221,7 +228,7 @@ public class TextDisplayStackView: UIStackView {
                     if !newTitle.string.trimmed().isEmpty {
                         newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                     }
-                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], accent: tColor))
+                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], accent: tColor, linksCallback: linkCallback, indexCallback: indexCallback))
                 }
                 startIndex = 1
             }
@@ -241,24 +248,37 @@ public class TextDisplayStackView: UIStackView {
             
             if blocks.count > 1 {
                 if startIndex == 0 {
-                    setViews(blocks)
+                    setViews(blocks, linksCallback: linkCallback, indexCallback: indexCallback)
                 } else {
                     blocks.remove(at: 0)
-                    setViews(blocks)
+                    setViews(blocks, linksCallback: linkCallback, indexCallback: indexCallback)
                 }
             }
         } else {
             let newTitle = NSMutableAttributedString(attributedString: title)
             if body != nil {
+                let mutableBody = NSMutableAttributedString(attributedString: body!)
                 if !newTitle.string.trimmed().isEmpty {
                     newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 }
-                newTitle.append(body!)
+                if allLinks.isEmpty && body != nil {
+                    mutableBody.enumerateAttributes(in: NSRange.init(location: 0, length: body!.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                        for attr in attrs {
+                            if let url = attr.value as? URL {
+                                linkCallback(url)
+                                let positionString = NSMutableAttributedString.init(string: " †\(indexCallback())", attributes: [NSAttributedString.Key.foregroundColor: baseFontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
+                                mutableBody.insert(positionString, at: range.location + range.length)
+                                break
+                            }
+                        }
+                    })
+                }
+                newTitle.append(mutableBody)
             } else if !htmlString.isEmpty() {
                 if !newTitle.string.trimmed().isEmpty {
                     newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 }
-                newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor))
+                newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor, linksCallback: linkCallback, indexCallback: indexCallback))
             }
             
 //            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
@@ -287,57 +307,46 @@ public class TextDisplayStackView: UIStackView {
 
         }
         
-        let types: NSTextCheckingResult.CheckingType = .link
-        
-        let detector = try? NSDataDetector(types: types.rawValue)
-        
-        guard let detect = detector else {
-            return
-        }
-        
-        let matches = detect.matches(in: body?.string ?? "", options: .reportCompletion, range: NSMakeRange(0, (body?.string ?? "").count))
-        
-        let buttonBase = UIStackView().then {
-            $0.accessibilityIdentifier = "Content links"
-            $0.axis = .horizontal
-            $0.spacing = 8
-        }
-        
-        var finalWidth = CGFloat(0)
-        
-        if !matches.isEmpty {
-            for link in matches {
-                if let url = link.url {
-                    let type = ContentType.getContentType(baseUrl: url)
-                    let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
-                        $0.layer.cornerRadius = 12.5
-                        $0.clipsToBounds = true
-                        $0.setTitle("    \(url.host ?? url.absoluteString)", for: .normal)
-                        $0.setTitleColor(ColorUtil.fontColor, for: .normal)
-                        $0.setTitleColor(.white, for: .selected)
-                        $0.titleLabel?.textAlignment = .center
-                        $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.fontColor), for: .normal)
-                        //todo icon
-                        $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
-                        $0.backgroundColor = ColorUtil.foregroundColor
-                        $0.addTapGestureRecognizer(action: {
-                            self.delegate.linkTapped(url: url, text: "")
-                        })
-                    }
-                    
-                    view.layer.borderWidth = 1
-                    view.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.7).cgColor
-
-                    let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(35)
-                    
-                    view.heightAnchor == CGFloat(25)
-                    view.widthAnchor == widthS
-                    
-                    finalWidth += widthS
-                    finalWidth += 8
-                    
-                    buttonBase.addArrangedSubview(view)
+        if !allLinks.isEmpty {
+            let buttonBase = UIStackView().then {
+                $0.accessibilityIdentifier = "Content links"
+                $0.axis = .horizontal
+                $0.spacing = 8
+            }
+            
+            var finalWidth = CGFloat(0)
+            var counter = 1
+            for url in allLinks {
+                let type = ContentType.getContentType(baseUrl: url)
+                let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
+                    $0.layer.cornerRadius = 12.5
+                    $0.clipsToBounds = true
+                    $0.setTitle("    \(counter): \(url.host ?? url.absoluteString)", for: .normal)
+                    $0.setTitleColor(ColorUtil.fontColor, for: .normal)
+                    $0.setTitleColor(.white, for: .selected)
+                    $0.titleLabel?.textAlignment = .center
+                    $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.fontColor), for: .normal)
+                    //todo icon
+                    $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
+                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.addTapGestureRecognizer(action: {
+                        self.delegate.linkTapped(url: url, text: "")
+                    })
+                    counter += 1
                 }
+                
+                view.layer.borderWidth = 1
+                view.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.7).cgColor
+
+                let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(35)
+                
+                view.heightAnchor == CGFloat(25)
+                view.widthAnchor == widthS
+                
+                finalWidth += widthS
+                finalWidth += 8
+                
+                buttonBase.addArrangedSubview(view)
             }
             
             finalWidth -= 8
@@ -369,7 +378,7 @@ public class TextDisplayStackView: UIStackView {
         var startIndex = 0
         
         if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<pre><code>") {
-            let text = createAttributedChunk(baseHTML: blocks[0], accent: tColor)
+            let text = createAttributedChunk(baseHTML: blocks[0], accent: tColor, linksCallback: nil, indexCallback: nil)
             
             if !activeSet {
                 activeSet = true
@@ -397,15 +406,15 @@ public class TextDisplayStackView: UIStackView {
         
         if blocks.count > 1 {
             if startIndex == 0 {
-                setViews(blocks)
+                setViews(blocks, linksCallback: nil, indexCallback: nil)
             } else {
                 blocks.remove(at: 0)
-                setViews(blocks)
+                setViews(blocks, linksCallback: nil, indexCallback: nil)
             }
         }
     }
     
-    func setViews(_ blocks: [String]) {
+    func setViews(_ blocks: [String], linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) {
         if !blocks.isEmpty {
             overflow.isHidden = false
         }
@@ -413,7 +422,7 @@ public class TextDisplayStackView: UIStackView {
         for block in blocks {
             estimatedHeight += 8
             if block.startsWith("<table>") {
-                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, action: self.touchLinkAction, longAction: self.longTouchLinkAction)
+                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, action: self.touchLinkAction, longAction: self.longTouchLinkAction, linksCallback: linksCallback, indexCallback: indexCallback)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
@@ -433,7 +442,7 @@ public class TextDisplayStackView: UIStackView {
                 line.heightAnchor == CGFloat(1)
                 line.horizontalAnchors == overflow.horizontalAnchors
             } else if block.startsWith("<pre><code>") {
-                let body = CodeDisplayView.init(baseHtml: block, color: baseFontColor)
+                let body = CodeDisplayView.init(baseHtml: block, color: baseFontColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors == overflow.horizontalAnchors
@@ -447,7 +456,7 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<cite>") {
                 let label = YYLabel(frame: .zero)
                 label.accessibilityIdentifier = "Quote"
-                let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed(), accent: tColor)
+                let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed(), accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 label.alpha = 0.7
                 label.numberOfLines = 0
                 label.lineBreakMode = .byWordWrapping
@@ -475,7 +484,7 @@ public class TextDisplayStackView: UIStackView {
                 baseView.horizontalAnchors == overflow.horizontalAnchors
                 baseView.heightAnchor == layout.textBoundingSize.height
             } else {
-                let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor)
+                let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 let label = YYLabel(frame: CGRect.zero).then {
                     $0.accessibilityIdentifier = "Paragraph"
                     $0.numberOfLines = 0
@@ -500,12 +509,12 @@ public class TextDisplayStackView: UIStackView {
         overflow.setNeedsLayout()
     }
     
-    public func createAttributedChunk(baseHTML: String, accent: UIColor) -> NSAttributedString {
-        return TextDisplayStackView.createAttributedChunk(baseHTML: baseHTML, fontSize: fontSize, submission: submission, accentColor: accent, fontColor: baseFontColor)
+    public func createAttributedChunk(baseHTML: String, accent: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSAttributedString {
+        return TextDisplayStackView.createAttributedChunk(baseHTML: baseHTML, fontSize: fontSize, submission: submission, accentColor: accent, fontColor: baseFontColor, linksCallback: linksCallback, indexCallback: indexCallback)
     }
     
     public static func
-        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor) -> NSAttributedString {
+        createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>").replacingOccurrences(of: "<code>", with: "<font color=\"blue\">").replacingOccurrences(of: "</code>", with: "</font>")
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
@@ -523,7 +532,7 @@ public class TextDisplayStackView: UIStackView {
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
         }
         
-        return LinkParser.parse(html, accentColor, font: font, fontColor: fontColor)
+        return LinkParser.parse(html, accentColor, font: font, fontColor: fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
     }
     
 //    public func link(at: CGPoint, withTouch: UITouch) -> TTTAttributedLabelLink? {
@@ -677,7 +686,7 @@ public class TextDisplayStackView: UIStackView {
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<pre><code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
                     newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
-                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white))
+                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil))
                 }
                 startIndex = 1
             }
@@ -697,7 +706,7 @@ public class TextDisplayStackView: UIStackView {
             let newTitle = NSMutableAttributedString(attributedString: titleString)
             if !htmlString.isEmpty() {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
-                newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white))
+                newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil))
             }
             
             let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
@@ -713,10 +722,10 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<hr/>") {
                 totalHeight += 1
             } else if block.startsWith("<pre><code>") {
-                let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor)
+                let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
                 totalHeight += body.globalHeight
             } else {
-                let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white)
+                let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil)
                 let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
                 let layout = YYTextLayout(containerSize: size, text: text)!
                 let textSize = layout.textBoundingSize

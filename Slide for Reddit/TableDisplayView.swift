@@ -27,8 +27,12 @@ class TableDisplayView: UIScrollView {
     var tColor: UIColor
     var action: YYTextAction?
     var longAction: YYTextAction?
-
-    init(baseHtml: String, color: UIColor, accentColor: UIColor, action: YYTextAction?, longAction: YYTextAction?) {
+    var linksCallback: ((URL) -> Void)?
+    var indexCallback: (() -> Int)?
+    
+    init(baseHtml: String, color: UIColor, accentColor: UIColor, action: YYTextAction?, longAction: YYTextAction?, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) {
+        self.linksCallback = linksCallback
+        self.indexCallback = indexCallback
         let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
@@ -105,7 +109,7 @@ class TableDisplayView: UIScrollView {
                     currentString = currentString.substring(index! + 1, length: currentString.length - index! - 1)
                 }
                 columnStarted = false
-                currentRow.append(TextDisplayStackView.createAttributedChunk(baseHTML: currentString.trimmed(), fontSize: CGFloat((isHeader ? 3 : 0) + 16 ), submission: false, accentColor: tColor, fontColor: baseColor))
+                currentRow.append(TextDisplayStackView.createAttributedChunk(baseHTML: currentString.trimmed(), fontSize: CGFloat((isHeader ? 3 : 0) + 16 ), submission: false, accentColor: tColor, fontColor: baseColor, linksCallback: linksCallback, indexCallback: indexCallback))
                 currentString = ""
             } else {
                 currentString.append(current)

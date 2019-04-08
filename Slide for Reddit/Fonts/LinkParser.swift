@@ -11,7 +11,7 @@ import YYText
 import UIKit
 
 class LinkParser {
-    public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, fontColor: UIColor) -> NSMutableAttributedString {
+    public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSMutableAttributedString {
         let string = NSMutableAttributedString.init(attributedString: attributedString)
         string.removeAttribute(convertToNSAttributedStringKey(kCTForegroundColorFromContextAttributeName as String), range: NSRange.init(location: 0, length: string.length))
         if string.length > 0 {
@@ -41,6 +41,7 @@ class LinkParser {
                             string.setAttributes([NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key(rawValue: YYTextStrikethroughAttributeName): YYTextDecoration(style: YYTextLineStyle.single, width: 1, color: fontColor), NSAttributedString.Key.font: font], range: range)
                         }
                     } else if let url = attr.value as? URL {
+                        linksCallback?(url)
                         if SettingValues.enlargeLinks {
                             string.addAttribute(NSAttributedString.Key.font, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
                         }
@@ -80,6 +81,11 @@ class LinkParser {
                             }
                             string.insert(typeString, at: range.location + range.length)
                             string.addAttributes(convertToNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]), range: NSRange.init(location: range.location + range.length, length: typeString.length))
+                        }
+                        
+                        if let value = indexCallback?() {
+                            let positionString = NSMutableAttributedString.init(string: " †\(value)", attributes: [NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
+                            string.insert(positionString, at: range.location + range.length)
                         }
                         
                         string.yy_setTextHighlight(range, color: color, backgroundColor: nil, userInfo: ["url": url])

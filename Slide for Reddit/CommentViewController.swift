@@ -1585,10 +1585,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 first = false
             }
             if let comment = thing.0 as? Comment {
-                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.fontColor)
+                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
-                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.fontColor)
+                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
             }
         }
     }
@@ -1600,10 +1600,10 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         for thing in newComments {
             if let comment = thing as? RComment {
                 let html = comment.htmlText
-                self.text[comment.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.fontColor)
+                self.text[comment.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
-                self.text[(thing as! RMore).getIdentifier()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.fontColor)
+                self.text[(thing as! RMore).getIdentifier()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
             }
 
         }

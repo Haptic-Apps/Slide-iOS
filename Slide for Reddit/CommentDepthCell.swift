@@ -1426,9 +1426,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         var attr = NSAttributedString()
         if more.children.isEmpty {
-            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Continue thread</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.fontColor)
+            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Continue thread</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
         } else {
-            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Load \(more.count) more</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.fontColor)
+            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Load \(more.count) more</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
         }
         
         title.attributedText = attr

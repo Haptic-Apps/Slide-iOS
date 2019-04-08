@@ -317,7 +317,7 @@ class CachedTitle {
 
             if !text.isEmpty() {
                 infoString.append(NSAttributedString.init(string: "\n\n"))
-                infoString.append(TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit), fontColor: ColorUtil.fontColor))
+                infoString.append(TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit), fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil))
             }
         }
         return infoString

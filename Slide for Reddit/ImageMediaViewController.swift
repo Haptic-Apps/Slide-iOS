@@ -299,7 +299,7 @@ extension ImageMediaViewController {
         alert.setupTheme()
         alert.attributedTitle = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         
-        alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: data.text!.trimmed(), fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor)
+        alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: data.text!.trimmed(), fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
         
         alert.addCloseButton()
         alert.addBlurView()
