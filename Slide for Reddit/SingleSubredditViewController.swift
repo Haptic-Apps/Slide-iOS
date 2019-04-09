@@ -937,28 +937,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     func doDisplayMultiSidebar(_ sub: Multireddit) {
-        let alrController = UIAlertController(title: sub.displayName, message: sub.descriptionMd, preferredStyle: UIAlertController.Style.alert)
-        for s in sub.subreddits {
-            let somethingAction = UIAlertAction(title: "r/" + s, style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
-                VCPresenter.showVC(viewController: SingleSubredditViewController.init(subName: s, single: true), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-            })
-            let color = ColorUtil.getColorForSub(sub: s)
-            if color != ColorUtil.baseColor {
-                somethingAction.setValue(color, forKey: "titleTextColor")
-            }
-            alrController.addAction(somethingAction)
-
-        }
-        //var somethingAction = UIAlertAction(title: "Edit multireddit", style: UIAlertActionStyle.default, handler: { (_: UIAlertAction!) in print("something") })
-        //alrController.addAction(somethingAction)
-
-        //somethingAction = UIAlertAction(title: "Delete multireddit", style: UIAlertActionStyle.destructive, handler: { (_: UIAlertAction!) in print("something") })
-        //alrController.addAction(somethingAction)
-
-        alrController.addCancelButton()
-
-        //todo make this work on ipad
-        self.present(alrController, animated: true, completion: {})
+        VCPresenter.presentModally(viewController: ManageMultireddit(multi: sub, reloadCallback: {
+            self.refresh()
+        }), self)
     }
 
     @objc func subscribeSingle(_ selector: AnyObject) {
@@ -998,7 +979,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     func displayMultiredditSidebar() {
         do {
-            print("Getting \(sub.substring(3, length: sub.length - 3))")
             try (UIApplication.shared.delegate as! AppDelegate).session?.getMultireddit(Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName), completion: { (result) in
                 switch result {
                 case .success(let r):

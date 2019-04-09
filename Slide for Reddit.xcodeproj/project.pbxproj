@@ -202,6 +202,7 @@
 		BE42B6F320CE01BD00607A54 /* IAPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42B6F220CE01BD00607A54 /* IAPHandler.swift */; };
 		BE44B5841FFAC5FE00D3F6D5 /* BottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */; };
 		BE44B5881FFAC66100D3F6D5 /* BSCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE44B5861FFAC66100D3F6D5 /* BSCell.xib */; };
+		BE47AF71225C574700A61FB0 /* ManageMultireddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */; };
 		BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE51BE6420C7386A00DFFD8B /* StoreKit.framework */; };
 		BE5466271FB93F46007ADD22 /* PlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */; };
 		BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5E53741E1DAEB7004FE226 /* RedditLink.swift */; };
@@ -591,6 +592,7 @@
 		BE42B6F220CE01BD00607A54 /* IAPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandler.swift; sourceTree = "<group>"; };
 		BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetController.swift; sourceTree = "<group>"; };
 		BE44B5861FFAC66100D3F6D5 /* BSCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BSCell.xib; sourceTree = "<group>"; };
+		BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageMultireddit.swift; sourceTree = "<group>"; };
 		BE51BE6420C7386A00DFFD8B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderViewController.swift; sourceTree = "<group>"; };
 		BE5E53741E1DAEB7004FE226 /* RedditLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedditLink.swift; sourceTree = "<group>"; };
@@ -1251,6 +1253,7 @@
 				BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */,
 				BE8AE94221F9225000E1C0D1 /* Main.storyboard */,
 				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
+				BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -2061,6 +2064,7 @@
 				BE6EA6CA1E1C1E9400E9E709 /* Files.swift in Sources */,
 				BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */,
 				BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */,
+				BE47AF71225C574700A61FB0 /* ManageMultireddit.swift in Sources */,
 				BE8FCA081E0C46090063B8EF /* AppDelegate.swift in Sources */,
 				BE6EA6D81E1C1FC700E9E709 /* Progress.swift in Sources */,
 				BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */,
