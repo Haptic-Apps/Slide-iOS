@@ -116,6 +116,20 @@ class RedditLink {
         case .SUBREDDIT:
             return SingleSubredditViewController.init(subName: parts[2], single: true)
         case .MESSAGE:
+            var to = ""
+            var subject = ""
+            var message = ""
+            
+            if let q = urlS.queryDictionary["to"] {
+                to = q.removingPercentEncoding?.removingPercentEncoding ?? q
+            }
+            if let q = urlS.queryDictionary["subject"] {
+                subject = q.removingPercentEncoding?.removingPercentEncoding ?? q
+            }
+            if let q = urlS.queryDictionary["message"] {
+                message = q.removingPercentEncoding?.removingPercentEncoding ?? q
+            }
+
             return ReplyViewController.init(name: "/r/\(parts[parts.count - 1])", completion: { (_) in
             })
         case .USER:

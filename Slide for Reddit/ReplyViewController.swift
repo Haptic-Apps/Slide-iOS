@@ -57,6 +57,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var distinguish: UIStateButton?
     var sticky: UIStateButton?
     var info: UIStateButton?
+    
+    var subject: String?
+    var message: String?
 
     var subreddit = ""
     var canMod = false
@@ -100,6 +103,15 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     //New message with sub colors
     convenience init(name: String, completion: @escaping(String?) -> Void) {
         self.init(completion: completion)
+        self.username = name
+        setBarColors(color: ColorUtil.getColorForUser(name: name))
+    }
+    
+    //New message with sub colors
+    convenience init(name: String, subject: String, message: String, completion: @escaping(String?) -> Void) {
+        self.init(completion: completion)
+        self.subject = subject
+        self.message = message
         self.username = name
         setBarColors(color: ColorUtil.getColorForUser(name: name))
     }
@@ -717,6 +729,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.delegate = self
                 })
                 
+                if subject != nil {
+                    text1.text = subject!
+                }
+                
+                if message != nil {
+                    text3.text = message!
+                }
+
                 stack.addArrangedSubviews(text1, text2, text3)
                 text1.horizontalAnchors == stack.horizontalAnchors + CGFloat(8)
                 text1.heightAnchor >= CGFloat(70)
