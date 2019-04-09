@@ -130,7 +130,7 @@ class RedditLink {
                 message = q.removingPercentEncoding?.removingPercentEncoding ?? q
             }
 
-            return ReplyViewController.init(name: "/r/\(parts[parts.count - 1])", completion: { (_) in
+            return ReplyViewController.init(name: to, subject: subject, message: message, completion: { (_) in
             })
         case .USER:
             return ProfileViewController.init(name: parts[2])

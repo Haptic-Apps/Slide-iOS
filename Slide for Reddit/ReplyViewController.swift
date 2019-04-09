@@ -110,9 +110,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     //New message with sub colors
     convenience init(name: String, subject: String, message: String, completion: @escaping(String?) -> Void) {
         self.init(completion: completion)
-        self.subject = subject
-        self.message = message
-        self.username = name
+        self.subject = subject.isEmpty ? nil : subject
+        self.message = message.isEmpty ? nil : message
+        self.username = name.isEmpty ? nil : name
         setBarColors(color: ColorUtil.getColorForUser(name: name))
     }
 
