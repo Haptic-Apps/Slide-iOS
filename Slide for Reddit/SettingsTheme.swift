@@ -28,6 +28,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
     var reduceColorCell: UITableViewCell = UITableViewCell()
     var reduceColor: UISwitch = UISwitch()
+    var nightEnabled: UISwitch = UISwitch()
 
     var isAccent = false
     
@@ -248,13 +249,19 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.base.imageView?.tintColor = ColorUtil.navIconColor
         
-        self.night.textLabel?.text = "Automatic night theme"
+        nightEnabled = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
+        nightEnabled.isOn = SettingValues.nightModeEnabled
+        nightEnabled.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
+        self.night.textLabel?.text = "Select Night Theme hours"
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.night.imageView?.tintColor = ColorUtil.navIconColor
-        
+        night.accessoryView = nightEnabled
+
         tintOutsideSwitch = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
         }
@@ -276,7 +283,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         reduceColor = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
         }
-        
+
         reduceColor.isOn = SettingValues.reduceColor
         reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
@@ -418,14 +425,18 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             let barButton = UIBarButtonItem.init(customView: button)
             
             navigationItem.leftBarButtonItem = barButton
-        } else {
-            SettingValues.nightModeEnabled = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
-            _ = ColorUtil.doInit()
-            SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
-            self.tochange!.doCells()
-            self.tochange!.tableView.reloadData()
+        } else if changed == nightEnabled {
+            if !VCPresenter.proDialogShown(feature: false, self) {
+                SettingValues.nightModeEnabled = changed.isOn
+                UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
+                _ = ColorUtil.doInit()
+                SingleSubredditViewController.cellVersion += 1
+                MainViewController.needsReTheme = true
+                self.tochange!.doCells()
+                self.tochange!.tableView.reloadData()
+            } else {
+                nightEnabled.isOn = false
+            }
         }
         self.setupViews()
         if SettingValues.reduceColor {
@@ -450,7 +461,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return customThemes.count == 0 ? 1 : 2
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -469,17 +480,30 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.base
-            case 1: return self.custom
-            case 2: return self.primary
-            case 3: return self.accent
-            case 4: return self.night
-            case 5: return self.reduceColorCell
+            case 0: return self.primary
+            case 1: return self.accent
+            case 2: return self.reduceColorCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
+            switch indexPath.row {
+            case 0: return self.night
+            default:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
+                cell.setTheme(theme: SettingValues.nightTheme)
+                return cell
+            }
+        case 2:
+            switch indexPath.row {
+            case 0: return self.custom
+            default:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
+                cell.setTheme(string: customThemes[indexPath.row - 1])
+                return cell
+            }
+        case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
-            cell.setTheme(string: customThemes[indexPath.row])
+            cell.setTheme(theme: ColorUtil.Theme.cases[indexPath.row])
             return cell
         default: fatalError("Unknown section")
         }
@@ -513,34 +537,21 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
 
     func selectTheme() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Select a night theme", message: "", preferredStyle: .actionSheet)
-        
-        actionSheetController.addCancelButton()
-        
-        for theme in ColorUtil.Theme.cases {
-            if theme != .LIGHT && theme != .MINT && theme != .CREAM {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
-                    SettingValues.nightTheme = theme
-                    UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
-                    UserDefaults.standard.synchronize()
-                    _ = ColorUtil.doInit()
-                    SingleSubredditViewController.cellVersion += 1
-                    MainViewController.needsReTheme = true
-                    self.setupViews()
-                    self.tableView.reloadData()
-                    self.tochange!.doCells()
-                    self.tochange!.tableView.reloadData()
-                }
-                actionSheetController.addAction(saveActionButton)
-            }
+        let chooseVC = SettingsThemeChooser()
+        chooseVC.callback = { theme in
+            SettingValues.nightTheme = theme
+            UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
+            UserDefaults.standard.synchronize()
+            _ = ColorUtil.doInit()
+            SingleSubredditViewController.cellVersion += 1
+            MainViewController.needsReTheme = true
+            self.setupViews()
+            self.tableView.reloadData()
+            self.tochange!.doCells()
+            self.tochange!.tableView.reloadData()
+            self.setupBaseBarColors()
         }
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selectedTableView
-            presenter.sourceRect = selectedTableView.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
+        VCPresenter.presentModally(viewController: chooseVC, self)
     }
     
     var selectedTableView = UIView()
@@ -548,23 +559,26 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedTableView = tableView.cellForRow(at: indexPath)!.contentView
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 0 && indexPath.row == 2 {
+        if indexPath.section == 0 && indexPath.row == 0 {
             pickTheme()
-        } else if indexPath.section == 0 && indexPath.row == 3 {
-            pickAccent()
-        } else if indexPath.section == 0 && indexPath.row == 0 {
-            VCPresenter.showVC(viewController: SettingsMainTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
-        } else if indexPath.section == 0 && indexPath.row == 4 {
-            if !VCPresenter.proDialogShown(feature: false, self) {
-                showNightTheme()
-            }
         } else if indexPath.section == 0 && indexPath.row == 1 {
+            pickAccent()
+        } else if indexPath.section == 1 && indexPath.row == 0 {
+            if !VCPresenter.proDialogShown(feature: false, self) {
+                self.selectTime()
+            }
+        } else if indexPath.section == 1 && indexPath.row == 1 {
+            if !VCPresenter.proDialogShown(feature: false, self) {
+                self.selectTheme()
+            }
+        } else if indexPath.section == 2 && indexPath.row == 0 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 VCPresenter.showVC(viewController: SettingsCustomTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }
-        } else if indexPath.section == 1 {
+        } else if indexPath.section == 2 {
             if !VCPresenter.proDialogShown(feature: true, self) {
-                let theme = customThemes[indexPath.row]
+                let row = indexPath.row - 1
+                let theme = customThemes[row]
                 let themeData = UserDefaults.standard.string(forKey: theme)!.removingPercentEncoding!
                 let split = themeData.split("#")
                 let alert = UIAlertController(title: "Apply theme \"\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))\"", message: "This will overwrite all your theme preferences", preferredStyle: .alert)
@@ -595,6 +609,20 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                 alert.addCancelButton()
                 self.present(alert, animated: true)
             }
+        } else if indexPath.section == 3 {
+            let row = indexPath.row
+            let theme = ColorUtil.Theme.cases[row]
+            UserDefaults.standard.set(theme.rawValue, forKey: "theme")
+            UserDefaults.standard.synchronize()
+            _ = ColorUtil.doInit()
+            SingleSubredditViewController.cellVersion += 1
+            self.tableView.reloadData()
+            MainViewController.needsReTheme = true
+            self.setupViews()
+            self.tochange!.doCells()
+            self.tochange!.tableView.reloadData()
+            self.tableView.reloadData()
+            self.setupBaseBarColors()
         }
     }
 
@@ -620,6 +648,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             self.tableView.reloadData()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
+            self.setupBaseBarColors()
         }
         alert.addAction(cancelActionButton)
 
@@ -683,38 +712,6 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         self.present(alert, animated: true, completion: nil)
     }
 
-    func showNightTheme() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Night Mode", message: "", preferredStyle: .actionSheet)
-
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-        }
-        actionSheetController.addAction(cancelActionButton)
-
-        let enabled = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
-        enabled.isOn = SettingValues.nightModeEnabled
-        enabled.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        actionSheetController.view.addSubview(enabled)
-
-        var button: UIAlertAction = UIAlertAction(title: "Select night hours", style: .default) { _ -> Void in
-            self.selectTime()
-        }
-        actionSheetController.addAction(button)
-
-        button = UIAlertAction(title: "Select night theme", style: .default) { _ -> Void in
-            self.selectTheme()
-        }
-        actionSheetController.addAction(button)
-
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selectedTableView
-            presenter.sourceRect = selectedTableView.bounds
-        }
-
-        self.present(actionSheetController, animated: true, completion: nil)
-
-    }
-
     func showBaseTheme() {
         let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "", preferredStyle: .actionSheet)
 
@@ -735,6 +732,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     self.tochange!.doCells()
                     self.tochange!.tableView.reloadData()
                     MainViewController.needsReTheme = true
+                    self.setupBaseBarColors()
                 }
                 actionSheetController.addAction(saveActionButton)
             }
@@ -756,8 +754,10 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         toReturn.backgroundColor = ColorUtil.backgroundColor
 
         switch section {
-        case 0: titleLabel.text = "App theme"
-        case 1: titleLabel.text = "Saved themes"
+        case 0: titleLabel.text = "App Colors"
+        case 1: titleLabel.text = "Night mode"
+        case 2: titleLabel.text = "Custom themes"
+        case 3: titleLabel.text = "Standard themes"
         default: titleLabel.text = ""
         }
         return toReturn
@@ -765,8 +765,10 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 6
-        case 1: return customThemes.count
+        case 0: return 3
+        case 1: return 2
+        case 2: return customThemes.count + 1
+        case 3: return ColorUtil.Theme.cases.count
         default: fatalError("Unknown number of sections")
         }
     }

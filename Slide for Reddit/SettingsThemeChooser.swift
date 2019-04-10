@@ -1,5 +1,5 @@
 //
-//  SettingsMainTheme.swift
+//  SettingsThemeChooser.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 1/23/19.
@@ -10,14 +10,10 @@ import Anchorage
 import Then
 import UIKit
 
-class SettingsMainTheme: UITableViewController {
+class SettingsThemeChooser: UITableViewController {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        UserDefaults.standard.set(true, forKey: "2notifs")
-        UserDefaults.standard.synchronize()
-    }
+    var callback: ((ColorUtil.Theme) -> ())?
+    var nightOnly: Bool = true
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -55,9 +51,13 @@ class SettingsMainTheme: UITableViewController {
     override func loadView() {
         super.loadView()
         
+        self.themes = ColorUtil.Theme.cases.filter({ (theme) -> Bool in
+            return !theme.isLight() || !nightOnly
+        })
+        
+        
         self.view.backgroundColor = ColorUtil.backgroundColor
-        // set the title
-        self.title = "Main Theme"
+        self.title = "Choose a \(nightOnly ? "Night" : "") Theme"
         self.tableView.separatorStyle = .none
         self.tableView.tableFooterView = UIView()
         self.tableView.register(ThemeCellView.classForCoder(), forCellReuseIdentifier: "theme")
@@ -87,19 +87,16 @@ class SettingsMainTheme: UITableViewController {
         return cell
     }
     
+    var themes: [ColorUtil.Theme] = []
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let theme = ColorUtil.Theme.cases[indexPath.row]
-        UserDefaults.standard.set(theme.rawValue, forKey: "theme")
-        UserDefaults.standard.synchronize()
-        _ = ColorUtil.doInit()
-        SubredditReorderViewController.changed = true
-        self.tableView.reloadData(with: .automatic)
-        MainViewController.needsReTheme = true
-        doLayout()
+        self.dismiss(animated: true) {
+            self.callback?(self.themes[indexPath.row])
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return ColorUtil.Theme.cases.count
+       return themes.count
     }
     
 }
