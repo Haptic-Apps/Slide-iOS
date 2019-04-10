@@ -212,6 +212,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         self.reloadNeedingColor()
         flowLayout.reset(modal: presentingViewController != nil)
         CachedTitle.titles.removeAll()
+        LinkCellImageCache.initialize()
         self.tableView.reloadData()
     }
 

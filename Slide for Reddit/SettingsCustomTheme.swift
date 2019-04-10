@@ -14,16 +14,19 @@ import SDCAlertView
 
 class SettingsCustomTheme: UITableViewController {
     
-    var tochange: SettingsViewController?
     var foreground: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "foreground")
     var background: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "background")
     var font: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "font")
     var navicon: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "navicon")
     var statusbar: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "status")
+    
+    var inputTheme = ""
+    var foregroundColor = ColorUtil.Theme.LIGHT.foregroundColor
+    var backgroundColor = ColorUtil.Theme.LIGHT.backgroundColor
+    var fontColor = ColorUtil.Theme.LIGHT.fontColor
+    var navIconColor = ColorUtil.Theme.LIGHT.navIconColor
+    var statusbarEnabled = ColorUtil.Theme.LIGHT.isLight()
 
-    var applySwitch: UISwitch = UISwitch().then {
-        $0.onTintColor = ColorUtil.baseAccent
-    }
     var statusbarSwitch: UISwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
@@ -43,158 +46,172 @@ class SettingsCustomTheme: UITableViewController {
     }
     
     override func viewDidLoad() {
-        super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        if !inputTheme.isEmpty() {
+            let colors = UserDefaults.standard.string(forKey: inputTheme)!.removingPercentEncoding!
+            let split = colors.split("#")
+            foregroundColor = UIColor(hex: split[2])
+            backgroundColor = UIColor(hex: split[3])
+            fontColor = UIColor(hex: split[4])
+            navIconColor = UIColor(hex: split[5])
+            statusbarEnabled = Bool(split[8])!
+            self.title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
+            self.setupViews()
+            setupBaseBarColors()
+        }
+        
+        super.viewDidLoad()
     }
     
     var doneOnce = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
-        if doneOnce {
-            self.loadView()
-            self.tableView.reloadData(with: .automatic)
-            self.tochange!.doCells()
-            self.tochange!.tableView.reloadData()
-        } else {
-            doneOnce = true
-        }
     }
     
+    var themeText: String?
+    
+    @objc public func save() {
+        if inputTheme.isEmpty {
+            let alert = AlertController(title: "Save theme?", message: "", preferredStyle: .alert)
+            
+            let date = Date()
+            let calender = Calendar.current
+            let components = calender.dateComponents([.year, .month, .day], from: date)
+            
+            let year = components.year
+            let month = components.month
+            let day = components.day
+            
+            let today_string = String(year!) + "-" + String(month!) + "-" + String(day!)
+            
+            let config: TextField.Config = { textField in
+                textField.becomeFirstResponder()
+                textField.textColor = ColorUtil.fontColor
+                textField.attributedPlaceholder = NSAttributedString(string: "Theme name...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
+                textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+                textField.backgroundColor = ColorUtil.foregroundColor
+                textField.layer.borderWidth = 1
+                textField.autocorrectionType = UITextAutocorrectionType.no
+                textField.keyboardAppearance = .default
+                textField.keyboardType = .default
+                textField.returnKeyType = .done
+                textField.text = today_string
+                textField.action { textField in
+                    self.themeText = textField.text
+                }
+            }
+            
+            let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+            
+            alert.setupTheme()
+            
+            alert.attributedTitle = NSAttributedString(string: "Save theme?", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            
+            alert.contentView.addSubview(textField)
+            
+            textField.edgeAnchors == alert.contentView.edgeAnchors
+            textField.heightAnchor == CGFloat(44 + 12)
+            let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+            let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
+            blurEffect.setValue(8, forKeyPath: "blurRadius")
+            blurView.effect = blurEffect
+            
+            alert.addAction(AlertAction(title: "Save", style: .preferred, handler: { (_) in
+                var colorString = "slide://colors"
+                colorString += ("#" + (self.themeText?.replacingOccurrences(of: "#", with: "<H>") ?? today_string)).addPercentEncoding
+                
+                colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
+                UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string).replacingOccurrences(of: "#", with: "<H>").addPercentEncoding)
+                UserDefaults.standard.synchronize()
+                self.dismiss(animated: true, completion: nil)
+            }))
+            
+            alert.addAction(AlertAction(title: "Discard", style: .destructive, handler: { (_) in
+                self.dismiss(animated: true, completion: nil)
+            }))
+            
+            alert.addCancelButton()
+            alert.addBlurView()
+            
+            self.present(alert, animated: true, completion: nil)
+        } else {
+            var colorString = "slide://colors"
+            colorString += ("#" + self.title!).addPercentEncoding
+            
+            colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
+            UserDefaults.standard.set(colorString, forKey: inputTheme)
+            UserDefaults.standard.synchronize()
+
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+
     var defaultButton: UIBarButtonItem?
     override func loadView() {
         super.loadView()
+        self.title = "Edit Custom Theme"
+        setupViews()
+    }
+    
+    func setupViews() {
         setupBaseBarColors()
         
-        self.view.backgroundColor = ColorUtil.Theme.CUSTOM.backgroundColor
+        self.view.backgroundColor = backgroundColor
         // set the title
-        self.title = "Edit Custom Theme"
         self.tableView.separatorStyle = .none
         
         self.foreground.textLabel?.text = "Foreground color"
         self.foreground.accessoryType = .none
-        self.foreground.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
-        self.foreground.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.foreground.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.foregroundColor)
+        self.foreground.backgroundColor = foregroundColor
+        self.foreground.textLabel?.textColor = fontColor
+        self.foreground.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: foregroundColor)
         self.foreground.imageView?.layer.masksToBounds = true
         self.foreground.imageView?.layer.borderWidth = 1.5
         self.foreground.imageView?.layer.borderColor = UIColor.white.cgColor
         self.foreground.imageView?.layer.cornerRadius = self.foreground.imageView!.bounds.width / 2
-
+        
         self.background.textLabel?.text = "Background color"
         self.background.accessoryType = .none
-        self.background.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
-        self.background.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.background.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.backgroundColor)
-
+        self.background.backgroundColor = foregroundColor
+        self.background.textLabel?.textColor = fontColor
+        self.background.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: backgroundColor)
+        
         self.font.textLabel?.text = "Font color"
         self.font.accessoryType = .none
-        self.font.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
-        self.font.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.font.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.fontColor)
-
+        self.font.backgroundColor = foregroundColor
+        self.font.textLabel?.textColor = fontColor
+        self.font.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: fontColor)
+        
         self.navicon.textLabel?.text = "Icons color"
         self.navicon.accessoryType = .none
-        self.navicon.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
-        self.navicon.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
-        self.navicon.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.Theme.CUSTOM.navIconColor)
-
+        self.navicon.backgroundColor = foregroundColor
+        self.navicon.textLabel?.textColor = fontColor
+        self.navicon.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: navIconColor)
+        
         self.statusbar.textLabel?.text = "Light statusbar"
         self.statusbar.accessoryType = .none
-        self.statusbar.backgroundColor = ColorUtil.Theme.CUSTOM.foregroundColor
-        self.statusbar.textLabel?.textColor = ColorUtil.Theme.CUSTOM.fontColor
+        self.statusbar.backgroundColor = foregroundColor
+        self.statusbar.textLabel?.textColor = fontColor
         statusbarSwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: .valueChanged)
-        statusbarSwitch.isOn = UserDefaults.standard.bool(forKey: ColorUtil.CUSTOM_STATUSBAR)
+        statusbarSwitch.isOn = statusbarEnabled
         self.statusbar.accessoryView = statusbarSwitch
-
-        self.tableView.tableFooterView = UIView()
         
-        if ColorUtil.theme != .CUSTOM {
-            self.foreground.isUserInteractionEnabled = false
-            self.background.isUserInteractionEnabled = false
-            self.font.isUserInteractionEnabled = false
-            self.navicon.isUserInteractionEnabled = false
-            self.statusbar.isUserInteractionEnabled = false
-            self.statusbarSwitch.isUserInteractionEnabled = false
-
-            self.foreground.contentView.alpha = 0.5
-            self.background.contentView.alpha = 0.5
-            self.font.contentView.alpha = 0.5
-            self.navicon.contentView.alpha = 0.5
-            self.statusbar.contentView.alpha = 0.5
-        } else {
-            self.foreground.isUserInteractionEnabled = true
-            self.background.isUserInteractionEnabled = true
-            self.font.isUserInteractionEnabled = true
-            self.navicon.isUserInteractionEnabled = true
-            self.statusbar.isUserInteractionEnabled = true
-            self.statusbarSwitch.isUserInteractionEnabled = true
-
-            self.foreground.contentView.alpha = 1
-            self.background.contentView.alpha = 1
-            self.font.contentView.alpha = 1
-            self.navicon.contentView.alpha = 1
-            self.statusbar.contentView.alpha = 1
-        }
+        self.tableView.tableFooterView = UIView()
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
         let barButton = UIBarButtonItem.init(customView: button)
-        
-        let defaultb = UIButtonWithContext.init(type: .custom)
-        defaultb.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        defaultb.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControl.State.normal)
-        defaultb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        defaultb.addTarget(self, action: #selector(reset), for: .touchUpInside)
-        
-        defaultButton = UIBarButtonItem.init(customView: defaultb)
-
         navigationItem.leftBarButtonItem = barButton
-        applySwitch.isOn = ColorUtil.theme == .CUSTOM
-        applySwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: .valueChanged)
-        applySwitch.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-
-        navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: applySwitch), defaultButton!]
-    }
-    
-    @objc func reset() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "Will overwrite your current custom settings", preferredStyle: .actionSheet)
-        
-        actionSheetController.addCancelButton()
-        
-        for theme in ColorUtil.Theme.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
-                UserDefaults.standard.setColor(color: theme.foregroundColor, forKey: ColorUtil.CUSTOM_FOREGROUND)
-                UserDefaults.standard.setColor(color: theme.backgroundColor, forKey: ColorUtil.CUSTOM_BACKGROUND)
-                UserDefaults.standard.setColor(color: theme.fontColor, forKey: ColorUtil.CUSTOM_FONT)
-                UserDefaults.standard.setColor(color: theme.navIconColor, forKey: ColorUtil.CUSTOM_NAVICON)
-                UserDefaults.standard.set(!theme.isLight(), forKey: ColorUtil.CUSTOM_STATUSBAR)
-                self.cleanup()
-            }
-            actionSheetController.addAction(saveActionButton)
-        }
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = defaultButton!.customView!
-            presenter.sourceRect = defaultButton!.customView!.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
 
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if statusbarEnabled && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent
@@ -202,23 +219,12 @@ class SettingsCustomTheme: UITableViewController {
     }
     
     @objc public func handleBackButton() {
-        self.navigationController?.popViewController(animated: true)
+        save()
     }
     
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == statusbarSwitch {
-            UserDefaults.standard.set(changed.isOn, forKey: ColorUtil.CUSTOM_STATUSBAR)
-        } else if changed == applySwitch {
-            if ColorUtil.theme == .CUSTOM {
-                UserDefaults.standard.set("light", forKey: "theme")
-            } else {
-                UserDefaults.standard.set("custom", forKey: "theme")
-            }
-            UserDefaults.standard.synchronize()
-            _ = ColorUtil.doInit()
-            SubredditReorderViewController.changed = true
-            self.tableView.reloadData(with: .automatic)
-            MainViewController.needsReTheme = true
+            statusbarEnabled = changed.isOn
         }
         
         cleanup()
@@ -261,14 +267,6 @@ class SettingsCustomTheme: UITableViewController {
     }
     
     func cleanup() {
-        CachedTitle.titles.removeAll()
-        LinkCellImageCache.initialize()
-        SingleSubredditViewController.cellVersion += 1
-        
-        ColorUtil.foregroundColor = ColorUtil.theme.foregroundColor
-        ColorUtil.backgroundColor = ColorUtil.theme.backgroundColor
-        ColorUtil.fontColor = ColorUtil.theme.fontColor
-        ColorUtil.navIconColor = ColorUtil.theme.navIconColor
         loadView()
     }
     
@@ -283,31 +281,30 @@ class SettingsCustomTheme: UITableViewController {
         var color: UIColor
         switch indexPath.row {
         case 0:
-            color = ColorUtil.Theme.CUSTOM.foregroundColor
+            color = foregroundColor
             alert.attributedMessage = NSAttributedString(string:  "Foreground color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         case 1:
-            color = ColorUtil.Theme.CUSTOM.backgroundColor
+            color = backgroundColor
             alert.attributedMessage = NSAttributedString(string:  "Background color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         case 2:
-            color = ColorUtil.Theme.CUSTOM.fontColor
+            color = fontColor
             alert.attributedMessage = NSAttributedString(string:  "Font color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         default:
-            color = ColorUtil.Theme.CUSTOM.navIconColor
+            color = navIconColor
             alert.attributedMessage = NSAttributedString(string:  "Icons color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
         }
 
         let selection: ColorPickerViewController.Selection? = { color in
             switch indexPath.row {
             case 0:
-                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FOREGROUND)
+                self.foregroundColor = color
             case 1:
-                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_BACKGROUND)
+                self.backgroundColor = color
             case 2:
-                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FONT)
+                self.fontColor = color
             default:
-                UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_NAVICON)
+                self.navIconColor = color
             }
-            UserDefaults.standard.synchronize()
             self.cleanup()
         }
         
@@ -326,15 +323,14 @@ class SettingsCustomTheme: UITableViewController {
                     let color = UIColor(hexString: text)
                     switch indexPath.row {
                     case 0:
-                        UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FOREGROUND)
+                        self.foregroundColor = color
                     case 1:
-                        UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_BACKGROUND)
+                        self.backgroundColor = color
                     case 2:
-                        UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_FONT)
+                        self.fontColor = color
                     default:
-                        UserDefaults.standard.setColor(color: color, forKey: ColorUtil.CUSTOM_NAVICON)
+                        self.navIconColor = color
                     }
-                    UserDefaults.standard.synchronize()
                     self.cleanup()
                 } else {
                 }

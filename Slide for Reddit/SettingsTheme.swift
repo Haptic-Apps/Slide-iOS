@@ -45,6 +45,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             titleLabel.textColor = self.accentChosen
             self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: accentChosen!)
             reduceColor.onTintColor = accentChosen!
+            tableView.beginUpdates()
+            tableView.endUpdates()
         } else {
             primaryChosen = colorPickerView.colors[indexPath.row]
             setupBaseBarColors(primaryChosen)
@@ -315,15 +317,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         
         let barButton = UIBarButtonItem.init(customView: button)
         
-        let save = UIButtonWithContext.init(type: .custom)
-        save.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        save.setImage(UIImage.init(named: "save")!.navIcon(), for: UIControl.State.normal)
-        save.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        save.addTarget(self, action: #selector(self.save), for: .touchUpInside)
-        let saveButton = UIBarButtonItem.init(customView: save)
-
         navigationItem.leftBarButtonItem = barButton
-        navigationItem.rightBarButtonItems = [saveButton]
 
         self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
@@ -341,67 +335,6 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
     
     var themeText: String?
-    @objc public func save() {
-        let alert = AlertController(title: "Name this theme", message: "", preferredStyle: .alert)
-        
-        let date = Date()
-        let calender = Calendar.current
-        let components = calender.dateComponents([.year, .month, .day], from: date)
-        
-        let year = components.year
-        let month = components.month
-        let day = components.day
-        
-        let today_string = String(year!) + "-" + String(month!) + "-" + String(day!)
-        
-        let config: TextField.Config = { textField in
-            textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.fontColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Theme name...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
-            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.foregroundColor
-            textField.layer.borderWidth = 1
-            textField.autocorrectionType = UITextAutocorrectionType.no
-            textField.keyboardAppearance = .default
-            textField.keyboardType = .default
-            textField.returnKeyType = .done
-            textField.text = today_string
-            textField.action { textField in
-                self.themeText = textField.text
-            }
-        }
-        
-        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
-        
-        alert.setupTheme()
-        
-        alert.attributedTitle = NSAttributedString(string: "Name your theme", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
-        
-        alert.contentView.addSubview(textField)
-        
-        textField.edgeAnchors == alert.contentView.edgeAnchors
-        textField.heightAnchor == CGFloat(44 + 12)
-        let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-        let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-        blurEffect.setValue(8, forKeyPath: "blurRadius")
-        blurView.effect = blurEffect
-        
-        alert.addAction(AlertAction(title: "Save", style: .preferred, handler: { (_) in
-            var colorString = "slide://colors"
-            colorString += ("#" + (self.themeText?.replacingOccurrences(of: "#", with: "<H>") ?? today_string)).addPercentEncoding
-            
-            colorString += (ColorUtil.foregroundColor.toHexString() + ColorUtil.backgroundColor.toHexString() + ColorUtil.fontColor.toHexString() + ColorUtil.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(ColorUtil.theme.isLight())).addPercentEncoding
-            UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string).replacingOccurrences(of: "#", with: "<H>").addPercentEncoding)
-            UserDefaults.standard.synchronize()
-            self.customThemes = UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("Theme+") })
-            self.tableView.reloadData()
-        }))
-        
-        alert.addCancelButton()
-        alert.addBlurView()
-        
-        self.present(alert, animated: true, completion: nil)
-    }
 
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == reduceColor {
@@ -510,7 +443,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section == 1
+        return indexPath.section == 2 && indexPath.row != 0
     }
     
     @available(iOS 11.0, *)
@@ -573,7 +506,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             }
         } else if indexPath.section == 2 && indexPath.row == 0 {
             if !VCPresenter.proDialogShown(feature: false, self) {
-                VCPresenter.showVC(viewController: SettingsCustomTheme(), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+                let theme = SettingsCustomTheme()
+                VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
             }
         } else if indexPath.section == 2 {
             if !VCPresenter.proDialogShown(feature: true, self) {
@@ -581,8 +515,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                 let theme = customThemes[row]
                 let themeData = UserDefaults.standard.string(forKey: theme)!.removingPercentEncoding!
                 let split = themeData.split("#")
-                let alert = UIAlertController(title: "Apply theme \"\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))\"", message: "This will overwrite all your theme preferences", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Apply", style: .destructive, handler: { (_) in
+                let alert = UIAlertController(title: "\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))\"", message: nil, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Apply Theme", style: .destructive, handler: { (_) in
                     UserDefaults.standard.set("custom", forKey: "theme")
                     
                     UserDefaults.standard.setColor(color: UIColor(hex: split[2]), forKey: ColorUtil.CUSTOM_FOREGROUND)
@@ -590,8 +524,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     UserDefaults.standard.setColor(color: UIColor(hex: split[4]), forKey: ColorUtil.CUSTOM_FONT)
                     UserDefaults.standard.setColor(color: UIColor(hex: split[5]), forKey: ColorUtil.CUSTOM_NAVICON)
                     
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[6]), forKey: "baseColor")
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[7]), forKey: "accentcolor")
+                    //UserDefaults.standard.setColor(color: UIColor(hex: split[6]), forKey: "baseColor")
+                    //UserDefaults.standard.setColor(color: UIColor(hex: split[7]), forKey: "accentcolor")
                     
                     UserDefaults.standard.set(!Bool(split[8])!, forKey: ColorUtil.CUSTOM_STATUSBAR)
                     UserDefaults.standard.synchronize()
@@ -605,6 +539,11 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     self.tochange!.tableView.reloadData()
                     self.tableView.reloadData()
                     self.setupBaseBarColors()
+                }))
+                alert.addAction(UIAlertAction(title: "Edit Theme", style: .destructive, handler: { (_) in
+                    let theme = SettingsCustomTheme()
+                    theme.inputTheme = self.customThemes[row]
+                    VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
                 }))
                 alert.addCancelButton()
                 self.present(alert, animated: true)
