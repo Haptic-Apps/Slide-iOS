@@ -461,7 +461,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return SettingValues.nightModeEnabled && ColorUtil.shouldBeNight() ? 2 : 4
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
