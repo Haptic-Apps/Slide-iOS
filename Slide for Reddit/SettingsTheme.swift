@@ -196,10 +196,12 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
 
     var doneOnce = false
+    static var needsRestart = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
-        if doneOnce {
+        if doneOnce || SettingsTheme.needsRestart {
+            SettingsTheme.needsRestart = false
             self.setupViews()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
@@ -516,7 +518,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                 let themeData = UserDefaults.standard.string(forKey: theme)!.removingPercentEncoding!
                 let split = themeData.split("#")
                 let alert = UIAlertController(title: "\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))\"", message: nil, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Apply Theme", style: .destructive, handler: { (_) in
+                alert.addAction(UIAlertAction(title: "Apply Theme", style: .default, handler: { (_) in
                     UserDefaults.standard.set("custom", forKey: "theme")
                     
                     UserDefaults.standard.setColor(color: UIColor(hex: split[2]), forKey: ColorUtil.CUSTOM_FOREGROUND)

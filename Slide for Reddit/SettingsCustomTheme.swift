@@ -21,6 +21,7 @@ class SettingsCustomTheme: UITableViewController {
     var statusbar: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "status")
     
     var inputTheme = ""
+    var isCurrentTheme = false
     var foregroundColor = ColorUtil.Theme.LIGHT.foregroundColor
     var backgroundColor = ColorUtil.Theme.LIGHT.backgroundColor
     var fontColor = ColorUtil.Theme.LIGHT.fontColor
@@ -45,8 +46,16 @@ class SettingsCustomTheme: UITableViewController {
         cell.selectionStyle = UITableViewCell.SelectionStyle.none
     }
     
-    override func viewDidLoad() {
+    override func setupBaseBarColors(_ overrideColor: UIColor? = nil) {
+        navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? backgroundColor : UserDefaults.standard.colorForKey(key: "color+") ?? ColorUtil.baseColor
         
+        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? fontColor : UIColor.white
+        let textAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? fontColor : .white]
+        navigationController?.navigationBar.titleTextAttributes = textAttributes
+    }
+    
+    override func viewDidLoad() {
+        self.title = "Edit Custom Theme"
         if !inputTheme.isEmpty() {
             let colors = UserDefaults.standard.string(forKey: inputTheme)!.removingPercentEncoding!
             let split = colors.split("#")
@@ -55,6 +64,7 @@ class SettingsCustomTheme: UITableViewController {
             fontColor = UIColor(hex: split[4])
             navIconColor = UIColor(hex: split[5])
             statusbarEnabled = Bool(split[8])!
+            isCurrentTheme = foregroundColor.hexString() == ColorUtil.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.fontColor.hexString() && navicon.hexString() == ColorUtil.navIconColor.hexString()
             self.title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
             self.setupViews()
             setupBaseBarColors()
@@ -124,6 +134,7 @@ class SettingsCustomTheme: UITableViewController {
                 colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
                 UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string).replacingOccurrences(of: "#", with: "<H>").addPercentEncoding)
                 UserDefaults.standard.synchronize()
+                SettingsTheme.needsRestart = true
                 self.dismiss(animated: true, completion: nil)
             }))
             
@@ -142,7 +153,20 @@ class SettingsCustomTheme: UITableViewController {
             colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
             UserDefaults.standard.set(colorString, forKey: inputTheme)
             UserDefaults.standard.synchronize()
-
+            if isCurrentTheme {
+                UserDefaults.standard.setColor(color: foregroundColor, forKey: ColorUtil.CUSTOM_FOREGROUND)
+                UserDefaults.standard.setColor(color: backgroundColor, forKey: ColorUtil.CUSTOM_BACKGROUND)
+                UserDefaults.standard.setColor(color: fontColor, forKey: ColorUtil.CUSTOM_FONT)
+                UserDefaults.standard.setColor(color: navIconColor, forKey: ColorUtil.CUSTOM_NAVICON)
+                
+                //UserDefaults.standard.setColor(color: UIColor(hex: split[6]), forKey: "baseColor")
+                //UserDefaults.standard.setColor(color: UIColor(hex: split[7]), forKey: "accentcolor")
+                
+                UserDefaults.standard.set(!statusbarEnabled, forKey: ColorUtil.CUSTOM_STATUSBAR)
+                _ = ColorUtil.doInit()
+                MainViewController.needsReTheme = true
+            }
+            SettingsTheme.needsRestart = true
             self.dismiss(animated: true, completion: nil)
         }
     }
@@ -150,7 +174,6 @@ class SettingsCustomTheme: UITableViewController {
     var defaultButton: UIBarButtonItem?
     override func loadView() {
         super.loadView()
-        self.title = "Edit Custom Theme"
         setupViews()
     }
     
