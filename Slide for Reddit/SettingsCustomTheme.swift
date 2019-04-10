@@ -64,7 +64,7 @@ class SettingsCustomTheme: UITableViewController {
             fontColor = UIColor(hex: split[4])
             navIconColor = UIColor(hex: split[5])
             statusbarEnabled = Bool(split[8])!
-            isCurrentTheme = foregroundColor.hexString() == ColorUtil.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.fontColor.hexString() && navicon.hexString() == ColorUtil.navIconColor.hexString()
+            isCurrentTheme = foregroundColor.hexString() == ColorUtil.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.fontColor.hexString() && navIconColor.hexString() == ColorUtil.navIconColor.hexString()
             self.title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
             self.setupViews()
             setupBaseBarColors()
