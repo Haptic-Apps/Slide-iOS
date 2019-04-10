@@ -55,7 +55,6 @@ class SettingsThemeChooser: UITableViewController {
             return !theme.isLight() || !nightOnly
         })
         
-        
         self.view.backgroundColor = ColorUtil.backgroundColor
         self.title = "Choose a \(nightOnly ? "Night" : "") Theme"
         self.tableView.separatorStyle = .none
@@ -77,13 +76,8 @@ class SettingsThemeChooser: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
-        let theme = ColorUtil.Theme.cases[indexPath.row]
+        let theme = themes[indexPath.row]
         cell.setTheme(theme: theme)
-        if theme == ColorUtil.theme {
-            cell.accessoryType = .checkmark
-        } else {
-            cell.accessoryType = .none
-        }
         return cell
     }
     
