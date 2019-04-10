@@ -189,7 +189,7 @@ class SettingsLayout: UITableViewController {
             SettingValues.flatMode = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
             SingleSubredditViewController.cellVersion += 1
-            SubredditReorderViewController.changed = true
+            MainViewController.needsReTheme = true
         }
         UserDefaults.standard.synchronize()
         doDisables()
@@ -304,7 +304,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             alertController.addAction(Action(ActionData(title: "Card view", image: UIImage(named: "card")!.menuIcon()), style: .default, handler: { _ in
@@ -316,7 +316,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             alertController.addAction(Action(ActionData(title: "Centered card view", image: UIImage(named: "centeredimage")!.menuIcon()), style: .default, handler: { _ in
@@ -328,7 +328,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             alertController.addAction(Action(ActionData(title: "Compact view", image: UIImage(named: "compact")!.menuIcon()), style: .default, handler: { _ in
@@ -340,7 +340,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)
@@ -356,7 +356,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             alertController.addAction(Action(ActionData(title: "Cropped image", image: UIImage(named: "crop")!.menuIcon()), style: .default, handler: { _ in
@@ -367,7 +367,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             alertController.addAction(Action(ActionData(title: "Thumbnail only", image: UIImage(named: "thumb")!.menuIcon()), style: .default, handler: { _ in
@@ -378,7 +378,7 @@ class SettingsLayout: UITableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)
@@ -394,7 +394,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             alertController.addAction(Action(ActionData(title: "Full left action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("left", forKey: SettingValues.pref_actionbarMode)
@@ -405,7 +405,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
 
             alertController.addAction(Action(ActionData(title: "Side action bar", image: UIImage(named: "up")!.menuIcon()), style: .default, handler: { _ in
@@ -417,7 +417,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             alertController.addAction(Action(ActionData(title: "Right side action bar", image: UIImage(named: "down")!.menuIcon()), style: .default, handler: { _ in
@@ -429,7 +429,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
 
             alertController.addAction(Action(ActionData(title: "Hide action bar", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
@@ -441,7 +441,7 @@ class SettingsLayout: UITableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                SubredditReorderViewController.changed = true
+                MainViewController.needsReTheme = true
             }))
             
             VCPresenter.presentAlert(alertController, parentVC: self)

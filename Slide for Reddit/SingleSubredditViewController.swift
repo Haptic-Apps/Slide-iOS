@@ -207,6 +207,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             self.tableView.contentInsetAdjustmentBehavior = .never
         }
     }
+    
+    func reTheme() {
+        self.reloadNeedingColor()
+        flowLayout.reset(modal: presentingViewController != nil)
+        CachedTitle.titles.removeAll()
+        self.tableView.reloadData()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -225,13 +232,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         server?.stop()
         loop?.stop()
-
-        if SubredditReorderViewController.changed {
-            self.reloadNeedingColor()
-            flowLayout.reset(modal: presentingViewController != nil)
-            CachedTitle.titles.removeAll()
-            self.tableView.reloadData()
-        }
 
         first = false
         tableView.delegate = self

@@ -398,14 +398,14 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == reduceColor {
-            MainViewController.needsRestart = true
+            MainViewController.needsReTheme = true
             SettingValues.reduceColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
         } else if changed == tintOutsideSwitch {
             SettingValues.onlyTintOutside = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_onlyTintOutside)
         } else if changed == reduceColor {
-            MainViewController.needsRestart = true
+            MainViewController.needsReTheme = true
             SettingValues.reduceColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
             setupBaseBarColors()
@@ -422,6 +422,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             SettingValues.nightModeEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
             _ = ColorUtil.doInit()
+            SingleSubredditViewController.cellVersion += 1
+            MainViewController.needsReTheme = true
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
@@ -461,7 +463,6 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        SubredditReorderViewController.changed = true
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -523,6 +524,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
                     UserDefaults.standard.synchronize()
                     _ = ColorUtil.doInit()
+                    SingleSubredditViewController.cellVersion += 1
+                    MainViewController.needsReTheme = true
                     self.setupViews()
                     self.tableView.reloadData()
                     self.tochange!.doCells()
@@ -581,9 +584,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     
                     _ = ColorUtil.doInit()
                     SingleSubredditViewController.cellVersion += 1
-                    SubredditReorderViewController.changed = true
-                    self.tableView.reloadData(with: .automatic)
-                    MainViewController.needsRestart = true
+                    self.tableView.reloadData()
+                    MainViewController.needsReTheme = true
                     self.setupViews()
                     self.tochange!.doCells()
                     self.tochange!.tableView.reloadData()
@@ -613,7 +615,9 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         let cancelActionButton = AlertAction(title: "Save", style: .preferred) { _ -> Void in
             _ = ColorUtil.doInit()
             self.setupViews()
-            self.tableView.reloadData(with: .automatic)
+            SingleSubredditViewController.cellVersion += 1
+            MainViewController.needsReTheme = true
+            self.tableView.reloadData()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
@@ -675,7 +679,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         
         alert.addCancelButton()
         alert.addBlurView()
-
+        
         self.present(alert, animated: true, completion: nil)
     }
 
@@ -726,12 +730,11 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     UserDefaults.standard.set(theme.rawValue, forKey: "theme")
                     UserDefaults.standard.synchronize()
                     _ = ColorUtil.doInit()
-                    SubredditReorderViewController.changed = true
                     self.setupViews()
                     self.tableView.reloadData()
                     self.tochange!.doCells()
                     self.tochange!.tableView.reloadData()
-                    MainViewController.needsRestart = true
+                    MainViewController.needsReTheme = true
                 }
                 actionSheetController.addAction(saveActionButton)
             }

@@ -218,7 +218,7 @@ class SettingsCustomTheme: UITableViewController {
             _ = ColorUtil.doInit()
             SubredditReorderViewController.changed = true
             self.tableView.reloadData(with: .automatic)
-            MainViewController.needsRestart = true
+            MainViewController.needsReTheme = true
         }
         
         cleanup()
