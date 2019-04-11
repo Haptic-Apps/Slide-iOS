@@ -289,7 +289,7 @@ class PostActions: NSObject {
                         CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
                     }
                     DispatchQueue.main.async {
-                        BannerUtil.makeBanner(text: "Submission locked!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
+                        BannerUtil.makeBanner(text: "Submission \(!set ? "un" : "")locked!", color: ColorUtil.accentColorForSub(sub: cell.link!.subreddit), seconds: 3, context: cell.parentViewController)
                         cell.link!.locked = set
                         cell.refreshLink(cell.link!, np: false)
                     }

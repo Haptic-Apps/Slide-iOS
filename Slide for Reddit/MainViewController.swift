@@ -640,6 +640,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var subs: UIView?
     
     func setupTabBar(_ subs: [String]) {
+        if !SettingValues.subredditBar {
+            return
+        }
         tabBar.removeFromSuperview()
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 48))
         tabBar.itemAppearance = .titles
