@@ -55,6 +55,10 @@ class SettingsThemeChooser: UITableViewController {
             return !theme.isLight() || !nightOnly
         })
         
+        self.customThemes = UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("Theme+") }).filter({ (theme) -> Bool in
+            return !theme.contains("true")
+        })
+
         self.view.backgroundColor = ColorUtil.backgroundColor
         self.title = "Choose a \(nightOnly ? "Night" : "") Theme"
         self.tableView.separatorStyle = .none
@@ -76,21 +80,40 @@ class SettingsThemeChooser: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
-        let theme = themes[indexPath.row]
-        cell.setTheme(theme: theme)
+        if indexPath.row > themes.count - 1 {
+            let theme = customThemes[indexPath.row - themes.count]
+            cell.setTheme(string: theme)
+        } else {
+            let theme = themes[indexPath.row]
+            cell.setTheme(theme: theme)
+        }
         return cell
     }
     
     var themes: [ColorUtil.Theme] = []
-    
+    var customThemes: [String] = []
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.dismiss(animated: true) {
-            self.callback?(self.themes[indexPath.row])
+            if self.nightOnly {
+                if indexPath.row > self.themes.count - 1 {
+                    let themeData = UserDefaults.standard.string(forKey: self.customThemes[indexPath.row - self.themes.count])!.removingPercentEncoding!
+                    let split = themeData.split("#")
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[2]), forKey: ColorUtil.CUSTOM_FOREGROUND_NIGHT)
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[3]), forKey: ColorUtil.CUSTOM_BACKGROUND_NIGHT)
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[4]), forKey: ColorUtil.CUSTOM_FONT_NIGHT)
+                    UserDefaults.standard.setColor(color: UIColor(hex: split[5]), forKey: ColorUtil.CUSTOM_NAVICON_NIGHT)
+                    UserDefaults.standard.set(!Bool(split[8])!, forKey: ColorUtil.CUSTOM_STATUSBAR_NIGHT)
+                    self.callback?(.CUSTOM)
+                } else {
+                    self.callback?(self.themes[indexPath.row])
+                }
+            }
         }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return themes.count
+       return themes.count + customThemes.count
     }
     
 }

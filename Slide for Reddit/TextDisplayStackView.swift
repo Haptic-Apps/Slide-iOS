@@ -363,7 +363,7 @@ public class TextDisplayStackView: UIStackView {
             buttonBase.widthAnchor == finalWidth
             links.alwaysBounceHorizontal = true
             links.showsHorizontalScrollIndicator = false
-            links.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(25))
+            links.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
             estimatedHeight += 25
         }
     }

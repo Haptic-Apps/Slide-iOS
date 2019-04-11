@@ -18,7 +18,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     var primary: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "primary")
     var accent: UITableViewCell = UITableViewCell()
     var base: UITableViewCell = UITableViewCell()
-    var night: UITableViewCell = UITableViewCell()
+    var night: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "night")
     var tintingMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "tintingMode")
     var tintOutside: UITableViewCell = UITableViewCell()
     var tintOutsideSwitch: UISwitch = UISwitch()
@@ -258,7 +258,9 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         }
         nightEnabled.isOn = SettingValues.nightModeEnabled
         nightEnabled.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        self.night.textLabel?.text = "Select Night Theme hours"
+        self.night.textLabel?.text = "Night Mode"
+        self.night.detailTextLabel?.text = "Tap to change night hours"
+        self.night.detailTextLabel?.textColor = ColorUtil.fontColor
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.fontColor

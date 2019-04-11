@@ -39,6 +39,12 @@ public class ColorUtil {
     static var CUSTOM_NAVICON = "customNavicon"
     static var CUSTOM_STATUSBAR = "customStatus"
 
+    static var CUSTOM_FOREGROUND_NIGHT = "customForegroundNight"
+    static var CUSTOM_FONT_NIGHT = "customFontNight"
+    static var CUSTOM_BACKGROUND_NIGHT = "customBackgroundNight"
+    static var CUSTOM_NAVICON_NIGHT = "customNaviconNight"
+    static var CUSTOM_STATUSBAR_NIGHT = "customStatusNight"
+
     static func shouldBeNight() -> Bool {
         let hour = Calendar.current.component(.hour, from: Date())
         let minute = Calendar.current.component(.minute, from: Date())
@@ -307,7 +313,7 @@ public class ColorUtil {
             case .PINK:
                 return UIColor(hexString: "#FFFFFC")
             case .CUSTOM:
-                return UserDefaults.standard.colorForKey(key: CUSTOM_FOREGROUND) ?? UIColor.white
+                return UserDefaults.standard.colorForKey(key: shouldBeNight() ? CUSTOM_FOREGROUND_NIGHT : CUSTOM_FOREGROUND) ?? UIColor.white
             case .SOLARIZE:
                 return UIColor(hexString: "#0C3641")
             }
@@ -338,7 +344,7 @@ public class ColorUtil {
             case .PINK:
                 return UIColor(hexString: "#fff5e8")
             case .CUSTOM:
-                return UserDefaults.standard.colorForKey(key: CUSTOM_BACKGROUND) ?? UIColor(hexString: "#e5e5e5")
+                return UserDefaults.standard.colorForKey(key: shouldBeNight() ? CUSTOM_BACKGROUND_NIGHT : CUSTOM_BACKGROUND) ?? UIColor(hexString: "#e5e5e5")
             case .SOLARIZE:
                 return UIColor(hexString: "#032B35")
             }
@@ -369,14 +375,14 @@ public class ColorUtil {
             case .PINK:
                 return UIColor(hexString: "#ea8ab4")
             case .CUSTOM:
-                return UserDefaults.standard.colorForKey(key: CUSTOM_NAVICON) ?? ColorUtil.Theme.LIGHT.fontColor
+                return UserDefaults.standard.colorForKey(key: shouldBeNight() ? CUSTOM_NAVICON_NIGHT : CUSTOM_NAVICON) ?? ColorUtil.Theme.LIGHT.fontColor
             case .SOLARIZE:
                 return UIColor(hexString: "#6E73C1")
             }
         }
         
         public func isLight() -> Bool {
-            return self == .LIGHT || self == .MINT || self == .CREAM || self == .PINK || (self == .CUSTOM && !UserDefaults.standard.bool(forKey: CUSTOM_STATUSBAR))
+            return self == .LIGHT || self == .MINT || self == .CREAM || self == .PINK || (self == .CUSTOM && !UserDefaults.standard.bool(forKey: shouldBeNight() ? CUSTOM_STATUSBAR_NIGHT : CUSTOM_STATUSBAR))
         }
 
         public var fontColor: UIColor {
@@ -404,7 +410,7 @@ public class ColorUtil {
             case .PINK:
                 return UIColor(hexString: "#262844").withAlphaComponent(0.87)
             case .CUSTOM:
-                return UserDefaults.standard.colorForKey(key: CUSTOM_FONT) ?? UIColor(hexString: "#000000").withAlphaComponent(0.87)
+                return UserDefaults.standard.colorForKey(key: shouldBeNight() ? CUSTOM_FONT_NIGHT : CUSTOM_FONT) ?? UIColor(hexString: "#000000").withAlphaComponent(0.87)
             case .SOLARIZE:
                 return UIColor(hexString: "#839496")
             }
