@@ -265,9 +265,12 @@ public class TextDisplayStackView: UIStackView {
                     mutableBody.enumerateAttributes(in: NSRange.init(location: 0, length: body!.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
                         for attr in attrs {
                             if let url = attr.value as? URL {
-                                linkCallback(url)
-                                let positionString = NSMutableAttributedString.init(string: "†\(indexCallback())", attributes: [NSAttributedString.Key.foregroundColor: baseFontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
-                                mutableBody.insert(positionString, at: range.location + range.length)
+                                let type = ContentType.getContentType(baseUrl: url)
+                                if type != .SPOILER {
+                                    linkCallback(url)
+                                    let positionString = NSMutableAttributedString.init(string: "†\(indexCallback())", attributes: [NSAttributedString.Key.foregroundColor: baseFontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
+                                    mutableBody.insert(positionString, at: range.location + range.length)
+                                }
                                 break
                             }
                         }
@@ -328,7 +331,7 @@ public class TextDisplayStackView: UIStackView {
                     $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.fontColor), for: .normal)
                     //todo icon
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.backgroundColor = UIColor.clear
                     $0.addTapGestureRecognizer(action: {
                         self.delegate.linkTapped(url: url, text: "")
                     })
@@ -352,7 +355,7 @@ public class TextDisplayStackView: UIStackView {
             finalWidth -= 8
             
             buttonBase.isUserInteractionEnabled = true
-            links.heightAnchor == CGFloat(25)
+            links.heightAnchor == CGFloat(30)
             links.horizontalAnchors == self.horizontalAnchors
             
             links.addSubview(buttonBase)
@@ -363,8 +366,9 @@ public class TextDisplayStackView: UIStackView {
             buttonBase.widthAnchor == finalWidth
             links.alwaysBounceHorizontal = true
             links.showsHorizontalScrollIndicator = false
+            links.contentInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
             links.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
-            estimatedHeight += 25
+            estimatedHeight += 30
         }
     }
     

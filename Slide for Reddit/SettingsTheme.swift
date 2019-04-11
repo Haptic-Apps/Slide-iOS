@@ -519,7 +519,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                 let theme = customThemes[row]
                 let themeData = UserDefaults.standard.string(forKey: theme)!.removingPercentEncoding!
                 let split = themeData.split("#")
-                let alert = UIAlertController(title: "\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))\"", message: nil, preferredStyle: .alert)
+                let alert = UIAlertController(title: "\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))", message: nil, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Apply Theme", style: .default, handler: { (_) in
                     UserDefaults.standard.set("custom", forKey: "theme")
                     
