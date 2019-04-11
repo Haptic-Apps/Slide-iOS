@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import SwiftEntryKit
 import UIKit
 
 public class BannerUtil {

@@ -16,6 +16,7 @@ target 'Slide for Reddit' do
   pod 'MaterialComponents/ActivityIndicator'
   pod 'MaterialComponents/Tabs'
   pod 'MaterialComponents/ProgressView'
+  pod 'SwiftEntryKit'
   pod 'SubtleVolume'
   pod 'SDCAlertView'
   pod 'Embassy', '~> 4.0.8'

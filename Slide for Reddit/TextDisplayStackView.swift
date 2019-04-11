@@ -349,7 +349,7 @@ public class TextDisplayStackView: UIStackView {
                 finalWidth += widthS
                 finalWidth += 8
                 
-                buttonBase.addArrangedSubview(view)
+                buttonBase.addArrangedSubview(view.withPadding(padding: UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)))
             }
             
             finalWidth -= 8
@@ -366,7 +366,6 @@ public class TextDisplayStackView: UIStackView {
             buttonBase.widthAnchor == finalWidth
             links.alwaysBounceHorizontal = true
             links.showsHorizontalScrollIndicator = false
-            links.contentInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
             links.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
             estimatedHeight += 30
         }
