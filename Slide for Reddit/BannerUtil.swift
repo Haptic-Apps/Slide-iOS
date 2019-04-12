@@ -49,6 +49,11 @@ public class BannerUtil {
         attributes.scroll = .enabled(swipeable: true, pullbackAnimation: .easeOut)
         attributes.entryBackground = EKAttributes.BackgroundStyle.color(color: color)
         attributes.precedence = .enqueue(priority: .normal)
+        if callback != nil {
+            attributes.entryInteraction.customTapActions.append {
+                callback!()
+            }
+        }
 
         SwiftEntryKit.display(entry: popup, using: attributes)
     }
