@@ -217,6 +217,7 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         searchBar.autocapitalizationType = .none
         searchBar.spellCheckingType = .no
         searchBar.frame.size.height = 50
+        searchBar.becomeFirstResponder()
         if !ColorUtil.theme.isLight() {
             searchBar.keyboardAppearance = .dark
         }

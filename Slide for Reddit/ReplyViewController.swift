@@ -189,6 +189,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     init(submission: RSubmission, completion: @escaping (Link?) -> Void) {
         type = .CROSSPOST
         toReplyTo = submission
+        title = submission.title
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
         self.submissionCallback = { (link, error) in
