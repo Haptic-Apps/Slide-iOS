@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import AudioToolbox
 import Foundation
 import reddift
 
@@ -118,6 +119,11 @@ class Subscriptions {
         SubredditReorderViewController.changed = true
         sub.append(name)
         set(name: AccountController.currentName, subs: sub) { () in }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
         if subscribe && AccountController.isLoggedIn {
             do {
                 try session.setSubscribeSubreddit(Subreddit.init(subreddit: name), subscribe: true, completion: { (_) in
@@ -135,6 +141,11 @@ class Subscriptions {
         setPinned(name: AccountController.currentName, subs: pinned.filter { $0 != name }, completion: {})
         SubredditReorderViewController.changed = true
         set(name: AccountController.currentName, subs: subs) { () in }
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
         if AccountController.isLoggedIn {
             do {
                 try session.setSubscribeSubreddit(Subreddit.init(subreddit: name), subscribe: false, completion: { (result) in

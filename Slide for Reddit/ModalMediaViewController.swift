@@ -231,7 +231,7 @@ class ModalMediaViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        desiredStatusBarStyle = .lightContent
         if !(parent is AlbumViewController) {
             panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
             panGestureRecognizer!.delegate = self
@@ -262,7 +262,7 @@ class ModalMediaViewController: UIViewController {
             shouldLoad = true
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         savedColor = UIApplication.shared.statusBarView?.backgroundColor
         UIApplication.shared.statusBarView?.backgroundColor = .clear
@@ -271,7 +271,6 @@ class ModalMediaViewController: UIViewController {
         if parent is AlbumViewController || parent is ShadowboxLinkViewController {
             self.closeButton.isHidden = true
         }
-        desiredStatusBarStyle = .lightContent
 
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: closeButton)
     }

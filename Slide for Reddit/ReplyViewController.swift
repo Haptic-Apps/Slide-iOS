@@ -202,7 +202,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     
                 } else if error != nil {
                     self.alertController?.dismiss(animated: false, completion: {
-                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your post has not been created, please try again\n\nError:\(error!.localizedDescription)", preferredStyle: .alert)
+                        let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Reddit did not allow this post to be made.\n\nError message:\(error!.localizedDescription)", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     })
@@ -1074,6 +1074,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        self.navigationController?.setToolbarHidden(true, animated: false)
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
 
         if type.isMessage() {
             title = "New message"

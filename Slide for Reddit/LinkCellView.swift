@@ -1021,6 +1021,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             videoView?.player?.pause()
             self.updater?.invalidate()
             self.updater = nil
+            self.bannerImage.isHidden = false
+            self.playView.isHidden = false
+            videoView?.isHidden = false
+            topVideoView?.isHidden = false
+            sound.isHidden = true
+            self.updateProgress(-1, "", buffering: false)
+            self.contentView.bringSubviewToFront(topVideoView!)
+            self.playView.isHidden = false
+            self.progressDot.isHidden = true
+            self.timeView.isHidden = true
             self.videoView!.player?.replaceCurrentItem(with: nil)
             self.videoView!.player = nil
         }

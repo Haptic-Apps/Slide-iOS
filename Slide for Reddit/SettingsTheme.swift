@@ -239,11 +239,11 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         self.accent.textLabel?.textColor = ColorUtil.fontColor
         self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
         
-        self.custom.textLabel?.text = "Custom base theme"
+        self.custom.textLabel?.text = "New custom theme"
         self.custom.accessoryType = .disclosureIndicator
         self.custom.backgroundColor = ColorUtil.foregroundColor
         self.custom.textLabel?.textColor = ColorUtil.fontColor
-        self.custom.imageView?.image = UIImage.init(named: "selectall")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.custom.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.custom.imageView?.tintColor = ColorUtil.navIconColor
         
         self.base.textLabel?.text = "Base theme"

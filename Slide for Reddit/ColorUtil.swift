@@ -254,6 +254,8 @@ public class ColorUtil {
         case CUSTOM = "custom"
         case SOLARIZE = "solarize"
         
+        
+        
         public var displayName: String {
             switch self {
             case .LIGHT:
