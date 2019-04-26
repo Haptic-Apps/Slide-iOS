@@ -1526,8 +1526,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = 0
         }
         
-        if commentBody.ignoreHeight {
-            commentBody.estimatedWidth = (self.contentView.frame.size.width) - CGFloat(16) - CGFloat(sideWidth) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) + CGFloat(8)
+        if commentBody.ignoreHeight {            
+            commentBody.estimatedWidth = (self.contentView.frame.size.width) - CGFloat(12) - CGFloat(sideWidth) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth)) - CGFloat(8)
             title.preferredMaxLayoutWidth = commentBody.estimatedWidth
         }
 
@@ -1553,7 +1553,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         } else {
             hideCommentMenu()
         }
-        
+
         NSLayoutConstraint.deactivate(topMargin)
         topMargin = batch {
             topViewSpace.heightAnchor == CGFloat(marginTop)

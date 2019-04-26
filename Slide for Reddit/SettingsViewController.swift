@@ -241,7 +241,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         let countBytes = ByteCountFormatter()
         countBytes.allowedUnits = [.useMB]
         countBytes.countStyle = .file
-        let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.getSize()))
+        let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize()))
         
         self.clearCell.detailTextLabel?.text = fileSize
         self.clearCell.detailTextLabel?.numberOfLines = 0
@@ -657,7 +657,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 SDImageCache.shared.clearDisk()
                 
                 do {
-                    var cache_path = SDImageCache.shared.makeDiskCachePath("")!
+                    var cache_path = SDImageCache.shared.diskCachePath
                     cache_path += cache_path.endsWith("/") ? "" : "/"
                     let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
                     for file in files {
@@ -671,7 +671,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 let countBytes = ByteCountFormatter()
                 countBytes.allowedUnits = [.useMB]
                 countBytes.countStyle = .file
-                let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.getSize()))
+                let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize()))
                 
                 self.clearCell.detailTextLabel?.text = fileSize
 
