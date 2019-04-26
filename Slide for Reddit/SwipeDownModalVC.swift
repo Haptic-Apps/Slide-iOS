@@ -22,7 +22,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        SDImageCache.shared().config.shouldCacheImagesInMemory = true
+        SDImageCache.shared.config.shouldCacheImagesInMemory = true
     }
 
     override var prefersHomeIndicatorAutoHidden: Bool {
@@ -31,7 +31,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        SDImageCache.shared().config.shouldCacheImagesInMemory = false
+        SDImageCache.shared.config.shouldCacheImagesInMemory = false
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer2 = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer!.delegate = self

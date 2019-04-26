@@ -189,9 +189,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _ = ColorUtil.doInit()
 
-        SDWebImageManager.shared().imageCache?.config.maxCacheAge = 1209600 //2 weeks
-        SDWebImageManager.shared().imageCache?.config.maxCacheSize = 250 * 1024 * 1024
-        SDWebImageDownloader.shared().shouldDecompressImages = false
+        SDImageCache.shared.config.maxDiskAge = 1209600 //2 weeks
+        SDImageCache.shared.config.maxDiskSize = 250 * 1024 * 1024
 
         UIApplication.shared.applicationIconBadgeNumber = 0
 

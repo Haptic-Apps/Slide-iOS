@@ -51,7 +51,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 buttons: true
             )
         }
-        let prefetcher = SDWebImagePrefetcher.shared()
+        let prefetcher = SDWebImagePrefetcher.shared
         prefetcher.prefetchURLs(thumbs)
 
         let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)
@@ -163,7 +163,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
 
                     self.navItem?.rightBarButtonItem = gridB
                 }
-                let prefetcher = SDWebImagePrefetcher.shared()
+                let prefetcher = SDWebImagePrefetcher.shared
                 prefetcher.prefetchURLs(thumbs)
             } catch {
                 print(error)
@@ -289,12 +289,12 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        SDImageCache.shared().clearMemory()
+        SDImageCache.shared.clearMemory()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        SDImageCache.shared().clearMemory()
+        SDImageCache.shared.clearMemory()
         DispatchQueue.global(qos: .background).async {
             do {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
@@ -381,8 +381,8 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         if key.length > 200 {
             key = key.substring(0, length: 200)
         }
-        
-        return (SDImageCache.shared().makeDiskCachePath(key) ?? "") + ".mp4"
+        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        return paths[0].appending(key + ".mp4")
     }
     
 }

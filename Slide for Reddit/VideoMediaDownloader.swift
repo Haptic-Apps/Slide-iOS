@@ -87,8 +87,8 @@ class VideoMediaDownloader {
         if key.length > 200 {
             key = key.substring(0, length: 200)
         }
-        
-        return (SDImageCache.shared().makeDiskCachePath(key) ?? "") + ".mp4"
+        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        return paths[0].appending(key + ".mp4")
     }
     
     func downloadRedditAudio(completion: @escaping (_ fileURL: URL?) -> Void, parent: UIViewController) {
