@@ -222,7 +222,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     func loadImage(imageURL: URL, completion: @escaping ((UIImage) -> Void) ) {
 
-        if let image = SDWebImageManager.shared.imageCache.imageFromDiskCache(forKey: imageURL.absoluteString) {
+        if let image = SDImageCache.shared.imageFromDiskCache(forKey: imageURL.absoluteString) {
             DispatchQueue.main.async {
                 completion(image)
             }
