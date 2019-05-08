@@ -1028,7 +1028,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             sound.isHidden = true
             self.updateProgress(-1, "", buffering: false)
             self.contentView.bringSubviewToFront(topVideoView!)
-            self.playView.isHidden = false
             self.progressDot.isHidden = true
             self.timeView.isHidden = true
             self.videoView!.player?.replaceCurrentItem(with: nil)

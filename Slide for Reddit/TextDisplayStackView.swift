@@ -364,7 +364,9 @@ public class TextDisplayStackView: UIStackView {
             
             links.addSubview(buttonBase)
             links.isHidden = false
-            buttonBase.heightAnchor == CGFloat(30)
+            if !ignoreHeight {
+                buttonBase.heightAnchor == CGFloat(30)
+            }
             buttonBase.edgeAnchors == links.edgeAnchors
             buttonBase.centerYAnchor == links.centerYAnchor
             buttonBase.widthAnchor == finalWidth
