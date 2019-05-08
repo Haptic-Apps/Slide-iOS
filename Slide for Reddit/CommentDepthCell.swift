@@ -126,6 +126,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureInit()
+        
     }
     
     func configureInit() {
@@ -1299,7 +1300,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var oldDepth = 0
 
     func configureLayout() {
-        self.contentView.autoresizingMask = [.flexibleHeight]
         
         topViewSpace.horizontalAnchors == contentView.horizontalAnchors
         topViewSpace.topAnchor == contentView.topAnchor

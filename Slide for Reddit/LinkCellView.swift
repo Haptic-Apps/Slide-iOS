@@ -1022,7 +1022,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.updater?.invalidate()
             self.updater = nil
             self.bannerImage.isHidden = false
-            self.playView.isHidden = false
+            self.playView.isHidden = SettingValues.autoPlayMode != .TAP || full
             videoView?.isHidden = false
             topVideoView?.isHidden = false
             sound.isHidden = true

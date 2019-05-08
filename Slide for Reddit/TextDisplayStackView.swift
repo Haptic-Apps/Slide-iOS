@@ -57,6 +57,8 @@ public class TextDisplayStackView: UIStackView {
         self.links = TouchUIScrollView()
         self.links.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
+        self.distribution = .fill
+
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
@@ -355,7 +357,9 @@ public class TextDisplayStackView: UIStackView {
             finalWidth -= 8
             
             buttonBase.isUserInteractionEnabled = true
-            links.heightAnchor == CGFloat(30)
+            if !ignoreHeight {
+                links.heightAnchor == CGFloat(30)
+            }
             links.horizontalAnchors == self.horizontalAnchors
             
             links.addSubview(buttonBase)
@@ -429,7 +433,9 @@ public class TextDisplayStackView: UIStackView {
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
-                table.heightAnchor == table.globalHeight
+                if !ignoreHeight {
+                    table.heightAnchor == table.globalHeight
+                }
                 table.backgroundColor = ColorUtil.backgroundColor.withAlphaComponent(0.5)
                 table.clipsToBounds = true
                 table.layer.cornerRadius = 10
@@ -449,7 +455,9 @@ public class TextDisplayStackView: UIStackView {
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors == overflow.horizontalAnchors
-                body.heightAnchor >= body.globalHeight
+                if !ignoreHeight {
+                    body.heightAnchor >= body.globalHeight
+                }
                 body.backgroundColor = ColorUtil.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
                 estimatedHeight += body.globalHeight
@@ -470,7 +478,7 @@ public class TextDisplayStackView: UIStackView {
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 
-                let size = CGSize(width: estimatedWidth - 8, height: CGFloat.greatestFiniteMagnitude)
+                let size = CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude)
                 let layout = YYTextLayout(containerSize: size, text: text)!
                 estimatedHeight += layout.textBoundingSize.height
                 label.textLayout = layout
@@ -481,12 +489,17 @@ public class TextDisplayStackView: UIStackView {
                 label.rightAnchor == baseView.rightAnchor - CGFloat(4)
                 label.topAnchor == baseView.topAnchor
                 label.bottomAnchor == baseView.bottomAnchor
-                label.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+                baseView.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 overflow.addArrangedSubview(baseView)
                             
                 baseView.horizontalAnchors == overflow.horizontalAnchors
-                baseView.heightAnchor == layout.textBoundingSize.height
+                if !ignoreHeight {
+                    baseView.heightAnchor == layout.textBoundingSize.height
+                }
             } else {
+                if block.trimmed().isEmpty || block.trimmed() == "\n" {
+                    continue
+                }
                 let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 let label = YYLabel(frame: CGRect.zero).then {
                     $0.accessibilityIdentifier = "Paragraph"
@@ -505,7 +518,9 @@ public class TextDisplayStackView: UIStackView {
                 overflow.addArrangedSubview(label)
 
                 label.horizontalAnchors == overflow.horizontalAnchors
-                label.heightAnchor == layout.textBoundingSize.height
+                if !ignoreHeight {
+                    label.heightAnchor == layout.textBoundingSize.height
+                }
             }
         }
         
