@@ -484,6 +484,7 @@ public class TextDisplayStackView: UIStackView {
                 let layout = YYTextLayout(containerSize: size, text: text)!
                 estimatedHeight += layout.textBoundingSize.height
                 label.textLayout = layout
+                label.preferredMaxLayoutWidth = layout.textBoundingSize.width
                 label.attributedText = text
 
                 baseView.addSubview(label)
@@ -515,6 +516,9 @@ public class TextDisplayStackView: UIStackView {
 
                 let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
                 let layout = YYTextLayout(containerSize: size, text: text)!
+                label.textLayout = layout
+                label.preferredMaxLayoutWidth = layout.textBoundingSize.width
+
                 estimatedHeight += layout.textBoundingSize.height
 
                 overflow.addArrangedSubview(label)
