@@ -44,8 +44,10 @@ final class FullLinkCellView: LinkCellView {
                 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 bannerImage.bottomAnchor == infoBox.topAnchor - ctwelve
-                if type != ContentType.CType.IMAGE {
+                if type == .LINK {
                     infoContainer.isHidden = false
+                } else {
+                    infoContainer.isHidden = true
                 }
                 infoContainer.heightAnchor == CGFloat(45)
                 infoContainer.leftAnchor == bannerImage.leftAnchor

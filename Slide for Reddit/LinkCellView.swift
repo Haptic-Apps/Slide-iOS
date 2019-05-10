@@ -1534,7 +1534,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         refresh(np: np)
         refreshTitle(np: np)
 
-        if (type != .IMAGE && type != .SELF && !thumb) || full {
+        if (type != .IMAGE && type != .SELF && !thumb) || (full && type == .LINK) {
             infoContainer.isHidden = false
             var text = ""
             switch type {
@@ -2204,6 +2204,58 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 text = "This is a locked post.\nYou won't be able to comment"
             }
             
+            if type != .IMAGE && type != .SELF && type != .NONE && type != .LINK {
+                let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
+                let popup = UILabel()
+                outer.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: link.subreddit).withAlphaComponent(0.2))
+                popup.textAlignment = .left
+                popup.isUserInteractionEnabled = true
+                
+                let finalText: NSMutableAttributedString!
+                let firstPart = NSMutableAttributedString.init(string: type.getTitle(link.url), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                let secondPart = NSMutableAttributedString.init(string: "\n" + link.urlString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                firstPart.append(secondPart)
+                finalText = firstPart
+                popup.attributedText = finalText
+                
+                popup.numberOfLines = 2
+                
+                outer.elevate(elevation: 2)
+                outer.layer.cornerRadius = 5
+                outer.clipsToBounds = true
+                
+                let icon = UIImageView(image: UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.fontColor))
+                outer.addSubviews(icon, popup)
+                icon.leftAnchor == outer.leftAnchor + CGFloat(8)
+                icon.centerYAnchor == outer.centerYAnchor
+                icon.widthAnchor == 20
+                
+                popup.leftAnchor == icon.rightAnchor + CGFloat(8)
+                popup.verticalAnchors == outer.verticalAnchors
+                popup.rightAnchor == outer.rightAnchor - CGFloat(8)
+                
+                infoBox.spacing = 4
+                infoBox.addArrangedSubview(outer)
+                
+                outer.horizontalAnchors == infoBox.horizontalAnchors
+                outer.heightAnchor == 48
+                
+                outer.addTapGestureRecognizer {
+                    let shareItems: Array = [link.url]
+                    let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                    if let presenter = activityViewController.popoverPresentationController {
+                        presenter.sourceView = outer
+                        presenter.sourceRect = outer.bounds
+                    }
+                    let window = UIApplication.shared.keyWindow!
+                    if let modalVC = window.rootViewController?.presentedViewController {
+                        modalVC.present(activityViewController, animated: true, completion: nil)
+                    } else {
+                        window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                    }
+                }
+            }
+            
             if !text.isEmpty {
                 let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
                 popup.backgroundColor = ColorUtil.getColorForSub(sub: link.subreddit)
@@ -2349,7 +2401,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
                 }
             } else {
-                fullHeightExtras += 12
                 estimatedUsableWidth -= (24) //12 padding on either side
                 if thumb {
                     fullHeightExtras += 45 + 12 + 12
@@ -2358,6 +2409,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
                 
                 if link!.archived || link!.locked || np {
+                    fullHeightExtras += 56
+                }
+                
+                if type != .IMAGE && type != .SELF && type != .NONE && type != .LINK {
                     fullHeightExtras += 56
                 }
         

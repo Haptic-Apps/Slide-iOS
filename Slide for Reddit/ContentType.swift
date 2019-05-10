@@ -343,6 +343,42 @@ class ContentType {
         case VID_ME = "Vid.me"
         case TABLE = "Table"
         
+        func getTitle(_ url: URL?) -> String {
+            switch self {
+            case .UNKNOWN, .LINK, .NONE, .SPOILER, .TABLE, .EMBEDDED:
+                return "Link"
+            case .ALBUM:
+                return "Imgur Album"
+            case .DEVIANTART:
+                return "Deviantart"
+            case .IMAGE:
+                return "Direct Image"
+            case .IMGUR:
+                return "Imgur Image"
+            case .TUMBLR:
+                return "Tumblr"
+            case .XKCD:
+                return "XKCD"
+            case .EXTERNAL:
+                return "External Link"
+            case .GIF:
+                if url != nil && url!.absoluteString.contains("v.redd.it") {
+                    return "Reddit Video"
+                }
+                return "Gif"
+            case .STREAMABLE:
+                return "Streamable.com Video"
+            case .VIDEO:
+                return "YouTube Video"
+            case .VID_ME:
+                return "Vid.me Video"
+            case .REDDIT:
+                return "Reddit Link"
+            case .SELF:
+                return "Selftext Post"
+            }
+        }
+        
         func getImage() -> String {
             switch self {
             case .UNKNOWN, .LINK, .NONE, .SPOILER, .TABLE, .EMBEDDED:
