@@ -234,7 +234,7 @@ class SettingValues {
     public static var nightEndMin = 0
     public static var nightModeEnabled = false
     public static var nightModeFilter = false
-    public static var nightTheme = ColorUtil.Theme.DARK
+    public static var nightTheme = ""
     public static var commentFullScreen = true
     public static var linkAlwaysThumbnail = false
     public static var autoKeyboard = true
@@ -486,9 +486,7 @@ class SettingValues {
         SettingValues.nightEnd = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 5 : settings.integer(forKey: SettingValues.pref_nightEndH)
         SettingValues.nightEndMin = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 0 : settings.integer(forKey: SettingValues.pref_nightEndM)
         if let name = UserDefaults.standard.string(forKey: SettingValues.pref_nightTheme) {
-            if let t = ColorUtil.Theme(rawValue: name) {
-                SettingValues.nightTheme = t
-            }
+            SettingValues.nightTheme = name
         }
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)

@@ -21,7 +21,7 @@ class SettingsThemeChooser: UITableViewController {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent
@@ -31,7 +31,7 @@ class SettingsThemeChooser: UITableViewController {
     func doLayout() {
         setupBaseBarColors()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -51,15 +51,11 @@ class SettingsThemeChooser: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.themes = ColorUtil.Theme.cases.filter({ (theme) -> Bool in
-            return !theme.isLight() || !nightOnly
+        self.themes = ColorUtil.themes.filter({ (theme) -> Bool in
+            return !theme.isLight || !nightOnly
         })
         
-        self.customThemes = UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("Theme+") }).filter({ (theme) -> Bool in
-            return !theme.contains("true")
-        })
-
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         self.title = "Choose a \(nightOnly ? "Night" : "") Theme"
         self.tableView.separatorStyle = .none
         self.tableView.tableFooterView = UIView()
@@ -80,40 +76,23 @@ class SettingsThemeChooser: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
-        if indexPath.row > themes.count - 1 {
-            let theme = customThemes[indexPath.row - themes.count]
-            cell.setTheme(string: theme)
-        } else {
-            let theme = themes[indexPath.row]
-            cell.setTheme(theme: theme)
-        }
+        let theme = themes[indexPath.row]
+        cell.setTheme(theme: theme)
         return cell
     }
     
     var themes: [ColorUtil.Theme] = []
-    var customThemes: [String] = []
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.dismiss(animated: true) {
             if self.nightOnly {
-                if indexPath.row > self.themes.count - 1 {
-                    let themeData = UserDefaults.standard.string(forKey: self.customThemes[indexPath.row - self.themes.count])!.removingPercentEncoding!
-                    let split = themeData.split("#")
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[2]), forKey: ColorUtil.CUSTOM_FOREGROUND_NIGHT)
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[3]), forKey: ColorUtil.CUSTOM_BACKGROUND_NIGHT)
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[4]), forKey: ColorUtil.CUSTOM_FONT_NIGHT)
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[5]), forKey: ColorUtil.CUSTOM_NAVICON_NIGHT)
-                    UserDefaults.standard.set(!Bool(split[8])!, forKey: ColorUtil.CUSTOM_STATUSBAR_NIGHT)
-                    self.callback?(.CUSTOM)
-                } else {
-                    self.callback?(self.themes[indexPath.row])
-                }
+                self.callback?(self.themes[indexPath.row])
             }
         }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return themes.count + customThemes.count
+       return themes.count
     }
     
 }
@@ -180,7 +159,7 @@ class ThemeCellView: UITableViewCell {
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
         body.backgroundColor = UIColor(hex: split[2])
-        self.backgroundColor = ColorUtil.backgroundColor
+        self.backgroundColor = ColorUtil.theme.backgroundColor
         self.tintColor = UIColor(hex: split[5])
     }
     
@@ -191,7 +170,7 @@ class ThemeCellView: UITableViewCell {
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
         body.backgroundColor = UIColor(hex: split[2])
-        self.backgroundColor = ColorUtil.backgroundColor
+        self.backgroundColor = ColorUtil.theme.backgroundColor
         self.tintColor = UIColor(hex: split[5])
     }
 
@@ -200,7 +179,7 @@ class ThemeCellView: UITableViewCell {
         title.text = theme.displayName
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: theme.navIconColor)
         body.backgroundColor = theme.foregroundColor
-        self.backgroundColor = ColorUtil.backgroundColor
+        self.backgroundColor = ColorUtil.theme.backgroundColor
         self.tintColor = theme.navIconColor
     }
 }

@@ -112,7 +112,7 @@ class SettingsLayout: UITableViewController {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent
@@ -251,7 +251,7 @@ class SettingsLayout: UITableViewController {
         self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true, np: false)
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
-        linkCell.contentView.backgroundColor = ColorUtil.backgroundColor
+        linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
         link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true, np: false))
         linkCell.contentView.addSubview(link.contentView)
         linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true, np: false))
@@ -450,8 +450,8 @@ class SettingsLayout: UITableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.backgroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -465,7 +465,7 @@ class SettingsLayout: UITableViewController {
     override func loadView() {
         super.loadView()
         doLink()
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Submission Layout"
         self.tableView.separatorStyle = .none
@@ -473,25 +473,25 @@ class SettingsLayout: UITableViewController {
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
         
         createCell(cardModeCell, isOn: false, text: "Submission view mode")
-        cardModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        cardModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(imageCell, isOn: false, text: "Banner images")
-        imageCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        imageCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
         imageCell.detailTextLabel?.numberOfLines = 0
         imageCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(actionBarCell, isOn: false, text: "Action Bar style")
-        actionBarCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        actionBarCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Show selftext image preview")
-        hideImageSelftextCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        hideImageSelftextCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show selftext image previews"
         hideImageSelftextCell.detailTextLabel?.numberOfLines = 0
         hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -511,7 +511,7 @@ class SettingsLayout: UITableViewController {
         createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Always show thumbnail on link posts")
         createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
         createCell(moreCell, more, isOn: SettingValues.menuButton, text: "Show menu button")
-        flatModeCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        flatModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows"
 
         doDisables()
@@ -552,7 +552,7 @@ class SettingsLayout: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
         case 0: label.text = "Preview"

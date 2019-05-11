@@ -62,7 +62,7 @@ class SettingsGeneral: UITableViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent
@@ -172,7 +172,7 @@ class SettingsGeneral: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
 
         switch section {
         case 0: label.text = "Display"
@@ -186,8 +186,8 @@ class SettingsGeneral: UITableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.backgroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -201,7 +201,7 @@ class SettingsGeneral: UITableViewController {
     override func loadView() {
         super.loadView()
 
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "General"
         self.tableView.separatorStyle = .none
@@ -217,20 +217,20 @@ class SettingsGeneral: UITableViewController {
         createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.fullyHideNavbar, text: "Hide status bar on scroll")
         createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Always show header image and buttons")
         self.alwaysShowHeader.detailTextLabel?.text = "When off, scrolling up past the first post will display the header"
-        self.alwaysShowHeader.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.alwaysShowHeader.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.alwaysShowHeader.detailTextLabel?.numberOfLines = 0
         
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
-        self.postSorting.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.postSorting.backgroundColor = ColorUtil.foregroundColor
-        self.postSorting.textLabel?.textColor = ColorUtil.fontColor
+        self.postSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.postSorting.backgroundColor = ColorUtil.theme.backgroundColor
+        self.postSorting.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.searchSorting.textLabel?.text = "Default search sorting"
         self.searchSorting.detailTextLabel?.text = "Sort by \(SettingValues.defaultSearchSorting.path.capitalize())"
-        self.searchSorting.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.searchSorting.backgroundColor = ColorUtil.foregroundColor
-        self.searchSorting.textLabel?.textColor = ColorUtil.fontColor
+        self.searchSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.searchSorting.backgroundColor = ColorUtil.theme.backgroundColor
+        self.searchSorting.textLabel?.textColor = ColorUtil.theme.fontColor
 
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { (settings) in
@@ -241,9 +241,9 @@ class SettingsGeneral: UITableViewController {
         } else {
             self.notifications.textLabel?.text = "New message notifications"
             self.notifications.detailTextLabel?.text = "Requires iOS 10 or newer"
-            self.notifications.detailTextLabel?.textColor = ColorUtil.fontColor
-            self.notifications.backgroundColor = ColorUtil.foregroundColor
-            self.notifications.textLabel?.textColor = ColorUtil.fontColor
+            self.notifications.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+            self.notifications.backgroundColor = ColorUtil.theme.backgroundColor
+            self.notifications.textLabel?.textColor = ColorUtil.theme.fontColor
         }
         
         if SettingValues.pinToolbar {
@@ -259,20 +259,20 @@ class SettingsGeneral: UITableViewController {
         }
         self.notifications.textLabel?.text = "New message notifications"
         self.notifications.detailTextLabel?.text = "Check for new mail every 15 minutes"
-        self.notifications.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.notifications.backgroundColor = ColorUtil.foregroundColor
-        self.notifications.textLabel?.textColor = ColorUtil.fontColor
+        self.notifications.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.notifications.backgroundColor = ColorUtil.theme.backgroundColor
+        self.notifications.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.matchSilence.detailTextLabel?.text = "Follows mute switch and silent mode"
-        self.matchSilence.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.matchSilence.backgroundColor = ColorUtil.foregroundColor
-        self.matchSilence.textLabel?.textColor = ColorUtil.fontColor
+        self.matchSilence.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.matchSilence.backgroundColor = ColorUtil.theme.backgroundColor
+        self.matchSilence.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.commentSorting.textLabel?.text = "Default comment sorting"
         self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
-        self.commentSorting.backgroundColor = ColorUtil.foregroundColor
-        self.commentSorting.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.commentSorting.textLabel?.textColor = ColorUtil.fontColor
+        self.commentSorting.backgroundColor = ColorUtil.theme.backgroundColor
+        self.commentSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.commentSorting.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.tableView.tableFooterView = UIView()
     }

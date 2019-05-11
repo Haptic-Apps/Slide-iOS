@@ -289,7 +289,7 @@ class ModalMediaViewController: UIViewController {
             UIApplication.shared.statusBarView?.backgroundColor = savedColor
         }
 
-        if SettingValues.reduceColor && ColorUtil.theme.isLight() {
+        if SettingValues.reduceColor && ColorUtil.theme.isLight {
             desiredStatusBarStyle = .default
         } else {
             desiredStatusBarStyle = .lightContent
@@ -499,6 +499,6 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
 }
 extension UINavigationController {
     open override var preferredStatusBarStyle: UIStatusBarStyle {
-        return (presentedViewController is AlertController) ? .lightContent : (presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? (SettingValues.reduceColor && ColorUtil.theme.isLight() ? .default : .lightContent))
+        return (presentedViewController is AlertController) ? .lightContent : (presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? (SettingValues.reduceColor && ColorUtil.theme.isLight ? .default : .lightContent))
     }
 }

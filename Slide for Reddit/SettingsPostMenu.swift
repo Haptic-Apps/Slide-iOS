@@ -15,7 +15,7 @@ class SettingsPostMenu: UITableViewController {
     var enabled: [SettingValues.PostOverflowAction] = []
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent
@@ -26,7 +26,7 @@ class SettingsPostMenu: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         
         enabled.append(contentsOf: SettingValues.PostOverflowAction.getMenuNone())
         all.append(contentsOf: SettingValues.PostOverflowAction.cases.filter({ !enabled.contains($0) }))
@@ -56,7 +56,7 @@ class SettingsPostMenu: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.foregroundColor
+        cell?.backgroundColor = ColorUtil.theme.backgroundColor
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -72,8 +72,8 @@ class SettingsPostMenu: UITableViewController {
         
         let c = UITableViewCell(style: .default, reuseIdentifier: nil)
         c.textLabel?.text = thing.getTitle()
-        c.backgroundColor = ColorUtil.foregroundColor
-        c.textLabel?.textColor = ColorUtil.fontColor
+        c.backgroundColor = ColorUtil.theme.backgroundColor
+        c.textLabel?.textColor = ColorUtil.theme.fontColor
         c.imageView?.image = thing.getImage()
         c.showsReorderControl = true
         
@@ -107,7 +107,7 @@ class SettingsPostMenu: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         switch section {
         case 0: label.text = "Active actions"
         case 1: label.text =  "Disabled actions"

@@ -63,7 +63,7 @@ class SubredditCellView: UITableViewCell {
         }
 
         self.contentView.addSubviews(sideView, title, pin, icon)
-        self.backgroundColor = ColorUtil.backgroundColor
+        self.backgroundColor = ColorUtil.theme.backgroundColor
     }
 
     func configureLayout() {
@@ -122,8 +122,8 @@ class SubredditCellView: UITableViewCell {
     }
 
     func setSubreddit(subreddit: String, nav: UIViewController?, exists: Bool = true) {
-        title.textColor = ColorUtil.fontColor
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        title.textColor = ColorUtil.theme.fontColor
+        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
         self.navController = nav
         self.subreddit = subreddit
         self.sideView.isHidden = false
@@ -136,13 +136,13 @@ class SubredditCellView: UITableViewCell {
         self.profile = ""
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
-        selectedView.backgroundColor = ColorUtil.backgroundColor
+        selectedView.backgroundColor = ColorUtil.theme.backgroundColor
         selectedBackgroundView = selectedView
     }
     
     func setProfile(profile: String, nav: UIViewController?) {
-        title.textColor = ColorUtil.fontColor
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        title.textColor = ColorUtil.theme.fontColor
+        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
         self.profile = profile
         self.subreddit = ""
         self.search = ""
@@ -153,13 +153,13 @@ class SubredditCellView: UITableViewCell {
         self.icon.image = UIImage.init(named: "profile")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
-        selectedView.backgroundColor = ColorUtil.backgroundColor
+        selectedView.backgroundColor = ColorUtil.theme.backgroundColor
         selectedBackgroundView = selectedView
     }
 
     func setSearch(string: String, sub: String?, nav: UIViewController?) {
-        title.textColor = ColorUtil.fontColor
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        title.textColor = ColorUtil.theme.fontColor
+        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
         self.search = string
         self.subreddit = sub ?? "all"
         self.profile = ""
@@ -170,7 +170,7 @@ class SubredditCellView: UITableViewCell {
         self.icon.image = UIImage.init(named: "search")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
-        selectedView.backgroundColor = ColorUtil.backgroundColor
+        selectedView.backgroundColor = ColorUtil.theme.backgroundColor
         selectedBackgroundView = selectedView
     }
 

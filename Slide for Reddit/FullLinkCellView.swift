@@ -15,7 +15,7 @@ final class FullLinkCellView: LinkCellView {
         full = true
         self.textView = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.baseAccent, width: 100, delegate: self).then {
             $0.accessibilityIdentifier = "Self Text View"
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.backgroundColor
             $0.isHidden = true
         }
         super.configureView()
@@ -44,7 +44,7 @@ final class FullLinkCellView: LinkCellView {
                 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 bannerImage.bottomAnchor == infoBox.topAnchor - ctwelve
-                if type == .LINK {
+                if thumb {
                     infoContainer.isHidden = false
                 } else {
                     infoContainer.isHidden = true
@@ -61,7 +61,7 @@ final class FullLinkCellView: LinkCellView {
             } else if thumb {
                 thumbImageContainer.isHidden = false
                 infoContainer.backgroundColor = .clear
-                info.textColor = ColorUtil.fontColor
+                info.textColor = ColorUtil.theme.fontColor
                 let ceight = CGFloat(8)
                 let ctwelve = CGFloat(12)
                 thumbImageContainer.bottomAnchor <= infoBox.topAnchor - ceight

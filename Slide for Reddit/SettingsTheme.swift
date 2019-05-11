@@ -37,7 +37,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     var accentChosen: UIColor?
     var primaryChosen: UIColor?
     
-    var customThemes: [String] = []
+    var customThemes: [ColorUtil.Theme] = []
+    var themes: [ColorUtil.Theme] = []
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
@@ -122,6 +123,16 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.customThemes.removeAll()
+        self.themes.removeAll()
+        
+        for theme in ColorUtil.themes {
+            if theme.isCustom {
+                customThemes.append(theme)
+            } else {
+                themes.append(theme)
+            }
+        }
         self.tableView.register(ThemeCellView.classForCoder(), forCellReuseIdentifier: "theme")
     }
 
@@ -183,8 +194,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.backgroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -217,41 +228,40 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
     
     func setupViews() {
-        self.customThemes = UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("Theme+") })
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Edit theme"
         self.tableView.separatorStyle = .none
         
         self.primary.textLabel?.text = "Primary color"
         self.primary.accessoryType = .none
-        self.primary.backgroundColor = ColorUtil.foregroundColor
-        self.primary.textLabel?.textColor = ColorUtil.fontColor
+        self.primary.backgroundColor = ColorUtil.theme.backgroundColor
+        self.primary.textLabel?.textColor = ColorUtil.theme.fontColor
         self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
         
         self.accent.textLabel?.text = "Accent color"
         self.accent.accessoryType = .none
-        self.accent.backgroundColor = ColorUtil.foregroundColor
-        self.accent.textLabel?.textColor = ColorUtil.fontColor
+        self.accent.backgroundColor = ColorUtil.theme.backgroundColor
+        self.accent.textLabel?.textColor = ColorUtil.theme.fontColor
         self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
         
         self.custom.textLabel?.text = "New custom theme"
         self.custom.accessoryType = .disclosureIndicator
-        self.custom.backgroundColor = ColorUtil.foregroundColor
-        self.custom.textLabel?.textColor = ColorUtil.fontColor
+        self.custom.backgroundColor = ColorUtil.theme.backgroundColor
+        self.custom.textLabel?.textColor = ColorUtil.theme.fontColor
         self.custom.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.custom.imageView?.tintColor = ColorUtil.navIconColor
+        self.custom.imageView?.tintColor = ColorUtil.theme.navIconColor
         
         self.base.textLabel?.text = "Base theme"
         self.base.accessoryType = .disclosureIndicator
-        self.base.backgroundColor = ColorUtil.foregroundColor
-        self.base.textLabel?.textColor = ColorUtil.fontColor
+        self.base.backgroundColor = ColorUtil.theme.backgroundColor
+        self.base.textLabel?.textColor = ColorUtil.theme.fontColor
         self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.base.imageView?.tintColor = ColorUtil.navIconColor
+        self.base.imageView?.tintColor = ColorUtil.theme.navIconColor
         
         nightEnabled = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
@@ -260,12 +270,12 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         nightEnabled.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.night.textLabel?.text = "Night Mode"
         self.night.detailTextLabel?.text = "Tap to change night hours"
-        self.night.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.night.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.night.accessoryType = .none
-        self.night.backgroundColor = ColorUtil.foregroundColor
-        self.night.textLabel?.textColor = ColorUtil.fontColor
+        self.night.backgroundColor = ColorUtil.theme.backgroundColor
+        self.night.textLabel?.textColor = ColorUtil.theme.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.night.imageView?.tintColor = ColorUtil.navIconColor
+        self.night.imageView?.tintColor = ColorUtil.theme.navIconColor
         night.accessoryView = nightEnabled
 
         tintOutsideSwitch = UISwitch().then {
@@ -276,15 +286,15 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         tintOutsideSwitch.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.tintOutside.textLabel?.text = "Only tint outside of subreddit"
         self.tintOutside.accessoryView = tintOutsideSwitch
-        self.tintOutside.backgroundColor = ColorUtil.foregroundColor
-        self.tintOutside.textLabel?.textColor = ColorUtil.fontColor
+        self.tintOutside.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tintOutside.textLabel?.textColor = ColorUtil.theme.fontColor
         tintOutside.selectionStyle = UITableViewCell.SelectionStyle.none
         
         self.tintingMode.textLabel?.text = "Subreddit tinting mode"
         self.tintingMode.detailTextLabel?.text = SettingValues.tintingMode
-        self.tintingMode.backgroundColor = ColorUtil.foregroundColor
-        self.tintingMode.textLabel?.textColor = ColorUtil.fontColor
-        self.tintingMode.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.tintingMode.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tintingMode.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.tintingMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
         reduceColor = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
@@ -295,18 +305,18 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
         reduceColorCell.textLabel?.numberOfLines = 0
         reduceColorCell.accessoryView = reduceColor
-        reduceColorCell.backgroundColor = ColorUtil.foregroundColor
-        reduceColorCell.textLabel?.textColor = ColorUtil.fontColor
+        reduceColorCell.backgroundColor = ColorUtil.theme.backgroundColor
+        reduceColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.reduceColorCell.imageView?.image = UIImage.init(named: "nocolors")?.toolbarIcon()
-        self.reduceColorCell.imageView?.tintColor = ColorUtil.fontColor
+        self.reduceColorCell.imageView?.tintColor = ColorUtil.theme.fontColor
         
         if SettingValues.reduceColor {
             self.primary.isUserInteractionEnabled = false
             self.primary.textLabel?.isEnabled = false
             self.primary.detailTextLabel?.isEnabled = false
             
-            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
         }
@@ -327,7 +337,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent
@@ -381,7 +391,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             self.primary.textLabel?.isEnabled = false
             self.primary.detailTextLabel?.isEnabled = false
             
-            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
         } else {
@@ -389,7 +399,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             self.primary.textLabel?.isEnabled = true
             self.primary.detailTextLabel?.isEnabled = true
             
-            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = ""
         }
@@ -427,7 +437,15 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             case 0: return self.night
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
-                cell.setTheme(theme: SettingValues.nightTheme)
+                var theme = ColorUtil.theme
+                for bTheme in themes {
+                    if bTheme.title == SettingValues.nightTheme {
+                        theme = bTheme
+                        break
+                    }
+                }
+
+                cell.setTheme(theme: theme)
                 return cell
             }
         case 2:
@@ -435,12 +453,12 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             case 0: return self.custom
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
-                cell.setTheme(string: customThemes[indexPath.row - 1])
+                cell.setTheme(theme: customThemes[indexPath.row - 1])
                 return cell
             }
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
-            cell.setTheme(theme: ColorUtil.Theme.cases[indexPath.row])
+            cell.setTheme(theme: themes[indexPath.row])
             return cell
         default: fatalError("Unknown section")
         }
@@ -454,7 +472,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let shareAction = UIContextualAction(style: .normal, title: "Share") { (_, _, b) in
             b(true)
-            let textShare = [UserDefaults.standard.string(forKey: self.customThemes[indexPath.row])]
+            let textShare = [UserDefaults.standard.string(forKey: "Theme+" + self.customThemes[indexPath.row].title)]
             let activityViewController = UIActivityViewController(activityItems: textShare, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.shareButton.customView
             self.present(activityViewController, animated: true, completion: nil)
@@ -462,9 +480,10 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         shareAction.backgroundColor = ColorUtil.baseAccent
 
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, b) in
-            UserDefaults.standard.removeObject(forKey: self.customThemes[indexPath.row])
+            let title = self.customThemes[indexPath.row].title
+            UserDefaults.standard.removeObject(forKey: "Theme+" + title)
             UserDefaults.standard.synchronize()
-            self.customThemes = UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("Theme+") })
+            self.customThemes = self.customThemes.filter({ $0.title == title })
             self.tableView.reloadData()
             b(true)
         }
@@ -476,8 +495,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     func selectTheme() {
         let chooseVC = SettingsThemeChooser()
         chooseVC.callback = { theme in
-            SettingValues.nightTheme = theme
-            UserDefaults.standard.set(theme.rawValue, forKey: SettingValues.pref_nightTheme)
+            SettingValues.nightTheme = theme.title
+            UserDefaults.standard.set(theme.title, forKey: SettingValues.pref_nightTheme)
             UserDefaults.standard.synchronize()
             _ = ColorUtil.doInit()
             SingleSubredditViewController.cellVersion += 1
@@ -517,21 +536,11 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 let row = indexPath.row - 1
                 let theme = customThemes[row]
-                let themeData = UserDefaults.standard.string(forKey: theme)!.removingPercentEncoding!
+                let themeData = UserDefaults.standard.string(forKey: "Theme+" + theme.title)!.removingPercentEncoding!
                 let split = themeData.split("#")
                 let alert = UIAlertController(title: "\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))", message: nil, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Apply Theme", style: .default, handler: { (_) in
-                    UserDefaults.standard.set("custom", forKey: "theme")
-                    
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[2]), forKey: ColorUtil.CUSTOM_FOREGROUND)
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[3]), forKey: ColorUtil.CUSTOM_BACKGROUND)
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[4]), forKey: ColorUtil.CUSTOM_FONT)
-                    UserDefaults.standard.setColor(color: UIColor(hex: split[5]), forKey: ColorUtil.CUSTOM_NAVICON)
-                    
-                    //UserDefaults.standard.setColor(color: UIColor(hex: split[6]), forKey: "baseColor")
-                    //UserDefaults.standard.setColor(color: UIColor(hex: split[7]), forKey: "accentcolor")
-                    
-                    UserDefaults.standard.set(!Bool(split[8])!, forKey: ColorUtil.CUSTOM_STATUSBAR)
+                    UserDefaults.standard.set(theme.title, forKey: "theme")
                     UserDefaults.standard.synchronize()
                     
                     _ = ColorUtil.doInit()
@@ -546,7 +555,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                 }))
                 alert.addAction(UIAlertAction(title: "Edit Theme", style: .destructive, handler: { (_) in
                     let theme = SettingsCustomTheme()
-                    theme.inputTheme = self.customThemes[row]
+                    theme.inputTheme = self.customThemes[row].title
                     VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
                 }))
                 alert.addCancelButton()
@@ -554,8 +563,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             }
         } else if indexPath.section == 3 {
             let row = indexPath.row
-            let theme = ColorUtil.Theme.cases[row]
-            UserDefaults.standard.set(theme.rawValue, forKey: "theme")
+            let theme = themes[row]
+            UserDefaults.standard.set(theme.title, forKey: "theme")
             UserDefaults.standard.synchronize()
             _ = ColorUtil.doInit()
             SingleSubredditViewController.cellVersion += 1
@@ -616,7 +625,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         initialSelection.append((4, SettingValues.nightEndMin / 5))
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Select night hours", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Select night hours", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         let pickerView = PickerViewViewControllerColored(values: values, initialSelection: initialSelection, action: { _, _, index, _ in
             switch index.column {
@@ -655,46 +664,12 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         self.present(alert, animated: true, completion: nil)
     }
 
-    func showBaseTheme() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Select a base theme", message: "", preferredStyle: .actionSheet)
-
-        actionSheetController.addCancelButton()
-
-        for theme in ColorUtil.Theme.cases {
-            if !SettingValues.isPro && (theme == ColorUtil.Theme.SEPIA || theme == ColorUtil.Theme.DEEP) {
-                actionSheetController.addAction(image: UIImage.init(named: "support")?.menuIcon().getCopy(withColor: GMColor.red500Color()), title: theme.rawValue + " (pro)", color: GMColor.red500Color(), style: .default, isEnabled: true) { (_) in
-                    _ = VCPresenter.proDialogShown(feature: false, self)
-                }
-            } else {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: theme.displayName, style: .default) { _ -> Void in
-                    UserDefaults.standard.set(theme.rawValue, forKey: "theme")
-                    UserDefaults.standard.synchronize()
-                    _ = ColorUtil.doInit()
-                    self.setupViews()
-                    self.tableView.reloadData()
-                    self.tochange!.doCells()
-                    self.tochange!.tableView.reloadData()
-                    MainViewController.needsReTheme = true
-                    self.setupBaseBarColors()
-                }
-                actionSheetController.addAction(saveActionButton)
-            }
-        }
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selectedTableView
-            presenter.sourceRect = selectedTableView.bounds
-        }
-
-        self.present(actionSheetController, animated: true, completion: nil)
-    }
-
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         titleLabel = UILabel()
         titleLabel.textColor = ColorUtil.baseAccent
         titleLabel.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = titleLabel.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
 
         switch section {
         case 0: titleLabel.text = "App Colors"
@@ -711,7 +686,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         case 0: return 3
         case 1: return 2
         case 2: return customThemes.count + 1
-        case 3: return ColorUtil.Theme.cases.count
+        case 3: return themes.count
         default: fatalError("Unknown number of sections")
         }
     }
@@ -796,7 +771,7 @@ extension PickerViewViewControllerColored: UIPickerViewDataSource, UIPickerViewD
     // for the view versions, we cache any hidden and thus unused views and pass them back for reuse.
     // If you return back a different object, the old one will be released. the view will be centered in the row rect
     public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
-        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 8)])
+        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 8)])
     }
     /*
      public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {

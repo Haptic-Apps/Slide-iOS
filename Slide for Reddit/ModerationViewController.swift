@@ -19,7 +19,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
     var vCs: [UIViewController] = []
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent
@@ -84,8 +84,8 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
         
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
-        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white)
-        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white).withAlphaComponent(0.45)
+        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white)
+        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45)
 
         tabBar.itemAppearance = .titles
         tabBar.items = content.enumerated().map { index, source in
@@ -113,7 +113,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
 
         time = History.getInboxSeen()
         History.inboxSeen()
-        view.backgroundColor = ColorUtil.backgroundColor
+        view.backgroundColor = ColorUtil.theme.backgroundColor
         // set up style before super view did load is executed
         // -
 

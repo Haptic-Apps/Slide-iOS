@@ -251,16 +251,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Window must exist when resetting the stack!")
         }
         let rootController: UIViewController!
-        if false && !UserDefaults.standard.bool(forKey: "firstOpen") { //disable this for now
-            rootController = UINavigationController(rootViewController: SettingsWelcome())
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
+            rootController = splitVC
+            splitVC.preferredDisplayMode = .allVisible
+            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
         } else {
-            if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
-                rootController = splitVC
-                splitVC.preferredDisplayMode = .allVisible
-                (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
-            } else {
-                rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
-            }
+            rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
         }
 
         window.setRootViewController(rootController, animated: false)
@@ -605,7 +601,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if SettingValues.biometrics {
             if backView == nil {
                 backView = UIView.init(frame: self.window!.frame)
-                backView?.backgroundColor = ColorUtil.backgroundColor
+                backView?.backgroundColor = ColorUtil.theme.backgroundColor
                 self.window?.addSubview(backView!)
             }
                 self.backView?.isHidden = false
@@ -769,7 +765,7 @@ private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIden
 
 class CustomSplitController: UISplitViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent

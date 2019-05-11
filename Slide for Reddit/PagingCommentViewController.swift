@@ -55,7 +55,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent

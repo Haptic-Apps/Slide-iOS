@@ -96,7 +96,6 @@
 		BE0C4F9A21BCC0B7006C54FF /* SettingsIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0C4F9921BCC0B7006C54FF /* SettingsIcon.swift */; };
 		BE0D639D215983260006A2DD /* PostActionMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D639C215983260006A2DD /* PostActionMenuController.swift */; };
 		BE0D63A3215AA5CD0006A2DD /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0D63A2215AA5CD0006A2DD /* ContentType.swift */; };
-		BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */; };
 		BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0EF7C31F43C9510058D572 /* Spoilers.swift */; };
 		BE0F4434218F6BBD00D98279 /* ProInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0F4433218F6BBD00D98279 /* ProInterfaceController.swift */; };
 		BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11351B2159390700502C5B /* WatchSessionManager.swift */; };
@@ -481,7 +480,6 @@
 		BE0C4F9921BCC0B7006C54FF /* SettingsIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIcon.swift; sourceTree = "<group>"; };
 		BE0D639C215983260006A2DD /* PostActionMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostActionMenuController.swift; sourceTree = "<group>"; };
 		BE0D63A2215AA5CD0006A2DD /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
-		BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWelcome.swift; sourceTree = "<group>"; };
 		BE0EF7C31F43C9510058D572 /* Spoilers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spoilers.swift; sourceTree = "<group>"; };
 		BE0F4433218F6BBD00D98279 /* ProInterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProInterfaceController.swift; sourceTree = "<group>"; };
 		BE11351B2159390700502C5B /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
@@ -954,7 +952,6 @@
 				BE42B6F220CE01BD00607A54 /* IAPHandler.swift */,
 				B776BBAC46362B38981E24E0 /* SettingsBackup.swift */,
 				BEF7483120DD894100B6236B /* SettingsGestures.swift */,
-				BE0DC524210BB7A700E8E441 /* SettingsWelcome.swift */,
 				BE0958DE218A08620076966C /* SettingsViewMode.swift */,
 				BE0C4F9921BCC0B7006C54FF /* SettingsIcon.swift */,
 				BE257A7C21F8D9710082A47E /* SettingsThemeChooser.swift */,
@@ -1948,7 +1945,6 @@
 				BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */,
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
-				BE0DC525210BB7A700E8E441 /* SettingsWelcome.swift in Sources */,
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
 				09D6603221E69211003D632C /* CurrentAccountViewController.swift in Sources */,

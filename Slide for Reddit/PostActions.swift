@@ -113,11 +113,11 @@ class PostActions: NSObject {
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
             
             let text = UITextView().then {
                 $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
-                $0.textColor = ColorUtil.fontColor
+                $0.textColor = ColorUtil.theme.fontColor
                 $0.backgroundColor = .clear
                 $0.isEditable = false
                 $0.text = cell.link!.body.decodeHTML()
@@ -587,11 +587,11 @@ class PostActions: NSObject {
         } else {
             let config: TextField.Config = { textField in
                 textField.becomeFirstResponder()
-                textField.textColor = ColorUtil.fontColor
-                textField.attributedPlaceholder = NSAttributedString(string: "Reason (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.fontColor)
-                textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.foregroundColor
+                textField.textColor = ColorUtil.theme.fontColor
+                textField.attributedPlaceholder = NSAttributedString(string: "Reason (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+                textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
+                textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+                textField.backgroundColor = ColorUtil.theme.backgroundColor
                 textField.leftViewPadding = 12
                 textField.layer.borderWidth = 1
                 textField.layer.cornerRadius = 8
@@ -607,7 +607,7 @@ class PostActions: NSObject {
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: "Report this content", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "Report this content", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
             
             alert.contentView.addSubview(textField)
             

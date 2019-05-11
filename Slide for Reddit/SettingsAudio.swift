@@ -16,7 +16,7 @@ class SettingsAudio: UITableViewController {
     var sectionTitles: [String] = []
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight() && SettingValues.reduceColor {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
             return .default
         } else {
             return .lightContent
@@ -52,7 +52,7 @@ class SettingsAudio: UITableViewController {
         super.loadView()
         self.tableView.tableFooterView = UIView()
 
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         self.title = "Audio Settings"
         self.tableView.separatorStyle = .none
 
@@ -151,7 +151,7 @@ class SettingsAudio: UITableViewController {
             $0.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         }
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         label.text = sectionTitles[section]
 
         return toReturn
@@ -181,8 +181,8 @@ private extension SettingsAudio {
 
 private extension UITableViewCell {
     func style() {
-        backgroundColor = ColorUtil.foregroundColor
-        textLabel?.textColor = ColorUtil.fontColor
-        detailTextLabel?.textColor = ColorUtil.fontColor.withAlphaComponent(0.7)
+        backgroundColor = ColorUtil.theme.backgroundColor
+        textLabel?.textColor = ColorUtil.theme.fontColor
+        detailTextLabel?.textColor = ColorUtil.theme.fontColor.withAlphaComponent(0.7)
     }
 }

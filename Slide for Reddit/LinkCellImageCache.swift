@@ -77,8 +77,8 @@ public class LinkCellImageCache {
         readLater = UIImage(named: "readLater")!.menuIcon()
         readLaterTinted = readLater.getCopy(withColor: GMColor.green500Color())
         
-        var topColor = ColorUtil.fontColor.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.9))
-        var nextColor = ColorUtil.fontColor.add(overlay: ColorUtil.foregroundColor.withAlphaComponent(0.8))
+        var topColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.backgroundColor.withAlphaComponent(0.9))
+        var nextColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.backgroundColor.withAlphaComponent(0.8))
 
         web = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         web = web.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))

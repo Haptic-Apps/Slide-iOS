@@ -37,19 +37,19 @@ extension UIImage {
 
     // TODO: These should make only one copy and do in-place operations on those
     func navIcon(_ white: Bool = false) -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: SettingValues.reduceColor && !white ? ColorUtil.navIconColor : .white)
+        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: SettingValues.reduceColor && !white ? ColorUtil.theme.navIconColor : .white)
     }
 
     func smallIcon() -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 12, height: 12), withColor: ColorUtil.navIconColor)
+        return self.getCopy(withSize: CGSize(width: 12, height: 12), withColor: ColorUtil.theme.navIconColor)
     }
 
     func toolbarIcon() -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.navIconColor)
+        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.theme.navIconColor)
     }
 
     func menuIcon() -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.navIconColor)
+        return self.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.navIconColor)
     }
 
     func cropToBounds(image: UIImage, width: Double, height: Double) -> UIImage {

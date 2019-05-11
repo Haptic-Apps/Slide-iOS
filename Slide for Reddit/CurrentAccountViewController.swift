@@ -41,12 +41,12 @@ class CurrentAccountViewController: UIViewController {
 
     var spinner = UIActivityIndicatorView().then {
         $0.style = UIActivityIndicatorView.Style.whiteLarge
-        $0.color = ColorUtil.fontColor
+        $0.color = ColorUtil.theme.fontColor
         $0.hidesWhenStopped = true
     }
 
     var contentView = UIView().then {
-        $0.backgroundColor = ColorUtil.backgroundColor
+        $0.backgroundColor = ColorUtil.theme.backgroundColor
         $0.clipsToBounds = false
     }
 
@@ -110,7 +110,7 @@ class CurrentAccountViewController: UIViewController {
 
     var accountNameLabel = UILabel().then {
         $0.font = FontGenerator.boldFontOfSize(size: 28, submission: false)
-        $0.textColor = ColorUtil.fontColor
+        $0.textColor = ColorUtil.theme.fontColor
         $0.numberOfLines = 1
         $0.adjustsFontSizeToFitWidth = true
         $0.minimumScaleFactor = 0.5
@@ -119,13 +119,13 @@ class CurrentAccountViewController: UIViewController {
 
     var accountAgeLabel = UILabel().then {
         $0.font = FontGenerator.fontOfSize(size: 12, submission: false)
-        $0.textColor = ColorUtil.fontColor
+        $0.textColor = ColorUtil.theme.fontColor
         $0.numberOfLines = 1
         $0.text = ""
     }
 
     var accountImageView = UIImageView().then {
-        $0.backgroundColor = ColorUtil.foregroundColor
+        $0.backgroundColor = ColorUtil.theme.backgroundColor
         $0.contentMode = .scaleAspectFit
         if #available(iOS 11.0, *) {
             $0.accessibilityIgnoresInvertColors = true
@@ -141,7 +141,7 @@ class CurrentAccountViewController: UIViewController {
 
     var emptyStateLabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.textColor = ColorUtil.fontColor
+        $0.textColor = ColorUtil.theme.fontColor
         $0.textAlignment = .center
         $0.attributedText = {
             var font = UIFont.boldSystemFont(ofSize: 20)
@@ -189,7 +189,7 @@ class CurrentAccountViewController: UIViewController {
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        setStyle = SettingValues.reduceColor && ColorUtil.theme.isLight() ? .default : .lightContent
+        setStyle = SettingValues.reduceColor && ColorUtil.theme.isLight ? .default : .lightContent
     }
 }
 
@@ -293,12 +293,12 @@ extension CurrentAccountViewController {
         updateModBadge()
 
         if AccountController.current != nil {
-            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(named: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                 guard let strongSelf = self else { return }
                 strongSelf.accountImageView.image = image
             }
         } else {
-            accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.fontColor)
+            accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor)
         }
         setEmptyState(!AccountController.isLoggedIn, animate: true)
 
@@ -535,14 +535,14 @@ class AccountHeaderView: UIView {
         $0.numberOfLines = 0
         $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
         $0.textAlignment = .center
-        $0.textColor = ColorUtil.fontColor
+        $0.textColor = ColorUtil.theme.fontColor
         $0.accessibilityTraits = UIAccessibilityTraits.button
     }
     var postKarmaLabel: UILabel = UILabel().then {
         $0.numberOfLines = 0
         $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
         $0.textAlignment = .center
-        $0.textColor = ColorUtil.fontColor
+        $0.textColor = ColorUtil.theme.fontColor
         $0.accessibilityTraits = UIAccessibilityTraits.button
     }
 
@@ -555,7 +555,7 @@ class AccountHeaderView: UIView {
     }
 
     var detailsCell = UITableViewCell().then {
-        $0.configure(text: "Your profile", imageName: "profile", imageColor: ColorUtil.fontColor)
+        $0.configure(text: "Your profile", imageName: "profile", imageColor: ColorUtil.theme.fontColor)
     }
 
     var infoStack = UIStackView().then {
@@ -657,8 +657,8 @@ private extension UITableViewCell {
         imageView?.tintColor = imageColor
 
         accessoryType = .none
-        backgroundColor = ColorUtil.foregroundColor
-        textLabel?.textColor = ColorUtil.fontColor
+        backgroundColor = ColorUtil.theme.backgroundColor
+        textLabel?.textColor = ColorUtil.theme.fontColor
         layer.cornerRadius = 5
         clipsToBounds = true
     }
