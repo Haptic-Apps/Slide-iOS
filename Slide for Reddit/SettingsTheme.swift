@@ -408,7 +408,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return SettingValues.nightModeEnabled && ColorUtil.shouldBeNight() ? 2 : 4
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -438,13 +438,14 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
                 var theme = ColorUtil.theme
-                for bTheme in themes {
+                for bTheme in ColorUtil.themes {
                     if bTheme.title == SettingValues.nightTheme {
                         theme = bTheme
                         break
                     }
                 }
-
+                cell.isUserInteractionEnabled = true
+                cell.contentView.alpha = 1
                 cell.setTheme(theme: theme)
                 return cell
             }
@@ -454,11 +455,27 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
                 cell.setTheme(theme: customThemes[indexPath.row - 1])
+                if ColorUtil.shouldBeNight() {
+                    cell.isUserInteractionEnabled = false
+                    cell.contentView.alpha = 0.5
+                } else {
+                    cell.isUserInteractionEnabled = true
+                    cell.contentView.alpha = 1
+                }
+                cell.isUserInteractionEnabled = true
+                cell.contentView.alpha = 1
                 return cell
             }
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
             cell.setTheme(theme: themes[indexPath.row])
+            if ColorUtil.shouldBeNight() {
+                cell.isUserInteractionEnabled = false
+                cell.contentView.alpha = 0.5
+            } else {
+                cell.isUserInteractionEnabled = true
+                cell.contentView.alpha = 1
+            }
             return cell
         default: fatalError("Unknown section")
         }
@@ -534,8 +551,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             }
         } else if indexPath.section == 2 {
             if !VCPresenter.proDialogShown(feature: true, self) {
-                let row = indexPath.row - 1
-                let theme = customThemes[row]
+                let theme = customThemes[indexPath.row - 1]
                 let themeData = UserDefaults.standard.string(forKey: "Theme+" + theme.title)!.removingPercentEncoding!
                 let split = themeData.split("#")
                 let alert = UIAlertController(title: "\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))", message: nil, preferredStyle: .alert)
@@ -555,7 +571,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                 }))
                 alert.addAction(UIAlertAction(title: "Edit Theme", style: .destructive, handler: { (_) in
                     let theme = SettingsCustomTheme()
-                    theme.inputTheme = self.customThemes[row].title
+                    theme.inputTheme = self.customThemes[indexPath.row - 1].title
                     VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
                 }))
                 alert.addCancelButton()

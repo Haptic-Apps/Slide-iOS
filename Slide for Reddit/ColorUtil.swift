@@ -266,6 +266,7 @@ public class ColorUtil {
     static var themes = [Theme]()
     
     static func initializeThemes() {
+        ColorUtil.themes.removeAll()
         ColorUtil.themes.append(Theme(title: "light", displayName: "Light", foregroundColor: UIColor.white, backgroundColor: UIColor(hexString: "#e5e5e5"), navIconColor: UIColor(hexString: "#000000").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#000000").withAlphaComponent(0.87), isLight: true, isCustom: false))
         ColorUtil.themes.append(Theme(title: "dark", displayName: "Dark Gray", foregroundColor: UIColor(hexString: "#303030"), backgroundColor: UIColor(hexString: "#212121"), navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false))
         ColorUtil.themes.append(Theme(title: "black", displayName: "AMOLED Black", foregroundColor: UIColor.black, backgroundColor: UIColor.black, navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false))
@@ -283,7 +284,7 @@ public class ColorUtil {
             let themeData = UserDefaults.standard.string(forKey: theme)!.removingPercentEncoding!
             let split = themeData.split("#")
             let title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
-            themes.append(Theme(title: title, displayName: title, foregroundColor: UIColor(hex: split[2]), backgroundColor: UIColor(hex: split[3]), navIconColor: UIColor(hex: split[5]), fontColor: UIColor(hex: split[4]), isLight: !Bool(split[8])!, isCustom: true))
+            themes.append(Theme(title: title, displayName: title, foregroundColor: UIColor(hex: split[2]), backgroundColor: UIColor(hex: split[3]), navIconColor: UIColor(hex: split[5]), fontColor: UIColor(hex: split[4]), isLight: Bool(split[8])!, isCustom: true))
         }
     }
 
