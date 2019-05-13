@@ -11,6 +11,7 @@ import LicensesViewController
 import RealmSwift
 import RLBAlertsPickers
 import SDWebImage
+import SDCAlertView
 import UIKit
 
 class SettingsBackup: UITableViewController {
@@ -75,7 +76,7 @@ class SettingsBackup: UITableViewController {
 
 extension SettingsBackup {
     func doBackup() {
-        let alert = UIAlertController.init(title: "Really back up your data?", message: "This will overwrite any previous backups", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: "Really back up your data?", message: "This will overwrite any previous backups for this device", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
             self.backupSync()
         }))
@@ -85,23 +86,62 @@ extension SettingsBackup {
     }
 
     func doRestore() {
-        let alert = UIAlertController.init(title: "Really restore your data?", message: "This will overwrite all current Slide settings and you will have to restart Slide for the changes to take place", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
-            self.restoreSync()
-        }))
-        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: { (_) in
-        }))
+        let icloud = NSUbiquitousKeyValueStore.default
+        let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
+        if icloud.dictionaryRepresentation.keys.contains("name") {
+            alert.addAction(AlertAction(title: "Global backup", style: AlertAction.Style.normal, handler: { (_) in
+                self.restoreSync(device: nil)
+            }))
+        }
+        if icloud.dictionaryRepresentation.keys.contains("backupdevices") {
+            for device in icloud.value(forKey: "backupdevices") as? [String] ?? [] {
+                alert.addAction(AlertAction(title: device, style: AlertAction.Style.normal, handler: { (_) in
+                    self.restoreSync(device: device.split(" ").first ?? device)
+                }))
+            }
+        }
+        
+        alert.setupTheme()
+        alert.attributedTitle = NSAttributedString(string: "Select a backup to restore on this device", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        alert.addCloseButton()
+        alert.addBlurView()
+
         present(alert, animated: true)
     }
 
     func backupSync() {
         let icloud = NSUbiquitousKeyValueStore.default
-        for item in icloud.dictionaryRepresentation {
-            icloud.removeObject(forKey: item.key)
-        }
+        let device = UIDevice.current.model
         for item in UserDefaults.standard.dictionaryRepresentation() {
-            icloud.set(item.value, forKey: item.key)
+            if (device + "#" + item.key).length < 64 {
+                icloud.set(item.value, forKey: device + "#" + item.key)
+            }
         }
+        let date = Date()
+        let calender = Calendar.current
+        let components = calender.dateComponents([.year, .month, .day, .minute, .hour], from: date)
+        
+        let year = components.year
+        let month = components.month
+        let day = components.day
+        let hour = components.hour
+        let minute = components.minute
+
+        let todayString = String(year ?? 0) + "-" + String(month ?? 0) + "-" + String(day ?? 0) + " @ " + String(hour ?? 0) + ":" + String(minute ?? 0)
+        var devices: [String] = []
+            
+        if icloud.dictionaryRepresentation.keys.contains("backupdevices") {
+            for d in icloud.value(forKey: "backupdevices") as? [String] ?? [] {
+                if !d.contains(device) {
+                    devices.append(d)
+                }
+            }
+        }
+        
+        devices.append(device + " (" + todayString + ")")
+        
+        icloud.set(devices, forKey: "backupdevices")
         icloud.synchronize()
         let alert = UIAlertController.init(title: "Your data has been synced!", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
@@ -110,17 +150,45 @@ extension SettingsBackup {
         present(alert, animated: true)
     }
 
-    func restoreSync() {
-        let icloud = NSUbiquitousKeyValueStore.default
-        for item in icloud.dictionaryRepresentation {
-            UserDefaults.standard.set(item.value, forKey: item.key)
-        }
-        UserDefaults.standard.synchronize()
-        let alert = UIAlertController.init(title: "Your data has been restored!", message: "Slide will now close to apply changes", preferredStyle: .alert)
-        alert.addAction(UIAlertAction.init(title: "Close Slide", style: .cancel, handler: { (_) in
-            exit(0)
+    func restoreSync(device: String?) {
+        let alert = UIAlertController.init(title: "Really restore your data?", message: "This will overwrite all current Slide settings and you will have to restart Slide for the changes to take place", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
+            let icloud = NSUbiquitousKeyValueStore.default
+            if device == nil {
+                for item in icloud.dictionaryRepresentation {
+                    if item.key.contains("#") {
+                        UserDefaults.standard.set(item.value, forKey: item.key)
+                    }
+                }
+            } else {
+                for item in icloud.dictionaryRepresentation {
+                    if item.key.contains(device!) {
+                        UserDefaults.standard.set(item.value, forKey: item.key.split("#").last ?? item.key)
+                    }
+                }
+            }
+            UserDefaults.standard.synchronize()
+            let alert = UIAlertController.init(title: "Your data has been restored!", message: "Slide will now close to apply changes", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "Close Slide", style: .cancel, handler: { (_) in
+                exit(0)
+            }))
+            self.present(alert, animated: true)
+        }))
+        alert.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: { (_) in
         }))
         present(alert, animated: true)
+    }
+}
+
+extension NSUbiquitousKeyValueStore {
+    func object<T: Codable>(_ type: T.Type, with key: String, usingDecoder decoder: JSONDecoder = JSONDecoder()) -> T? {
+        guard let data = self.value(forKey: key) as? Data else { return nil }
+        return try? decoder.decode(type.self, from: data)
+    }
+    
+    func set<T: Codable>(object: T, forKey key: String, usingEncoder encoder: JSONEncoder = JSONEncoder()) {
+        let data = try? encoder.encode(object)
+        self.set(data, forKey: key)
     }
 }
 
