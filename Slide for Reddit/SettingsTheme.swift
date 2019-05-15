@@ -506,9 +506,9 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, b) in
             let title = self.customThemes[indexPath.row].title
-            UserDefaults.standard.removeObject(forKey: "Theme+" + title)
+            UserDefaults.standard.removeObject(forKey: "Theme+" + title.addPercentEncoding)
             UserDefaults.standard.synchronize()
-            self.customThemes = self.customThemes.filter({ $0.title == title })
+            self.customThemes = self.customThemes.filter({ $0.title != title })
             self.tableView.reloadData()
             b(true)
         }
