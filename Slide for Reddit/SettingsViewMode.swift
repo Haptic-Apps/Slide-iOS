@@ -52,7 +52,7 @@ class SettingsViewMode: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
         case 0: label.text = "Subreddit display mode"
@@ -64,8 +64,8 @@ class SettingsViewMode: UITableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -79,7 +79,7 @@ class SettingsViewMode: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "App Mode"
         self.tableView.separatorStyle = .none
@@ -91,27 +91,27 @@ class SettingsViewMode: UITableViewController {
         createCell(multicolumnCount, isOn: false, text: "Multi-column count")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.singleMode.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.singleMode.backgroundColor = ColorUtil.foregroundColor
-        self.singleMode.textLabel?.textColor = ColorUtil.fontColor
+        self.singleMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.singleMode.backgroundColor = ColorUtil.theme.foregroundColor
+        self.singleMode.textLabel?.textColor = ColorUtil.theme.fontColor
         self.singleMode.detailTextLabel?.numberOfLines = 0
         
         self.splitMode.detailTextLabel?.text = SettingValues.AppMode.SPLIT.getDescription()
-        self.splitMode.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.splitMode.backgroundColor = ColorUtil.foregroundColor
-        self.splitMode.textLabel?.textColor = ColorUtil.fontColor
+        self.splitMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.splitMode.backgroundColor = ColorUtil.theme.foregroundColor
+        self.splitMode.textLabel?.textColor = ColorUtil.theme.fontColor
         self.splitMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnMode.detailTextLabel?.text = SettingValues.AppMode.MULTI_COLUMN.getDescription()
-        self.multicolumnMode.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.multicolumnMode.backgroundColor = ColorUtil.foregroundColor
-        self.multicolumnMode.textLabel?.textColor = ColorUtil.fontColor
+        self.multicolumnMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnMode.backgroundColor = ColorUtil.theme.foregroundColor
+        self.multicolumnMode.textLabel?.textColor = ColorUtil.theme.fontColor
         self.multicolumnMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.multicolumnCount.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.multicolumnCount.backgroundColor = ColorUtil.foregroundColor
-        self.multicolumnCount.textLabel?.textColor = ColorUtil.fontColor
+        self.multicolumnCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnCount.backgroundColor = ColorUtil.theme.foregroundColor
+        self.multicolumnCount.textLabel?.textColor = ColorUtil.theme.fontColor
         self.multicolumnCount.detailTextLabel?.numberOfLines = 0
 
         self.setSelected()
@@ -245,7 +245,7 @@ class SettingsViewMode: UITableViewController {
 
         actionSheetController.setupTheme()
         
-        actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         actionSheetController.addChild(pickerView)
         

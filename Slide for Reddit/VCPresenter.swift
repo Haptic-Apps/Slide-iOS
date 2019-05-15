@@ -87,7 +87,7 @@ public class VCPresenter {
         let newParent = TapBehindModalViewController.init(rootViewController: viewController)
         newParent.navigationBar.shadowImage = UIImage()
         newParent.navigationBar.isTranslucent = false
-        newParent.view.backgroundColor = ColorUtil.backgroundColor
+        newParent.view.backgroundColor = ColorUtil.theme.backgroundColor
         newParent.closeCallback = {
             if parentViewController is MediaViewController {
                 (parentViewController as! MediaViewController).setAlphaOfBackgroundViews(alpha: 1)
@@ -106,11 +106,11 @@ public class VCPresenter {
         let barButton = UIBarButtonItem.init(customView: button)
         
         newParent.modalPresentationStyle = .popover
-        newParent.view.backgroundColor = ColorUtil.backgroundColor
+        newParent.view.backgroundColor = ColorUtil.theme.backgroundColor
         if let popover = newParent.popoverPresentationController {
             popover.sourceView = parentViewController.view
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.backgroundColor
+            popover.backgroundColor = ColorUtil.theme.backgroundColor
             
             popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
             if parentViewController is MediaViewController {
@@ -157,11 +157,11 @@ public class VCPresenter {
         let barButton = UIBarButtonItem.init(customView: button)
         
         newParent.modalPresentationStyle = .popover
-        newParent.view.backgroundColor = ColorUtil.backgroundColor
+        newParent.view.backgroundColor = ColorUtil.theme.backgroundColor
         if let popover = newParent.popoverPresentationController {
             popover.sourceView = parentViewController.view
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.backgroundColor
+            popover.backgroundColor = ColorUtil.theme.backgroundColor
 
             popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
             if parentViewController is MediaViewController {

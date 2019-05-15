@@ -30,7 +30,7 @@ public class ToolbarTextView: NSObject {
         let scrollView = TouchUIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: text!.frame.size.width, height: 50))
         scrollView.contentSize = CGSize.init(width: 50 * 11, height: 50)
         scrollView.autoresizingMask = .flexibleWidth
-        scrollView.backgroundColor = ColorUtil.backgroundColor
+        scrollView.backgroundColor = ColorUtil.theme.backgroundColor
         var i = 0
         for button in ([
             generateButtons(image: "save", action: #selector(ToolbarTextView.saveDraft(_:))),
@@ -55,7 +55,7 @@ public class ToolbarTextView: NSObject {
         if !(parent is ReplyViewController) {
             text!.tintColor = .white
         } else {
-            text!.tintColor = ColorUtil.fontColor
+            text!.tintColor = ColorUtil.theme.fontColor
         }
         if !ColorUtil.theme.isLight() {
             text!.keyboardAppearance = .dark
@@ -192,11 +192,11 @@ public class ToolbarTextView: NSObject {
 
                                                 let config: TextField.Config = { textField in
                                                     textField.becomeFirstResponder()
-                                                    textField.textColor = ColorUtil.fontColor
-                                                    textField.attributedPlaceholder = NSAttributedString(string: "Caption (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
-                                                    textField.left(image: UIImage.init(named: "link"), color: ColorUtil.fontColor)
-                                                    textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
-                                                    textField.backgroundColor = ColorUtil.foregroundColor
+                                                    textField.textColor = ColorUtil.theme.fontColor
+                                                    textField.attributedPlaceholder = NSAttributedString(string: "Caption (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+                                                    textField.left(image: UIImage.init(named: "link"), color: ColorUtil.theme.fontColor)
+                                                    textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+                                                    textField.backgroundColor = ColorUtil.theme.foregroundColor
                                                     textField.leftViewPadding = 12
                                                     textField.layer.borderWidth = 1
                                                     textField.layer.cornerRadius = 8
@@ -212,7 +212,7 @@ public class ToolbarTextView: NSObject {
                                                 
                                                 alert.setupTheme()
                                                 
-                                                alert.attributedTitle = NSAttributedString(string: "Link Text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+                                                alert.attributedTitle = NSAttributedString(string: "Link Text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                                                 
                                                 alert.contentView.addSubview(textField)
                                                 
@@ -257,11 +257,11 @@ public class ToolbarTextView: NSObject {
 
                                 let config: TextField.Config = { textField in
                                     textField.becomeFirstResponder()
-                                    textField.textColor = ColorUtil.fontColor
-                                    textField.attributedPlaceholder = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
-                                    textField.left(image: UIImage.init(named: "link"), color: ColorUtil.fontColor)
-                                    textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
-                                    textField.backgroundColor = ColorUtil.foregroundColor
+                                    textField.textColor = ColorUtil.theme.fontColor
+                                    textField.attributedPlaceholder = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+                                    textField.left(image: UIImage.init(named: "link"), color: ColorUtil.theme.fontColor)
+                                    textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+                                    textField.backgroundColor = ColorUtil.theme.foregroundColor
                                     textField.leftViewPadding = 12
                                     textField.layer.borderWidth = 1
                                     textField.layer.cornerRadius = 8
@@ -277,7 +277,7 @@ public class ToolbarTextView: NSObject {
                                 
                                 alert.setupTheme()
                                 
-                                alert.attributedTitle = NSAttributedString(string: "Link Text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+                                alert.attributedTitle = NSAttributedString(string: "Link Text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                                 
                                 alert.contentView.addSubview(textField)
                                 
@@ -369,14 +369,14 @@ public class ToolbarTextView: NSObject {
 
         let configU: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.fontColor
+            textField.textColor = ColorUtil.theme.fontColor
             textField.placeholder = "URL"
-            textField.left(image: UIImage.init(named: "link"), color: ColorUtil.fontColor)
+            textField.left(image: UIImage.init(named: "link"), color: ColorUtil.theme.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.foregroundColor
+            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done
@@ -387,14 +387,14 @@ public class ToolbarTextView: NSObject {
 
         let configT: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.fontColor
+            textField.textColor = ColorUtil.theme.fontColor
             textField.placeholder = "Caption (optional)"
-            textField.left(image: UIImage.init(named: "size"), color: ColorUtil.fontColor)
+            textField.left(image: UIImage.init(named: "size"), color: ColorUtil.theme.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.foregroundColor
+            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done
@@ -407,7 +407,7 @@ public class ToolbarTextView: NSObject {
         
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Insert link", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Insert link", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         alert.contentView.addSubview(textField)
         

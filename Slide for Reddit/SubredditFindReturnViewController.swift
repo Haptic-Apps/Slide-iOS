@@ -81,8 +81,8 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         self.automaticallyAdjustsScrollViewInsets = false
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         
-        tableView.backgroundColor = ColorUtil.backgroundColor
-        tableView.separatorColor = ColorUtil.backgroundColor
+        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.separatorColor = ColorUtil.theme.backgroundColor
         tableView.separatorInset = .zero
         
         tableView.reloadData()
@@ -264,7 +264,7 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
         case 0: label.text  = "Preview"

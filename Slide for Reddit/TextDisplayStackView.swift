@@ -95,7 +95,7 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = color
     }
     
-    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.fontColor, delegate: TextDisplayStackViewDelegate) {
+    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.theme.fontColor, delegate: TextDisplayStackViewDelegate) {
         self.fontSize = fontSize
         self.submission = submission
         self.estimatedWidth = width
@@ -327,10 +327,10 @@ public class TextDisplayStackView: UIStackView {
                     $0.layer.cornerRadius = 12.5
                     $0.clipsToBounds = true
                     $0.setTitle("    \(counter): \(url.host ?? url.absoluteString)", for: .normal)
-                    $0.setTitleColor(ColorUtil.fontColor, for: .normal)
+                    $0.setTitleColor(ColorUtil.theme.fontColor, for: .normal)
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
-                    $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.fontColor), for: .normal)
+                    $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.theme.fontColor), for: .normal)
                     //todo icon
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
                     $0.backgroundColor = UIColor.clear
@@ -341,7 +341,7 @@ public class TextDisplayStackView: UIStackView {
                 }
                 
                 view.layer.borderWidth = 1
-                view.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.7).cgColor
+                view.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.7).cgColor
 
                 let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(35)
                 
@@ -438,7 +438,7 @@ public class TextDisplayStackView: UIStackView {
                 if !ignoreHeight {
                     table.heightAnchor == table.globalHeight
                 }
-                table.backgroundColor = ColorUtil.backgroundColor.withAlphaComponent(0.5)
+                table.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 table.clipsToBounds = true
                 table.layer.cornerRadius = 10
                 table.isUserInteractionEnabled = true
@@ -447,7 +447,7 @@ public class TextDisplayStackView: UIStackView {
                 tableCount += 1
             } else if block.startsWith("<hr/>") {
                 let line = UIView()
-                line.backgroundColor = ColorUtil.fontColor
+                line.backgroundColor = ColorUtil.theme.fontColor
                 overflow.addArrangedSubview(line)
                 estimatedHeight += 1
                 line.heightAnchor == CGFloat(1)
@@ -460,7 +460,7 @@ public class TextDisplayStackView: UIStackView {
                 if !ignoreHeight {
                     body.heightAnchor >= body.globalHeight
                 }
-                body.backgroundColor = ColorUtil.backgroundColor.withAlphaComponent(0.5)
+                body.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
                 estimatedHeight += body.globalHeight
                 body.layer.cornerRadius = 10
@@ -746,7 +746,7 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<hr/>") {
                 totalHeight += 1
             } else if block.startsWith("<pre><code>") {
-                let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
+                let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 totalHeight += body.globalHeight
             } else {
                 let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil)

@@ -183,8 +183,8 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -222,36 +222,36 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Edit theme"
         self.tableView.separatorStyle = .none
         
         self.primary.textLabel?.text = "Primary color"
         self.primary.accessoryType = .none
-        self.primary.backgroundColor = ColorUtil.foregroundColor
-        self.primary.textLabel?.textColor = ColorUtil.fontColor
+        self.primary.backgroundColor = ColorUtil.theme.foregroundColor
+        self.primary.textLabel?.textColor = ColorUtil.theme.fontColor
         self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
         
         self.accent.textLabel?.text = "Accent color"
         self.accent.accessoryType = .none
-        self.accent.backgroundColor = ColorUtil.foregroundColor
-        self.accent.textLabel?.textColor = ColorUtil.fontColor
+        self.accent.backgroundColor = ColorUtil.theme.foregroundColor
+        self.accent.textLabel?.textColor = ColorUtil.theme.fontColor
         self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
         
         self.custom.textLabel?.text = "New custom theme"
         self.custom.accessoryType = .disclosureIndicator
-        self.custom.backgroundColor = ColorUtil.foregroundColor
-        self.custom.textLabel?.textColor = ColorUtil.fontColor
+        self.custom.backgroundColor = ColorUtil.theme.foregroundColor
+        self.custom.textLabel?.textColor = ColorUtil.theme.fontColor
         self.custom.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.custom.imageView?.tintColor = ColorUtil.navIconColor
+        self.custom.imageView?.tintColor = ColorUtil.theme.navIconColor
         
         self.base.textLabel?.text = "Base theme"
         self.base.accessoryType = .disclosureIndicator
-        self.base.backgroundColor = ColorUtil.foregroundColor
-        self.base.textLabel?.textColor = ColorUtil.fontColor
+        self.base.backgroundColor = ColorUtil.theme.foregroundColor
+        self.base.textLabel?.textColor = ColorUtil.theme.fontColor
         self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.base.imageView?.tintColor = ColorUtil.navIconColor
+        self.base.imageView?.tintColor = ColorUtil.theme.navIconColor
         
         nightEnabled = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
@@ -260,12 +260,12 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         nightEnabled.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.night.textLabel?.text = "Night Mode"
         self.night.detailTextLabel?.text = "Tap to change night hours"
-        self.night.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.night.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.night.accessoryType = .none
-        self.night.backgroundColor = ColorUtil.foregroundColor
-        self.night.textLabel?.textColor = ColorUtil.fontColor
+        self.night.backgroundColor = ColorUtil.theme.foregroundColor
+        self.night.textLabel?.textColor = ColorUtil.theme.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.night.imageView?.tintColor = ColorUtil.navIconColor
+        self.night.imageView?.tintColor = ColorUtil.theme.navIconColor
         night.accessoryView = nightEnabled
 
         tintOutsideSwitch = UISwitch().then {
@@ -276,15 +276,15 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         tintOutsideSwitch.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.tintOutside.textLabel?.text = "Only tint outside of subreddit"
         self.tintOutside.accessoryView = tintOutsideSwitch
-        self.tintOutside.backgroundColor = ColorUtil.foregroundColor
-        self.tintOutside.textLabel?.textColor = ColorUtil.fontColor
+        self.tintOutside.backgroundColor = ColorUtil.theme.foregroundColor
+        self.tintOutside.textLabel?.textColor = ColorUtil.theme.fontColor
         tintOutside.selectionStyle = UITableViewCell.SelectionStyle.none
         
         self.tintingMode.textLabel?.text = "Subreddit tinting mode"
         self.tintingMode.detailTextLabel?.text = SettingValues.tintingMode
-        self.tintingMode.backgroundColor = ColorUtil.foregroundColor
-        self.tintingMode.textLabel?.textColor = ColorUtil.fontColor
-        self.tintingMode.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.tintingMode.backgroundColor = ColorUtil.theme.foregroundColor
+        self.tintingMode.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.tintingMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
         reduceColor = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
@@ -295,18 +295,18 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
         reduceColorCell.textLabel?.numberOfLines = 0
         reduceColorCell.accessoryView = reduceColor
-        reduceColorCell.backgroundColor = ColorUtil.foregroundColor
-        reduceColorCell.textLabel?.textColor = ColorUtil.fontColor
+        reduceColorCell.backgroundColor = ColorUtil.theme.foregroundColor
+        reduceColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.reduceColorCell.imageView?.image = UIImage.init(named: "nocolors")?.toolbarIcon()
-        self.reduceColorCell.imageView?.tintColor = ColorUtil.fontColor
+        self.reduceColorCell.imageView?.tintColor = ColorUtil.theme.fontColor
         
         if SettingValues.reduceColor {
             self.primary.isUserInteractionEnabled = false
             self.primary.textLabel?.isEnabled = false
             self.primary.detailTextLabel?.isEnabled = false
             
-            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
         }
@@ -381,7 +381,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             self.primary.textLabel?.isEnabled = false
             self.primary.detailTextLabel?.isEnabled = false
             
-            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
         } else {
@@ -389,7 +389,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             self.primary.textLabel?.isEnabled = true
             self.primary.detailTextLabel?.isEnabled = true
             
-            self.primary.detailTextLabel?.textColor = ColorUtil.fontColor
+            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = ""
         }
@@ -616,7 +616,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         initialSelection.append((4, SettingValues.nightEndMin / 5))
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Select night hours", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Select night hours", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         let pickerView = PickerViewViewControllerColored(values: values, initialSelection: initialSelection, action: { _, _, index, _ in
             switch index.column {
@@ -694,7 +694,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         titleLabel.textColor = ColorUtil.baseAccent
         titleLabel.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = titleLabel.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
 
         switch section {
         case 0: titleLabel.text = "App Colors"
@@ -796,7 +796,7 @@ extension PickerViewViewControllerColored: UIPickerViewDataSource, UIPickerViewD
     // for the view versions, we cache any hidden and thus unused views and pass them back for reuse.
     // If you return back a different object, the old one will be released. the view will be centered in the row rect
     public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
-        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 8)])
+        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 8)])
     }
     /*
      public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {

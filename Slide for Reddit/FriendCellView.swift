@@ -38,12 +38,12 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         title.numberOfLines = 0
         title.lineBreakMode = NSLineBreakMode.byWordWrapping
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
-        title.textColor = ColorUtil.fontColor
+        title.textColor = ColorUtil.theme.fontColor
         
-        self.icon = UIImageView(image: UIImage(named: "profile")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.fontColor))
+        self.icon = UIImageView(image: UIImage(named: "profile")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
         self.contentView.addSubviews(title, icon)
 
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.setupConstraints()
         
         self.contentView.addTapGestureRecognizer {
@@ -67,8 +67,8 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         self.friend = friend
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: friend.name, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
-        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: friend.name, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: friend.name, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
+        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: friend.name, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
         
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: friend.name)
@@ -102,7 +102,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         let df = DateFormatter()
         df.dateFormat = "MM/dd/yyyy"
 
-        let endString = NSMutableAttributedString(string: "\nFriend since \(df.string(from: friend.friendSince as Date))", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        let endString = NSMutableAttributedString(string: "\nFriend since \(df.string(from: friend.friendSince as Date))", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
         
         infoString.append(endString)
         title.attributedText = infoString

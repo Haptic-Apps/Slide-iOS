@@ -101,8 +101,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
-                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     vc = safariVC
                 } else {
                     let web = WebsiteViewController(url: url, subreddit: "")
@@ -158,8 +158,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                     let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                     if #available(iOS 10.0, *) {
-                        safariVC.preferredBarTintColor = ColorUtil.backgroundColor
-                        safariVC.preferredControlTintColor = ColorUtil.fontColor
+                        safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                        safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     } else {
                         // Fallback on earlier versions
                     }
@@ -172,8 +172,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
-                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                 } else {
                     // Fallback on earlier versions
                 }
@@ -187,8 +187,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
             let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
             if #available(iOS 10.0, *) {
-                safariVC.preferredBarTintColor = ColorUtil.backgroundColor
-                safariVC.preferredControlTintColor = ColorUtil.fontColor
+                safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
             } else {
                 // Fallback on earlier versions
             }
@@ -222,8 +222,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.backgroundColor
-                    safariVC.preferredControlTintColor = ColorUtil.fontColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     vc = safariVC
                 } else {
                     let web = WebsiteViewController(url: url, subreddit: "")
@@ -311,7 +311,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
     func setBarColors(color: UIColor) {
         self.color = color
         if SettingValues.reduceColor {
-            self.color = ColorUtil.backgroundColor
+            self.color = ColorUtil.theme.backgroundColor
         }
         setNavColors()
     }
@@ -321,7 +321,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             navigationController.navigationBar.shadowImage = UIImage()
             navigationController.navigationBar.barTintColor = color
             navigationController.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([
-                NSAttributedString.Key.foregroundColor.rawValue: SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white as Any,
+                NSAttributedString.Key.foregroundColor.rawValue: SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white as Any,
             ])
             // If no color was specified but the color muxer is doing its thing,
             // grab the "from" color so that we don't get a white flash.

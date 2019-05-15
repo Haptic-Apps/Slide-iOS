@@ -71,7 +71,7 @@ class SettingsHistory: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
         case 0: label.text  = "Settings"
@@ -83,8 +83,8 @@ class SettingsHistory: UITableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -98,7 +98,7 @@ class SettingsHistory: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "History"
         self.tableView.separatorStyle = .none
@@ -109,14 +109,14 @@ class SettingsHistory: UITableViewController {
         createCell(dotCell, dot, isOn: SettingValues.newIndicator, text: "Show new posts with a dot instead of graying post titles")
 
         clearHistory.textLabel?.text = "Clear submission history"
-        clearHistory.backgroundColor = ColorUtil.foregroundColor
-        clearHistory.textLabel?.textColor = ColorUtil.fontColor
+        clearHistory.backgroundColor = ColorUtil.theme.foregroundColor
+        clearHistory.textLabel?.textColor = ColorUtil.theme.fontColor
         clearHistory.selectionStyle = UITableViewCell.SelectionStyle.none
         clearHistory.accessoryType = .disclosureIndicator
 
         clearSubs.textLabel?.text = "Clear subreddit history"
-        clearSubs.backgroundColor = ColorUtil.foregroundColor
-        clearSubs.textLabel?.textColor = ColorUtil.fontColor
+        clearSubs.backgroundColor = ColorUtil.theme.foregroundColor
+        clearSubs.textLabel?.textColor = ColorUtil.theme.fontColor
         clearSubs.selectionStyle = UITableViewCell.SelectionStyle.none
         clearSubs.accessoryType = .disclosureIndicator
 

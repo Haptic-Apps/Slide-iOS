@@ -32,7 +32,7 @@ class OfflineOverviewViewController: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Offline content"
         self.tableView.separatorStyle = .none
@@ -45,13 +45,13 @@ class OfflineOverviewViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "sub")
         
-        cell.textLabel?.textColor = ColorUtil.fontColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
         cell.textLabel?.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         cell.accessoryType = .disclosureIndicator
-        cell.detailTextLabel?.textColor = ColorUtil.fontColor
+        cell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         cell.detailTextLabel?.numberOfLines = 0
         
        // if indexPath.row == 0 {

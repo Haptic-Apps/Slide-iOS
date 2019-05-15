@@ -32,7 +32,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         subs = Subscriptions.subreddits
@@ -134,7 +134,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = ColorUtil.fontColor
+        spinnerIndicator.color = ColorUtil.theme.fontColor
         spinnerIndicator.startAnimating()
 
         alertController?.view.addSubview(spinnerIndicator)
@@ -241,7 +241,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
-        cell?.backgroundColor = ColorUtil.foregroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
         cell?.sideView.isHidden = UserDefaults.standard.colorForKey(key: "color+" + thing) == nil
         return cell!
     }
@@ -382,7 +382,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.foregroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
     }
 
     func doDelete(_ sub: String) {

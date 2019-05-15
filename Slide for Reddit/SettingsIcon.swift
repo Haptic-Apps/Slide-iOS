@@ -46,7 +46,7 @@ class SettingsIcon: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
         case 0: label.text  = "Premium icons"
@@ -59,7 +59,7 @@ class SettingsIcon: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Icon"
         self.tableView.separatorStyle = .none
@@ -154,9 +154,9 @@ public class IconCell: UITableViewCell {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textAlignment = .left
-        title.textColor = ColorUtil.fontColor
+        title.textColor = ColorUtil.theme.fontColor
         
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         
         iconView.heightAnchor == 40
         iconView.widthAnchor == 40

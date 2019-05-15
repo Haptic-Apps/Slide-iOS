@@ -244,7 +244,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if !loaded {
             showUI()
         }
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
@@ -261,7 +261,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
         }
         
-        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
+        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.splitViewController?.navigationController?.navigationBar.shadowImage = UIImage()
@@ -270,8 +270,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
         
-        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.fontColor
+        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
+        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
         self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -793,13 +793,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     var lastVersion = 0
     
     func reloadNeedingColor() {
-        tableView.backgroundColor = ColorUtil.backgroundColor
+        tableView.backgroundColor = ColorUtil.theme.backgroundColor
         inHeadView?.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
         if SettingValues.fullyHideNavbar {
             inHeadView?.backgroundColor = .clear
         }
 
-        refreshControl.tintColor = ColorUtil.fontColor
+        refreshControl.tintColor = ColorUtil.theme.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
         tableView.addSubview(refreshControl) // not required when using UITableViewController
@@ -1096,14 +1096,14 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.fontColor
-            textField.backgroundColor = ColorUtil.foregroundColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Search...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
-            textField.left(image: UIImage.init(named: "search"), color: ColorUtil.fontColor)
+            textField.textColor = ColorUtil.theme.fontColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
+            textField.attributedPlaceholder = NSAttributedString(string: "Search...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+            textField.left(image: UIImage.init(named: "search"), color: ColorUtil.theme.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done
@@ -1115,7 +1115,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Search", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Search", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
 
         alert.contentView.addSubview(textField)
         
@@ -1170,8 +1170,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Content to hide on", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
-        alert.attributedMessage = NSAttributedString(string: "r/\(sub)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Content to hide on", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedMessage = NSAttributedString(string: "r/\(sub)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         alert.contentView.addSubview(filterView)
         settings.didMove(toParent: alert)
@@ -2297,7 +2297,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         }
         if row >= self.links.count {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
-            cell.loader.color = ColorUtil.fontColor
+            cell.loader.color = ColorUtil.theme.fontColor
             cell.loader.startAnimating()
             if !loading && !nomore {
                 self.loadMore()
@@ -2314,16 +2314,16 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             
             let finalText: NSMutableAttributedString!
             if textParts.count > 1 {
-                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16)]))
-                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
+                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16)]))
+                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
                 firstPart.append(secondPart)
                 finalText = firstPart
             } else {
-                finalText = NSMutableAttributedString.init(string: submission.title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                finalText = NSMutableAttributedString.init(string: submission.title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
             }
 
             cell.time.font = UIFont.systemFont(ofSize: 12)
-            cell.time.textColor = ColorUtil.fontColor
+            cell.time.textColor = ColorUtil.theme.fontColor
             cell.time.alpha = 0.7
             cell.time.text = submission.subreddit
             
@@ -2412,10 +2412,10 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
         } else {
             let c = colorPickerView.colors[indexPath.row]
             primaryChosen = c
-            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
+            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : c
             sideView.backgroundColor = c
             sideView.backgroundColor = c
-            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : c
+            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : c
             if SettingValues.fullyHideNavbar {
                 inHeadView?.backgroundColor = .clear
             }
@@ -2745,8 +2745,8 @@ public class ReadLaterCell: UICollectionViewCell {
     func setArticles(articles: Int) {
         let text = "Read Later "
         let numberText = "(\(articles))"
-        let number = NSMutableAttributedString.init(string: numberText, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 15)]))
-        let readLater = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 15)]))
+        let number = NSMutableAttributedString.init(string: numberText, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 15)]))
+        let readLater = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 15)]))
         let finalText = readLater
         finalText.append(number)
 
@@ -2754,7 +2754,7 @@ public class ReadLaterCell: UICollectionViewCell {
     }
     
     func setupView() {
-        title.backgroundColor = ColorUtil.foregroundColor
+        title.backgroundColor = ColorUtil.theme.foregroundColor
         title.textAlignment = .center
         
         title.numberOfLines = 0
@@ -2800,7 +2800,7 @@ public class PageCell: UICollectionViewCell {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textAlignment = .center
-        title.textColor = ColorUtil.fontColor
+        title.textColor = ColorUtil.theme.fontColor
         
         time.heightAnchor == 60
         time.leftAnchor == self.contentView.leftAnchor

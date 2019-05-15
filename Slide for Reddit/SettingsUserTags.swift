@@ -51,7 +51,7 @@ class SettingsUserTags: UITableViewController {
     func doLayout() {
         setupBaseBarColors()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -71,7 +71,7 @@ class SettingsUserTags: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "User Tags"
         self.tableView.separatorStyle = .none
@@ -165,7 +165,7 @@ class TagCellView: UITableViewCell {
 
     func setTag(user: String, tag: String) {
         
-        let attributedTitle = NSMutableAttributedString(string: user, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
+        let attributedTitle = NSMutableAttributedString(string: user, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
         if !tag.isEmpty {
             let spacer = NSMutableAttributedString.init(string: "  ")
             
@@ -176,8 +176,8 @@ class TagCellView: UITableViewCell {
         }
 
         title.attributedText = attributedTitle
-        body.backgroundColor = ColorUtil.foregroundColor
-        self.backgroundColor = ColorUtil.backgroundColor
+        body.backgroundColor = ColorUtil.theme.foregroundColor
+        self.backgroundColor = ColorUtil.theme.backgroundColor
     }
 }
 
