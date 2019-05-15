@@ -49,8 +49,8 @@ class SettingsContent: UITableViewController {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -64,7 +64,7 @@ class SettingsContent: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Reddit Content"
         self.tableView.separatorStyle = .none

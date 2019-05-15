@@ -44,26 +44,26 @@ class SettingsBackup: UITableViewController {
     }
     
     func doCells(_ reset: Bool = true) {
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Backup"
         self.tableView.separatorStyle = .none
 
         self.backup.textLabel?.text = "Backup"
         self.backup.detailTextLabel?.text = "Backup your Slide data to iCloud"
-        self.backup.backgroundColor = ColorUtil.foregroundColor
-        self.backup.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.backup.textLabel?.textColor = ColorUtil.fontColor
-        self.backup.imageView?.image = UIImage.init(named: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.fontColor)
-        self.backup.imageView?.tintColor = ColorUtil.fontColor
+        self.backup.backgroundColor = ColorUtil.theme.foregroundColor
+        self.backup.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.backup.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.backup.imageView?.image = UIImage.init(named: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
+        self.backup.imageView?.tintColor = ColorUtil.theme.fontColor
         
         self.restore.textLabel?.text = "Restore"
-        self.restore.backgroundColor = ColorUtil.foregroundColor
-        self.restore.detailTextLabel?.textColor = ColorUtil.fontColor
-        self.restore.textLabel?.textColor = ColorUtil.fontColor
+        self.restore.backgroundColor = ColorUtil.theme.foregroundColor
+        self.restore.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.restore.textLabel?.textColor = ColorUtil.theme.fontColor
         self.restore.detailTextLabel?.text = "Restore your backup data from iCloud"
-        self.restore.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon().getCopy(withColor: ColorUtil.fontColor)
-        self.restore.imageView?.tintColor = ColorUtil.fontColor
+        self.restore.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
+        self.restore.imageView?.tintColor = ColorUtil.theme.fontColor
     }
 
     override func viewDidLoad() {

@@ -31,8 +31,8 @@ class CacheSettings: UITableViewController {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -56,13 +56,13 @@ class CacheSettings: UITableViewController {
 
         createCell(autoCache, autoCacheSwitch, isOn: SettingValues.autoCache, text: "Cache subreddits automatically")
         self.autoCache.detailTextLabel?.text = "Will run the first time Slide opens each day"
-        self.autoCache.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.autoCache.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.autoCache.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.autoCache.detailTextLabel?.numberOfLines = 0
 
         createCell(cacheContent, cacheContentSwitch, isOn: false, text: "Cache subreddits automatically")
         self.cacheContent.detailTextLabel?.text = "Coming soon!"
-        self.cacheContent.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.cacheContent.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.cacheContent.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.cacheContent.detailTextLabel?.numberOfLines = 0
 
@@ -95,7 +95,7 @@ class CacheSettings: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
 
         switch section {
         case 0: label.text = "Caching settings"
@@ -164,7 +164,7 @@ class CacheSettings: UITableViewController {
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
             c.setSubreddit(subreddit: thing, nav: nil)
             cell = c
-            cell?.backgroundColor = ColorUtil.foregroundColor
+            cell?.backgroundColor = ColorUtil.theme.foregroundColor
             let aSwitch = UISwitch().then {
                 $0.tintColor = ColorUtil.accentColorForSub(sub: thing)
             }

@@ -40,7 +40,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             readLaterBadge!.text = "\(count)"
             readLaterBadge!.insets = CGSize.zero
             readLaterBadge!.font = UIFont.boldSystemFont(ofSize: 10)
-            readLaterBadge!.textColor = SettingValues.reduceColor ? ColorUtil.navIconColor : UIColor.white
+            readLaterBadge!.textColor = SettingValues.reduceColor ? ColorUtil.theme.navIconColor : UIColor.white
             readLaterBadge!.badgeColor = .clear
             readLaterBadge!.shadowOpacityBadge = 0
             readLater.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -112,7 +112,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
             setupBaseBarColors()
             menuNav?.setColors("")
-            toolbar?.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             self.doButtons()
             MainViewController.needsReTheme = false
         }
@@ -161,7 +161,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
         
-        navigationController?.toolbar.barTintColor = ColorUtil.backgroundColor
+        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
         
         self.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         if menuNav?.tableView != nil {
@@ -378,8 +378,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                     self.color1 = ColorUtil.baseColor
                     self.color2 = ColorUtil.getColorForSub(sub: (firstViewController as! SingleSubredditViewController).sub)
                 } else {
-                    self.color1 = ColorUtil.backgroundColor
-                    self.color2 = ColorUtil.backgroundColor
+                    self.color1 = ColorUtil.theme.backgroundColor
+                    self.color2 = ColorUtil.theme.backgroundColor
                 }
                 
                 self.setViewControllers([firstViewController],
@@ -430,7 +430,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             UserDefaults.standard.setValue(true, forKey: "done" + token.name)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.fontColor
+            spinnerIndicator.color = ColorUtil.theme.fontColor
             spinnerIndicator.startAnimating()
             
             alertController?.view.addSubview(spinnerIndicator)
@@ -504,9 +504,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)
-        menuNav?.muxColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        menuNav?.muxColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
 
-        toolbar!.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        toolbar!.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight() ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
         toolbar!.topAnchor == menuNav!.view.topAnchor
         toolbar!.heightAnchor == 90
@@ -568,8 +568,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         
         CachedTitle.titles.removeAll()
-        view.backgroundColor = ColorUtil.backgroundColor
-        splitViewController?.view.backgroundColor = ColorUtil.foregroundColor
+        view.backgroundColor = ColorUtil.theme.backgroundColor
+        splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
         SubredditReorderViewController.changed = false
         
         finalSubs = []
@@ -647,8 +647,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 48))
         tabBar.itemAppearance = .titles
         
-        tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
-        tabBar.unselectedItemTintColor = SettingValues.reduceColor ? ColorUtil.fontColor.withAlphaComponent(0.45) : UIColor.white.withAlphaComponent(0.45)
+        tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
+        tabBar.unselectedItemTintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor.withAlphaComponent(0.45) : UIColor.white.withAlphaComponent(0.45)
         
         tabBar.selectedItemTitleFont = UIFont.boldSystemFont(ofSize: 14)
         tabBar.unselectedItemTitleFont = UIFont.boldSystemFont(ofSize: 14)
@@ -710,7 +710,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func doLeftItem() {
         let label = UILabel()
         label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
-        label.textColor = SettingValues.reduceColor ? ColorUtil.fontColor : .white
+        label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
         
@@ -814,8 +814,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     override func viewDidLoad() {
         self.navToMux = self.navigationController!.navigationBar
-        self.color1 = ColorUtil.backgroundColor
-        self.color2 = ColorUtil.backgroundColor
+        self.color1 = ColorUtil.theme.backgroundColor
+        self.color2 = ColorUtil.theme.backgroundColor
         
         self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
         self.splitViewController?.maximumPrimaryColumnWidth = 10000
@@ -855,11 +855,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         requestReviewIfAppropriate()
         
         //        drawerButton = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        //        drawerButton.backgroundColor = ColorUtil.foregroundColor
+        //        drawerButton.backgroundColor = ColorUtil.theme.foregroundColor
         //        drawerButton.clipsToBounds = true
         //        drawerButton.contentMode = .center
         //        drawerButton.layer.cornerRadius = 20
-        //        drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.fontColor)
+        //        drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.theme.fontColor)
         //        self.view.addSubview(drawerButton)
         //        drawerButton.translatesAutoresizingMaskIntoConstraints = false
         //        drawerButton.addTapGestureRecognizer {
@@ -1015,7 +1015,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func colorChanged(_ color: UIColor) {
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
-        inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : color
+        inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : color
         if SettingValues.fullyHideNavbar {
             inHeadView.backgroundColor = .clear
         }

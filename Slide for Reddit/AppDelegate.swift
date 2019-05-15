@@ -605,7 +605,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if SettingValues.biometrics {
             if backView == nil {
                 backView = UIView.init(frame: self.window!.frame)
-                backView?.backgroundColor = ColorUtil.backgroundColor
+                backView?.backgroundColor = ColorUtil.theme.backgroundColor
                 self.window?.addSubview(backView!)
             }
                 self.backView?.isHidden = false

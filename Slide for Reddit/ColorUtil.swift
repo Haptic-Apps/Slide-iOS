@@ -120,7 +120,7 @@ public class ColorUtil {
 
     public static func getColorForSub(sub: String, _ header: Bool = false) -> UIColor {
         if header && SettingValues.reduceColor {
-            return ColorUtil.backgroundColor
+            return ColorUtil.theme.backgroundColor
         }
         if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
             return color
@@ -184,7 +184,7 @@ public class ColorUtil {
         }
         let color = UserDefaults.standard.colorForKey(key: "commentcolor")
         if color == nil {
-            return ColorUtil.fontColor
+            return ColorUtil.theme.fontColor
         } else {
             return color!
         }

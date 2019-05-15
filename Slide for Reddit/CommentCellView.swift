@@ -89,7 +89,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         text.topAnchor == contentView.topAnchor + CGFloat(8)
         text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.horizontalAnchors == contentView.horizontalAnchors + CGFloat(8)
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
@@ -110,7 +110,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     }
     
     public static func getTitle(_ comment: RComment) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
                 
         var uC: UIColor
         switch ActionStates.getVoteDirection(s: comment) {
@@ -119,12 +119,12 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         case .up:
             uC = ColorUtil.upvoteColor
         default:
-            uC = ColorUtil.fontColor
+            uC = ColorUtil.theme.fontColor
         }
         
         let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): uC] as [String: Any]
         
-        let attrs2 = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor] as [String: Any]
+        let attrs2 = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor] as [String: Any]
         
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs2))
         
@@ -134,7 +134,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         if color != ColorUtil.baseColor {
             subString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: subString.length))
         } else {
-            subString.addAttribute(NSAttributedString.Key.foregroundColor, value: ColorUtil.fontColor, range: NSRange.init(location: 0, length: subString.length))
+            subString.addAttribute(NSAttributedString.Key.foregroundColor, value: ColorUtil.theme.fontColor, range: NSRange.init(location: 0, length: subString.length))
         }
         
         let infoString = NSMutableAttributedString()

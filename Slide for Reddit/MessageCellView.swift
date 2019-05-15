@@ -92,7 +92,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.rightAnchor == contentView.rightAnchor - CGFloat(8)
         
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     var lsC: [NSLayoutConstraint] = []
@@ -133,13 +133,13 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var cancelled = false
     
     public static func getTitleText(message: RMessage) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject.escapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.fontColor]))
+        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject.escapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.theme.fontColor]))
         
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
         
         var color = ColorUtil.getColorForSub(sub: message.subreddit)
         if color == ColorUtil.baseColor {
-            color = ColorUtil.fontColor
+            color = ColorUtil.theme.fontColor
         }
 
         let subString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
@@ -147,7 +147,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         let infoString = NSMutableAttributedString()
         infoString.append(endString)
         if !message.subreddit.isEmpty {
-            infoString.append(NSAttributedString.init(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)])))
+            infoString.append(NSAttributedString.init(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)])))
             infoString.append(subString)
         }
         

@@ -594,7 +594,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         self.scrollView = UIScrollView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
         self.view.addSubview(scrollView)
         extras = [UIView]()
-        self.scrollView.backgroundColor = ColorUtil.backgroundColor
+        self.scrollView.backgroundColor = ColorUtil.theme.backgroundColor
         self.scrollView.isUserInteractionEnabled = true
         self.scrollView.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 0, right: 0)
         self.scrollView.bottomAnchor == self.view.bottomAnchor - 64
@@ -613,8 +613,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if type == .REPLY_MESSAGE {
                 //two
                 let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.textColor = ColorUtil.theme.fontColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -622,7 +622,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RMessage).htmlBody
-                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
+                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 
                 /* todo this
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
@@ -649,8 +649,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.placeholder = "Body"
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.textColor = ColorUtil.theme.fontColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -675,8 +675,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 //three
                 let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.textColor = ColorUtil.theme.fontColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.delegate = self
@@ -687,8 +687,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
                 let text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.textColor = ColorUtil.theme.fontColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -720,8 +720,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.placeholder = "Body"
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.textColor = ColorUtil.theme.fontColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -756,8 +756,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             //three
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.textColor = ColorUtil.theme.fontColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.delegate = self
@@ -768,8 +768,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             let text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.textColor = ColorUtil.theme.fontColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.textContainer.maximumNumberOfLines = 1
@@ -806,8 +806,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
                 $0.placeholder = "Body"
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.textColor = ColorUtil.theme.fontColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.font = UIFont.systemFont(ofSize: 16)
@@ -900,8 +900,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if (toReplyTo as! RSubmission).type == .SELF && !(toReplyTo as! RSubmission).htmlBody.trimmed().isEmpty {
                 //two
                 let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.textColor = ColorUtil.theme.fontColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.clipsToBounds = true
                     $0.numberOfLines = 0
                     $0.layer.cornerRadius = 10
@@ -909,7 +909,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! RSubmission).htmlBody
-                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil)
+                let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 
                 /* todo this
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
@@ -937,8 +937,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.placeholder = "Body"
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.textColor = ColorUtil.theme.fontColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -973,8 +973,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.placeholder = "Body"
-                    $0.textColor = ColorUtil.fontColor
-                    $0.backgroundColor = ColorUtil.foregroundColor
+                    $0.textColor = ColorUtil.theme.fontColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -1007,8 +1007,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             //two
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.textColor = ColorUtil.theme.fontColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.delegate = self
@@ -1027,8 +1027,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
                 $0.placeholder = "Body"
-                $0.textColor = ColorUtil.fontColor
-                $0.backgroundColor = ColorUtil.foregroundColor
+                $0.textColor = ColorUtil.theme.fontColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.font = UIFont.systemFont(ofSize: 16)
@@ -1219,7 +1219,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.fontColor
+            spinnerIndicator.color = ColorUtil.theme.fontColor
             spinnerIndicator.startAnimating()
 
             alertController?.view.addSubview(spinnerIndicator)
@@ -1241,7 +1241,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.fontColor
+            spinnerIndicator.color = ColorUtil.theme.fontColor
             spinnerIndicator.startAnimating()
 
             alertController?.view.addSubview(spinnerIndicator)
@@ -1308,7 +1308,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = ColorUtil.fontColor
+        spinnerIndicator.color = ColorUtil.theme.fontColor
         spinnerIndicator.startAnimating()
         
         alertController?.view.addSubview(spinnerIndicator)
@@ -1373,7 +1373,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         alertController = UIAlertController(title: "Sending message...\n\n\n", message: nil, preferredStyle: .alert)
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = ColorUtil.fontColor
+        spinnerIndicator.color = ColorUtil.theme.fontColor
         spinnerIndicator.startAnimating()
 
         alertController?.view.addSubview(spinnerIndicator)
@@ -1420,7 +1420,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         alertController = UIAlertController(title: "Posting comment...\n\n\n", message: nil, preferredStyle: .alert)
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = ColorUtil.fontColor
+        spinnerIndicator.color = ColorUtil.theme.fontColor
         spinnerIndicator.startAnimating()
 
         alertController?.view.addSubview(spinnerIndicator)
@@ -1633,7 +1633,7 @@ public class UIStateButton: UIButton {
     var color = UIColor.white
     override open var isSelected: Bool {
         didSet {
-            backgroundColor = isSelected ? color : ColorUtil.foregroundColor
+            backgroundColor = isSelected ? color : ColorUtil.theme.foregroundColor
             self.layer.borderColor = color .cgColor
             self.layer.borderWidth = isSelected ? CGFloat(0) : CGFloat(2)
         }

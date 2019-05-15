@@ -105,7 +105,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
         case 0: label.text  = "Submission"
@@ -195,8 +195,8 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             self.setDepthColors(colorArray)
         }))
         
-        alertController.addAction(Action(ActionData(title: "Invisible", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.backgroundColor)), style: .default, handler: { _ in
-            let baseColor = ColorUtil.backgroundColor
+        alertController.addAction(Action(ActionData(title: "Invisible", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.theme.backgroundColor)), style: .default, handler: { _ in
+            let baseColor = ColorUtil.theme.backgroundColor
             var colorArray = [UIColor]()
             colorArray.append(baseColor)
             colorArray.append(baseColor)
@@ -304,8 +304,8 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -318,7 +318,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
 
     override func loadView() {
         super.loadView()
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Comments"
         self.tableView.separatorStyle = .none
@@ -332,7 +332,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
         createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Move top AutoModerator comment to a button (if it is not your submission)")
         createCell(floatingJumpCell, nil, isOn: false, text: "Floating jump button")
-        floatingJumpCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        floatingJumpCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         floatingJumpCell.detailTextLabel?.numberOfLines = 0
         floatingJumpCell.detailTextLabel?.text = SettingValues.commentJumpButton.getTitle()
 
@@ -344,8 +344,8 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     
     public func updateThemeCell() {
         authorThemeCell.textLabel?.text = "Author username color"
-        authorThemeCell.textLabel?.textColor = ColorUtil.fontColor
-        authorThemeCell.backgroundColor = ColorUtil.foregroundColor
+        authorThemeCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        authorThemeCell.backgroundColor = ColorUtil.theme.foregroundColor
         authorThemeCell.textLabel?.numberOfLines = 0
         authorThemeCell.textLabel?.lineBreakMode = .byWordWrapping
         authorThemeCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -357,8 +357,8 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     
     public func updateDepthsCell() {
         themeColorCell.textLabel?.text = "Depths colors"
-        themeColorCell.textLabel?.textColor = ColorUtil.fontColor
-        themeColorCell.backgroundColor = ColorUtil.foregroundColor
+        themeColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        themeColorCell.backgroundColor = ColorUtil.theme.foregroundColor
         themeColorCell.textLabel?.numberOfLines = 0
         themeColorCell.textLabel?.lineBreakMode = .byWordWrapping
         themeColorCell.selectionStyle = UITableViewCell.SelectionStyle.none

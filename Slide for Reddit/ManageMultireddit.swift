@@ -38,7 +38,7 @@ class ManageMultireddit: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         
         subs.append(contentsOf: multi.subreddits)
         self.subs = self.subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
@@ -74,7 +74,7 @@ class ManageMultireddit: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.foregroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     @objc func add(_ selector: AnyObject) {
@@ -107,7 +107,7 @@ class ManageMultireddit: UITableViewController {
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
-        cell?.backgroundColor = ColorUtil.foregroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
         
         return cell!
     }

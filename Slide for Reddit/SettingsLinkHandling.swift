@@ -192,8 +192,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -207,7 +207,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     override func loadView() {
         super.loadView()
 
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Link Handling"
         self.tableView.separatorStyle = .none
@@ -223,7 +223,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         domainEnter.placeholder = "Enter domain to open externally"
         domainEnter.delegate = self
         domainEnter.returnKeyType = .done
-        domainEnter.textColor = ColorUtil.fontColor
+        domainEnter.textColor = ColorUtil.theme.fontColor
         if !ColorUtil.theme.isLight() {
             domainEnter.keyboardAppearance = .dark
         }
@@ -255,9 +255,9 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         switch indexPath.section {
         case 0:
             let cell = UITableViewCell()
-            cell.backgroundColor = ColorUtil.foregroundColor
-            cell.backgroundColor = ColorUtil.foregroundColor
-            cell.textLabel?.textColor = ColorUtil.fontColor
+            cell.backgroundColor = ColorUtil.theme.foregroundColor
+            cell.backgroundColor = ColorUtil.theme.foregroundColor
+            cell.textLabel?.textColor = ColorUtil.theme.fontColor
             
             let text = browsers[indexPath.row]
             if text == SettingValues.BROWSER_SAFARI {
@@ -314,10 +314,10 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             }
         case 2:
             let cell = UITableViewCell()
-            cell.backgroundColor = ColorUtil.foregroundColor
+            cell.backgroundColor = ColorUtil.theme.foregroundColor
             cell.accessoryType = .disclosureIndicator
-            cell.backgroundColor = ColorUtil.foregroundColor
-            cell.textLabel?.textColor = ColorUtil.fontColor
+            cell.backgroundColor = ColorUtil.theme.foregroundColor
+            cell.textLabel?.textColor = ColorUtil.theme.fontColor
             cell.textLabel?.text = PostFilter.openExternally[indexPath.row] as String
             return cell
 
@@ -353,7 +353,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         let contentAttribute = NSMutableAttributedString(string: "Content Settings", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): label.font, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): label.textColor]))
         contentAttribute.append(NSMutableAttributedString(string: "\nAdditionally, you can set specific domains to open externally in the section below", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): label.textColor])))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         switch section {
         case 0: label.text = "Web browser"
         case 1: label.attributedText = contentAttribute

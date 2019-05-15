@@ -31,7 +31,7 @@ class SettingsThemeChooser: UITableViewController {
     func doLayout() {
         setupBaseBarColors()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -59,7 +59,7 @@ class SettingsThemeChooser: UITableViewController {
             return !theme.contains("true")
         })
 
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         self.title = "Choose a \(nightOnly ? "Night" : "") Theme"
         self.tableView.separatorStyle = .none
         self.tableView.tableFooterView = UIView()
@@ -180,7 +180,7 @@ class ThemeCellView: UITableViewCell {
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
         body.backgroundColor = UIColor(hex: split[2])
-        self.backgroundColor = ColorUtil.backgroundColor
+        self.backgroundColor = ColorUtil.theme.backgroundColor
         self.tintColor = UIColor(hex: split[5])
     }
     
@@ -191,7 +191,7 @@ class ThemeCellView: UITableViewCell {
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
         body.backgroundColor = UIColor(hex: split[2])
-        self.backgroundColor = ColorUtil.backgroundColor
+        self.backgroundColor = ColorUtil.theme.backgroundColor
         self.tintColor = UIColor(hex: split[5])
     }
 
@@ -200,7 +200,7 @@ class ThemeCellView: UITableViewCell {
         title.text = theme.displayName
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: theme.navIconColor)
         body.backgroundColor = theme.foregroundColor
-        self.backgroundColor = ColorUtil.backgroundColor
+        self.backgroundColor = ColorUtil.theme.backgroundColor
         self.tintColor = theme.navIconColor
     }
 }

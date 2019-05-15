@@ -26,7 +26,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         newColor = colorPickerView.colors[indexPath.row]
-        self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.backgroundColor : colorPickerView.colors[indexPath.row]
+        self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : colorPickerView.colors[indexPath.row]
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -94,11 +94,11 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
 
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.fontColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Tag", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
-            textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.fontColor)
-            textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.foregroundColor
+            textField.textColor = ColorUtil.theme.fontColor
+            textField.attributedPlaceholder = NSAttributedString(string: "Tag", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+            textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
+            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
@@ -115,7 +115,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         alert.contentView.addSubview(textField)
         
@@ -193,7 +193,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         
         if navigationController != nil {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
-            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white
+            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
         }
         
         if navigationController != nil {
@@ -344,7 +344,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             }
         }
 
-        view.backgroundColor = ColorUtil.backgroundColor
+        view.backgroundColor = ColorUtil.theme.backgroundColor
         var items: [String] = []
         if friends {
             items.append("FRIENDS")
@@ -360,8 +360,8 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         }
         
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
-        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white)
-        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.fontColor : UIColor.white).withAlphaComponent(0.45)
+        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white)
+        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45)
 
         if friends {
             openTo += 1

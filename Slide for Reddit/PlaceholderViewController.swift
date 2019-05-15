@@ -14,7 +14,7 @@ class PlaceholderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
 
         let image = UIImage(named: "roundicon")!.convertToGrayScale()
 
@@ -25,7 +25,7 @@ class PlaceholderViewController: UIViewController {
 
         let label = UILabel().then {
             $0.text = "SELECT A POST"
-            $0.textColor = ColorUtil.fontColor
+            $0.textColor = ColorUtil.theme.fontColor
             $0.font = UIFont.boldSystemFont(ofSize: 12)
             $0.textAlignment = .center
         }

@@ -244,7 +244,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
             $0.textContainerInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
             $0.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
                 text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
@@ -271,7 +271,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.hide, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.reply = UIButton(type: .custom).then {
@@ -279,7 +279,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.reply, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.edit = UIButton(type: .custom).then {
@@ -287,49 +287,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.edit, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.save = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.menu = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Post menu"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.upvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.downvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideUpvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideDownvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.mod = UIButton(type: .custom).then {
@@ -337,7 +337,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.mod, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
 
         self.readLater = UIButton(type: .custom).then {
@@ -345,7 +345,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.readLater, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
@@ -353,7 +353,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.commentsIcon
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
@@ -361,22 +361,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.votesIcon
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
-            $0.textColor = ColorUtil.fontColor
+            $0.textColor = ColorUtil.theme.fontColor
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideScore = UILabel().then {
             $0.accessibilityIdentifier = "Score Label vertical"
             $0.numberOfLines = 1
             $0.textAlignment = .center
-            $0.textColor = ColorUtil.fontColor
+            $0.textColor = ColorUtil.theme.fontColor
             $0.isOpaque = false
         }
         
@@ -384,9 +384,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Comment Count Label"
             $0.numberOfLines = 1
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
-            $0.textColor = ColorUtil.fontColor
+            $0.textColor = ColorUtil.theme.fontColor
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.foregroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.taglabel = UILabel().then {
@@ -1287,9 +1287,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.loadedImage = nil
         lq = false
 
-        self.contentView.backgroundColor = ColorUtil.foregroundColor
-        comments.textColor = ColorUtil.navIconColor
-        title.textColor = ColorUtil.navIconColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        comments.textColor = ColorUtil.theme.navIconColor
+        title.textColor = ColorUtil.theme.navIconColor
 
         activeSet = true
 
@@ -1579,10 +1579,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 if submission.isCrosspost && full && !crosspostDone {
                     crosspostDone = true
                     let popup = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
-                    popup.backgroundColor = ColorUtil.backgroundColor
+                    popup.backgroundColor = ColorUtil.theme.backgroundColor
                     popup.textAlignment = .center
                     popup.isUserInteractionEnabled = true
-                    let colorF = ColorUtil.fontColor
+                    let colorF = ColorUtil.theme.fontColor
                         
                     let finalText = NSMutableAttributedString.init(string: "Crosspost - " + submission.domain, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
                 
@@ -2018,11 +2018,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let config: TextField.Config = { textField in
                 textField.becomeFirstResponder()
-                textField.textColor = ColorUtil.fontColor
-                textField.attributedPlaceholder = NSAttributedString(string: "Flair text...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.fontColor)
-                textField.layer.borderColor = ColorUtil.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.foregroundColor
+                textField.textColor = ColorUtil.theme.fontColor
+                textField.attributedPlaceholder = NSAttributedString(string: "Flair text...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+                textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
+                textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+                textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.leftViewPadding = 12
                 textField.layer.borderWidth = 1
                 textField.layer.cornerRadius = 8
@@ -2039,7 +2039,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: "Edit flair text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "Edit flair text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
             
             alert.contentView.addSubview(textField)
             
@@ -2121,7 +2121,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             sideUpvote.setImage(LinkCellImageCache.upvoteTintedSmall, for: .normal)
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
-            attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.theme.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         }
         
         var scoreInt = link.score
@@ -2207,13 +2207,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if type != .IMAGE && type != .SELF && type != .NONE && type != .LINK {
                 let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
                 let popup = UILabel()
-                outer.backgroundColor = ColorUtil.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: link.subreddit).withAlphaComponent(0.2))
+                outer.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: link.subreddit).withAlphaComponent(0.2))
                 popup.textAlignment = .left
                 popup.isUserInteractionEnabled = true
                 
                 let finalText: NSMutableAttributedString!
-                let firstPart = NSMutableAttributedString.init(string: type.getTitle(link.url), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                let secondPart = NSMutableAttributedString.init(string: "\n" + link.urlString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                let firstPart = NSMutableAttributedString.init(string: type.getTitle(link.url), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                let secondPart = NSMutableAttributedString.init(string: "\n" + link.urlString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
                 firstPart.append(secondPart)
                 finalText = firstPart
                 popup.attributedText = finalText
@@ -2224,7 +2224,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 outer.layer.cornerRadius = 5
                 outer.clipsToBounds = true
                 
-                let icon = UIImageView(image: UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.fontColor))
+                let icon = UIImageView(image: UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
                 outer.addSubviews(icon, popup)
                 icon.leftAnchor == outer.leftAnchor + CGFloat(8)
                 icon.centerYAnchor == outer.centerYAnchor
@@ -2639,7 +2639,7 @@ extension UILabel {
             textAttachment.image = image as? UIImage
         } else {
             
-            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.navIconColor)
+            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.theme.navIconColor)
             textAttachment.image = img
             LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
         }
@@ -2695,7 +2695,7 @@ private extension UIView {
 private extension UIImageView {
     func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?) {
         let oldBackgroundColor: UIColor? = self.backgroundColor
-        self.backgroundColor = ColorUtil.fontColor
+        self.backgroundColor = ColorUtil.theme.fontColor
 
         startPulsingAnimation()
 

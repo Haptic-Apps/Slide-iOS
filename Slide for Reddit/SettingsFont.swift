@@ -99,7 +99,7 @@ class SettingsFont: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Font Settings"
         self.tableView.separatorStyle = .none
@@ -248,7 +248,7 @@ class SettingsFont: UITableViewController {
 
         cell.style()
         if indexPath == IndexPath(row: 3, section: 0) || indexPath == IndexPath(row: 3, section: 1) {
-            cell.backgroundColor = ColorUtil.backgroundColor
+            cell.backgroundColor = ColorUtil.theme.backgroundColor
         }
         return cell
     }
@@ -273,7 +273,7 @@ class SettingsFont: UITableViewController {
             $0.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         }
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
 
         switch section {
         case 0: label.text = "Submissions"
@@ -440,8 +440,8 @@ extension SettingsFont: FontSelectionTableViewControllerDelegate {
 
 private extension UITableViewCell {
     func style() {
-        backgroundColor = ColorUtil.foregroundColor
-        textLabel?.textColor = ColorUtil.fontColor
-        detailTextLabel?.textColor = ColorUtil.fontColor.withAlphaComponent(0.7)
+        backgroundColor = ColorUtil.theme.foregroundColor
+        textLabel?.textColor = ColorUtil.theme.fontColor
+        detailTextLabel?.textColor = ColorUtil.theme.fontColor.withAlphaComponent(0.7)
     }
 }

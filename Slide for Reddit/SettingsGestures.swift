@@ -81,7 +81,7 @@ class SettingsGestures: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
         case 0: label.text  = "Submissions"
@@ -207,8 +207,8 @@ class SettingsGestures: UITableViewController {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.fontColor
-        cell.backgroundColor = ColorUtil.foregroundColor
+        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -222,36 +222,36 @@ class SettingsGestures: UITableViewController {
     override func loadView() {
         canForceTouch = (UIApplication.shared.keyWindow?.rootViewController?.traitCollection.forceTouchCapability ?? .unknown) == .available
         super.loadView()
-        self.view.backgroundColor = ColorUtil.backgroundColor
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Gestures"
         self.tableView.separatorStyle = .none
         
         createCell(submissionGesturesCell, submissionGestures, isOn: SettingValues.submissionGesturesEnabled, text: "Enable submission gestures")
-        self.submissionGesturesCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.submissionGesturesCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.submissionGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.submissionGesturesCell.detailTextLabel?.numberOfLines = 0
         self.submissionGesturesCell.detailTextLabel?.text = "Enabling submission gestures will require two fingers to swipe between subreddits in the main view"
-        self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.foregroundColor
+        self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         
         createCell(disableBannerCell, disableBanner, isOn: SettingValues.disableBanner, text: "Open comments from banner image")
-        self.disableBannerCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.disableBannerCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.disableBannerCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.disableBannerCell.detailTextLabel?.numberOfLines = 0
         self.disableBannerCell.detailTextLabel?.text = "Enabling this will open comments when clicking on the submission banner image"
-        self.disableBannerCell.contentView.backgroundColor = ColorUtil.foregroundColor
+        self.disableBannerCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
 
         createCell(commentGesturesCell, nil, isOn: false, text: "Comment gestures mode")
-        self.commentGesturesCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.commentGesturesCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.commentGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.commentGesturesCell.detailTextLabel?.numberOfLines = 0
         self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
-        self.commentGesturesCell.contentView.backgroundColor = ColorUtil.foregroundColor
+        self.commentGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
 
         updateCells()
         self.tableView.tableFooterView = UIView()
         
-        commentCell.contentView.backgroundColor = ColorUtil.foregroundColor
+        commentCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         let label = UILabel()
         for view in commentCell.contentView.subviews {
             view.removeFromSuperview()
@@ -269,20 +269,20 @@ class SettingsGestures: UITableViewController {
     }
     
     func getText() -> NSAttributedString {
-        let color = ColorUtil.fontColor
+        let color = ColorUtil.theme.fontColor
         
         let boldFont = FontGenerator.boldFontOfSize(size: 12, submission: false)
         
         let scoreString = NSMutableAttributedString(string: "[score hidden]", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
         
-        let endString = NSMutableAttributedString(string: "  •  3d", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        let endString = NSMutableAttributedString(string: "  •  3d", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
         
-        let authorStringNoFlair = NSMutableAttributedString(string: "u/ccrama\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor]))
+        let authorStringNoFlair = NSMutableAttributedString(string: "u/ccrama\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
         
         let infoString = NSMutableAttributedString(string: "")
             infoString.append(authorStringNoFlair)
         
-        infoString.append(NSAttributedString(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.fontColor])))
+        infoString.append(NSAttributedString(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor])))
         infoString.append(scoreString)
         infoString.append(endString)
         
@@ -292,7 +292,7 @@ class SettingsGestures: UITableViewController {
         
         let newTitle = NSMutableAttributedString(attributedString: infoString)
             newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
-        newTitle.append(TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Swipe here to test the gestures out!</p>", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.fontColor, linksCallback: nil, indexCallback: nil))
+        newTitle.append(TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Swipe here to test the gestures out!</p>", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
 
         return newTitle
     }
@@ -382,63 +382,63 @@ class SettingsGestures: UITableViewController {
         createCell(forceTouchSubmissionCell, nil, isOn: false, text: "3D-Touch submission action")
 
         createLeftView(cell: forceTouchSubmissionCell, image: SettingValues.submissionActionForceTouch == .NONE ? "fullscreen" : SettingValues.submissionActionForceTouch.getPhoto(), color: SettingValues.submissionActionForceTouch == .NONE ? GMColor.lightGreen500Color() :SettingValues.submissionActionForceTouch.getColor())
-        self.forceTouchSubmissionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.forceTouchSubmissionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.forceTouchSubmissionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.forceTouchSubmissionCell.detailTextLabel?.numberOfLines = 0
         self.forceTouchSubmissionCell.detailTextLabel?.text = SettingValues.submissionActionForceTouch == .NONE ? "Peek content" : SettingValues.submissionActionForceTouch.getTitle()
         self.forceTouchSubmissionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: rightRightActionCell, image: SettingValues.commentActionRightRight.getPhoto(), color: SettingValues.commentActionRightRight.getColor())
-        self.rightRightActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.rightRightActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.rightRightActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.rightRightActionCell.detailTextLabel?.numberOfLines = 0
         self.rightRightActionCell.detailTextLabel?.text = SettingValues.commentActionRightRight.getTitle()
         self.rightRightActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: rightLeftActionCell, image: SettingValues.commentActionRightLeft.getPhoto(), color: SettingValues.commentActionRightLeft.getColor())
-        self.rightLeftActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.rightLeftActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.rightLeftActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.rightLeftActionCell.detailTextLabel?.numberOfLines = 0
         self.rightLeftActionCell.detailTextLabel?.text = SettingValues.commentActionRightLeft.getTitle()
         self.rightLeftActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: leftRightActionCell, image: SettingValues.commentActionLeftRight.getPhoto(), color: SettingValues.commentActionLeftRight.getColor())
-        self.leftRightActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.leftRightActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.leftRightActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.leftRightActionCell.detailTextLabel?.numberOfLines = 0
         self.leftRightActionCell.detailTextLabel?.text = SettingValues.commentActionLeftRight.getTitle()
         self.leftRightActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: leftLeftActionCell, image: SettingValues.commentActionLeftLeft.getPhoto(), color: SettingValues.commentActionLeftLeft.getColor())
-        self.leftLeftActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.leftLeftActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.leftLeftActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.leftLeftActionCell.detailTextLabel?.numberOfLines = 0
         self.leftLeftActionCell.detailTextLabel?.text = SettingValues.commentActionLeftLeft.getTitle()
         self.leftLeftActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: doubleTapActionCell, image: SettingValues.commentActionDoubleTap.getPhoto(), color: SettingValues.commentActionDoubleTap.getColor())
-        self.doubleTapActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.doubleTapActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.doubleTapActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleTapActionCell.detailTextLabel?.numberOfLines = 0
         self.doubleTapActionCell.detailTextLabel?.text = SettingValues.commentActionDoubleTap.getTitle()
         self.doubleTapActionCell.imageView?.layer.cornerRadius = 5
         
         createLeftView(cell: forceTouchActionCell, image: SettingValues.commentActionForceTouch.getPhoto(), color: SettingValues.commentActionForceTouch.getColor())
-        self.forceTouchActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.forceTouchActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.forceTouchActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.forceTouchActionCell.detailTextLabel?.numberOfLines = 0
         self.forceTouchActionCell.detailTextLabel?.text = SettingValues.commentActionForceTouch.getTitle()
         self.forceTouchActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: leftSubActionCell, image: SettingValues.submissionActionLeft.getPhoto(), color: SettingValues.submissionActionLeft.getColor())
-        self.leftSubActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.leftSubActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.leftSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.leftSubActionCell.detailTextLabel?.numberOfLines = 0
         self.leftSubActionCell.detailTextLabel?.text = SettingValues.submissionActionLeft.getTitle()
         self.leftSubActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: rightSubActionCell, image: SettingValues.submissionActionRight.getPhoto(), color: SettingValues.submissionActionRight.getColor())
-        self.rightSubActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.rightSubActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.rightSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.rightSubActionCell.detailTextLabel?.numberOfLines = 0
         self.rightSubActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
@@ -477,7 +477,7 @@ class SettingsGestures: UITableViewController {
         }
         
         createLeftView(cell: doubleTapSubActionCell, image: SettingValues.submissionActionDoubleTap.getPhoto(), color: SettingValues.submissionActionDoubleTap.getColor())
-        self.doubleTapSubActionCell.detailTextLabel?.textColor = ColorUtil.fontColor
+        self.doubleTapSubActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.doubleTapSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleTapSubActionCell.detailTextLabel?.numberOfLines = 0
         self.doubleTapSubActionCell.detailTextLabel?.text = SettingValues.submissionActionDoubleTap.getTitle()
@@ -485,7 +485,7 @@ class SettingsGestures: UITableViewController {
     }
     
     func createLeftView(cell: UITableViewCell, image: String, color: UIColor) {
-        cell.imageView?.image = UIImage.init(named: image)?.navIcon().getCopy(withColor: ColorUtil.fontColor)
+        cell.imageView?.image = UIImage.init(named: image)?.navIcon().getCopy(withColor: ColorUtil.theme.fontColor)
         cell.imageView?.backgroundColor = color
     }
     
