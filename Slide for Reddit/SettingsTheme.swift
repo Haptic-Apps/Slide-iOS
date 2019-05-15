@@ -462,8 +462,6 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     cell.isUserInteractionEnabled = true
                     cell.contentView.alpha = 1
                 }
-                cell.isUserInteractionEnabled = true
-                cell.contentView.alpha = 1
                 return cell
             }
         case 3:
@@ -683,6 +681,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         titleLabel = UILabel()
         titleLabel.textColor = ColorUtil.baseAccent
+        titleLabel.numberOfLines = 0
         titleLabel.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = titleLabel.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
@@ -690,8 +689,22 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         switch section {
         case 0: titleLabel.text = "App Colors"
         case 1: titleLabel.text = "Night mode"
-        case 2: titleLabel.text = "Custom themes"
-        case 3: titleLabel.text = "Standard themes"
+        case 2:
+            if ColorUtil.shouldBeNight() {
+                let titleString = NSMutableAttributedString(string: "Custom themes", attributes: [NSAttributedString.Key.font: titleLabel.font, NSAttributedString.Key.foregroundColor: titleLabel.textColor])
+                titleString.append(NSAttributedString(string: "\nThese cannot be applied while night mode is active", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 13, submission: true), NSAttributedString.Key.foregroundColor: titleLabel.textColor]))
+                titleLabel.attributedText = titleString
+            } else {
+                titleLabel.text = "Custom themes"
+            }
+        case 3:
+            if ColorUtil.shouldBeNight() {
+                let titleString = NSMutableAttributedString(string: "Standard themes", attributes: [NSAttributedString.Key.font: titleLabel.font, NSAttributedString.Key.foregroundColor: titleLabel.textColor])
+                titleString.append(NSAttributedString(string: "\nThese cannot be applied while night mode is active", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 13, submission: true), NSAttributedString.Key.foregroundColor: titleLabel.textColor]))
+                titleLabel.attributedText = titleString
+            } else {
+                titleLabel.text = "Custom themes"
+            }
         default: titleLabel.text = ""
         }
         return toReturn
