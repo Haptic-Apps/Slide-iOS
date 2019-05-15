@@ -112,7 +112,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
             setupBaseBarColors()
             menuNav?.setColors("")
-            toolbar?.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             self.doButtons()
             MainViewController.needsReTheme = false
         }
@@ -504,9 +504,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
         menuNav?.topView = toolbar
         menuNav?.view.addSubview(toolbar!)
-        menuNav?.muxColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        menuNav?.muxColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
 
-        toolbar!.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        toolbar!.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
         toolbar!.topAnchor == menuNav!.view.topAnchor
         toolbar!.heightAnchor == 90
@@ -569,7 +569,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         CachedTitle.titles.removeAll()
         view.backgroundColor = ColorUtil.theme.backgroundColor
-        splitViewController?.view.backgroundColor = ColorUtil.theme.backgroundColor
+        splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
         SubredditReorderViewController.changed = false
         
         finalSubs = []
@@ -855,7 +855,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         requestReviewIfAppropriate()
         
         //        drawerButton = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        //        drawerButton.backgroundColor = ColorUtil.theme.backgroundColor
+        //        drawerButton.backgroundColor = ColorUtil.theme.foregroundColor
         //        drawerButton.clipsToBounds = true
         //        drawerButton.contentMode = .center
         //        drawerButton.layer.cornerRadius = 20

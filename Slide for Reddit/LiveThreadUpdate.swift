@@ -75,7 +75,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.contentView.addSubview(image)
             self.contentView.addSubview(web)
 
-            self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
             title.horizontalAnchors == self.contentView.horizontalAnchors + 8
             image.horizontalAnchors == self.contentView.horizontalAnchors + 8
             image.topAnchor == self.contentView.topAnchor + 4

@@ -87,7 +87,7 @@ extension FontSelectionTableViewController {
         case .named(let name):
             cell.textLabel?.text = name
         }
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
         if fontName == currentFont {
             cell.accessoryType = .checkmark

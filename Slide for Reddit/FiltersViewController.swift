@@ -83,7 +83,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         domainEnter.setImage(UIImage(), for: .search, state: .normal)
         domainEnter.autocapitalizationType = .none
         domainEnter.isTranslucent = false
-        domainEnter.backgroundColor = ColorUtil.theme.backgroundColor
+        domainEnter.backgroundColor = ColorUtil.theme.foregroundColor
         if !ColorUtil.theme.isLight {
             domainEnter.keyboardAppearance = .dark
         }
@@ -96,7 +96,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         selftextEnter.setImage(UIImage(), for: .search, state: .normal)
         selftextEnter.autocapitalizationType = .none
         selftextEnter.isTranslucent = false
-        selftextEnter.backgroundColor = ColorUtil.theme.backgroundColor
+        selftextEnter.backgroundColor = ColorUtil.theme.foregroundColor
         if !ColorUtil.theme.isLight {
             selftextEnter.keyboardAppearance = .dark
         }
@@ -109,7 +109,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         titleEnter.setImage(UIImage(), for: .search, state: .normal)
         titleEnter.autocapitalizationType = .none
         titleEnter.isTranslucent = false
-        titleEnter.backgroundColor = ColorUtil.theme.backgroundColor
+        titleEnter.backgroundColor = ColorUtil.theme.foregroundColor
         if !ColorUtil.theme.isLight {
             titleEnter.keyboardAppearance = .dark
         }
@@ -122,7 +122,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         profileEnter.setImage(UIImage(), for: .search, state: .normal)
         profileEnter.autocapitalizationType = .none
         profileEnter.isTranslucent = false
-        profileEnter.backgroundColor = ColorUtil.theme.backgroundColor
+        profileEnter.backgroundColor = ColorUtil.theme.foregroundColor
         if !ColorUtil.theme.isLight {
             profileEnter.keyboardAppearance = .dark
         }
@@ -135,7 +135,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         subredditEnter.setImage(UIImage(), for: .search, state: .normal)
         subredditEnter.setImage(UIImage(), for: .search, state: .normal)
         subredditEnter.isTranslucent = false
-        subredditEnter.backgroundColor = ColorUtil.theme.backgroundColor
+        subredditEnter.backgroundColor = ColorUtil.theme.foregroundColor
         if !ColorUtil.theme.isLight {
             subredditEnter.keyboardAppearance = .dark
         }
@@ -148,7 +148,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         flairEnter.setImage(UIImage(), for: .search, state: .normal)
         flairEnter.setImage(UIImage(), for: .search, state: .normal)
         flairEnter.isTranslucent = false
-        flairEnter.backgroundColor = ColorUtil.theme.backgroundColor
+        flairEnter.backgroundColor = ColorUtil.theme.foregroundColor
         if !ColorUtil.theme.isLight {
             flairEnter.keyboardAppearance = .dark
         }
@@ -217,9 +217,9 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.accessoryType = .disclosureIndicator
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
 
         switch indexPath.section {

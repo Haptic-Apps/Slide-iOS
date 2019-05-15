@@ -164,7 +164,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.general.textLabel?.text = "General"
         self.general.accessoryType = .disclosureIndicator
-        self.general.backgroundColor = ColorUtil.theme.backgroundColor
+        self.general.backgroundColor = ColorUtil.theme.foregroundColor
         self.general.textLabel?.textColor = ColorUtil.theme.fontColor
         self.general.imageView?.image = UIImage.init(named: "settings")?.toolbarIcon()
         self.general.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -180,7 +180,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.manageSubs.textLabel?.text = "Subscriptions"
         self.manageSubs.accessoryType = .disclosureIndicator
-        self.manageSubs.backgroundColor = ColorUtil.theme.backgroundColor
+        self.manageSubs.backgroundColor = ColorUtil.theme.foregroundColor
         self.manageSubs.textLabel?.textColor = ColorUtil.theme.fontColor
         self.manageSubs.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon()
         self.manageSubs.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -190,21 +190,21 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.postActionCell.textLabel?.text = "Reorder post actions"
         self.postActionCell.accessoryType = .disclosureIndicator
-        self.postActionCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.postActionCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.postActionCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.postActionCell.imageView?.image = UIImage.init(named: "compact")?.toolbarIcon()
         self.postActionCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.mainTheme.textLabel?.text = "App theme"
         self.mainTheme.accessoryType = .disclosureIndicator
-        self.mainTheme.backgroundColor = ColorUtil.theme.backgroundColor
+        self.mainTheme.backgroundColor = ColorUtil.theme.foregroundColor
         self.mainTheme.textLabel?.textColor = ColorUtil.theme.fontColor
         self.mainTheme.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon()
         self.mainTheme.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.icon.textLabel?.text = "App icon"
         self.icon.accessoryType = .disclosureIndicator
-        self.icon.backgroundColor = ColorUtil.theme.backgroundColor
+        self.icon.backgroundColor = ColorUtil.theme.foregroundColor
         self.icon.textLabel?.textColor = ColorUtil.theme.fontColor
         self.icon.imageView?.image = Bundle.main.icon?.getCopy(withSize: CGSize(width: 25, height: 25))
         self.icon.imageView?.layer.cornerRadius = 5
@@ -212,28 +212,28 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.tagsCell.textLabel?.text = "User Tags Management"
         self.tagsCell.accessoryType = .disclosureIndicator
-        self.tagsCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tagsCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.tagsCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.tagsCell.imageView?.image = UIImage.init(named: "user")?.toolbarIcon()
         self.tagsCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.goPro.textLabel?.text = "Support Slide, go Pro!"
         self.goPro.accessoryType = .disclosureIndicator
-        self.goPro.backgroundColor = ColorUtil.theme.backgroundColor
+        self.goPro.backgroundColor = ColorUtil.theme.foregroundColor
         self.goPro.textLabel?.textColor = ColorUtil.theme.fontColor
         self.goPro.imageView?.image = UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color())
         self.goPro.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.coffeeCell.textLabel?.text = "Tip Jar"
         self.coffeeCell.accessoryType = .disclosureIndicator
-        self.coffeeCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.coffeeCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.coffeeCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.coffeeCell.imageView?.image = UIImage.init(named: "support")?.toolbarIcon().getCopy(withColor: GMColor.lightGreen500Color())
         self.coffeeCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.clearCell.textLabel?.text = "Clear cache"
         self.clearCell.accessoryType = .none
-        self.clearCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.clearCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.clearCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.clearCell.imageView?.image = UIImage.init(named: "multis")?.toolbarIcon()
         self.clearCell.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -248,14 +248,14 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.backupCell.textLabel?.text = "Backup and Restore"
         self.backupCell.accessoryType = .disclosureIndicator
-        self.backupCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backupCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.backupCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.backupCell.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon()
         self.backupCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.gestureCell.textLabel?.text = "Gestures"
         self.gestureCell.accessoryType = .disclosureIndicator
-        self.gestureCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.gestureCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.gestureCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.gestureCell.imageView?.image = UIImage.init(named: "gestures")?.toolbarIcon()
         self.gestureCell.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -265,49 +265,49 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
-        self.cacheCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.cacheCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.cacheCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.cacheCell.imageView?.image = UIImage.init(named: "save-1")?.toolbarIcon()
         self.cacheCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.postLayout.textLabel?.text = "Submission layout"
         self.postLayout.accessoryType = .disclosureIndicator
-        self.postLayout.backgroundColor = ColorUtil.theme.backgroundColor
+        self.postLayout.backgroundColor = ColorUtil.theme.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.theme.fontColor
         self.postLayout.imageView?.image = UIImage.init(named: "layout")?.toolbarIcon()
         self.postLayout.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.subThemes.textLabel?.text = "Subreddit themes"
         self.subThemes.accessoryType = .disclosureIndicator
-        self.subThemes.backgroundColor = ColorUtil.theme.backgroundColor
+        self.subThemes.backgroundColor = ColorUtil.theme.foregroundColor
         self.subThemes.textLabel?.textColor = ColorUtil.theme.fontColor
         self.subThemes.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon()
         self.subThemes.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.font.textLabel?.text = "Font"
         self.font.accessoryType = .disclosureIndicator
-        self.font.backgroundColor = ColorUtil.theme.backgroundColor
+        self.font.backgroundColor = ColorUtil.theme.foregroundColor
         self.font.textLabel?.textColor = ColorUtil.theme.fontColor
         self.font.imageView?.image = UIImage.init(named: "size")?.toolbarIcon()
         self.font.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.comments.textLabel?.text = "Comments"
         self.comments.accessoryType = .disclosureIndicator
-        self.comments.backgroundColor = ColorUtil.theme.backgroundColor
+        self.comments.backgroundColor = ColorUtil.theme.foregroundColor
         self.comments.textLabel?.textColor = ColorUtil.theme.fontColor
         self.comments.imageView?.image = UIImage.init(named: "comments")?.toolbarIcon()
         self.comments.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.linkHandling.textLabel?.text = "Link handling"
         self.linkHandling.accessoryType = .disclosureIndicator
-        self.linkHandling.backgroundColor = ColorUtil.theme.backgroundColor
+        self.linkHandling.backgroundColor = ColorUtil.theme.foregroundColor
         self.linkHandling.textLabel?.textColor = ColorUtil.theme.fontColor
         self.linkHandling.imageView?.image = UIImage.init(named: "link")?.toolbarIcon()
         self.linkHandling.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.history.textLabel?.text = "History"
         self.history.accessoryType = .disclosureIndicator
-        self.history.backgroundColor = ColorUtil.theme.backgroundColor
+        self.history.backgroundColor = ColorUtil.theme.foregroundColor
         self.history.textLabel?.textColor = ColorUtil.theme.fontColor
         self.history.imageView?.image = UIImage.init(named: "history")?.toolbarIcon()
         self.history.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -317,35 +317,35 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.dataSaving.textLabel?.text = "Data saving"
         self.dataSaving.accessoryType = .disclosureIndicator
-        self.dataSaving.backgroundColor = ColorUtil.theme.backgroundColor
+        self.dataSaving.backgroundColor = ColorUtil.theme.foregroundColor
         self.dataSaving.textLabel?.textColor = ColorUtil.theme.fontColor
         self.dataSaving.imageView?.image = UIImage.init(named: "data")?.toolbarIcon()
         self.dataSaving.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.content.textLabel?.text = "Content"
         self.content.accessoryType = .disclosureIndicator
-        self.content.backgroundColor = ColorUtil.theme.backgroundColor
+        self.content.backgroundColor = ColorUtil.theme.foregroundColor
         self.content.textLabel?.textColor = ColorUtil.theme.fontColor
         self.content.imageView?.image = UIImage.init(named: "image")?.toolbarIcon()
         self.content.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.subCell.textLabel?.text = "Visit the Slide subreddit!"
         self.subCell.accessoryType = .disclosureIndicator
-        self.subCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.subCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.subCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.subCell.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon()
         self.subCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.filters.textLabel?.text = "Filters"
         self.filters.accessoryType = .disclosureIndicator
-        self.filters.backgroundColor = ColorUtil.theme.backgroundColor
+        self.filters.backgroundColor = ColorUtil.theme.foregroundColor
         self.filters.textLabel?.textColor = ColorUtil.theme.fontColor
         self.filters.imageView?.image = UIImage.init(named: "filter")?.toolbarIcon()
         self.filters.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.aboutCell.textLabel?.text = "Version: \(getVersion())"
         self.aboutCell.accessoryType = .disclosureIndicator
-        self.aboutCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.aboutCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.aboutCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.aboutCell.imageView?.image = UIImage.init(named: "info")?.toolbarIcon()
             
@@ -353,28 +353,28 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.githubCell.textLabel?.text = "Github"
         self.githubCell.accessoryType = .disclosureIndicator
-        self.githubCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.githubCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.githubCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.githubCell.imageView?.image = UIImage.init(named: "github")?.toolbarIcon()
         self.githubCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.licenseCell.textLabel?.text = "Open source licenses"
         self.licenseCell.accessoryType = .disclosureIndicator
-        self.licenseCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.licenseCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.licenseCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.licenseCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
         self.licenseCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.contributorsCell.textLabel?.text = "Slide project contributors"
         self.contributorsCell.accessoryType = .disclosureIndicator
-        self.contributorsCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contributorsCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.contributorsCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.contributorsCell.imageView?.image = UIImage.init(named: "happy")?.toolbarIcon()
         self.contributorsCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.autoPlayCell.textLabel?.text = "Autoplay videos and gifs"
         self.autoPlayCell.accessoryType = .none
-        self.autoPlayCell.backgroundColor = ColorUtil.theme.backgroundColor
+        self.autoPlayCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.autoPlayCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.autoPlayCell.imageView?.image = UIImage.init(named: "play")?.toolbarIcon()
         self.autoPlayCell.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -385,7 +385,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         viewModeCell.textLabel?.text = "App mode"
         viewModeCell.accessoryType = .disclosureIndicator
-        viewModeCell.backgroundColor = ColorUtil.theme.backgroundColor
+        viewModeCell.backgroundColor = ColorUtil.theme.foregroundColor
         viewModeCell.textLabel?.textColor = ColorUtil.theme.fontColor
         viewModeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.viewModeCell.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
@@ -402,7 +402,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         lock.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         lockCell.textLabel?.text = "Biometric app lock"
         lockCell.accessoryView = lock
-        lockCell.backgroundColor = ColorUtil.theme.backgroundColor
+        lockCell.backgroundColor = ColorUtil.theme.foregroundColor
         lockCell.textLabel?.textColor = ColorUtil.theme.fontColor
         lockCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.lockCell.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
@@ -410,7 +410,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         audioSettings.textLabel?.text = "Audio"
         audioSettings.accessoryType = .disclosureIndicator
-        audioSettings.backgroundColor = ColorUtil.theme.backgroundColor
+        audioSettings.backgroundColor = ColorUtil.theme.foregroundColor
         audioSettings.textLabel?.textColor = ColorUtil.theme.fontColor
         audioSettings.imageView?.image = UIImage.init(named: "audio")?.toolbarIcon()
         audioSettings.imageView?.tintColor = ColorUtil.theme.fontColor

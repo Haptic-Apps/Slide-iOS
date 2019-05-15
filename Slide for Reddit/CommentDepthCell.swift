@@ -171,7 +171,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, commentBody, childrenCount)
         
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.theme.backgroundColor
         topViewSpace.backgroundColor = ColorUtil.theme.backgroundColor
         
@@ -517,7 +517,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         newFrame.size.height = 0
         UIView.animate(withDuration: 0.12, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
             self.menu.frame = newFrame
-            self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         }, completion: { (_) in
             self.contentView.removeConstraints(self.tempConstraints)
             self.tempConstraints = []
@@ -564,7 +564,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         newFrame.size.height += 40
         UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
             self.menu.frame = newFrame
-            self.contentView.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((self.comment)!.subreddit)).withAlphaComponent(0.25))
+            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((self.comment)!.subreddit)).withAlphaComponent(0.25))
         }, completion: { (_) in
         })
         parent!.menuId = comment!.getIdentifier()
@@ -663,7 +663,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         if animate {
-            self.contentView.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
+            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
         }
         menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
     }
@@ -695,7 +695,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         updateDepth()
         if doBody {
-            self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         }
     }
 
@@ -1397,7 +1397,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         loading = false
         childrenCount.alpha = 0
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         if depth - 1 > 0 {
             sideWidth = (SettingValues.wideIndicators ? 8 : 4)
             marginTop = 1
@@ -1485,7 +1485,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.isMore = false
         
         self.currentPath = indexPath
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         loading = false
         if self.parent == nil {
             self.parent = parent
@@ -1541,7 +1541,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             marginTop = 0
             self.depth = 0
             sideWidth = 8
-            sideView.backgroundColor = ColorUtil.theme.backgroundColor
+            sideView.backgroundColor = ColorUtil.theme.foregroundColor
         }
 
         refresh(comment: comment, submissionAuthor: author, text: text, date)
@@ -1735,7 +1735,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func setIsNew(sub: String) {
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.25))
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.25))
     }
 
     func getScoreText(comment: RComment) -> Int {
@@ -1929,7 +1929,7 @@ extension CommentDepthCell: ForceTouchGestureDelegate {
         parentPresentedTextView?.setTextWithTitleHTML(NSAttributedString(string: "asdfasdf"), htmlString: "<b>ASDFSDF</b> not bold")
         let alert = UIViewController()
         alert.view.addSubview(parentPresentedTextView!)
-        alert.view.backgroundColor = ColorUtil.theme.backgroundColor
+        alert.view.backgroundColor = ColorUtil.theme.foregroundColor
         alert.view.roundCorners(UIRectCorner.allCorners, radius: 20)
         alert.view.addGestureRecognizer(force)
         alert.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.8, height: UIScreen.main.bounds.size.height * 0.8)

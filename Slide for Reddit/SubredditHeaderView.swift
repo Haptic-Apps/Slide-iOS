@@ -99,7 +99,7 @@ class SubredditHeaderView: UIView {
 
         self.submit.textLabel?.text = "New post"
         self.submit.accessoryType = .none
-        self.submit.backgroundColor = ColorUtil.theme.backgroundColor
+        self.submit.backgroundColor = ColorUtil.theme.foregroundColor
         self.submit.textLabel?.textColor = ColorUtil.theme.fontColor
         self.submit.imageView?.image = UIImage.init(named: "edit")?.menuIcon()
         self.submit.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -108,7 +108,7 @@ class SubredditHeaderView: UIView {
 
         self.sorting.textLabel?.text = "Default subreddit sorting"
         self.sorting.accessoryType = .none
-        self.sorting.backgroundColor = ColorUtil.theme.backgroundColor
+        self.sorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.sorting.textLabel?.textColor = ColorUtil.theme.fontColor
         self.sorting.imageView?.image = UIImage.init(named: "ic_sort_white")?.menuIcon()
         self.sorting.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -117,7 +117,7 @@ class SubredditHeaderView: UIView {
 
         self.mods.textLabel?.text = "Subreddit moderators"
         self.mods.accessoryType = .none
-        self.mods.backgroundColor = ColorUtil.theme.backgroundColor
+        self.mods.backgroundColor = ColorUtil.theme.foregroundColor
         self.mods.textLabel?.textColor = ColorUtil.theme.fontColor
         self.mods.imageView?.image = UIImage.init(named: "mod")?.menuIcon()
         self.mods.imageView?.tintColor = ColorUtil.theme.fontColor

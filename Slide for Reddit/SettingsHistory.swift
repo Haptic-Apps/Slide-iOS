@@ -84,7 +84,7 @@ class SettingsHistory: UITableViewController {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -109,13 +109,13 @@ class SettingsHistory: UITableViewController {
         createCell(dotCell, dot, isOn: SettingValues.newIndicator, text: "Show new posts with a dot instead of graying post titles")
 
         clearHistory.textLabel?.text = "Clear submission history"
-        clearHistory.backgroundColor = ColorUtil.theme.backgroundColor
+        clearHistory.backgroundColor = ColorUtil.theme.foregroundColor
         clearHistory.textLabel?.textColor = ColorUtil.theme.fontColor
         clearHistory.selectionStyle = UITableViewCell.SelectionStyle.none
         clearHistory.accessoryType = .disclosureIndicator
 
         clearSubs.textLabel?.text = "Clear subreddit history"
-        clearSubs.backgroundColor = ColorUtil.theme.backgroundColor
+        clearSubs.backgroundColor = ColorUtil.theme.foregroundColor
         clearSubs.textLabel?.textColor = ColorUtil.theme.fontColor
         clearSubs.selectionStyle = UITableViewCell.SelectionStyle.none
         clearSubs.accessoryType = .disclosureIndicator

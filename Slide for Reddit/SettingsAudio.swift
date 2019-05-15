@@ -181,7 +181,7 @@ private extension SettingsAudio {
 
 private extension UITableViewCell {
     func style() {
-        backgroundColor = ColorUtil.theme.backgroundColor
+        backgroundColor = ColorUtil.theme.foregroundColor
         textLabel?.textColor = ColorUtil.theme.fontColor
         detailTextLabel?.textColor = ColorUtil.theme.fontColor.withAlphaComponent(0.7)
     }

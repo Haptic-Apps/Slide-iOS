@@ -591,7 +591,7 @@ class PostActions: NSObject {
                 textField.attributedPlaceholder = NSAttributedString(string: "Reason (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
                 textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
                 textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.theme.backgroundColor
+                textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.leftViewPadding = 12
                 textField.layer.borderWidth = 1
                 textField.layer.cornerRadius = 8

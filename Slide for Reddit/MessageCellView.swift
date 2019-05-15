@@ -92,7 +92,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.rightAnchor == contentView.rightAnchor - CGFloat(8)
         
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     var lsC: [NSLayoutConstraint] = []

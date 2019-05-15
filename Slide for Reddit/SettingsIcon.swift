@@ -156,7 +156,7 @@ public class IconCell: UITableViewCell {
         title.textAlignment = .left
         title.textColor = ColorUtil.theme.fontColor
         
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         
         iconView.heightAnchor == 40
         iconView.widthAnchor == 40

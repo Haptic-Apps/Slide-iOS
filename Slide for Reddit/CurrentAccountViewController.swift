@@ -125,7 +125,7 @@ class CurrentAccountViewController: UIViewController {
     }
 
     var accountImageView = UIImageView().then {
-        $0.backgroundColor = ColorUtil.theme.backgroundColor
+        $0.backgroundColor = ColorUtil.theme.foregroundColor
         $0.contentMode = .scaleAspectFit
         if #available(iOS 11.0, *) {
             $0.accessibilityIgnoresInvertColors = true
@@ -657,7 +657,7 @@ private extension UITableViewCell {
         imageView?.tintColor = imageColor
 
         accessoryType = .none
-        backgroundColor = ColorUtil.theme.backgroundColor
+        backgroundColor = ColorUtil.theme.foregroundColor
         textLabel?.textColor = ColorUtil.theme.fontColor
         layer.cornerRadius = 5
         clipsToBounds = true

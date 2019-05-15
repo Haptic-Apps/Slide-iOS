@@ -74,7 +74,7 @@ class ManageMultireddit: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.backgroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     @objc func add(_ selector: AnyObject) {
@@ -107,7 +107,7 @@ class ManageMultireddit: UITableViewController {
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
-        cell?.backgroundColor = ColorUtil.theme.backgroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
         
         return cell!
     }

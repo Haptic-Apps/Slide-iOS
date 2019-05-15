@@ -77,7 +77,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.night.textLabel?.text = "Auto night mode"
         self.night.detailTextLabel?.text = "Select a custom night theme and night hours, Slide does the rest"
         self.night.detailTextLabel?.numberOfLines = 0
-        self.night.backgroundColor = ColorUtil.theme.backgroundColor
+        self.night.backgroundColor = ColorUtil.theme.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.theme.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon()
         self.night.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -86,7 +86,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.username.textLabel?.text = "Username scrubbing"
         self.username.detailTextLabel?.text = "Keep your account names a secret"
         self.username.detailTextLabel?.numberOfLines = 0
-        self.username.backgroundColor = ColorUtil.theme.backgroundColor
+        self.username.backgroundColor = ColorUtil.theme.foregroundColor
         self.username.textLabel?.textColor = ColorUtil.theme.fontColor
         self.username.imageView?.image = UIImage.init(named: "hide")?.toolbarIcon()
         self.username.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -95,7 +95,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.backup.textLabel?.text = "Backup and Restore"
         self.backup.detailTextLabel?.text = "Sync your Slide settings between devices"
         self.backup.detailTextLabel?.numberOfLines = 0
-        self.backup.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backup.backgroundColor = ColorUtil.theme.foregroundColor
         self.backup.textLabel?.textColor = ColorUtil.theme.fontColor
         self.backup.imageView?.image = UIImage.init(named: "download")?.toolbarIcon()
         self.backup.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -104,7 +104,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.custom.textLabel?.text = "Custom theme colors"
         self.custom.detailTextLabel?.text = "Choose a custom color for your themes"
         self.custom.detailTextLabel?.numberOfLines = 0
-        self.custom.backgroundColor = ColorUtil.theme.backgroundColor
+        self.custom.backgroundColor = ColorUtil.theme.foregroundColor
         self.custom.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.custom.textLabel?.textColor = ColorUtil.theme.fontColor
         self.custom.imageView?.image = UIImage.init(named: "accent")?.toolbarIcon()
@@ -121,7 +121,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         self.restore.textLabel?.text = "Already a supporter?"
         self.restore.accessoryType = .disclosureIndicator
-        self.restore.backgroundColor = ColorUtil.theme.backgroundColor
+        self.restore.backgroundColor = ColorUtil.theme.foregroundColor
         self.restore.textLabel?.textColor = GMColor.lightGreen300Color()
         self.restore.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon().getCopy(withColor: GMColor.lightGreen300Color())
         self.restore.imageView?.tintColor = GMColor.lightGreen300Color()
@@ -131,7 +131,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         let aboutArea = UIView()
         let about = UILabel(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 30))
         about.font = UIFont.systemFont(ofSize: 15)
-        aboutArea.backgroundColor = ColorUtil.theme.backgroundColor
+        aboutArea.backgroundColor = ColorUtil.theme.foregroundColor
         about.textColor = ColorUtil.theme.fontColor
         about.text = "Upgrade to Slide Pro to enjoy some awesome new features while supporting ad-free and open source software!\n\nSlide is my side project while attending university full-time, and every donation helps keep Slide going 😊"
         about.numberOfLines = 0
@@ -164,7 +164,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.shadowbox.textLabel?.text = "Shadowbox mode"
         self.shadowbox.detailTextLabel?.text = "View your favorite content in a full-screen distraction free shadowbox"
         self.shadowbox.detailTextLabel?.numberOfLines = 0
-        self.shadowbox.backgroundColor = ColorUtil.theme.backgroundColor
+        self.shadowbox.backgroundColor = ColorUtil.theme.foregroundColor
         self.shadowbox.textLabel?.textColor = ColorUtil.theme.fontColor
         self.shadowbox.imageView?.image = UIImage.init(named: "shadowbox")?.toolbarIcon()
         self.shadowbox.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -173,7 +173,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.gallery.textLabel?.text = "Gallery mode"
         self.gallery.detailTextLabel?.text = "r/pics never looked better"
         self.gallery.detailTextLabel?.numberOfLines = 0
-        self.gallery.backgroundColor = ColorUtil.theme.backgroundColor
+        self.gallery.backgroundColor = ColorUtil.theme.foregroundColor
         self.gallery.textLabel?.textColor = ColorUtil.theme.fontColor
         self.gallery.imageView?.image = UIImage.init(named: "image")?.toolbarIcon()
         self.gallery.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -182,7 +182,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.biometric.textLabel?.text = "Biometric lock"
         self.biometric.detailTextLabel?.text = "Keep your Reddit content safe"
         self.biometric.detailTextLabel?.numberOfLines = 0
-        self.biometric.backgroundColor = ColorUtil.theme.backgroundColor
+        self.biometric.backgroundColor = ColorUtil.theme.foregroundColor
         self.biometric.textLabel?.textColor = ColorUtil.theme.fontColor
         self.biometric.imageView?.image = UIImage.init(named: "lockapp")?.toolbarIcon()
         self.biometric.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -191,7 +191,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.multicolumn.textLabel?.text = "Multicolumn mode"
         self.multicolumn.detailTextLabel?.text = "A must-have for iPads! This option allows you to display posts side-by-side in a configurable number of columns"
         self.multicolumn.detailTextLabel?.numberOfLines = 0
-        self.multicolumn.backgroundColor = ColorUtil.theme.backgroundColor
+        self.multicolumn.backgroundColor = ColorUtil.theme.foregroundColor
         self.multicolumn.textLabel?.textColor = ColorUtil.theme.fontColor
         self.multicolumn.imageView?.image = UIImage.init(named: "multicolumn")?.toolbarIcon()
         self.multicolumn.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -200,7 +200,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.autocache.textLabel?.text = "Autocache subreddits"
         self.autocache.detailTextLabel?.text = "Cache your favorite subs for your morning commute"
         self.autocache.detailTextLabel?.numberOfLines = 0
-        self.autocache.backgroundColor = ColorUtil.theme.backgroundColor
+        self.autocache.backgroundColor = ColorUtil.theme.foregroundColor
         self.autocache.textLabel?.textColor = ColorUtil.theme.fontColor
         self.autocache.imageView?.image = UIImage.init(named: "download")?.toolbarIcon()
         self.autocache.imageView?.tintColor = ColorUtil.theme.fontColor

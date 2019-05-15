@@ -23,7 +23,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var backgroundView = UIView()
     var topView: UIView?
     var bottomOffset: CGFloat = 64
-    var muxColor = ColorUtil.theme.backgroundColor
+    var muxColor = ColorUtil.theme.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
 
@@ -251,7 +251,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             strongSelf.backgroundView.alpha = 0
             strongSelf.topView?.alpha = 1
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
-            strongSelf.topView?.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            strongSelf.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
             strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
@@ -290,7 +290,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                 strongSelf.backgroundView.alpha = 0
                 strongSelf.topView?.alpha = 1
                 strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.parentController?.view.frame.width ?? strongSelf.view.frame.size.width, height: desiredHeight)
-                strongSelf.topView?.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+                strongSelf.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
                 strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             }
             
@@ -315,7 +315,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             self.backgroundView.isHidden = true
             self.topView?.alpha = 1
             self.view.frame = CGRect(x: 0, y: y, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: desiredHeight)
-            self.topView?.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            self.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             self.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
         }
     }
@@ -417,7 +417,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         super.viewWillAppear(animated)
 
         // Update any things that can change due to user settings here
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = ColorUtil.theme.foregroundColor
         tableView.separatorColor = ColorUtil.theme.backgroundColor
     }
     
@@ -523,8 +523,8 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
             //self.horizontalSubGroup.setColors()
-            //self.horizontalSubGroup.backgroundColor = ColorUtil.theme.backgroundColor
-            self.headerView.backgroundColor = ColorUtil.theme.backgroundColor
+            //self.horizontalSubGroup.backgroundColor = ColorUtil.theme.foregroundColor
+            self.headerView.backgroundColor = ColorUtil.theme.foregroundColor
             self.dragHandleView.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.2)
             self.searchBar.tintColor = ColorUtil.theme.fontColor
             self.searchBar.textColor = ColorUtil.theme.fontColor
@@ -694,7 +694,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         }
 
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.foregroundColor
         return toReturn
     }
 
@@ -750,7 +750,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             cell = c
         }
 
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
 
         return cell
     }

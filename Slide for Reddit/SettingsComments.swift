@@ -305,7 +305,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -345,7 +345,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     public func updateThemeCell() {
         authorThemeCell.textLabel?.text = "Author username color"
         authorThemeCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        authorThemeCell.backgroundColor = ColorUtil.theme.backgroundColor
+        authorThemeCell.backgroundColor = ColorUtil.theme.foregroundColor
         authorThemeCell.textLabel?.numberOfLines = 0
         authorThemeCell.textLabel?.lineBreakMode = .byWordWrapping
         authorThemeCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -358,7 +358,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     public func updateDepthsCell() {
         themeColorCell.textLabel?.text = "Depths colors"
         themeColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        themeColorCell.backgroundColor = ColorUtil.theme.backgroundColor
+        themeColorCell.backgroundColor = ColorUtil.theme.foregroundColor
         themeColorCell.textLabel?.numberOfLines = 0
         themeColorCell.textLabel?.lineBreakMode = .byWordWrapping
         themeColorCell.selectionStyle = UITableViewCell.SelectionStyle.none

@@ -44,7 +44,7 @@ class CachedTitle {
             colorF = .white
         }
         let brightF = colorF
-        colorF = colorF.add(overlay: ColorUtil.theme.backgroundColor.withAlphaComponent(0.20))
+        colorF = colorF.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.20))
 
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): brightF]))
 
@@ -208,7 +208,7 @@ class CachedTitle {
                 infoString.append(NSAttributedString.init(string: "\n"))
             }
             if SettingValues.scoreInTitle {
-                var sColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.backgroundColor.withAlphaComponent(0.15))
+                var sColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.15))
                 switch ActionStates.getVoteDirection(s: submission) {
                 case .down:
                     sColor = ColorUtil.downvoteColor
@@ -269,7 +269,7 @@ class CachedTitle {
         }
         
         if SettingValues.typeInTitle {
-            let info = NSMutableAttributedString.init(string: "\u{00A0}\u{00A0}\(submission.type.rawValue)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.theme.fontColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.theme.backgroundColor])
+            let info = NSMutableAttributedString.init(string: "\u{00A0}\u{00A0}\(submission.type.rawValue)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName) : YYTextBorder(fill: ColorUtil.theme.fontColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.theme.foregroundColor])
             infoString.append(spacer)
             infoString.append(info)
         }

@@ -47,7 +47,7 @@ extension UIAlertController {
     }
     
     public var cancelButtonColor: UIColor? {
-        return ColorUtil.theme.backgroundColor
+        return ColorUtil.theme.foregroundColor
     }
     
     private var visualEffectView: UIVisualEffectView? {
@@ -87,13 +87,13 @@ extension UIAlertController {
             }
             if let firstSubview = self.view.subviews.first, let alertContentView = firstSubview.subviews.first {
                 for view in alertContentView.subviews {
-                    view.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.6)
+                    view.backgroundColor = ColorUtil.theme.foregroundColor.withAlphaComponent(0.6)
                 }
             }
         }
         visualEffectView?.effect = UIBlurEffect(style: ColorUtil.theme.isLight ? UIBlurEffect.Style.light : UIBlurEffect.Style.dark)
         if self.preferredStyle == .actionSheet && UIDevice.current.userInterfaceIdiom != .pad {
-            cancelActionView?.backgroundColor = ColorUtil.theme.backgroundColor
+            cancelActionView?.backgroundColor = ColorUtil.theme.foregroundColor
         }
     }
 }
@@ -114,7 +114,7 @@ class CancelButtonViewController: UIViewController {
             $0.font = UIFont.boldSystemFont(ofSize: 20)
             $0.textColor = ColorUtil.baseAccent
             $0.clipsToBounds = true
-            $0.backgroundColor = ColorUtil.theme.backgroundColor  
+            $0.backgroundColor = ColorUtil.theme.foregroundColor  
             $0.textAlignment = .center
         }
         self.view.addSubview(cancelView)

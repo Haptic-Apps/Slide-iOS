@@ -43,7 +43,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         self.icon = UIImageView(image: UIImage(named: "profile")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
         self.contentView.addSubviews(title, icon)
 
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.setupConstraints()
         
         self.contentView.addTapGestureRecognizer {

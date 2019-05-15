@@ -187,7 +187,7 @@ class SettingsGeneral: UITableViewController {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -223,13 +223,13 @@ class SettingsGeneral: UITableViewController {
         self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
         self.postSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.postSorting.backgroundColor = ColorUtil.theme.backgroundColor
+        self.postSorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.postSorting.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.searchSorting.textLabel?.text = "Default search sorting"
         self.searchSorting.detailTextLabel?.text = "Sort by \(SettingValues.defaultSearchSorting.path.capitalize())"
         self.searchSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.searchSorting.backgroundColor = ColorUtil.theme.backgroundColor
+        self.searchSorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.searchSorting.textLabel?.textColor = ColorUtil.theme.fontColor
 
         if #available(iOS 10.0, *) {
@@ -242,7 +242,7 @@ class SettingsGeneral: UITableViewController {
             self.notifications.textLabel?.text = "New message notifications"
             self.notifications.detailTextLabel?.text = "Requires iOS 10 or newer"
             self.notifications.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-            self.notifications.backgroundColor = ColorUtil.theme.backgroundColor
+            self.notifications.backgroundColor = ColorUtil.theme.foregroundColor
             self.notifications.textLabel?.textColor = ColorUtil.theme.fontColor
         }
         
@@ -260,17 +260,17 @@ class SettingsGeneral: UITableViewController {
         self.notifications.textLabel?.text = "New message notifications"
         self.notifications.detailTextLabel?.text = "Check for new mail every 15 minutes"
         self.notifications.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.notifications.backgroundColor = ColorUtil.theme.backgroundColor
+        self.notifications.backgroundColor = ColorUtil.theme.foregroundColor
         self.notifications.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.matchSilence.detailTextLabel?.text = "Follows mute switch and silent mode"
         self.matchSilence.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.matchSilence.backgroundColor = ColorUtil.theme.backgroundColor
+        self.matchSilence.backgroundColor = ColorUtil.theme.foregroundColor
         self.matchSilence.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.commentSorting.textLabel?.text = "Default comment sorting"
         self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
-        self.commentSorting.backgroundColor = ColorUtil.theme.backgroundColor
+        self.commentSorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.commentSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.commentSorting.textLabel?.textColor = ColorUtil.theme.fontColor
 

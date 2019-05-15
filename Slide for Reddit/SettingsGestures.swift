@@ -208,7 +208,7 @@ class SettingsGestures: UITableViewController {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -232,26 +232,26 @@ class SettingsGestures: UITableViewController {
         self.submissionGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.submissionGesturesCell.detailTextLabel?.numberOfLines = 0
         self.submissionGesturesCell.detailTextLabel?.text = "Enabling submission gestures will require two fingers to swipe between subreddits in the main view"
-        self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         
         createCell(disableBannerCell, disableBanner, isOn: SettingValues.disableBanner, text: "Open comments from banner image")
         self.disableBannerCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.disableBannerCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.disableBannerCell.detailTextLabel?.numberOfLines = 0
         self.disableBannerCell.detailTextLabel?.text = "Enabling this will open comments when clicking on the submission banner image"
-        self.disableBannerCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.disableBannerCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
 
         createCell(commentGesturesCell, nil, isOn: false, text: "Comment gestures mode")
         self.commentGesturesCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.commentGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.commentGesturesCell.detailTextLabel?.numberOfLines = 0
         self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
-        self.commentGesturesCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.commentGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
 
         updateCells()
         self.tableView.tableFooterView = UIView()
         
-        commentCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        commentCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         let label = UILabel()
         for view in commentCell.contentView.subviews {
             view.removeFromSuperview()

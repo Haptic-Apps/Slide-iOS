@@ -241,7 +241,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
-        cell?.backgroundColor = ColorUtil.theme.backgroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
         cell?.sideView.isHidden = UserDefaults.standard.colorForKey(key: "color+" + thing) == nil
         return cell!
     }
@@ -382,7 +382,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.backgroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
     }
 
     func doDelete(_ sub: String) {

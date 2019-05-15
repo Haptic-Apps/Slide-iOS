@@ -15,7 +15,7 @@ final class FullLinkCellView: LinkCellView {
         full = true
         self.textView = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.baseAccent, width: 100, delegate: self).then {
             $0.accessibilityIdentifier = "Self Text View"
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
             $0.isHidden = true
         }
         super.configureView()

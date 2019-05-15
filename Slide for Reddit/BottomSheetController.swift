@@ -36,7 +36,7 @@ open class BottomSheetCell: ActionCell {
     
     open lazy var animatableBackgroundView: UIView = { [weak self] in
         let view = UIView(frame: self?.frame ?? CGRect.zero)
-        view.backgroundColor = ColorUtil.theme.backgroundColor
+        view.backgroundColor = ColorUtil.theme.foregroundColor
         return view
         }()
     
@@ -89,7 +89,7 @@ open class ActionControllerHeader: UICollectionReusableView {
     
     var label = UILabel().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = ColorUtil.theme.backgroundColor
+        $0.backgroundColor = ColorUtil.theme.foregroundColor
         $0.font = UIFont.boldSystemFont(ofSize: 17)
         $0.textColor = ColorUtil.theme.fontColor
         $0.textAlignment = .center
@@ -137,7 +137,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         settings.cancelView.fontColor = ColorUtil.theme.navIconColor
         settings.cancelView.height = 96 - (hasHomebar() ? 0 : 25)
         //collectionView.contentInset = UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 12)
-        settings.cancelView.backgroundColor = ColorUtil.theme.backgroundColor
+        settings.cancelView.backgroundColor = ColorUtil.theme.foregroundColor
         settings.behavior.hideOnScrollDown = false
         settings.behavior.bounces = true
         settings.behavior.hideNavigationBarOnShow = false
@@ -170,9 +170,9 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             cell.alpha = action.enabled ? 1.0 : 0.5
             cell.actionTitleLabel?.textColor = ColorUtil.theme.fontColor
             cell.actionTitleLabel?.font = UIFont.systemFont(ofSize: 16)
-            cell.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.6)
+            cell.backgroundColor = ColorUtil.theme.foregroundColor.withAlphaComponent(0.6)
             
-            self.collectionView.backgroundColor = ColorUtil.theme.backgroundColor
+            self.collectionView.backgroundColor = ColorUtil.theme.foregroundColor
             self.collectionView.layer.cornerRadius = 15
             self.collectionView.clipsToBounds = true
             
@@ -181,7 +181,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
                // self.header!.widthAnchor == self.collectionView.widthAnchor
                // self.header!.heightAnchor == CGFloat(52)
                // self.header!.leftAnchor == self.collectionView.leftAnchor
-               // self.header!.backgroundColor = ColorUtil.theme.backgroundColor
+               // self.header!.backgroundColor = ColorUtil.theme.foregroundColor
                 doneOnce = true
             }
             var corners = UIRectCorner()

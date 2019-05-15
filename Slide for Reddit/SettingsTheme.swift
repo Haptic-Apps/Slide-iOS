@@ -195,7 +195,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -239,26 +239,26 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         
         self.primary.textLabel?.text = "Primary color"
         self.primary.accessoryType = .none
-        self.primary.backgroundColor = ColorUtil.theme.backgroundColor
+        self.primary.backgroundColor = ColorUtil.theme.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.theme.fontColor
         self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
         
         self.accent.textLabel?.text = "Accent color"
         self.accent.accessoryType = .none
-        self.accent.backgroundColor = ColorUtil.theme.backgroundColor
+        self.accent.backgroundColor = ColorUtil.theme.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.theme.fontColor
         self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
         
         self.custom.textLabel?.text = "New custom theme"
         self.custom.accessoryType = .disclosureIndicator
-        self.custom.backgroundColor = ColorUtil.theme.backgroundColor
+        self.custom.backgroundColor = ColorUtil.theme.foregroundColor
         self.custom.textLabel?.textColor = ColorUtil.theme.fontColor
         self.custom.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.custom.imageView?.tintColor = ColorUtil.theme.navIconColor
         
         self.base.textLabel?.text = "Base theme"
         self.base.accessoryType = .disclosureIndicator
-        self.base.backgroundColor = ColorUtil.theme.backgroundColor
+        self.base.backgroundColor = ColorUtil.theme.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.theme.fontColor
         self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.base.imageView?.tintColor = ColorUtil.theme.navIconColor
@@ -272,7 +272,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         self.night.detailTextLabel?.text = "Tap to change night hours"
         self.night.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.night.accessoryType = .none
-        self.night.backgroundColor = ColorUtil.theme.backgroundColor
+        self.night.backgroundColor = ColorUtil.theme.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.theme.fontColor
         self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.night.imageView?.tintColor = ColorUtil.theme.navIconColor
@@ -286,13 +286,13 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         tintOutsideSwitch.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.tintOutside.textLabel?.text = "Only tint outside of subreddit"
         self.tintOutside.accessoryView = tintOutsideSwitch
-        self.tintOutside.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tintOutside.backgroundColor = ColorUtil.theme.foregroundColor
         self.tintOutside.textLabel?.textColor = ColorUtil.theme.fontColor
         tintOutside.selectionStyle = UITableViewCell.SelectionStyle.none
         
         self.tintingMode.textLabel?.text = "Subreddit tinting mode"
         self.tintingMode.detailTextLabel?.text = SettingValues.tintingMode
-        self.tintingMode.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tintingMode.backgroundColor = ColorUtil.theme.foregroundColor
         self.tintingMode.textLabel?.textColor = ColorUtil.theme.fontColor
         self.tintingMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
@@ -305,7 +305,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
         reduceColorCell.textLabel?.numberOfLines = 0
         reduceColorCell.accessoryView = reduceColor
-        reduceColorCell.backgroundColor = ColorUtil.theme.backgroundColor
+        reduceColorCell.backgroundColor = ColorUtil.theme.foregroundColor
         reduceColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.reduceColorCell.imageView?.image = UIImage.init(named: "nocolors")?.toolbarIcon()

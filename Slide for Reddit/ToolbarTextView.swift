@@ -196,7 +196,7 @@ public class ToolbarTextView: NSObject {
                                                     textField.attributedPlaceholder = NSAttributedString(string: "Caption (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
                                                     textField.left(image: UIImage.init(named: "link"), color: ColorUtil.theme.fontColor)
                                                     textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                                                    textField.backgroundColor = ColorUtil.theme.backgroundColor
+                                                    textField.backgroundColor = ColorUtil.theme.foregroundColor
                                                     textField.leftViewPadding = 12
                                                     textField.layer.borderWidth = 1
                                                     textField.layer.cornerRadius = 8
@@ -261,7 +261,7 @@ public class ToolbarTextView: NSObject {
                                     textField.attributedPlaceholder = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
                                     textField.left(image: UIImage.init(named: "link"), color: ColorUtil.theme.fontColor)
                                     textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                                    textField.backgroundColor = ColorUtil.theme.backgroundColor
+                                    textField.backgroundColor = ColorUtil.theme.foregroundColor
                                     textField.leftViewPadding = 12
                                     textField.layer.borderWidth = 1
                                     textField.layer.cornerRadius = 8
@@ -376,7 +376,7 @@ public class ToolbarTextView: NSObject {
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
             textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.theme.backgroundColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done
@@ -394,7 +394,7 @@ public class ToolbarTextView: NSObject {
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
             textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.theme.backgroundColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
             textField.keyboardAppearance = .default
             textField.keyboardType = .default
             textField.returnKeyType = .done

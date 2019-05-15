@@ -56,7 +56,7 @@ class SettingsPostMenu: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.backgroundColor
+        cell?.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -72,7 +72,7 @@ class SettingsPostMenu: UITableViewController {
         
         let c = UITableViewCell(style: .default, reuseIdentifier: nil)
         c.textLabel?.text = thing.getTitle()
-        c.backgroundColor = ColorUtil.theme.backgroundColor
+        c.backgroundColor = ColorUtil.theme.foregroundColor
         c.textLabel?.textColor = ColorUtil.theme.fontColor
         c.imageView?.image = thing.getImage()
         c.showsReorderControl = true

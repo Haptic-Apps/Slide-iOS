@@ -513,7 +513,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
         if submission != nil {
-            self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.backgroundColor)
+            self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.foregroundColor)
         }
         
         let landscape = size.width > size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)
@@ -1955,7 +1955,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             textField.attributedPlaceholder = NSAttributedString(string: "Tag", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
             textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
             textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.theme.backgroundColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
@@ -2883,7 +2883,7 @@ class ParentCommentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView = UIScrollView().then {
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
             $0.isUserInteractionEnabled = true
         }
         self.view.addSubview(scrollView)
@@ -2993,7 +2993,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         if let popover = viewControllerToCommit.popoverPresentationController {
             popover.sourceView = self.tableView
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.theme.backgroundColor
+            popover.backgroundColor = ColorUtil.theme.foregroundColor
             popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
             //detailViewController.frame = CGRect(x: (self.view.frame.bounds.width / 2 - (UIScreen.main.bounds.size.width * 0.85)), y: (self.view.frame.bounds.height / 2 - (cell2.title.estimatedHeight + 12)), width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 12)
             popover.delegate = self

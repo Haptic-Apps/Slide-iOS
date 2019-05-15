@@ -123,7 +123,7 @@ class SubredditCellView: UITableViewCell {
 
     func setSubreddit(subreddit: String, nav: UIViewController?, exists: Bool = true) {
         title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.navController = nav
         self.subreddit = subreddit
         self.sideView.isHidden = false
@@ -142,7 +142,7 @@ class SubredditCellView: UITableViewCell {
     
     func setProfile(profile: String, nav: UIViewController?) {
         title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.profile = profile
         self.subreddit = ""
         self.search = ""
@@ -159,7 +159,7 @@ class SubredditCellView: UITableViewCell {
 
     func setSearch(string: String, sub: String?, nav: UIViewController?) {
         title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.search = string
         self.subreddit = sub ?? "all"
         self.profile = ""

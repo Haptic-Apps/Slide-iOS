@@ -51,14 +51,14 @@ class SettingsBackup: UITableViewController {
 
         self.backup.textLabel?.text = "Backup"
         self.backup.detailTextLabel?.text = "Backup your Slide data to iCloud"
-        self.backup.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backup.backgroundColor = ColorUtil.theme.foregroundColor
         self.backup.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.backup.textLabel?.textColor = ColorUtil.theme.fontColor
         self.backup.imageView?.image = UIImage.init(named: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
         self.backup.imageView?.tintColor = ColorUtil.theme.fontColor
         
         self.restore.textLabel?.text = "Restore"
-        self.restore.backgroundColor = ColorUtil.theme.backgroundColor
+        self.restore.backgroundColor = ColorUtil.theme.foregroundColor
         self.restore.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.restore.textLabel?.textColor = ColorUtil.theme.fontColor
         self.restore.detailTextLabel?.text = "Restore your backup data from iCloud"

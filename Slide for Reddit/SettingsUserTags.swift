@@ -176,7 +176,7 @@ class TagCellView: UITableViewCell {
         }
 
         title.attributedText = attributedTitle
-        body.backgroundColor = ColorUtil.theme.backgroundColor
+        body.backgroundColor = ColorUtil.theme.foregroundColor
         self.backgroundColor = ColorUtil.theme.backgroundColor
     }
 }

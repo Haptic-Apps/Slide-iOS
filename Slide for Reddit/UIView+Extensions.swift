@@ -56,7 +56,7 @@ extension UIView {
             self.backgroundColor = color
         }, completion: {_ in
             UIView.animate(withDuration: 0.25, delay: 0.0, options: [.curveLinear], animations: {
-                self.backgroundColor = ColorUtil.theme.backgroundColor
+                self.backgroundColor = ColorUtil.theme.foregroundColor
             }, completion: nil)
         })
     }

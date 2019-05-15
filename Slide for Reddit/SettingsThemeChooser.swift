@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 1/23/19.
 //  Copyright © 2019 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import Then
 import UIKit
@@ -47,7 +46,7 @@ class SettingsThemeChooser: UITableViewController {
     @objc public func handleBackButton() {
         self.navigationController?.popViewController(animated: true)
     }
-
+    
     override func loadView() {
         super.loadView()
         
@@ -82,7 +81,7 @@ class SettingsThemeChooser: UITableViewController {
     }
     
     var themes: [ColorUtil.Theme] = []
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.dismiss(animated: true) {
             if self.nightOnly {
@@ -92,7 +91,7 @@ class SettingsThemeChooser: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return themes.count
+        return themes.count
     }
     
 }
@@ -141,7 +140,7 @@ class ThemeCellView: UITableViewCell {
             body.rightAnchor == contentView.rightAnchor - 8
             body.topAnchor == contentView.topAnchor + 8
             body.bottomAnchor == contentView.bottomAnchor - 8
-
+            
             icon.leftAnchor == body.leftAnchor + 2
             icon.sizeAnchors == CGSize.square(size: 60)
             icon.centerYAnchor == body.centerYAnchor
@@ -154,7 +153,7 @@ class ThemeCellView: UITableViewCell {
     func setTheme(string: String) {
         let colors = UserDefaults.standard.string(forKey: string)!.removingPercentEncoding!
         let split = colors.split("#")
-
+        
         title.textColor = UIColor(hex: split[4])
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
@@ -173,7 +172,7 @@ class ThemeCellView: UITableViewCell {
         self.backgroundColor = ColorUtil.theme.backgroundColor
         self.tintColor = UIColor(hex: split[5])
     }
-
+    
     func setTheme(theme: ColorUtil.Theme) {
         title.textColor = theme.fontColor
         title.text = theme.displayName

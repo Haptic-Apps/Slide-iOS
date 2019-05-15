@@ -193,7 +193,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -255,8 +255,8 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         switch indexPath.section {
         case 0:
             let cell = UITableViewCell()
-            cell.backgroundColor = ColorUtil.theme.backgroundColor
-            cell.backgroundColor = ColorUtil.theme.backgroundColor
+            cell.backgroundColor = ColorUtil.theme.foregroundColor
+            cell.backgroundColor = ColorUtil.theme.foregroundColor
             cell.textLabel?.textColor = ColorUtil.theme.fontColor
             
             let text = browsers[indexPath.row]
@@ -314,9 +314,9 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             }
         case 2:
             let cell = UITableViewCell()
-            cell.backgroundColor = ColorUtil.theme.backgroundColor
+            cell.backgroundColor = ColorUtil.theme.foregroundColor
             cell.accessoryType = .disclosureIndicator
-            cell.backgroundColor = ColorUtil.theme.backgroundColor
+            cell.backgroundColor = ColorUtil.theme.foregroundColor
             cell.textLabel?.textColor = ColorUtil.theme.fontColor
             cell.textLabel?.text = PostFilter.openExternally[indexPath.row] as String
             return cell

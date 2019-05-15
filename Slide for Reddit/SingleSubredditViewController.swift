@@ -1097,7 +1097,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
             textField.textColor = ColorUtil.theme.fontColor
-            textField.backgroundColor = ColorUtil.theme.backgroundColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
             textField.attributedPlaceholder = NSAttributedString(string: "Search...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
             textField.left(image: UIImage.init(named: "search"), color: ColorUtil.theme.fontColor)
             textField.leftViewPadding = 12
@@ -2754,7 +2754,7 @@ public class ReadLaterCell: UICollectionViewCell {
     }
     
     func setupView() {
-        title.backgroundColor = ColorUtil.theme.backgroundColor
+        title.backgroundColor = ColorUtil.theme.foregroundColor
         title.textAlignment = .center
         
         title.numberOfLines = 0

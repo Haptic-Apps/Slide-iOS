@@ -65,7 +65,7 @@ class SettingsViewMode: UITableViewController {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -92,25 +92,25 @@ class SettingsViewMode: UITableViewController {
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
         self.singleMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.singleMode.backgroundColor = ColorUtil.theme.backgroundColor
+        self.singleMode.backgroundColor = ColorUtil.theme.foregroundColor
         self.singleMode.textLabel?.textColor = ColorUtil.theme.fontColor
         self.singleMode.detailTextLabel?.numberOfLines = 0
         
         self.splitMode.detailTextLabel?.text = SettingValues.AppMode.SPLIT.getDescription()
         self.splitMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.splitMode.backgroundColor = ColorUtil.theme.backgroundColor
+        self.splitMode.backgroundColor = ColorUtil.theme.foregroundColor
         self.splitMode.textLabel?.textColor = ColorUtil.theme.fontColor
         self.splitMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnMode.detailTextLabel?.text = SettingValues.AppMode.MULTI_COLUMN.getDescription()
         self.multicolumnMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.multicolumnMode.backgroundColor = ColorUtil.theme.backgroundColor
+        self.multicolumnMode.backgroundColor = ColorUtil.theme.foregroundColor
         self.multicolumnMode.textLabel?.textColor = ColorUtil.theme.fontColor
         self.multicolumnMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
         self.multicolumnCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.multicolumnCount.backgroundColor = ColorUtil.theme.backgroundColor
+        self.multicolumnCount.backgroundColor = ColorUtil.theme.foregroundColor
         self.multicolumnCount.textLabel?.textColor = ColorUtil.theme.fontColor
         self.multicolumnCount.detailTextLabel?.numberOfLines = 0
 

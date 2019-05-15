@@ -120,7 +120,7 @@ class SearchViewController: ContentListingViewController {
             textField.attributedPlaceholder = NSAttributedString(string: "Search for a post...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
             textField.left(image: UIImage.init(named: "search"), color: ColorUtil.theme.fontColor)
             textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.theme.backgroundColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
             textField.text = self.search
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1

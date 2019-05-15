@@ -165,7 +165,7 @@ class TableDisplayView: UIScrollView {
                 text.highlightTapAction = action
                 text.attributedText = string
                 if odd {
-                    text.backgroundColor = ColorUtil.theme.backgroundColor
+                    text.backgroundColor = ColorUtil.theme.foregroundColor
                 }
                 let width = getWidestCell(column: column)
                 globalWidth += width

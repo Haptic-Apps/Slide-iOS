@@ -32,7 +32,7 @@ class CacheSettings: UITableViewController {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -164,7 +164,7 @@ class CacheSettings: UITableViewController {
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
             c.setSubreddit(subreddit: thing, nav: nil)
             cell = c
-            cell?.backgroundColor = ColorUtil.theme.backgroundColor
+            cell?.backgroundColor = ColorUtil.theme.foregroundColor
             let aSwitch = UISwitch().then {
                 $0.tintColor = ColorUtil.accentColorForSub(sub: thing)
             }

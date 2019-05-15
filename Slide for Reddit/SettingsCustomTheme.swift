@@ -35,7 +35,7 @@ class SettingsCustomTheme: UITableViewController {
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -64,7 +64,7 @@ class SettingsCustomTheme: UITableViewController {
             fontColor = UIColor(hex: split[4])
             navIconColor = UIColor(hex: split[5])
             statusbarEnabled = Bool(split[8])!
-            isCurrentTheme = foregroundColor.hexString() == ColorUtil.theme.backgroundColor.hexString() && backgroundColor.hexString() == ColorUtil.theme.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.theme.fontColor.hexString() && navIconColor.hexString() == ColorUtil.theme.navIconColor.hexString()
+            isCurrentTheme = foregroundColor.hexString() == ColorUtil.theme.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.theme.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.theme.fontColor.hexString() && navIconColor.hexString() == ColorUtil.theme.navIconColor.hexString()
             self.title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
             self.setupViews()
             setupBaseBarColors()
@@ -100,7 +100,7 @@ class SettingsCustomTheme: UITableViewController {
                 textField.textColor = ColorUtil.theme.fontColor
                 textField.attributedPlaceholder = NSAttributedString(string: "Theme name...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
                 textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.theme.backgroundColor
+                textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.layer.borderWidth = 1
                 textField.autocorrectionType = UITextAutocorrectionType.no
                 textField.keyboardAppearance = .default
@@ -356,7 +356,7 @@ class SettingsCustomTheme: UITableViewController {
                 textField.attributedPlaceholder = NSAttributedString(string: "HEX String", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
                 textField.left(image: UIImage.init(named: "pallete"), color: ColorUtil.theme.fontColor)
                 textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.theme.backgroundColor
+                textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.leftViewPadding = 12
                 textField.layer.borderWidth = 1
                 textField.layer.cornerRadius = 8

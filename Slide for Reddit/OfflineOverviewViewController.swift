@@ -47,7 +47,7 @@ class OfflineOverviewViewController: UITableViewController {
         
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
         cell.textLabel?.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
-        cell.backgroundColor = ColorUtil.theme.backgroundColor
+        cell.backgroundColor = ColorUtil.theme.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         cell.accessoryType = .disclosureIndicator

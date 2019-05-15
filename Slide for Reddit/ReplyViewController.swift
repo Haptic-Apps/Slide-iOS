@@ -614,7 +614,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 //two
                 let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.theme.fontColor
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -650,7 +650,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.isEditable = true
                     $0.placeholder = "Body"
                     $0.textColor = ColorUtil.theme.fontColor
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -676,7 +676,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.textColor = ColorUtil.theme.fontColor
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.delegate = self
@@ -688,7 +688,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.textColor = ColorUtil.theme.fontColor
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -721,7 +721,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.isEditable = true
                     $0.placeholder = "Body"
                     $0.textColor = ColorUtil.theme.fontColor
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -757,7 +757,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
                 $0.textColor = ColorUtil.theme.fontColor
-                $0.backgroundColor = ColorUtil.theme.backgroundColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.delegate = self
@@ -769,7 +769,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             let text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
                 $0.textColor = ColorUtil.theme.fontColor
-                $0.backgroundColor = ColorUtil.theme.backgroundColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.textContainer.maximumNumberOfLines = 1
@@ -807,7 +807,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.isEditable = true
                 $0.placeholder = "Body"
                 $0.textColor = ColorUtil.theme.fontColor
-                $0.backgroundColor = ColorUtil.theme.backgroundColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.font = UIFont.systemFont(ofSize: 16)
@@ -901,7 +901,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 //two
                 let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.theme.fontColor
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.clipsToBounds = true
                     $0.numberOfLines = 0
                     $0.layer.cornerRadius = 10
@@ -938,7 +938,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.isEditable = true
                     $0.placeholder = "Body"
                     $0.textColor = ColorUtil.theme.fontColor
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -974,7 +974,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.isEditable = true
                     $0.placeholder = "Body"
                     $0.textColor = ColorUtil.theme.fontColor
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.layer.masksToBounds = false
                     $0.layer.cornerRadius = 10
                     $0.font = UIFont.systemFont(ofSize: 16)
@@ -1008,7 +1008,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
                 $0.textColor = ColorUtil.theme.fontColor
-                $0.backgroundColor = ColorUtil.theme.backgroundColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.delegate = self
@@ -1028,7 +1028,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.isEditable = true
                 $0.placeholder = "Body"
                 $0.textColor = ColorUtil.theme.fontColor
-                $0.backgroundColor = ColorUtil.theme.backgroundColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.font = UIFont.systemFont(ofSize: 16)
@@ -1633,7 +1633,7 @@ public class UIStateButton: UIButton {
     var color = UIColor.white
     override open var isSelected: Bool {
         didSet {
-            backgroundColor = isSelected ? color : ColorUtil.theme.backgroundColor
+            backgroundColor = isSelected ? color : ColorUtil.theme.foregroundColor
             self.layer.borderColor = color .cgColor
             self.layer.borderWidth = isSelected ? CGFloat(0) : CGFloat(2)
         }

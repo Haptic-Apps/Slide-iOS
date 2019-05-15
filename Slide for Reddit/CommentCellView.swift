@@ -89,7 +89,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         text.topAnchor == contentView.topAnchor + CGFloat(8)
         text.bottomAnchor <= contentView.bottomAnchor + CGFloat(8)
         text.horizontalAnchors == contentView.horizontalAnchors + CGFloat(8)
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {

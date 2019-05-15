@@ -244,7 +244,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.numberOfLines = 0
             $0.lineBreakMode = .byWordWrapping
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
             $0.textContainerInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
             $0.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
                 text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
@@ -271,7 +271,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.hide, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.reply = UIButton(type: .custom).then {
@@ -279,7 +279,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.reply, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.edit = UIButton(type: .custom).then {
@@ -287,49 +287,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.edit, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.save = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.menu = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Post menu"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.upvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.downvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideUpvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideDownvote = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.mod = UIButton(type: .custom).then {
@@ -337,7 +337,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.mod, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
 
         self.readLater = UIButton(type: .custom).then {
@@ -345,7 +345,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.setImage(LinkCellImageCache.readLater, for: .normal)
             $0.contentMode = .center
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
@@ -353,7 +353,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.commentsIcon
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
@@ -361,7 +361,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.votesIcon
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.score = UILabel().then {
@@ -369,7 +369,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.numberOfLines = 1
             $0.textColor = ColorUtil.theme.fontColor
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideScore = UILabel().then {
@@ -386,7 +386,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.theme.fontColor
             $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.taglabel = UILabel().then {
@@ -1287,7 +1287,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.loadedImage = nil
         lq = false
 
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         comments.textColor = ColorUtil.theme.navIconColor
         title.textColor = ColorUtil.theme.navIconColor
 
@@ -2033,7 +2033,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 textField.attributedPlaceholder = NSAttributedString(string: "Flair text...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
                 textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
                 textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.theme.backgroundColor
+                textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.leftViewPadding = 12
                 textField.layer.borderWidth = 1
                 textField.layer.cornerRadius = 8
@@ -2222,7 +2222,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if type != .IMAGE && type != .SELF && type != .NONE && type != .LINK && type != .REDDIT {
                 let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
                 let popup = UILabel()
-                outer.backgroundColor = ColorUtil.theme.backgroundColor.add(overlay: ColorUtil.getColorForSub(sub: link.subreddit).withAlphaComponent(0.2))
+                outer.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: link.subreddit).withAlphaComponent(0.2))
                 popup.textAlignment = .left
                 popup.isUserInteractionEnabled = true
                 
