@@ -467,9 +467,13 @@ public class TextDisplayStackView: UIStackView {
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
                 body.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if block.startsWith("<cite>") {
+                let body = block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed()
+                if body.isEmpty {
+                    continue
+                }
                 let label = YYLabel(frame: .zero)
                 label.accessibilityIdentifier = "Quote"
-                let text = createAttributedChunk(baseHTML: block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed(), accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
+                let text = createAttributedChunk(baseHTML: body, accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 label.alpha = 0.7
                 label.numberOfLines = 0
                 label.lineBreakMode = .byWordWrapping

@@ -1576,70 +1576,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 taglabel.text = " \(text.uppercased()) "
             } else {
                 tagbody.isHidden = true
-                if submission.isCrosspost && full && !crosspostDone {
-                    crosspostDone = true
-                    let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
-                    let popup = UILabel()
-                    outer.backgroundColor = ColorUtil.theme.backgroundColor
-                    popup.textAlignment = .left
-                    popup.isUserInteractionEnabled = true
-                    
-                    popup.numberOfLines = 2
-                    
-                    outer.elevate(elevation: 2)
-                    outer.layer.cornerRadius = 5
-                    outer.clipsToBounds = true
-                    
-                    let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
-                    outer.addSubviews(icon, popup)
-                    icon.leftAnchor == outer.leftAnchor + CGFloat(8)
-                    icon.centerYAnchor == outer.centerYAnchor
-                    icon.widthAnchor == 20
-                    
-                    popup.leftAnchor == icon.rightAnchor + CGFloat(8)
-                    popup.verticalAnchors == outer.verticalAnchors
-                    popup.rightAnchor == outer.rightAnchor - CGFloat(8)
-                    
-                    infoBox.spacing = 4
-
-                    let colorF = ColorUtil.theme.fontColor
-                    
-                    let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
-                    
-                    let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
-                    let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
-                    if color != ColorUtil.baseColor {
-                        boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
-                    }
-                
-                    let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                
-                    let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                
-                    let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
-                    /* Maybe enable this later
-                    if AccountController.currentName == submission.author {
-                        authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
-                    } else if userColor != ColorUtil.baseColor {
-                        authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
-                    }*/
-                
-                    endString.append(authorString)
-                    boldString.append(endString)
-                
-                    outer.addTapGestureRecognizer {
-                        VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
-                    }
-                    popup.attributedText = boldString
-                    
-                    popup.numberOfLines = 0
-                    
-                    infoBox.spacing = 4
-                    infoBox.addArrangedSubview(outer)
-                    
-                    outer.horizontalAnchors == infoBox.horizontalAnchors
-                    outer.heightAnchor == 48
-                }
                 let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
                 finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
                 info.attributedText = finalText
@@ -1650,6 +1586,71 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             tagbody.isHidden = true
         }
         
+        if submission.isCrosspost && full && !crosspostDone {
+            crosspostDone = true
+            let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
+            let popup = UILabel()
+            outer.backgroundColor = ColorUtil.theme.backgroundColor
+            popup.textAlignment = .left
+            popup.isUserInteractionEnabled = true
+            
+            popup.numberOfLines = 2
+            
+            outer.elevate(elevation: 2)
+            outer.layer.cornerRadius = 5
+            outer.clipsToBounds = true
+            
+            let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
+            outer.addSubviews(icon, popup)
+            icon.leftAnchor == outer.leftAnchor + CGFloat(8)
+            icon.centerYAnchor == outer.centerYAnchor
+            icon.widthAnchor == 20
+            
+            popup.leftAnchor == icon.rightAnchor + CGFloat(8)
+            popup.verticalAnchors == outer.verticalAnchors
+            popup.rightAnchor == outer.rightAnchor - CGFloat(8)
+            
+            infoBox.spacing = 4
+            
+            let colorF = ColorUtil.theme.fontColor
+            
+            let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
+            
+            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
+            if color != ColorUtil.baseColor {
+                boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
+            }
+            
+            let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            
+            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            
+            let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
+            /* Maybe enable this later
+             if AccountController.currentName == submission.author {
+             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+             } else if userColor != ColorUtil.baseColor {
+             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+             }*/
+            
+            endString.append(authorString)
+            boldString.append(endString)
+            
+            outer.addTapGestureRecognizer {
+                VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
+            }
+            popup.attributedText = boldString
+            
+            popup.numberOfLines = 0
+            
+            infoBox.spacing = 4
+            infoBox.addArrangedSubview(outer)
+            
+            outer.horizontalAnchors == infoBox.horizontalAnchors
+            outer.heightAnchor == 48
+        }
+
         //todo maybe? self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
         if full {
             self.setNeedsLayout()
@@ -2296,7 +2297,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 outer.layer.cornerRadius = 5
                 outer.clipsToBounds = true
                 
-                let icon = UIImageView(image: UIImage(named: icon)!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
+                let icon = UIImageView(image: UIImage(named: icon)!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white))
                 outer.addSubviews(icon, popup)
                 icon.leftAnchor == outer.leftAnchor + CGFloat(8)
                 icon.centerYAnchor == outer.centerYAnchor
