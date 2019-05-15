@@ -195,7 +195,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.postActionCell.imageView?.image = UIImage.init(named: "compact")?.toolbarIcon()
         self.postActionCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
-        self.mainTheme.textLabel?.text = "Main theme"
+        self.mainTheme.textLabel?.text = "App theme"
         self.mainTheme.accessoryType = .disclosureIndicator
         self.mainTheme.backgroundColor = ColorUtil.theme.backgroundColor
         self.mainTheme.textLabel?.textColor = ColorUtil.theme.fontColor

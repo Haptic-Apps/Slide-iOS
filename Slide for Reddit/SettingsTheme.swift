@@ -455,6 +455,11 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
                 cell.setTheme(theme: customThemes[indexPath.row - 1])
+                if ColorUtil.theme.title == customThemes[indexPath.row - 1].title {
+                    cell.accessoryType = .checkmark
+                } else {
+                    cell.accessoryType = .none
+                }
                 if ColorUtil.shouldBeNight() {
                     cell.isUserInteractionEnabled = false
                     cell.contentView.alpha = 0.5
@@ -467,6 +472,11 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
             cell.setTheme(theme: themes[indexPath.row])
+            if ColorUtil.theme.title == themes[indexPath.row].title {
+                cell.accessoryType = .checkmark
+            } else {
+                cell.accessoryType = .none
+            }
             if ColorUtil.shouldBeNight() {
                 cell.isUserInteractionEnabled = false
                 cell.contentView.alpha = 0.5
@@ -550,7 +560,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         } else if indexPath.section == 2 {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 let theme = customThemes[indexPath.row - 1]
-                let themeData = UserDefaults.standard.string(forKey: "Theme+" + theme.title)!.removingPercentEncoding!
+                let themeData = UserDefaults.standard.string(forKey: "Theme+" + theme.title.addPercentEncoding)!.removingPercentEncoding!
                 let split = themeData.split("#")
                 let alert = UIAlertController(title: "\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))", message: nil, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Apply Theme", style: .default, handler: { (_) in

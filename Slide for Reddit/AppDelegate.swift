@@ -175,6 +175,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
 
         SettingValues.initialize()
+        
+        let dictionary = Bundle.main.infoDictionary!
+        let build = dictionary["CFBundleVersion"] as! String
+        
+        let lastVersion = UserDefaults.standard.string(forKey: "LAST_BUILD") ?? ""
+        let lastVersionInt = Int(lastVersion) ?? 0
+        let currentVersionInt = Int(build) ?? 0
+        
+        if lastVersionInt < currentVersionInt {
+            //Migration block for build 113
+            if currentVersionInt == 113 {
+                if UserDefaults.standard.string(forKey: "theme") == "custom" {
+                    var colorString = "slide://colors"
+                    colorString += ("#Theme Backup v3.5").addPercentEncoding
+                    let foregroundColor = UserDefaults.standard.colorForKey(key: "customForeground") ?? UIColor.white
+                    let backgroundColor = UserDefaults.standard.colorForKey(key: "customBackground") ?? UIColor(hexString: "#e5e5e5")
+                    let fontColor = UserDefaults.standard.colorForKey(key: "customFont") ?? UIColor(hexString: "#000000").withAlphaComponent(0.87)
+                    let navIconColor = UserDefaults.standard.colorForKey(key: "customNavicon") ?? UIColor(hexString: "#000000").withAlphaComponent(0.87)
+                    let statusbarEnabled = UserDefaults.standard.bool(forKey: "customStatus")
+
+                    colorString += (foregroundColor.toHexString() + backgroundColor.toHexString() + fontColor.toHexString() + navIconColor.toHexString() + "#ffffff" + "#ffffff" + "#" + String(statusbarEnabled)).addPercentEncoding
+                    
+                    UserDefaults.standard.set(colorString, forKey: "Theme+" + ("Theme Backup v3.5").addPercentEncoding)
+                    UserDefaults.standard.set("Theme Backup v3.5", forKey: "theme")
+                    UserDefaults.standard.synchronize()
+                }
+            }
+            
+            UserDefaults.standard.set(build, forKey: "LAST_BUILD")
+        }
+
         DTCoreTextFontDescriptor.asyncPreloadFontLookupTable()
         FontGenerator.initialize()
         AccountController.initialize()

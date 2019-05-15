@@ -151,18 +151,9 @@ class SettingsCustomTheme: UITableViewController {
             colorString += ("#" + self.title!).addPercentEncoding
             
             colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
-            UserDefaults.standard.set(colorString, forKey: "Theme+" + inputTheme)
+            UserDefaults.standard.set(colorString, forKey: "Theme+" + inputTheme.addPercentEncoding)
             UserDefaults.standard.synchronize()
             if isCurrentTheme {
-                UserDefaults.standard.setColor(color: foregroundColor, forKey: ColorUtil.CUSTOM_FOREGROUND)
-                UserDefaults.standard.setColor(color: backgroundColor, forKey: ColorUtil.CUSTOM_BACKGROUND)
-                UserDefaults.standard.setColor(color: fontColor, forKey: ColorUtil.CUSTOM_FONT)
-                UserDefaults.standard.setColor(color: navIconColor, forKey: ColorUtil.CUSTOM_NAVICON)
-                
-                //UserDefaults.standard.setColor(color: UIColor(hex: split[6]), forKey: "baseColor")
-                //UserDefaults.standard.setColor(color: UIColor(hex: split[7]), forKey: "accentcolor")
-                
-                UserDefaults.standard.set(!statusbarEnabled, forKey: ColorUtil.CUSTOM_STATUSBAR)
                 _ = ColorUtil.doInit()
                 MainViewController.needsReTheme = true
             }
