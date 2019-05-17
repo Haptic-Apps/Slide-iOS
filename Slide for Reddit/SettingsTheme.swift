@@ -493,30 +493,6 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         return indexPath.section == 2 && indexPath.row != 0
     }
     
-    @available(iOS 11.0, *)
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let shareAction = UIContextualAction(style: .normal, title: "Share") { (_, _, b) in
-            b(true)
-            let textShare = [UserDefaults.standard.string(forKey: "Theme+" + self.customThemes[indexPath.row].title)]
-            let activityViewController = UIActivityViewController(activityItems: textShare, applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = self.shareButton.customView
-            self.present(activityViewController, animated: true, completion: nil)
-        }
-        shareAction.backgroundColor = ColorUtil.baseAccent
-
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, b) in
-            let title = self.customThemes[indexPath.row].title
-            UserDefaults.standard.removeObject(forKey: "Theme+" + title.addPercentEncoding)
-            UserDefaults.standard.synchronize()
-            self.customThemes = self.customThemes.filter({ $0.title != title })
-            self.tableView.reloadData()
-            b(true)
-        }
-        deleteAction.backgroundColor = .red
-        let configuration = UISwipeActionsConfiguration(actions: [shareAction, deleteAction])
-        return configuration
-    }
-
     func selectTheme() {
         let chooseVC = SettingsThemeChooser()
         chooseVC.callback = { theme in
@@ -577,10 +553,24 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                     self.tableView.reloadData()
                     self.setupBaseBarColors()
                 }))
-                alert.addAction(UIAlertAction(title: "Edit Theme", style: .destructive, handler: { (_) in
+                alert.addAction(UIAlertAction(title: "Edit Theme", style: .default, handler: { (_) in
                     let theme = SettingsCustomTheme()
                     theme.inputTheme = self.customThemes[indexPath.row - 1].title
                     VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
+                }))
+                alert.addAction(UIAlertAction(title: "Share Theme", style: .default, handler: { (_) in
+                    let textShare = [UserDefaults.standard.string(forKey: "Theme+" + self.customThemes[indexPath.row - 1].title.addPercentEncoding)]
+                    let activityViewController = UIActivityViewController(activityItems: textShare, applicationActivities: nil)
+                    activityViewController.popoverPresentationController?.sourceView = self.shareButton.customView
+                    self.present(activityViewController, animated: true, completion: nil)
+                }))
+                alert.addAction(UIAlertAction(title: "Delete Theme", style: .destructive, handler: { (_) in
+                    let title = self.customThemes[indexPath.row - 1].title
+                    UserDefaults.standard.removeObject(forKey: "Theme+" + title.addPercentEncoding)
+                    UserDefaults.standard.synchronize()
+                    self.customThemes = self.customThemes.filter({ $0.title != title })
+                    ColorUtil.themes = ColorUtil.themes.filter({ $0.title != title })
+                    self.tableView.reloadData()
                 }))
                 alert.addCancelButton()
                 self.present(alert, animated: true)
@@ -697,7 +687,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
 
         switch section {
-        case 0: titleLabel.text = "App Colors"
+        case 0: titleLabel.text = "App colors"
         case 1: titleLabel.text = "Night mode"
         case 2:
             if ColorUtil.shouldBeNight() {
@@ -713,7 +703,7 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
                 titleString.append(NSAttributedString(string: "\nThese cannot be applied while night mode is active", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 13, submission: true), NSAttributedString.Key.foregroundColor: titleLabel.textColor]))
                 titleLabel.attributedText = titleString
             } else {
-                titleLabel.text = "Custom themes"
+                titleLabel.text = "Standard themes"
             }
         default: titleLabel.text = ""
         }
