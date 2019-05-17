@@ -1425,6 +1425,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         
         if self.shouldAnimateLoad {
             self.reloadTableViewAnimated()
+            self.shouldAnimateLoad = false
         }
         self.finishedPush = true
     }

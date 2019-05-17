@@ -2219,7 +2219,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 icon = "lock"
             }
             
-            if type != .IMAGE && type != .SELF && type != .NONE && type != .LINK && type != .REDDIT {
+            if type != .IMAGE && type != .SELF && type != .NONE && !thumb {
                 let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
                 let popup = UILabel()
                 outer.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: link.subreddit).withAlphaComponent(0.2))

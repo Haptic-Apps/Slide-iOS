@@ -142,6 +142,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
         settings.behavior.bounces = true
         settings.behavior.hideNavigationBarOnShow = false
         settings.behavior.hideOnTap = true
+        
         settings.animation.scale = nil
         settings.behavior.useDynamics = false
         settings.behavior.scrollEnabled = true
@@ -175,6 +176,7 @@ open class BottomSheetActionController: ActionController<BottomSheetCell, Action
             self.collectionView.backgroundColor = ColorUtil.theme.foregroundColor
             self.collectionView.layer.cornerRadius = 15
             self.collectionView.clipsToBounds = true
+            self.collectionView.showsVerticalScrollIndicator = true
             
             if !doneOnce && false { //todo this later maybe
                // self.header!.bottomAnchor == self.collectionView.topAnchor - CGFloat(12)
