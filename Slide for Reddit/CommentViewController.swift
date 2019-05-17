@@ -1429,7 +1429,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         self.finishedPush = true
     }
-
+ 
     var duringAnimation = false
     var finishedPush = false
     

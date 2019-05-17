@@ -1604,8 +1604,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             outer.addSubviews(icon, popup)
             icon.leftAnchor == outer.leftAnchor + CGFloat(8)
             icon.centerYAnchor == outer.centerYAnchor
-            icon.widthAnchor == 20
-            
+            icon.widthAnchor == 40
+            icon.contentMode = .center
+
             popup.leftAnchor == icon.rightAnchor + CGFloat(8)
             popup.verticalAnchors == outer.verticalAnchors
             popup.rightAnchor == outer.rightAnchor - CGFloat(8)
@@ -2243,8 +2244,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 outer.addSubviews(icon, popup)
                 icon.leftAnchor == outer.leftAnchor + CGFloat(8)
                 icon.centerYAnchor == outer.centerYAnchor
-                icon.widthAnchor == 20
-                
+                icon.widthAnchor == 40
+                icon.contentMode = .center
+
                 popup.leftAnchor == icon.rightAnchor + CGFloat(8)
                 popup.verticalAnchors == outer.verticalAnchors
                 popup.rightAnchor == outer.rightAnchor - CGFloat(8)
@@ -2301,7 +2303,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 outer.addSubviews(icon, popup)
                 icon.leftAnchor == outer.leftAnchor + CGFloat(8)
                 icon.centerYAnchor == outer.centerYAnchor
-                icon.widthAnchor == 20
+                icon.widthAnchor == 40
+                icon.contentMode = .center
                 
                 popup.leftAnchor == icon.rightAnchor + CGFloat(8)
                 popup.verticalAnchors == outer.verticalAnchors
@@ -2438,7 +2441,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     fullHeightExtras += 56
                 }
                 
-                if type != .IMAGE && type != .SELF && type != .NONE && type != .LINK && type != .REDDIT {
+                if type != .IMAGE && type != .SELF && type != .NONE && !thumb {
                     fullHeightExtras += 56
                 }
         

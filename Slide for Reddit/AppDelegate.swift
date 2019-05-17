@@ -184,8 +184,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let currentVersionInt = Int(build) ?? 0
         
         if lastVersionInt < currentVersionInt {
-            //Migration block for build 113
-            if currentVersionInt == 113 {
+            //Migration block for build 114
+            if currentVersionInt == 114 {
                 if UserDefaults.standard.string(forKey: "theme") == "custom" {
                     var colorString = "slide://colors"
                     colorString += ("#Theme Backup v3.5").addPercentEncoding
