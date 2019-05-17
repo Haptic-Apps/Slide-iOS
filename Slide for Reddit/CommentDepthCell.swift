@@ -351,9 +351,28 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if sender.state != .ended && sender.state != .began && sender.state != .cancelled {
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: self).x
+            if direction == -1 && self.contentView.frame.origin.x > originalPos {
+                direction = 0
+                diff = self.contentView.frame.width - diff
+                typeImage.removeConstraints(typeImage.constraints)
+                typeImage.leftAnchor == self.leftAnchor + 4
+                typeImage.centerYAnchor == self.centerYAnchor
+                typeImage.heightAnchor == 45
+                typeImage.widthAnchor == 45
+                return
+            } else if direction == 1 && self.contentView.frame.origin.x < originalPos {
+                direction = 0
+                typeImage.removeConstraints(typeImage.constraints)
+                typeImage.rightAnchor == self.rightAnchor - 4
+                typeImage.centerYAnchor == self.centerYAnchor
+                typeImage.heightAnchor == 45
+                typeImage.widthAnchor == 45
+                return
+            }
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
+                    diff = self.contentView.frame.width - diff
                     action = getFirstAction(left: true)
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
@@ -371,7 +390,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }
             }
             
-            let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx
+            let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx - diff
             self.contentView.frame.origin.x = posx - originalLocation
 
             if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionRightLeft == .NONE) {
@@ -392,6 +411,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             
             let progress = Float(min(abs(currentTranslation) / (self.contentView.bounds.width), 1))
+            print(progress)
             
             if progress > 0.1 && previousProgress <= 0.1 {
                 typeImage.isHidden = false
