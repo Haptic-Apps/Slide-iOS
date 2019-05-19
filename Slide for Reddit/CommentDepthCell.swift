@@ -321,6 +321,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var currentProgress = Float(0)
     var diff = CGFloat.zero
     var action = SettingValues.CommentAction.EXIT
+    var tiConstraints = [NSLayoutConstraint]()
+    
     @objc func handlePan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began || typeImage == nil {
             dragCancelled = false
@@ -352,23 +354,24 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: self).x
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
-                direction = 0
-                diff = self.contentView.frame.width - diff
-                typeImage.removeConstraints(typeImage.constraints)
-                typeImage.leftAnchor == self.leftAnchor + 4
-                typeImage.centerYAnchor == self.centerYAnchor
-                typeImage.heightAnchor == 45
-                typeImage.widthAnchor == 45
-                return
+                if getFirstAction(left: false) != .NONE {
+                    direction = 0
+                    diff = self.contentView.frame.width - diff
+                    NSLayoutConstraint.deactivate(tiConstraints)
+                    tiConstraints = batch {
+                        typeImage.leftAnchor == self.leftAnchor + 4
+                    }
+                }
             } else if direction == 1 && self.contentView.frame.origin.x < originalPos {
-                direction = 0
-                typeImage.removeConstraints(typeImage.constraints)
-                typeImage.rightAnchor == self.rightAnchor - 4
-                typeImage.centerYAnchor == self.centerYAnchor
-                typeImage.heightAnchor == 45
-                typeImage.widthAnchor == 45
-                return
+                if getFirstAction(left: true) != .NONE {
+                    direction = 0
+                    NSLayoutConstraint.deactivate(tiConstraints)
+                    tiConstraints = batch {
+                        typeImage.rightAnchor == self.rightAnchor - 4
+                    }
+                }
             }
+            
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
@@ -400,10 +403,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } else if typeImage.superview == nil {
                 self.addSubviews(typeImage)
                 self.bringSubviewToFront(typeImage)
-                if direction == 1 {
-                    typeImage.leftAnchor == self.leftAnchor + 4
-                } else {
-                    typeImage.rightAnchor == self.rightAnchor - 4
+                tiConstraints = batch {
+                    if direction == 1 {
+                        typeImage.leftAnchor == self.leftAnchor + 4
+                    } else {
+                        typeImage.rightAnchor == self.rightAnchor - 4
+                    }
                 }
                 typeImage.centerYAnchor == self.centerYAnchor
                 typeImage.heightAnchor == 45
@@ -411,7 +416,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             
             let progress = Float(min(abs(currentTranslation) / (self.contentView.bounds.width), 1))
-            print(progress)
             
             if progress > 0.1 && previousProgress <= 0.1 {
                 typeImage.isHidden = false
