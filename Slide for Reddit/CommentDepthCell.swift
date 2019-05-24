@@ -447,7 +447,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
                 }
-                self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((1.2 * 0.1) / 0.25), y: CGFloat((1.2 * 0.1) / 0.25))
+                self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((0.1) / 0.25), y: CGFloat((0.1) / 0.25))
                 UIView.animate(withDuration: 0.2) {
                     self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat(1), y: CGFloat(1))
                     self.typeImage.image = UIImage(named: self.action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
@@ -458,7 +458,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
                 }
-                self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((1.2 * 0.1) / 0.25), y: CGFloat((1.2 * 0.1) / 0.25))
+                self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((0.1) / 0.25), y: CGFloat((0.1) / 0.25))
                 UIView.animate(withDuration: 0.2) {
                     self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat(1), y: CGFloat(1))
                     self.typeImage.image = UIImage(named: self.action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
@@ -468,8 +468,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if progress > 0.1 && progress <= 0.25 {
                 typeImage.alpha = 1
                 typeImage.isHidden = false
+                var prog = (progress * 1.2) / 0.25
+                if prog > 1 {
+                    prog = 1
+                }
                 UIView.animate(withDuration: 0.1) {
-                    self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((1.2 * progress) / 0.25), y: CGFloat((1.2 * progress) / 0.25))
+                    self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat(prog), y: CGFloat(prog))
                 }
             }
             
