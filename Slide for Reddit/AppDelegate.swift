@@ -633,7 +633,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if backView == nil {
                 backView = UIView.init(frame: self.window!.frame)
                 backView?.backgroundColor = ColorUtil.theme.backgroundColor
-                self.window?.addSubview(backView!)
+                if let window = self.window {
+                    window.addSubview(backView!)
+                    backView!.edgeAnchors == window.edgeAnchors
+                }
             }
                 self.backView?.isHidden = false
         }

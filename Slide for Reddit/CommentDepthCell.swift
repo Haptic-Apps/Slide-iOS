@@ -377,6 +377,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     direction = 1
                     diff = self.contentView.frame.width - diff
                     action = getFirstAction(left: true)
+                    if action == .NONE {
+                        sender.cancel()
+                        return
+                    }
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
                     UIView.animate(withDuration: 0.1) {
@@ -385,6 +389,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 } else {
                     direction = -1
                     action = getFirstAction(left: false)
+                    if action == .NONE {
+                        sender.cancel()
+                        return
+                    }
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
                     UIView.animate(withDuration: 0.1) {
