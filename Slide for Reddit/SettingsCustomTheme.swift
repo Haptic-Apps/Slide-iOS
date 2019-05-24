@@ -57,17 +57,19 @@ class SettingsCustomTheme: UITableViewController {
     override func viewDidLoad() {
         self.title = "Edit Custom Theme"
         if !inputTheme.isEmpty() {
-            let colors = UserDefaults.standard.string(forKey: "Theme+" + inputTheme)!.removingPercentEncoding!
-            let split = colors.split("#")
-            foregroundColor = UIColor(hex: split[2])
-            backgroundColor = UIColor(hex: split[3])
-            fontColor = UIColor(hex: split[4])
-            navIconColor = UIColor(hex: split[5])
-            statusbarEnabled = Bool(split[8])!
-            isCurrentTheme = foregroundColor.hexString() == ColorUtil.theme.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.theme.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.theme.fontColor.hexString() && navIconColor.hexString() == ColorUtil.theme.navIconColor.hexString()
-            self.title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
-            self.setupViews()
-            setupBaseBarColors()
+            let colors = UserDefaults.standard.string(forKey: "Theme+" + inputTheme)?.removingPercentEncoding ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme) ?? ""
+            if !colors.isEmpty {
+                let split = colors.split("#")
+                foregroundColor = UIColor(hex: split[2])
+                backgroundColor = UIColor(hex: split[3])
+                fontColor = UIColor(hex: split[4])
+                navIconColor = UIColor(hex: split[5])
+                statusbarEnabled = Bool(split[8])!
+                isCurrentTheme = foregroundColor.hexString() == ColorUtil.theme.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.theme.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.theme.fontColor.hexString() && navIconColor.hexString() == ColorUtil.theme.navIconColor.hexString()
+                self.title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
+                self.setupViews()
+                setupBaseBarColors()
+            }
         }
         
         super.viewDidLoad()
@@ -151,7 +153,7 @@ class SettingsCustomTheme: UITableViewController {
             colorString += ("#" + self.title!).addPercentEncoding
             
             colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
-            UserDefaults.standard.set(colorString, forKey: "Theme+" + inputTheme.addPercentEncoding)
+            UserDefaults.standard.set(colorString, forKey: "Theme+" + inputTheme)
             UserDefaults.standard.synchronize()
             if isCurrentTheme {
                 _ = ColorUtil.doInit()

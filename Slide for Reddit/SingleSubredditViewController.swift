@@ -366,9 +366,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         
         let index = round(offset.x / width)
         let newOffset = CGPoint(x: index * size.width, y: offset.y)
-        
-        self.tableView.setContentOffset(newOffset, animated: false)
-        
+                
         oldsize = self.view.bounds.width
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
@@ -1480,9 +1478,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty
                         do {
-                            let realm = try! Realm()
+                            let realm = try Realm()
                             //todo insert
-                            realm.beginWrite()
+                            try realm.beginWrite()
                             for submission in self.links {
                                 if submission.author != "PAGE_SEPARATOR" {
                                     realm.create(type(of: submission), value: submission, update: true)

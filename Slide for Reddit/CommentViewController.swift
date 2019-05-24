@@ -835,7 +835,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             
                             if !self.comments.isEmpty {
                                 do {
-                                    let realm = try! Realm()
+                                    let realm = try Realm()
                                     //todo insert
                                     realm.beginWrite()
                                     for comment in self.comments {

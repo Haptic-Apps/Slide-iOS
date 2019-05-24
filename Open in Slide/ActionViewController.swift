@@ -33,7 +33,7 @@ class ActionViewController: UIViewController {
                             
                             if !absolute.matches(regex: "(?i)redd\\.it/\\w+") && !absolute.matches(regex: "(?i)reddit\\.com/[^/]*") {
                                 //Not a Reddit URL
-                                self.extensionContext!.cancelRequest(withError: NSError())
+                                self.extensionContext?.cancelRequest(withError: NSError())
                             }
                             
                             urlFound = true

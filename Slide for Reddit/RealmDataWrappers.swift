@@ -109,7 +109,11 @@ class RealmDataWrapper {
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
         rSubmission.locked = submission.locked
-        rSubmission.urlString = try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        do {
+            try rSubmission.urlString = ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        } catch {
+            rSubmission.urlString = (submission.url?.absoluteString) ?? ""
+        }
         rSubmission.urlString = rSubmission.urlString.removingPercentEncoding ?? rSubmission.urlString
         rSubmission.title = submission.title
         rSubmission.commentCount = submission.numComments
@@ -265,7 +269,11 @@ class RealmDataWrapper {
         rSubmission.archived = submission.archived
         rSubmission.locked = submission.locked
         rSubmission.canMod = submission.canMod
-        rSubmission.urlString = try! ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        do {
+            try rSubmission.urlString = ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+        } catch {
+            rSubmission.urlString = (submission.url?.absoluteString) ?? ""
+        }
         rSubmission.urlString = rSubmission.urlString.removingPercentEncoding ?? rSubmission.urlString
         rSubmission.title = submission.title
         rSubmission.commentCount = submission.numComments
