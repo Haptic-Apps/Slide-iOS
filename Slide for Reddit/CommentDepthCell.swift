@@ -426,12 +426,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             let progress = Float(min(abs(currentTranslation) / (self.contentView.bounds.width), 1))
             
             if progress > 0.1 && previousProgress <= 0.1 {
-                typeImage.isHidden = false
                 typeImage.alpha = 0
                 UIView.animate(withDuration: 0.2) {
                     self.typeImage.alpha = 1
                 }
-                UIView.animate(withDuration: 0.1) {
+                UIView.animate(withDuration: 0.2) {
                     self.backgroundColor = self.action.getColor()
                 }
             } else if progress < 0.1  && previousProgress >= 0.1 {
@@ -439,28 +438,38 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 UIView.animate(withDuration: 0.2, animations: {
                     self.typeImage.alpha = 0
                 }, completion: { (_) in
-                    self.typeImage.isHidden = true
                 })
-                UIView.animate(withDuration: 0.1) {
+                UIView.animate(withDuration: 0.2) {
                     self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
                 }
             } else if progress > 0.25 && previousProgress <= 0.25 && isTwoForDirection(left: direction == 1) {
                 action = getSecondAction(left: direction == 1)
-                typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
                 }
-                UIView.animate(withDuration: 0.1) {
+                self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((1.2 * 0.1) / 0.25), y: CGFloat((1.2 * 0.1) / 0.25))
+                UIView.animate(withDuration: 0.2) {
+                    self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat(1), y: CGFloat(1))
+                    self.typeImage.image = UIImage(named: self.action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     self.backgroundColor = self.action.getColor()
                 }
             } else if progress < 0.25 && previousProgress >= 0.25 && isTwoForDirection(left: direction == 1) {
                 action = getFirstAction(left: direction == 1)
-                typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
                 }
-                UIView.animate(withDuration: 0.1) {
+                self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((1.2 * 0.1) / 0.25), y: CGFloat((1.2 * 0.1) / 0.25))
+                UIView.animate(withDuration: 0.2) {
+                    self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat(1), y: CGFloat(1))
+                    self.typeImage.image = UIImage(named: self.action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     self.backgroundColor = self.action.getColor()
+                }
+            }
+            if progress > 0.1 && progress <= 0.25 {
+                typeImage.alpha = 1
+                typeImage.isHidden = false
+                UIView.animate(withDuration: 0.1) {
+                    self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((1.2 * progress) / 0.25), y: CGFloat((1.2 * progress) / 0.25))
                 }
             }
             
