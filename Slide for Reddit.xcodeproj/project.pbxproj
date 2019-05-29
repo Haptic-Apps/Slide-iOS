@@ -205,6 +205,7 @@
 		BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE51BE6420C7386A00DFFD8B /* StoreKit.framework */; };
 		BE5466271FB93F46007ADD22 /* PlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */; };
 		BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5E53741E1DAEB7004FE226 /* RedditLink.swift */; };
+		BE602AFA229F3A5200AF0DC3 /* LinkBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */; };
 		BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6C11E1C1DCE00E9E709 /* GfyItem.swift */; };
 		BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6C21E1C1DCE00E9E709 /* GfycatJSONBase.swift */; };
 		BE6EA6CA1E1C1E9400E9E709 /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6C61E1C1E9400E9E709 /* Files.swift */; };
@@ -594,6 +595,7 @@
 		BE51BE6420C7386A00DFFD8B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderViewController.swift; sourceTree = "<group>"; };
 		BE5E53741E1DAEB7004FE226 /* RedditLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedditLink.swift; sourceTree = "<group>"; };
+		BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkBubble.swift; sourceTree = "<group>"; };
 		BE6EA6C11E1C1DCE00E9E709 /* GfyItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GfyItem.swift; sourceTree = "<group>"; };
 		BE6EA6C21E1C1DCE00E9E709 /* GfycatJSONBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GfycatJSONBase.swift; sourceTree = "<group>"; };
 		BE6EA6C61E1C1E9400E9E709 /* Files.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
@@ -1251,6 +1253,7 @@
 				BE8AE94221F9225000E1C0D1 /* Main.storyboard */,
 				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
 				BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */,
+				BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1819,6 +1822,7 @@
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 				"${BUILT_PRODUCTS_DIR}/SubtleVolume/SubtleVolume.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftEntryKit/SwiftEntryKit.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftLinkPreview/SwiftLinkPreview.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftSpreadsheet/SwiftSpreadsheet.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
@@ -1856,6 +1860,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SubtleVolume.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftEntryKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLinkPreview.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSpreadsheet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
@@ -1969,6 +1974,7 @@
 				BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */,
 				BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */,
 				BE6EA6CB1E1C1E9400E9E709 /* StreamableJSONBase.swift in Sources */,
+				BE602AFA229F3A5200AF0DC3 /* LinkBubble.swift in Sources */,
 				BE6EA6E21E1DA1A300E9E709 /* ContributionLoader.swift in Sources */,
 				098B5A4520EFC5E800FE201B /* RSubmission+Extensions.swift in Sources */,
 				BE6EA6DA1E1C1FC700E9E709 /* Watchers.swift in Sources */,
