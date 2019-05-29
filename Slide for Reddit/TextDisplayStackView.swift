@@ -746,8 +746,12 @@ public class TextDisplayStackView: UIStackView {
             totalHeight += layout.textBoundingSize.height
         }
         
+        var hasLinks = false
         for block in blocks {
             totalHeight += 8
+            if block.contains("<a") {
+                hasLinks = true
+            }
             if block.startsWith("<table>") {
                 let table = TableDisplayView.getEstimatedHeight(baseHtml: block)
                 totalHeight += table
@@ -764,6 +768,9 @@ public class TextDisplayStackView: UIStackView {
                 
                 totalHeight += textSize.height
             }
+        }
+        if hasLinks && !SettingValues.disablePreviews {
+            totalHeight += 30
         }
         return totalHeight
     }
