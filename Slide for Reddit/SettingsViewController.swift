@@ -284,7 +284,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.subThemes.imageView?.image = UIImage.init(named: "subs")?.toolbarIcon()
         self.subThemes.imageView?.tintColor = ColorUtil.theme.fontColor
 
-        self.font.textLabel?.text = "Font"
+        self.font.textLabel?.text = "Font and Links"
         self.font.accessoryType = .disclosureIndicator
         self.font.backgroundColor = ColorUtil.theme.foregroundColor
         self.font.textLabel?.textColor = ColorUtil.theme.fontColor

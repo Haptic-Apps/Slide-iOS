@@ -134,7 +134,12 @@ class RealmDataWrapper {
         rSubmission.upvoteRatio = submission.upvoteRatio
         rSubmission.vote = submission.likes == .up
         rSubmission.name = submission.id
-        rSubmission.videoPreview = try! (videoPreview ?? "").convertHtmlSymbols() ?? ""
+        do {
+            try rSubmission.videoPreview = (videoPreview ?? "").convertHtmlSymbols() ?? ""
+        } catch {
+            rSubmission.videoPreview = videoPreview ?? ""
+        }
+
         rSubmission.height = h
         rSubmission.width = w
         rSubmission.distinguished = submission.distinguished.type
@@ -306,7 +311,11 @@ class RealmDataWrapper {
         rSubmission.isSelf = submission.isSelf
         rSubmission.body = submission.selftext
         rSubmission.permalink = submission.permalink
-        rSubmission.videoPreview = try! (videoPreview ?? "").convertHtmlSymbols() ?? ""
+        do {
+            try rSubmission.videoPreview = (videoPreview ?? "").convertHtmlSymbols() ?? ""
+        } catch {
+            rSubmission.videoPreview = videoPreview ?? ""
+        }
         rSubmission.cakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
 
         if json?["crosspost_parent_list"] != nil {

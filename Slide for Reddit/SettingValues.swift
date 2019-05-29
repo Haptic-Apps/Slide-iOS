@@ -121,6 +121,7 @@ class SettingValues {
     public static let pref_muteYouTube = "MUTE_YOU_TUBE"
     public static let pref_commentJumpMode = "COMMENT_JUMP_MODE"
     public static let pref_alwaysShowHeader = "ALWAYS_SHOW_HEADER"
+    public static let pref_disablePreviews = "DISABLE_PREVIEWS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -241,6 +242,7 @@ class SettingValues {
     public static var appMode = AppMode.SINGLE
     public static var commentJumpButton = CommentJumpMode.RIGHT
     public static var alwaysShowHeader = false
+    public static var disablePreviews = false
 
     enum PostViewType: String {
         case LIST = "list"
@@ -452,6 +454,7 @@ class SettingValues {
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
         SettingValues.typeInTitle = settings.bool(forKey: SettingValues.pref_typeInTitle)
         SettingValues.collapseDefault = settings.bool(forKey: SettingValues.pref_collapseDefault)
+        SettingValues.disablePreviews = settings.bool(forKey: SettingValues.pref_disablePreviews)
         SettingValues.volumeButtonNavigation = settings.bool(forKey: SettingValues.pref_volumeButtonNavigation)
         SettingValues.collapseFully = settings.bool(forKey: SettingValues.pref_collapseFully)
         SettingValues.autoCache = settings.bool(forKey: SettingValues.pref_autoCache)

@@ -368,12 +368,14 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let newOffset = CGPoint(x: index * size.width, y: offset.y)
                 
         oldsize = self.view.bounds.width
+        self.tableView.setContentOffset(newOffset, animated: false)
+
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
                 self.flowLayout.reset(modal: self.presentingViewController != nil)
                 self.tableView.reloadData()
-                self.tableView.setContentOffset(newOffset, animated: false)
                 self.view.setNeedsLayout()
+                self.tableView.setContentOffset(newOffset, animated: false)
             }, completion: nil
         )
 
@@ -1484,7 +1486,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             for submission in self.links {
                                 if submission.author != "PAGE_SEPARATOR" {
                                     realm.create(type(of: submission), value: submission, update: true)
-                                    self.realmListing!.links.append(submission)
+                                    if let listing = self.realmListing {
+                                        listing.links.append(submission)
+                                    }
                                 }
                             }
                             realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)

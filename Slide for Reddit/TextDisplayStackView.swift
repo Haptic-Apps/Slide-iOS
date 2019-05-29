@@ -312,7 +312,7 @@ public class TextDisplayStackView: UIStackView {
 
         }
         
-        if !allLinks.isEmpty {
+        if !allLinks.isEmpty && !SettingValues.disablePreviews {
             let buttonBase = UIStackView().then {
                 $0.accessibilityIdentifier = "Content links"
                 $0.axis = .horizontal

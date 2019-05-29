@@ -24,6 +24,9 @@ class SettingsFont: UITableViewController {
     var enlarge = UISwitch()
     var type = UISwitch()
 
+    var previewCell: UITableViewCell = UITableViewCell()
+    var preview = UISwitch()
+
     var commentSize: UITableViewCell = UITableViewCell(style: .value1, reuseIdentifier: "commentSize")
     var submissionSize: UITableViewCell = UITableViewCell(style: .value1, reuseIdentifier: "submissionSize")
 
@@ -114,6 +117,16 @@ class SettingsFont: UITableViewController {
         enlargeCell.textLabel?.numberOfLines = 0
         enlargeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         
+        preview = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+            $0.isOn = SettingValues.disablePreviews
+        }
+        preview.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
+        previewCell.textLabel?.text = "Disable link preview bubbles"
+        previewCell.accessoryView = enlarge
+        previewCell.textLabel?.numberOfLines = 0
+        previewCell.selectionStyle = UITableViewCell.SelectionStyle.none
+
         type = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
             $0.isOn = SettingValues.showLinkContentType
@@ -239,8 +252,9 @@ class SettingsFont: UITableViewController {
             }
         case 2:
             switch indexPath.row {
-            case 0: cell = self.enlargeCell
-            case 1: cell = self.typeCell
+            case 0: cell = self.previewCell
+            case 1: cell = self.enlargeCell
+            case 2: cell = self.typeCell
             default: fatalError("Unknown row in section \(indexPath.section)")
             }
         default: fatalError("Unknown section")
@@ -262,7 +276,7 @@ class SettingsFont: UITableViewController {
         switch section {
         case 0: return 4    // section 0 has 2 rows
         case 1: return 4    // section 1 has 2 rows
-        case 2: return 2
+        case 2: return 3
         default: fatalError("Unknown number of sections")
         }
     }
@@ -278,7 +292,7 @@ class SettingsFont: UITableViewController {
         switch section {
         case 0: label.text = "Submissions"
         case 1: label.text = "Comments"
-        case 2: label.text = "Options"
+        case 2: label.text = "Link options"
         default: label.text = ""
         }
         return toReturn

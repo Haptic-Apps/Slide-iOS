@@ -10,9 +10,9 @@ import UIKit
 import SwiftLinkPreview
 
 public class LinkBubble: UIView {
-    static let slp = SwiftLinkPreview(session: URLSession = URLSession.shared,
-                               workQueue: DispatchQueue = SwiftLinkPreview.defaultWorkQueue,
-                               responseQueue: DispatchQueue = DispatchQueue.main,
-                               cache: Cache = DisabledCache.instance)
+    static let slp = SwiftLinkPreview(session: URLSession.shared,
+                               workQueue: SwiftLinkPreview.defaultWorkQueue,
+                               responseQueue: DispatchQueue.main,
+                               cache: DisabledCache.instance)
 
 }

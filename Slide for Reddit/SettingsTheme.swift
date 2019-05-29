@@ -536,9 +536,12 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         } else if indexPath.section == 2 {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 let theme = customThemes[indexPath.row - 1]
-                let themeData = UserDefaults.standard.string(forKey: "Theme+" + theme.title)!.removingPercentEncoding!
+                let themeData = UserDefaults.standard.string(forKey: "Theme+" + theme.title)?.removingPercentEncoding ?? UserDefaults.standard.string(forKey: "Theme+" + theme.title) ?? ""
+                if themeData.isEmpty {
+                    return
+                }
                 let split = themeData.split("#")
-                let alert = UIAlertController(title: "\(split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#"))", message: nil, preferredStyle: .alert)
+                let alert = UIAlertController(title: "\(split[1].replacingOccurrences(of: "<H>", with: "#"))", message: nil, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Apply Theme", style: .default, handler: { (_) in
                     UserDefaults.standard.set(theme.title, forKey: "theme")
                     UserDefaults.standard.synchronize()

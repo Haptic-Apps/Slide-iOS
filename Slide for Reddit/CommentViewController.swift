@@ -2731,7 +2731,11 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                                 realPosition += 1
                                             }
 
-                                            self.comments.remove(at: realPosition)
+                                            if self.comments[realPosition] != nil {
+                                                self.comments.remove(at: realPosition)
+                                            } else {
+                                                return
+                                            }
                                             self.dataArray.remove(at: datasetPosition)
                                             
                                             let currentParent = self.parents[more.getIdentifier()]
