@@ -1998,22 +1998,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 case .success(let flairs):
                     list.append(contentsOf: flairs)
                     DispatchQueue.main.async {
-                        let sheet = UIAlertController(title: "r/\(self.link!.subreddit) flairs", message: nil, preferredStyle: .actionSheet)
-                        sheet.addAction(
-                            UIAlertAction(title: "Close", style: .cancel) { (_) in
-                                sheet.dismiss(animated: true, completion: nil)
-                            }
-                        )
+                        let sheet = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                       
+                        sheet.setupTheme()
+                        sheet.attributedTitle = NSAttributedString(string: "r/\(self.link!.subreddit) flairs", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                         
                         for flair in flairs {
-                            let somethingAction = UIAlertAction(title: (flair.text.isEmpty) ?flair.name : flair.text, style: .default) { (_) in
-                                sheet.dismiss(animated: true, completion: nil)
+                            let somethingAction = AlertAction(title: (flair.text.isEmpty) ?flair.name : flair.text, style: .normal) { (_) in
                                 self.setFlair(flair)
                             }
                             
                             sheet.addAction(somethingAction)
                         }
-                        
+                        sheet.addCloseButton()
+                        sheet.addBlurView()
                         self.parentViewController?.present(sheet, animated: true)
                     }
                 }

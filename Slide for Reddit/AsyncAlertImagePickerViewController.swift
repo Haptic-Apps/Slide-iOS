@@ -58,7 +58,6 @@ extension AlertController {
         self.visualStyle.normalTextColor = ColorUtil.baseAccent
         self.visualStyle.textFieldBorderColor = ColorUtil.theme.fontColor
         self.visualStyle.actionHighlightColor = ColorUtil.theme.navIconColor
-        self.visualStyle.actionHighlightColor = ColorUtil.theme.navIconColor
     }
 }
 

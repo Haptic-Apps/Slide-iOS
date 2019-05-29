@@ -23,6 +23,12 @@ class AccountController {
 
     static func switchAccount(name: String) {
         changed = true
+        ActionStates.upVotedFullnames.removeAll()
+        ActionStates.downVotedFullnames.removeAll()
+        ActionStates.savedFullnames.removeAll()
+        ActionStates.unvotedFullnames.removeAll()
+        ActionStates.unSavedFullnames.removeAll()
+        
         UserDefaults.standard.set(name, forKey: "name")
         UserDefaults.standard.synchronize()
         initialize()

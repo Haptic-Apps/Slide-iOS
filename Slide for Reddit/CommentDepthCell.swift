@@ -1291,7 +1291,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }))
         }
 
-        if comment!.author == AccountController.currentName && comment!.depth == 1 {
+        if comment!.author == AccountController.currentName && comment!.depth == 0 {
             if comment!.sticky {
                 alertController.addAction(Action(ActionData(title: "Un-pin", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
                     self.modSticky(sticky: false)
