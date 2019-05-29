@@ -323,10 +323,14 @@ public class TextDisplayStackView: UIStackView {
             var counter = 1
             for url in allLinks {
                 let type = ContentType.getContentType(baseUrl: url)
+                var urlText = url.host ?? url.absoluteString
+                if url.absoluteString.contains("slide://theme") {
+                    urlText = "Slide Theme"
+                }
                 let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
                     $0.layer.cornerRadius = 12.5
                     $0.clipsToBounds = true
-                    $0.setTitle("    \(counter): \(url.host ?? url.absoluteString)", for: .normal)
+                    $0.setTitle("    \(counter): \(urlText)", for: .normal)
                     $0.setTitleColor(ColorUtil.theme.fontColor, for: .normal)
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center

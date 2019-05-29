@@ -839,12 +839,18 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                     //todo insert
                                     realm.beginWrite()
                                     for comment in self.comments {
-                                        realm.create(type(of: self.content[comment]!), value: self.content[comment]!, update: true)
-                                        if self.content[comment]! is RComment {
-                                            self.submission!.comments.append(self.content[comment] as! RComment)
+                                        if let content = self.content[comment] {
+                                            if content is RComment {
+                                                realm.create(RComment.self, value: content, update: .all)
+                                            } else {
+                                                realm.create(RMore.self, value: content, update: .all)
+                                            }
+                                            if content is RComment {
+                                                self.submission!.comments.append(content as! RComment)
+                                            }
                                         }
                                     }
-                                    realm.create(type(of: self.submission!), value: self.submission!, update: true)
+                                    realm.create(type(of: self.submission!), value: self.submission!, update: .all)
                                     try realm.commitWrite()
                                 } catch {
                                     

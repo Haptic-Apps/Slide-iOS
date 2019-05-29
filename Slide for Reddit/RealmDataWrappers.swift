@@ -470,7 +470,7 @@ class RealmDataWrapper {
 }
 
 class RListing: Object {
-    override static func primaryKey() -> String? {
+    override class func primaryKey() -> String? {
         return "subreddit"
     }
     
@@ -480,7 +480,7 @@ class RListing: Object {
 }
 
 class RSubmission: Object {
-    override static func primaryKey() -> String? {
+    override class func primaryKey() -> String? {
         return "id"
     }
     
@@ -575,7 +575,7 @@ class RSubmission: Object {
 }
 
 class RMessage: Object {
-    override static func primaryKey() -> String? {
+    override class func primaryKey() -> String? {
         return "id"
     }
     
@@ -597,7 +597,7 @@ class RMessage: Object {
 }
 
 class RComment: Object {
-    override static func primaryKey() -> String? {
+    override class func primaryKey() -> String? {
         return "id"
     }
     
@@ -663,7 +663,7 @@ class RString: Object {
 }
 
 class RMore: Object {
-    override static func primaryKey() -> String? {
+    override class func primaryKey() -> String? {
         return "id"
     }
     
