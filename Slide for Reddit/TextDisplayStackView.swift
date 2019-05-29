@@ -707,8 +707,8 @@ public class TextDisplayStackView: UIStackView {
     public static func estimateHeight(fontSize: CGFloat, submission: Bool, width: CGFloat, titleString: NSAttributedString, htmlString: String) -> CGFloat {
         var totalHeight = CGFloat(0)
         let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: titleString)!
         var blocks: [String]
+        var hasLinks = false
         if htmlString.contains("<table") || htmlString.contains("<pre><code") || htmlString.contains("<cite") {
             blocks = TextDisplayStackView.getBlocks(htmlString)
             
@@ -739,6 +739,9 @@ public class TextDisplayStackView: UIStackView {
             if !htmlString.isEmpty() {
                 newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil))
+                if htmlString.contains("<a") {
+                    hasLinks = true
+                }
             }
             
             let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
@@ -746,7 +749,6 @@ public class TextDisplayStackView: UIStackView {
             totalHeight += layout.textBoundingSize.height
         }
         
-        var hasLinks = false
         for block in blocks {
             totalHeight += 8
             if block.contains("<a") {
