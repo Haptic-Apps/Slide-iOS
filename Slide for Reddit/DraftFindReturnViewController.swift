@@ -30,6 +30,16 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        
+        if let indexPathForSelectedRow = tableView.indexPathForSelectedRow,
+            indexPathForSelectedRow == indexPath {
+            tableView.deselectRow(at: indexPath, animated: false)
+            return nil
+        }
+        return indexPath
+    }
+
     override func loadView() {
         super.loadView()
         self.automaticallyAdjustsScrollViewInsets = false
@@ -37,7 +47,7 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         
         tableView.backgroundColor = .clear
         tableView.separatorColor = ColorUtil.theme.backgroundColor
-        tableView.separatorInset = .zero
+        tableView.separatorInset = UIEdgeInsets(top: 4, left: 0, bottom: 4, right: 0)
         
         tableView.reloadData()
         tableView.allowsMultipleSelection = true
@@ -47,9 +57,12 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         var value = ""
         var label = UILabel()
         
+        var separator = UIView()
+        
         func setDraft(_ string: String) {
             label.text = string
             self.value = string
+            label.preferredMaxLayoutWidth = label.frame.size.width
         }
         
         required init?(coder aDecoder: NSCoder) {
@@ -64,10 +77,8 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         }
         
         func configureViews() {
-            self.clipsToBounds = true
             
             self.label = UILabel()
-            self.contentView.addSubview(label)
             self.label.font = FontGenerator.fontOfSize(size: 16, submission: false)
             self.label.backgroundColor = ColorUtil.theme.foregroundColor
             self.label.layer.cornerRadius = 5
@@ -76,14 +87,23 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
             self.label.textColor = ColorUtil.theme.fontColor
             self.label.numberOfLines = 0
             self.label.clipsToBounds = true
+            
+            self.separator = UIView().then {
+                $0.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+            }
+            
+            self.contentView.addSubviews(label, separator)
         }
         
         func configureLayout() {
             batch {
                 label.leftAnchor == contentView.leftAnchor + 2
                 label.rightAnchor == contentView.rightAnchor - 2
-                label.topAnchor == contentView.topAnchor + 2
-                label.bottomAnchor == contentView.bottomAnchor - 2
+                label.topAnchor == contentView.topAnchor + 8
+                separator.topAnchor == label.bottomAnchor + 8
+                separator.horizontalAnchors == contentView.horizontalAnchors
+                separator.bottomAnchor == contentView.bottomAnchor
+                separator.heightAnchor == CGFloat(2)
             }
         }
         
@@ -128,12 +148,16 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return baseDrafts.count
     }
-    
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let thing = baseDrafts[indexPath.row]
         let c = tableView.dequeueReusableCell(withIdentifier: "draft", for: indexPath) as! DraftCellView
         c.setDraft(thing)
+        if (self.tableView.indexPathsForSelectedRows ?? []).contains(indexPath) {
+            c.label.backgroundColor = ColorUtil.baseAccent.withAlphaComponent(0.2)
+        } else {
+            c.label.backgroundColor = ColorUtil.theme.foregroundColor
+        }
         return c
     }
     

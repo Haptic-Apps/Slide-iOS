@@ -115,6 +115,7 @@ public class ToolbarTextView: NSObject {
                     self.text?.insertText(draft)
                     self.text?.insertText(" ")
                 }
+                self.text?.becomeFirstResponder()
             }
         }))
         alert.addAction(AlertAction(title: "Delete", style: .preferred, handler: { (_) in
@@ -123,6 +124,8 @@ public class ToolbarTextView: NSObject {
                 for draft in selectedData! {
                     Drafts.deleteDraft(s: draft)
                 }
+                BannerUtil.makeBanner(text: "\(selectedData!.count) drafts deleted", color: GMColor.red500Color(), seconds: 2, context: parent, top: false, callback: nil)
+                self.text?.becomeFirstResponder()
             }
         }))
 

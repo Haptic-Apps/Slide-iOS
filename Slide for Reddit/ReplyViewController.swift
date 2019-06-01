@@ -684,6 +684,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.isScrollEnabled = false
                     $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
                 })
+                if !ColorUtil.theme.isLight {
+                    text1.keyboardAppearance = .dark
+                }
                 
                 let text2 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
