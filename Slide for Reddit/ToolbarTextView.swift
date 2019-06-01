@@ -124,7 +124,7 @@ public class ToolbarTextView: NSObject {
                 for draft in selectedData! {
                     Drafts.deleteDraft(s: draft)
                 }
-                BannerUtil.makeBanner(text: "\(selectedData!.count) drafts deleted", color: GMColor.red500Color(), seconds: 2, context: parent, top: false, callback: nil)
+                BannerUtil.makeBanner(text: "\(selectedData!.count) drafts deleted", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: false, callback: nil)
                 self.text?.becomeFirstResponder()
             }
         }))
