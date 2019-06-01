@@ -382,10 +382,16 @@ public class AutoCache: NSObject {
     static func cancelAutocache(completed: Int) {
         print("Cancelling")
         cancel = true
-        SwiftEntryKit.dismiss(.displayed) {
-            AutoCache.label?.removeFromSuperview()
-            AutoCache.progressBar = nil
-            AutoCache.label = nil
+        if SwiftEntryKit.isCurrentlyDisplaying {
+            SwiftEntryKit.dismiss(.displayed) {
+                AutoCache.label?.removeFromSuperview()
+                AutoCache.progressBar = nil
+                AutoCache.label = nil
+                if completed > 0 {
+                    BannerUtil.makeBanner(text: "\(completed) posts cached successfully", color: .black, seconds: 3, context: nil, top: true, callback: nil)
+                }
+            }
+        } else {
             if completed > 0 {
                 BannerUtil.makeBanner(text: "\(completed) posts cached successfully", color: .black, seconds: 3, context: nil, top: true, callback: nil)
             }
