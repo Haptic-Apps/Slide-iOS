@@ -4,7 +4,6 @@
 //
 
 import Anchorage
-import ActionSheetPicker_3_0
 import Alamofire
 import MobileCoreServices
 import OpalImagePicker
@@ -90,8 +89,6 @@ public class ToolbarTextView: NSObject {
             }
         }
     }
-
-    var picker: ActionSheetStringPicker?
 
     @objc func openDrafts(_ sender: AnyObject) {
         print("Opening drafts")

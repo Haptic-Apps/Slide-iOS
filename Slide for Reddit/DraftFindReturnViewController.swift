@@ -35,7 +35,7 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         self.automaticallyAdjustsScrollViewInsets = false
         self.tableView.register(DraftCellView.classForCoder(), forCellReuseIdentifier: "draft")
         
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = .clear
         tableView.separatorColor = ColorUtil.theme.backgroundColor
         tableView.separatorInset = .zero
         
@@ -72,7 +72,7 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
             self.label.backgroundColor = ColorUtil.theme.foregroundColor
             self.label.layer.cornerRadius = 5
             
-            self.contentView.backgroundColor = .clear
+            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
             self.label.textColor = ColorUtil.theme.fontColor
             self.label.numberOfLines = 0
             self.label.clipsToBounds = true
@@ -80,10 +80,10 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         
         func configureLayout() {
             batch {
-                label.leftAnchor == contentView.leftAnchor
-                label.rightAnchor == contentView.rightAnchor
-                label.topAnchor == contentView.topAnchor
-                label.bottomAnchor == contentView.bottomAnchor
+                label.leftAnchor == contentView.leftAnchor + 2
+                label.rightAnchor == contentView.rightAnchor - 2
+                label.topAnchor == contentView.topAnchor + 2
+                label.bottomAnchor == contentView.bottomAnchor - 2
             }
         }
         

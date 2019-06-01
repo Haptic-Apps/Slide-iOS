@@ -1,7 +1,6 @@
 PODS:
-  - ActionSheetPicker-3.0 (2.3.0)
   - Alamofire (4.8.2)
-  - Anchorage (4.3)
+  - Anchorage (4.3.1)
   - BadgeSwift (7.0.0)
   - BiometricAuthentication (3.0)
   - DTCoreText (1.6.21):
@@ -64,11 +63,11 @@ PODS:
   - MTColorDistance (0.0.3)
   - OpalImagePicker (2.0.0)
   - QuickLayout (3.0.0)
-  - Realm (3.16.0):
-    - Realm/Headers (= 3.16.0)
-  - Realm/Headers (3.16.0)
-  - RealmSwift (3.16.0):
-    - Realm (= 3.16.0)
+  - Realm (3.16.1):
+    - Realm/Headers (= 3.16.1)
+  - Realm/Headers (3.16.1)
+  - RealmSwift (3.16.1):
+    - Realm (= 3.16.1)
   - reddift (2.0.3):
     - HTMLSpecialCharacters
     - MiniKeychain
@@ -79,7 +78,7 @@ PODS:
   - SDWebImage/Core (5.0.4)
   - SloppySwiper (0.6)
   - Starscream (3.0.6)
-  - SubtleVolume (1.0.2)
+  - SubtleVolume (1.1.0)
   - SwiftEntryKit (1.0.1):
     - QuickLayout (= 3.0.0)
   - SwiftLinkPreview (3.0.1)
@@ -93,7 +92,6 @@ PODS:
   - YYText (1.0.7)
 
 DEPENDENCIES:
-  - ActionSheetPicker-3.0 (from `https://github.com/ccrama/ActionSheetPicker-3.0`)
   - Alamofire (~> 4.3)
   - Anchorage (~> 4.3)
   - BadgeSwift (~> 7.0)
@@ -125,8 +123,6 @@ DEPENDENCIES:
   - YYText
 
 EXTERNAL SOURCES:
-  ActionSheetPicker-3.0:
-    :git: https://github.com/ccrama/ActionSheetPicker-3.0
   DTCoreText:
     :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
@@ -143,9 +139,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/ccrama/XLActionController
 
 CHECKOUT OPTIONS:
-  ActionSheetPicker-3.0:
-    :commit: 6a7757579502871c9a2801f574557067503ef60d
-    :git: https://github.com/ccrama/ActionSheetPicker-3.0
   DTCoreText:
     :commit: 761a02efd14e0d0bf41650220daa326e03d335af
     :git: https://github.com/Cocoanetics/DTCoreText
@@ -169,9 +162,8 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ccrama/XLActionController
 
 SPEC CHECKSUMS:
-  ActionSheetPicker-3.0: eef157d75e151f255c5333d26656c7fbfe905a51
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
-  Anchorage: 21a98675245188427f0bcea21404d42a824a766f
+  Anchorage: a187da0bc9b07440637d42c8744b8c82a4490295
   BadgeSwift: 5cfacfad916d85e2f68d93dbb9ade4e9555903da
   BiometricAuthentication: e39b1a55040d679d5dbc4fa90d76e067c432de7f
   DTCoreText: c07f9d7109a1dd637d7190032261b7c8aff23c92
@@ -188,15 +180,15 @@ SPEC CHECKSUMS:
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   OpalImagePicker: efc91612ef5b3849314801f68fddc26200da9435
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
-  Realm: 5ca1b8c472dfc532cd0ba0bfe2ce49f97130158f
-  RealmSwift: 2ee401dbcc188706261921326146f5a539d4d4a7
+  Realm: 601cacc51d8be3b17a377ef787be0f6ee0e76cf1
+  RealmSwift: 486f2e09d5a8ccff63ed66e48d0846b111deb5e5
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: e8d2b6dd7d97d32e1f940a6b3bd3e8913bd6ad90
   SDCAlertView: 5fbc48cae6d7bf9781097e3f27883924ef3b922c
   SDWebImage: c739016e4bdf0a4a1f9a04b5e0385395ad63a282
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
-  SubtleVolume: 88618f8304a0e605d1adca14b95376dcbf9e03ce
+  SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
   SwiftEntryKit: 3f55c0b8e676afe24a3703237bcac68372891c56
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
   SwiftLint: 009a898ef2a1c851f45e1b59349bf6ff2ddc990d
@@ -206,6 +198,6 @@ SPEC CHECKSUMS:
   XLActionController: d2ab12a967ae0fee0b4563b8d809c8fb13ebc636
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 59acdfc015b7e58e3e0541c09a4ad3a71df18f74
+PODFILE CHECKSUM: f1a8c1e8458d00bdc0f32675bbbca3437b58ca5c
 
 COCOAPODS: 1.4.0

@@ -6,7 +6,6 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import ActionSheetPicker_3_0
 import Anchorage
 import RealmSwift
 import reddift
@@ -451,25 +450,30 @@ class PostActions: NSObject {
         for rule in rules {
             reasons.append(rule.violatonReason + "\n" + rule.description)
         }
-        let picker = ActionSheetStringPicker(title: "Choose a removal reason", rows: reasons, initialSelection: 0, doneBlock: { (_, index, _) in
-            //todo this
-            if index == 0 {
-                modRemoveReason(cell, reason: "")
-            } else if index == 1 {
-                removeNoReason(cell)
-            } else if index == 2 {
-                removeNoReason(cell, spam: true)
-            } else {
-                modRemoveReason(cell, reason: reasons[index])
-            }
-        }, cancel: { (_) in
-            return
-        }, origin: cell.contentView)
+        let sheet = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        let doneButton = UIBarButtonItem.init(title: "Remove", style: .done, target: nil, action: nil)
-        picker?.setDoneButton(doneButton)
-        picker?.show()
-
+        sheet.setupTheme()
+        sheet.attributedTitle = NSAttributedString(string: "Choose a removal reason", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        for reason in reasons {
+            let somethingAction = AlertAction(title: reason, style: .normal) { (_) in
+                var index = reasons.index(of: reason) ?? 0
+                if index == 0 {
+                    modRemoveReason(cell, reason: "")
+                } else if index == 1 {
+                    removeNoReason(cell)
+                } else if index == 2 {
+                    removeNoReason(cell, spam: true)
+                } else {
+                    modRemoveReason(cell, reason: reasons[index])
+                }
+            }
+            
+            sheet.addAction(somethingAction)
+        }
+        sheet.addCloseButton()
+        sheet.addBlurView()
+        cell.parentViewController?.present(sheet, animated: true)
     }
     
     static func removeNoReason(_ cell: LinkCellView, spam: Bool = false) {
