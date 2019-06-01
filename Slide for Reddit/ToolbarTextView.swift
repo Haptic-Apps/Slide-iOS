@@ -95,6 +95,45 @@ public class ToolbarTextView: NSObject {
 
     @objc func openDrafts(_ sender: AnyObject) {
         print("Opening drafts")
+        parent.view.endEditing(true)
+        let alert = AlertController(title: "Drafts", message: "", preferredStyle: .alert)
+        
+        alert.setupTheme()
+        
+        alert.attributedTitle = NSAttributedString(string: "Drafts", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        let inner = DraftFindReturnViewController { (_) in
+        }
+        let innerView = inner.view!
+        
+        alert.contentView.addSubview(innerView)
+        
+        innerView.edgeAnchors == alert.contentView.edgeAnchors
+        innerView.heightAnchor == CGFloat(200)
+        
+        alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
+            let selectedData = inner.tableView.indexPathsForSelectedRows?.map { inner.baseDrafts[$0.row] }
+            if selectedData != nil {
+                for draft in selectedData! {
+                    self.text?.insertText(draft)
+                    self.text?.insertText(" ")
+                }
+            }
+        }))
+        alert.addAction(AlertAction(title: "Delete", style: .preferred, handler: { (_) in
+            let selectedData = inner.tableView.indexPathsForSelectedRows?.map { inner.baseDrafts[$0.row] }
+            if selectedData != nil {
+                for draft in selectedData! {
+                    Drafts.deleteDraft(s: draft)
+                }
+            }
+        }))
+
+        alert.addCancelButton()
+        alert.addBlurView()
+        
+        parent.present(alert, animated: true, completion: nil)
+        /*
         if Drafts.drafts.isEmpty {
             parent.view.makeToast("No drafts found", duration: 4, position: .top)
         } else {
@@ -112,17 +151,20 @@ public class ToolbarTextView: NSObject {
 
             let doneButton = UIBarButtonItem.init(title: "Insert", style: .done, target: nil, action: nil)
             picker?.setDoneButton(doneButton)
-            //todo  picker?.addCustomButton(withTitle: "Delete", target: self, selector: #selector(ReplyViewController.doDelete(_:)))
+            picker?.addCustomButton(withTitle: "Delete Draft", actionBlock: {
+                if let p = self.picker?.pickerView as? UIPickerView
+                {
+                    var current = drafts[p.selectedRow(inComponent: 0)]
+                    Drafts.deleteDraft(s: current as String)
+                    
+                    self.openDrafts(sender)
+                }
+            })
             picker?.show()
 
-        }
+        }*/
     }
-
-    func doDelete(_ sender: AnyObject) {
-        Drafts.deleteDraft(s: Drafts.drafts[(picker?.selectedIndex)!] as String)
-        self.openDrafts(sender)
-    }
-
+    
     @objc func uploadImage(_ sender: UIButton!) {
         let imagePicker = OpalImagePickerController()
         imagePicker.allowedMediaTypes = [PHAssetMediaType.image]
