@@ -469,98 +469,48 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             //            }
         }
         self.isToolbarHidden = true
-
-        if !single {
-            if AutoCache.progressView != nil {
-                oldY = AutoCache.progressView!.frame.origin.y
-                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-                    AutoCache.progressView!.frame.origin.y = self.view.frame.size.height - 56
-                }, completion: nil)
-            }
-        }
     }
 
     func showUI(_ disableBottom: Bool = false) {
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
-
-        if !single && AutoCache.progressView != nil {
-                UIView.animate(withDuration: 0.25, delay: 0.0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-                    AutoCache.progressView!.frame.origin.y = self.oldY
-                }, completion: { _ in
-                    self.fab?.isHidden = false
-                    self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-
-                    UIView.animate(withDuration: 0.25, delay: 0.25, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                        self.fab?.transform = CGAffineTransform.identity
-                    }, completion: { _ in
-                    })
-
-                    if self.single && !MainViewController.isOffline {
-                        self.navigationController?.setToolbarHidden(false, animated: true)
-                    } else if !disableBottom {
-                        if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView,
-                            parent.menu.isDescendant(of: topView) {
-                            parent.menu.deactivateImmediateConstraints()
-                            parent.menu.topAnchor == topView.topAnchor
-                            parent.menu.widthAnchor == 56
-                            parent.menu.heightAnchor == 56
-                            parent.menu.leftAnchor == topView.leftAnchor
-
-                            parent.more.deactivateImmediateConstraints()
-                            parent.more.topAnchor == topView.topAnchor
-                            parent.more.widthAnchor == 56
-                            parent.more.heightAnchor == 56
-                            parent.more.rightAnchor == topView.rightAnchor
-                        }
-
-                        UIView.animate(withDuration: 0.25) {
-                            self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.parentController?.menuNav?.bottomOffset ?? 0), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
-                            self.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-                            self.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
-                        }
-                    }
-                    self.isToolbarHidden = false
-                })
-        } else {
+        
+        if self.fab?.superview != nil {
+            self.fab?.isHidden = false
+            self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             
-            if self.fab?.superview != nil {
-                self.fab?.isHidden = false
-                self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-                
-                UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                    self.fab?.transform = CGAffineTransform.identity
-                })
-            }
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.fab?.transform = CGAffineTransform.identity
+            })
+        }
 
-            if single && !MainViewController.isOffline {
-                navigationController?.setToolbarHidden(false, animated: true)
-            } else if !disableBottom {
-                UIView.animate(withDuration: 0.25) {
-                    if let parent = self.parentController {
-                        if parent.menu.superview != nil, let topView = parent.menuNav?.topView {
-                            parent.menu.deactivateImmediateConstraints()
-                            parent.menu.topAnchor == topView.topAnchor
-                            parent.menu.widthAnchor == 56
-                            parent.menu.heightAnchor == 56
-                            parent.menu.leftAnchor == topView.leftAnchor
+        if single && !MainViewController.isOffline {
+            navigationController?.setToolbarHidden(false, animated: true)
+        } else if !disableBottom {
+            UIView.animate(withDuration: 0.25) {
+                if let parent = self.parentController {
+                    if parent.menu.superview != nil, let topView = parent.menuNav?.topView {
+                        parent.menu.deactivateImmediateConstraints()
+                        parent.menu.topAnchor == topView.topAnchor
+                        parent.menu.widthAnchor == 56
+                        parent.menu.heightAnchor == 56
+                        parent.menu.leftAnchor == topView.leftAnchor
 
-                            parent.more.deactivateImmediateConstraints()
-                            parent.more.topAnchor == topView.topAnchor
-                            parent.more.widthAnchor == 56
-                            parent.more.heightAnchor == 56
-                            parent.more.rightAnchor == topView.rightAnchor
-                        }
-
-                        parent.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (parent.menuNav?.bottomOffset ?? 0)), width: parent.menuNav?.view.frame.width ?? 0, height: parent.menuNav?.view.frame.height ?? 0)
-                        parent.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-                        parent.more.transform = CGAffineTransform(scaleX: 1, y: 1)
+                        parent.more.deactivateImmediateConstraints()
+                        parent.more.topAnchor == topView.topAnchor
+                        parent.more.widthAnchor == 56
+                        parent.more.heightAnchor == 56
+                        parent.more.rightAnchor == topView.rightAnchor
                     }
+
+                    parent.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (parent.menuNav?.bottomOffset ?? 0)), width: parent.menuNav?.view.frame.width ?? 0, height: parent.menuNav?.view.frame.height ?? 0)
+                    parent.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    parent.more.transform = CGAffineTransform(scaleX: 1, y: 1)
                 }
             }
-            self.isToolbarHidden = false
         }
+        self.isToolbarHidden = false
     }
 
     func show(_ animated: Bool = true) {
@@ -2185,6 +2135,14 @@ extension SingleSubredditViewController {
                 self.doDisplaySidebar()
             }))
         }
+        
+        alertController.addAction(Action(ActionData(title: "Cache for offline use", image: UIImage(named: "save-1")!.menuIcon()), style: .default, handler: { _ in
+            _ = AutoCache.init(baseController: self, subs: [self.sub])
+        }))
+        
+        alertController.addAction(Action(ActionData(title: "Shadowbox", image: UIImage(named: "shadowbox")!.menuIcon()), style: .default, handler: { _ in
+            self.shadowboxMode()
+        }))
 
         alertController.addAction(Action(ActionData(title: "Hide read", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
             self.hideReadPosts()
@@ -2196,10 +2154,6 @@ extension SingleSubredditViewController {
         
         alertController.addAction(Action(ActionData(title: "Gallery", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { _ in
             self.galleryMode()
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Shadowbox", image: UIImage(named: "shadowbox")!.menuIcon()), style: .default, handler: { _ in
-            self.shadowboxMode()
         }))
 
         alertController.addAction(Action(ActionData(title: "Subreddit theme", image: UIImage(named: "colors")!.menuIcon()), style: .default, handler: { _ in

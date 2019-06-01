@@ -105,7 +105,7 @@ public class ToolbarTextView: NSObject {
         
         alert.contentView.addSubview(innerView)
         
-        innerView.edgeAnchors == alert.contentView.edgeAnchors
+        innerView.edgeAnchors == alert.contentView.edgeAnchors - 8
         innerView.heightAnchor == CGFloat(200)
         
         alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
@@ -118,18 +118,21 @@ public class ToolbarTextView: NSObject {
                 self.text?.becomeFirstResponder()
             }
         }))
-        alert.addAction(AlertAction(title: "Delete", style: .preferred, handler: { (_) in
+        alert.addAction(AlertAction(title: "Delete", style: .normal, handler: { (_) in
             let selectedData = inner.tableView.indexPathsForSelectedRows?.map { inner.baseDrafts[$0.row] }
             if selectedData != nil {
                 for draft in selectedData! {
                     Drafts.deleteDraft(s: draft)
                 }
-                BannerUtil.makeBanner(text: "\(selectedData!.count) drafts deleted", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: false, callback: nil)
+                BannerUtil.makeBanner(text: "\(selectedData!.count) drafts deleted", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)
                 self.text?.becomeFirstResponder()
             }
         }))
+        let cancelAction = AlertAction(title: "Close", style: .preferred, handler: { (_) in
+            self.text?.becomeFirstResponder()
+        })
+        alert.addAction(cancelAction)
 
-        alert.addCancelButton()
         alert.addBlurView()
         
         parent.present(alert, animated: true, completion: nil)

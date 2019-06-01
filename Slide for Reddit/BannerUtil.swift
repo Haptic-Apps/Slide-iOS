@@ -11,16 +11,13 @@ import SwiftEntryKit
 import UIKit
 
 public class BannerUtil {
-    public var popup = UILabel()
     
     public static func makeBanner(text: String, color: UIColor = ColorUtil.accentColorForSub(sub: ""), seconds: TimeInterval, context: UIViewController?, top: Bool = false, callback: (() -> Void)? = nil) {
-        if let context = context {
-            BannerUtil.init().makeBanner(text: text, color: color, seconds: seconds, context: context, top: top, callback: callback)
-        }
+        BannerUtil.init().makeBanner(text: text, color: color, seconds: seconds, top: top, callback: callback)
     }
 
-    func makeBanner(text: String, color: UIColor = ColorUtil.accentColorForSub(sub: ""), seconds: TimeInterval, context: UIViewController, top: Bool, callback: (() -> Void)? = nil) {
-        popup = UILabel.init(frame: CGRect.zero)
+    func makeBanner(text: String, color: UIColor = ColorUtil.accentColorForSub(sub: ""), seconds: TimeInterval, top: Bool, callback: (() -> Void)? = nil) {
+        let popup = UILabel.init(frame: CGRect.zero)
         popup.textAlignment = .center
         popup.isUserInteractionEnabled = true
         

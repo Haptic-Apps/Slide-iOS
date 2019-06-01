@@ -6,29 +6,44 @@
 import MaterialComponents.MDCProgressView
 import RealmSwift
 import reddift
+import SDCAlertView
 import SDWebImage
+import SwiftEntryKit
 import UIKit
+import Anchorage
 
 public class AutoCache: NSObject {
-    static var progressView: UILabel?
-    static var progressBar: MDCProgressView?
     static var subs = [String]()
+    static var progressBar: MDCProgressView?
+    static var label: UILabel?
     static private var cancel = false
 
-    init(baseController: MainViewController) {
-        AutoCache.progressView = UILabel()
+    init(baseController: UIViewController, subs: [String]) {
         super.init()
-        AutoCache.subs.append(contentsOf: Subscriptions.offline)
+        if AutoCache.label != nil {
+            let alert = AlertController.init(title: "", message: nil, preferredStyle: .alert)
+            
+            alert.setupTheme()
+            alert.attributedTitle = NSAttributedString(string: "Another caching operation is active", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Please wait for it to complete before caching more subreddits!", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            
+            alert.addCloseButton()
+            alert.addBlurView()
+            baseController.present(alert, animated: true, completion: nil)
+            return
+        }
+        AutoCache.subs = subs
         if !AutoCache.subs.isEmpty {
             setupProgressView(baseController)
         }
     }
 
-    static func doCache(subs: [String], progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping () -> Void) {
-        cacheSub(0, progress: progress, completion: completion)
+    static func doCache(subs: [String], progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
+        cacheSub(0, progress: progress, completion: completion, total: 0, failed: 0)
     }
 
-    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [RSubmission], realmListing: RListing, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping () -> Void) {
+    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [RSubmission], realmListing: RListing, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
         if cancel {
             return
         }
@@ -46,7 +61,7 @@ public class AutoCache: NSObject {
                 print(error)
             }
             DispatchQueue.main.async {
-                cacheSub(index + 1, progress: progress, completion: completion)
+                cacheSub(index + 1, progress: progress, completion: completion, total: currentLinks.count, failed: failed)
             }
             return
         }
@@ -111,13 +126,13 @@ public class AutoCache: NSObject {
 
     }
 
-    static func cacheSub(_ index: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping () -> Void) {
+    static func cacheSub(_ index: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void, total: Int, failed: Int) {
         if cancel {
             return
         }
 
         if index >= subs.count {
-            completion()
+            completion(total, failed)
             return
         }
 
@@ -134,7 +149,7 @@ public class AutoCache: NSObject {
                     //todo error reporting?
                     print(error)
                     DispatchQueue.main.async {
-                        AutoCache.cacheSub(index + 1, progress: progress, completion: completion)
+                        AutoCache.cacheSub(index + 1, progress: progress, completion: completion, total: total, failed: failed)
                     }
                 case .success(let listing):
                     if cancel {
@@ -241,53 +256,81 @@ public class AutoCache: NSObject {
         SDWebImagePrefetcher.init().prefetchURLs(urls)
     }
 
-    func setupProgressView(_ base: MainViewController) {
-        AutoCache.progressView = UILabel.init(frame: CGRect.init(x: 12, y: base.view.frame.size.height - 120, width: base.view.frame.size.width - 24, height: 48))
-        AutoCache.progressView!.backgroundColor = ColorUtil.baseAccent
-        AutoCache.progressView!.textAlignment = .left
-        AutoCache.progressView!.isUserInteractionEnabled = true
-        AutoCache.progressView!.text = "\tStarting cache..."
-        AutoCache.progressView!.font = UIFont.systemFont(ofSize: 15)
-        AutoCache.progressView!.textColor = .white
+    func setupProgressView(_ base: UIViewController) {
+        let popup = UILabel.init(frame: CGRect.zero)
+        popup.textAlignment = .center
+        popup.isUserInteractionEnabled = true
+        
+        let textParts = "Caching in progress\nPreparing..."
+        popup.numberOfLines = 0
+        popup.heightAnchor == 70
+        
+        var attributes = EKAttributes.topNote
+        attributes.name = "autocache"
+        attributes.displayDuration = .infinity
+        attributes.position = EKAttributes.Position.top
+        attributes.screenInteraction = .forward
+        attributes.scroll = .enabled(swipeable: true, pullbackAnimation: .easeOut)
+        attributes.entryBackground = EKAttributes.BackgroundStyle.color(color: .black)
+        attributes.precedence = .enqueue(priority: .normal)
+        attributes.roundCorners = EKAttributes.RoundCorners.bottom(radius: 15)
+        AutoCache.label = popup
+        AutoCache.setPopupText(textParts)
+
+        SwiftEntryKit.display(entry: popup.withPadding(padding: UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)), using: attributes)
 
         AutoCache.progressBar = MDCProgressView()
-        AutoCache.progressBar!.progressTintColor = ColorUtil.baseAccent
-        AutoCache.progressBar!.trackTintColor = UIColor.white.withAlphaComponent(0.5)
-        AutoCache.progressBar!.frame = CGRect(x: 0, y: 0, width: AutoCache.progressView!.frame.size.width, height: 5)
-        AutoCache.progressBar!.progress = 0.0
-        AutoCache.progressView!.elevate(elevation: 2)
-
+        AutoCache.progressBar?.progressTintColor = ColorUtil.baseAccent
+        AutoCache.progressBar?.trackTintColor = UIColor.white.withAlphaComponent(0.5)
+        
+        if let progressBar = AutoCache.progressBar {
+            popup.addSubview(progressBar)
+            progressBar.horizontalAnchors == popup.horizontalAnchors + 4
+            progressBar.bottomAnchor == popup.bottomAnchor
+            popup.clipsToBounds = true
+            popup.layer.cornerRadius = 15
+            progressBar.heightAnchor == 4
+            progressBar.progress = 0.0
+        }
+        
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
-        button.frame = CGRect.init(x: AutoCache.progressView!.frame.size.width - 40, y: 11.5, width: 25, height: 25)
+        button.setImage(UIImage.init(named: "close")!.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
+        popup.addSubview(button)
+        button.rightAnchor == popup.rightAnchor - 4
+        button.heightAnchor == 25
+        button.widthAnchor == 25
+        button.centerYAnchor == popup.centerYAnchor
         button.addTapGestureRecognizer {
-            AutoCache.cancelAutocache()
+            AutoCache.cancelAutocache(completed: -1)
         }
         button.isUserInteractionEnabled = true
-
-        AutoCache.progressView!.addSubview(button)
-
-        AutoCache.progressView!.addSubview(AutoCache.progressBar!)
-        AutoCache.progressView!.layer.cornerRadius = 5
-        AutoCache.progressView!.clipsToBounds = true
-        AutoCache.progressView!.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
-        base.view.addSubview(AutoCache.progressView!)
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            AutoCache.progressView!.transform = CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0)
-        }, completion: nil)
 
         AutoCache.cancel = false
         AutoCache.doCache(subs: AutoCache.subs, progress: { sub, post, total, failed in
             DispatchQueue.main.async {
-                AutoCache.progressView?.text = "\tCaching post \(post)/\(total)\(failed > 0 ? " (\(failed) failed)" : "") in r/\(sub)"
+                AutoCache.setPopupText("Caching in progress\nCaching post \(post)/\(total)\(failed > 0 ? " (\(failed) failed)" : "") in r/\(sub)")
                 AutoCache.progressBar?.progress = Float(post) / Float(total)
             }
-        }, completion: {
+        }, completion: { (total, failed) in
             DispatchQueue.main.async {
-                AutoCache.cancelAutocache()
+                AutoCache.cancelAutocache(completed: total - failed)
             }
         })
+    }
+    
+    static func setPopupText(_ text: String) {
+        let finalText: NSMutableAttributedString!
+        let textParts = text.split("\n")
+        if textParts.count > 1 {
+            let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16)])
+            let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
+            firstPart.append(secondPart)
+            finalText = firstPart
+        } else {
+            finalText = NSMutableAttributedString.init(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16)])
+        }
+        label?.attributedText = finalText
     }
 
     static func extendKeepMore(in comment: Thing, current depth: Int) -> ([(Thing, Int)]) {
@@ -336,15 +379,17 @@ public class AutoCache: NSObject {
         return buf
     }
 
-    static func cancelAutocache() {
+    static func cancelAutocache(completed: Int) {
         print("Cancelling")
         cancel = true
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            AutoCache.progressView!.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-        }, completion: { _ in
-            AutoCache.progressView!.removeFromSuperview()
-            AutoCache.progressView = nil
-        })
+        SwiftEntryKit.dismiss(.displayed) {
+            AutoCache.label?.removeFromSuperview()
+            AutoCache.progressBar = nil
+            AutoCache.label = nil
+            if completed > 0 {
+                BannerUtil.makeBanner(text: "\(completed) posts cached successfully", color: .black, seconds: 3, context: nil, top: true, callback: nil)
+            }
+        }
     }
 
 }

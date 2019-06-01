@@ -80,10 +80,11 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
             
             self.label = UILabel()
             self.label.font = FontGenerator.fontOfSize(size: 16, submission: false)
-            self.label.backgroundColor = ColorUtil.theme.foregroundColor
+            self.label.backgroundColor = .clear
             self.label.layer.cornerRadius = 5
             
-            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+            self.contentView.backgroundColor = .clear
+            self.backgroundColor = .clear
             self.label.textColor = ColorUtil.theme.fontColor
             self.label.numberOfLines = 0
             self.label.clipsToBounds = true
@@ -103,7 +104,7 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
                 separator.topAnchor == label.bottomAnchor + 8
                 separator.horizontalAnchors == contentView.horizontalAnchors
                 separator.bottomAnchor == contentView.bottomAnchor
-                separator.heightAnchor == CGFloat(2)
+                separator.heightAnchor == CGFloat(1)
             }
         }
         
@@ -111,7 +112,7 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
             if selected {
                 self.label.backgroundColor = ColorUtil.baseAccent.withAlphaComponent(0.2)
             } else {
-                self.label.backgroundColor = ColorUtil.theme.foregroundColor
+                self.label.backgroundColor = .clear
             }
         }
     }
@@ -156,7 +157,7 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         if (self.tableView.indexPathsForSelectedRows ?? []).contains(indexPath) {
             c.label.backgroundColor = ColorUtil.baseAccent.withAlphaComponent(0.2)
         } else {
-            c.label.backgroundColor = ColorUtil.theme.foregroundColor
+            c.label.backgroundColor = .clear
         }
         return c
     }

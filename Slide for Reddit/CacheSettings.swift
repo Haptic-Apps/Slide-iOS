@@ -99,7 +99,7 @@ class CacheSettings: UITableViewController {
 
         switch section {
         case 0: label.text = "Caching settings"
-        case 1: label.text = "Subreddits to Cache"
+        case 1: label.text = "Subreddits to Auto-Cache"
         default: label.text = ""
         }
         return toReturn
@@ -166,7 +166,7 @@ class CacheSettings: UITableViewController {
             cell = c
             cell?.backgroundColor = ColorUtil.theme.foregroundColor
             let aSwitch = UISwitch().then {
-                $0.tintColor = ColorUtil.accentColorForSub(sub: thing)
+                $0.onTintColor = ColorUtil.accentColorForSub(sub: thing)
             }
             if selected.contains(thing) {
                 aSwitch.isOn = true

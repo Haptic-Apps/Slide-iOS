@@ -848,7 +848,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         if SettingValues.autoCache {
             if UserDefaults.standard.string(forKey: "DAY_LAUNCH") != today {
-                _ = AutoCache.init(baseController: self)
+                _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
                 UserDefaults.standard.setValue(today, forKey: "DAY_LAUNCH")
             }
         }
