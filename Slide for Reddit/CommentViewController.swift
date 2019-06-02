@@ -366,7 +366,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func replySent(comment: Comment?, cell: CommentDepthCell?) {
         if comment != nil && cell != nil {
             DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = self.cDepth[cell!.comment!.getIdentifier()]! + 1
+                let startDepth = (self.cDepth[cell!.comment!.getIdentifier()] ?? 0) + 1
 
                 let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.getId()] = startDepth
@@ -406,7 +406,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             })
         } else if comment != nil && cell == nil {
             DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = 0
+                let startDepth = 1
 
                 let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.getId()] = startDepth
@@ -458,7 +458,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     insertIndex += 1
                 }
 
-                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: 0)
+                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: self.cDepth[comment.getIdentifier()] ?? 1)
                 self.dataArray.remove(at: insertIndex)
                 self.dataArray.insert(comment.getIdentifier(), at: insertIndex)
                 self.comments.remove(at: realPosition)
