@@ -325,13 +325,19 @@ extension CurrentAccountViewController {
         modButton.isHidden = !(AccountController.current?.isMod ?? false)
 
         if let account = AccountController.current {
+            let creationDate = NSDate(timeIntervalSince1970: Double(account.created))
             let creationDateString: String = {
-                let creationDate = NSDate(timeIntervalSince1970: Double(account.created))
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yyyyMMMMd", options: 0, locale: NSLocale.current)
                 return dateFormatter.string(from: creationDate as Date)
             }()
-            accountAgeLabel.text = "Created \(creationDateString)"
+            let day = Calendar.current.ordinality(of: .day, in: .month, for: Date()) == Calendar.current.ordinality(of: .day, in: .month, for: creationDate as Date)
+            let month = Calendar.current.ordinality(of: .month, in: .year, for: Date()) == Calendar.current.ordinality(of: .month, in: .year, for: creationDate as Date)
+            if day && month {
+                accountAgeLabel.text = "🍰 Created \(creationDateString) 🍰"
+            } else {
+                accountAgeLabel.text = "Created \(creationDateString)"
+            }
             header.setAccount(account)
             setLoadingState(false)
         } else {

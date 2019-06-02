@@ -77,7 +77,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var liveTimer = Timer()
     
     var jump: UIView!
-
+    fileprivate var canDrag = false
+    fileprivate var scaleFactor: CGFloat = 6.0
+    fileprivate var initialPoint = CGPoint.zero
+    fileprivate let circleLayer = CAShapeLayer()
+    
     func isMenuShown() -> Bool {
         return menuCell != nil
     }
@@ -108,26 +112,27 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 jump.addTapGestureRecognizer {
                     self.goDown(self.jump)
                 }
-                jump.addLongTapGestureRecognizer {
-                    self.goUp(self.jump)
-                }
+                //jump.addLongTapGestureRecognizer {
+                 //   self.goUp(self.jump)
+                //}
+                
+                let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panDetected))
+                let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressDetected))
+                
+                panRecognizer.delegate = self
+                longPressRecognizer.delegate = self
+                
+                jump.addGestureRecognizer(panRecognizer)
+                jump.addGestureRecognizer(longPressRecognizer)
+
             }
             
             view.addSubview(jump)
-            jump.bottomAnchor == view.bottomAnchor - 24
-            if SettingValues.commentJumpButton == .RIGHT {
-                jump.rightAnchor == view.rightAnchor - 24
-            } else {
-                jump.leftAnchor == view.leftAnchor + 24
-            }
-            jump.widthAnchor == 40
-            jump.heightAnchor == 40
-            jump.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-            
-            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
-                self.jump?.transform = .identity
-            }, completion: nil)
-
+            var jumpFrame = jump.frame
+            jumpFrame.size = CGSize.square(size: 40)
+            jumpFrame.origin = CGPoint(x: self.view.frame.size.width - 64, y: self.view.frame.size.height - 64)
+            jump.frame = jumpFrame
+            print(jumpFrame)
         }
     }
     
@@ -366,7 +371,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func replySent(comment: Comment?, cell: CommentDepthCell?) {
         if comment != nil && cell != nil {
             DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = self.cDepth[cell!.comment!.getIdentifier()]! + 1
+                let startDepth = (self.cDepth[cell!.comment!.getIdentifier()] ?? 0) + 1
 
                 let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.getId()] = startDepth
@@ -406,7 +411,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             })
         } else if comment != nil && cell == nil {
             DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = 0
+                let startDepth = 1
 
                 let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.getId()] = startDepth
@@ -458,7 +463,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     insertIndex += 1
                 }
 
-                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: 0)
+                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: self.cDepth[comment.getIdentifier()] ?? 1)
                 self.dataArray.remove(at: insertIndex)
                 self.dataArray.insert(comment.getIdentifier(), at: insertIndex)
                 self.comments.remove(at: realPosition)
@@ -1434,6 +1439,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             self.shouldAnimateLoad = false
         }
         self.finishedPush = true
+        createJumpButton()
     }
  
     var duringAnimation = false
@@ -2329,7 +2335,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             (navigationController)?.setNavigationBarHidden(true, animated: true)
             
             (self.navigationController)?.setToolbarHidden(true, animated: true)
-            self.createJumpButton()
         }
         self.isToolbarHidden = true
         isHiding = false
@@ -2360,7 +2365,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             progressDot.layer.add(fadeAnimation, forKey: "fade")
         }
         self.isToolbarHidden = false
-        self.removeJumpButton()
     }
 
 override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -2867,6 +2871,35 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             translatingCell = nil
         }
     }
+    
+    //From https://github.com/Daniel-Lopez/DraggableButtonView-Swift
+    @objc fileprivate func panDetected(_ gesture: UIPanGestureRecognizer)
+    {
+        guard canDrag else { return }
+        
+        let translation = gesture.translation(in: jump.superview)
+        jump.center = CGPoint(x: initialPoint.x + translation.x, y: initialPoint.y + translation.y)
+    }
+    
+    @objc fileprivate func longPressDetected(_ gesture: UILongPressGestureRecognizer)
+    {
+        if gesture.state == .began
+        {
+            if let sup = jump.superview
+            {
+                sup.bringSubviewToFront(jump)
+                initialPoint = jump.center
+            }
+            canDrag = true
+            circleLayer.transform = CATransform3DMakeScale(scaleFactor, scaleFactor, 1)
+        }
+        else if gesture.state == .ended
+        {
+            canDrag = false
+            circleLayer.transform = CATransform3DMakeScale(1.0, 1.0, 1)
+        }
+    }
+
 }
 
 // Helper function inserted by Swift 4.2 migrator.

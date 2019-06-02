@@ -380,7 +380,6 @@ public class AutoCache: NSObject {
     }
 
     static func cancelAutocache(completed: Int) {
-        print("Cancelling")
         cancel = true
         if SwiftEntryKit.isCurrentlyDisplaying {
             SwiftEntryKit.dismiss(.displayed) {

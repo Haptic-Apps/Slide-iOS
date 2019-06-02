@@ -1534,7 +1534,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         refresh(np: np)
         refreshTitle(np: np)
 
-        if (type != .IMAGE && type != .SELF && !thumb) || (full && (type == .LINK || type == .REDDIT)) {
+        if (type != .IMAGE && type != .SELF && !thumb) || (full && (type == .LINK || type == .REDDIT)) || (full && thumb && type != .SELF) {
             infoContainer.isHidden = false
             var text = ""
             switch type {
