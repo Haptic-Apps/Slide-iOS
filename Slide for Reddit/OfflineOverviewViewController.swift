@@ -6,6 +6,7 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import RealmSwift
 import reddift
 import UIKit
 import UserNotifications
@@ -15,8 +16,16 @@ class OfflineOverviewViewController: UITableViewController {
     var subs: [String]
     
     init(subs: [String]) {
-        self.subs = subs
+        self.subs = []
         super.init(style: .plain)
+        do {
+            let realm = try Realm()
+            realm.objects(RListing.self).forEach({ (listing) in
+                self.subs.append(listing.subreddit)
+            })
+        } catch {
+            
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

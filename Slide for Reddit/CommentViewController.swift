@@ -743,7 +743,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                         if self.comments.isEmpty {
                             BannerUtil.makeBanner(text: "No cached comments found!\nYou can set up auto-cache in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
                         } else {
-                            BannerUtil.makeBanner(text: "Showing cached comments", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
+                           // BannerUtil.makeBanner(text: "Showing cached comments", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
                         }
                         
                     })

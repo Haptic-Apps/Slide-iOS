@@ -80,7 +80,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
     
     override func prepare() {
         // 1
-        if cache.isEmpty {
+        if cache.isEmpty && collectionView!.numberOfItems(inSection: 0) != 0 {
             // 2
             let columnWidth = contentWidth / CGFloat(numberOfColumns)
             var xOffset = [CGFloat]()
@@ -113,6 +113,9 @@ class WrappingFlowLayout: UICollectionViewLayout {
                 
                 // 5
                 let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+                if insetFrame.origin.x > 999999 {
+                    return
+                }
                 attributes.frame = insetFrame
                 cache.append(attributes)
                 
