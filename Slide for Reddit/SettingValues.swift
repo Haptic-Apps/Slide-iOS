@@ -122,6 +122,8 @@ class SettingValues {
     public static let pref_commentJumpMode = "COMMENT_JUMP_MODE"
     public static let pref_alwaysShowHeader = "ALWAYS_SHOW_HEADER"
     public static let pref_disablePreviews = "DISABLE_PREVIEWS"
+    public static let pref_commentDepth = "MAX_COMMENT_DEPTH"
+    public static let pref_postsToCache = "POST_CACHE_COUNT"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -205,6 +207,8 @@ class SettingValues {
     public static var dataSavingDisableWiFi = false
     public static var postFontOffset = -4
     public static var commentFontOffset = -4
+    public static var cachedPostsCount = 25
+    public static var commentDepth = 6
     public static var largerThumbnail = true
     public static var isPro = true
     public static var lqLow = true
@@ -400,6 +404,9 @@ class SettingValues {
 
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? -2 : settings.integer(forKey: SettingValues.pref_commentFontSize)
+
+        SettingValues.commentDepth = settings.object(forKey: SettingValues.pref_commentDepth) == nil ? 4 : settings.integer(forKey: SettingValues.pref_commentDepth)
+        SettingValues.cachedPostsCount = settings.object(forKey: SettingValues.pref_postsToCache) == nil ? 25 : settings.integer(forKey: SettingValues.pref_postsToCache)
 
         if let time = UserDefaults.standard.string(forKey: pref_defaultTimePeriod) {
             for t in TimeFilterWithin.cases {

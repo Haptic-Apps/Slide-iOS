@@ -69,7 +69,7 @@ public class AutoCache: NSObject {
         var failed = failed
         do {
             let link = currentLinks[commentIndex]
-            try (UIApplication.shared.delegate as! AppDelegate).session?.getArticles(link.name, sort: SettingValues.defaultCommentSorting, comments: nil, context: 3, completion: { (result) -> Void in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.getArticles(link.name, sort: SettingValues.defaultCommentSorting, depth: SettingValues.commentDepth, context: 3, completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):
                     done += 1
@@ -143,7 +143,7 @@ public class AutoCache: NSObject {
             if sub.hasPrefix("/m/") {
                 subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
             }
-            try (UIApplication.shared.delegate as! AppDelegate).session?.getList(Paginator.init(), subreddit: subreddit, sort: SettingValues.defaultSorting, timeFilterWithin: SettingValues.defaultTimePeriod, completion: { (result) in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.getList(Paginator.init(), subreddit: subreddit, sort: SettingValues.defaultSorting, timeFilterWithin: SettingValues.defaultTimePeriod, limit: SettingValues.cachedPostsCount, completion: { (result) in
                 switch result {
                 case .failure(let error):
                     //todo error reporting?

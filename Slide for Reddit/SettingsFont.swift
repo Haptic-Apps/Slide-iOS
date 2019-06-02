@@ -123,7 +123,7 @@ class SettingsFont: UITableViewController {
         }
         preview.addTarget(self, action: #selector(SettingsFont.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         previewCell.textLabel?.text = "Disable link preview bubbles"
-        previewCell.accessoryView = enlarge
+        previewCell.accessoryView = preview
         previewCell.textLabel?.numberOfLines = 0
         previewCell.selectionStyle = UITableViewCell.SelectionStyle.none
 
