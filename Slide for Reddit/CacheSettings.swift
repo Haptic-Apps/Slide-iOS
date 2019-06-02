@@ -204,10 +204,10 @@ class CacheSettings: UITableViewController {
                 
                 let values = [["4", "5", "6", "7", "8", "9", "10"]]
                 let pickerView = PickerViewViewControllerColored(values: values, initialSelection: [(0, SettingValues.commentDepth - 4)], action: { (_, _, chosen, _) in
-                    SettingValues.commentDepth = SettingValues.commentDepth + 4
-                    UserDefaults.standard.set(SettingValues.commentDepth + 4, forKey: SettingValues.pref_commentDepth)
+                    SettingValues.commentDepth = chosen.row + 4
+                    UserDefaults.standard.set(chosen.row + 4, forKey: SettingValues.pref_commentDepth)
                     UserDefaults.standard.synchronize()
-                    self.depth.detailTextLabel?.text = "\(SettingValues.commentDepth + 4) levels"
+                    self.depth.detailTextLabel?.text = "\(chosen.row + 4) levels"
                 })
                 
                 actionSheetController.setupTheme()
