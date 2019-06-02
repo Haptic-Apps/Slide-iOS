@@ -214,7 +214,7 @@ public class AutoCache: NSObject {
                 big = false
             }
 
-            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+            let shouldShowLq = false
             if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                     || SettingValues.noImages && submission.isSelf {
                 big = false
@@ -240,20 +240,17 @@ public class AutoCache: NSObject {
             }
 
             if big {
-                if shouldShowLq {
-                    if let url = URL.init(string: submission.lqUrl) {
-                        urls.append(url)
-                    }
-
-                } else {
-                    if let url = URL.init(string: submission.bannerUrl) {
-                        urls.append(url)
-                    }
+                if let url = URL.init(string: submission.bannerUrl) {
+                    urls.append(url)
                 }
             }
 
         }
-        SDWebImagePrefetcher.init().prefetchURLs(urls)
+        SDWebImagePrefetcher.shared.prefetchURLs(urls, progress: { (a, b) in
+            print("Caching \(a) of \(b)")
+        }, completed: { (a, b) in
+            print("Did \(a) of \(b)")
+        })
     }
 
     func setupProgressView(_ base: UIViewController) {
