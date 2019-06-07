@@ -9,7 +9,9 @@
 import Foundation
 import reddift
 import WatchConnectivity
+#if !os(iOS)
 import WatchKit
+#endif
 
 public class WatchSessionManager: NSObject, WCSessionDelegate {
     public func sessionDidBecomeInactive(_ session: WCSession) {

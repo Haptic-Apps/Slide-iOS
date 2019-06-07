@@ -164,7 +164,11 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         let rect = about.textRect(forBounds: CGRect(x: 0, y: 0, width: self.view.frame.size.width - 24, height: CGFloat.greatestFiniteMagnitude), limitedToNumberOfLines: 0)
         
         self.view.addSubview(aboutArea)
-        self.preferredContentSize = CGSize(width: self.view.frame.size.width, height: CGFloat(45 * 3 + 12 * 3 + 16 + rect.height + 16))
+        var total = CGFloat(45 * 3)
+        total += CGFloat(12 * 3)
+        total += CGFloat(16 + 16)
+        total += rect.height
+        self.preferredContentSize = CGSize(width: self.view.frame.size.width, height: total)
         aboutArea.edgeAnchors == self.view.edgeAnchors
     }
     

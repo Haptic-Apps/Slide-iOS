@@ -28,10 +28,8 @@ class FontGenerator {
     
     public static var postFont = Font.SYSTEM
     public static var commentFont = Font.SYSTEM
-    public static var fontDict = [String: UIFont]()
 
     public static func initialize() {
-        fontDict.removeAll()
         if let name = UserDefaults.standard.string(forKey: "postfont") {
             if let t = Font(rawValue: name) {
                 postFont = t

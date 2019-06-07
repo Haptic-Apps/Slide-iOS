@@ -86,10 +86,10 @@ class CustomAlbum: NSObject {
 
                 }, completionHandler: { (success, _) in
                     DispatchQueue.main.async {
-                        if success {
-                            BannerUtil.makeBanner(text: "Image saved to gallery!", color: .black, seconds: 3, context: parent)
+                        if success && false {
+                            BannerUtil.makeBanner(text: "Image saved to gallery!", color: ColorUtil.theme.fontColor, seconds: 3, context: parent)
                         } else {
-                            BannerUtil.makeBanner(text: "Error saving image!\nMake sure Slide has permission to access gallery", color: GMColor.red500Color(), seconds: 3, context: parent)
+                            BannerUtil.makeBanner(text: "Error saving image!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: parent)
                         }
                     }
                 })
@@ -115,7 +115,7 @@ class CustomAlbum: NSObject {
                             BannerUtil.makeBanner(text: "Video saved to gallery!", color: .black, seconds: 3, context: parent)
                         } else {
                             print("Error writing to movie library: \(error!.localizedDescription)")
-                            BannerUtil.makeBanner(text: "Error saving video!\nMake sure Slide has permission to access gallery", color: GMColor.red500Color(), seconds: 3, context: parent)
+                            BannerUtil.makeBanner(text: "Error saving video!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: parent)
                         }
                     }
                 })

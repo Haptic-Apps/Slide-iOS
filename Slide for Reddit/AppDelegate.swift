@@ -16,7 +16,9 @@ import SDWebImage
 import UIKit
 import UserNotifications
 import WatchConnectivity
+#if !os(iOS)
 import WatchKit
+#endif
 
 /// Posted when the OAuth2TokenRepository object succeed in saving a token successfully into Keychain.
 public let OAuth2TokenRepositoryDidSaveTokenName = Notification.Name(rawValue: "OAuth2TokenRepositoryDidSaveToken")

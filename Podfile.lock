@@ -122,6 +122,37 @@ DEPENDENCIES:
   - XLActionController (from `https://github.com/ccrama/XLActionController`)
   - YYText
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - Anchorage
+    - BadgeSwift
+    - BiometricAuthentication
+    - DTFoundation
+    - Embassy
+    - HTMLSpecialCharacters
+    - LicensesViewController
+    - MaterialComponents
+    - MDFInternationalization
+    - MiniKeychain
+    - MotionAnimator
+    - MotionInterchange
+    - MTColorDistance
+    - OpalImagePicker
+    - QuickLayout
+    - Realm
+    - RealmSwift
+    - SDWebImage
+    - Starscream
+    - SubtleVolume
+    - SwiftEntryKit
+    - SwiftLinkPreview
+    - SwiftLint
+    - SwiftSpreadsheet
+    - SwiftyJSON
+    - Then
+    - YYText
+
 EXTERNAL SOURCES:
   DTCoreText:
     :git: https://github.com/Cocoanetics/DTCoreText
@@ -200,4 +231,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f1a8c1e8458d00bdc0f32675bbbca3437b58ca5c
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.7.1
