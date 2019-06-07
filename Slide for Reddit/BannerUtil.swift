@@ -12,7 +12,7 @@ import UIKit
 
 public class BannerUtil {
     
-    public static func makeBanner(text: String, color: UIColor = ColorUtil.accentColorForSub(sub: ""), seconds: TimeInterval, context: UIViewController?, top: Bool = false, callback: (() -> Void)? = nil) {
+    public static func makeBanner(text: String, color: UIColor = ColorUtil.accentColorForSub(sub: ""), seconds: TimeInterval, context: UIViewController?, top: Bool = true, callback: (() -> Void)? = nil) {
         BannerUtil.init().makeBanner(text: text, color: color, seconds: seconds, top: top, callback: callback)
     }
 
@@ -54,10 +54,13 @@ public class BannerUtil {
         }
         attributes.position = top ? EKAttributes.Position.top : EKAttributes.Position.bottom
         attributes.screenInteraction = .forward
+        attributes.exitAnimation = EKAttributes.Animation(translate: EKAttributes.Animation.Translate.init(duration: 0.1), scale: EKAttributes.Animation.RangeAnimation.init(from: 0.7, to: 1, duration: 0.3), fade: nil)
+
+        attributes.entranceAnimation = EKAttributes.Animation(translate: EKAttributes.Animation.Translate.init(duration: 0.25), scale: EKAttributes.Animation.RangeAnimation.init(from: 0.7, to: 1, duration: 0.3), fade: nil)
         attributes.scroll = .enabled(swipeable: true, pullbackAnimation: .easeOut)
         attributes.entryBackground = EKAttributes.BackgroundStyle.color(color: UIColor.clear)
         attributes.precedence = .enqueue(priority: .normal)
-
+        
         if let callback = callback {
             attributes.entryInteraction.customTapActions.append {
                 callback()

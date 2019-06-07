@@ -2519,7 +2519,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                 self.flowLayout.reset(modal: self.presentingViewController != nil)
                 tableView.reloadData()
             }
-            BannerUtil.makeBanner(text: "Hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, callback: {
+            BannerUtil.makeBanner(text: "Hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, top: false, callback: {
                 self.links.insert(item, at: location)
                 self.tableView.insertItems(at: [IndexPath.init(item: location + self.headerOffset(), section: 0)])
                 self.flowLayout.reset(modal: self.presentingViewController != nil)
