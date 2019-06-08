@@ -438,7 +438,15 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
+        return 30
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return UIView()
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 30
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -726,14 +734,13 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             VCPresenter.showVC(viewController: n, popupIfPossible: false, parentNavigationController: navigationController, parentViewController: self)
         }
     }
-
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
+        label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 24, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-
+        
         switch section {
         case 0: label.text = "General"
         case 1: label.text = "Appearance"
