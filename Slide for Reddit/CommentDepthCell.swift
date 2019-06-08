@@ -442,7 +442,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 UIView.animate(withDuration: 0.2) {
                     self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
                 }
-            } else if progress > 0.25 && previousProgress <= 0.25 && isTwoForDirection(left: direction == 1) {
+            } else if progress > 0.35 && previousProgress <= 0.35 && isTwoForDirection(left: direction == 1) {
                 action = getSecondAction(left: direction == 1)
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
@@ -453,7 +453,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     self.typeImage.image = UIImage(named: self.action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     self.backgroundColor = self.action.getColor()
                 }
-            } else if progress < 0.25 && previousProgress >= 0.25 && isTwoForDirection(left: direction == 1) {
+            } else if progress < 0.35 && previousProgress >= 0.35 && isTwoForDirection(left: direction == 1) {
                 action = getFirstAction(left: direction == 1)
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
@@ -481,14 +481,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             CATransaction.setDisableActions(true)
             CATransaction.commit()
             currentProgress = progress
-            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.25 && previousProgress < 0.25) || sender.state == .ended {
+            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.35 && previousProgress < 0.35) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
                 }
             }
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.25) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
+        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.35) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
             doAction(item: self.action)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0

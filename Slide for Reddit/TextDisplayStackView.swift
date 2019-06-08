@@ -439,9 +439,7 @@ public class TextDisplayStackView: UIStackView {
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors == overflow.horizontalAnchors
-                if !ignoreHeight {
-                    table.heightAnchor == table.globalHeight
-                }
+                table.heightAnchor >= table.globalHeight
                 table.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 table.clipsToBounds = true
                 table.layer.cornerRadius = 10

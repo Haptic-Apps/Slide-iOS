@@ -361,21 +361,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         self.setupFab(size)
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
-        let offset = self.tableView.contentOffset
-        let width = self.tableView.bounds.size.width
-        
-        let index = round(offset.x / width)
-        let newOffset = CGPoint(x: index * size.width, y: offset.y)
-                
-        oldsize = self.view.bounds.width
-        self.tableView.setContentOffset(newOffset, animated: false)
 
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
                 self.flowLayout.reset(modal: self.presentingViewController != nil)
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
-                self.tableView.setContentOffset(newOffset, animated: false)
+                //todo content offset
             }, completion: nil
         )
 

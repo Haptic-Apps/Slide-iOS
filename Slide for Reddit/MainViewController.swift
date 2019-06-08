@@ -730,7 +730,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if !SettingValues.subredditBar {
             self.navigationItem.leftBarButtonItems = SettingValues.subredditBar ? [leftItem] : [accountB, leftItem]
         }
-
     }
     
     func doCurrentPage(_ page: Int) {
@@ -892,13 +891,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if menu.superview != nil && !MainViewController.needsReTheme {
             return
         }
-        let sort = UIButton.init(type: .custom)
+        let sort = ExpandedHitButton(type: .custom)
         sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         sortB = UIBarButtonItem.init(customView: sort)
 
-        let account = UIButton(type: .custom)
+        let account = ExpandedHitButton(type: .custom)
         account.setImage(UIImage(named: "profile")?.navIcon(), for: UIControl.State.normal)
         account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
         account.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -907,13 +906,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         accountB.accessibilityLabel = "Account"
         accountB.accessibilityHint = "Open account page"
         
-        let settings = UIButton.init(type: .custom)
+        let settings = ExpandedHitButton(type: .custom)
         settings.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControl.State.normal)
         //todo this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         settings.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let settingsB = UIBarButtonItem.init(customView: settings)
         
-        let offline = UIButton.init(type: .custom)
+        let offline = ExpandedHitButton(type: .custom)
         offline.setImage(UIImage.init(named: "offline")?.toolbarIcon(), for: UIControl.State.normal)
         offline.addTarget(self, action: #selector(self.restartVC), for: UIControl.Event.touchUpInside)
         offline.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
@@ -1224,5 +1223,14 @@ extension Bundle {
     }
     var releaseVersionNumberPretty: String {
         return "v\(releaseVersionNumber ?? "1.0.0")"
+    }
+}
+
+class ExpandedHitButton: UIButton {
+    override func point( inside point: CGPoint, with event: UIEvent? ) -> Bool {
+        let relativeFrame = self.bounds
+        let hitTestEdgeInsets = UIEdgeInsets( top: -44, left: -44, bottom: -44, right: -44 )
+        let hitFrame = relativeFrame.inset(by: hitTestEdgeInsets)
+        return hitFrame.contains(point)
     }
 }
