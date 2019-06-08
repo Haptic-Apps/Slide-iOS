@@ -16,7 +16,7 @@ target 'Slide for Reddit' do
   pod 'MaterialComponents/ActivityIndicator'
   pod 'MaterialComponents/Tabs'
   pod 'MaterialComponents/ProgressView'
-  pod 'SwiftEntryKit'
+  pod 'SwiftEntryKit', :git => 'https://github.com/ccrama/SwiftEntryKit'
   pod 'SubtleVolume'
   pod 'SDCAlertView', :git => 'https://github.com/ccrama/SDCAlertView'
   pod 'Embassy', '~> 4.0.8'

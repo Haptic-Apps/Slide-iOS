@@ -10,56 +10,47 @@ import Anchorage
 import UIKit
 import XLActionController
 
-class SettingsGestures: UITableViewController {
+class SettingsGestures: BubbleSettingTableViewController {
     
-    var submissionGesturesCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "subs")
+    var submissionGesturesCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "subs")
     var submissionGestures = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var disableBannerCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "banner")
+    var disableBannerCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "banner")
     var disableBanner = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var forceTouchSubmissionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "3dsubmission")
+    var forceTouchSubmissionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "3dsubmission")
 
-    var commentGesturesCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "comments")
+    var commentGesturesCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "comments")
 
-    var rightLeftActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "left")
+    var rightLeftActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "left")
 
-    var rightRightActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "right")
+    var rightRightActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "right")
 
-    var leftLeftActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "left")
+    var leftLeftActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "left")
     
-    var leftRightActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "right")
+    var leftRightActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "right")
 
-    var doubleTapActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "dtap")
+    var doubleTapActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "dtap")
 
-    var doubleTapSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "dtaps")
+    var doubleTapSubActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "dtaps")
 
-    var leftSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "leftsub")
+    var leftSubActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "leftsub")
 
-    var rightSubActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "rightsub")
+    var rightSubActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "rightsub")
     
-    var forceTouchActionCell: UITableViewCell = UITableViewCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "3dcomment")
+    var forceTouchActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "3dcomment")
     
     var canForceTouch = false
 
-    var commentCell = UITableViewCell()
+    var commentCell = InsetCell()
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateCells()
-        setupBaseBarColors()
     }
     
     @objc func switchIsChanged(_ changed: UISwitch) {
@@ -74,21 +65,6 @@ class SettingsGestures: UITableViewController {
 
         UserDefaults.standard.synchronize()
         updateCells()
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        
-        switch section {
-        case 0: label.text  = "Submissions"
-        case 1: label.text  = "Comments"
-        default: label.text  = ""
-        }
-        return toReturn
     }
     
     func showCommentGesturesMenu() {
@@ -225,8 +201,7 @@ class SettingsGestures: UITableViewController {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Gestures"
-        self.tableView.separatorStyle = .none
-        
+        self.headers = ["Submissions", "Comments"]
         createCell(submissionGesturesCell, submissionGestures, isOn: SettingValues.submissionGesturesEnabled, text: "Enable submission gestures")
         self.submissionGesturesCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.submissionGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -247,6 +222,7 @@ class SettingsGestures: UITableViewController {
         self.commentGesturesCell.detailTextLabel?.numberOfLines = 0
         self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
         self.commentGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.commentGesturesCell.accessoryType = .disclosureIndicator
 
         updateCells()
         self.tableView.tableFooterView = UIView()
@@ -297,78 +273,6 @@ class SettingsGestures: UITableViewController {
         return newTitle
     }
     
-//    @available(iOS 11.0, *)
-//    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        if indexPath.row != 0 || indexPath.section != 1 {
-//            return nil
-//        }
-//
-//        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE) {
-//            HapticUtility.hapticActionWeak()
-//            var actions = [UIContextualAction]()
-//            if SettingValues.commentActionRightRight != .NONE {
-//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
-//                    b(true)
-//                })
-//                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
-//
-//                actions.append(action)
-//            }
-//            if SettingValues.commentActionRightLeft != .NONE {
-//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
-//                    b(true)
-//                })
-//                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
-//
-//                actions.append(action)
-//            }
-//            let config = UISwipeActionsConfiguration.init(actions: actions)
-//
-//            return config
-//
-//        } else {
-//            return UISwipeActionsConfiguration.init()
-//        }
-//    }
-//
-//    @available(iOS 11.0, *)
-//    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        if indexPath.row != 0 || indexPath.section != 1 {
-//            return nil
-//        }
-//
-//        if SettingValues.commentGesturesEnabled && (SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE) {
-//            HapticUtility.hapticActionWeak()
-//            var actions = [UIContextualAction]()
-//            if SettingValues.commentActionLeftLeft != .NONE {
-//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
-//                    b(true)
-//                })
-//                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
-//
-//                actions.append(action)
-//            }
-//            if SettingValues.commentActionLeftRight != .NONE {
-//                let action = UIContextualAction.init(style: .normal, title: "", handler: { (_, _, b) in
-//                    b(true)
-//                })
-//                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
-//
-//                actions.append(action)
-//            }
-//            let config = UISwipeActionsConfiguration.init(actions: actions)
-//
-//            return config
-//
-//        } else {
-//            return UISwipeActionsConfiguration.init()
-//        }
-//    }
-
     func updateCells() {
         createCell(rightRightActionCell, nil, isOn: false, text: "First action swiping left to right")
         createCell(rightLeftActionCell, nil, isOn: false, text: "Second action swiping left to right")
@@ -485,22 +389,19 @@ class SettingsGestures: UITableViewController {
     }
     
     func createLeftView(cell: UITableViewCell, image: String, color: UIColor) {
-        cell.imageView?.image = UIImage.init(named: image)?.navIcon().getCopy(withColor: ColorUtil.theme.fontColor)
-        cell.imageView?.backgroundColor = color
+        if let icon = UIImage.init(named: image)?.navIcon().getCopy(withSize: CGSize.square(size: 25), withColor: .white) {
+            var coloredIcon = UIImage.convertGradientToImage(colors: [color, color], frame: CGSize.square(size: 45))
+            coloredIcon = coloredIcon.overlayWith(image: icon, posX: 10, posY: 10)
+            cell.imageView?.image = coloredIcon.sd_roundedCornerImage(withRadius: 10, corners: UIRectCorner.allCorners, borderWidth: 0, borderColor: nil)
+        }
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.row == 0 ? 100 : 70
-    }
-    
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        return indexPath.row == 0 && indexPath.section == 0 ? 100 : 70
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

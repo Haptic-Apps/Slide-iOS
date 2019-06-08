@@ -11,66 +11,53 @@ import MKColorPicker
 import UIKit
 import XLActionController
 
-class SettingsComments: UITableViewController, ColorPickerViewDelegate {
-    var disableNavigationBarCell: UITableViewCell = UITableViewCell()
+class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegate {
+    var disableNavigationBarCell: UITableViewCell = InsetCell()
     var disableNavigationBar = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var authorThemeCell: UITableViewCell = UITableViewCell()
+    var authorThemeCell: UITableViewCell = InsetCell()
 
-    var themeColorCell: UITableViewCell = UITableViewCell()
+    var themeColorCell: UITableViewCell = InsetCell()
     
-    var wideIndicatorCell: UITableViewCell = UITableViewCell()
+    var wideIndicatorCell: UITableViewCell = InsetCell()
     var wideIndicator = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var floatingJumpCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "jump")
+    var floatingJumpCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "jump")
 
-    var collapseDefaultCell: UITableViewCell = UITableViewCell()
+    var collapseDefaultCell: UITableViewCell = InsetCell()
     var collapseDefault = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var swapLongPressCell: UITableViewCell = UITableViewCell()
+    var swapLongPressCell: UITableViewCell = InsetCell()
     var swapLongPress = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var collapseFullyCell: UITableViewCell = UITableViewCell()
+    var collapseFullyCell: UITableViewCell = InsetCell()
     var collapseFully = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var fullscreenImageCell: UITableViewCell = UITableViewCell()
+    var fullscreenImageCell: UITableViewCell = InsetCell()
     var fullscreenImage = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var highlightOpCell: UITableViewCell = UITableViewCell()
+    var highlightOpCell: UITableViewCell = InsetCell()
     var highlightOp = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var hideAutomodCell: UITableViewCell = UITableViewCell()
+    var hideAutomodCell: UITableViewCell = InsetCell()
     var hideAutomod = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupBaseBarColors()
-    }
-    
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == disableNavigationBar {
             SettingValues.disableNavigationBar = changed.isOn
@@ -98,22 +85,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_highlightOp)
         }
         UserDefaults.standard.synchronize()
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        
-        switch section {
-        case 0: label.text  = "Submission"
-        case 1: label.text  = "Display"
-        case 2: label.text = "Interaction"
-        default: label.text  = ""
-        }
-        return toReturn
     }
     
     func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
@@ -320,17 +291,17 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         super.loadView()
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Comments"
-        self.tableView.separatorStyle = .none
+        self.title = "Comments settings"
+        self.headers = ["Comments page", "Comment display", "Comment interaction"]
 
         createCell(disableNavigationBarCell, disableNavigationBar, isOn: SettingValues.disableNavigationBar, text: "Disable comment navigation toolbar")
-        createCell(fullscreenImageCell, fullscreenImage, isOn: !SettingValues.commentFullScreen, text: "Crop the submission image in comment view")
+        createCell(fullscreenImageCell, fullscreenImage, isOn: !SettingValues.commentFullScreen, text: "Crop the lead banner image")
         createCell(collapseDefaultCell, collapseDefault, isOn: SettingValues.collapseDefault, text: "Collapse all comments automatically")
         createCell(swapLongPressCell, swapLongPress, isOn: SettingValues.swapLongPress, text: "Swap tap and long press actions")
         createCell(collapseFullyCell, collapseFully, isOn: SettingValues.collapseFully, text: "Collapse comments fully")
-        createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Highlight op replies of parent comments with a purple depth indicator")
+        createCell(highlightOpCell, highlightOp, isOn: SettingValues.highlightOp, text: "Purple depth indicator for OP replies")
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
-        createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Move top AutoModerator comment to a button (if it is not your submission)")
+        createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Hide pinned AutoModerator comments")
         createCell(floatingJumpCell, nil, isOn: false, text: "Floating jump button")
         floatingJumpCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         floatingJumpCell.detailTextLabel?.numberOfLines = 0
@@ -383,17 +354,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
         return 3
     }
     
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-    
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
         PagingCommentViewController.savedComment = nil
     }
@@ -412,6 +372,7 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             case 0: return self.authorThemeCell
             case 1: return self.themeColorCell
             case 2: return self.wideIndicatorCell
+            case 3: return self.highlightOpCell
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -419,7 +380,6 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
             case 0: return self.collapseDefaultCell
             case 1: return self.collapseFullyCell
             case 2: return self.swapLongPressCell
-            case 3: return self.highlightOpCell
             default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
@@ -430,8 +390,8 @@ class SettingsComments: UITableViewController, ColorPickerViewDelegate {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 3
-        case 1: return 3
-        case 2: return 4
+        case 1: return 4
+        case 2: return 3
         default: fatalError("Unknown number of sections")
         }
     }

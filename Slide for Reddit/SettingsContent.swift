@@ -9,29 +9,16 @@
 import reddift
 import UIKit
 
-class SettingsContent: UITableViewController {
+class SettingsContent: BubbleSettingTableViewController {
     
-    var showNSFWPreviewsCell: UITableViewCell = UITableViewCell()
+    var showNSFWPreviewsCell: UITableViewCell = InsetCell()
     var showNSFWPreviews = UISwitch().then {
         $0.tintColor = GMColor.red500Color()
     }
 
-    var hideCollectionViewsCell: UITableViewCell = UITableViewCell()
+    var hideCollectionViewsCell: UITableViewCell = InsetCell()
     var hideCollectionViews = UISwitch().then {
         $0.tintColor = GMColor.red500Color()
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupBaseBarColors()
     }
     
     @objc func switchIsChanged(_ changed: UISwitch) {
@@ -67,7 +54,7 @@ class SettingsContent: UITableViewController {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Reddit Content"
-        self.tableView.separatorStyle = .none
+        self.headers = ["NSFW content"]
         
         createCell(showNSFWPreviewsCell, showNSFWPreviews, isOn: SettingValues.nsfwPreviews, text: "Show NSFW image previews")
         createCell(hideCollectionViewsCell, hideCollectionViews, isOn: SettingValues.hideNSFWCollection, text: "Hide NSFW image previews in collections (such as r/all)")
@@ -95,17 +82,6 @@ class SettingsContent: UITableViewController {
 extension SettingsContent {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
-    }
-
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
-    }
-
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -9,21 +9,14 @@
 import reddift
 import UIKit
 
-class SettingsPostMenu: UITableViewController {
+class SettingsPostMenu: BubbleSettingTableViewController {
     
     var all: [SettingValues.PostOverflowAction] = []
     var enabled: [SettingValues.PostOverflowAction] = []
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        headers = ["Active actions", "Disabled actions"]
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
@@ -37,7 +30,7 @@ class SettingsPostMenu: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
+        return 45
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -48,10 +41,6 @@ class SettingsPostMenu: UITableViewController {
         }
         UserDefaults.standard.set(saveArray, forKey: "postMenu")
         UserDefaults.standard.synchronize()
-    }
-    
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
     }
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
@@ -102,20 +91,6 @@ class SettingsPostMenu: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        switch section {
-        case 0: label.text = "Active actions"
-        case 1: label.text =  "Disabled actions"
-        default: label.text  = ""
-        }
-        return toReturn
-    }
-    
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .none
     }
@@ -124,13 +99,8 @@ class SettingsPostMenu: UITableViewController {
         return false
     }
     
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.tableView.separatorStyle = .none
         setupBaseBarColors()
         self.title = "Arrange post menu"
     }

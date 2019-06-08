@@ -10,10 +10,9 @@ import reddift
 import Then
 import UIKit
 
-class SettingsAudio: UITableViewController {
+class SettingsAudio: BubbleSettingTableViewController {
 
     var cells: [[UITableViewCell]] = []
-    var sectionTitles: [String] = []
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
@@ -23,22 +22,22 @@ class SettingsAudio: UITableViewController {
         }
     }
 
-    var muteInlineVideoCell = UITableViewCell().then {
+    var muteInlineVideoCell = InsetCell().then {
         $0.selectionStyle = .none
     }
     var muteInlineVideoSwitch = UISwitch()
 
-    var muteModalVideoCell = UITableViewCell().then {
+    var muteModalVideoCell = InsetCell().then {
         $0.selectionStyle = .none
     }
     var muteModalVideoSwitch = UISwitch()
 
-    var muteYTCell = UITableViewCell().then {
+    var muteYTCell = InsetCell().then {
         $0.selectionStyle = .none
     }
     var muteYTSwitch = UISwitch()
 
-    var modalVideoFollowsMuteSwitchCell = UITableViewCell().then {
+    var modalVideoFollowsMuteSwitchCell = InsetCell().then {
         $0.selectionStyle = .none
     }
     var modalVideoFollowsMuteSwitchSwitch = UISwitch()
@@ -53,15 +52,14 @@ class SettingsAudio: UITableViewController {
         self.tableView.tableFooterView = UIView()
 
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
-        self.title = "Audio Settings"
-        self.tableView.separatorStyle = .none
+        self.title = "Audio settings"
 
         muteModalVideoSwitch = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
             $0.isOn = SettingValues.muteVideosInModal
         }
         muteModalVideoSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        muteModalVideoCell.textLabel?.text = "Start muted"
+        muteModalVideoCell.textLabel?.text = "Always start videos muted"
         muteModalVideoCell.accessoryView = muteModalVideoSwitch
         muteModalVideoCell.textLabel?.numberOfLines = 0
         muteModalVideoCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -71,7 +69,7 @@ class SettingsAudio: UITableViewController {
             $0.isOn = SettingValues.modalVideosRespectHardwareMuteSwitch
         }
         modalVideoFollowsMuteSwitchSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        modalVideoFollowsMuteSwitchCell.textLabel?.text = "Respect mute switch"
+        modalVideoFollowsMuteSwitchCell.textLabel?.text = "Start videos muted if your device is muted"
         modalVideoFollowsMuteSwitchCell.accessoryView = modalVideoFollowsMuteSwitchSwitch
         modalVideoFollowsMuteSwitchCell.textLabel?.numberOfLines = 0
         modalVideoFollowsMuteSwitchCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -81,12 +79,12 @@ class SettingsAudio: UITableViewController {
             $0.isOn = SettingValues.muteYouTube
         }
         muteYTSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        muteYTCell.textLabel?.text = "Start YouTube videos muted"
+        muteYTCell.textLabel?.text = "Always start YouTube videos muted"
         muteYTCell.accessoryView = muteYTSwitch
         muteYTCell.textLabel?.numberOfLines = 0
         muteYTCell.selectionStyle = UITableViewCell.SelectionStyle.none
 
-        sectionTitles.append("Popup Video Player")
+        headers.append("Popup Video Player")
         cells.append([
             muteModalVideoCell,
             modalVideoFollowsMuteSwitchCell,
@@ -104,7 +102,7 @@ class SettingsAudio: UITableViewController {
         muteInlineVideoCell.textLabel?.numberOfLines = 0
         muteInlineVideoCell.selectionStyle = UITableViewCell.SelectionStyle.none
 
-        sectionTitles.append("Inline Video")
+        headers.append("Inline Video")
         cells.append([muteInlineVideoCell])
         #endif
 
@@ -127,14 +125,6 @@ class SettingsAudio: UITableViewController {
         return cells[section].count
     }
 
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = cells[indexPath.section][indexPath.row]
         cell.style()
@@ -144,19 +134,6 @@ class SettingsAudio: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel().then {
-            $0.textColor = ColorUtil.baseAccent
-            $0.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        }
-        let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        label.text = sectionTitles[section]
-
-        return toReturn
-    }
-
 }
 
 // MARK: - Actions

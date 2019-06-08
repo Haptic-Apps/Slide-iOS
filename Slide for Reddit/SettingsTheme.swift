@@ -9,24 +9,24 @@
 import Anchorage
 import MKColorPicker
 import RLBAlertsPickers
-import UIKit
 import SDCAlertView
+import UIKit
 
-class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
+class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
 
     var tochange: SettingsViewController?
-    var primary: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "primary")
-    var accent: UITableViewCell = UITableViewCell()
-    var base: UITableViewCell = UITableViewCell()
-    var night: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "night")
-    var tintingMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "tintingMode")
-    var tintOutside: UITableViewCell = UITableViewCell()
+    var primary: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "primary")
+    var accent: UITableViewCell = InsetCell()
+    var base: UITableViewCell = InsetCell()
+    var night: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "night")
+    var tintingMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "tintingMode")
+    var tintOutside: UITableViewCell = InsetCell()
     var tintOutsideSwitch: UISwitch = UISwitch()
-    var custom: UITableViewCell = UITableViewCell()
+    var custom: UITableViewCell = InsetCell()
 
     var shareButton = UIBarButtonItem.init()
 
-    var reduceColorCell: UITableViewCell = UITableViewCell()
+    var reduceColorCell: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "reduce")
     var reduceColor: UISwitch = UISwitch()
     var nightEnabled: UISwitch = UISwitch()
 
@@ -52,6 +52,21 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             primaryChosen = colorPickerView.colors[indexPath.row]
             setupBaseBarColors(primaryChosen)
             self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: primaryChosen!)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let cell = cell as? InsetCell {
+            if indexPath.row == 0 {
+                cell.top = true
+            } else {
+                cell.top = false
+            }
+            if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 || indexPath.section == 1 || indexPath.section == 2 {
+                cell.bottom = true
+            } else {
+                cell.bottom = false
+            }
         }
     }
 
@@ -234,16 +249,17 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Edit theme"
+        self.title = "App Theme"
+        self.headers = ["App colors", "Night mode", "Custom themes", "Standard themes"]
         self.tableView.separatorStyle = .none
         
-        self.primary.textLabel?.text = "Primary color"
+        self.primary.textLabel?.text = "Header color"
         self.primary.accessoryType = .none
         self.primary.backgroundColor = ColorUtil.theme.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.theme.fontColor
         self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
         
-        self.accent.textLabel?.text = "Accent color"
+        self.accent.textLabel?.text = "Links and buttons color"
         self.accent.accessoryType = .none
         self.accent.backgroundColor = ColorUtil.theme.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -302,11 +318,14 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
         reduceColor.isOn = SettingValues.reduceColor
         reduceColor.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        reduceColorCell.textLabel?.text = "Reduce app colors (experimental)"
+        reduceColorCell.textLabel?.text = "Minimal Mode"
         reduceColorCell.textLabel?.numberOfLines = 0
+        reduceColorCell.detailTextLabel?.text = "Disables header colors for a simpler look"
+        reduceColorCell.detailTextLabel?.numberOfLines = 0
         reduceColorCell.accessoryView = reduceColor
         reduceColorCell.backgroundColor = ColorUtil.theme.foregroundColor
         reduceColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        reduceColorCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.reduceColorCell.imageView?.image = UIImage.init(named: "nocolors")?.toolbarIcon()
         self.reduceColorCell.imageView?.tintColor = ColorUtil.theme.fontColor
@@ -318,10 +337,10 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
             
             self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
-            self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
+            self.primary.detailTextLabel?.text = "Requires Minimal Mode to be disabled"
         }
         
-        createCell(reduceColorCell, reduceColor, isOn: SettingValues.reduceColor, text: "Reduce color throughout app (affects all navigation bars)")
+        createCell(reduceColorCell, reduceColor, isOn: SettingValues.reduceColor, text: "Minimal Mode")
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -334,14 +353,6 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         navigationItem.leftBarButtonItem = barButton
 
         self.navigationController?.setNavigationBarHidden(false, animated: false)
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
     }
     
     @objc public func handleBackButton() {
@@ -409,14 +420,6 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 4
-    }
-
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -679,38 +682,6 @@ class SettingsTheme: MediaTableViewController, ColorPickerViewDelegate {
         alert.addBlurView()
         
         self.present(alert, animated: true, completion: nil)
-    }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        titleLabel = UILabel()
-        titleLabel.textColor = ColorUtil.baseAccent
-        titleLabel.numberOfLines = 0
-        titleLabel.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = titleLabel.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-
-        switch section {
-        case 0: titleLabel.text = "App colors"
-        case 1: titleLabel.text = "Night mode"
-        case 2:
-            if ColorUtil.shouldBeNight() {
-                let titleString = NSMutableAttributedString(string: "Custom themes", attributes: [NSAttributedString.Key.font: titleLabel.font, NSAttributedString.Key.foregroundColor: titleLabel.textColor])
-                titleString.append(NSAttributedString(string: "\nThese cannot be applied while night mode is active", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 13, submission: true), NSAttributedString.Key.foregroundColor: titleLabel.textColor]))
-                titleLabel.attributedText = titleString
-            } else {
-                titleLabel.text = "Custom themes"
-            }
-        case 3:
-            if ColorUtil.shouldBeNight() {
-                let titleString = NSMutableAttributedString(string: "Standard themes", attributes: [NSAttributedString.Key.font: titleLabel.font, NSAttributedString.Key.foregroundColor: titleLabel.textColor])
-                titleString.append(NSAttributedString(string: "\nThese cannot be applied while night mode is active", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 13, submission: true), NSAttributedString.Key.foregroundColor: titleLabel.textColor]))
-                titleLabel.attributedText = titleString
-            } else {
-                titleLabel.text = "Standard themes"
-            }
-        default: titleLabel.text = ""
-        }
-        return toReturn
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

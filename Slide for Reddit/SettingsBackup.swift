@@ -13,28 +13,15 @@ import RLBAlertsPickers
 import SDWebImage
 import UIKit
 
-class SettingsBackup: UITableViewController {
+class SettingsBackup: BubbleSettingTableViewController {
     
     static var changed = false
 
-    var restore: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-    var backup: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
+    var restore: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: nil)
+    var backup: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: nil)
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupBaseBarColors()
         navigationController?.setToolbarHidden(true, animated: false)
         doCells()
     }

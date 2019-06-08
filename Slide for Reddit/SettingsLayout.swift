@@ -10,95 +10,95 @@ import reddift
 import UIKit
 import XLActionController
 
-class SettingsLayout: UITableViewController {
+class SettingsLayout: BubbleSettingTableViewController {
     
-    var imageCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "image")
+    var imageCell: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "image")
     
-    var cardModeCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "mode")
+    var cardModeCell: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "mode")
     
-    var actionBarCell: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "actionbar")
+    var actionBarCell: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "actionbar")
 
-    var flatModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "flat")
+    var flatModeCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "flat")
     var flatMode = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var hideImageSelftextCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "hide")
+    var hideImageSelftextCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "hide")
     var hideImageSelftext = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var largerThumbnailCell: UITableViewCell = UITableViewCell()
+    var largerThumbnailCell: UITableViewCell = InsetCell()
     var largerThumbnail = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var thumbLinkCell: UITableViewCell = UITableViewCell()
+    var thumbLinkCell: UITableViewCell = InsetCell()
     var thumbLink = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var scoreTitleCell: UITableViewCell = UITableViewCell()
+    var scoreTitleCell: UITableViewCell = InsetCell()
     var scoreTitle = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var commentTitleCell: UITableViewCell = UITableViewCell()
+    var commentTitleCell: UITableViewCell = InsetCell()
     var commentTitle = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var typeTitleCell: UITableViewCell = UITableViewCell()
+    var typeTitleCell: UITableViewCell = InsetCell()
     var typeTitle = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var infoBelowTitleCell: UITableViewCell = UITableViewCell()
+    var infoBelowTitleCell: UITableViewCell = InsetCell()
     var infoBelowTitle = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var abbreviateScoreCell: UITableViewCell = UITableViewCell()
+    var abbreviateScoreCell: UITableViewCell = InsetCell()
     var abbreviateScore = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var domainInfoCell: UITableViewCell = UITableViewCell()
+    var domainInfoCell: UITableViewCell = InsetCell()
     var domainInfo = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var leftThumbCell: UITableViewCell = UITableViewCell()
+    var leftThumbCell: UITableViewCell = InsetCell()
     var leftThumb = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var hideCell: UITableViewCell = UITableViewCell()
+    var hideCell: UITableViewCell = InsetCell()
     var hide = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var moreCell: UITableViewCell = UITableViewCell()
+    var moreCell: UITableViewCell = InsetCell()
     var more = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var saveCell: UITableViewCell = UITableViewCell()
+    var saveCell: UITableViewCell = InsetCell()
     var save = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var readLaterCell: UITableViewCell = UITableViewCell()
+    var readLaterCell: UITableViewCell = InsetCell()
     var readLater = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var selftextCell: UITableViewCell = UITableViewCell()
+    var selftextCell: UITableViewCell = InsetCell()
     var selftext = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var smalltagCell: UITableViewCell = UITableViewCell()
+    var smalltagCell: UITableViewCell = InsetCell()
     var smalltag = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
@@ -109,30 +109,6 @@ class SettingsLayout: UITableViewController {
     
     var link = LinkCellView().then {
         $0.tintColor = ColorUtil.baseAccent
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupBaseBarColors()
     }
     
     @objc func switchIsChanged(_ changed: UISwitch) {
@@ -149,8 +125,8 @@ class SettingsLayout: UITableViewController {
             SettingValues.menuButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_moreButton)
         } else if changed == infoBelowTitle {
-            SettingValues.infoBelowTitle = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_infoBelowTitle)
+            SettingValues.infoBelowTitle = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_infoBelowTitle)
             CachedTitle.titles.removeAll()
         } else if changed == abbreviateScore {
             SettingValues.abbreviateScores = changed.isOn
@@ -294,7 +270,7 @@ class SettingsLayout: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 1 && indexPath.row == 0 {
             let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = "Submission view mode"
+            alertController.headerData = "Card type"
             alertController.addAction(Action(ActionData(title: "List view", image: UIImage(named: "list")!.menuIcon()), style: .default, handler: { _ in
                 UserDefaults.standard.set("list", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .LIST
@@ -465,58 +441,59 @@ class SettingsLayout: UITableViewController {
     override func loadView() {
         super.loadView()
         doLink()
+        
+        headers = ["Preview", "Display", "Information line", "Thumbnails", "Advanced"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Submission Layout"
-        self.tableView.separatorStyle = .none
+        self.title = "Submission layout"
         
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
         
-        createCell(cardModeCell, isOn: false, text: "Submission view mode")
+        createCell(cardModeCell, isOn: false, text: "Card type")
         cardModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(imageCell, isOn: false, text: "Banner images")
+        createCell(imageCell, isOn: false, text: "Image mode")
         imageCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
         imageCell.detailTextLabel?.numberOfLines = 0
         imageCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(actionBarCell, isOn: false, text: "Action Bar style")
+        createCell(actionBarCell, isOn: false, text: "Button bar mode")
         actionBarCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Show selftext image preview")
+        createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Text-post images")
         hideImageSelftextCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show selftext image previews"
+        hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show image previews on text-only posts"
         hideImageSelftextCell.detailTextLabel?.numberOfLines = 0
         hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
-        createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Show content type in title")
+        createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Content type in title")
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
-        createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Show comment count under title")
-        createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Show post score under title")
+        createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")
+        createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Post score in title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
-        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Show information bar below the title")
-        createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Show domain in info line")
-        createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Thumbnail on left side")
-        createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Show hide post button")
-        createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Show save button")
-        createCell(readLaterCell, readLater, isOn: SettingValues.readLaterButton, text: "Show read later button")
-        createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Always show thumbnail on link posts")
+        createCell(infoBelowTitleCell, infoBelowTitle, isOn: !SettingValues.infoBelowTitle, text: "Title above submission information")
+        createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Domain in title")
+        createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Left-side thumbnail")
+        createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Hide post button")
+        createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Save post button")
+        createCell(readLaterCell, readLater, isOn: SettingValues.readLaterButton, text: "Read Later button")
+        createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Hide banner image on link submissions")
         createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
-        createCell(moreCell, more, isOn: SettingValues.menuButton, text: "Show menu button")
+        createCell(moreCell, more, isOn: SettingValues.menuButton, text: "Menu button")
         flatModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows"
+        flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows throughout Slide"
+        flatModeCell.detailTextLabel?.numberOfLines = 0
 
         doDisables()
         self.tableView.tableFooterView = UIView()
-        
     }
     
     func doDisables() {
@@ -544,35 +521,14 @@ class SettingsLayout: UITableViewController {
         if section == 0 {
             return 0
         }
-        return 70
+        return super.tableView(tableView, heightForHeaderInSection: section)
     }
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        
-        switch section {
-        case 0: label.text = "Preview"
-        case 1: label.text = "Display"
-        case 2: label.text = "Information line"
-        case 3: label.text = "Thumbnails"
-        case 4: label.text = "Advanced"
-        default: label.text  = ""
-        }
-        return toReturn
-    }
-
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return link.estimateHeight(false, np: false)
         }
         return 60
-    }
-    
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

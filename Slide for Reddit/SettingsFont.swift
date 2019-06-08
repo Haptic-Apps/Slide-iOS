@@ -9,37 +9,29 @@
 import reddift
 import UIKit
 
-class SettingsFont: UITableViewController {
+class SettingsFont: BubbleSettingTableViewController {
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-    
-    var enlargeCell: UITableViewCell = UITableViewCell()
-    var typeCell: UITableViewCell = UITableViewCell()
+    var enlargeCell: UITableViewCell = InsetCell()
+    var typeCell: UITableViewCell = InsetCell()
     var enlarge = UISwitch()
     var type = UISwitch()
 
-    var previewCell: UITableViewCell = UITableViewCell()
+    var previewCell: UITableViewCell = InsetCell()
     var preview = UISwitch()
 
-    var commentSize: UITableViewCell = UITableViewCell(style: .value1, reuseIdentifier: "commentSize")
-    var submissionSize: UITableViewCell = UITableViewCell(style: .value1, reuseIdentifier: "submissionSize")
+    var commentSize: UITableViewCell = InsetCell(style: .value1, reuseIdentifier: "commentSize")
+    var submissionSize: UITableViewCell = InsetCell(style: .value1, reuseIdentifier: "submissionSize")
 
-    var submissionFont = UITableViewCell(style: .value1, reuseIdentifier: "submissionFont")
-    var commentFont = UITableViewCell(style: .value1, reuseIdentifier: "commentFont")
+    var submissionFont = InsetCell(style: .value1, reuseIdentifier: "submissionFont")
+    var commentFont = InsetCell(style: .value1, reuseIdentifier: "commentFont")
 
-    var submissionWeight = UITableViewCell(style: .value1, reuseIdentifier: "submissionWeight")
-    var commentWeight = UITableViewCell(style: .value1, reuseIdentifier: "commentWeight")
+    var submissionWeight = InsetCell(style: .value1, reuseIdentifier: "submissionWeight")
+    var commentWeight = InsetCell(style: .value1, reuseIdentifier: "commentWeight")
 
-    var submissionPreview = UITableViewCell(style: .default, reuseIdentifier: "submissionPreview").then {
+    var submissionPreview = InsetCell(style: .default, reuseIdentifier: "submissionPreview").then {
         $0.selectionStyle = .none
     }
-    var commentPreview = UITableViewCell(style: .default, reuseIdentifier: "commentPreview").then {
+    var commentPreview = InsetCell(style: .default, reuseIdentifier: "commentPreview").then {
         $0.selectionStyle = .none
     }
 
@@ -54,22 +46,6 @@ class SettingsFont: UITableViewController {
         -6: "Smallest",
         ]
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupBaseBarColors()
-    }
-    
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == enlarge {
             SettingValues.enlargeLinks = changed.isOn
@@ -104,8 +80,8 @@ class SettingsFont: UITableViewController {
         
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Font Settings"
-        self.tableView.separatorStyle = .none
+        self.title = "Font settings"
+        headers = ["Submissions", "Comments", "Link options"]
 
         enlarge = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
@@ -220,16 +196,6 @@ class SettingsFont: UITableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-    
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-    }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
@@ -280,24 +246,6 @@ class SettingsFont: UITableViewController {
         default: fatalError("Unknown number of sections")
         }
     }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel().then {
-            $0.textColor = ColorUtil.baseAccent
-            $0.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        }
-        let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-
-        switch section {
-        case 0: label.text = "Submissions"
-        case 1: label.text = "Comments"
-        case 2: label.text = "Link options"
-        default: label.text = ""
-        }
-        return toReturn
-    }
-    
 }
 
 // MARK: - Actions

@@ -10,7 +10,7 @@ import Anchorage
 import reddift
 import UIKit
 
-class SettingsIcon: UITableViewController {
+class SettingsIcon: BubbleSettingTableViewController {
     
     var premium = ["retroapple", "tronteal", "pink", "black"]
     var community = ["cottoncandy", "outrun", "default", "stars", "ghost", "blue", "mint", "green", "lightblue", "purple", "red", "yellow"]
@@ -23,46 +23,12 @@ class SettingsIcon: UITableViewController {
         self.tableView.register(IconCell.classForCoder(), forCellReuseIdentifier: "icon")
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupBaseBarColors()
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        
-        switch section {
-        case 0: label.text  = "Premium icons"
-        case 1: label.text  = "Community icons"
-        default: label.text  = ""
-        }
-        return toReturn
-    }
-    
     override func loadView() {
         super.loadView()
-        
+        headers = ["Premium icons", "Community icons"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Icon"
-        self.tableView.separatorStyle = .none
+        self.title = "App icon"
         
         doChecks()
         self.tableView.tableFooterView = UIView()
@@ -75,13 +41,6 @@ class SettingsIcon: UITableViewController {
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
-    }
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -131,7 +90,7 @@ class SettingsIcon: UITableViewController {
     
 }
 
-public class IconCell: UITableViewCell {
+public class IconCell: InsetCell {
     var title = UILabel()
     var iconView = UIImageView()
     override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

@@ -11,31 +11,18 @@ import reddift
 import UIKit
 import SDCAlertView
 
-class SettingsViewMode: UITableViewController {
+class SettingsViewMode: BubbleSettingTableViewController {
     
-    var singleMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "single")
-    var splitMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "split")
-    var multicolumnMode: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "multi")
-    var multicolumnCount: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "multicount")
+    var singleMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "single")
+    var splitMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "split")
+    var multicolumnMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multi")
+    var multicolumnCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multicount")
 
-    var numberColumns: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "number")
+    var numberColumns: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "number")
     
-    var subredditBar = UITableViewCell()
+    var subredditBar = InsetCell()
     var subredditBarSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupBaseBarColors()
     }
     
     @objc func switchIsChanged(_ changed: UISwitch) {
@@ -46,22 +33,7 @@ class SettingsViewMode: UITableViewController {
         }
         UserDefaults.standard.synchronize()
     }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        
-        switch section {
-        case 0: label.text = "Subreddit display mode"
-        case 1: label.text = "Other settings"
-        default: label.text = ""
-        }
-        return toReturn
-    }
-    
+
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -79,10 +51,10 @@ class SettingsViewMode: UITableViewController {
     override func loadView() {
         super.loadView()
         
+        headers = ["Subreddit display mode", "Other settings"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "App Mode"
-        self.tableView.separatorStyle = .none
         
         createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
         createCell(singleMode, isOn: false, text: "Single-column posts")
@@ -170,17 +142,6 @@ class SettingsViewMode: UITableViewController {
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 0 : 70
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-    
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

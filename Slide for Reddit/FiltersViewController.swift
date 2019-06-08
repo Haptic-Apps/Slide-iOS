@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FiltersViewController: UITableViewController, UISearchBarDelegate {
+class FiltersViewController: BubbleSettingTableViewController, UISearchBarDelegate {
     
     var domainEnter = UISearchBar()
     var selftextEnter = UISearchBar()
@@ -73,7 +73,7 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Filters"
-        self.tableView.separatorStyle = .none
+        self.headers = ["Submission domain filters", "Submission body text filters", "Submission title filters", "Submission author filters", "Subreddit filters", "Submission flair filters"]
 
         domainEnter.searchBarStyle = UISearchBar.Style.minimal
         domainEnter.placeholder = "Add a new domain to filter"
@@ -191,17 +191,6 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 6
     }
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 70
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch section {
@@ -287,22 +276,8 @@ class FiltersViewController: UITableViewController, UISearchBarDelegate {
      
      }*/
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        switch section {
-        case 0: label.text = "Domain filters"
-        case 1: label.text =  "Selftext filters"
-        case 2: label.text = "Title filters"
-        case 3: label.text = "Profile filters"
-        case 4: label.text = "Subreddit filters"
-        case 5: label.text = "Flair filters"
-        default: label.text  = ""
-        }
-        return toReturn
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 70
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -10,13 +10,13 @@ import Anchorage
 import UIKit
 import SDCAlertView
 
-class CacheSettings: UITableViewController {
+class CacheSettings: BubbleSettingTableViewController {
 
     var subs: [String] = []
-    var autoCache: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "auto")
-    var cacheContent: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "cache")
-    var depth: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "depth")
-    var posts: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "posts")
+    var autoCache: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "auto")
+    var cacheContent: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "cache")
+    var depth: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "depth")
+    var posts: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "posts")
 
     var autoCacheSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -25,14 +25,6 @@ class CacheSettings: UITableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -56,7 +48,7 @@ class CacheSettings: UITableViewController {
             $0.localizedCaseInsensitiveCompare($1) == ComparisonResult.orderedAscending
         }
         tableView.reloadData()
-        self.tableView.separatorStyle = .none
+        self.headers = ["Caching options", "Subreddits to Auto-Cache"]
 
         createCell(autoCache, autoCacheSwitch, isOn: SettingValues.autoCache, text: "Cache subreddits automatically")
         self.autoCache.detailTextLabel?.text = "Will run the first time Slide opens each day"
@@ -104,25 +96,6 @@ class CacheSettings: UITableViewController {
         Subscriptions.set(name: AccountController.currentName, subs: subs, completion: {
             self.dismiss(animated: true, completion: nil)
         })*/
-    }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-
-        switch section {
-        case 0: label.text = "Caching settings"
-        case 1: label.text = "Subreddits to Auto-Cache"
-        default: label.text = ""
-        }
-        return toReturn
-    }
-
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return CGFloat(70)
     }
 
     override func didReceiveMemoryWarning() {
@@ -263,7 +236,7 @@ class CacheSettings: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
-        self.title = "Manage subreddit caching"
+        self.title = "Manage offline caching"
     }
 
 }

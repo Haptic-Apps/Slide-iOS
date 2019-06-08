@@ -8,52 +8,39 @@
 
 import UIKit
 
-class SettingsHistory: UITableViewController {
+class SettingsHistory: BubbleSettingTableViewController {
     
-    var saveHistoryCell: UITableViewCell = UITableViewCell()
+    var saveHistoryCell: UITableViewCell = InsetCell()
     var saveHistory = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var saveNSFWHistoryCell: UITableViewCell = UITableViewCell()
+    var saveNSFWHistoryCell: UITableViewCell = InsetCell()
     var saveNSFWHistory = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var readOnScrollCell: UITableViewCell = UITableViewCell()
+    var readOnScrollCell: UITableViewCell = InsetCell()
     var readOnScroll = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var dotCell: UITableViewCell = UITableViewCell()
+    var dotCell: UITableViewCell = InsetCell()
     var dot = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var clearHistory: UITableViewCell = UITableViewCell()
+    var clearHistory: UITableViewCell = InsetCell()
 
-    var clearSubs: UITableViewCell = UITableViewCell()
+    var clearSubs: UITableViewCell = InsetCell()
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupBaseBarColors()
-    }
-    
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == saveHistory {
             SettingValues.saveHistory = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveHistory)
         } else if changed == saveNSFWHistory {
-            SettingValues.saveNSFWHistory = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveNSFWHistory)
+            SettingValues.saveNSFWHistory = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_saveNSFWHistory)
         } else if changed == dot {
             SettingValues.newIndicator = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_newIndicator)
@@ -64,21 +51,6 @@ class SettingsHistory: UITableViewController {
         UserDefaults.standard.synchronize()
         doDisables()
         tableView.reloadData()
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        
-        switch section {
-        case 0: label.text  = "Settings"
-        case 1: label.text = "Clear History"
-        default: label.text  = ""
-        }
-        return toReturn
     }
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
@@ -101,13 +73,15 @@ class SettingsHistory: UITableViewController {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "History"
-        self.tableView.separatorStyle = .none
+        self.headers = ["Settings", "Clear history"]
 
         createCell(saveHistoryCell, saveHistory, isOn: SettingValues.saveHistory, text: "Save submission and subreddit history")
-        createCell(saveNSFWHistoryCell, saveNSFWHistory, isOn: SettingValues.saveNSFWHistory, text: "Save NSFW submission and subreddit history")
+        createCell(saveNSFWHistoryCell, saveNSFWHistory, isOn: !SettingValues.saveNSFWHistory, text: "Hide NSFW submission and subreddit history")
         createCell(readOnScrollCell, readOnScroll, isOn: SettingValues.markReadOnScroll, text: "Mark submissions as read when scrolled off screen")
-        createCell(dotCell, dot, isOn: SettingValues.newIndicator, text: "Show new posts with a dot instead of graying post titles")
-
+        createCell(dotCell, dot, isOn: SettingValues.newIndicator, text: "New submissions indicator")
+        dotCell.detailTextLabel?.numberOfLines = 0
+        dotCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        dotCell.detailTextLabel?.text = "Enabling this will disable the 'grayed out' effect of read submissions"
         clearHistory.textLabel?.text = "Clear submission history"
         clearHistory.backgroundColor = ColorUtil.theme.foregroundColor
         clearHistory.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -149,16 +123,6 @@ class SettingsHistory: UITableViewController {
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
-    }
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-    
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

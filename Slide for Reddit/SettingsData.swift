@@ -9,46 +9,33 @@
 import reddift
 import UIKit
 
-class SettingsData: UITableViewController {
+class SettingsData: BubbleSettingTableViewController {
     
-    var enableDataSavingCell: UITableViewCell = UITableViewCell()
+    var enableDataSavingCell: UITableViewCell = InsetCell()
     var enableDataSaving = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var disableOnWifiCell: UITableViewCell = UITableViewCell()
+    var disableOnWifiCell: UITableViewCell = InsetCell()
     var disableOnWifi = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     //load hq always
     //LOwer quality mode
     //Dont show images
-    var loadHQViewerCell: UITableViewCell = UITableViewCell()
+    var loadHQViewerCell: UITableViewCell = InsetCell()
     var loadHQViewer = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var lowerQualityModeCell: UITableViewCell = UITableViewCell()
+    var lowerQualityModeCell: UITableViewCell = InsetCell()
     var lowerQualityMode = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var dontLoadImagePreviewsCell: UITableViewCell = UITableViewCell()
+    var dontLoadImagePreviewsCell: UITableViewCell = InsetCell()
     var dontLoadImagePreviews = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupBaseBarColors()
     }
     
     @objc func switchIsChanged(_ changed: UISwitch) {
@@ -56,8 +43,8 @@ class SettingsData: UITableViewController {
             SettingValues.dataSavingEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingEnabled)
         } else if changed == disableOnWifi {
-            SettingValues.dataSavingDisableWiFi = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_dataSavingDisableWifi)
+            SettingValues.dataSavingDisableWiFi = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_dataSavingDisableWifi)
         } else if changed == loadHQViewer {
             SettingValues.loadContentHQ = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_loadContentHQ)
@@ -106,14 +93,14 @@ class SettingsData: UITableViewController {
         
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Data Saving"
-        self.tableView.separatorStyle = .none
+        self.title = "Data settings"
+        headers =  ["Data Saving"]
 
-        createCell(enableDataSavingCell, enableDataSaving, isOn: SettingValues.dataSavingEnabled, text: "Data saving enabled")
-        createCell(disableOnWifiCell, disableOnWifi, isOn: SettingValues.dataSavingDisableWiFi, text: "Disable data saving on WiFi")
-        createCell(loadHQViewerCell, loadHQViewer, isOn: SettingValues.loadContentHQ, text: "Always load images in highest quality when opened (same as when Data Saving is off)")
+        createCell(enableDataSavingCell, enableDataSaving, isOn: SettingValues.dataSavingEnabled, text: "Enable Data Saving mode")
+        createCell(disableOnWifiCell, disableOnWifi, isOn: !SettingValues.dataSavingDisableWiFi, text: "Data Saving mode on WiFi")
+        createCell(loadHQViewerCell, loadHQViewer, isOn: SettingValues.loadContentHQ, text: "Load full-size images when opened")
         createCell(lowerQualityModeCell, lowerQualityMode, isOn: SettingValues.lqLow, text: "Load lowest image quality")
-        createCell(dontLoadImagePreviewsCell, dontLoadImagePreviews, isOn: SettingValues.noImages, text: "Don't load any images")
+        createCell(dontLoadImagePreviewsCell, dontLoadImagePreviews, isOn: SettingValues.noImages, text: "Don't load any images when Data Saving mode is active")
         
         doDisables()
         self.tableView.tableFooterView = UIView()
@@ -136,17 +123,11 @@ class SettingsData: UITableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
-    }
-    
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-    
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-    }
-    
+        
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:

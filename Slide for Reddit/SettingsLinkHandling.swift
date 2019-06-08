@@ -9,28 +9,28 @@
 import reddift
 import UIKit
 
-class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
+class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegate {
 
     var domainEnter = UISearchBar().then {
         $0.tintColor = ColorUtil.baseAccent
     }
 
-    var internalGifCell: UITableViewCell = UITableViewCell()
+    var internalGifCell: UITableViewCell = InsetCell()
     var internalGif = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var internalImageCell: UITableViewCell = UITableViewCell()
+    var internalImageCell: UITableViewCell = InsetCell()
     var internalImage = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var internalAlbumCell: UITableViewCell = UITableViewCell()
+    var internalAlbumCell: UITableViewCell = InsetCell()
     var internalAlbum = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
-    var internalYouTubeCell: UITableViewCell = UITableViewCell()
+    var internalYouTubeCell: UITableViewCell = InsetCell()
     var internalYouTube = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
@@ -44,14 +44,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     var focusKlarIcon: UIImage?
     var duckIcon: UIImage?
     var braveIcon: UIImage?
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
-        } else {
-            return .lightContent
-        }
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -174,17 +166,17 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == internalImage {
-            SettingValues.internalImageView = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalImageView)
+            SettingValues.internalImageView = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalImageView)
         } else if changed == internalGif {
-            SettingValues.internalGifView = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalGifView)
+            SettingValues.internalGifView = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalGifView)
         } else if changed == internalAlbum {
-            SettingValues.internalAlbumView = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalAlbumView)
+            SettingValues.internalAlbumView = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalAlbumView)
         } else if changed == internalYouTube {
-            SettingValues.internalYouTube = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_internalYouTube)
+            SettingValues.internalYouTube = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalYouTube)
         }
         UserDefaults.standard.synchronize()
         tableView.reloadData()
@@ -210,12 +202,12 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Link Handling"
-        self.tableView.separatorStyle = .none
+        headers = ["Web browser", "Internal link handling", "Domains to open externally"]
 
-        createCell(internalGifCell, internalGif, isOn: !SettingValues.internalGifView, text: "Open videos (gifs, v.redd.it, streamable.com) externally")
-        createCell(internalAlbumCell, internalAlbum, isOn: !SettingValues.internalAlbumView, text: "Open Imgur albums externally")
-        createCell(internalImageCell, internalImage, isOn: !SettingValues.internalImageView, text: "Open images (Imgur, direct image links) externally")
-        createCell(internalYouTubeCell, internalYouTube, isOn: !SettingValues.internalYouTube, text: "Open YouTube videos externally")
+        createCell(internalGifCell, internalGif, isOn: SettingValues.internalGifView, text: "Video viewer (gifs, v.redd.it, streamable.com)")
+        createCell(internalAlbumCell, internalAlbum, isOn: SettingValues.internalAlbumView, text: "Imgur Album viewer")
+        createCell(internalImageCell, internalImage, isOn: SettingValues.internalImageView, text: "Image viewer (Imgur, direct image links)")
+        createCell(internalYouTubeCell, internalYouTube, isOn: SettingValues.internalYouTube, text: "YouTube viewer")
 
         self.tableView.tableFooterView = UIView()
 
@@ -233,13 +225,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
 
     }
 
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-
-    func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-    }
-
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         PostFilter.openExternally.append(domainEnter.text! as NSString)
         domainEnter.text = ""
@@ -254,7 +239,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            let cell = UITableViewCell()
+            let cell = InsetCell()
             cell.backgroundColor = ColorUtil.theme.foregroundColor
             cell.backgroundColor = ColorUtil.theme.foregroundColor
             cell.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -313,9 +298,7 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             default: fatalError("Unknown row in section 0")
             }
         case 2:
-            let cell = UITableViewCell()
-            cell.backgroundColor = ColorUtil.theme.foregroundColor
-            cell.accessoryType = .disclosureIndicator
+            let cell = InsetCell()
             cell.backgroundColor = ColorUtil.theme.foregroundColor
             cell.textLabel?.textColor = ColorUtil.theme.fontColor
             cell.textLabel?.text = PostFilter.openExternally[indexPath.row] as String
@@ -339,28 +322,6 @@ class SettingsLinkHandling: UITableViewController, UISearchBarDelegate {
             UserDefaults.standard.synchronize()
             tableView.reloadData()
         }
-    }
-
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 70
-    }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label: UILabel = UILabel()
-        label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
-        label.numberOfLines = 0
-        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        let contentAttribute = NSMutableAttributedString(string: "Content Settings", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): label.font, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): label.textColor]))
-        contentAttribute.append(NSMutableAttributedString(string: "\nAdditionally, you can set specific domains to open externally in the section below", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): label.textColor])))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        switch section {
-        case 0: label.text = "Web browser"
-        case 1: label.attributedText = contentAttribute
-        case 2: label.text =  "External Domains"
-        default: label.text  = ""
-        }
-        return toReturn
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
