@@ -1590,7 +1590,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
             }
         }
-        SDWebImagePrefetcher.init().prefetchURLs(urls)
+        SDWebImagePrefetcher.shared.prefetchURLs(urls)
         }
     }
     
