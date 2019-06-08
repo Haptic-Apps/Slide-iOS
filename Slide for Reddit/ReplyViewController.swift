@@ -14,8 +14,8 @@ import reddift
 import SDCAlertView
 import SwiftyJSON
 import Then
-import YYText
 import UIKit
+import YYText
 
 class ReplyViewController: MediaViewController, UITextViewDelegate {
 
@@ -599,7 +599,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         self.scrollView.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 0, right: 0)
         self.scrollView.bottomAnchor == self.view.bottomAnchor - 64
         self.scrollView.topAnchor == self.view.topAnchor
-        self.scrollView.edgeAnchors == self.view.edgeAnchors
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.scrollView.horizontalAnchors == self.view.horizontalAnchors
 
         let stack = UIStackView().then {
             $0.accessibilityIdentifier = "Reply Stack Vertical"

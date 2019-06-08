@@ -459,9 +459,9 @@ public class TextDisplayStackView: UIStackView {
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors == overflow.horizontalAnchors
-                if !ignoreHeight {
+                //if !ignoreHeight {
                     body.heightAnchor >= body.globalHeight
-                }
+                //}
                 body.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
                 estimatedHeight += body.globalHeight
