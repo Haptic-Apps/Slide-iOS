@@ -552,6 +552,6 @@ class BubbleSettingTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
-        tableView.separatorColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+        tableView.separatorColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.fontColor.withAlphaComponent(0.25))
     }
 }
