@@ -150,16 +150,14 @@ class PostActions: NSObject {
     public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
         
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Submission by \(AccountController.formatUsername(input: link.author, small: true))"
+        let alertController: DragDownAlertMenu = DragDownAlertMenu(title: "Submission", subtitle: link.title, icon: link.thumbnailUrl)
         
         for item in SettingValues.PostOverflowAction.getMenu(link, mutableList: mutableList) {
-            alertController.addAction(Action(ActionData(title: item.getTitle(link), image: item.getImage(link)), style: .default, handler: { _ in
+            alertController.addAction(title: item.getTitle(link), icon: item.getImage(link)) {
                 handleAction(action: item, cell: cell, parent: parent, nav: nav, mutableList: mutableList, delegate: delegate, index: index)
-            }))
+            }
         }
-        
-        VCPresenter.presentAlert(alertController, parentVC: parent)
+        alertController.show(parent)
     }
     
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {

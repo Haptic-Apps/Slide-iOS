@@ -239,6 +239,7 @@
 		BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */; };
 		BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B631E3405F300DAA1EB /* SettingsTheme.swift */; };
 		BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE780B681E3527D900DAA1EB /* Drafts.swift */; };
+		BE7A2D3E22AD99600005F74F /* DragDownAlertMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */; };
 		BE7AF5761F3529E00003B24B /* ShadowboxLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AF5751F3529E00003B24B /* ShadowboxLinkViewController.swift */; };
 		BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AF5771F363A7C0003B24B /* ShadowboxViewController.swift */; };
 		BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AF5791F3655F50003B24B /* SwipeDownModalVC.swift */; };
@@ -630,6 +631,7 @@
 		BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelatedViewController.swift; sourceTree = "<group>"; };
 		BE780B631E3405F300DAA1EB /* SettingsTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTheme.swift; sourceTree = "<group>"; };
 		BE780B681E3527D900DAA1EB /* Drafts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drafts.swift; sourceTree = "<group>"; };
+		BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragDownAlertMenu.swift; sourceTree = "<group>"; };
 		BE7AF5751F3529E00003B24B /* ShadowboxLinkViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShadowboxLinkViewController.swift; sourceTree = "<group>"; };
 		BE7AF5771F363A7C0003B24B /* ShadowboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShadowboxViewController.swift; sourceTree = "<group>"; };
 		BE7AF5791F3655F50003B24B /* SwipeDownModalVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeDownModalVC.swift; sourceTree = "<group>"; };
@@ -1257,6 +1259,7 @@
 				BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */,
 				BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */,
 				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
+				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1925,6 +1928,7 @@
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				096A7D152215D9AB0067106C /* AVAudioSession+Extensions.swift in Sources */,
 				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
+				BE7A2D3E22AD99600005F74F /* DragDownAlertMenu.swift in Sources */,
 				0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */,
 				0984BE4E2114C4040091C2E1 /* PostContentPresentationManager.swift in Sources */,
 				BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */,
