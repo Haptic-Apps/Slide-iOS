@@ -161,13 +161,14 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.view.addSubview(tableView)
         backgroundView.edgeAnchors == view.edgeAnchors
 
-        self.tableView.horizontalAnchors == self.view.horizontalAnchors
+        self.tableView.centerXAnchor == self.view.centerXAnchor
+        self.tableView.widthAnchor == min(self.view.frame.size.width, 450)
         self.tableView.bottomAnchor == self.view.bottomAnchor + 20
         self.tableView.bounces = false
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.layer.cornerRadius = 15
         self.tableView.layer.masksToBounds = true
-        height = min(UIScreen.main.bounds.height * (2/3), CGFloat(80 + (60 * actions.count)))
+        height = min(UIScreen.main.bounds.height * (2 / 3), CGFloat(80 + (60 * actions.count)))
         self.tableView.heightAnchor == height
         stylize()
         self.tableView.reloadData()
@@ -204,9 +205,9 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         label.attributedText = attributedTitle
         let close = UIImageView(image: UIImage(named: "close")?.navIcon())
         close.contentMode = .center
-        label.addSubview(close)
-        close.topAnchor == label.topAnchor + 4
-        close.rightAnchor == label.rightAnchor
+        toReturn.addSubview(close)
+        close.centerYAnchor == toReturn.centerYAnchor
+        close.rightAnchor == toReturn.rightAnchor - 16
         close.heightAnchor == 30
         close.widthAnchor == 30
         close.addTapGestureRecognizer {
@@ -217,7 +218,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             image.layer.cornerRadius = 7
             image.clipsToBounds = true
             toReturn.addSubviews(image, label)
-            image.leftAnchor == toReturn.leftAnchor + 16
+            image.leftAnchor == toReturn.leftAnchor + 12
             image.centerYAnchor == toReturn.centerYAnchor
             image.heightAnchor == 45
             image.widthAnchor == 45
@@ -225,12 +226,12 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             
             image.sd_setImage(with: URL(string: icon!), placeholderImage: LinkCellImageCache.web)
             label.leftAnchor == image.rightAnchor + 8
-            label.rightAnchor == toReturn.rightAnchor - 16
+            label.rightAnchor == close.leftAnchor - 8
             label.verticalAnchors == toReturn.verticalAnchors
         } else {
             toReturn.addSubview(label)
             label.leftAnchor == toReturn.leftAnchor + 16
-            label.rightAnchor == toReturn.rightAnchor - 16
+            label.rightAnchor == close.leftAnchor - 8
             label.verticalAnchors == toReturn.verticalAnchors
         }
         let bar = UIView().then {
