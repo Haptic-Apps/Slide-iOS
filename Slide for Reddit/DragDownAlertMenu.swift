@@ -61,6 +61,18 @@ class BottomActionCell: UITableViewCell {
             self.icon.alpha = 1
         }
     }
+    
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        if highlighted {
+            UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+                self.background.alpha = 0.4
+            }, completion: nil)
+        } else {
+            UIView.animate(withDuration: 0.1, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+                self.background.alpha = 1
+            }, completion: nil)
+        }
+    }
 
     func layoutViews() {
         self.contentView.addSubviews(background, title, icon)
@@ -74,6 +86,8 @@ class BottomActionCell: UITableViewCell {
         icon.rightAnchor == background.rightAnchor - 16
         icon.centerYAnchor == background.centerYAnchor
         icon.heightAnchor == 44
+        
+        self.selectionStyle = .none
     }
     
     func themeViews() {
@@ -311,6 +325,21 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
 }
 
+// MARK: - Accessibility
+extension DragDownAlertMenu {
+    override func accessibilityPerformEscape() -> Bool {
+        dismiss(animated: true)
+        return true
+    }
+    
+    override var accessibilityViewIsModal: Bool {
+        get {
+            return true
+        }
+        set {}
+    }
+}
+
 //Based off of https://stackoverflow.com/a/45525284/3697225
 extension DragDownAlertMenu: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController,
@@ -352,6 +381,7 @@ extension DragDownAlertMenu: UIViewControllerTransitioningDelegate {
 final class DragDownPresentationAnimator: NSObject {
     
     let isPresentation: Bool
+    var presented = false
     var interactionController: DragDownDismissInteraction?
     
     init(isPresentation: Bool, interactionController: DragDownDismissInteraction?) {
@@ -363,7 +393,7 @@ final class DragDownPresentationAnimator: NSObject {
 extension DragDownPresentationAnimator: UIViewControllerAnimatedTransitioning {
     func transitionDuration(
         using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return isPresentation ? 0.3 : 0.25
+        return isPresentation || presented ? 0.3 : 0.25
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -391,8 +421,10 @@ extension DragDownPresentationAnimator: UIViewControllerAnimatedTransitioning {
             spring = 0
             initial = 0
         }
-        if !isPresentation {
+        if !isPresentation || presented {
             spring = 0
+        } else {
+            presented = true
         }
         if spring == 0 {
             UIView.animate(withDuration: transitionDuration(using: transitionContext),
@@ -511,7 +543,7 @@ class DragDownDismissInteraction: UIPercentDrivenInteractiveTransition, UIGestur
         let velocity = gestureRecognizer.velocity(in: gestureRecognizer.view!)
         var progress = min(max(0, translation.y), storedHeight) / storedHeight
         progress = max(min(progress, 1), 0) // Clamp between 0 and 1
-        print(progress)
+
         switch gestureRecognizer.state {
         case .began:
             interactionInProgress = true
