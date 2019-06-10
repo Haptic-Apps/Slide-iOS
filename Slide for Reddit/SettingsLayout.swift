@@ -8,7 +8,6 @@
 
 import reddift
 import UIKit
-import XLActionController
 
 class SettingsLayout: BubbleSettingTableViewController {
     
@@ -269,9 +268,9 @@ class SettingsLayout: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 1 && indexPath.row == 0 {
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = "Card type"
-            alertController.addAction(Action(ActionData(title: "List view", image: UIImage(named: "list")!.menuIcon()), style: .default, handler: { _ in
+            let alertController = DragDownAlertMenu(title: "Card type", subtitle: "Select a card type that will be used throughout Slide", icon: nil)
+            
+            alertController.addAction(title: "List view", icon: UIImage(named: "list")!.menuIcon()) {
                 UserDefaults.standard.set("list", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .LIST
                 UserDefaults.standard.synchronize()
@@ -281,9 +280,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 MainViewController.needsReTheme = true
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Card view", image: UIImage(named: "card")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: "Large card view", icon: UIImage(named: "card")!.menuIcon()) {
                 UserDefaults.standard.set("card", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .CARD
                 UserDefaults.standard.synchronize()
@@ -293,9 +292,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 MainViewController.needsReTheme = true
-            }))
+            }
             
-            alertController.addAction(Action(ActionData(title: "Centered card view", image: UIImage(named: "centeredimage")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Centered large card view", icon: UIImage(named: "centeredimage")!.menuIcon()) {
                 UserDefaults.standard.set("center", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .CENTER
                 UserDefaults.standard.synchronize()
@@ -305,9 +304,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 MainViewController.needsReTheme = true
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Compact view", image: UIImage(named: "compact")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: "Compact list view", icon: UIImage(named: "compact")!.menuIcon()) {
                 UserDefaults.standard.set("compact", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .COMPACT
                 UserDefaults.standard.synchronize()
@@ -317,14 +316,13 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
                 MainViewController.needsReTheme = true
-            }))
+            }
             
-            VCPresenter.presentAlert(alertController, parentVC: self)
-            
+            alertController.show(self)
         } else if indexPath.section == 1 && indexPath.row == 1 {
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = "Submission image mode"
-            alertController.addAction(Action(ActionData(title: "Full image", image: UIImage(named: "full")!.menuIcon()), style: .default, handler: { _ in
+            let alertController = DragDownAlertMenu(title: "Submission image mode", subtitle: "Select a size for images throughout Slide", icon: nil)
+
+            alertController.addAction(title: "Full-sized image", icon: UIImage(named: "full")!.menuIcon()) {
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_postImageMode)
                 SettingValues.postImageMode = .FULL_IMAGE
                 UserDefaults.standard.synchronize()
@@ -333,9 +331,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
                 MainViewController.needsReTheme = true
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Cropped image", image: UIImage(named: "crop")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: "Cropped image", icon: UIImage(named: "crop")!.menuIcon()) {
                 UserDefaults.standard.set("cropped", forKey: SettingValues.pref_postImageMode)
                 SettingValues.postImageMode = .CROPPED_IMAGE
                 UserDefaults.standard.synchronize()
@@ -344,9 +342,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
                 MainViewController.needsReTheme = true
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Thumbnail only", image: UIImage(named: "thumb")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: "No image (thumbnail only)", icon: UIImage(named: "thumb")!.menuIcon()) {
                 UserDefaults.standard.set("thumbnail", forKey: SettingValues.pref_postImageMode)
                 SettingValues.postImageMode = .THUMBNAIL
                 UserDefaults.standard.synchronize()
@@ -355,13 +353,14 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
                 MainViewController.needsReTheme = true
-            }))
+            }
             
-            VCPresenter.presentAlert(alertController, parentVC: self)
+            alertController.show(self)
         } else if indexPath.section == 1 && indexPath.row == 2 {
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = "Action bar mode"
-            alertController.addAction(Action(ActionData(title: "Full action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { _ in
+            let alertController = DragDownAlertMenu(title: "Button bar mode", subtitle: "Sets the layout for the submission buttons", icon: nil)
+            
+
+            alertController.addAction(title: "Full-sized button bar", icon: UIImage(named: "code")!.menuIcon()) {
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL
                 UserDefaults.standard.synchronize()
@@ -371,8 +370,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
                 MainViewController.needsReTheme = true
-            }))
-            alertController.addAction(Action(ActionData(title: "Full left action bar", image: UIImage(named: "code")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: "Left-aligned full-sized button bar", icon: UIImage(named: "code")!.menuIcon()) {
                 UserDefaults.standard.set("left", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL_LEFT
                 UserDefaults.standard.synchronize()
@@ -382,9 +382,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
                 MainViewController.needsReTheme = true
-            }))
+            }
 
-            alertController.addAction(Action(ActionData(title: "Side action bar", image: UIImage(named: "up")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Left-side vote buttons", icon: UIImage(named: "up")!.menuIcon()) {
                 UserDefaults.standard.set("side", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE
                 UserDefaults.standard.synchronize()
@@ -394,9 +394,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
                 MainViewController.needsReTheme = true
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Right side action bar", image: UIImage(named: "down")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: "Right-side vote buttons", icon:  UIImage(named: "down")!.menuIcon()) {
                 UserDefaults.standard.set("right", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE_RIGHT
                 UserDefaults.standard.synchronize()
@@ -406,9 +406,10 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
                 MainViewController.needsReTheme = true
-            }))
 
-            alertController.addAction(Action(ActionData(title: "Hide action bar", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: "Hide button bar", icon: UIImage(named: "hide")!.menuIcon()) {
                 UserDefaults.standard.set("none", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .NONE
                 UserDefaults.standard.synchronize()
@@ -418,9 +419,9 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
                 MainViewController.needsReTheme = true
-            }))
-            
-            VCPresenter.presentAlert(alertController, parentVC: self)
+            }
+
+            alertController.show(self)
         }
     }
     

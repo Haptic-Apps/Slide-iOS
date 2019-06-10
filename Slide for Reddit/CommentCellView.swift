@@ -11,7 +11,6 @@ import AudioToolbox
 import reddift
 import YYText
 import UIKit
-import XLActionController
 
 class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     
@@ -26,41 +25,47 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
 
     func linkLongTapped(url: URL) {
         longBlocking = true
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = url.absoluteString
-        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+        
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(url)
             }
-        }))
+        }
+        
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
                 _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }))
+            }
         }
+        
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         } else if SettingValues.hapticFeedback {
             AudioServicesPlaySystemSound(1519)
         }
-        self.parentViewController?.present(alertController, animated: true, completion: nil)
+        
+        if parentViewController != nil {
+            alertController.show(parentViewController!)
+        }
     }
-    
+
     var text: TextDisplayStackView!
     var single = false
     

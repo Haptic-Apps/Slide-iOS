@@ -11,7 +11,6 @@ import AVKit
 import SubtleVolume
 import Then
 import UIKit
-import XLActionController
 
 class AnyModalViewController: UIViewController {
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
@@ -282,23 +281,24 @@ class AnyModalViewController: UIViewController {
         guard let baseURL = self.baseURL else {
             return
         }
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = baseURL.absoluteString
+        let alertController = DragDownAlertMenu(title: "Video options", subtitle: baseURL.absoluteString, icon: nil)
         
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "nav")!.menuIcon()) {
                 open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
-            }))
+            }
         }
-        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+        
+        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(baseURL)
             }
-        }))
-        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Share video URL", icon: UIImage(named: "reply")!.menuIcon()) {
             let shareItems: Array = [baseURL]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
@@ -311,17 +311,18 @@ class AnyModalViewController: UIViewController {
             } else {
                 window.rootViewController!.present(activityViewController, animated: true, completion: nil)
             }
-        }))
-        alertController.addAction(Action(ActionData(title: "Share Video", image: UIImage(named: "play")!.menuIcon()), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Share Video", icon: UIImage(named: "play")!.menuIcon()) {
             self.shareVideo(baseURL, sender: sender)
-        }))
+        }
 
         let window = UIApplication.shared.keyWindow!
         
         if let modalVC = window.rootViewController?.presentedViewController {
-            modalVC.present(alertController, animated: true, completion: nil)
+            alertController.show(modalVC)
         } else {
-            window.rootViewController!.present(alertController, animated: true, completion: nil)
+            alertController.show(window.rootViewController)
         }
     }
     

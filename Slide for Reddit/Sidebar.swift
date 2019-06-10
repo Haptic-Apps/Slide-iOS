@@ -9,7 +9,6 @@
 import Foundation
 import reddift
 import YYText
-import XLActionController
 
 class Sidebar: NSObject {
     

@@ -11,7 +11,6 @@ import AudioToolbox
 import reddift
 import YYText
 import UIKit
-import XLActionController
 
 class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     
@@ -25,39 +24,45 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
 
     func linkLongTapped(url: URL) {
         longBlocking = true
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = url.absoluteString
-        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+        
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(url)
             }
-        }))
+        }
+        
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
                 _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }))
+            }
         }
+        
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         } else if SettingValues.hapticFeedback {
             AudioServicesPlaySystemSound(1519)
         }
-        self.parentViewController?.present(alertController, animated: true, completion: nil)
+        
+        if parentViewController != nil {
+            alertController.show(parentViewController!)
+        }
     }
 
     var text: TextDisplayStackView!
@@ -170,19 +175,18 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             } else if SettingValues.hapticFeedback {
                 AudioServicesPlaySystemSound(1519)
             }
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = "Message from u/\(self.message!.author)"
+            let alertController = DragDownAlertMenu(title: "Message from u/\(self.message!.author)", subtitle: self.message!.subject, icon: nil)
 
-            alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
-
+            alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", icon: UIImage(named: "profile")!.menuIcon()) {
                 let prof = ProfileViewController.init(name: self.message!.author)
                 VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
-            }))
+            }
 
-            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Reply to message", icon: UIImage(named: "reply")!.menuIcon()) {
                 self.doReply()
-            }))
-            alertController.addAction(Action(ActionData(title: ActionStates.isRead(s: self.message!) ? "Mark unread" : "Mark read", image: UIImage(named: "seen")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: ActionStates.isRead(s: self.message!) ? "Mark as unread" : "Mark as read", icon: UIImage(named: "seen")!.menuIcon()) {
                 if ActionStates.isRead(s: self.message!) {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
@@ -192,12 +196,12 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
                             }
                         })
                     } catch {
-
+                        
                     }
                     ActionStates.setRead(s: self.message!, read: false)
                     let titleText = MessageCellView.getTitleText(message: self.message!)
                     self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
-
+                    
                 } else {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
@@ -207,22 +211,22 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
                             }
                         })
                     } catch {
-
+                        
                     }
                     ActionStates.setRead(s: self.message!, read: true)
                     let titleText = MessageCellView.getTitleText(message: self.message!)
                     self.text.setTextWithTitleHTML(titleText, htmlString: self.message!.htmlBody)
                 }
-            }))
-            if self.message!.wasComment {
-                alertController.addAction(Action(ActionData(title: "Full thread", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
-                    let url = "https://www.reddit.com\(self.message!.context)"
-                    VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
-                }))
             }
 
-            VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
+            if self.message!.wasComment {
+                alertController.addAction(title: "View comment thread", icon: UIImage(named: "comments")!.menuIcon()) {
+                    let url = "https://www.reddit.com\(self.message!.context)"
+                    VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+                }
+            }
 
+            alertController.show(parentViewController)
         }
     }
 

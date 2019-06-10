@@ -11,7 +11,6 @@ import SDWebImage
 import SDCAlertView
 import Then
 import UIKit
-import XLActionController
 
 class ImageMediaViewController: EmbeddableMediaViewController {
 
@@ -311,27 +310,14 @@ extension ImageMediaViewController {
     }
 
     @objc func showContextMenu(_ sender: UIButton) {
-        guard let baseURL = self.data.baseURL else {
+        guard let url = self.data.baseURL else {
             return
         }
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = baseURL.absoluteString
-
-        let open = OpenInChromeController.init()
-        if open.isChromeInstalled() {
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
-                open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
-            }))
-        }
-        alertController.addAction(Action(ActionData(title: "Open in Safari", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(baseURL)
-            }
-        }))
-        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
-            let shareItems: Array = [baseURL]
+        
+        let alertController = DragDownAlertMenu(title: "Image options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share image URL", icon: UIImage(named: "share")!.menuIcon()) {
+            let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = sender
@@ -343,16 +329,36 @@ extension ImageMediaViewController {
             } else {
                 window.rootViewController!.present(activityViewController, animated: true, completion: nil)
             }
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Share image", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { _ in
-            self.shareImage(sender: sender)
-        }))
+        }
         
+        alertController.addAction(title: "Share image", icon: UIImage(named: "image")!.menuIcon(), action: {
+            self.shareImage(sender: sender)
+        })
+        
+        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self)
+        }
+        
+        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+        
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }
+        }
+
         if let topController = UIApplication.topViewController(base: self) {
-            topController.present(alertController, animated: true, completion: nil)
+            alertController.show(topController)
         } else {
-            self.present(alertController, animated: true, completion: nil)
+            alertController.show(self)
         }
     }
     

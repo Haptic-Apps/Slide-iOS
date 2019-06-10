@@ -15,7 +15,6 @@ import YYText
 import UIKit
 import SDWebImage
 import SDCAlertView
-import XLActionController
 
 protocol TTTAttributedCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)
@@ -1193,38 +1192,37 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
 
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Comment by u/\(comment!.author)"
+        let alertController = DragDownAlertMenu(title: "Comment by u/\(comment!.author)", subtitle: comment!.body, icon: nil)
 
-        alertController.addAction(Action(ActionData(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
-
+        alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", icon: UIImage(named: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: par.navigationController, parentViewController: par)
-        }))
-        alertController.addAction(Action(ActionData(title: "Share comment permalink", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Share comment permalink", icon: UIImage(named: "link")!.menuIcon()) {
             let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink + "?context=5"], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = self.moreButton
                 presenter.sourceRect = self.moreButton.bounds
             }
             par.present(activityViewController, animated: true, completion: {})
-        }))
+        }
+
         if AccountController.isLoggedIn {
-            alertController.addAction(Action(ActionData(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(named: "save")!.menuIcon()) {
                 par.saveComment(self.comment!)
-            }))
+            }
         }
         
-        alertController.addAction(Action(ActionData(title: "Report", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Report comment", icon: UIImage(named: "flag")!.menuIcon()) {
             PostActions.report(self.comment!, parent: par, index: -1, delegate: nil)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Tag user", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { _ in
-            par.tagUser(name: self.comment!.author)
-        }))
+        }
 
-        alertController.addAction(Action(ActionData(title: "Copy text", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
-            
+        alertController.addAction(title: "Tag u/\(comment!.author)", icon: UIImage(named: "subs")!.menuIcon()) {
+            par.tagUser(name: self.comment!.author)
+        }
+        
+        alertController.addAction(title: "Copy text", icon: UIImage(named: "copy")!.menuIcon()) {
             let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
             
             alert.setupTheme()
@@ -1252,16 +1250,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             alert.addBlurView()
             par.present(alert, animated: true)
-        }))
+        }
 
-        VCPresenter.presentAlert(alertController, parentVC: par.parent!)
+        alertController.show(par.parent)
     }
 
     func mod(_ par: CommentViewController) {
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Comment by u/\(comment!.author)"
+        let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Comment by u/\(comment!.author)", icon: nil)
 
-        alertController.addAction(Action(ActionData(title: "\(comment!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "\(comment!.reports.count) reports", icon: UIImage(named: "reports")!.menuIcon()) {
             var reports = ""
             for report in self.comment!.reports {
                 reports += report + "\n"
@@ -1275,48 +1272,48 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             alert.addAction(cancelAction)
             self.parent?.present(alert, animated: true, completion: nil)
+        }
 
-        }))
-        alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Approve", icon: UIImage(named: "approve")!.menuIcon()) {
             self.modApprove()
-        }))
+        }
 
-        alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { _ in
-            //todo show dialog for this
-        }))
-        
+        alertController.addAction(title: "Ban u/\(comment!.author)", icon: UIImage(named: "ban")!.menuIcon()) {
+            //todo add ban!!!
+        }
+
         if comment!.author == AccountController.currentName {
-            alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Distinguish your comment", icon: UIImage(named: "save")!.menuIcon()) {
                 self.modDistinguish()
-            }))
+            }
         }
 
         if comment!.author == AccountController.currentName && comment!.depth == 1 {
             if comment!.sticky {
-                alertController.addAction(Action(ActionData(title: "Un-pin", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+                alertController.addAction(title: "Un-pin comment", icon: UIImage(named: "flag")!.menuIcon()) {
                     self.modSticky(sticky: false)
-                }))
+                }
             } else {
-                alertController.addAction(Action(ActionData(title: "Pin and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+                alertController.addAction(title: "Pin and Distinguish comment", icon: UIImage(named: "flag")!.menuIcon()) {
                     self.modSticky(sticky: true)
-                }))
+                }
             }
         }
 
-        alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Remove comment", icon: UIImage(named: "close")!.menuIcon()) {
             self.modRemove()
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+        }
+        
+        alertController.addAction(title: "Remove as Spam", icon: UIImage(named: "flag")!.menuIcon()) {
             self.modRemove(true)
-        }))
-
-        alertController.addAction(Action(ActionData(title: "User profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
+        }
+        
+        alertController.addAction(title: "u/\(comment!.author)'s profile", icon: UIImage(named: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par)
-        }))
+        }
 
-        VCPresenter.presentAlert(alertController, parentVC: par.parent!)
+        alertController.show(par.parent)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -1893,39 +1890,43 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
 
     func linkLongTapped(url: URL) {
         longBlocking = true
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = url.absoluteString
-        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+        
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
             self.parent?.present(activityViewController, animated: true, completion: nil)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parent)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(url)
             }
-        }))
+        }
+        
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
                 _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }))
+            }
         }
+        
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         } else if SettingValues.hapticFeedback {
             AudioServicesPlaySystemSound(1519)
         }
-        self.parent?.present(alertController, animated: true, completion: nil)
+        
+        alertController.show(parent)
     }
 }
 

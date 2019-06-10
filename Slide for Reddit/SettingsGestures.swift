@@ -8,7 +8,6 @@
 
 import Anchorage
 import UIKit
-import XLActionController
 
 class SettingsGestures: BubbleSettingTableViewController {
     
@@ -68,18 +67,18 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     func showCommentGesturesMenu() {
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Select a comment gesture"
+        let alertController = DragDownAlertMenu(title: "Comment gesture mode", subtitle: "This setting changes the comment swipe gesture", icon: nil)
+        
         for item in SettingValues.CommentGesturesMode.cases {
-            alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
+            alertController.addAction(title: item.description(), icon: UIImage()) {
                 UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_commentGesturesMode)
                 SettingValues.commentGesturesMode = item
                 UserDefaults.standard.synchronize()
                 self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
                 self.updateCells()
-            }))
+            }
         }
-        VCPresenter.presentAlert(alertController, parentVC: self)
+        alertController.show(self)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -123,10 +122,11 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     func showAction(cell: UITableViewCell) {
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Select a comment gesture"
+        var type = cell.textLabel?.text ?? ""
+
+        let alertController = DragDownAlertMenu(title: "Select a comment gesture", subtitle: type, icon: nil)
         for action in cell == self.forceTouchActionCell ? SettingValues.CommentAction.cases3D : SettingValues.CommentAction.cases {
-            alertController.addAction(Action(ActionData(title: action.getTitle(), image: UIImage(named: action.getPhoto())!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: action.getTitle(), icon: UIImage(named: action.getPhoto())!.menuIcon()) {
                 if cell == self.leftRightActionCell {
                     SettingValues.commentActionLeftRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftRight)
@@ -149,16 +149,15 @@ class SettingsGestures: BubbleSettingTableViewController {
                 
                 UserDefaults.standard.synchronize()
                 self.updateCells()
-            }))
+            }
         }
-        VCPresenter.presentAlert(alertController, parentVC: self)
+        alertController.show(self)
     }
     
     func showActionSub(cell: UITableViewCell) {
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Select a submission gesture"
+        let alertController = DragDownAlertMenu(title: "Select a submission gesture", subtitle: cell.textLabel?.text ?? "", icon: nil)
         for action in SettingValues.SubmissionAction.cases {
-            alertController.addAction(Action(ActionData(title: action == .NONE && cell == forceTouchSubmissionCell ? "Peek content" : action.getTitle(), image: action == .NONE && cell == forceTouchSubmissionCell ? UIImage(named: "fullscreen")!.menuIcon() : UIImage(named: action.getPhoto())!.menuIcon() ), style: .default, handler: { _ in
+            alertController.addAction(title: action == .NONE && cell == forceTouchSubmissionCell ? "Peek content" : action.getTitle(), icon:  action == .NONE && cell == forceTouchSubmissionCell ? UIImage(named: "fullscreen")!.menuIcon() : UIImage(named: action.getPhoto())!.menuIcon()) {
                 if cell == self.doubleTapSubActionCell {
                     SettingValues.submissionActionDoubleTap = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionDoubleTap)
@@ -172,11 +171,11 @@ class SettingsGestures: BubbleSettingTableViewController {
                     SettingValues.submissionActionForceTouch = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionForceTouch)
                 }
-
+                
                 SubredditReorderViewController.changed = true
                 UserDefaults.standard.synchronize()
                 self.updateCells()
-            }))
+            }
         }
         VCPresenter.presentAlert(alertController, parentVC: self)
     }

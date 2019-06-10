@@ -18,7 +18,6 @@ import SDCAlertView
 import Then
 import YYText
 import UIKit
-import XLActionController
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -53,39 +52,45 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
     func linkLongTapped(url: URL) {
         longBlocking = true
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = url.absoluteString
-        alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+        
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(url)
             }
-        }))
+        }
+
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
                 _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }))
+            }
         }
+        
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         } else if SettingValues.hapticFeedback {
             AudioServicesPlaySystemSound(1519)
         }
-        self.parentViewController?.present(alertController, animated: true, completion: nil)
+        
+        if parentViewController != nil {
+            alertController.show(parentViewController!)
+        }
     }
     
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
@@ -625,49 +630,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     @objc func linkMenu(sender: AnyObject) {
         if parentViewController != nil && parentViewController?.presentedViewController == nil {
             let url = self.link!.url!
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = url.absoluteString
-            alertController.addAction(Action(ActionData(title: "Share URL", image: UIImage(named: "share")!.menuIcon()), style: .default, handler: { _ in
+            let alertController = DragDownAlertMenu(title: ContentType.isImage(uri: url) && !bannerImage.isHidden ? "Image options" : "Submission link options", subtitle: url.absoluteString, icon: url.absoluteString)
+            
+            alertController.addAction(title: "Share\(ContentType.isImage(uri: url) && !bannerImage.isHidden ? " image" : "") URL", icon: UIImage(named: "share")!.menuIcon()) {
                 let shareItems: Array = [url]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 activityViewController.popoverPresentationController?.sourceView = self.contentView
                 self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-            }))
+            }
             
             if ContentType.isImage(uri: url) && !bannerImage.isHidden {
                 let imageToShare = [bannerImage.image!]
                 let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
                 activityViewController.popoverPresentationController?.sourceView = self.contentView
-
-                alertController.addAction(Action(ActionData(title: "Share image", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { _ in
+                alertController.addAction(title: "Share image", icon: UIImage(named: "image")!.menuIcon(), action: {
                     self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-                }))
+                })
             }
 
-            alertController.addAction(Action(ActionData(title: "Copy URL", image: UIImage(named: "copy")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
                 UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
                 BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-            }))
+            }
 
-            alertController.addAction(Action(ActionData(title: "Open externally", image: UIImage(named: "nav")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
-            }))
+            }
+
             let open = OpenInChromeController.init()
             if open.isChromeInstalled() {
-                alertController.addAction(Action(ActionData(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()), style: .default, handler: { _ in
+                alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
                     _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                }))
+                }
             }
             if #available(iOS 10.0, *) {
                 HapticUtility.hapticActionStrong()
             } else if SettingValues.hapticFeedback {
                 AudioServicesPlaySystemSound(1519)
             }
-            self.parentViewController?.present(alertController, animated: true, completion: nil)
+            alertController.show(parentViewController!)
         }
     }
     
@@ -1934,25 +1939,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     @objc func edit(sender: AnyObject) {
         let link = self.link!
         
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Edit your submission"
+        let alertController = DragDownAlertMenu(title: "Manage your submission", subtitle: link.title, icon: link.thumbnailUrl)
         
         if link.isSelf {
-            alertController.addAction(Action(ActionData(title: "Edit selftext", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Edit selftext", icon: UIImage(named: "edit")!.menuIcon()) {
                 self.editSelftext()
-            }))
+            }
+        }
+        alertController.addAction(title: "Set flair", icon: UIImage(named: "flag")!.menuIcon()) {
+            self.flairSelf()
         }
         
-        alertController.addAction(Action(ActionData(title: "Flair submission", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { _ in
-            self.flairSelf()
-            
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Delete submission", image: UIImage(named: "delete")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Delete submission", icon: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
             self.deleteSelf(self)
-        }))
-        
-        VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
+        }
+
+        if parentViewController != nil {
+            alertController.show(parentViewController)
+        }
     }
     
     func editSelftext() {
@@ -1969,16 +1973,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func deleteSelf(_ cell: LinkCellView) {
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Really delete your submission?"
+        let alertController = DragDownAlertMenu(title: "Really delete your submission?", subtitle: "This cannot be undone", icon: link!.thumbnailUrl)
         
-        alertController.addAction(Action(ActionData(title: "Yes", image: UIImage(named: "delete")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Delete", icon: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
             if let delegate = self.del {
                 delegate.deleteSelf(self)
             }
-        }))
+        }
         
-        VCPresenter.presentAlert(alertController, parentVC: parentViewController!)
+        alertController.addAction(title: "Cancel", icon: UIImage(named: "close")!.menuIcon()) {
+            alertController.dismiss(animated: true, completion: nil)
+        }
+
+        alertController.show(parentViewController)
     }
     
     var lockDone = false

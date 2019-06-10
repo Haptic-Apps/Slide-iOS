@@ -23,7 +23,6 @@ target 'Slide for Reddit' do
   pod 'MTColorDistance'
   pod 'SwiftLinkPreview', '~> 3.0.1'
   pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'
-  pod 'XLActionController', :git => 'https://github.com/ccrama/XLActionController'
   pod 'SwiftSpreadsheet'
   pod 'Starscream', '~> 3.0.2'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'

@@ -12,7 +12,6 @@ import reddift
 import SDWebImage
 import Then
 import UIKit
-import XLActionController
 
 protocol CurrentAccountViewControllerDelegate: AnyObject {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void)
@@ -454,38 +453,36 @@ extension CurrentAccountViewController: AccountHeaderViewDelegate {
 // MARK: - Account Switching
 extension CurrentAccountViewController {
     func showSwitchAccountsMenu() {
-        let optionMenu = BottomSheetActionController()
-        optionMenu.headerData = "Accounts"
-        
+        let optionMenu = DragDownAlertMenu(title: "Accounts", subtitle: "Currently signed in as \(AccountController.isLoggedIn ? AccountController.currentName : "Guest")", icon: nil)
+
         for accountName in AccountController.names.unique().sorted() {
             if accountName != AccountController.currentName {
-                optionMenu.addAction(Action(ActionData(title: "\(accountName)", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
+                optionMenu.addAction(title: accountName, icon: UIImage(named: "profile")!.menuIcon()) {
                     self.setLoadingState(true)
                     self.delegate?.currentAccountViewController(self, didRequestAccountChangeToName: accountName)
-                }))
+                }
             } else {
-                var action = Action(ActionData(title: "\(accountName) (current)", image: UIImage(named: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())), style: .default, handler: nil)
-                action.enabled = false
-                optionMenu.addAction(action)
+                //todo enabled
+                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(named: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
+                }
             }
         }
         
         if AccountController.isLoggedIn {
-            optionMenu.addAction(Action(ActionData(title: "Browse as guest", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
+            optionMenu.addAction(title: "Browse as Guest", icon: UIImage(named: "hide")!.menuIcon()) {
                 self.setEmptyState(true, animate: false)
                 self.delegate?.currentAccountViewController(self, didRequestGuestAccount: ())
-            }))
-            
-            optionMenu.addAction(Action(ActionData(title: "Log out", image: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())), style: .default, handler: { _ in
+            }
+
+            optionMenu.addAction(title: "Log out of u/\(AccountController.currentName)", icon: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
                 self.setEmptyState(true, animate: false)
                 self.delegate?.currentAccountViewController(self, didRequestLogOut: ())
-            }))
-            
+            }
         }
         
-        optionMenu.addAction(Action(ActionData(title: "Add a new account", image: UIImage(named: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)), style: .default, handler: { _ in
+        optionMenu.addAction(title: "Add a new account", icon: UIImage(named: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)) {
             self.delegate?.currentAccountViewController(self, didRequestNewAccount: ())
-        }))
+        }
         
         present(optionMenu, animated: true, completion: nil)
     }

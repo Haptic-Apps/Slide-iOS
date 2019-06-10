@@ -86,9 +86,6 @@ PODS:
   - SwiftSpreadsheet (1.2.1)
   - SwiftyJSON (5.0.0)
   - Then (2.4.0)
-  - XLActionController (4.1.1):
-    - XLActionController/Core (= 4.1.1)
-  - XLActionController/Core (4.1.1)
   - YYText (1.0.7)
 
 DEPENDENCIES:
@@ -119,7 +116,6 @@ DEPENDENCIES:
   - SwiftSpreadsheet
   - SwiftyJSON
   - Then
-  - XLActionController (from `https://github.com/ccrama/XLActionController`)
   - YYText
 
 SPEC REPOS:
@@ -167,8 +163,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/ccrama/SloppySwiper
   SwiftEntryKit:
     :git: https://github.com/ccrama/SwiftEntryKit
-  XLActionController:
-    :git: https://github.com/ccrama/XLActionController
 
 CHECKOUT OPTIONS:
   DTCoreText:
@@ -192,9 +186,6 @@ CHECKOUT OPTIONS:
   SwiftEntryKit:
     :commit: 0af4542ce5d151068e95a6e499ffa5f7237cd60e
     :git: https://github.com/ccrama/SwiftEntryKit
-  XLActionController:
-    :commit: b71c910998c20d67cab4fe4fe12abed784a13291
-    :git: https://github.com/ccrama/XLActionController
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
@@ -230,9 +221,8 @@ SPEC CHECKSUMS:
   SwiftSpreadsheet: b3dc6d89bd5fd18f38fe88c29898fbc481660a04
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   Then: 71866660c7af35a7343831f7668e7cd2b62ee0f2
-  XLActionController: 5a6a14d1d62112bebd874ffe81a803d0ebdb12d5
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: b6594cc76e0310a6bee81842e412aa85c99d99ab
+PODFILE CHECKSUM: 27236275aabf0857d445e4614b701856f7c13914
 
 COCOAPODS: 1.7.1

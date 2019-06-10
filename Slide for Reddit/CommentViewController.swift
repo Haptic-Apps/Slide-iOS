@@ -16,7 +16,6 @@ import SloppySwiper
 import SDCAlertView
 import YYText
 import UIKit
-import XLActionController
 
 class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate {
     
@@ -1469,40 +1468,39 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !offline {
             let link = submission!
 
-            let alertController: BottomSheetActionController = BottomSheetActionController()
-            alertController.headerData = "Comment actions"
+            let alertController = DragDownAlertMenu(title: "Comment actions", subtitle: self.submission?.title ?? "", icon: self.submission?.thumbnailUrl)
 
-            alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Refresh comments", icon: UIImage(named: "sync")!.menuIcon()) {
                 self.reset = true
                 self.refresh(self)
-            }))
-            
-            alertController.addAction(Action(ActionData(title: "Reply", image: UIImage(named: "reply")!.menuIcon()), style: .default, handler: { _ in
+            }
+
+            alertController.addAction(title: "Reply to submission", icon: UIImage(named: "reply")!.menuIcon()) {
                 self.reply(self.headerCell)
-            }))
+            }
 
-            alertController.addAction(Action(ActionData(title: "r/\(link.subreddit)", image: UIImage(named: "subs")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Go to r/\(link.subreddit)", icon: UIImage(named: "subs")!.menuIcon()) {
                 VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
-            }))
+            }
 
-            alertController.addAction(Action(ActionData(title: "Related submissions", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "View related submissions", icon: UIImage(named: "size")!.menuIcon()) {
                 let related = RelatedViewController.init(thing: self.submission!)
                 VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
-            }))
+            }
 
-            alertController.addAction(Action(ActionData(title: "r/\(link.subreddit) sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "View r/\(link.subreddit)'s sidebar", icon: UIImage(named: "info")!.menuIcon()) {
                 Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
-            }))
+            }
 
-            alertController.addAction(Action(ActionData(title: allCollapsed ? "Expand child comments" : "Collapse child comments", image: UIImage(named: "comments")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: allCollapsed ? "Expand child comments" : "Collapse child comments", icon: UIImage(named: "comments")!.menuIcon()) {
                 if self.allCollapsed {
                     self.expandAll()
                 } else {
                     self.collapseAll()
                 }
-            }))
-
-            VCPresenter.presentAlert(alertController, parentVC: self)
+            }
+            
+            alertController.show(self)
         }
     }
 
@@ -1682,37 +1680,31 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !loaded {
             return
         }
-        let alertController = BottomSheetActionController()
-        alertController.headerData = "Navigation Type"
-        alertController.settings.cancelView.hideCollectionViewBehindCancelView = false
+        let alertController = DragDownAlertMenu(title: "Comment navigation", subtitle: "Select a navigation type", icon: nil)
 
+        
         let link = getCount(sort: .LINK)
         let parents = getCount(sort: .PARENTS)
         let op = getCount(sort: .OP)
         let gilded = getCount(sort: .GILDED)
         let you = getCount(sort: .YOU)
 
-        alertController.addAction(Action(ActionData(title: "Parent comment (\(parents))"), style: .default, handler: { _ in
+        alertController.addAction(title: "Top-level comments (\(parents))", icon: UIImage()) {
             self.currentSort = .PARENTS
-        }))
-
-        alertController.addAction(Action(ActionData(title: "OP (\(op))"), style: .default, handler: { _ in
+        }
+        alertController.addAction(title: "Submission OP (\(op))", icon: UIImage()) {
             self.currentSort = .OP
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Link (\(link))"), style: .default, handler: { _ in
+        }
+        alertController.addAction(title: "Links in comment (\(link))", icon: UIImage()) {
             self.currentSort = .LINK
-        }))
-
-        alertController.addAction(Action(ActionData(title: "You (\(you))"), style: .default, handler: { _ in
+        }
+        alertController.addAction(title: "Your comments (\(you))", icon: UIImage()) {
             self.currentSort = .YOU
-        }))
-
-        alertController.addAction(Action(ActionData(title: "Gilded (\(gilded))"), style: .default, handler: { _ in
+        }
+        alertController.addAction(title: "Gilded comments (\(gilded))", icon: UIImage()) {
             self.currentSort = .GILDED
-        }))
-
-        self.present(alertController, animated: true, completion: nil)
+        }
+        alertController.show(self)
     }
 
     func goToCell(i: Int) {

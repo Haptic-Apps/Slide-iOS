@@ -199,8 +199,6 @@
 		BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */; };
 		BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C201E18227500749C0C /* CommentDepthCell.swift */; };
 		BE42B6F320CE01BD00607A54 /* IAPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42B6F220CE01BD00607A54 /* IAPHandler.swift */; };
-		BE44B5841FFAC5FE00D3F6D5 /* BottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */; };
-		BE44B5881FFAC66100D3F6D5 /* BSCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE44B5861FFAC66100D3F6D5 /* BSCell.xib */; };
 		BE47AF71225C574700A61FB0 /* ManageMultireddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */; };
 		BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE51BE6420C7386A00DFFD8B /* StoreKit.framework */; };
 		BE5466271FB93F46007ADD22 /* PlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */; };
@@ -591,8 +589,6 @@
 		BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		BE3E5C201E18227500749C0C /* CommentDepthCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentDepthCell.swift; sourceTree = "<group>"; };
 		BE42B6F220CE01BD00607A54 /* IAPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandler.swift; sourceTree = "<group>"; };
-		BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetController.swift; sourceTree = "<group>"; };
-		BE44B5861FFAC66100D3F6D5 /* BSCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BSCell.xib; sourceTree = "<group>"; };
 		BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageMultireddit.swift; sourceTree = "<group>"; };
 		BE51BE6420C7386A00DFFD8B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderViewController.swift; sourceTree = "<group>"; };
@@ -1173,8 +1169,6 @@
 				BE3E5C0F1E16BA1300749C0C /* Album */,
 				BE8FCA071E0C46090063B8EF /* AppDelegate.swift */,
 				BE8FCA0E1E0C46090063B8EF /* Assets.xcassets */,
-				BE44B5831FFAC5FE00D3F6D5 /* BottomSheetController.swift */,
-				BE44B5861FFAC66100D3F6D5 /* BSCell.xib */,
 				B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */,
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
@@ -1579,7 +1573,6 @@
 				BE1B57EB21DED23000FF6F98 /* ic_stars@3x.png in Resources */,
 				BE1DA5E42208AC80001C7DB4 /* ic_mint@2x~ipad.png in Resources */,
 				BE0C4F8921BCBE83006C54FF /* ic_red@3x.png in Resources */,
-				BE44B5881FFAC66100D3F6D5 /* BSCell.xib in Resources */,
 				BE8FCA0F1E0C46090063B8EF /* Assets.xcassets in Resources */,
 				BE1DA5DB2208AC80001C7DB4 /* ic_green@2x~ipad.png in Resources */,
 				BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */,
@@ -1751,7 +1744,6 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftSpreadsheet/SwiftSpreadsheet.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
-				"${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework",
 				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
 				"${BUILT_PRODUCTS_DIR}/reddift/reddift.framework",
 			);
@@ -1788,7 +1780,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSpreadsheet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XLActionController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/reddift.framework",
 			);
@@ -1978,7 +1969,6 @@
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
-				BE44B5841FFAC5FE00D3F6D5 /* BottomSheetController.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SingleSubredditViewController.swift in Sources */,
 				BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */,

@@ -9,7 +9,6 @@
 import Anchorage
 import MKColorPicker
 import UIKit
-import XLActionController
 
 class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegate {
     var disableNavigationBarCell: UITableViewCell = InsetCell()
@@ -131,11 +130,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     }
     
     func showDepthChooser() {
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Comment depth colors"
+        let alertController = DragDownAlertMenu(title: "Comment depth theme", subtitle: "Select a color theme for comment depth", icon: nil)
 
-        alertController.addAction(Action(ActionData(title: "Default", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.red500Color())), style: .default, handler: { _ in
-            //choose color
+        alertController.addAction(title: "Default", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
             var colorArray = [UIColor]()
             colorArray.append(GMColor.red500Color())
             colorArray.append(GMColor.orange500Color())
@@ -143,9 +140,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(GMColor.green500Color())
             colorArray.append(GMColor.blue500Color())
             self.setDepthColors(colorArray)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Monochrome", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.grey500Color())), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Monochrome", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.grey500Color())) {
             var colorArray = [UIColor]()
             colorArray.append(GMColor.grey700Color())
             colorArray.append(GMColor.grey600Color())
@@ -153,9 +150,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(GMColor.grey400Color())
             colorArray.append(GMColor.grey300Color())
             self.setDepthColors(colorArray)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Main color", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Main color", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)) {
             let baseColor = ColorUtil.baseColor
             var colorArray = [UIColor]()
             colorArray.append(baseColor.add(overlay: UIColor.white.withAlphaComponent(0.3)))
@@ -164,9 +161,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(baseColor.add(overlay: UIColor.black.withAlphaComponent(0.15)))
             colorArray.append(baseColor.add(overlay: UIColor.black.withAlphaComponent(0.3)))
             self.setDepthColors(colorArray)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Invisible", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.theme.backgroundColor)), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Invisible", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.theme.backgroundColor)) {
             let baseColor = ColorUtil.theme.backgroundColor
             var colorArray = [UIColor]()
             colorArray.append(baseColor)
@@ -175,9 +172,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(baseColor)
             colorArray.append(baseColor)
             self.setDepthColors(colorArray)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Accent color", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.baseAccent)), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Accent color", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.baseAccent)) {
             let baseColor = ColorUtil.baseAccent
             var colorArray = [UIColor]()
             colorArray.append(baseColor.add(overlay: UIColor.white.withAlphaComponent(0.3)))
@@ -186,10 +183,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(baseColor.add(overlay: UIColor.black.withAlphaComponent(0.15)))
             colorArray.append(baseColor.add(overlay: UIColor.black.withAlphaComponent(0.3)))
             self.setDepthColors(colorArray)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Space", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: UIColor(hex: "BF3436"))), style: .default, handler: { _ in
-            //choose color
+        }
+
+        alertController.addAction(title: "Space", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: UIColor(hex: "BF3436"))) {
             var colorArray = [UIColor]()
             colorArray.append(UIColor(hex: "EF6040"))
             colorArray.append(UIColor(hex: "BF3436"))
@@ -197,10 +193,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(UIColor(hex: "662132"))
             colorArray.append(UIColor(hex: "20151D"))
             self.setDepthColors(colorArray)
-        }))
-            
-        alertController.addAction(Action(ActionData(title: "Candy", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())), style: .default, handler: { _ in
-            //choose color
+        }
+
+        alertController.addAction(title: "Candy", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())) {
             var colorArray = [UIColor]()
             colorArray.append(UIColor(hex: "E83F6F"))
             colorArray.append(UIColor(hex: "FF7B00"))
@@ -208,10 +203,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(UIColor(hex: "32936F"))
             colorArray.append(UIColor(hex: "2274A5"))
             self.setDepthColors(colorArray)
-        }))
+        }
 
-        alertController.addAction(Action(ActionData(title: "Spice", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())), style: .default, handler: { _ in
-            //choose color
+        alertController.addAction(title: "Spice", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())) {
             var colorArray = [UIColor]()
             colorArray.append(UIColor(hex: "4F000B"))
             colorArray.append(UIColor(hex: "720026"))
@@ -219,10 +213,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(UIColor(hex: "CE4257"))
             colorArray.append(UIColor(hex: "FF9B54"))
             self.setDepthColors(colorArray)
-        }))
+        }
 
-        alertController.addAction(Action(ActionData(title: "Bright", image: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())), style: .default, handler: { _ in
-            //choose color
+        alertController.addAction(title: "Bright", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())) {
             var colorArray = [UIColor]()
             colorArray.append(UIColor(hex: "FFBE0B"))
             colorArray.append(UIColor(hex: "FB5607"))
@@ -230,9 +223,9 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             colorArray.append(UIColor(hex: "8338EC"))
             colorArray.append(UIColor(hex: "3A86FF"))
             self.setDepthColors(colorArray)
-        }))
+        }
 
-        present(alertController, animated: true, completion: nil)
+        alertController.show(self)
     }
     
     func showAuthorChooser() {

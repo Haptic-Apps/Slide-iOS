@@ -15,7 +15,6 @@ import RLBAlertsPickers
 import SDWebImage
 import SloppySwiper
 import UIKit
-import XLActionController
 
 class SettingsViewController: MediaTableViewController, MFMailComposeViewControllerDelegate {
     var swiper: SloppySwiper?
@@ -615,19 +614,18 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 2:
                 ch = SettingsLayout()
             case 3:
-                let alertController: BottomSheetActionController = BottomSheetActionController()
-                alertController.headerData = "AutoPlay Settings"
+                let alertController = DragDownAlertMenu(title: "AutoPlay Settings", subtitle: "AutoPlay can lead to higher data use", icon: nil)
                 for item in SettingValues.AutoPlay.cases {
-                    alertController.addAction(Action(ActionData(title: item.description()), style: .default, handler: { _ in
+                    alertController.addAction(title: item.description(), icon: UIImage()) {
                         UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_autoPlayMode)
                         SettingValues.autoPlayMode = item
                         UserDefaults.standard.synchronize()
                         self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoPlaying videos can lead to more data use"
                         SingleSubredditViewController.cellVersion += 1
                         SubredditReorderViewController.changed = true
-                    }))
+                    }
                 }
-                VCPresenter.presentAlert(alertController, parentVC: self)
+                alertController.show(self)
             case 4:
                 ch = SettingsAudio()
             case 5:

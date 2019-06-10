@@ -10,7 +10,6 @@ import reddift
 import SDWebImage
 import Starscream
 import UIKit
-import XLActionController
 import YYText
 
 class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource {

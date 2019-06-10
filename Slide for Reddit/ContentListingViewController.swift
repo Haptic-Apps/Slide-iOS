@@ -11,7 +11,6 @@ import reddift
 import SDWebImage
 import SloppySwiper
 import UIKit
-import XLActionController
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate, UINavigationControllerDelegate {
     
@@ -37,7 +36,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             BannerUtil.makeBanner(text: "Added\nr/\(sub) ", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
         })
         alrController.addAction(somethingAction)
-        
         
         alrController.addCancelButton()
         

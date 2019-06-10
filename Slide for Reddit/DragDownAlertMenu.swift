@@ -99,10 +99,13 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         fatalError("init(coder:) has not been implemented")
     }
     
-    func show(_ vc: UIViewController) {
+    func show(_ vc: UIViewController?) {
+        if vc == nil {
+            return
+        }
         self.modalPresentationStyle = .custom
         self.transitioningDelegate = self
-        vc.present(self, animated: true, completion: nil)
+        vc!.present(self, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -168,7 +171,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.layer.cornerRadius = 15
         self.tableView.layer.masksToBounds = true
-        height = min(UIScreen.main.bounds.height * (2 / 3), CGFloat(80 + (60 * actions.count)))
+        height = min(UIScreen.main.bounds.height * (2 / 3), CGFloat(80 + (60 * actions.count) + 50))
         self.tableView.heightAnchor == height
         stylize()
         self.tableView.reloadData()

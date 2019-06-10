@@ -12,7 +12,6 @@ import reddift
 import RLBAlertsPickers
 import UIKit
 import SDCAlertView
-import XLActionController
 
 protocol SubmissionMoreDelegate: class {
     func save(_ cell: LinkCellView)
@@ -26,28 +25,26 @@ protocol SubmissionMoreDelegate: class {
 class PostActions: NSObject {
     
     public static func showPostMenu(_ parent: UIViewController, sub: String) {
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "New submission"
+        let alertController = DragDownAlertMenu(title: "New submission", subtitle: "in r/" + sub, icon: nil)
         
-        alertController.addAction(Action(ActionData(title: "Image", image: UIImage(named: "camera")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Image", icon: UIImage(named: "camera")!.menuIcon()) {
             VCPresenter.showVC(viewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             }), popupIfPossible: true, parentNavigationController: nil, parentViewController: parent)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Link", image: UIImage(named: "link")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Link", icon: UIImage(named:"link")!.menuIcon()) {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)
-        }))
+        }
         
-        alertController.addAction(Action(ActionData(title: "Selftext", image: UIImage(named: "size")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Selftext", icon: UIImage(named:"size")!.menuIcon()) {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)
-        }))
-        VCPresenter.presentAlert(alertController, parentVC: parent)
-
+        }
+        alertController.show(parent)
     }
     
     public static func handleAction(action: SettingValues.PostOverflowAction, cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
@@ -162,10 +159,9 @@ class PostActions: NSObject {
     
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {
         //todo remove with reason, new icons
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = "Submission by u/\(cell.link!.author)"
+        let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl)
         
-        alertController.addAction(Action(ActionData(title: "\(cell.link!.reports.count) reports", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(named: "reports")!.menuIcon()) {
             var reports = ""
             for report in cell.link!.reports {
                 reports += report + "\n"
@@ -179,95 +175,92 @@ class PostActions: NSObject {
             
             alert.addAction(cancelAction)
             parent.present(alert, animated: true, completion: nil)
-            
-        }))
+        }
         
         if cell.link!.approved {
-            var action = Action(ActionData(title: "Approved by u/\(cell.link!.approvedBy)", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { _ in
-            })
-            action.enabled = false
-            alertController.addAction(action)
+            //todo enabled
+            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(named: "approve")!.menuIcon()) {
+            }
         } else {
-            alertController.addAction(Action(ActionData(title: "Approve", image: UIImage(named: "approve")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Approve", icon: UIImage(named: "approve")!.menuIcon()) {
                 self.modApprove(cell)
-            }))
+            }
         }
         
         if cell.link!.removed {
-            var action = Action(ActionData(title: "Removed by u/\(cell.link!.removedBy)", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
-            })
-            action.enabled = false
-            alertController.addAction(action)
+            //todo enabled
+            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(named: "close")!.menuIcon()) {
+            }
         } else {
-            alertController.addAction(Action(ActionData(title: "Remove", image: UIImage(named: "close")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Remove", icon: UIImage(named: "close")!.menuIcon()) {
                 self.modRemove(cell)
-            }))
+            }
         }
 
-        alertController.addAction(Action(ActionData(title: "Ban user", image: UIImage(named: "ban")!.menuIcon()), style: .default, handler: { _ in
-            //todo show dialog for this
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Set flair", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Ban u/\(cell.link!.author)", icon: UIImage(named: "ban")!.menuIcon()) {
+            //todo allow bans!
+        }
+
+        alertController.addAction(title: "Set flair", icon: UIImage(named: "flag")!.menuIcon()) {
             cell.flairSelf()
-        }))
-        
+        }
+
         if !cell.link!.nsfw {
-            alertController.addAction(Action(ActionData(title: "Mark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Mark as NSFW", icon: UIImage(named: "hide")!.menuIcon()) {
                 self.modNSFW(cell, true)
-            }))
+            }
         } else {
-            alertController.addAction(Action(ActionData(title: "Unmark as NSFW", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Unmark as NSFW", icon: UIImage(named: "hide")!.menuIcon()) {
                 self.modNSFW(cell, false)
-            }))
+            }
         }
         
         if !cell.link!.spoiler {
-            alertController.addAction(Action(ActionData(title: "Mark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Mark as spoiler", icon: UIImage(named: "reports")!.menuIcon()) {
                 self.modSpoiler(cell, true)
-            }))
+            }
         } else {
-            alertController.addAction(Action(ActionData(title: "Unmark as spoiler", image: UIImage(named: "reports")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Unmark as spoiler", icon: UIImage(named: "reports")!.menuIcon()) {
                 self.modSpoiler(cell, false)
-            }))
+            }
         }
         
         if cell.link!.locked {
-            alertController.addAction(Action(ActionData(title: "Unlock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Unlock thread", icon: UIImage(named: "lock")!.menuIcon()) {
                 self.modLock(cell, false)
-            }))
+            }
         } else {
-            alertController.addAction(Action(ActionData(title: "Lock thread", image: UIImage(named: "lock")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Lock thread", icon: UIImage(named: "lock")!.menuIcon()) {
                 self.modLock(cell, true)
-            }))
+            }
         }
         
         if cell.link!.author == AccountController.currentName {
-            alertController.addAction(Action(ActionData(title: "Distinguish", image: UIImage(named: "save")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Distinguish", icon: UIImage(named: "save")!.menuIcon()) {
                 self.modDistinguish(cell)
-            }))
+            }
         }
         
         if cell.link!.stickied {
-            alertController.addAction(Action(ActionData(title: "Un-sticky", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Un-sticky post", icon: UIImage(named: "flag")!.menuIcon()) {
                 self.modSticky(cell, sticky: false)
-            }))
+            }
         } else {
-            alertController.addAction(Action(ActionData(title: "Sticky and distinguish", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Sticky post", icon: UIImage(named: "flag")!.menuIcon()) {
                 self.modSticky(cell, sticky: true)
-            }))
+            }
         }
         
-        alertController.addAction(Action(ActionData(title: "Mark as spam", image: UIImage(named: "flag")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Mark as spam", icon: UIImage(named: "flag")!.menuIcon()) {
             self.modRemove(cell, spam: true)
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "User profile", image: UIImage(named: "profile")!.menuIcon()), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "u/\(cell.link!.author)'s profile", icon: UIImage(named: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: cell.link!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
-        }))
+        }
         
-        VCPresenter.presentAlert(alertController, parentVC: parent)
+        alertController.show(parent)
     }
     
     static func modLock(_ cell: LinkCellView, _ set: Bool) {

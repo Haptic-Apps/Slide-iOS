@@ -18,7 +18,6 @@ import SloppySwiper
 import YYText
 import UIKit
 import SDCAlertView
-import XLActionController
 
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, UINavigationControllerDelegate {
@@ -2099,82 +2098,80 @@ extension SingleSubredditViewController {
 
     @objc func showMore(_ sender: AnyObject, parentVC: MainViewController? = nil) {
 
-        let alertController: BottomSheetActionController = BottomSheetActionController()
-        alertController.headerData = sub == "frontpage" ? "frontpage" : "r/\(sub)"
+        let alertController = DragDownAlertMenu(title: "Subreddit options", subtitle: sub, icon: nil)
         
         let special = !(sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/"))
         
-        alertController.addAction(Action(ActionData(title: "Search", image: UIImage(named: "search")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Search", icon: UIImage(named: "search")!.menuIcon()) {
             self.search()
-        }))
-        
-        if single && !special {
-            alertController.addAction(Action(ActionData(title: Subscriptions.isSubscriber(self.sub) ? "Un-subscribe" : "Subscribe", image: UIImage(named: Subscriptions.isSubscriber(self.sub) ? "subbed" : "addcircle")!.menuIcon()), style: .default, handler: { _ in
-                self.subscribeSingle(sender)
-            }))
         }
 
-        alertController.addAction(Action(ActionData(title: "Sort (currently \(sort.path))", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
+        if single && !special {
+            alertController.addAction(title: Subscriptions.isSubscriber(self.sub) ? "Un-subscribe" : "Subscribe", icon: UIImage(named: Subscriptions.isSubscriber(self.sub) ? "subbed" : "addcircle")!.menuIcon()) {
+                self.subscribeSingle(sender)
+            }
+        }
+
+        alertController.addAction(title: "Sort (currently \(sort.path))", icon:  UIImage(named: "filter")!.menuIcon()) {
             self.showSortMenu(self.more)
-        }))
+        }
 
         if sub.contains("/m/") {
-            alertController.addAction(Action(ActionData(title: "Manage multireddit", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Manage multireddit", icon: UIImage(named: "info")!.menuIcon()) {
                 self.displayMultiredditSidebar()
-            }))
+            }
         } else if !special {
-            alertController.addAction(Action(ActionData(title: "Sidebar", image: UIImage(named: "info")!.menuIcon()), style: .default, handler: { _ in
+            alertController.addAction(title: "Show sidebar", icon: UIImage(named: "info")!.menuIcon()) {
                 self.doDisplaySidebar()
-            }))
+            }
         }
         
-        alertController.addAction(Action(ActionData(title: "Cache for offline use", image: UIImage(named: "save-1")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Cache for offline viewing", icon: UIImage(named: "save-1")!.menuIcon()) {
             _ = AutoCache.init(baseController: self, subs: [self.sub])
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Shadowbox", image: UIImage(named: "shadowbox")!.menuIcon()), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Shadowbox", icon:  UIImage(named: "shadowbox")!.menuIcon()) {
             self.shadowboxMode()
-        }))
+        }
 
-        alertController.addAction(Action(ActionData(title: "Hide read", image: UIImage(named: "hide")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Hide read posts", icon: UIImage(named: "hide")!.menuIcon()) {
             self.hideReadPosts()
-        }))
+        }
 
-        alertController.addAction(Action(ActionData(title: "Refresh", image: UIImage(named: "sync")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Refresh posts", icon: UIImage(named: "sync")!.menuIcon()) {
             self.refresh()
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Gallery", image: UIImage(named: "image")!.menuIcon()), style: .default, handler: { _ in
-            self.galleryMode()
-        }))
+        }
 
-        alertController.addAction(Action(ActionData(title: "Subreddit theme", image: UIImage(named: "colors")!.menuIcon()), style: .default, handler: { _ in
+        alertController.addAction(title: "Gallery view", icon: UIImage(named: "image")!.menuIcon()) {
+            self.galleryMode()
+        }
+
+        alertController.addAction(title: "Custom theme for \(sub)", icon: UIImage(named: "colors")!.menuIcon()) {
             if parentVC != nil {
                 let p = (parentVC!)
                 self.pickTheme(sender: sender, parent: p)
             } else {
                 self.pickTheme(sender: sender, parent: nil)
             }
-        }))
-
-        if !special {
-            alertController.addAction(Action(ActionData(title: "Submit", image: UIImage(named: "edit")!.menuIcon()), style: .default, handler: { _ in
-                self.newPost(sender)
-            }))
         }
 
-        alertController.addAction(Action(ActionData(title: "Filter content", image: UIImage(named: "filter")!.menuIcon()), style: .default, handler: { _ in
+        if !special {
+            alertController.addAction(title: "Submit new post", icon: UIImage(named: "edit")!.menuIcon()) {
+                self.newPost(sender)
+            }
+        }
+
+        alertController.addAction(title: "Filter content from \(sub)", icon: UIImage(named: "filter")!.menuIcon()) {
             if !self.links.isEmpty || self.loaded {
                 self.filterContent()
             }
-        }))
-        
-        alertController.addAction(Action(ActionData(title: "Add to homescreen", image: UIImage(named: "add_homescreen")!.menuIcon()), style: .default, handler: { _ in
+        }
+
+        alertController.addAction(title: "Add homescreen shortcut", icon: UIImage(named: "add_homescreen")!.menuIcon()) {
             self.addToHomescreen()
-        }))
+        }
 
-        VCPresenter.presentAlert(alertController, parentVC: self)
-
+        alertController.show(self)
     }
 
 }

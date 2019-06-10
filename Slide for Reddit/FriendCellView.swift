@@ -11,7 +11,6 @@ import AudioToolbox
 import reddift
 import YYText
 import UIKit
-import XLActionController
 
 class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     
