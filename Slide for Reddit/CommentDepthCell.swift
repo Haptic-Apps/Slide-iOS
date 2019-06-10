@@ -1256,7 +1256,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func mod(_ par: CommentViewController) {
-        let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Comment by u/\(comment!.author)", icon: nil)
+        let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Comment by u/\(comment!.author)", icon: nil, themeColor: GMColor.lightGreen500Color())
 
         alertController.addAction(title: "\(comment!.reports.count) reports", icon: UIImage(named: "reports")!.menuIcon()) {
             var reports = ""

@@ -159,7 +159,7 @@ class PostActions: NSObject {
     
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {
         //todo remove with reason, new icons
-        let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl)
+        let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())
         
         alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(named: "reports")!.menuIcon()) {
             var reports = ""
@@ -178,8 +178,7 @@ class PostActions: NSObject {
         }
         
         if cell.link!.approved {
-            //todo enabled
-            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(named: "approve")!.menuIcon()) {
+            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(named: "approve")!.menuIcon(), enabled: false) {
             }
         } else {
             alertController.addAction(title: "Approve", icon: UIImage(named: "approve")!.menuIcon()) {
@@ -188,8 +187,7 @@ class PostActions: NSObject {
         }
         
         if cell.link!.removed {
-            //todo enabled
-            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(named: "close")!.menuIcon()) {
+            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(named: "close")!.menuIcon(), enabled: false) {
             }
         } else {
             alertController.addAction(title: "Remove", icon: UIImage(named: "close")!.menuIcon()) {

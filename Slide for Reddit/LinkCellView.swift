@@ -2726,7 +2726,7 @@ private extension UIView {
 
 }
 
-private extension UIImageView {
+public extension UIImageView {
     func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?) {
         let oldBackgroundColor: UIColor? = self.backgroundColor
         self.backgroundColor = ColorUtil.theme.fontColor

@@ -8,17 +8,20 @@
 
 import Anchorage
 import SDWebImage
+import SwiftLinkPreview
 import UIKit
 
 class AlertMenuAction: NSObject {
     var title: String
     var icon: UIImage
     var action: () -> Void
+    var enabled = true
     
-    init(title: String, icon: UIImage, action: @escaping () -> Void) {
+    init(title: String, icon: UIImage, action: @escaping () -> Void, enabled: Bool = true) {
         self.title = title
         self.icon = icon
         self.action = action
+        self.enabled = enabled
     }
 }
 
@@ -37,9 +40,26 @@ class BottomActionCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setAction(action: AlertMenuAction) {
+    func setAction(action: AlertMenuAction, color: UIColor?) {
         title.text = action.title
-        icon.image = action.icon
+        if color != nil {
+            title.textColor = color!
+            icon.image = action.icon.getCopy(withColor: color!)
+        } else {
+            icon.image = action.icon
+        }
+        
+        if !action.enabled {
+            self.isUserInteractionEnabled = false
+            self.background.alpha = 0.5
+            self.title.alpha = 0.5
+            self.icon.alpha = 0.5
+        } else {
+            self.isUserInteractionEnabled = true
+            self.background.alpha = 1
+            self.title.alpha = 1
+            self.icon.alpha = 1
+        }
     }
 
     func layoutViews() {
@@ -79,11 +99,13 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var actions: [AlertMenuAction] = []
     var tableView = UITableView()
     var headerView = UIView()
+    var themeColor: UIColor?
 
-    init(title: String, subtitle: String, icon: String?) {
+    init(title: String, subtitle: String, icon: String?, themeColor: UIColor? = nil) {
         self.descriptor = title
         self.subtitle = subtitle
         self.icon = icon
+        self.themeColor = themeColor
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .custom
         transitioningDelegate = self
@@ -119,14 +141,14 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.tableView.separatorStyle = .none
     }
     
-    func addAction(title: String, icon: UIImage, action: @escaping () -> Void) {
-        actions.append(AlertMenuAction(title: title, icon: icon, action: action))
+    func addAction(title: String, icon: UIImage, enabled: Bool = true, action: @escaping () -> Void) {
+        actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled))
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = actions[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "action") as! BottomActionCell
-        cell.setAction(action: item)
+        cell.setAction(action: item, color: themeColor)
         return cell
     }
     
@@ -171,7 +193,11 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.layer.cornerRadius = 15
         self.tableView.layer.masksToBounds = true
-        height = min(UIScreen.main.bounds.height * (2 / 3), CGFloat(80 + (60 * actions.count) + 50))
+        let maxHeight = UIScreen.main.bounds.height * (2 / 3)
+        height = min(maxHeight, CGFloat(80 + (60 * actions.count) + 60))
+        if height < maxHeight {
+            tableView.isScrollEnabled = false
+        }
         self.tableView.heightAnchor == height
         stylize()
         self.tableView.reloadData()
@@ -183,7 +209,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
-        let currentBottomY = scrollView.frame.size.height + currentY
+        let currentBottomY = height + currentY
         if currentY > lastY {
             tableView.bounces = true
         } else {
@@ -203,10 +229,10 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         label.numberOfLines = 2
         let toReturn = UIView()
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        let attributedTitle = NSMutableAttributedString(string: self.descriptor, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 15)])
-        attributedTitle.append(NSAttributedString(string: "\n" + subtitle, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.6)]))
+        let attributedTitle = NSMutableAttributedString(string: self.descriptor, attributes: [NSAttributedString.Key.foregroundColor: themeColor ?? ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 15)])
+        attributedTitle.append(NSAttributedString(string: "\n" + subtitle, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: themeColor?.withAlphaComponent(0.6) ?? ColorUtil.theme.fontColor.withAlphaComponent(0.6)]))
         label.attributedText = attributedTitle
-        let close = UIImageView(image: UIImage(named: "close")?.navIcon())
+        let close = UIImageView(image: UIImage(named: "close")?.navIcon().getCopy(withColor: themeColor ?? ColorUtil.theme.fontColor))
         close.contentMode = .center
         toReturn.addSubview(close)
         close.centerYAnchor == toReturn.centerYAnchor
@@ -216,6 +242,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         close.addTapGestureRecognizer {
             self.dismiss(animated: true, completion: nil)
         }
+        
         if icon != nil {
             let image = UIImageView()
             image.layer.cornerRadius = 7
@@ -227,7 +254,22 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             image.widthAnchor == 45
             image.contentMode = .scaleAspectFill
             
-            image.sd_setImage(with: URL(string: icon!), placeholderImage: LinkCellImageCache.web)
+            if let url = URL(string: icon!) {
+                if ContentType.isImage(uri: url) {
+                    image.loadImageWithPulsingAnimation(atUrl: url, withPlaceHolderImage: LinkCellImageCache.web)
+                } else {
+                    image.image = LinkCellImageCache.web
+                    let slp = SwiftLinkPreview(session: URLSession.shared,
+                                               workQueue: SwiftLinkPreview.defaultWorkQueue,
+                                               responseQueue: DispatchQueue.main,
+                                               cache: DisabledCache.instance)
+                    slp.preview(icon!, onSuccess: { (response) in
+                        image.loadImageWithPulsingAnimation(atUrl: URL(string: response.image ?? response.icon ?? ""), withPlaceHolderImage: LinkCellImageCache.web)
+                    }, onError: {(_) in })
+                }
+            } else {
+                image.image = LinkCellImageCache.web
+            }
             label.leftAnchor == image.rightAnchor + 8
             label.rightAnchor == close.leftAnchor - 8
             label.verticalAnchors == toReturn.verticalAnchors

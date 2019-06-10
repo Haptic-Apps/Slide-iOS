@@ -86,7 +86,7 @@ class CustomAlbum: NSObject {
 
                 }, completionHandler: { (success, _) in
                     DispatchQueue.main.async {
-                        if success && false {
+                        if success {
                             BannerUtil.makeBanner(text: "Image saved to gallery!", color: ColorUtil.theme.fontColor, seconds: 3, context: parent)
                         } else {
                             BannerUtil.makeBanner(text: "Error saving image!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: parent)
