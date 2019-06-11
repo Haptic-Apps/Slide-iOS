@@ -124,8 +124,8 @@ class SettingsLayout: BubbleSettingTableViewController {
             SettingValues.menuButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_moreButton)
         } else if changed == infoBelowTitle {
-            SettingValues.infoBelowTitle = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_infoBelowTitle)
+            SettingValues.infoBelowTitle = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_infoBelowTitle)
             CachedTitle.titles.removeAll()
         } else if changed == abbreviateScore {
             SettingValues.abbreviateScores = changed.isOn
@@ -480,7 +480,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Post score in title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
-        createCell(infoBelowTitleCell, infoBelowTitle, isOn: !SettingValues.infoBelowTitle, text: "Title above submission information")
+        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Title above submission information")
         createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Domain in title")
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Left-side thumbnail")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Hide post button")

@@ -1022,7 +1022,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func endVideos() {
-        if videoView != nil && AnyModalViewController.linkID.isEmpty {
+        if videoView != nil && AnyModalViewController.linkID.isEmpty && (!full || videoLoaded) {
             videoView?.player?.pause()
             self.updater?.invalidate()
             self.updater = nil
@@ -1768,6 +1768,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var videoURL: URL?
     weak var videoTask: URLSessionDataTask?
+    var videoLoaded = false
     
     func doLoadVideo() {
         if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
@@ -1777,6 +1778,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             return
         }
         
+        videoLoaded = true
+
         let baseUrl: URL
         if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!) {
             baseUrl = URL.init(string: link!.videoPreview)!

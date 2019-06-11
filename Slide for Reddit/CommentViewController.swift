@@ -1380,7 +1380,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         
         doStartupItems()
 
-        if headerCell.videoView != nil {
+        if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
             headerCell.videoView?.player?.play()
         }
         
@@ -1408,7 +1408,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }

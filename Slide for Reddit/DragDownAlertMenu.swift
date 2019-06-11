@@ -243,7 +243,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         label.numberOfLines = 2
         let toReturn = UIView()
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        let attributedTitle = NSMutableAttributedString(string: self.descriptor, attributes: [NSAttributedString.Key.foregroundColor: themeColor ?? ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 15)])
+        let attributedTitle = NSMutableAttributedString(string: self.descriptor, attributes: [NSAttributedString.Key.foregroundColor: themeColor ?? ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17)])
         attributedTitle.append(NSAttributedString(string: "\n" + subtitle, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: themeColor?.withAlphaComponent(0.6) ?? ColorUtil.theme.fontColor.withAlphaComponent(0.6)]))
         label.attributedText = attributedTitle
         let close = UIImageView(image: UIImage(named: "close")?.navIcon().getCopy(withColor: themeColor ?? ColorUtil.theme.fontColor))
