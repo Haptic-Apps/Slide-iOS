@@ -217,6 +217,9 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.tableView.reloadData()
         interactionController = DragDownDismissInteraction(viewController: self)
         //self.tableView.roundCorners(UIRectCorner.allCorners, radius: 10)
+
+        // Focus the title for accessibility users
+        UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: descriptor)
     }
     
     var lastY: CGFloat = 0.0
@@ -256,6 +259,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         close.addTapGestureRecognizer {
             self.dismiss(animated: true, completion: nil)
         }
+        close.accessibilityLabel = "Close"
         
         if icon != nil {
             let image = UIImageView()
@@ -267,6 +271,8 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             image.heightAnchor == 45
             image.widthAnchor == 45
             image.contentMode = .scaleAspectFill
+            image.isAccessibilityElement = false
+            image.accessibilityIgnoresInvertColors = true
             
             if let url = URL(string: icon!) {
                 if ContentType.isImage(uri: url) {
@@ -375,6 +381,21 @@ extension DragDownAlertMenu: UIViewControllerTransitioningDelegate {
                 return nil
         }
         return interactionController
+    }
+}
+
+// MARK: - Accessibility
+extension DragDownAlertMenu {
+    override func accessibilityPerformEscape() -> Bool {
+        dismiss(animated: true, completion: nil)
+        return true
+    }
+
+    override var accessibilityViewIsModal: Bool {
+        get {
+            return true
+        }
+        set {}
     }
 }
 
