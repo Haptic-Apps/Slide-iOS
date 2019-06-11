@@ -272,7 +272,9 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             image.widthAnchor == 45
             image.contentMode = .scaleAspectFill
             image.isAccessibilityElement = false
-            image.accessibilityIgnoresInvertColors = true
+            if #available(iOS 11.0, *) {
+                image.accessibilityIgnoresInvertColors = true
+            }
             
             if let url = URL(string: icon!) {
                 if ContentType.isImage(uri: url) {
@@ -328,21 +330,6 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-    }
-}
-
-// MARK: - Accessibility
-extension DragDownAlertMenu {
-    override func accessibilityPerformEscape() -> Bool {
-        dismiss(animated: true)
-        return true
-    }
-    
-    override var accessibilityViewIsModal: Bool {
-        get {
-            return true
-        }
-        set {}
     }
 }
 
