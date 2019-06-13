@@ -2038,47 +2038,80 @@ extension CommentDepthCell {
 
         let actionManager = CommentActionsManager(comment: comment, submission: submission)
 
-        let isSaved = ActionStates.isSaved(s: comment)
-
         var actions: [UIAccessibilityCustomAction] = []
 
-        if actionManager.isSavePossible {
-            actions.append(UIAccessibilityCustomAction(name: isSaved ? "Unsave" : "Save", target: self, selector: #selector(self.save(_:))))
-        }
-
         if actionManager.isVotingPossible {
-            let downvoteActionString: String
-            let upvoteActionString: String
+            var downvoteActionString = "Downvote"
+            var upvoteActionString = "Upvote"
 
             switch ActionStates.getVoteDirection(s: comment) {
+            case .up:
+                upvoteActionString = "Remove Upvote"
             case .down:
                 downvoteActionString = "Remove Downvote"
-                upvoteActionString = "Upvote"
-            case .up:
-                downvoteActionString = "Downvote"
-                upvoteActionString = "Remove Upvote"
-            default:
-                downvoteActionString = "Downvote"
-                upvoteActionString = "Upvote"
+            case .none:
+                break
             }
 
-            actions.append(UIAccessibilityCustomAction(name: upvoteActionString, target: self, selector: #selector(upvote)))
-            actions.append(UIAccessibilityCustomAction(name: downvoteActionString, target: self, selector: #selector(downvote)))
+            actions.append(UIAccessibilityCustomAction(
+                name: upvoteActionString,
+                target: self,
+                selector: #selector(upvote))
+            )
+
+            actions.append(UIAccessibilityCustomAction(
+                name: downvoteActionString,
+                target: self,
+                selector: #selector(downvote))
+            )
         }
 
-        if actionManager.isEditPossible {
-            actions.append(UIAccessibilityCustomAction(name: "Edit", target: self, selector: #selector(self.edit(_:))))
+        if actionManager.isSavePossible {
+            let isSaved = ActionStates.isSaved(s: comment)
+            actions.append(UIAccessibilityCustomAction(
+                name: isSaved ? "Unsave" : "Save",
+                target: self, selector:
+                #selector(self.save(_:)))
+            )
         }
 
         if actionManager.isReplyPossible {
-            actions.append(UIAccessibilityCustomAction(name: "Reply", target: self, selector: #selector(self.reply(_:))))
+            actions.append(UIAccessibilityCustomAction(
+                name: "Reply",
+                target: self,
+                selector: #selector(self.reply(_:)))
+            )
+        }
+
+        if actionManager.isEditPossible {
+            actions.append(UIAccessibilityCustomAction(
+                name: "Edit",
+                target: self,
+                selector: #selector(self.edit(_:)))
+            )
+        }
+
+        if actionManager.isDeletePossible {
+            actions.append(UIAccessibilityCustomAction(
+                name: "Delete",
+                target: self,
+                selector: #selector(self.doDelete(_:)))
+            )
         }
 
         if actionManager.isModPossible {
-            actions.append(UIAccessibilityCustomAction(name: "Moderate", target: self, selector: #selector(self.showModMenu(_:))))
+            actions.append(UIAccessibilityCustomAction(
+                name: "Moderate",
+                target: self,
+                selector: #selector(self.showModMenu(_:)))
+            )
         }
 
-        actions.append(UIAccessibilityCustomAction(name: "Additional options", target: self, selector: #selector(menu(_:))))
+        actions.append(UIAccessibilityCustomAction(
+            name: "Additional options",
+            target: self,
+            selector: #selector(menu(_:)))
+        )
 
         self.accessibilityCustomActions = actions
 
@@ -2102,6 +2135,10 @@ class CommentActionsManager {
         return AccountController.isLoggedIn && LinkCellView.checkInternet()
     }()
 
+    var isOwnComment: Bool {
+        return AccountController.currentName == comment.author
+    }
+
     var isVotingPossible: Bool {
         return networkActionsArePossible && !submission.archived
     }
@@ -2111,7 +2148,11 @@ class CommentActionsManager {
     }
 
     var isEditPossible: Bool {
-        return networkActionsArePossible && !submission.archived && AccountController.currentName == comment.author
+        return networkActionsArePossible && isOwnComment
+    }
+
+    var isDeletePossible: Bool {
+        return networkActionsArePossible && isOwnComment
     }
 
     var isReplyPossible: Bool {
