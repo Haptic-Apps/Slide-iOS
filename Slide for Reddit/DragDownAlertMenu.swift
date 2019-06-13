@@ -259,6 +259,8 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         close.addTapGestureRecognizer {
             self.dismiss(animated: true, completion: nil)
         }
+        close.isAccessibilityElement = true
+        close.accessibilityTraits = [.button]
         close.accessibilityLabel = "Close"
         
         if icon != nil {
