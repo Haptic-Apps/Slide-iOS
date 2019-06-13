@@ -129,6 +129,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func configureInit() {
+        self.isAccessibilityElement = true
         self.backgroundColor = ColorUtil.theme.backgroundColor
         self.commentBody = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width, delegate: self).then( {
             $0.isUserInteractionEnabled = true
@@ -1003,8 +1004,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
 
-    @objc func menu(_ s: AnyObject) {
+    func doMenu() {
         more(parent!)
+    }
+
+    @objc func menu(_ s: AnyObject) {
+        doMenu()
     }
     
     @objc func downvote(_ s: AnyObject) {
@@ -1015,7 +1020,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
-    func save() {
+    @objc func save(_ s: AnyObject) {
         parent!.saveComment(self.comment!)
     }
     
@@ -1532,7 +1537,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         self.accessibilityValue = """
         "\(text.string)"
-        Written by user \(comment.author).
+        Comment by user \(comment.author). Score is \(comment.scoreHidden ? "hidden" : "\(comment.score)")
         """
 
         self.comment = comment
@@ -1781,6 +1786,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             commentBody.clearOverflow()
             commentBody.firstTextView.isHidden = true
         }
+
+        refreshAccessibility()
     }
 
     var setLinkAttrs = false
@@ -2014,12 +2021,109 @@ extension CommentDepthCell: ForceTouchGestureDelegate {
     }
 }
 */
+
+// MARK: - Accessibility
+extension CommentDepthCell {
+    override func accessibilityActivate() -> Bool {
+        doMenu()
+        return true
+    }
+
+    private func refreshAccessibility() {
+        guard let comment = comment, let parent = parent, let submission = parent.submission else {
+            print("Could not refresh accessibility for this cell!")
+            return
+        }
+
+        let actionManager = CommentActionsManager(comment: comment, submission: submission)
+
+        let isSaved = ActionStates.isSaved(s: comment)
+
+        var actions: [UIAccessibilityCustomAction] = []
+
+        if actionManager.isSavePossible {
+            actions.append(UIAccessibilityCustomAction(name: isSaved ? "Unsave" : "Save", target: self, selector: #selector(self.save(_:))))
+        }
+
+        if actionManager.isVotingPossible {
+            let downvoteActionString: String
+            let upvoteActionString: String
+
+            switch ActionStates.getVoteDirection(s: comment) {
+            case .down:
+                downvoteActionString = "Remove Downvote"
+                upvoteActionString = "Upvote"
+            case .up:
+                downvoteActionString = "Downvote"
+                upvoteActionString = "Remove Upvote"
+            default:
+                downvoteActionString = "Downvote"
+                upvoteActionString = "Upvote"
+            }
+
+            actions.append(UIAccessibilityCustomAction(name: upvoteActionString, target: self, selector: #selector(upvote)))
+            actions.append(UIAccessibilityCustomAction(name: downvoteActionString, target: self, selector: #selector(downvote)))
+        }
+
+        if actionManager.isEditPossible {
+            actions.append(UIAccessibilityCustomAction(name: "Edit", target: self, selector: #selector(self.edit(_:))))
+        }
+
+        if actionManager.isReplyPossible {
+            actions.append(UIAccessibilityCustomAction(name: "Reply", target: self, selector: #selector(self.reply(_:))))
+        }
+
+        if actionManager.isModPossible {
+            actions.append(UIAccessibilityCustomAction(name: "Moderate", target: self, selector: #selector(self.showModMenu(_:))))
+        }
+
+        actions.append(UIAccessibilityCustomAction(name: "Additional options", target: self, selector: #selector(menu(_:))))
+
+        self.accessibilityCustomActions = actions
+
+    }
+}
+
 extension CommentDepthCell: UIPopoverPresentationControllerDelegate {
     func adaptivePresentationStyle(
         for controller: UIPresentationController,
         traitCollection: UITraitCollection)
         -> UIModalPresentationStyle {
             return .none
+    }
+}
+
+class CommentActionsManager {
+    var submission: RSubmission
+    var comment: RComment
+
+    private lazy var networkActionsArePossible: Bool = {
+        return AccountController.isLoggedIn && LinkCellView.checkInternet()
+    }()
+
+    var isVotingPossible: Bool {
+        return networkActionsArePossible && !submission.archived
+    }
+
+    var isSavePossible: Bool {
+        return networkActionsArePossible
+    }
+
+    var isEditPossible: Bool {
+        return networkActionsArePossible && !submission.archived && AccountController.currentName == comment.author
+    }
+
+    var isReplyPossible: Bool {
+        return networkActionsArePossible && !submission.archived
+    }
+
+    var isModPossible: Bool {
+        return networkActionsArePossible && submission.canMod
+    }
+
+    init(comment: RComment, submission: RSubmission) {
+        self.comment = comment
+        self.submission = submission
     }
 }
 
