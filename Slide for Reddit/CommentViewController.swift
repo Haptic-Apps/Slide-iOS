@@ -1085,13 +1085,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     @objc func sort(_ selector: UIButton?) {
         if !offline {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Comment sorting", message: "", preferredStyle: .actionSheet)
+            let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
 
-            actionSheetController.addCancelButton()
-            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+            let selected = UIImage.init(named: "selected")!.menuIcon()
 
             for c in CommentSort.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: c.description, style: .default) { _ -> Void in
+                actionSheetController.addAction(title: c.description, icon: sort == c ? selected : nil) {
                     self.sort = c
                     self.reset = true
                     self.live = false
@@ -1099,28 +1098,16 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                     let barButton = UIBarButtonItem(customView: self.activityIndicator)
                     self.navigationItem.rightBarButtonItems = [barButton]
                     self.activityIndicator.startAnimating()
-
+                    
                     self.refresh(self)
                 }
-                if sort == c {
-                    saveActionButton.setValue(selected, forKey: "image")
-                }
-
-                actionSheetController.addAction(saveActionButton)
             }
 
-            let saveActionButton: UIAlertAction = UIAlertAction(title: "Live (beta)", style: .default) { _ -> Void in
+            actionSheetController.addAction(title: "Live (beta)", icon: live ? selected : nil) {
                 self.setLive()
             }
             
-            actionSheetController.addAction(saveActionButton)
-
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = selector!
-                presenter.sourceRect = selector!.bounds
-            }
-
-            self.present(actionSheetController, animated: true, completion: nil)
+            actionSheetController.show(self)
         }
     }
 

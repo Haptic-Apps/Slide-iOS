@@ -34,38 +34,20 @@ class SubredditHeaderView: UIView {
                 case .success(let users):
                     list.append(contentsOf: users)
                     DispatchQueue.main.async {
-                        let sheet = UIAlertController(title: "r/\(self.subreddit!.displayName) mods", message: nil, preferredStyle: .actionSheet)
-                        sheet.addAction(
-                                UIAlertAction(title: "Close", style: .cancel) { (_) in
-                                    sheet.dismiss(animated: true, completion: nil)
-                                }
-                        )
-                        sheet.addAction(
-                                UIAlertAction(title: "Message r/\(self.subreddit!.displayName) moderators", style: .default) { (_) in
-                                    sheet.dismiss(animated: true, completion: nil)
-                                    //todo this
-                                }
-                        )
+                        let sheet = DragDownAlertMenu(title: "Moderators", subtitle: "r/\(self.subreddit!.displayName)", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: false)
+
+                        sheet.addAction(title: "Message r/\(self.subreddit!.displayName) moderators", icon: UIImage(named: "mod")?.menuIcon(), action: {
+                            VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=/r/\(self.subreddit!.displayName)", self.parentController?.navigationController, self.parentController)
+                        })
 
                         for user in users {
-                            let somethingAction = UIAlertAction(title: "u/\(user.name)", style: .default) { (_) in
-                                sheet.dismiss(animated: true, completion: nil)
+                            sheet.addAction(title: "u/\(user.name)", icon: nil, action: {
                                 VCPresenter.showVC(viewController: ProfileViewController.init(name: user.name), popupIfPossible: false, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
-                            }
-
-                            let color = ColorUtil.getColorForUser(name: user.name)
-                            if color != ColorUtil.baseColor {
-                                somethingAction.setValue(color, forKey: "titleTextColor")
-
-                            }
-                            sheet.addAction(somethingAction)
+                            })
+                            //todo maybe tags or colors?
                         }
-                        if let presenter = sheet.popoverPresentationController {
-                            presenter.sourceView = self.mods
-                            presenter.sourceRect = self.mods.bounds
-                        }
-
-                        self.parentController?.present(sheet, animated: true)
+                        
+                        sheet.show(self.parentController)
                     }
                 }
             })
@@ -161,30 +143,17 @@ class SubredditHeaderView: UIView {
     }
     
     @objc func sort(_ selector: UITableViewCell) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
+        let actionSheetController = DragDownAlertMenu(title: "Default sorting for r/\(self.subreddit!.displayName)", subtitle: "Overrides the default in Settings > General", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 
-        actionSheetController.addCancelButton()
-        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let selected = UIImage.init(named: "selected")!.menuIcon()
 
         for link in LinkSortType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
+            actionSheetController.addAction(title: link.description, icon: SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link ? selected : nil) {
                 self.showTimeMenu(s: link, selector: selector)
             }
-            
-            if SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-
-            actionSheetController.addAction(saveActionButton)
         }
 
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = self.sorting
-            presenter.sourceRect = self.sorting.bounds
-        }
-
-        self.parentController?.present(actionSheetController, animated: true, completion: nil)
-
+        actionSheetController.show(self.parentController)
     }
 
     func showTimeMenu(s: LinkSortType, selector: UITableViewCell) {
@@ -194,31 +163,19 @@ class SubredditHeaderView: UIView {
             UserDefaults.standard.synchronize()
             return
         } else {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
+            let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 
-            actionSheetController.addCancelButton()
             let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
             for t in TimeFilterWithin.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
+                actionSheetController.addAction(title: t.param, icon: SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t ? selected : nil) {
                     UserDefaults.standard.set(s.path, forKey: self.subreddit!.displayName.lowercased() + "Sorting")
                     UserDefaults.standard.set(t.param, forKey: self.subreddit!.displayName.lowercased() + "Time")
                     UserDefaults.standard.synchronize()
                 }
-                
-                if SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t {
-                    saveActionButton.setValue(selected, forKey: "image")
-                }
-
-                actionSheetController.addAction(saveActionButton)
             }
 
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = selector
-                presenter.sourceRect = selector.bounds
-            }
-
-            self.parentController?.present(actionSheetController, animated: true, completion: nil)
+            actionSheetController.show(self.parentController)
         }
     }
 

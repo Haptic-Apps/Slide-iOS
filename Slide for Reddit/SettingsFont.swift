@@ -267,54 +267,33 @@ extension SettingsFont {
     }
 
     func commentSizeCellWasTapped() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Comment font size", message: "", preferredStyle: .actionSheet)
+        let actionSheetController = DragDownAlertMenu(title: "Comment font size", subtitle: "Applies to text displayed throughout Slide", icon: nil, themeColor: nil, full: true)
 
-        actionSheetController.addCancelButton()
-        
+        let selected = UIImage.init(named: "selected")!.menuIcon()
+
         for key in fontSizes.keys.sorted() {
             let description = fontSizes[key]!
-            let action = UIAlertAction(title: description, style: .default) { _ in
+            actionSheetController.addAction(title: description, icon: SettingValues.commentFontOffset == key ? selected : nil) {
                 self.setSizeComment(size: key)
             }
-            if SettingValues.commentFontOffset == key {
-                let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-                action.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(action)
         }
 
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = commentSize.contentView
-            presenter.sourceRect = commentSize.contentView.bounds
-        }
-        self.present(actionSheetController, animated: true, completion: nil)
-
+        actionSheetController.show(self)
     }
 
     func submissionSizeCellWasTapped() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Submission font size", message: "", preferredStyle: .actionSheet)
+        let actionSheetController = DragDownAlertMenu(title: "Submission font size", subtitle: "Applies to submission titles and subtitles", icon: nil, themeColor: nil, full: true)
 
-        actionSheetController.addCancelButton()
+        let selected = UIImage.init(named: "selected")!.menuIcon()
 
         for key in fontSizes.keys.sorted() {
             let description = fontSizes[key]!
-            let action = UIAlertAction(title: description, style: .default) { _ in
+            actionSheetController.addAction(title: description, icon: SettingValues.commentFontOffset == key ? selected : nil) {
                 self.setSizeSubmission(size: key)
             }
-            if SettingValues.postFontOffset == key {
-                let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-                action.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(action)
         }
-
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = submissionSize.contentView
-            presenter.sourceRect = submissionSize.contentView.bounds
-        }
-        self.present(actionSheetController, animated: true, completion: nil)
+        
+        actionSheetController.show(self)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -324,39 +303,28 @@ extension SettingsFont {
 
     func weightCellWasTapped(submission: Bool) {
 
-        let actionSheetController: UIAlertController = UIAlertController(title: submission ? "Submission font variant" : "Comment font variant", message: "", preferredStyle: .actionSheet)
-
-        actionSheetController.addCancelButton()
+        let actionSheetController = DragDownAlertMenu(title: submission ? "Submission font variant" : "Comment font variant", subtitle: "", icon: nil, themeColor: nil, full: true)
 
         let currentFamily = FontGenerator.fontOfSize(size: 16, submission: submission).familyName
         let fontsInFamily = UIFont.fontNames(forFamilyName: currentFamily)
-        print(fontsInFamily)
+
+        let selected = UIImage.init(named: "selected")!.menuIcon()
+
         // Prune out the weights that aren't available for the selected font
         for font in fontsInFamily {
-            let action = UIAlertAction(title: font, style: .default) { _ in
+            actionSheetController.addAction(title: font, icon: font == FontGenerator.fontOfSize(size: 16, submission: submission).fontName ? selected : nil) {
                 // Update the stored font weight
                 UserDefaults.standard.set(font, forKey: submission ? "postfont" : "commentfont")
-
+                
                 UserDefaults.standard.synchronize()
                 FontGenerator.initialize()
                 CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
                 CachedTitle.titles.removeAll()
                 self.refresh()
             }
-            
-            if font == FontGenerator.fontOfSize(size: 16, submission: submission).fontName {
-                let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-                action.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(action)
         }
 
-        actionSheetController.modalPresentationStyle = .popover
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = submission ? submissionWeight.contentView : commentWeight.contentView
-            presenter.sourceRect = submission ? submissionWeight.contentView.bounds : commentWeight.contentView.bounds
-        }
-        self.present(actionSheetController, animated: true, completion: nil)
+        actionSheetController.show(self)
     }
 }
 

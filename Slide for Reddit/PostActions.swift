@@ -439,14 +439,11 @@ class PostActions: NSObject {
         for rule in rules {
             reasons.append(rule.violatonReason + "\n" + rule.description)
         }
-        let sheet = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        sheet.setupTheme()
-        sheet.attributedTitle = NSAttributedString(string: "Choose a removal reason", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        let sheet = DragDownAlertMenu(title: "Remove post", subtitle: "Choose a removal reason", icon: nil, themeColor: GMColor.lightGreen500Color(), full: true)
         
         for reason in reasons {
-            let somethingAction = AlertAction(title: reason, style: .normal) { (_) in
-                var index = reasons.index(of: reason) ?? 0
+            sheet.addAction(title: reason, icon: nil) {
+                let index = reasons.index(of: reason) ?? 0
                 if index == 0 {
                     modRemoveReason(cell, reason: "")
                 } else if index == 1 {
@@ -457,12 +454,9 @@ class PostActions: NSObject {
                     modRemoveReason(cell, reason: reasons[index])
                 }
             }
-            
-            sheet.addAction(somethingAction)
         }
-        sheet.addCloseButton()
-        sheet.addBlurView()
-        cell.parentViewController?.present(sheet, animated: true)
+        
+        sheet.show(cell.parentViewController)
     }
     
     static func removeNoReason(_ cell: LinkCellView, spam: Bool = false) {

@@ -53,53 +53,43 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         guard let baseURL = self.webView.url else {
             return
         }
-        let alert = UIAlertController.init(title: baseURL.absoluteString, message: "", preferredStyle: .actionSheet)
+        let alert = DragDownAlertMenu(title: "Link options", subtitle: baseURL.absoluteString, icon: baseURL.absoluteString)
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alert.addAction(
-                UIAlertAction(title: "Open in Chrome", style: .default) { (_) in
-                    open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
-                }
-            )
+            alert.addAction(title: "Open in Chrome", icon: UIImage(named: "world")?.menuIcon()) {
+                open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
+            }
         }
-        alert.addAction(
-            UIAlertAction(title: "Open externally (Safari)", style: .default) { (_) in
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(baseURL)
-                }
-            }
-        )
-        alert.addAction(
-            UIAlertAction(title: "Share URL", style: .default) { (_) in
-                let shareItems: Array = [baseURL]
-                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                if let presenter = activityViewController.popoverPresentationController {
-                    presenter.sourceView = sender
-                    presenter.sourceRect = sender.bounds
-                }
-                let window = UIApplication.shared.keyWindow!
-                if let modalVC = window.rootViewController?.presentedViewController {
-                    modalVC.present(activityViewController, animated: true, completion: nil)
-                } else {
-                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
-                }
-            }
-        )
-        alert.addCancelButton()
-        let window = UIApplication.shared.keyWindow!
-        alert.modalPresentationStyle = .popover
         
-        if let presenter = alert.popoverPresentationController {
-            presenter.sourceView = sender
-            presenter.sourceRect = sender.bounds
+        alert.addAction(title: "Open in default app", icon: UIImage(named: "nav")?.menuIcon(), action: {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(baseURL)
+            }
+        })
+        
+        alert.addAction(title: "Share URL", icon: UIImage(named: "share")?.menuIcon()) {
+            let shareItems: Array = [baseURL]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = sender
+                presenter.sourceRect = sender.bounds
+            }
+            let window = UIApplication.shared.keyWindow!
+            if let modalVC = window.rootViewController?.presentedViewController {
+                modalVC.present(activityViewController, animated: true, completion: nil)
+            } else {
+                window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+            }
         }
+
+        let window = UIApplication.shared.keyWindow!
         
         if let modalVC = window.rootViewController?.presentedViewController {
-            modalVC.present(alert, animated: true, completion: nil)
+            alert.show(modalVC)
         } else {
-            window.rootViewController!.present(alert, animated: true, completion: nil)
+            alert.show(window.rootViewController)
         }
     }
 

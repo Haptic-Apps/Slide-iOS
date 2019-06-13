@@ -284,86 +284,51 @@ class SettingsGeneral: BubbleSettingTableViewController {
     }
     
     func showMenuComments(_ selector: UIView?) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Comment sorting", message: "", preferredStyle: .actionSheet)
-        
-        actionSheetController.addCancelButton()
-        
-        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let actionSheetController = DragDownAlertMenu(title: "Default comment sorting", subtitle: "Will be applied to threads", icon: nil, themeColor: nil, full: true)
+
+        let selected = UIImage(named: "selected")!.menuIcon()
         
         for link in CommentSort.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
+            actionSheetController.addAction(title: link.description, icon: SettingValues.defaultCommentSorting == link ? selected : nil) {
                 SettingValues.defaultCommentSorting = link
                 UserDefaults.standard.set(link.path, forKey: SettingValues.pref_defaultCommentSorting)
                 UserDefaults.standard.synchronize()
                 self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
             }
-            if SettingValues.defaultCommentSorting == link {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(saveActionButton)
         }
         
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selector!
-            presenter.sourceRect = selector!.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
+        actionSheetController.show(self)
     }
 
     func showMenuSearch(_ selector: UIView?) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Search sorting", message: "", preferredStyle: .actionSheet)
+        let actionSheetController = DragDownAlertMenu(title: "Default search sorting", subtitle: "Will be applied to all searches", icon: nil, themeColor: nil, full: true)
         
-        actionSheetController.addCancelButton()
-        
-        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let selected = UIImage(named: "selected")!.menuIcon()
         
         for link in SearchSortBy.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: "Sort by \(link.path.capitalize())", style: .default) { _ -> Void in
+            actionSheetController.addAction(title: "Sort by \(link.path.capitalize())", icon: SettingValues.defaultSearchSorting == link ? selected : nil) {
                 SettingValues.defaultSearchSorting = link
                 UserDefaults.standard.set(link.path, forKey: SettingValues.pref_defaultSearchSort)
                 UserDefaults.standard.synchronize()
                 self.searchSorting.detailTextLabel?.text = "Sort by \(SettingValues.defaultSearchSorting.path.capitalize())"
             }
-            if SettingValues.defaultSearchSorting == link {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(saveActionButton)
         }
         
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selector!
-            presenter.sourceRect = selector!.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
-        
+        actionSheetController.show(self)
     }
 
     func showMenu(_ selector: UIView?) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
+        let actionSheetController = DragDownAlertMenu(title: "Default subreddit sorting", subtitle: "Will be applied to all subreddits", icon: nil, themeColor: nil, full: true)
 
-        actionSheetController.addCancelButton()
-
-        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let selected = UIImage.init(named: "selected")!.menuIcon()
 
         for link in LinkSortType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
+            actionSheetController.addAction(title: link.description, icon: SettingValues.defaultSorting == link ? selected : nil) {
                 self.showTimeMenu(s: link, selector: selector)
             }
-            if SettingValues.defaultSorting == link {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(saveActionButton)
         }
 
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selector!
-            presenter.sourceRect = selector!.bounds
-        }
-
-        self.present(actionSheetController, animated: true, completion: nil)
+        actionSheetController.show(self)
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
@@ -374,17 +339,12 @@ class SettingsGeneral: BubbleSettingTableViewController {
             self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
             return
         } else {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
+            let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: nil, full: true)
 
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-            }
-            actionSheetController.addAction(cancelActionButton)
-
-            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+            let selected = UIImage.init(named: "selected")!.menuIcon()
 
             for t in TimeFilterWithin.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
-                    print("Sort is \(s) and time is \(t)")
+                actionSheetController.addAction(title: t.param, icon: SettingValues.defaultTimePeriod == t ? selected : nil) {
                     SettingValues.defaultSorting = s
                     UserDefaults.standard.set(s.path, forKey: SettingValues.pref_defaultSorting)
                     SettingValues.defaultTimePeriod = t
@@ -392,19 +352,9 @@ class SettingsGeneral: BubbleSettingTableViewController {
                     UserDefaults.standard.synchronize()
                     self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
                 }
-                if SettingValues.defaultTimePeriod == t {
-                    saveActionButton.setValue(selected, forKey: "image")
-                }
-
-                actionSheetController.addAction(saveActionButton)
             }
-
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = selector!
-                presenter.sourceRect = selector!.bounds
-            }
-
-            self.present(actionSheetController, animated: true, completion: nil)
+            
+            actionSheetController.show(self)
         }
     }
 

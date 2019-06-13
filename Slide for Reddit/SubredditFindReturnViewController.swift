@@ -108,36 +108,28 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
             return
         }
         
-        let alrController = UIAlertController.init(title: "Subscribe to \(sub)", message: nil, preferredStyle: .actionSheet)
+        let alrController = DragDownAlertMenu(title: "Follow r/\(sub)", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
 
         if AccountController.isLoggedIn {
-            let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertAction.Style.default, handler: {(_: UIAlertAction!) in
+            alrController.addAction(title: "Subscribe", icon: nil) {
                 Subscriptions.subscribe(sub, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 BannerUtil.makeBanner(text: "Subscribed", seconds: 5, context: self.parent, top: true)
                 self.navigationController?.popViewController(animated: true)
                 self.callback(sub)
-            })
-            alrController.addAction(somethingAction)
+            }
         } else {
             self.navigationController?.popViewController(animated: true)
             self.callback(sub)
             return
         }
         
-        let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertAction.Style.default, handler: {(_: UIAlertAction!) in
+        alrController.addAction(title: "Casually subscribe", icon: nil) {
             Subscriptions.subscribe(sub, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             self.navigationController?.popViewController(animated: true)
             self.callback(sub)
-        })
-        alrController.addAction(somethingAction)
-        
-        alrController.addCancelButton()
-        alrController.modalPresentationStyle = .popover
-        if let presenter = alrController.popoverPresentationController {
-            presenter.sourceView = cell.contentView
-            presenter.sourceRect = cell.contentView.bounds
         }
-        self.present(alrController, animated: true, completion: {})
+        
+        alrController.show(self)
     }
     
     var searchBar: UISearchBar = UISearchBar()

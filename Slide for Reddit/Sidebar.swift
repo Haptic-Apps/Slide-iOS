@@ -58,32 +58,22 @@ class Sidebar: NSObject {
             parent!.subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", seconds: 5, context: self.parent, top: true)
         } else {
-            let alrController = UIAlertController.init(title: "Subscribe to \(sub.displayName)", message: nil, preferredStyle: .actionSheet)
+            let alrController = DragDownAlertMenu(title: "Follow r/\(sub.displayName)", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub.displayName), full: true)
             if AccountController.isLoggedIn {
-                let somethingAction = UIAlertAction(title: "Add to sub list and subscribe", style: UIAlertAction.Style.default, handler: {(_: UIAlertAction!) in
+                alrController.addAction(title: "Subscribe", icon: nil) {
                     Subscriptions.subscribe(sub.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     self.parent!.subChanged = true
                     BannerUtil.makeBanner(text: "Subscribed", seconds: 5, context: self.parent, top: true)
-                })
-                alrController.addAction(somethingAction)
+                }
             }
             
-            let somethingAction = UIAlertAction(title: "Add to sub list", style: UIAlertAction.Style.default, handler: {(_: UIAlertAction!) in
+            alrController.addAction(title: "Casually subscribe", icon: nil) {
                 Subscriptions.subscribe(sub.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 self.parent!.subChanged = true
                 BannerUtil.makeBanner(text: "Added to subscription list", seconds: 5, context: self.parent, top: true)
-            })
-            alrController.addAction(somethingAction)
-            
-            alrController.addCancelButton()
-            alrController.modalPresentationStyle = .popover
-            if let presenter = alrController.popoverPresentationController {
-                presenter.sourceView = parent!.view
-                presenter.sourceRect = parent!.view.bounds
             }
 
-            parent?.present(alrController, animated: true, completion: {})
-            
+            alrController.show(parent)
         }
     }
 

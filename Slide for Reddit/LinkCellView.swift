@@ -2008,21 +2008,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 case .success(let flairs):
                     list.append(contentsOf: flairs)
                     DispatchQueue.main.async {
-                        let sheet = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                       
-                        sheet.setupTheme()
-                        sheet.attributedTitle = NSAttributedString(string: "r/\(self.link!.subreddit) flairs", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                        
+                        let sheet = DragDownAlertMenu(title: "r/\(self.link!.subreddit) flairs", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.link!.subreddit), full: true)
+
                         for flair in flairs {
-                            let somethingAction = AlertAction(title: (flair.text.isEmpty) ?flair.name : flair.text, style: .normal) { (_) in
+                            sheet.addAction(title: (flair.text.isEmpty) ? flair.name : flair.text, icon: nil, action: {
                                 self.setFlair(flair)
-                            }
-                            
-                            sheet.addAction(somethingAction)
+                            })
                         }
-                        sheet.addCloseButton()
-                        sheet.addBlurView()
-                        self.parentViewController?.present(sheet, animated: true)
+                        sheet.show(self.parentViewController)
                     }
                 }
             })

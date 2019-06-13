@@ -52,61 +52,33 @@ class SearchViewController: ContentListingViewController {
     var timeB = UIBarButtonItem.init()
     
     @objc func time(_ sender: UIView) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Time period", message: "", preferredStyle: .actionSheet)
+        let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
         
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let selected = UIImage(named: "selected")!.menuIcon()
 
         for t in SearchTimePeriod.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { _ -> Void in
+            actionSheetController.addAction(title: t.path.firstUppercased, icon: (baseData as! SearchContributionLoader).time == t ? selected : nil) {
                 (self.baseData as! SearchContributionLoader).time = t
                 self.refresh()
             }
-            if (baseData as! SearchContributionLoader).time == t {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-            
-            actionSheetController.addAction(saveActionButton)
         }
         
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = sender
-            presenter.sourceRect = sender.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
+        actionSheetController.show(self)
     }
     
     @objc func filter(_ sender: UIView) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Search sort", message: "", preferredStyle: .actionSheet)
+        let actionSheetController = DragDownAlertMenu(title: "Select a sorting type", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
         
-        let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-        }
-        actionSheetController.addAction(cancelActionButton)
-        
-        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let selected = UIImage(named: "selected")!.menuIcon()
         
         for t in SearchSortBy.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.path.firstUppercased, style: .default) { _ -> Void in
+            actionSheetController.addAction(title: t.path.firstUppercased, icon: (baseData as! SearchContributionLoader).sorting == t ? selected : nil) {
                 (self.baseData as! SearchContributionLoader).sorting = t
                 self.refresh()
             }
-            if (baseData as! SearchContributionLoader).sorting == t {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-            
-            actionSheetController.addAction(saveActionButton)
         }
-        
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = sender
-            presenter.sourceRect = sender.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
+
+        actionSheetController.show(self)
     }
 
     var searchText: String?

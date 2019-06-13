@@ -13,11 +13,11 @@ import UIKit
 
 class AlertMenuAction: NSObject {
     var title: String
-    var icon: UIImage
+    var icon: UIImage?
     var action: () -> Void
     var enabled = true
     
-    init(title: String, icon: UIImage, action: @escaping () -> Void, enabled: Bool = true) {
+    init(title: String, icon: UIImage?, action: @escaping () -> Void, enabled: Bool = true) {
         self.title = title
         self.icon = icon
         self.action = action
@@ -44,8 +44,10 @@ class BottomActionCell: UITableViewCell {
         title.text = action.title
         if color != nil {
             title.textColor = color!
-            icon.image = action.icon.getCopy(withColor: color!)
-        } else {
+            if action.icon != nil {
+                icon.image = action.icon!.getCopy(withColor: color!)
+            }
+        } else if action.icon != nil {
             icon.image = action.icon
         }
         
@@ -114,8 +116,9 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var tableView = UITableView()
     var headerView = UIView()
     var themeColor: UIColor?
+    var full = false
 
-    init(title: String, subtitle: String, icon: String?, themeColor: UIColor? = nil) {
+    init(title: String, subtitle: String, icon: String?, themeColor: UIColor? = nil, full: Bool = false) {
         self.descriptor = title
         self.subtitle = subtitle
         self.icon = icon
@@ -123,6 +126,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .custom
         transitioningDelegate = self
+        self.full = full
     }
     
     var backgroundView = UIView().then {
@@ -155,7 +159,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.tableView.separatorStyle = .none
     }
     
-    func addAction(title: String, icon: UIImage, enabled: Bool = true, action: @escaping () -> Void) {
+    func addAction(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void) {
         actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled))
     }
     
@@ -167,7 +171,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 80
+        return subtitle.isEmpty ? 55 : 80
     }
     
     var isPresenting = false
@@ -207,8 +211,14 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.layer.cornerRadius = 15
         self.tableView.layer.masksToBounds = true
-        let maxHeight = UIScreen.main.bounds.height * (2 / 3)
-        height = min(maxHeight, CGFloat(80 + (60 * actions.count) + 60))
+        let maxHeight: CGFloat
+        if full {
+            maxHeight = UIScreen.main.bounds.height - 80
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (60 * actions.count) + 60))
+        } else {
+            maxHeight = UIScreen.main.bounds.height * (2 / 3)
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (60 * actions.count) + 60))
+        }
         if height < maxHeight {
             tableView.isScrollEnabled = false
         }
@@ -247,7 +257,9 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         let toReturn = UIView()
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         let attributedTitle = NSMutableAttributedString(string: self.descriptor, attributes: [NSAttributedString.Key.foregroundColor: themeColor ?? ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17)])
-        attributedTitle.append(NSAttributedString(string: "\n" + subtitle, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: themeColor?.withAlphaComponent(0.6) ?? ColorUtil.theme.fontColor.withAlphaComponent(0.6)]))
+        if !subtitle.isEmpty {
+            attributedTitle.append(NSAttributedString(string: "\n" + subtitle, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: themeColor?.withAlphaComponent(0.6) ?? ColorUtil.theme.fontColor.withAlphaComponent(0.6)]))
+        }
         label.attributedText = attributedTitle
         let close = UIImageView(image: UIImage(named: "close")?.navIcon().getCopy(withColor: themeColor ?? ColorUtil.theme.fontColor))
         close.contentMode = .center

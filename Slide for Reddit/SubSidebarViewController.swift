@@ -86,30 +86,21 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
             BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: self, top: true)
             
         } else {
-            let alrController = UIAlertController.init(title: "Follow \(subreddit!.displayName)", message: nil, preferredStyle: .actionSheet)
+            let alrController = DragDownAlertMenu(title: "Follow \(subreddit!.displayName)", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: subreddit!.displayName), full: true)
+            
             if AccountController.isLoggedIn {
-                let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+                alrController.addAction(title: "Subscribe", icon: nil) {
                     Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                     BannerUtil.makeBanner(text: "Subscribed to r/\(self.subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
-                })
-                alrController.addAction(somethingAction)
+                }
             }
             
-            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+            alrController.addAction(title: "Casually subscribe", icon: nil) {
                 Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 BannerUtil.makeBanner(text: "r/\(self.subreddit!.displayName) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
-            })
-            alrController.addAction(somethingAction)
-                        
-            alrController.addCancelButton()
-            
-            alrController.modalPresentationStyle = .fullScreen
-            if let presenter = alrController.popoverPresentationController {
-                presenter.sourceView = changed
-                presenter.sourceRect = changed.bounds
             }
             
-            self.present(alrController, animated: true, completion: {})
+            alrController.show(self)
         }
     }
 

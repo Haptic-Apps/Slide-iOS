@@ -103,25 +103,19 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     }
     
     func showJumpChooser() {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Floating jump button mode", message: "Tip: long pressing jumps up!", preferredStyle: .actionSheet)
+        let actionSheetController = DragDownAlertMenu(title: "Comment floating jump button", subtitle: "Can be long-pressed to jump up", icon: nil)
         
-        actionSheetController.addCancelButton()
-        
+        let selected = UIImage.init(named: "selected")!.menuIcon()
+
         for t in SettingValues.CommentJumpMode.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.getTitle(), style: .default) { _ -> Void in
+            actionSheetController.addAction(title: t.getTitle(), icon: SettingValues.commentJumpButton == t ? selected : nil) {
                 SettingValues.commentJumpButton = t
                 UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_commentJumpMode)
                 self.floatingJumpCell.detailTextLabel?.text = t.getTitle()
             }
-            actionSheetController.addAction(saveActionButton)
         }
         
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = floatingJumpCell.contentView
-            presenter.sourceRect = floatingJumpCell.contentView.bounds
-        }
-        
-        self.present(actionSheetController, animated: true, completion: nil)
+        actionSheetController.show(self)
     }
     
     func setDepthColors(_ colors: [UIColor]) {

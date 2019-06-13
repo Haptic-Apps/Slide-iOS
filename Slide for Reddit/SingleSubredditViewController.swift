@@ -1174,29 +1174,17 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     @objc func showSortMenu(_ selector: UIView?) {
-        let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
-
-        actionSheetController.addCancelButton()
+        let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
 
         let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         for link in LinkSortType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: link.description, style: .default) { _ -> Void in
+            actionSheetController.addAction(title: link.description, icon: sort == link ? selected : nil) {
                 self.showTimeMenu(s: link, selector: selector)
             }
-            if sort == link {
-                saveActionButton.setValue(selected, forKey: "image")
-            }
-            actionSheetController.addAction(saveActionButton)
         }
 
-        if let presenter = actionSheetController.popoverPresentationController {
-            presenter.sourceView = selector!
-            presenter.sourceRect = selector!.bounds
-        }
-
-        self.present(actionSheetController, animated: true, completion: nil)
-
+        actionSheetController.show(self)
     }
 
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
@@ -1205,38 +1193,23 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             refresh()
             return
         } else {
-            let actionSheetController: UIAlertController = UIAlertController(title: "Sorting", message: "", preferredStyle: .actionSheet)
-
-            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
-            }
-            actionSheetController.addAction(cancelActionButton)
-
-            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+            let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
 
             for t in TimeFilterWithin.cases {
-                let saveActionButton: UIAlertAction = UIAlertAction(title: t.param, style: .default) { _ -> Void in
+                actionSheetController.addAction(title: t.param, icon: nil) {
                     self.sort = s
                     self.time = t
                     self.refresh()
                 }
-                if time == t {
-                    saveActionButton.setValue(selected, forKey: "image")
-                }
-
-                actionSheetController.addAction(saveActionButton)
             }
-
-            if let presenter = actionSheetController.popoverPresentationController {
-                presenter.sourceView = selector!
-                presenter.sourceRect = selector!.bounds
-            }
-
-            self.present(actionSheetController, animated: true, completion: nil)
+            
+            actionSheetController.show(self)
         }
     }
 
     func refresh(_ indicator: Bool = true) {
         if indicator {
+            tableView.setContentOffset(CGPoint(x: 0, y: tableView.contentOffset.y - (refreshControl.frame.size.height)), animated: true)
             refreshControl.beginRefreshing()
         }
         
