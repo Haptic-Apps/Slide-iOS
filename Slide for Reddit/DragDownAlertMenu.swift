@@ -538,7 +538,7 @@ class DragDownDismissInteraction: UIPercentDrivenInteractiveTransition, UIGestur
         super.init()
         self.viewController = viewController
         self.storedHeight = viewController.height
-        prepareGestureRecognizer(in: viewController.tableView)
+        prepareGestureRecognizer(in: viewController.view)
     }
     
     private func prepareGestureRecognizer(in view: UIView) {
@@ -549,7 +549,7 @@ class DragDownDismissInteraction: UIPercentDrivenInteractiveTransition, UIGestur
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return (viewController.tableView.contentOffset.y == 0 || viewController.headerView.bounds.contains(touch.location(in: viewController.headerView)))
+        return (viewController.tableView.contentOffset.y == 0 || viewController.headerView.bounds.contains(touch.location(in: viewController.headerView)) || !(viewController.tableView.bounds.contains(touch.location(in: viewController.tableView))))
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
