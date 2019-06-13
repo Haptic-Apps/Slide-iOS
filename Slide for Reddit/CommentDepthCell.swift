@@ -1536,6 +1536,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if SettingValues.commentActionForceTouch == .NONE { //todo change this
         }
         self.accessibilityValue = """
+        Depth \(comment.depth).
         "\(text.string)"
         Comment by user \(comment.author). Score is \(comment.scoreHidden ? "hidden" : "\(comment.score)")
         """
