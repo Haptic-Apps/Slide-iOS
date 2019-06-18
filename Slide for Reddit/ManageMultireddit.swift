@@ -13,10 +13,12 @@ class ManageMultireddit: UITableViewController {
     
     var multi: Multireddit
     var reloadCallback: () -> Void
-    
-    init(multi: Multireddit, reloadCallback: @escaping () -> Void) {
+    var dismissCallback: (() -> Void)?
+
+    init(multi: Multireddit, reloadCallback: @escaping () -> Void, dismissCallback: (() -> Void)? = nil) {
         self.multi = multi
         self.reloadCallback = reloadCallback
+        self.dismissCallback = dismissCallback
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -34,6 +36,11 @@ class ManageMultireddit: UITableViewController {
         }
     }
     
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        super.dismiss(animated: animated, completion: completion)
+        self.dismissCallback?()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")

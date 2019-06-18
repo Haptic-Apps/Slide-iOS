@@ -1147,6 +1147,18 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
         let settings = SettingsViewController()
         VCPresenter.showVC(viewController: settings, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
     }
+    
+    func currentAccountViewController(_ controller: CurrentAccountViewController, goToMultireddit multireddit: String) {
+        finalSubs = []
+        finalSubs.append(contentsOf: Subscriptions.pinned)
+        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+        redoSubs()
+        goToSubreddit(subreddit: multireddit)
+    }
+    
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestCacheNow: Void) {
+        _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+    }
 
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String) {
 

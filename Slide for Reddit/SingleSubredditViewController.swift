@@ -1433,6 +1433,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     }
                                 }
                             } else {
+                                self.oldPosition = CGPoint.zero
                                 var paths = [IndexPath]()
                                 for i in before..<self.links.count {
                                     paths.append(IndexPath.init(item: i + self.headerOffset(), section: 0))

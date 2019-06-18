@@ -1122,8 +1122,10 @@ extension VideoMediaViewController {
             }
         }
         
-        alertController.addAction(title: "Share Video", icon: UIImage(named: "play")!.menuIcon()) {
-            self.shareVideo(baseURL, sender: sender)
+        if !isYoutubeView {
+            alertController.addAction(title: "Share Video", icon: UIImage(named: "play")!.menuIcon()) {
+                self.shareVideo(baseURL, sender: sender)
+            }
         }
         
         if let topController = UIApplication.topViewController(base: self) {

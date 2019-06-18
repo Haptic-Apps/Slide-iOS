@@ -9,6 +9,8 @@
 import Anchorage
 import BadgeSwift
 import reddift
+import RLBAlertsPickers
+import SDCAlertView
 import SDWebImage
 import Then
 import UIKit
@@ -19,11 +21,15 @@ protocol CurrentAccountViewControllerDelegate: AnyObject {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestGuestAccount: Void)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestLogOut: Void)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestNewAccount: Void)
+    func currentAccountViewController(_ controller: CurrentAccountViewController, goToMultireddit multireddit: String)
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestCacheNow: Void)
 }
 
 class CurrentAccountViewController: UIViewController {
     
     weak var delegate: CurrentAccountViewControllerDelegate?
+    
+    var reportText: String?
     
     var interactionController: CurrentAccountDismissInteraction?
     
@@ -58,7 +64,7 @@ class CurrentAccountViewController: UIViewController {
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Close"
     }
-    
+
     var settingsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 24, bottom: 24, right: 16)
@@ -81,9 +87,19 @@ class CurrentAccountViewController: UIViewController {
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 8, right: 8)
         $0.accessibilityLabel = "Inbox"
     }
+    var cacheButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "save-1")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 16)
+        $0.accessibilityLabel = "Cache Subreddits Now"
+    }
+    var multiButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "multis")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
+        $0.accessibilityLabel = "Create New Multireddit"
+    }
     var switchAccountsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 16)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "Switch Accounts"
     }
     
@@ -202,7 +218,7 @@ extension CurrentAccountViewController {
         view.addSubview(settingsButton)
         
         view.addSubview(upperButtonStack)
-        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton)
+        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton, multiButton, cacheButton)
         
         mailButton.addSubview(mailBadge)
         modButton.addSubview(modBadge)
@@ -267,7 +283,7 @@ extension CurrentAccountViewController {
         
         modBadge.centerYAnchor == modButton.centerYAnchor - 10
         modBadge.centerXAnchor == modButton.centerXAnchor + 16
-        
+
         emptyStateLabel.edgeAnchors == header.edgeAnchors
     }
     
@@ -276,6 +292,8 @@ extension CurrentAccountViewController {
         settingsButton.addTarget(self, action: #selector(settingsButtonPressed), for: .touchUpInside)
         
         mailButton.addTarget(self, action: #selector(mailButtonPressed), for: .touchUpInside)
+        cacheButton.addTarget(self, action: #selector(cacheButtonPressed), for: .touchUpInside)
+        multiButton.addTarget(self, action: #selector(multiButtonPressed), for: .touchUpInside)
         modButton.addTarget(self, action: #selector(modButtonPressed), for: .touchUpInside)
         switchAccountsButton.addTarget(self, action: #selector(switchAccountsButtonPressed), for: .touchUpInside)
         
@@ -422,7 +440,87 @@ extension CurrentAccountViewController {
         navVC.navigationBar.isTranslucent = false
         present(navVC, animated: true)
     }
-    
+
+    @objc func cacheButtonPressed(_ sender: UIButton) {
+        self.dismiss(animated: true)
+        self.delegate?.currentAccountViewController(self, didRequestCacheNow: ())
+    }
+
+    @objc func multiButtonPressed(_ sender: UIButton) {
+        let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
+
+        let config: TextField.Config = { textField in
+            textField.becomeFirstResponder()
+            textField.textColor = ColorUtil.theme.fontColor
+            textField.attributedPlaceholder = NSAttributedString(string: "Title", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+            textField.left(image: UIImage.init(named: "edit"), color: ColorUtil.theme.fontColor)
+            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+            textField.backgroundColor = ColorUtil.theme.foregroundColor
+            textField.leftViewPadding = 12
+            textField.layer.borderWidth = 1
+            textField.layer.cornerRadius = 8
+            textField.keyboardAppearance = .default
+            textField.keyboardType = .default
+            textField.autocapitalizationType = .none
+            textField.returnKeyType = .done
+            textField.action { textField in
+                self.reportText = textField.text
+            }
+        }
+        
+        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+        
+        alert.setupTheme()
+        
+        alert.attributedTitle = NSAttributedString(string: "Name your Multireddit", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        alert.contentView.addSubview(textField)
+        
+        textField.edgeAnchors == alert.contentView.edgeAnchors
+        textField.heightAnchor == CGFloat(44 + 12)
+        
+        alert.addAction(AlertAction(title: "Create", style: .normal, handler: { (_) in
+            var text = self.reportText ?? ""
+            text = text.replacingOccurrences(of: " ", with: "_")
+            if text == "" {
+                let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
+                alert.setupTheme()
+                alert.attributedTitle = NSAttributedString(string: "Name must not be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.addAction(AlertAction(title: "Ok", style: .normal, handler: { (_) in
+                    
+                }))
+
+            }
+            do {
+                try (UIApplication.shared.delegate as! AppDelegate).session?.createMultireddit(text, descriptionMd: "", completion: { (result) in
+                    switch result {
+                    case .success(let multireddit):
+                        DispatchQueue.main.async {
+                            VCPresenter.presentModally(viewController: ManageMultireddit(multi: multireddit, reloadCallback: {
+                            }, dismissCallback: {
+                                Subscriptions.subscribe("/m/" + text, false, session: nil)
+                                self.delegate?.currentAccountViewController(self, goToMultireddit: "/m/" + text)
+                            }), self)
+                        }
+                    case .failure(_):
+                        DispatchQueue.main.async {
+                            BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: self)
+                        }
+                    }
+                })
+            } catch {
+                DispatchQueue.main.async {
+                    BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: self.parent)
+                }
+            }
+        }))
+        
+        alert.addCancelButton()
+        alert.addBlurView()
+        
+        VCPresenter.presentAlert(alert, parentVC: self)
+    }
+
     @objc func modButtonPressed(_ sender: UIButton) {
         let vc = ModerationViewController()
         let navVC = UINavigationController(rootViewController: vc)

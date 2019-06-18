@@ -114,7 +114,7 @@ class Subscriptions {
         UserDefaults.standard.synchronize()
     }
 
-    public static func subscribe(_ name: String, _ subscribe: Bool, session: Session) {
+    public static func subscribe(_ name: String, _ subscribe: Bool, session: Session?) {
         var sub = Subscriptions.subreddits
         SubredditReorderViewController.changed = true
         sub.append(name)
@@ -124,9 +124,9 @@ class Subscriptions {
         } else if SettingValues.hapticFeedback {
             AudioServicesPlaySystemSound(1519)
         }
-        if subscribe && AccountController.isLoggedIn {
+        if subscribe && AccountController.isLoggedIn && session != nil {
             do {
-                try session.setSubscribeSubreddit(Subreddit.init(subreddit: name), subscribe: true, completion: { (_) in
+                try session!.setSubscribeSubreddit(Subreddit.init(subreddit: name), subscribe: true, completion: { (_) in
                     
                 })
             } catch {
