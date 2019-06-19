@@ -36,11 +36,6 @@ class ManageMultireddit: UITableViewController {
         }
     }
     
-    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        super.dismiss(animated: animated, completion: completion)
-        self.dismissCallback?()
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
@@ -59,11 +54,24 @@ class ManageMultireddit: UITableViewController {
         let addB = UIBarButtonItem.init(customView: add)
         self.navigationItem.rightBarButtonItem = addB
         
+        if dismissCallback != nil {
+            let button = UIButtonWithContext.init(type: .custom)
+            button.parentController = self.navigationController
+            button.contextController = self
+            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
+            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
+            
+            let barButton = UIBarButtonItem.init(customView: button)
+            self.navigationItem.leftBarButtonItems = [barButton]
+        }
         self.tableView.tableFooterView = UIView()
     }
     
     @objc func close(_ sender: AnyObject?) {
         self.dismiss(animated: true)
+        self.dismissCallback?()
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
