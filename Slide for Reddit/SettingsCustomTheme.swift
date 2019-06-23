@@ -240,7 +240,7 @@ class SettingsCustomTheme: UITableViewController {
     
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == statusbarSwitch {
-            statusbarEnabled = changed.isOn
+            statusbarEnabled = !changed.isOn
         }
         
         cleanup()
