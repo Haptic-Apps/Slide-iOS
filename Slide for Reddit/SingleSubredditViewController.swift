@@ -1759,12 +1759,12 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
     
     // TODO: This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
-    static func cellType(forSubmission submission: RSubmission, _ isCollection: Bool) -> CurrentType {
+    static func cellType(forSubmission submission: RSubmission, _ isCollection: Bool, cellWidth: CGFloat) -> CurrentType {
         var target: CurrentType = .none
 
         var thumb = submission.thumbnail
         var big = submission.banner
-        let height = submission.height
+        let height = CGFloat(submission.height)
 
         var type = ContentType.getContentType(baseUrl: submission.url)
         if submission.isSelf {
@@ -1778,9 +1778,19 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         let fullImage = ContentType.fullImage(t: type)
 
-        if !fullImage && height < 75 {
+        var submissionHeight = height
+        if !fullImage && submissionHeight < 75 {
             big = false
             thumb = true
+        } else if big && SettingValues.postImageMode == .CROPPED_IMAGE {
+            submissionHeight = 200
+        } else if big {
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: cellWidth)
+            if h == 0 {
+                submissionHeight = 200
+            } else {
+                submissionHeight = h
+            }
         }
 
         if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
@@ -1788,7 +1798,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             thumb = false
         }
 
-        if height < 75 {
+        if submissionHeight < 75 {
             thumb = true
             big = false
         }
@@ -1836,6 +1846,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
         } else {
             target = .text
+        }
+        
+        if big && submissionHeight < 75 {
+            target = .thumb
         }
 
         if type == .LINK && SettingValues.linkAlwaysThumbnail {
@@ -2258,8 +2272,37 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
             self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
         }
-
-        switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub)) {
+        
+        var numberOfColumns = CGFloat.zero
+        var portraitCount = CGFloat(SettingValues.multiColumnCount / 2)
+        if portraitCount == 0 {
+            portraitCount = 1
+        }
+        
+        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        if portraitCount == 1 && pad {
+            portraitCount = 2
+        }
+        
+        if SettingValues.appMode == .MULTI_COLUMN {
+            if UIApplication.shared.statusBarOrientation.isPortrait {
+                if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
+                    numberOfColumns = 1
+                } else {
+                    numberOfColumns = portraitCount
+                }
+            } else {
+                numberOfColumns = CGFloat(SettingValues.multiColumnCount)
+            }
+        } else {
+            numberOfColumns = 1
+        }
+        
+        if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds {
+            numberOfColumns = 1
+        }
+        var tableWidth = self.tableView.frame.size.width
+        switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub), cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) / numberOfColumns ) {
         case .thumb:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
         case .autoplay:

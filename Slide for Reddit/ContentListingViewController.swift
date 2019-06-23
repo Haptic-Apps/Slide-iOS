@@ -257,9 +257,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
         if thing is RSubmission {
-            
+            let tableWidth = self.tableView.frame.size.width
             var c: LinkCellView?
-            switch SingleSubredditViewController.cellType(forSubmission: thing as! RSubmission, false) {
+            switch SingleSubredditViewController.cellType(forSubmission: thing as! RSubmission, false, cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) ) {
             case .thumb:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
             case .banner:
