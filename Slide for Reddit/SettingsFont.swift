@@ -53,6 +53,9 @@ class SettingsFont: BubbleSettingTableViewController {
         } else if changed == type {
             SettingValues.showLinkContentType = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showLinkContentType)
+        } else if changed == preview {
+            SettingValues.disablePreviews = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disablePreviews)
         }
         UserDefaults.standard.synchronize()
     }

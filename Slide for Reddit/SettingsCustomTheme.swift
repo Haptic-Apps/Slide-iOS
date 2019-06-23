@@ -210,7 +210,7 @@ class SettingsCustomTheme: UITableViewController {
         self.statusbar.backgroundColor = foregroundColor
         self.statusbar.textLabel?.textColor = fontColor
         statusbarSwitch.addTarget(self, action: #selector(switchIsChanged(_:)), for: .valueChanged)
-        statusbarSwitch.isOn = statusbarEnabled
+        statusbarSwitch.isOn = !statusbarEnabled
         self.statusbar.accessoryView = statusbarSwitch
         
         self.tableView.tableFooterView = UIView()
@@ -287,6 +287,11 @@ class SettingsCustomTheme: UITableViewController {
     }
     
     var tagText: String?
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        ColorUtil.initializeThemes()
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
