@@ -121,7 +121,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             }
             jump.widthAnchor == 40
             jump.heightAnchor == 40
-            jump.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+            jump.transform = CGAffineTransform(translationX: 0, y: 70)
             
             UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
                 self.jump?.transform = .identity
@@ -136,8 +136,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         if self.jump != nil {
             UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
-                self.jump?.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-            }, completion: {finished in
+                self.jump?.transform = CGAffineTransform(translationX: 0, y: 70)
+            }, completion: { finished in
                 self.jump?.removeFromSuperview()
             })
         }
