@@ -1693,6 +1693,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let isSaved = ActionStates.isSaved(s: submission)
 
         var actions: [UIAccessibilityCustomAction] = [
+            UIAccessibilityCustomAction(name: "Menu", target: self, selector: #selector(more(sender:))),
             UIAccessibilityCustomAction(name: isReadLater ? "Remove from Read Later list" : "Read Later", target: self, selector: #selector(readLater(sender:))),
             UIAccessibilityCustomAction(name: "Hide", target: self, selector: #selector(hide(sender:))),
             ]

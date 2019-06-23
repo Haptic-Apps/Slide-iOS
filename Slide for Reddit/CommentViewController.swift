@@ -2453,7 +2453,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         case .DOWNVOTE:
             cell.downvote(cell)
         case .SAVE:
-            cell.save()
+            cell.save(cell)
         case .MENU:
             cell.menu(cell)
         case .COLLAPSE:

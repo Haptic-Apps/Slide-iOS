@@ -74,8 +74,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var more = UIButton()
     var menu = UIButton()
     var readLaterB = UIBarButtonItem()
-    var sortB = UIBarButtonItem()
-    var readLater = UIButton()
+    var sortB = UIBarButtonItem().then {
+        $0.accessibilityLabel = "Change Post Sorting Order"
+    }
+    var readLater = UIButton().then {
+        $0.accessibilityLabel = "Open Read Later List"
+    }
     var accountB = UIBarButtonItem()
 
     lazy var currentAccountTransitioningDelegate = CurrentAccountPresentationManager()
