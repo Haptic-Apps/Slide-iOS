@@ -633,14 +633,15 @@ class PostActions: NSObject {
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
             PostFilter.profiles.append(username as NSString)
             PostFilter.saveAndUpdate()
+            BannerUtil.makeBanner(text: "User blocked", color: GMColor.red500Color(), seconds: 3, context: parent, top: true, callback: nil)
             if AccountController.isLoggedIn {
                 do {
-                    try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaUsername(username, completion: { (_) in
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaUsername(username, completion: { (result) in
+                        print(result)
                     })
                 } catch {
                     print(error)
                 }
-
             }
             callback()
         }))

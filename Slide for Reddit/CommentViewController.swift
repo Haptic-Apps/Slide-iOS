@@ -1119,7 +1119,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.registerForPreviewing(with: self, sourceView: self.tableView)
 
         self.tableView.allowsSelection = false
-        self.tableView.layer.speed = 1.5
+        //self.tableView.layer.speed = 1.5
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         self.navigationController?.view.backgroundColor = ColorUtil.theme.backgroundColor
         refreshControl = UIRefreshControl()
@@ -1974,23 +1974,24 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func blockUser(name: String) {
         let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
-        let confirmAction = AlertAction(title: "Block", style: .preferred) { (_) in
+        let confirmAction = AlertAction(title: "Block", style: .preferred, handler: {(_) in
             PostFilter.profiles.append(name as NSString)
             PostFilter.saveAndUpdate()
+            BannerUtil.makeBanner(text: "User blocked", color: GMColor.red500Color(), seconds: 3, context: self, top: true, callback: nil)
             if AccountController.isLoggedIn {
                 do {
-                    try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaUsername(name, completion: { (_) in
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaUsername(name, completion: { (result) in
+                        print(result)
                     })
                 } catch {
                     print(error)
                 }
-                
             }
-        }
-        
+        })
+            
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Are you sure you want to block u/\(AccountController.formatUsernamePosessive(input: name, small: true))?", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Are you sure you want to block u/\(name)?", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         alert.addAction(confirmAction)
         alert.addCancelButton()
