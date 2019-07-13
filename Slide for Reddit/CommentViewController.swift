@@ -1926,7 +1926,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 // user did not fill field
             }
         }
-
+        
         if !ColorUtil.getTagForUser(name: name).isEmpty {
             let removeAction = AlertAction(title: "Remove tag", style: .destructive) { (_) in
                 ColorUtil.removeTagForUser(name: name)
@@ -1934,7 +1934,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             }
             alert.addAction(removeAction)
         }
-
+        
         let config: TextField.Config = { textField in
             textField.becomeFirstResponder()
             textField.textColor = ColorUtil.theme.fontColor
@@ -1953,7 +1953,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.tagText = textField.text
             }
         }
-
+        
         let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
         
         alert.setupTheme()
@@ -1967,7 +1967,34 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         
         alert.addAction(confirmAction)
         alert.addCancelButton()
+        
+        alert.addBlurView()
+        self.present(alert, animated: true, completion: nil)
+    }
 
+    func blockUser(name: String) {
+        let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
+        let confirmAction = AlertAction(title: "Block", style: .preferred) { (_) in
+            PostFilter.profiles.append(name as NSString)
+            PostFilter.saveAndUpdate()
+            if AccountController.isLoggedIn {
+                do {
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaUsername(name, completion: { (_) in
+                    })
+                } catch {
+                    print(error)
+                }
+                
+            }
+        }
+        
+        alert.setupTheme()
+        
+        alert.attributedTitle = NSAttributedString(string: "Are you sure you want to block u/\(AccountController.formatUsernamePosessive(input: name, small: true))?", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        alert.addAction(confirmAction)
+        alert.addCancelButton()
+        
         alert.addBlurView()
         self.present(alert, animated: true, completion: nil)
     }

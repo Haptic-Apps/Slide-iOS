@@ -633,6 +633,15 @@ class PostActions: NSObject {
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
             PostFilter.profiles.append(username as NSString)
             PostFilter.saveAndUpdate()
+            if AccountController.isLoggedIn {
+                do {
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaUsername(username, completion: { (_) in
+                    })
+                } catch {
+                    print(error)
+                }
+
+            }
             callback()
         }))
         alert.addCancelButton()

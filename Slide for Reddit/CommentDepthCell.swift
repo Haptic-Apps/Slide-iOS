@@ -1227,6 +1227,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             par.tagUser(name: self.comment!.author)
         }
         
+        alertController.addAction(title: "Block u/\(comment!.author)", icon: UIImage(named: "hide")!.menuIcon()) {
+            par.blockUser(name: self.comment!.author)
+        }
+        
         alertController.addAction(title: "Copy text", icon: UIImage(named: "copy")!.menuIcon()) {
             let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
             

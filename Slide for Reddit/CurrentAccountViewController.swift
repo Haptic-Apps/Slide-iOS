@@ -87,16 +87,6 @@ class CurrentAccountViewController: UIViewController {
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 8, right: 8)
         $0.accessibilityLabel = "Inbox"
     }
-    var cacheButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "save-1")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 16)
-        $0.accessibilityLabel = "Cache Subreddits Now"
-    }
-    var multiButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "multis")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
-        $0.accessibilityLabel = "Create New Multireddit"
-    }
     var switchAccountsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
@@ -218,7 +208,7 @@ extension CurrentAccountViewController {
         view.addSubview(settingsButton)
         
         view.addSubview(upperButtonStack)
-        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton, multiButton, cacheButton)
+        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton)
         
         mailButton.addSubview(mailBadge)
         modButton.addSubview(modBadge)
@@ -292,8 +282,6 @@ extension CurrentAccountViewController {
         settingsButton.addTarget(self, action: #selector(settingsButtonPressed), for: .touchUpInside)
         
         mailButton.addTarget(self, action: #selector(mailButtonPressed), for: .touchUpInside)
-        cacheButton.addTarget(self, action: #selector(cacheButtonPressed), for: .touchUpInside)
-        multiButton.addTarget(self, action: #selector(multiButtonPressed), for: .touchUpInside)
         modButton.addTarget(self, action: #selector(modButtonPressed), for: .touchUpInside)
         switchAccountsButton.addTarget(self, action: #selector(switchAccountsButtonPressed), for: .touchUpInside)
         
@@ -441,12 +429,12 @@ extension CurrentAccountViewController {
         present(navVC, animated: true)
     }
 
-    @objc func cacheButtonPressed(_ sender: UIButton) {
+    @objc func cacheButtonPressed() {
         self.dismiss(animated: true)
         self.delegate?.currentAccountViewController(self, didRequestCacheNow: ())
     }
 
-    @objc func multiButtonPressed(_ sender: UIButton) {
+    @objc func multiButtonPressed() {
         let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
 
         let config: TextField.Config = { textField in
@@ -541,6 +529,14 @@ extension CurrentAccountViewController {
 
 // MARK: - AccountHeaderViewDelegate
 extension CurrentAccountViewController: AccountHeaderViewDelegate {
+    func didRequestCache() {
+        self.cacheButtonPressed()
+    }
+    
+    func didRequestNewMulti() {
+        self.multiButtonPressed()
+    }
+    
     func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int) {
         let vc = ProfileViewController(name: AccountController.currentName)
         vc.openTo = index
@@ -628,6 +624,8 @@ extension CurrentAccountViewController {
 
 protocol AccountHeaderViewDelegate: AnyObject {
     func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int)
+    func didRequestCache()
+    func didRequestNewMulti()
 }
 
 class AccountHeaderView: UIView {
@@ -652,7 +650,15 @@ class AccountHeaderView: UIView {
     var savedCell = UITableViewCell().then {
         $0.configure(text: "Saved Posts", imageName: "save", imageColor: GMColor.yellow500Color())
     }
-    
+
+    var cacheCell = UITableViewCell().then {
+        $0.configure(text: "Start Auto Cache now", imageName: "save-1", imageColor: GMColor.yellow500Color())
+    }
+
+    var multiCell = UITableViewCell().then {
+        $0.configure(text: "Create a Multireddit", imageName: "add", imageColor: GMColor.yellow500Color())
+    }
+
     var likedCell = UITableViewCell().then {
         $0.configure(text: "Liked Posts", imageName: "upvote", imageColor: GMColor.orange500Color())
     }
@@ -677,7 +683,7 @@ class AccountHeaderView: UIView {
         
         addSubviews(infoStack, cellStack)
         infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell)
+        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell, multiCell, cacheCell)
         
         self.clipsToBounds = true
         
@@ -717,6 +723,8 @@ class AccountHeaderView: UIView {
         cellStack.horizontalAnchors == horizontalAnchors
         
         savedCell.heightAnchor == 50
+        cacheCell.heightAnchor == 50
+        multiCell.heightAnchor == 50
         detailsCell.heightAnchor == 50
         likedCell.heightAnchor == 50
         
@@ -735,6 +743,14 @@ class AccountHeaderView: UIView {
         detailsCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 0)
+        }
+        multiCell.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.didRequestNewMulti()
+        }
+        cacheCell.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.didRequestCache()
         }
         commentKarmaLabel.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }

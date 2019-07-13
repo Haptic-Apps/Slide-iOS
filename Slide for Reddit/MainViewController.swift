@@ -12,6 +12,7 @@ import BadgeSwift
 import MaterialComponents.MaterialTabs
 import RealmSwift
 import reddift
+import SDCAlertView
 import StoreKit
 import UIKit
 import WatchConnectivity
@@ -1161,7 +1162,20 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
     }
     
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestCacheNow: Void) {
-        _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+        if Subscriptions.offline.isEmpty {
+            let alert = AlertController.init(title: "Caption", message: "", preferredStyle: .alert)
+            
+            alert.setupTheme()
+            alert.attributedTitle = NSAttributedString(string: "You have no subs set to Auto Cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "You can set this up in Settings > Offline Caching", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            
+            alert.addCloseButton()
+            alert.addBlurView()
+            present(alert, animated: true, completion: nil)
+        } else {
+            _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+        }
     }
 
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String) {
