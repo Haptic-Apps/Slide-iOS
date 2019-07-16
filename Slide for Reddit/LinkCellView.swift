@@ -107,9 +107,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     @objc func share(sender: UITapGestureRecognizer? = nil) {
-        let url = self.link!.url!
-        let shareItems: Array = [url]
-        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        let url = self.link!.url ?? URL(string: self.link!.permalink)
+        
+        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: self is BannerLinkCellView ? [bannerImage?.image] : [url], applicationActivities: nil)
         activityViewController.popoverPresentationController?.sourceView = self.contentView
         self.parentViewController?.present(activityViewController, animated: true, completion: nil)
     }
@@ -559,7 +559,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             readLater.addTarget(self, action: #selector(readLater(sender:)), for: .touchUpInside)
             edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
             hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
-            share.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
+            share.addTarget(self, action: #selector(LinkCellView.share(sender:)), for: .touchUpInside)
             sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
             menu.addTarget(self, action: #selector(LinkCellView.more(sender:)), for: .touchUpInside)
 
