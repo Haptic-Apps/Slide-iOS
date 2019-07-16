@@ -167,7 +167,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.general.textLabel?.textColor = ColorUtil.theme.fontColor
         self.general.imageView?.image = UIImage.init(named: "settings")?.toolbarIcon()
         self.general.imageView?.tintColor = ColorUtil.theme.fontColor
-        if !UserDefaults.standard.bool(forKey: "2notifs") {
+        if false && !UserDefaults.standard.bool(forKey: "2notifs") { //Disabled now
             self.general.detailTextLabel?.textColor = ColorUtil.baseAccent
             self.general.detailTextLabel?.text = "New in 2.0: set up notifications here!"
         } else {

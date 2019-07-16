@@ -9,11 +9,8 @@
 import Anchorage
 import AudioToolbox
 import reddift
-import reddift
 import SDWebImage
 import UIKit
-
-import UIKit.UIGestureRecognizerSubclass
 
 class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDelegate {
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
@@ -191,6 +188,21 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         return (tableView.contentOffset.y == 0 || headerView.bounds.contains(touch.location(in: headerView))) && !self.view.isHidden
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let text = searchBar.text {
+            if text.isEmpty {
+                return
+            }
+            if text.contains(" ") {
+                //do search
+                VCPresenter.showVC(viewController: SearchViewController(subreddit: MainViewController.current, searchFor: text), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+            } else {
+                //go to sub
+                parentController?.goToSubreddit(subreddit: text)
+            }
+        }
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {

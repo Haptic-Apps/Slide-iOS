@@ -82,6 +82,11 @@ class SettingsLayout: BubbleSettingTableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
+    var shareCell: UITableViewCell = InsetCell()
+    var share = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var saveCell: UITableViewCell = InsetCell()
     var save = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -154,6 +159,9 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if changed == hide {
             SettingValues.hideButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideButton)
+        } else if changed == share {
+            SettingValues.shareButton = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_shareButton)
         } else if changed == save {
             SettingValues.saveButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveButton)
@@ -163,9 +171,9 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if changed == flatMode {
             SettingValues.flatMode = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
-            SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
         }
+        SingleSubredditViewController.cellVersion += 1
+        MainViewController.needsReTheme = true
         UserDefaults.standard.synchronize()
         doDisables()
         doLink()
@@ -485,6 +493,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Left-side thumbnail")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Hide post button")
         createCell(saveCell, save, isOn: SettingValues.saveButton, text: "Save post button")
+        createCell(shareCell, share, isOn: SettingValues.shareButton, text: "Share content button")
         createCell(readLaterCell, readLater, isOn: SettingValues.readLaterButton, text: "Read Later button")
         createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Hide banner image on link submissions")
         createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
@@ -571,7 +580,8 @@ class SettingsLayout: BubbleSettingTableViewController {
             case 2: return self.hideCell
             case 3: return self.saveCell
             case 4: return self.moreCell
-            case 5: return self.readLaterCell
+            case 5: return self.shareCell
+            case 6: return self.readLaterCell
                 
             default: fatalError("Unknown row in section 4")
             }
@@ -585,7 +595,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         case 1: return 4
         case 2: return 7
         case 3: return 3
-        case 4: return 6
+        case 4: return 7
         default: fatalError("Unknown number of sections")
         }
     }

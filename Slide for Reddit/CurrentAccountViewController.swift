@@ -67,7 +67,7 @@ class CurrentAccountViewController: UIViewController {
 
     var settingsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 24, bottom: 24, right: 16)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "App Settings"
     }
     
@@ -205,10 +205,9 @@ extension CurrentAccountViewController {
         view.addSubview(backgroundView)
         
         view.addSubview(closeButton)
-        view.addSubview(settingsButton)
         
         view.addSubview(upperButtonStack)
-        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton)
+        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton, UIView(), settingsButton)
         
         mailButton.addSubview(mailBadge)
         modButton.addSubview(modBadge)
@@ -235,13 +234,11 @@ extension CurrentAccountViewController {
             closeButton.topAnchor == view.safeTopAnchor
             closeButton.leftAnchor == view.safeLeftAnchor
             
-            settingsButton.topAnchor == view.safeTopAnchor
             settingsButton.rightAnchor == view.safeRightAnchor
         } else {
             closeButton.topAnchor == view.safeTopAnchor + 24
             closeButton.leftAnchor == view.safeLeftAnchor
             
-            settingsButton.topAnchor == view.safeTopAnchor + 24
             settingsButton.rightAnchor == view.safeRightAnchor
         }
         
@@ -367,8 +364,13 @@ extension CurrentAccountViewController {
     
     func setEmptyState(_ isOn: Bool, animate: Bool) {
         func animationBlock() {
-            self.upperButtonStack.alpha = isOn ? 0 : 1
-            self.upperButtonStack.isUserInteractionEnabled = !isOn
+            self.mailButton.alpha = isOn ? 0 : 1
+            self.modButton.alpha = isOn ? 0 : 1
+            self.switchAccountsButton.alpha = isOn ? 0 : 1
+
+            self.mailButton.isUserInteractionEnabled = !isOn
+            self.modButton.isUserInteractionEnabled = !isOn
+            self.switchAccountsButton.isUserInteractionEnabled = !isOn
             
             self.accountNameLabel.alpha = isOn ? 0 : 1
             self.accountAgeLabel.alpha = isOn ? 0 : 1

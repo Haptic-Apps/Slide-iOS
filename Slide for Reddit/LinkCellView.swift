@@ -106,6 +106,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         del?.reply(self)
     }
     
+    @objc func share(sender: UITapGestureRecognizer? = nil) {
+        let url = self.link!.url!
+        let shareItems: Array = [url]
+        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.contentView
+        self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+    }
+
     @objc func downvote(sender: UITapGestureRecognizer? = nil) {
         del?.downvote(self)
     }
@@ -141,6 +149,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var menu: UIButton!
     var upvote: UIButton!
     var hide: UIButton!
+    var share: UIButton!
     var edit: UIButton!
     var reply: UIButton!
     var downvote: UIButton!
@@ -345,6 +354,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
 
+        self.share = UIButton(type: .custom).then {
+            $0.accessibilityIdentifier = "Share Button"
+            $0.setImage(LinkCellImageCache.share, for: .normal)
+            $0.contentMode = .center
+            $0.isOpaque = false
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
+        }
+
         self.readLater = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Read Later Button"
             $0.setImage(LinkCellImageCache.readLater, for: .normal)
@@ -500,9 +517,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 $0.spacing = 16
             }
             if SettingValues.actionBarMode == .FULL_LEFT {
-                buttons.addArrangedSubviews(menu, upvote, downvote, edit, reply, readLater, save, hide, mod)
+                buttons.addArrangedSubviews(menu, share, upvote, downvote, edit, reply, readLater, save, hide, mod)
             } else {
-                buttons.addArrangedSubviews(edit, reply, readLater, save, hide, upvote, downvote, mod, menu)
+                buttons.addArrangedSubviews(edit, reply, readLater, save, hide, upvote, downvote, mod, share, menu)
             }
             self.contentView.addSubview(buttons)
         } else {
@@ -542,6 +559,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             readLater.addTarget(self, action: #selector(readLater(sender:)), for: .touchUpInside)
             edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
             hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
+            share.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
             sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
             menu.addTarget(self, action: #selector(LinkCellView.more(sender:)), for: .touchUpInside)
 
@@ -997,6 +1015,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         var testedViews: [UIView] = [
             menu,
+            share,
             upvote,
             downvote,
             mod,
@@ -1316,6 +1335,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         setVisibility(save, actions.isSaveEnabled && actions.isSavePossible)
         setVisibility(reply, actions.isReplyPossible && full)
         setVisibility(menu, actions.isMenuEnabled)
+        setVisibility(share, actions.isShareEnabled)
         setVisibility(edit, actions.isEditPossible && full)
         setVisibility(mod, actions.isModPossible)
 
@@ -1734,6 +1754,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             actions.append(UIAccessibilityCustomAction(name: "Moderate", target: self, selector: #selector(mod(sender:))))
         }
 
+        if actionManager.isShareEnabled {
+            actions.append(UIAccessibilityCustomAction(name: "Share", target: self, selector: #selector(share(sender:))))
+        }
+
         accessibilityView.accessibilityCustomActions = actions
 
     }
@@ -2118,6 +2142,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         downvote.setImage(LinkCellImageCache.downvote, for: .normal)
         sideUpvote.setImage(LinkCellImageCache.upvoteSmall, for: .normal)
         sideDownvote.setImage(LinkCellImageCache.downvoteSmall, for: .normal)
+        share.setImage(LinkCellImageCache.share, for: .normal)
         menu.setImage(LinkCellImageCache.menu, for: .normal)
 
         save.setImage(ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save, for: .normal)
@@ -2764,6 +2789,10 @@ class PostActionsManager {
     
     var isMenuEnabled: Bool {
         return SettingValues.menuButton
+    }
+    
+    var isShareEnabled: Bool {
+        return SettingValues.shareButton
     }
 
     var isReadLaterEnabled: Bool {

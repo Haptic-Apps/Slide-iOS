@@ -124,6 +124,7 @@ class SettingValues {
     public static let pref_disablePreviews = "DISABLE_PREVIEWS"
     public static let pref_commentDepth = "MAX_COMMENT_DEPTH"
     public static let pref_postsToCache = "POST_CACHE_COUNT"
+    public static let pref_shareButton = "SHARE_BUTTON_ENABLED"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -186,6 +187,7 @@ class SettingValues {
    // public static var matchSilence = true
     public static var showPages = true
     public static var menuButton = true
+    public static var shareButton = true
     public static var disableBanner = false
     public static var newIndicator = false
     public static var typeInTitle = true
@@ -393,6 +395,7 @@ class SettingValues {
         SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
         SettingValues.submissionGesturesEnabled = settings.object(forKey: SettingValues.pref_submissionGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_submissionGesturesEnabled)
         SettingValues.menuButton = settings.object(forKey: SettingValues.pref_moreButton) == nil ? true : settings.bool(forKey: SettingValues.pref_moreButton)
+        SettingValues.shareButton = settings.object(forKey: SettingValues.pref_shareButton) == nil ? false : settings.bool(forKey: SettingValues.pref_shareButton)
 
         basePath = settings.string(forKey: SettingValues.pref_defaultTimePeriod)
         for time in TimeFilterWithin.cases {
