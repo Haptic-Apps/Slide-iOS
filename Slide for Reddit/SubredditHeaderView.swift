@@ -9,6 +9,8 @@
 import Anchorage
 import AudioToolbox
 import reddift
+import RLBAlertsPickers
+import SDCAlertView
 import YYText
 import UIKit
 
@@ -21,6 +23,7 @@ class SubredditHeaderView: UIView {
     var submit = UITableViewCell()
     var sorting = UITableViewCell()
     var mods = UITableViewCell()
+    var flair = UITableViewCell()
 
     @objc func mods(_ sender: UITableViewCell) {
         var list: [User] = []
@@ -105,6 +108,15 @@ class SubredditHeaderView: UIView {
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
+        self.flair.textLabel?.text = "Your flair on r/\(subreddit!.displayName)"
+        self.flair.accessoryType = .none
+        self.flair.backgroundColor = ColorUtil.theme.foregroundColor
+        self.flair.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.flair.imageView?.image = UIImage.init(named: "flag")?.menuIcon()
+        self.flair.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.flair.layer.cornerRadius = 5
+        self.flair.clipsToBounds = true
+
         self.info = TextDisplayStackView.init(fontSize: 16, submission: false, color: .blue, width: self.frame.size.width - 24, delegate: self)
         self.info.isUserInteractionEnabled = true
         
@@ -118,8 +130,12 @@ class SubredditHeaderView: UIView {
         here.font = UIFont.systemFont(ofSize: 16)
         here.textColor = UIColor.white
 
-        addSubviews(submit, info, subscribers, here, sorting, mods)
-
+        if AccountController.isLoggedIn {
+            addSubviews(submit, info, subscribers, here, sorting, mods, flair)
+        } else {
+            addSubviews(submit, info, subscribers, here, sorting, mods)
+        }
+        
         self.clipsToBounds = true
         
         setupAnchors()
@@ -135,13 +151,113 @@ class SubredditHeaderView: UIView {
         let nTap = UITapGestureRecognizer(target: self, action: #selector(self.new(_:)))
         submit.addGestureRecognizer(nTap)
         submit.isUserInteractionEnabled = true
-
+        
+        let fTap = UITapGestureRecognizer(target: self, action: #selector(self.flair(_:)))
+        flair.addGestureRecognizer(fTap)
+        flair.isUserInteractionEnabled = true
+        
     }
     
     @objc func new(_ selector: UITableViewCell) {
         PostActions.showPostMenu(parentController!, sub: self.subreddit!.displayName)
     }
     
+    @objc func flair(_ selector: UITableViewCell) {
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.userFlairList(subreddit!.displayName, completion: { (result) in
+                switch result {
+                case .success(let flairList):
+                    DispatchQueue.main.async {
+                        let alert = DragDownAlertMenu(title: "Available flairs", subtitle: "r/\(self.subreddit!.displayName)", icon: nil)
+                        
+                        for item in flairList {
+                            alert.addAction(title: item.text.isEmpty ? item.name : item.text, icon: nil, action: {
+                                self.setFlair(item)
+                            })
+                        }
+                        
+                        alert.show(self.parentController)
+                    }
+                case .failure(let error):
+                    print(error)
+                    
+                }
+            })
+        } catch {
+            
+        }
+    }
+    
+    var flairText: String?
+    
+    func setFlair(_ flair: FlairTemplate) {
+        if flair.editable {
+            let alert = AlertController(title: "Edit flair text", message: "", preferredStyle: .alert)
+            
+            let config: TextField.Config = { textField in
+                textField.becomeFirstResponder()
+                textField.textColor = ColorUtil.theme.fontColor
+                textField.attributedPlaceholder = NSAttributedString(string: "Flair text...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+                textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
+                textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+                textField.backgroundColor = ColorUtil.theme.foregroundColor
+                textField.leftViewPadding = 12
+                textField.layer.borderWidth = 1
+                textField.layer.cornerRadius = 8
+                textField.keyboardAppearance = .default
+                textField.keyboardType = .default
+                textField.returnKeyType = .done
+                textField.text = flair.text
+                textField.action { textField in
+                    self.flairText = textField.text
+                }
+            }
+            
+            let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+            
+            alert.setupTheme()
+            
+            alert.attributedTitle = NSAttributedString(string: "Edit flair text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            
+            alert.contentView.addSubview(textField)
+            
+            textField.edgeAnchors == alert.contentView.edgeAnchors
+            textField.heightAnchor == CGFloat(44 + 12)
+            
+            alert.addAction(AlertAction(title: "Set flair", style: .preferred, handler: { (_) in
+                self.submitFlairChange(flair, text: self.flairText ?? "")
+            }))
+            
+            alert.addCancelButton()
+            alert.addBlurView()
+            
+            parentController?.present(alert, animated: true, completion: nil)
+        } else {
+            submitFlairChange(flair)
+        }
+    }
+    
+    func submitFlairChange(_ flair: FlairTemplate, text: String? = "") {
+        do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flairUser(self.subreddit!.displayName, flairId: flair.id, username: AccountController.currentName, text: text ?? "") { result in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                    DispatchQueue.main.async {
+                        BannerUtil.makeBanner(text: "Flair not set", color: GMColor.red500Color(), seconds: 3, context: self.parentController)
+                    }
+                case .success(let success):
+                    print(success)
+                    DispatchQueue.main.async {
+                        BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentController)
+                        self.flair.textLabel?.text = text?.isEmpty ?? true ? flair.name : text
+                    }
+                }}
+        } catch {
+        }
+    }
+
+
     @objc func sort(_ selector: UITableViewCell) {
         let actionSheetController = DragDownAlertMenu(title: "Default sorting for r/\(self.subreddit!.displayName)", subtitle: "Overrides the default in Settings > General", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 
@@ -248,6 +364,7 @@ class SubredditHeaderView: UIView {
         submit.horizontalAnchors == horizontalAnchors + CGFloat(12)
         sorting.horizontalAnchors == horizontalAnchors + CGFloat(12)
         mods.horizontalAnchors == horizontalAnchors + CGFloat(12)
+        flair.horizontalAnchors == horizontalAnchors + CGFloat(12)
         info.horizontalAnchors == horizontalAnchors + CGFloat(12)
         subscribers.leftAnchor == leftAnchor + CGFloat(12)
         subscribers.rightAnchor == here.leftAnchor - CGFloat(4)
@@ -260,16 +377,18 @@ class SubredditHeaderView: UIView {
         submit.topAnchor == subscribers.bottomAnchor + CGFloat(8)
         mods.topAnchor == submit.bottomAnchor + CGFloat(2)
         sorting.topAnchor == mods.bottomAnchor + CGFloat(2)
-        info.topAnchor == sorting.bottomAnchor + CGFloat(16)
+        flair.topAnchor == sorting.bottomAnchor + CGFloat(2)
+        info.topAnchor == flair.bottomAnchor + CGFloat(16)
         info.bottomAnchor == bottomAnchor - CGFloat(16)
         subscribers.heightAnchor == CGFloat(50)
+        flair.heightAnchor == CGFloat(50)
         submit.heightAnchor == CGFloat(50)
         mods.heightAnchor == CGFloat(50)
         sorting.heightAnchor == CGFloat(50)
     }
 
     func getEstHeight() -> CGFloat {
-        return CGFloat(290) + (descHeight)
+        return CGFloat(340) + (descHeight)
     }
 }
 

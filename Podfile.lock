@@ -23,29 +23,29 @@ PODS:
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (85.7.0):
+  - MaterialComponents/ActivityIndicator (85.8.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (85.7.0)
-  - MaterialComponents/Ink (85.7.0):
+  - MaterialComponents/AnimationTiming (85.8.0)
+  - MaterialComponents/Ink (85.8.0):
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (85.7.0)
-  - MaterialComponents/private/Application (85.7.0)
-  - MaterialComponents/private/Math (85.7.0)
-  - MaterialComponents/ProgressView (85.7.0):
+  - MaterialComponents/Palettes (85.8.0)
+  - MaterialComponents/private/Application (85.8.0)
+  - MaterialComponents/private/Math (85.8.0)
+  - MaterialComponents/ProgressView (85.8.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/Ripple (85.7.0):
+  - MaterialComponents/Ripple (85.8.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/private/Math
-  - MaterialComponents/ShadowElevations (85.7.0)
-  - MaterialComponents/ShadowLayer (85.7.0):
+  - MaterialComponents/ShadowElevations (85.8.0)
+  - MaterialComponents/ShadowLayer (85.8.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (85.7.0):
+  - MaterialComponents/Tabs (85.8.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Ink
     - MaterialComponents/Palettes
@@ -55,7 +55,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (85.7.0):
+  - MaterialComponents/Typography (85.8.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -86,7 +86,7 @@ PODS:
   - SwiftEntryKit (1.0.1):
     - QuickLayout (= 3.0.0)
   - SwiftLinkPreview (3.0.1)
-  - SwiftLint (0.33.1)
+  - SwiftLint (0.34.0)
   - SwiftSpreadsheet (1.2.1)
   - SwiftyJSON (5.0.0)
   - Then (2.5.0)
@@ -176,7 +176,7 @@ CHECKOUT OPTIONS:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
-    :commit: cbd97122c3f174b06b87d2a12b6e5d3ead5d416a
+    :commit: f732da5c626f395ecb42304fc680c3529f5b6ce2
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 8a5ecb09650a68bc20f29ba321dad4725482fb56
@@ -201,7 +201,7 @@ SPEC CHECKSUMS:
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 5a8386aa9de7ee8bf9a6d31ac73b82a0f0a39a1e
+  MaterialComponents: d3c6936b52687041650c99d2298d16fb2767f97a
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -221,7 +221,7 @@ SPEC CHECKSUMS:
   SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
   SwiftEntryKit: ef368c3e6f47b79806f47376194a50489736ef68
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
-  SwiftLint: 9fc1143bbacec37f94994a7d0d2a85b2154b6294
+  SwiftLint: 79d48a17c6565dc286c37efb8322c7b450f95c67
   SwiftSpreadsheet: b3dc6d89bd5fd18f38fe88c29898fbc481660a04
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   Then: 0157115e883545c77967b452fe74a1d25fb796e1

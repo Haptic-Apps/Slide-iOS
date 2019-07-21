@@ -41,6 +41,18 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         $0.accessibilityHint = "Close navigation drawer"
     }
 
+    var multiButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
+        $0.accessibilityLabel = "Create a Multireddit"
+    }
+
+    var editButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 24, bottom: 24, right: 16)
+        $0.accessibilityLabel = "Edit your Subscriptions"
+    }
+
     // Guaranteed amount of space between top edge of menu and top edge of screen
     let minTopOffset: CGFloat = 42
 
@@ -467,6 +479,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         headerView.addSubview(searchBar)
 
         headerView.addSubview(accessibilityCloseButton)
+        backgroundView.addSubview(editButton)
         accessibilityCloseButton.addTarget(self, action: #selector(accessibilityCloseButtonActivated), for: .touchUpInside)
 
         tableView.bounces = false
@@ -504,6 +517,10 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         dragHandleView.centerXAnchor == headerView.centerXAnchor
         dragHandleView.sizeAnchors == CGSize(width: 60, height: 6)
         dragHandleView.layer.cornerRadius = 3
+        
+        editButton.leftAnchor == backgroundView.leftAnchor
+        editButton.topAnchor == backgroundView.topAnchor
+        editButton.sizeAnchors == .square(size: 20)
         
         searchBar.topAnchor == dragHandleView.bottomAnchor + 4
         searchBar.horizontalAnchors == headerView.horizontalAnchors
