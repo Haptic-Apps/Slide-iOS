@@ -805,6 +805,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     override var keyCommands: [UIKeyCommand]? {
         return [
             UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
+            UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
+            UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
             UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(search), discoverabilityTitle: "Search"),
             UIKeyCommand(input: "h", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
             UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh), discoverabilityTitle: "Reload")
@@ -814,7 +816,15 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             if let vc = self.getSubredditVC() {
-                vc.tableView.contentOffset.y += 350
+                vc.tableView.contentOffset.y = min(vc.tableView.contentOffset.y + 350, vc.tableView.contentSize.height)
+            }
+        }, completion: nil)
+    }
+
+    @objc func spacePressedUp() {
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+            if let vc = self.getSubredditVC() {
+                vc.tableView.contentOffset.y = max(vc.tableView.contentOffset.y - 350, -64)
             }
         }, completion: nil)
     }
