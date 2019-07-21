@@ -2233,7 +2233,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     @objc func spacePressed() {
         if !isEditing {
             UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-                self.tableView.contentOffset.y = min(self.tableView.contentOffset.y + 350, vc.tableView.contentSize.height)
+                self.tableView.contentOffset.y = min(self.tableView.contentOffset.y + 350, self.tableView.contentSize.height - self.tableView.frame.size.height)
             }, completion: nil)
         }
     }

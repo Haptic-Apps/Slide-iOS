@@ -816,7 +816,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func spacePressed() {
         UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             if let vc = self.getSubredditVC() {
-                vc.tableView.contentOffset.y = min(vc.tableView.contentOffset.y + 350, vc.tableView.contentSize.height)
+                vc.tableView.contentOffset.y = min(vc.tableView.contentOffset.y + 350, vc.tableView.contentSize.height - vc.tableView.frame.size.height)
             }
         }, completion: nil)
     }
