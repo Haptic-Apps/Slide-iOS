@@ -356,8 +356,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         self.share = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Share Button"
-            $0.setImage(LinkCellImageCache.share, for: .normal)
             $0.contentMode = .center
+            $0.setImage(LinkCellImageCache.share, for: .normal)
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }

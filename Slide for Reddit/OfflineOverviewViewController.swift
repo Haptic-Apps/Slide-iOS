@@ -13,15 +13,21 @@ import UserNotifications
 
 class OfflineOverviewViewController: UITableViewController {
     
+    var subComments: [String: Bool]
+    var subTime: [String:NSDate]
     var subs: [String]
     
     init(subs: [String]) {
         self.subs = []
+        self.subComments = [:]
+        self.subTime = [:]
         super.init(style: .plain)
         do {
             let realm = try Realm()
             realm.objects(RListing.self).forEach({ (listing) in
+                self.subComments[listing.subreddit] = listing.comments
                 self.subs.append(listing.subreddit)
+                self.subTime[listing.subreddit] = listing.updated
             })
         } catch {
             
@@ -53,6 +59,8 @@ class OfflineOverviewViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "sub")
+        let row = indexPath.row
+        let sub = subs[row]
         
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
         cell.textLabel?.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
@@ -62,14 +70,13 @@ class OfflineOverviewViewController: UITableViewController {
         cell.accessoryType = .disclosureIndicator
         cell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         cell.detailTextLabel?.numberOfLines = 0
-        
+        cell.detailTextLabel?.text = subComments[sub] ?? false ? "Comments cached \(DateFormatter().timeSince(from: subTime[sub] ?? NSDate(), numericDates: true))" : "No cached comments"
        // if indexPath.row == 0 {
        //     cell.textLabel?.text = "Read later articles"
        //     cell.detailTextLabel?.text = "\(ReadLater.readLaterIDs.count)"
        // } else {
-            var row = indexPath.row
            // row -= 1
-            cell.textLabel?.text = subs[row]
+        cell.textLabel?.text = sub
        // }
 
         return cell

@@ -476,6 +476,7 @@ class RListing: Object {
     
     @objc dynamic var updated = NSDate(timeIntervalSince1970: 1)
     @objc dynamic var subreddit = ""
+    @objc dynamic var comments = false
     let links = List<RSubmission>()
 }
 

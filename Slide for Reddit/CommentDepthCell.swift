@@ -685,15 +685,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         
-        if !AccountController.isLoggedIn || comment!.archived || parent!.np {
+        if !AccountController.isLoggedIn || comment!.archived || parent!.np || (parent?.offline ?? false) {
             upvoteButton.isHidden = true
             downvoteButton.isHidden = true
             replyButton.isHidden = true
         }
-        if !comment!.canMod {
+        if !comment!.canMod || (parent?.offline ?? false) {
             modButton.isHidden = true
         }
-        if comment!.author != AccountController.currentName {
+        if comment!.author != AccountController.currentName || (parent?.offline ?? false) {
             editButton.isHidden = true
             deleteButton.isHidden = true
         }

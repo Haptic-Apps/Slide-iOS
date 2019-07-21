@@ -58,7 +58,7 @@ public class LinkCellImageCache {
         save = UIImage(named: "save")!.menuIcon()
         saveTinted = save.getCopy(withColor: ColorUtil.upvoteColor)
 
-        share = UIImage(named: "reply")!.menuIcon()
+        share = UIImage(named: "send")!.menuIcon()
 
         upvoteSmall = UIImage(named: "up")!.menuIcon()
         upvoteTintedSmall = upvoteSmall.getCopy(withColor: ColorUtil.upvoteColor)

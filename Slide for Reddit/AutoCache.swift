@@ -55,6 +55,7 @@ public class AutoCache: NSObject {
                 for submission in currentLinks {
                     realmListing.links.append(submission)
                 }
+                realmListing.comments = true
                 realm.create(type(of: realmListing), value: realmListing, update: true)
                 try realm.commitWrite()
             } catch {
