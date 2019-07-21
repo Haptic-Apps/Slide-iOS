@@ -27,7 +27,12 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     override var keyCommands: [UIKeyCommand]? {
-        return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
+        return [
+            UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
+            UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(search), discoverabilityTitle: "Search"),
+            UIKeyCommand(input: "h", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
+            UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh(_:)), discoverabilityTitle: "Reload")
+        ]
     }
     
     var navbarEnabled: Bool {
@@ -938,7 +943,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
     }
 
-    func hideReadPosts() {
+    @objc func hideReadPosts() {
         var indexPaths: [IndexPath] = []
 
         var index = 0
@@ -1032,7 +1037,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     
     var oldPosition: CGPoint = CGPoint.zero
 
-    func search() {
+    @objc func search() {
         let alert = AlertController(title: "Search", message: "", preferredStyle: .alert)
 
         let config: TextField.Config = { textField in
@@ -1207,7 +1212,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
     }
 
-    func refresh(_ indicator: Bool = true) {
+    @objc func refresh(_ indicator: Bool = true) {
         if indicator {
             tableView.setContentOffset(CGPoint(x: 0, y: tableView.contentOffset.y - (refreshControl.frame.size.height)), animated: true)
             refreshControl.beginRefreshing()
@@ -1355,7 +1360,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                             if self.links.isEmpty {
                                                 BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
                                             } else {
-                                                self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Cached \(DateFormatter().timeSince(from: updated, numericDates: true)) ago")
+                                                self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Content \(DateFormatter().timeSince(from: updated, numericDates: true)) old")
                                             }
                                         }
                                         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)

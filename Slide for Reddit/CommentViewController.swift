@@ -56,10 +56,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
 
     override var keyCommands: [UIKeyCommand]? {
-        if !isReply {
-            return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
-        }
-        return nil
+        return [
+            UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
+            UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(upvote(_:)), discoverabilityTitle: "Like post"),
+            UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(reply(_:)), discoverabilityTitle: "Reply to post"),
+            UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(save(_:)), discoverabilityTitle: "Save post")
+        ]
     }
 
     var menuCell: CommentDepthCell?
@@ -486,7 +488,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     }
 
-    func save(_ cell: LinkCellView) {
+    @objc func save(_ cell: LinkCellView) {
         do {
             let state = !ActionStates.isSaved(s: cell.link!)
             print(cell.link!.id)
@@ -571,13 +573,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     }
 
-    func reply(_ cell: LinkCellView) {
+    @objc func reply(_ cell: LinkCellView) {
         if !offline {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, delegate: self)), parentVC: self)
         }
     }
 
-    func upvote(_ cell: LinkCellView) {
+    @objc func upvote(_ cell: LinkCellView) {
         do {
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in
 

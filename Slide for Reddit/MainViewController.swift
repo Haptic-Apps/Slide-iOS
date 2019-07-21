@@ -803,7 +803,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     override var keyCommands: [UIKeyCommand]? {
-        return [UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed))]
+        return [
+            UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
+            UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(search), discoverabilityTitle: "Search"),
+            UIKeyCommand(input: "h", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
+            UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh(_:)), discoverabilityTitle: "Reload")
+        ]
     }
     
     @objc func spacePressed() {
@@ -813,7 +818,25 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         }, completion: nil)
     }
-    
+
+    @objc func search() {
+        if let vc = self.getSubredditVC() {
+            vc.search()
+        }
+    }
+
+    @objc func hideReadPosts() {
+        if let vc = self.getSubredditVC() {
+            vc.hideReadPosts()
+        }
+    }
+
+    @objc func refresh() {
+        if let vc = self.getSubredditVC() {
+            vc.refresh()
+        }
+    }
+
     var inHeadView = UIView()
     
     override func viewDidLoad() {

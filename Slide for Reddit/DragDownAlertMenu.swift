@@ -117,6 +117,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var headerView = UIView()
     var themeColor: UIColor?
     var full = false
+    var hasInput = false
 
     init(title: String, subtitle: String, icon: String?, themeColor: UIColor? = nil, full: Bool = false) {
         self.descriptor = title
@@ -162,7 +163,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     func addAction(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void) {
         actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled))
     }
-    
+        
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = actions[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "action") as! BottomActionCell
@@ -171,7 +172,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return subtitle.isEmpty ? 55 : 80
+        return (subtitle.isEmpty ? 55 : 80) + (hasInput ? 50 : 0)
     }
     
     var isPresenting = false

@@ -70,7 +70,7 @@ class OfflineOverviewViewController: UITableViewController {
         cell.accessoryType = .disclosureIndicator
         cell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         cell.detailTextLabel?.numberOfLines = 0
-        cell.detailTextLabel?.text = subComments[sub] ?? false ? "Comments cached \(DateFormatter().timeSince(from: subTime[sub] ?? NSDate(), numericDates: true))" : "No cached comments"
+        cell.detailTextLabel?.text = subComments[sub] ?? false ? "Comments cached \(DateFormatter().timeSince(from: subTime[sub] ?? NSDate(), numericDates: true))" : ""
        // if indexPath.row == 0 {
        //     cell.textLabel?.text = "Read later articles"
        //     cell.detailTextLabel?.text = "\(ReadLater.readLaterIDs.count)"
