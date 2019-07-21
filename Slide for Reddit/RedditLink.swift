@@ -23,6 +23,10 @@ class RedditLink {
         let oldUrl = URL(string: urlString)!
         var url = formatRedditUrl(urlS: urlS)
         var np = false
+        
+        if urlS.absoluteString.startsWith("/m/") {
+            return SingleSubredditViewController.init(subName: urlS.absoluteString, single: true)
+        }
         if url.isEmpty() {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: oldUrl, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)

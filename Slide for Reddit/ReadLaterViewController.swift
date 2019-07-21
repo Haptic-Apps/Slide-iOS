@@ -85,7 +85,7 @@ public extension UIViewController {
         subTitleLabel.sizeToFit()
 
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel])
-        stackView.distribution = .equalCentering
+        stackView.distribution = .fillProportionally
         stackView.axis = .vertical
 
         let width = max(titleLabel.frame.size.width, subTitleLabel.frame.size.width)

@@ -196,7 +196,7 @@ class PostActions: NSObject {
         }
 
         alertController.addAction(title: "Ban u/\(cell.link!.author)", icon: UIImage(named: "ban")!.menuIcon()) {
-            //todo allow bans!
+            self.modBan(cell)
         }
 
         alertController.addAction(title: "Set flair", icon: UIImage(named: "flag")!.menuIcon()) {
@@ -413,7 +413,7 @@ class PostActions: NSObject {
             print(error)
         }
     }
-    
+
     static func modRemove(_ cell: LinkCellView, spam: Bool = false) {
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.ruleList(cell.link!.subreddit, completion: { (result) in
@@ -434,6 +434,26 @@ class PostActions: NSObject {
         }
     }
     
+    static func modBan(_ cell: LinkCellView, spam: Bool = false) {
+       /* do {
+            try (UIApplication.shared.delegate as! AppDelegate).session?.ban(cell.link!.subreddit, completion: { (result) in
+                switch result {
+                case .success(let rules):
+                    DispatchQueue.main.async {
+                        showRemovalReasons(cell, rules: rules, spam: spam)
+                    }
+                case .failure(let error):
+                    print(error)
+                    DispatchQueue.main.async {
+                        showRemovalReasons(cell, rules: [RuleTemplate](), spam: spam)
+                    }
+                }
+            })
+        } catch {
+            showRemovalReasons(cell, rules: [RuleTemplate](), spam: spam)
+        }*/
+    }
+
     static func showRemovalReasons(_ cell: LinkCellView, rules: [RuleTemplate], spam: Bool = false) {
         var reasons: [String] = ["Custom reason", "Spam", "Removal not spam"]
         for rule in rules {

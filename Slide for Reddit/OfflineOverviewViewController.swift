@@ -77,7 +77,7 @@ class OfflineOverviewViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        VCPresenter.openRedditLink("/r/\(subs[indexPath.row])", self.navigationController, self)
+        VCPresenter.openRedditLink("\(subs[indexPath.row].contains("m/") ? "" : "/r/")\(subs[indexPath.row])", self.navigationController, self)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -1338,7 +1338,15 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         self.nomore = true
                                         self.offline = true
                                         
-                                        self.tableView.contentOffset = CGPoint.init(x: 0, y: -64)
+                                        var top = CGFloat(0)
+                                        if #available(iOS 11, *) {
+                                            top += 26
+                                            if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
+                                                top -= 18
+                                            }
+                                        }
+                                        let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
+                                        self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top)
 
                                         if self.tries < 1 {
                                             self.tries += 1
@@ -1347,7 +1355,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                             if self.links.isEmpty {
                                                 BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
                                             } else {
-                                                BannerUtil.makeBanner(text: "Showing offline content (\(DateFormatter().timeSince(from: updated, numericDates: true)))", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self)
+                                                self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Cached \(DateFormatter().timeSince(from: updated, numericDates: true)) ago")
                                             }
                                         }
                                         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
@@ -1405,6 +1413,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     }
                                 }
                             }
+                            
                             realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
                             try realm.commitWrite()
                         } catch {
