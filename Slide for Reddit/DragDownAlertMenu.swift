@@ -25,6 +25,72 @@ class AlertMenuAction: NSObject {
     }
 }
 
+class AlertMenuInputAction: AlertMenuAction {
+    var inputField: UITextField
+    var exitOnAction: Bool
+    var textRequired: Bool
+
+    init(title: String, icon: UIImage?, action: @escaping () -> Void, inputField: UITextField, enabled: Bool = true, inputIcon: UIImage, inputPlaceholder: String, accentColor: UIColor, exitOnAction: Bool, textRequired: Bool) {
+        self.inputField = inputField
+        self.exitOnAction = exitOnAction
+        self.textRequired = textRequired
+        super.init(title: title, icon: icon, action: action)
+        inputField.setImageMode(image: inputIcon, accentColor: accentColor, placeholder: inputPlaceholder)
+        inputField.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
+        inputField.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
+        
+        self.enabled = textRequired
+    }
+    
+    @objc func textChanged(_ textField: UITextField) {
+        self.enabled = !(textField.text?.isEmpty ?? true)
+    }
+    
+    @objc func done(_ textField: UITextField) {
+        if let text = textField.text {
+            if !text.isEmpty && exitOnAction {
+                action()
+            }
+        }
+    }
+}
+
+extension UITextField {
+    func setImageMode(image: UIImage, accentColor: UIColor, placeholder: String) {
+        self.tintColor = accentColor
+        self.layer.cornerRadius = 15
+        self.clipsToBounds = true
+        self.becomeFirstResponder()
+        self.textColor = ColorUtil.theme.fontColor
+        self.backgroundColor = ColorUtil.theme.foregroundColor
+        self.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+        self.left(image: UIImage.init(named: "search"), color: ColorUtil.theme.fontColor)
+        //self.leftViewPadding = 12
+        self.layer.borderWidth = 1
+        self.layer.cornerRadius = 8
+        self.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+        self.keyboardAppearance = .default
+        self.keyboardType = .default
+        self.returnKeyType = .done
+    }
+}
+
+class InsetTextField: UITextField {
+    override func textRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.insetBy(dx: 32, dy: 0)
+    }
+    
+    override open func leftViewRect(forBounds bounds: CGRect) -> CGRect {
+        var textRect = super.leftViewRect(forBounds: bounds)
+        textRect.origin.x += 12
+        return textRect
+    }
+    // text position
+    override func editingRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.insetBy(dx: 42, dy: 0)
+    }
+}
+
 class BottomActionCell: UITableViewCell {
     var background = UIView()
     var title = UILabel()
@@ -112,7 +178,10 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var descriptor: String
     var subtitle: String
     var icon: String?
+    
     var actions: [AlertMenuAction] = []
+    var textFields: [UITextField] = []
+    
     var tableView = UITableView()
     var headerView = UIView()
     var themeColor: UIColor?
@@ -163,7 +232,20 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     func addAction(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void) {
         actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled))
     }
+    
+    func addTextInput(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void, inputPlaceholder: String, inputIcon: UIImage, textRequired: Bool, exitOnAction: Bool) {
+        let input = InsetTextField()
         
+        actions.append(AlertMenuInputAction(title: title, icon: icon, action: {
+            self.dismiss(animated: true) {
+                action()
+            }
+        }, inputField: input, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, accentColor: themeColor ?? ColorUtil.theme.fontColor, exitOnAction: exitOnAction, textRequired: textRequired))
+        
+        textFields.append(input)
+        hasInput = true
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = actions[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "action") as! BottomActionCell
@@ -172,7 +254,14 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (subtitle.isEmpty ? 55 : 80) + (hasInput ? 50 : 0)
+        return (subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0)
+    }
+    
+    func getText() -> String? {
+        if !textFields.isEmpty {
+            return textFields[0].text
+        }
+        return nil
     }
     
     var isPresenting = false
@@ -215,10 +304,10 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         let maxHeight: CGFloat
         if full {
             maxHeight = UIScreen.main.bounds.height - 80
-            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (60 * actions.count) + 60))
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60))
         } else {
             maxHeight = UIScreen.main.bounds.height * (2 / 3)
-            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (60 * actions.count) + 60))
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60))
         }
         if height < maxHeight {
             tableView.isScrollEnabled = false
@@ -231,8 +320,42 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
 
         // Focus the title for accessibility users
         UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: descriptor)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            self.view.frame.origin.y -= keyboardHeight
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            self.view.frame.origin.y += keyboardHeight
+        }
+    }
+
     var lastY: CGFloat = 0.0
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -253,8 +376,14 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        //Remove old search constraints
+        NSLayoutConstraint.deactivate(textFields.flatMap({ $0.constraints }))
+        textFields.forEach({ $0.removeFromSuperview() })
+        
         let label: UILabel = UILabel()
         label.numberOfLines = 2
+        
         let toReturn = UIView()
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         let attributedTitle = NSMutableAttributedString(string: self.descriptor, attributes: [NSAttributedString.Key.foregroundColor: themeColor ?? ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17)])
@@ -316,6 +445,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             label.rightAnchor == close.leftAnchor - 8
             label.verticalAnchors == toReturn.verticalAnchors
         }
+        
         let bar = UIView().then {
             $0.backgroundColor = .clear // ColorUtil.theme.fontColor.withAlphaComponent(0.25)
         }
@@ -323,7 +453,28 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         bar.horizontalAnchors == toReturn.horizontalAnchors
         bar.bottomAnchor == toReturn.bottomAnchor
         bar.heightAnchor == 1
-        return toReturn
+        
+        if textFields.isEmpty {
+            return toReturn
+        } else {
+            let finalView = UIStackView().then {
+                $0.axis = .vertical
+                $0.backgroundColor = ColorUtil.theme.backgroundColor
+            }
+            finalView.addArrangedSubview(toReturn)
+            toReturn.heightAnchor == (subtitle.isEmpty ? 55 : 80)
+            toReturn.horizontalAnchors == finalView.horizontalAnchors
+            for field in textFields {
+                finalView.addArrangedSubview(field)
+                field.horizontalAnchors == finalView.horizontalAnchors + 8
+                field.heightAnchor == 50
+            }
+            let space = UIView()
+            finalView.addArrangedSubview(space)
+            space.heightAnchor == 8
+            space.horizontalAnchors == finalView.horizontalAnchors
+            return finalView
+        }
     }
     
     var headers = [String]()
@@ -506,6 +657,9 @@ class DragDownPresentationController: UIPresentationController {
             //            accountView.view.removeFromSuperview() // TODO: Risky?
             containerView.addSubview(accountView.view)
         }
+        if accountView.isEditing {
+            accountView.textFields[0].becomeFirstResponder()
+        }
     }
     
     override func dismissalTransitionWillBegin() {
@@ -517,6 +671,7 @@ class DragDownPresentationController: UIPresentationController {
             })
         } else {
         }
+        containerView?.endEditing(true)
     }
     
 }

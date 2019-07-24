@@ -1040,67 +1040,37 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     var oldPosition: CGPoint = CGPoint.zero
 
     @objc func search() {
-        let alert = AlertController(title: "Search", message: "", preferredStyle: .alert)
-
-        let config: TextField.Config = { textField in
-            textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.theme.fontColor
-            textField.backgroundColor = ColorUtil.theme.foregroundColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Search...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-            textField.left(image: UIImage.init(named: "search"), color: ColorUtil.theme.fontColor)
-            textField.leftViewPadding = 12
-            textField.layer.borderWidth = 1
-            textField.layer.cornerRadius = 8
-            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.keyboardAppearance = .default
-            textField.keyboardType = .default
-            textField.returnKeyType = .done
-            textField.action { textField in
-                self.searchText = textField.text
-            }
-        }
-        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
-        
-        alert.setupTheme()
-        
-        alert.attributedTitle = NSAttributedString(string: "Search", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-
-        alert.contentView.addSubview(textField)
-        
-        textField.edgeAnchors == alert.contentView.edgeAnchors
-        textField.heightAnchor == CGFloat(44 + 12)
-
-        alert.addAction(AlertAction(title: "Search All", style: .normal, handler: { (_) in
+        let alert = DragDownAlertMenu(title: "Search", subtitle: sub, icon: nil, full: true)
+        let searchAction = {
             if !AccountController.isLoggedIn {
                 let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
                 VCPresenter.presentAlert(alert, parentVC: self)
             } else {
-                let text = self.searchText ?? ""
-                let search = SearchViewController.init(subreddit: "all", searchFor: text)
+                let search = SearchViewController.init(subreddit: self.sub, searchFor: alert.getText() ?? "")
                 VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
             }
-        }))
-
-        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
-            alert.addAction(AlertAction(title: "Search \(sub)", style: .normal, handler: { (_) in
-                let text = self.searchText ?? ""
-                if !AccountController.isLoggedIn {
-                    let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
-                        VCPresenter.presentAlert(alert, parentVC: self)
-                } else {
-                    let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
-                    VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-                }
-            }))
+        }
+        
+        let searchAllAction = {
+            if !AccountController.isLoggedIn {
+                let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
+                VCPresenter.presentAlert(alert, parentVC: self)
+            } else {
+                let search = SearchViewController.init(subreddit: "all", searchFor: alert.getText() ?? "")
+                VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            }
         }
 
-        alert.addCancelButton()
-        alert.addBlurView()
-
-        present(alert, animated: true, completion: nil)
-
+        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
+            alert.addTextInput(title: "Search in \(sub)", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(named: "search")!, textRequired: true, exitOnAction: true)
+            alert.addAction(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction)
+        } else {
+            alert.addTextInput(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(named: "search")!, textRequired: true, exitOnAction: true)
+        }
+        
+        alert.show(self)
     }
     
     @objc func doDisplaySidebar() {
