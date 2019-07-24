@@ -1065,7 +1065,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
             alert.addTextInput(title: "Search in \(sub)", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(named: "search")!, textRequired: true, exitOnAction: true)
-            alert.addAction(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction)
+            alert.addAction(title: "Search all of Reddit", icon: nil, enabled: true, action: searchAllAction)
         } else {
             alert.addTextInput(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(named: "search")!, textRequired: true, exitOnAction: true)
         }

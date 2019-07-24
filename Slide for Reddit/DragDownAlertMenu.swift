@@ -16,6 +16,7 @@ class AlertMenuAction: NSObject {
     var icon: UIImage?
     var action: () -> Void
     var enabled = true
+    var isInput = false
     
     init(title: String, icon: UIImage?, action: @escaping () -> Void, enabled: Bool = true) {
         self.title = title
@@ -38,7 +39,8 @@ class AlertMenuInputAction: AlertMenuAction {
         inputField.setImageMode(image: inputIcon, accentColor: accentColor, placeholder: inputPlaceholder)
         inputField.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
         inputField.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
-        
+        self.isInput = true
+
         self.enabled = textRequired
     }
     
@@ -485,8 +487,13 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        dismiss(animated: true) {
-            self.actions[indexPath.row].action()
+        let selected = self.actions[indexPath.row]
+        if selected.isInput {
+            selected.action()
+        } else {
+            dismiss(animated: true) {
+                selected.action()
+            }
         }
     }
     
