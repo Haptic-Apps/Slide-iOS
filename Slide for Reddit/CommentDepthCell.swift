@@ -1212,7 +1212,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             par.present(activityViewController, animated: true, completion: {})
         }
-
+        
         if AccountController.isLoggedIn {
             alertController.addAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(named: "save")!.menuIcon()) {
                 par.saveComment(self.comment!)
@@ -1260,7 +1260,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             alert.addBlurView()
             par.present(alert, animated: true)
         }
-
+        
+        alertController.addAction(title: "Open comment permalink", icon: UIImage(named: "crosspost")!.menuIcon()) {
+            VCPresenter.openRedditLink(self.comment!.permalink + "?context=5", par.navigationController, par)
+        }
+        
         alertController.show(par.parent)
     }
 
