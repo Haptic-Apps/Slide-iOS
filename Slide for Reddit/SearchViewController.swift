@@ -86,12 +86,14 @@ class SearchViewController: ContentListingViewController {
     @objc func edit(_ sender: AnyObject) {
         let alert = DragDownAlertMenu(title: "Edit search", subtitle: self.search, icon: nil)
         
-        alert.addTextInput(title: "Search again", icon: UIImage(named: "edit")?.menuIcon(), action: {
+        alert.addTextInput(title: "Search again", icon: UIImage(named: "search")?.menuIcon(), action: {
             let text = alert.getText() ?? ""
-            let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
-            self.navigationController?.popViewController(animated: true)
-            VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-        }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(named: "search")!.menuIcon(), textRequired: true, exitOnAction: true)
+            self.search = text
+            if let base = self.baseData as? SearchContributionLoader {
+                base.query = self.search
+                base.getData(reload: true)
+            }
+        }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(named: "edit")!.menuIcon(), textRequired: true, exitOnAction: true)
         
         alert.show(self)
     }
