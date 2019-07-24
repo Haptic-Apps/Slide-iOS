@@ -1673,7 +1673,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
         let alertController = DragDownAlertMenu(title: "Comment navigation", subtitle: "Select a navigation type", icon: nil)
 
-        
         let link = getCount(sort: .LINK)
         let parents = getCount(sort: .PARENTS)
         let op = getCount(sort: .OP)

@@ -1186,8 +1186,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     @objc func refresh(_ indicator: Bool = true) {
         if indicator {
-            tableView.setContentOffset(CGPoint(x: 0, y: tableView.contentOffset.y - (refreshControl.frame.size.height)), animated: true)
-            refreshControl.beginRefreshing()
+            self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
+            
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1, execute: {
+                self.refreshControl?.beginRefreshing()
+            })
         }
         
         links = []

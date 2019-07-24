@@ -93,10 +93,10 @@ class SearchViewController: ContentListingViewController {
                 base.query = self.search
                 base.reset()
                 self.tableView.reloadData()
-                self.tableView.setContentOffset(CGPoint(x:0, y:self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
+                self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
                 
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {
-                    self.refreshControl?.sendActions(for: .valueChanged)
+                    self.refreshControl?.beginRefreshing()
                 })
                 base.getData(reload: true)
                 self.navigationItem.titleView = self.setTitle(title: self.search, subtitle: "r/\(self.sub)")
