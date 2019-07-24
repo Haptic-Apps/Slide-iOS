@@ -220,8 +220,8 @@ public class ColorUtil {
         UserDefaults.standard.synchronize()
     }
 
-    public static func getTagForUser(name: String) -> String {
-        return UserDefaults.standard.string(forKey: "tag+" + name) ?? ""
+    public static func getTagForUser(name: String) -> String? {
+        return UserDefaults.standard.string(forKey: "tag+" + name)
     }
 
     public static func removeTagForUser(name: String) {

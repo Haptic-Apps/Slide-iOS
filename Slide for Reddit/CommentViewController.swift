@@ -1921,59 +1921,21 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var tagText: String?
 
     func tagUser(name: String) {
-        let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
-        let confirmAction = AlertAction(title: "Set", style: .preferred) { (_) in
-            if let text = self.tagText {
-                ColorUtil.setTagForUser(name: name, tag: text)
-                self.tableView.reloadData()
-            } else {
-                // user did not fill field
-            }
-        }
+        let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
-        if !ColorUtil.getTagForUser(name: name).isEmpty {
-            let removeAction = AlertAction(title: "Remove tag", style: .destructive) { (_) in
+        alert.addTextInput(title: "Set tag", icon: UIImage(named: "save-1")?.menuIcon(), action: {
+            ColorUtil.setTagForUser(name: name, tag: alert.getText() ?? "")
+            self.tableView.reloadData()
+        }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name),inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+
+        if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
+            alert.addAction(title: "Remove tag", icon: UIImage(named: "delete")?.menuIcon(), enabled: true) {
                 ColorUtil.removeTagForUser(name: name)
                 self.tableView.reloadData()
             }
-            alert.addAction(removeAction)
         }
         
-        let config: TextField.Config = { textField in
-            textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.theme.fontColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Tag", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-            textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
-            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.theme.foregroundColor
-            textField.leftViewPadding = 12
-            textField.layer.borderWidth = 1
-            textField.layer.cornerRadius = 8
-            textField.keyboardAppearance = ColorUtil.theme.isLight ? .default : .dark
-            textField.keyboardType = .default
-            textField.returnKeyType = .done
-            textField.text = ColorUtil.getTagForUser(name: name)
-            textField.action { textField in
-                self.tagText = textField.text
-            }
-        }
-        
-        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
-        
-        alert.setupTheme()
-        
-        alert.attributedTitle = NSAttributedString(string: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        
-        alert.contentView.addSubview(textField)
-        
-        textField.edgeAnchors == alert.contentView.edgeAnchors
-        textField.heightAnchor == CGFloat(44 + 12)
-        
-        alert.addAction(confirmAction)
-        alert.addCancelButton()
-        
-        alert.addBlurView()
-        self.present(alert, animated: true, completion: nil)
+        alert.show(self)
     }
 
     func blockUser(name: String) {

@@ -192,46 +192,13 @@ class SubredditHeaderView: UIView {
     
     func setFlair(_ flair: FlairTemplate) {
         if flair.editable {
-            let alert = AlertController(title: "Edit flair text", message: "", preferredStyle: .alert)
+            let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "\(flair.name)", icon: nil)
             
-            let config: TextField.Config = { textField in
-                textField.becomeFirstResponder()
-                textField.textColor = ColorUtil.theme.fontColor
-                textField.attributedPlaceholder = NSAttributedString(string: "Flair text...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
-                textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.theme.foregroundColor
-                textField.leftViewPadding = 12
-                textField.layer.borderWidth = 1
-                textField.layer.cornerRadius = 8
-                textField.keyboardAppearance = .default
-                textField.keyboardType = .default
-                textField.returnKeyType = .done
-                textField.text = flair.text
-                textField.action { textField in
-                    self.flairText = textField.text
-                }
-            }
+            alert.addTextInput(title: "Set flair", icon: UIImage(named: "save-1")?.menuIcon(), action: {
+                self.submitFlairChange(flair, text: alert.getText() ?? "")
+            }, inputPlaceholder: "Flair text...", inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
             
-            let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
-            
-            alert.setupTheme()
-            
-            alert.attributedTitle = NSAttributedString(string: "Edit flair text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-            
-            alert.contentView.addSubview(textField)
-            
-            textField.edgeAnchors == alert.contentView.edgeAnchors
-            textField.heightAnchor == CGFloat(44 + 12)
-            
-            alert.addAction(AlertAction(title: "Set flair", style: .preferred, handler: { (_) in
-                self.submitFlairChange(flair, text: self.flairText ?? "")
-            }))
-            
-            alert.addCancelButton()
-            alert.addBlurView()
-            
-            parentController?.present(alert, animated: true, completion: nil)
+            alert.show(parentController)
         } else {
             submitFlairChange(flair)
         }

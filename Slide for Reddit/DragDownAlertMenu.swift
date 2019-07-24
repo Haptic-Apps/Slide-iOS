@@ -31,7 +31,7 @@ class AlertMenuInputAction: AlertMenuAction {
     var exitOnAction: Bool
     var textRequired: Bool
 
-    init(title: String, icon: UIImage?, action: @escaping () -> Void, inputField: UITextField, enabled: Bool = true, inputIcon: UIImage, inputPlaceholder: String, accentColor: UIColor, exitOnAction: Bool, textRequired: Bool) {
+    init(title: String, icon: UIImage?, action: @escaping () -> Void, inputField: UITextField, enabled: Bool = true, inputIcon: UIImage, inputPlaceholder: String, inputValue: String?, accentColor: UIColor, exitOnAction: Bool, textRequired: Bool) {
         self.inputField = inputField
         self.exitOnAction = exitOnAction
         self.textRequired = textRequired
@@ -39,6 +39,7 @@ class AlertMenuInputAction: AlertMenuAction {
         inputField.setImageMode(image: inputIcon, accentColor: accentColor, placeholder: inputPlaceholder)
         inputField.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
         inputField.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
+        inputField.text = inputValue
         self.isInput = true
 
         self.enabled = textRequired
@@ -66,7 +67,7 @@ extension UITextField {
         self.textColor = ColorUtil.theme.fontColor
         self.backgroundColor = ColorUtil.theme.foregroundColor
         self.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-        self.left(image: UIImage.init(named: "search"), color: ColorUtil.theme.fontColor)
+        self.left(image: image, color: ColorUtil.theme.fontColor)
         //self.leftViewPadding = 12
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
@@ -235,14 +236,14 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled))
     }
     
-    func addTextInput(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void, inputPlaceholder: String, inputIcon: UIImage, textRequired: Bool, exitOnAction: Bool) {
+    func addTextInput(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void, inputPlaceholder: String, inputValue: String? = nil, inputIcon: UIImage, textRequired: Bool, exitOnAction: Bool) {
         let input = InsetTextField()
         
         actions.append(AlertMenuInputAction(title: title, icon: icon, action: {
             self.dismiss(animated: true) {
                 action()
             }
-        }, inputField: input, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, accentColor: themeColor ?? ColorUtil.theme.fontColor, exitOnAction: exitOnAction, textRequired: textRequired))
+        }, inputField: input, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, inputValue: inputValue, accentColor: themeColor ?? ColorUtil.theme.fontColor, exitOnAction: exitOnAction, textRequired: textRequired))
         
         textFields.append(input)
         hasInput = true
@@ -489,7 +490,11 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         tableView.deselectRow(at: indexPath, animated: true)
         let selected = self.actions[indexPath.row]
         if selected.isInput {
-            selected.action()
+            if let input = selected as? AlertMenuInputAction {
+                if input.textRequired && getText() != nil && !getText()!.isEmpty {
+                    selected.action()
+                }
+            }
         } else {
             dismiss(animated: true) {
                 selected.action()

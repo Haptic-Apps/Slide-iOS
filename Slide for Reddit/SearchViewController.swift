@@ -84,49 +84,16 @@ class SearchViewController: ContentListingViewController {
     var searchText: String?
 
     @objc func edit(_ sender: AnyObject) {
-        let alert = AlertController(title: "Edit search", message: "", preferredStyle: .alert)
-
-        let config: TextField.Config = { textField in
-            textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.theme.fontColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Search for a post...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-            textField.left(image: UIImage.init(named: "search"), color: ColorUtil.theme.fontColor)
-            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.theme.foregroundColor
-            textField.text = self.search
-            textField.leftViewPadding = 12
-            textField.layer.borderWidth = 1
-            textField.layer.cornerRadius = 8
-            textField.keyboardAppearance = .default
-            textField.keyboardType = .default
-            textField.returnKeyType = .done
-            textField.action { textField in
-                self.searchText = textField.text
-            }
-        }
-        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+        let alert = DragDownAlertMenu(title: "Edit search", subtitle: self.search, icon: nil)
         
-        alert.setupTheme()
-        
-        alert.attributedTitle = NSAttributedString(string: "Edit search", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        
-        alert.contentView.addSubview(textField)
-        
-        textField.edgeAnchors == alert.contentView.edgeAnchors
-        textField.heightAnchor == CGFloat(44 + 12)
-
-        alert.addAction(AlertAction(title: "Search again", style: .preferred, handler: { (_) in
-            let text = self.searchText ?? ""
+        alert.addTextInput(title: "Search again", icon: UIImage(named: "edit")?.menuIcon(), action: {
+            let text = alert.getText() ?? ""
             let search = SearchViewController.init(subreddit: self.sub, searchFor: text)
             self.navigationController?.popViewController(animated: true)
             VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-        }))
-
-        alert.addCancelButton()
-        alert.addBlurView()
+        }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(named: "search")!.menuIcon(), textRequired: true, exitOnAction: true)
         
-        present(alert, animated: true, completion: nil)
-
+        alert.show(self)
     }
 
     required init?(coder aDecoder: NSCoder) {

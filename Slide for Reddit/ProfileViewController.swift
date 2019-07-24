@@ -76,59 +76,19 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     var tagText: String?
 
     func tagUser() {
-        let alert = AlertController(title: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", message: nil, preferredStyle: .alert)
-        let confirmAction = AlertAction(title: "Set", style: .normal) { (_) in
-            if let text = self.tagText {
-                ColorUtil.setTagForUser(name: self.name, tag: text)
-            } else {
-                // user did not fill field
+        let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
+        
+        alert.addTextInput(title: "Set tag", icon: UIImage(named: "save-1")?.menuIcon(), action: {
+            ColorUtil.setTagForUser(name: self.name, tag: alert.getText() ?? "")
+        }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+
+        if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
+            alert.addAction(title: "Remove tag", icon: UIImage(named: "delete")?.menuIcon(), enabled: true) {
+                ColorUtil.removeTagForUser(name: self.name)
             }
         }
         
-        if !ColorUtil.getTagForUser(name: name).isEmpty {
-        let removeAction = AlertAction(title: "Remove tag", style: .destructive) { (_) in
-            ColorUtil.removeTagForUser(name: self.name)
-        }
-            alert.addAction(removeAction)
-        }
-
-        let config: TextField.Config = { textField in
-            textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.theme.fontColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Tag", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-            textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
-            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.theme.foregroundColor
-            textField.leftViewPadding = 12
-            textField.layer.borderWidth = 1
-            textField.layer.cornerRadius = 8
-            textField.keyboardAppearance = .default
-            textField.keyboardType = .default
-            textField.returnKeyType = .done
-            textField.text = ColorUtil.getTagForUser(name: self.name)
-            textField.action { textField in
-                self.tagText = textField.text
-            }
-        }
-
-        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
-        
-        alert.setupTheme()
-        
-        alert.attributedTitle = NSAttributedString(string: "Tag \(AccountController.formatUsernamePosessive(input: name, small: true)) profile", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        
-        alert.contentView.addSubview(textField)
-        
-        textField.edgeAnchors == alert.contentView.edgeAnchors
-        textField.heightAnchor == CGFloat(44 + 12)
-        
-        alert.addAction(confirmAction)
-        alert.addCancelButton()
-        
-        alert.addBlurView()
-
-        self.present(alert, animated: true, completion: nil)
-
+        alert.show(self)
     }
 
     init(name: String) {
@@ -286,7 +246,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             self.pickColor(sender: sender)
         }))
         let tag = ColorUtil.getTagForUser(name: name)
-        alrController.addAction(UIAlertAction.init(title: "Tag user\((!(tag.isEmpty)) ? " (currently \(tag))" : "")", style: .default, handler: { (_) in
+        alrController.addAction(UIAlertAction.init(title: "Tag user\((tag != nil) ? " (currently \(tag!))" : "")", style: .default, handler: { (_) in
             self.tagUser()
         }))
         

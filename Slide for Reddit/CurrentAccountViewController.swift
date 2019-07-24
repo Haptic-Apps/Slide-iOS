@@ -437,49 +437,19 @@ extension CurrentAccountViewController {
     }
 
     @objc func multiButtonPressed() {
-        let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
-
-        let config: TextField.Config = { textField in
-            textField.becomeFirstResponder()
-            textField.textColor = ColorUtil.theme.fontColor
-            textField.attributedPlaceholder = NSAttributedString(string: "Title", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-            textField.left(image: UIImage.init(named: "edit"), color: ColorUtil.theme.fontColor)
-            textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-            textField.backgroundColor = ColorUtil.theme.foregroundColor
-            textField.leftViewPadding = 12
-            textField.layer.borderWidth = 1
-            textField.layer.cornerRadius = 8
-            textField.keyboardAppearance = .default
-            textField.keyboardType = .default
-            textField.autocapitalizationType = .none
-            textField.returnKeyType = .done
-            textField.action { textField in
-                self.reportText = textField.text
-            }
-        }
+        let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)
         
-        let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
-        
-        alert.setupTheme()
-        
-        alert.attributedTitle = NSAttributedString(string: "Name your Multireddit", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        
-        alert.contentView.addSubview(textField)
-        
-        textField.edgeAnchors == alert.contentView.edgeAnchors
-        textField.heightAnchor == CGFloat(44 + 12)
-        
-        alert.addAction(AlertAction(title: "Create", style: .normal, handler: { (_) in
-            var text = self.reportText ?? ""
+        alert.addTextInput(title: "Create", icon: UIImage(named: "add")?.menuIcon(), enabled: true, action: {
+            var text = alert.getText() ?? ""
             text = text.replacingOccurrences(of: " ", with: "_")
             if text == "" {
                 let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
                 alert.setupTheme()
-                alert.attributedTitle = NSAttributedString(string: "Name must not be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                 alert.addAction(AlertAction(title: "Ok", style: .normal, handler: { (_) in
-                    
+                    self.multiButtonPressed()
                 }))
-
+                return
             }
             do {
                 try (UIApplication.shared.delegate as! AppDelegate).session?.createMultireddit(text, descriptionMd: "", completion: { (result) in
@@ -505,12 +475,10 @@ extension CurrentAccountViewController {
                     BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: self.parent)
                 }
             }
-        }))
+
+        }, inputPlaceholder: "Name...", inputValue: nil, inputIcon: UIImage(named: "wiki")!.menuIcon(), textRequired: true, exitOnAction: false)
         
-        alert.addCancelButton()
-        alert.addBlurView()
-        
-        VCPresenter.presentAlert(alert, parentVC: self)
+        alert.show(self)
     }
 
     @objc func modButtonPressed(_ sender: UIButton) {
