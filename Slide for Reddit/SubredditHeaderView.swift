@@ -108,7 +108,6 @@ class SubredditHeaderView: UIView {
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
-        self.flair.textLabel?.text = "Your flair on r/\(subreddit!.displayName)"
         self.flair.accessoryType = .none
         self.flair.backgroundColor = ColorUtil.theme.foregroundColor
         self.flair.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -319,6 +318,8 @@ class SubredditHeaderView: UIView {
             info.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: subreddit.descriptionHtml)
             descHeight = info.estimatedHeight
         }
+        
+        self.flair.textLabel?.text = "Your flair on r/\(subreddit.displayName)"
     }
 
     var subreddit: Subreddit?
