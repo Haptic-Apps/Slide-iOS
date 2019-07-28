@@ -38,7 +38,7 @@ If you still run into problems, feel free to shoot me a message on Reddit or Dis
 
 ### What needs to be done
 
-Any issues are fair game, but any issue with the "Help Wanted" or "Enhancement" tags are issues that we would particulary love help with. If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to [/u/ccrama](https://www.reddit.com/u/ccrama), or join us on [Discord](https://discord.gg/hVWAY8A)!
+Any issues are fair game, but any issue with the "Help Wanted" or "Enhancement" tags are issues that we would particularly love help with. If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to [/u/ccrama](https://www.reddit.com/u/ccrama), or join us on [Discord](https://discord.gg/hVWAY8A)!
 
 
 ### Issues
