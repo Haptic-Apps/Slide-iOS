@@ -1212,7 +1212,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         alertController.addAction(title: "Share comment permalink", icon: UIImage(named: "link")!.menuIcon()) {
-            let activityViewController = UIActivityViewController(activityItems: [self.comment!.permalink + "?context=5"], applicationActivities: nil)
+            let activityViewController = UIActivityViewController(activityItems: [URL(string: self.comment!.permalink + "?context=5")], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = self.moreButton
                 presenter.sourceRect = self.moreButton.bounds
