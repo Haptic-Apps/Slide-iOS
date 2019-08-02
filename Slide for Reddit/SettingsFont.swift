@@ -291,7 +291,7 @@ extension SettingsFont {
 
         for key in fontSizes.keys.sorted() {
             let description = fontSizes[key]!
-            actionSheetController.addAction(title: description, icon: SettingValues.commentFontOffset == key ? selected : nil) {
+            actionSheetController.addAction(title: description, icon: SettingValues.postFontOffset == key ? selected : nil) {
                 self.setSizeSubmission(size: key)
             }
         }
