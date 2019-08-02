@@ -164,6 +164,18 @@ class RealmDataWrapper {
             let array = item as! [Any]
             rSubmission.reports.append("\(array[0]): \(array[1])")
         }
+        
+        for item in submission.baseJson["all_awardings"] as? [AnyObject] ?? [] {
+            if let award = item as? JSONDictionary {
+                if award["icon_url"] != nil && award["count"] != nil {
+                    let name = award["name"] as? String ?? ""
+                    if name != "Silver" && name != "Gold" && name != "Platinum" {
+                        rSubmission.awards.append("\(award["icon_url"]!)*\(award["count"]!)")
+                    }
+                }
+            }
+        }
+
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
         rSubmission.approved = !rSubmission.approvedBy.isEmpty()
         
@@ -261,6 +273,18 @@ class RealmDataWrapper {
             }
             
         }
+        
+        for item in submission.baseJson["all_awardings"] as? [AnyObject] ?? [] {
+            if let award = item as? JSONDictionary {
+                if award["icon_url"] != nil && award["count"] != nil {
+                    let name = award["name"] as? String ?? ""
+                    if name != "Silver" && name != "Gold" && name != "Platinum" {
+                        rSubmission.awards.append("\(award["icon_url"]!)*\(award["count"]!)")
+                    }
+                }
+            }
+        }
+
         rSubmission.author = submission.author
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
         rSubmission.isEdited = submission.edited > 0
@@ -528,6 +552,7 @@ class RSubmission: Object {
     }
     
     var reports = List<String>()
+    var awards = List<String>()
     @objc dynamic var removedBy = ""
     @objc dynamic var removed = false
     @objc dynamic var approvedBy = ""

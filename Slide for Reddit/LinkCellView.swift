@@ -1131,6 +1131,28 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
 
         let attText = CachedTitle.getTitle(submission: link, full: full, force, false)
+        /* Bad test code...
+         if !link.awards.isEmpty {
+            let string = NSMutableAttributedString.init(attributedString: attText)
+            string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                for attr in attrs {
+                    if attr.key == NSAttributedString.Key.strokeWidth {
+                        let url = string.attributedSubstring(from: range).string
+                        string.replaceCharacters(in: range, with: NSAttributedString())
+                        
+                        let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                        flairView.sd_setImage(with: URL(string: url), completed: nil)
+                        let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize.square(size: 20), alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: YYTextVerticalAlignment.center)
+                        
+                        //if count > 1 {
+                        //    let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+                          //  flairImage.append(gilded)
+                        //}
+                        string.insert(flairImage, at: range.location)
+                    }
+                }
+            })
+        }*/
         let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
         if oldBounds.width != bounds.textBoundingSize.width || oldBounds.height != bounds.textBoundingSize.height {
             oldBounds = bounds.textBoundingSize

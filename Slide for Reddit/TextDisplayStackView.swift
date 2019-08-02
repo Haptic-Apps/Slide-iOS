@@ -341,6 +341,9 @@ public class TextDisplayStackView: UIStackView {
                     $0.addTapGestureRecognizer(action: {
                         self.delegate.linkTapped(url: url, text: "")
                     })
+                    $0.addLongTapGestureRecognizer(action: {
+                        self.delegate.linkLongTapped(url: url)
+                    })
                     counter += 1
                 }
                 
