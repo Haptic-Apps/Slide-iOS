@@ -32,8 +32,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
             UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(search), discoverabilityTitle: "Search"),
-            UIKeyCommand(input: "h", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
-            UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh(_:)), discoverabilityTitle: "Reload")
+            UIKeyCommand(input: "p", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
+            UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh(_:)), discoverabilityTitle: "Reload"),
         ]
     }
     
@@ -950,6 +950,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         var index = 0
         var count = 0
+        self.lastTopItem = 0
         for submission in links {
             if History.getSeen(s: submission) {
                 indexPaths.append(IndexPath(row: count, section: 0))
@@ -2185,6 +2186,8 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
     func markReadScroll() {
         if SettingValues.markReadOnScroll {
             let top = tableView.indexPathsForVisibleItems
+            print(top)
+            print(lastTopItem)
             if !top.isEmpty {
                 let topItem = top[0].row - 1
                 if topItem > lastTopItem && topItem < links.count {

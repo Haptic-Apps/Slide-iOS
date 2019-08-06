@@ -2078,7 +2078,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             alert.addTextInput(title: "Set flair", icon: UIImage(named: "save-1")?.menuIcon(), action: {
                 self.submitFlairChange(flair, text: alert.getText() ?? "")
-            }, inputPlaceholder: "Flair text...", inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
             
             alert.show(parentViewController)
         } else {

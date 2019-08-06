@@ -69,9 +69,7 @@ extension UIAlertController {
     
     open override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        if self.actions[0].title == "OK" && self.actions.count == 1 {
-            return
-        }
+        
         if self.view.tag != -1 {
             objc_setAssociatedObject(self, &AssociatedKeys.blurStyleKey, ColorUtil.theme.isLight ? UIBlurEffect.Style.light : UIBlurEffect.Style.dark, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             view.tag = -1

@@ -708,15 +708,13 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                     UIApplication.shared.openURL(url)
                 }
             case 3:
-                VCPresenter.donateDialog(self)
-            case 4:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
-            case 5:
+            case 4:
                 ch = LicensesViewController()
                 let file = Bundle.main.path(forResource: "Credits", ofType: "plist")!
                 (ch as! LicensesViewController).loadPlist(NSDictionary(contentsOfFile: file)!)
