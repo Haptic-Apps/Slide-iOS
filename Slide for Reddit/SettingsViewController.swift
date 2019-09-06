@@ -705,7 +705,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
-                    UIApplication.shared.openURL(url)
+                    UIApplication.shared.opnURL(url)
                 }
             case 3:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
