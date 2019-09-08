@@ -369,7 +369,7 @@ class SettingValues {
         SettingValues.reduceColor = settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         
-        var columns = Int(round(UIApplication.shared.statusBarView!.frame.size.width / CGFloat(320)))
+        var columns = Int(round(UIApplication.shared.statusBarUIView!.frame.size.width / CGFloat(320)))
         if columns == 0 {
             columns = 1
         }

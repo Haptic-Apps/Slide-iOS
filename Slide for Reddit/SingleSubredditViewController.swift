@@ -201,7 +201,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
             inHeadView!.topAnchor == view.topAnchor
             inHeadView!.horizontalAnchors == view.horizontalAnchors
-            inHeadView!.heightAnchor == (UIApplication.shared.statusBarView?.frame.size.height ?? 0)
+            inHeadView!.heightAnchor == (UIApplication.shared.statusBarUIView?.frame.size.height ?? 0)
         }
 
         reloadNeedingColor()
@@ -333,7 +333,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
 
         if single {
-            UIApplication.shared.statusBarView?.backgroundColor = .clear
+            UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         }
         if fab != nil {
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
@@ -1975,7 +1975,7 @@ extension SingleSubredditViewController {
          ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
          self.reloadDataReset()
          self.navigationController?.navigationBar.barTintColor = c
-         UIApplication.shared.statusBarView?.backgroundColor = c
+         UIApplication.shared.statusBarUIView?.backgroundColor = c
          self.sideView.backgroundColor = c
          self.add.backgroundColor = c
          self.sideView.backgroundColor = c

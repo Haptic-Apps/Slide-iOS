@@ -12,9 +12,25 @@ extension UIImage {
     func getCopy(withSize size: CGSize) -> UIImage {
         let hasAlpha = true
         let scale: CGFloat = 0.0 // Use scale factor of main screen
-        let biggerSize = CGSize(width: size.width + 20, height: size.height + 20)
+        
+        let maxWidth = size.width
+        let maxHeight = size.height
+        
+        let imgWidth = self.size.width
+        let imgHeight = self.size.height
+
+        let widthRatio = maxWidth / imgWidth
+        let heightRatio = maxHeight / imgHeight
+        
+        let bestRatio = min(widthRatio, heightRatio)
+
+        let newWidth = imgWidth * bestRatio,
+            newHeight = imgHeight * bestRatio
+
+        let biggerSize = CGSize(width: newWidth + 20 + (abs(size.width - newWidth) / 2), height: newHeight + 20 + (abs(size.height - newHeight) / 2))
+
         UIGraphicsBeginImageContextWithOptions(biggerSize, !hasAlpha, scale)
-        self.draw(in: CGRect(origin: CGPoint(x: 10, y: 10), size: size))
+        self.draw(in: CGRect(origin: CGPoint(x: 10 + (abs(size.width - newWidth) / 2), y: 10 + (abs(size.height - newHeight) / 2)), size: biggerSize))
         
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         return scaledImage!

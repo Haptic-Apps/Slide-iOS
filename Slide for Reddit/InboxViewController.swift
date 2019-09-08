@@ -135,7 +135,11 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         self.extendedLayoutIncludesOpaqueBars = true
         self.automaticallyAdjustsScrollViewInsets = false
 
-        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + UIApplication.shared.statusBarFrame.height
+        var isModal13 = false
+        if #available(iOS 13, *), self.isModalInPresentation {
+            isModal13 = true
+        }
+        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
 
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.sizeToFit()

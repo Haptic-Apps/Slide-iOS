@@ -264,8 +264,8 @@ class ModalMediaViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        savedColor = UIApplication.shared.statusBarView?.backgroundColor
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+        savedColor = UIApplication.shared.statusBarUIView?.backgroundColor
+        UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         super.viewWillAppear(animated)
         
         if parent is AlbumViewController || parent is ShadowboxLinkViewController {
@@ -284,9 +284,9 @@ class ModalMediaViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.shared.statusBarView?.isHidden = false
+        UIApplication.shared.statusBarUIView?.isHidden = false
         if savedColor != nil {
-            UIApplication.shared.statusBarView?.backgroundColor = savedColor
+            UIApplication.shared.statusBarUIView?.backgroundColor = savedColor
         }
 
         if SettingValues.reduceColor && ColorUtil.theme.isLight {
@@ -391,7 +391,7 @@ extension ModalMediaViewController {
 
         fullscreen = true
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+            let statusBar: UIView = UIApplication.shared.statusBarUIView ?? UIView()
             statusBar.isHidden = true
 
             self.background?.alpha = 1
@@ -406,7 +406,7 @@ extension ModalMediaViewController {
         fullscreen = false
         self.embeddedVC.bottomButtons.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+            let statusBar: UIView = UIApplication.shared.statusBarUIView ?? UIView()
             statusBar.isHidden = false
             self.closeButton.alpha = 1
 

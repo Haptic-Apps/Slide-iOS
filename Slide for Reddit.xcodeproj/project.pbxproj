@@ -281,6 +281,7 @@
 		BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45E01E23EED800764BB8 /* SettingValues.swift */; };
 		BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494271E307D57006618F3 /* GalleryTableViewController.swift */; };
 		BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494291E307DDA006618F3 /* GalleryCellView.swift */; };
+		BEC4A1A22322F74D00EE5114 /* SFSymbolsEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */; };
 		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
 		BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECF52462012B8E700A310F9 /* YTPlayerView.m */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
@@ -677,6 +678,7 @@
 		BEBF45E01E23EED800764BB8 /* SettingValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingValues.swift; sourceTree = "<group>"; };
 		BEC494271E307D57006618F3 /* GalleryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryTableViewController.swift; sourceTree = "<group>"; };
 		BEC494291E307DDA006618F3 /* GalleryCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCellView.swift; sourceTree = "<group>"; };
+		BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolsEnum.swift; sourceTree = "<group>"; };
 		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
 		BECF52452012B8E700A310F9 /* YTPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YTPlayerView.h; sourceTree = "<group>"; };
 		BECF52462012B8E700A310F9 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YTPlayerView.m; sourceTree = "<group>"; };
@@ -794,6 +796,7 @@
 				0924E526219E088800C31D5E /* UIWindow+RootViewController.swift */,
 				BE1DA5C5220803BB001C7DB4 /* UIAlert+Extensions.swift */,
 				096A7D142215D9AB0067106C /* AVAudioSession+Extensions.swift */,
+				BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -2013,6 +2016,7 @@
 				BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */,
 				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
 				09D6603621E8F199003D632C /* CurrentAccountPresentationController.swift in Sources */,
+				BEC4A1A22322F74D00EE5114 /* SFSymbolsEnum.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
 				09BBDBF621F977F900FC8BF9 /* FontSelectionTableViewController.swift in Sources */,
 				098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */,

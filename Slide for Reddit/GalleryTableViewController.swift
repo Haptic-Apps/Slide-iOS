@@ -27,7 +27,7 @@ class GalleryTableViewController: MediaTableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .black
+        UIApplication.shared.statusBarUIView?.backgroundColor = .black
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -70,7 +70,7 @@ class GalleryTableViewController: MediaTableViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+        UIApplication.shared.statusBarUIView?.backgroundColor = .clear
     }
     
     override func viewWillDisappear(_ animated: Bool) {

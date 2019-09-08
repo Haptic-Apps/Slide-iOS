@@ -20,6 +20,14 @@ extension UIImage {
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         return scaledImage!
     }
+    
+    convenience init?(sfString: SFSymbol, overrideString: String) {
+        if #available(iOS 13, *) {
+            self.init(systemName: sfString.rawValue)
+        } else {
+            self.init(named: overrideString)
+        }
+    }
 
     func getCopy(withColor color: UIColor) -> UIImage {
         var image = withRenderingMode(.alwaysTemplate)

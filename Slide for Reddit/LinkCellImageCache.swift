@@ -49,35 +49,35 @@ public class LinkCellImageCache {
 
     // TODO: Call this whenever the theme changes.
     public static func initialize() {        
-        upvote = UIImage(named: "upvote")!.menuIcon()
+        upvote = UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.menuIcon()
         upvoteTinted = upvote.getCopy(withColor: ColorUtil.upvoteColor)
 
-        downvote = UIImage(named: "downvote")!.menuIcon()
+        downvote = UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")!.menuIcon()
         downvoteTinted = downvote.getCopy(withColor: ColorUtil.downvoteColor)
 
-        save = UIImage(named: "save")!.menuIcon()
+        save = UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()
         saveTinted = save.getCopy(withColor: ColorUtil.upvoteColor)
 
-        share = UIImage(named: "send")!.menuIcon()
+        share = UIImage(sfString: SFSymbol.paperplaneFill, overrideString: "send")!.menuIcon()
 
-        upvoteSmall = UIImage(named: "up")!.menuIcon()
+        upvoteSmall = UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")!.menuIcon()
         upvoteTintedSmall = upvoteSmall.getCopy(withColor: ColorUtil.upvoteColor)
         
-        downvoteSmall = UIImage(named: "down")!.menuIcon()
+        downvoteSmall = UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()
         downvoteTintedSmall = downvoteSmall.getCopy(withColor: ColorUtil.downvoteColor)
 
-        votesIcon = UIImage(named: "upvote")!.smallIcon()
-        commentsIcon = UIImage(named: "comments")!.smallIcon()
-        menu = UIImage(named: "ic_more_vert_white")!.menuIcon()
+        votesIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.smallIcon()
+        commentsIcon = UIImage(sfString: SFSymbol.bubbleRightFill, overrideString: "comments")!.smallIcon()
+        menu = UIImage(sfString: SFSymbol.ellipsis, overrideString: "ic_more_vert_white")!.menuIcon()
 
-        reply = UIImage(named: "reply")!.menuIcon()
-        hide = UIImage(named: "hide")!.menuIcon()
+        reply = UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()
+        hide = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.menuIcon()
         edit = UIImage(named: "edit")!.menuIcon()
 
         mod = UIImage(named: "mod")!.menuIcon()
         modTinted = mod.getCopy(withColor: GMColor.red500Color())
 
-        readLater = UIImage(named: "readLater")!.menuIcon()
+        readLater = UIImage(sfString: SFSymbol.trayAndArrowDown, overrideString: "readLater")!.menuIcon()
         readLaterTinted = readLater.getCopy(withColor: GMColor.green500Color())
         
         var topColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.9))

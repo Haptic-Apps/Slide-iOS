@@ -870,7 +870,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.automaticallyAdjustsScrollViewInsets = false
         
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         if SettingValues.subredditBar {
@@ -1061,7 +1061,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+        UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         
         menuNav?.view.isHidden = true
     }
