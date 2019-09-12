@@ -34,12 +34,12 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         }
         
-        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
         }
         
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
@@ -177,7 +177,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             }
             let alertController = DragDownAlertMenu(title: "Message from u/\(self.message!.author)", subtitle: self.message!.subject, icon: nil)
 
-            alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", icon: UIImage(named: "profile")!.menuIcon()) {
+            alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
                 let prof = ProfileViewController.init(name: self.message!.author)
                 VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
             }

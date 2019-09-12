@@ -669,7 +669,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControl.Event.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(named: "mod")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControl.Event.touchUpInside)
         })
         
@@ -1206,7 +1206,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let alertController = DragDownAlertMenu(title: "Comment by u/\(comment!.author)", subtitle: comment!.body, icon: nil)
 
-        alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", icon: UIImage(named: "profile")!.menuIcon()) {
+        alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: par.navigationController, parentViewController: par)
         }
@@ -1230,7 +1230,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             PostActions.report(self.comment!, parent: par, index: -1, delegate: nil)
         }
 
-        alertController.addAction(title: "Tag u/\(comment!.author)", icon: UIImage(named: "subs")!.menuIcon()) {
+        alertController.addAction(title: "Tag u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon()) {
             par.tagUser(name: self.comment!.author)
         }
         
@@ -1238,7 +1238,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             par.blockUser(name: self.comment!.author)
         }
         
-        alertController.addAction(title: "Copy text", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy text", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
             
             alert.setupTheme()
@@ -1278,7 +1278,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func mod(_ par: CommentViewController) {
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Comment by u/\(comment!.author)", icon: nil, themeColor: GMColor.lightGreen500Color())
 
-        alertController.addAction(title: "\(comment!.reports.count) reports", icon: UIImage(named: "reports")!.menuIcon()) {
+        alertController.addAction(title: "\(comment!.reports.count) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
             var reports = ""
             for report in self.comment!.reports {
                 reports += report + "\n"
@@ -1320,7 +1320,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
         }
 
-        alertController.addAction(title: "Remove comment", icon: UIImage(named: "close")!.menuIcon()) {
+        alertController.addAction(title: "Remove comment", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon()) {
             self.modRemove()
         }
         
@@ -1328,7 +1328,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.modRemove(true)
         }
         
-        alertController.addAction(title: "u/\(comment!.author)'s profile", icon: UIImage(named: "profile")!.menuIcon()) {
+        alertController.addAction(title: "u/\(comment!.author)'s profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par)
         }
@@ -1923,12 +1923,12 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
             self.parent?.present(activityViewController, animated: true, completion: nil)
         }
         
-        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parent)
         }
         
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {

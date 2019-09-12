@@ -674,7 +674,7 @@ class SettingValues {
         public func getImage(_ link: RSubmission? = nil) -> UIImage {
             switch self {
             case .PROFILE:
-                return UIImage(named: "profile")!.menuIcon()
+                return UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()
             case .SUBREDDIT:
                 return UIImage(named: "subs")!.menuIcon()
             case .REPORT:
@@ -703,7 +703,7 @@ class SettingValues {
             case .FILTER:
                 return UIImage(named: "filter")!.menuIcon()
             case .COPY:
-                return UIImage(named: "copy")!.menuIcon()
+                return UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()
             case .HIDE:
                 return UIImage(named: "hide")!.menuIcon()
             case .UPVOTE:
@@ -711,7 +711,7 @@ class SettingValues {
             case .DOWNVOTE:
                 return UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)
             case .MODERATE:
-                return UIImage(named: "mod")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
+                return UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
             }
         }
     }

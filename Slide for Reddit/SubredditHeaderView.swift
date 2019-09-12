@@ -39,7 +39,7 @@ class SubredditHeaderView: UIView {
                     DispatchQueue.main.async {
                         let sheet = DragDownAlertMenu(title: "Moderators", subtitle: "r/\(self.subreddit!.displayName)", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: false)
 
-                        sheet.addAction(title: "Message r/\(self.subreddit!.displayName) moderators", icon: UIImage(named: "mod")?.menuIcon(), action: {
+                        sheet.addAction(title: "Message r/\(self.subreddit!.displayName) moderators", icon: UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.menuIcon(), action: {
                             VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=/r/\(self.subreddit!.displayName)", self.parentController?.navigationController, self.parentController)
                         })
 
@@ -103,7 +103,7 @@ class SubredditHeaderView: UIView {
         self.mods.accessoryType = .none
         self.mods.backgroundColor = ColorUtil.theme.foregroundColor
         self.mods.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.mods.imageView?.image = UIImage(named: "mod")?.menuIcon()
+        self.mods.imageView?.image = UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.menuIcon()
         self.mods.imageView?.tintColor = ColorUtil.theme.fontColor
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
@@ -380,12 +380,12 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
             self.parentController?.present(activityViewController, animated: true, completion: nil)
         }
         
-        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentController)
         }
         
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {

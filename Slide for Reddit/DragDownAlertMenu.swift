@@ -394,7 +394,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             attributedTitle.append(NSAttributedString(string: "\n" + subtitle, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: themeColor?.withAlphaComponent(0.6) ?? ColorUtil.theme.fontColor.withAlphaComponent(0.6)]))
         }
         label.attributedText = attributedTitle
-        let close = UIImageView(image: UIImage(named: "close")?.navIcon().getCopy(withColor: themeColor ?? ColorUtil.theme.fontColor))
+        let close = UIImageView(image: UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon().getCopy(withColor: themeColor ?? ColorUtil.theme.fontColor))
         close.contentMode = .center
         toReturn.addSubview(close)
         close.centerYAnchor == toReturn.centerYAnchor

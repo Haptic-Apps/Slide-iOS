@@ -62,12 +62,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         }
         
-        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
         }
 
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
@@ -661,17 +661,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 let imageToShare = [bannerImage.image!]
                 let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
                 activityViewController.popoverPresentationController?.sourceView = self.contentView
-                alertController.addAction(title: "Share image", icon: UIImage(named: "image")!.menuIcon(), action: {
+                alertController.addAction(title: "Share image", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "image")!.menuIcon(), action: {
                     self.parentViewController?.present(activityViewController, animated: true, completion: nil)
                 })
             }
 
-            alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+            alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
                 UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
                 BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
             }
 
-            alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+            alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
@@ -2031,7 +2031,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
         
-        alertController.addAction(title: "Cancel", icon: UIImage(named: "close")!.menuIcon()) {
+        alertController.addAction(title: "Cancel", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon()) {
             alertController.dismiss(animated: true, completion: nil)
         }
 

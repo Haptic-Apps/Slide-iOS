@@ -237,7 +237,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: UIColor.white])
 
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage(named: "close")?.navIcon(true), for: UIControl.State.normal)
+        close.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: UIControl.State.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)

@@ -48,7 +48,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     var editButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 24, bottom: 24, right: 16)
         $0.accessibilityLabel = "Edit your Subscriptions"
     }

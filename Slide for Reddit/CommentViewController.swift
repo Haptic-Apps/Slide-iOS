@@ -1845,7 +1845,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             let nav = UIButton(type: .custom)
             nav.accessibilityLabel = "Change criteria for comment thread navigation"
-            nav.setImage(UIImage(named: "nav")?.toolbarIcon(), for: UIControl.State.normal)
+            nav.setImage(UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")?.toolbarIcon(), for: UIControl.State.normal)
             nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
             nav.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let navB = UIBarButtonItem(customView: nav)
@@ -1859,14 +1859,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             let more = UIButton(type: .custom)
             more.accessibilityLabel = "Post options"
-            more.setImage(UIImage(named: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
+            more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)
             mod.accessibilityLabel = "Moderator options"
-            mod.setImage(UIImage(named: "mod")?.toolbarIcon(), for: UIControl.State.normal)
+            mod.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.toolbarIcon(), for: UIControl.State.normal)
             mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
             mod.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             modB = UIBarButtonItem(customView: mod)
@@ -1929,7 +1929,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         alert.addTextInput(title: "Set tag", icon: UIImage(named: "save-1")?.menuIcon(), action: {
             ColorUtil.setTagForUser(name: name, tag: alert.getText() ?? "")
             self.tableView.reloadData()
-        }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name),inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+        }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)
 
         if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
             alert.addAction(title: "Remove tag", icon: UIImage(named: "delete")?.menuIcon(), enabled: true) {

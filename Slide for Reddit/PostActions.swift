@@ -161,7 +161,7 @@ class PostActions: NSObject {
         //todo remove with reason, new icons
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())
         
-        alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(named: "reports")!.menuIcon()) {
+        alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
             var reports = ""
             for report in cell.link!.reports {
                 reports += report + "\n"
@@ -187,10 +187,10 @@ class PostActions: NSObject {
         }
         
         if cell.link!.removed {
-            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(named: "close")!.menuIcon(), enabled: false) {
+            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon(), enabled: false) {
             }
         } else {
-            alertController.addAction(title: "Remove", icon: UIImage(named: "close")!.menuIcon()) {
+            alertController.addAction(title: "Remove", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon()) {
                 self.modRemove(cell)
             }
         }
@@ -214,11 +214,11 @@ class PostActions: NSObject {
         }
         
         if !cell.link!.spoiler {
-            alertController.addAction(title: "Mark as spoiler", icon: UIImage(named: "reports")!.menuIcon()) {
+            alertController.addAction(title: "Mark as spoiler", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
                 self.modSpoiler(cell, true)
             }
         } else {
-            alertController.addAction(title: "Unmark as spoiler", icon: UIImage(named: "reports")!.menuIcon()) {
+            alertController.addAction(title: "Unmark as spoiler", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
                 self.modSpoiler(cell, false)
             }
         }
@@ -253,7 +253,7 @@ class PostActions: NSObject {
             self.modRemove(cell, spam: true)
         }
 
-        alertController.addAction(title: "u/\(cell.link!.author)'s profile", icon: UIImage(named: "profile")!.menuIcon()) {
+        alertController.addAction(title: "u/\(cell.link!.author)'s profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: cell.link!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
         }

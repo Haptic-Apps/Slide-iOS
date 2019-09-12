@@ -722,20 +722,17 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             UserDefaults.standard.synchronize()
         }
         
-        let actionSheetController: UIAlertController = UIAlertController(title: "Change button type", message: "", preferredStyle: .alert)
-
-        actionSheetController.addCancelButton()
+        let actionSheetController = DragDownAlertMenu(title: "Change button action", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
 
         for t in SettingValues.FabType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.getTitle(), style: .default) { _ -> Void in
+            actionSheetController.addAction(title: t.getTitle(), icon: UIImage(named: t.getPhoto())?.menuIcon(), action: {
                 UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_fabType)
                 SettingValues.fabType = t
                 self.setupFab(self.view.bounds.size)
-            }
-            actionSheetController.addAction(saveActionButton)
+            })
         }
 
-        self.present(actionSheetController, animated: true, completion: nil)
+        actionSheetController.show(self)
     }
 
     var lastVersion = 0
@@ -805,7 +802,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             let infoB = UIBarButtonItem.init(customView: info)
 
             more = UIButton.init(type: .custom)
-            more.setImage(UIImage(named: "moreh")?.menuIcon(), for: UIControl.State.normal)
+            more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
             more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)

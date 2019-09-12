@@ -59,7 +59,7 @@ class ManageMultireddit: UITableViewController {
             button.parentController = self.navigationController
             button.contextController = self
             button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage(named: "close")!.navIcon(), for: UIControl.State.normal)
+            button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
             

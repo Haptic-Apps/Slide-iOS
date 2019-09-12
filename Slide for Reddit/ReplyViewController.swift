@@ -498,7 +498,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         replyButtons?.contentSize = CGSize.init(width: finalWidth, height: CGFloat(30))
         replyButtons?.alwaysBounceHorizontal = true
         replyButtons?.showsHorizontalScrollIndicator = false
-        
+
         if type == .SUBMIT_LINK || type == .SUBMIT_TEXT || type == .SUBMIT_IMAGE || type == .CROSSPOST {
             do {
                 self.session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -1119,7 +1119,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(named: "close")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.accessibilityLabel = "Close"
         button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)

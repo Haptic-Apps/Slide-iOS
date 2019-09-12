@@ -39,7 +39,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         title.font = FontGenerator.fontOfSize(size: 18, submission: true)
         title.textColor = ColorUtil.theme.fontColor
         
-        self.icon = UIImageView(image: UIImage(named: "profile")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
+        self.icon = UIImageView(image: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
         self.contentView.addSubviews(title, icon)
 
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor

@@ -128,7 +128,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     func doButtons() {
         navItem = UINavigationItem(title: "")
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage(named: "close")?.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
+        close.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)

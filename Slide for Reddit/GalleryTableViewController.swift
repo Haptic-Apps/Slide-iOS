@@ -52,7 +52,7 @@ class GalleryTableViewController: MediaTableViewController {
             blurView!.edgeAnchors == exit.edgeAnchors
             
             let image = UIImageView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
-                $0.image = UIImage(named: "close")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                $0.image = UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                 $0.contentMode = .center
             }
             exit.addSubview(image)

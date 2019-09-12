@@ -150,7 +150,7 @@ class SubredditCellView: UITableViewCell {
         self.sideView.isHidden = true
         self.navController = nav
         title.text = "Go to u/\(profile)'s profile"
-        self.icon.image = UIImage(named: "profile")!.menuIcon()
+        self.icon.image = UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.theme.backgroundColor

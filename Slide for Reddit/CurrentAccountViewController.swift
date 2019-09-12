@@ -60,7 +60,7 @@ class CurrentAccountViewController: UIViewController {
     }
     
     var closeButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Close"
     }
@@ -78,7 +78,7 @@ class CurrentAccountViewController: UIViewController {
         $0.spacing = 0
     }
     var modButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "Mod Queue"
     }
@@ -295,12 +295,12 @@ extension CurrentAccountViewController {
         updateModBadge()
         
         if AccountController.current != nil {
-            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(named: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                 guard let strongSelf = self else { return }
                 strongSelf.accountImageView.image = image
             }
         } else {
-            accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor)
+            accountImageView.image = UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor)
         }
         setEmptyState(!AccountController.isLoggedIn, animate: true)
         
@@ -523,7 +523,7 @@ extension CurrentAccountViewController {
 
         for accountName in AccountController.names.unique().sorted() {
             if accountName != AccountController.currentName {
-                optionMenu.addAction(title: accountName, icon: UIImage(named: "profile")!.menuIcon()) {
+                optionMenu.addAction(title: accountName, icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
                     self.setLoadingState(true)
                     self.delegate?.currentAccountViewController(self, didRequestAccountChangeToName: accountName)
                 }
