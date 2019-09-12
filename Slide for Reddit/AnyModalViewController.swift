@@ -298,7 +298,7 @@ class AnyModalViewController: UIViewController {
             }
         }
 
-        alertController.addAction(title: "Share video URL", icon: UIImage(named: "reply")!.menuIcon()) {
+        alertController.addAction(title: "Share video URL", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
             let shareItems: Array = [baseURL]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
@@ -502,13 +502,13 @@ class AnyModalViewController: UIViewController {
         
         downloadButton = UIButton().then {
             $0.accessibilityIdentifier = "Download Button"
-            $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "download")?.navIcon(true), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         upvoteButton = UIButton().then {
             $0.accessibilityIdentifier = "Upvote Button"
-            $0.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
             $0.isHidden = upvoteCallback == nil // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
@@ -538,7 +538,7 @@ class AnyModalViewController: UIViewController {
         if upvoteCallback != nil {
             self.upvoteCallback!()
             self.isUpvoted = !self.isUpvoted
-            self.upvoteButton.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+            self.upvoteButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
         }
     }
     

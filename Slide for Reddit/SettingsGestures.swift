@@ -388,7 +388,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     func createLeftView(cell: UITableViewCell, image: String, color: UIColor) {
-        if let icon = UIImage.init(named: image)?.navIcon().getCopy(withSize: CGSize.square(size: 25), withColor: .white) {
+        if let icon = UIImage(named: image)?.navIcon().getCopy(withSize: CGSize.square(size: 25), withColor: .white) {
             var coloredIcon = UIImage.convertGradientToImage(colors: [color, color], frame: CGSize.square(size: 45))
             coloredIcon = coloredIcon.overlayWith(image: icon, posX: 10, posY: 10)
             cell.imageView?.image = coloredIcon.sd_roundedCornerImage(withRadius: 10, corners: UIRectCorner.allCorners, borderWidth: 0, borderColor: nil)

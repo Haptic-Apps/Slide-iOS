@@ -27,7 +27,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
@@ -182,7 +182,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
                 VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
             }
 
-            alertController.addAction(title: "Reply to message", icon: UIImage(named: "reply")!.menuIcon()) {
+            alertController.addAction(title: "Reply to message", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
                 self.doReply()
             }
 

@@ -28,7 +28,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView

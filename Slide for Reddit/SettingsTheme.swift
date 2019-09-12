@@ -44,14 +44,14 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         if isAccent {
             accentChosen = colorPickerView.colors[indexPath.row]
             titleLabel.textColor = self.accentChosen
-            self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: accentChosen!)
+            self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: accentChosen!)
             reduceColor.onTintColor = accentChosen!
             tableView.beginUpdates()
             tableView.endUpdates()
         } else {
             primaryChosen = colorPickerView.colors[indexPath.row]
             setupBaseBarColors(primaryChosen)
-            self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: primaryChosen!)
+            self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: primaryChosen!)
         }
     }
     
@@ -120,7 +120,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
             self.setupBaseBarColors()
-            self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
+            self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
         })
 
         //alertController.addAction(custom)
@@ -193,7 +193,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             self.accentChosen = nil
             self.reduceColor.onTintColor = ColorUtil.baseAccent
             self.titleLabel.textColor = ColorUtil.baseAccent
-            self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
+            self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
         })
 
         alertController.addAction(somethingAction)
@@ -257,26 +257,26 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         self.primary.accessoryType = .none
         self.primary.backgroundColor = ColorUtil.theme.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.primary.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
+        self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
         
         self.accent.textLabel?.text = "Links and buttons color"
         self.accent.accessoryType = .none
         self.accent.backgroundColor = ColorUtil.theme.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.accent.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
+        self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
         
         self.custom.textLabel?.text = "New custom theme"
         self.custom.accessoryType = .disclosureIndicator
         self.custom.backgroundColor = ColorUtil.theme.foregroundColor
         self.custom.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.custom.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.custom.imageView?.image = UIImage(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.custom.imageView?.tintColor = ColorUtil.theme.navIconColor
         
         self.base.textLabel?.text = "Base theme"
         self.base.accessoryType = .disclosureIndicator
         self.base.backgroundColor = ColorUtil.theme.foregroundColor
         self.base.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.base.imageView?.image = UIImage.init(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.base.imageView?.image = UIImage(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.base.imageView?.tintColor = ColorUtil.theme.navIconColor
         
         nightEnabled = UISwitch().then {
@@ -290,7 +290,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.theme.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.night.imageView?.image = UIImage.init(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.night.imageView?.image = UIImage(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.night.imageView?.tintColor = ColorUtil.theme.navIconColor
         night.accessoryView = nightEnabled
 
@@ -327,7 +327,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         reduceColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
         reduceColorCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
-        self.reduceColorCell.imageView?.image = UIImage.init(named: "nocolors")?.toolbarIcon()
+        self.reduceColorCell.imageView?.image = UIImage(named: "nocolors")?.toolbarIcon()
         self.reduceColorCell.imageView?.tintColor = ColorUtil.theme.fontColor
         
         if SettingValues.reduceColor {
@@ -344,7 +344,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(named: "back")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
@@ -376,7 +376,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             setupBaseBarColors()
             let button = UIButtonWithContext.init(type: .custom)
             button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControl.State.normal)
+            button.setImage(UIImage(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
             

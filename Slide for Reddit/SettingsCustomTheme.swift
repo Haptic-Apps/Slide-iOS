@@ -181,7 +181,7 @@ class SettingsCustomTheme: UITableViewController {
         self.foreground.accessoryType = .none
         self.foreground.backgroundColor = foregroundColor
         self.foreground.textLabel?.textColor = fontColor
-        self.foreground.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: foregroundColor)
+        self.foreground.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: foregroundColor)
         self.foreground.imageView?.layer.masksToBounds = true
         self.foreground.imageView?.layer.borderWidth = 1.5
         self.foreground.imageView?.layer.borderColor = UIColor.white.cgColor
@@ -191,19 +191,19 @@ class SettingsCustomTheme: UITableViewController {
         self.background.accessoryType = .none
         self.background.backgroundColor = foregroundColor
         self.background.textLabel?.textColor = fontColor
-        self.background.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: backgroundColor)
+        self.background.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: backgroundColor)
         
         self.font.textLabel?.text = "Font color"
         self.font.accessoryType = .none
         self.font.backgroundColor = foregroundColor
         self.font.textLabel?.textColor = fontColor
-        self.font.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: fontColor)
+        self.font.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: fontColor)
         
         self.navicon.textLabel?.text = "Icons color"
         self.navicon.accessoryType = .none
         self.navicon.backgroundColor = foregroundColor
         self.navicon.textLabel?.textColor = fontColor
-        self.navicon.imageView?.image = UIImage.init(named: "circle")?.toolbarIcon().getCopy(withColor: navIconColor)
+        self.navicon.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: navIconColor)
         
         self.statusbar.textLabel?.text = "Light statusbar"
         self.statusbar.accessoryType = .none
@@ -217,7 +217,7 @@ class SettingsCustomTheme: UITableViewController {
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(named: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
@@ -361,7 +361,7 @@ class SettingsCustomTheme: UITableViewController {
                 textField.becomeFirstResponder()
                 textField.textColor = ColorUtil.theme.fontColor
                 textField.attributedPlaceholder = NSAttributedString(string: "HEX String", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage.init(named: "pallete"), color: ColorUtil.theme.fontColor)
+                textField.left(image: UIImage(named: "pallete"), color: ColorUtil.theme.fontColor)
                 textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
                 textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.leftViewPadding = 12

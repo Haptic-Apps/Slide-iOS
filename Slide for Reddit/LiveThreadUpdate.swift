@@ -103,7 +103,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                             if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
                                 let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
                                 
-                                alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+                                alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
                                     let shareItems: Array = [url]
                                     let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                                     activityViewController.popoverPresentationController?.sourceView = self.contentView

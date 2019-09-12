@@ -693,7 +693,7 @@ class SettingValues {
                 }
                 return ReadLater.isReadLater(id: link!.getIdentifier()) ? UIImage(named: "restore")!.menuIcon() : UIImage(named: "readLater")!.menuIcon()
             case .SHARE_CONTENT:
-                return UIImage(named: "share")!.menuIcon()
+                return UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()
             case .SHARE_REDDIT:
                 return UIImage(named: "comments")!.menuIcon()
             case .CHROME:
@@ -707,9 +707,9 @@ class SettingValues {
             case .HIDE:
                 return UIImage(named: "hide")!.menuIcon()
             case .UPVOTE:
-                return UIImage(named: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)
+                return UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)
             case .DOWNVOTE:
-                return UIImage(named: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)
+                return UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)
             case .MODERATE:
                 return UIImage(named: "mod")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
             }

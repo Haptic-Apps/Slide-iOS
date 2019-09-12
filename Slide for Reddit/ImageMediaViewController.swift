@@ -99,27 +99,27 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         if data.buttons {
             menuButton = UIButton().then {
                 $0.accessibilityIdentifier = "More Button"
-                $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.navIcon(true), for: [])
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
             
             downloadButton = UIButton().then {
                 $0.accessibilityIdentifier = "Download Button"
-                $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "download")?.navIcon(true), for: [])
                 $0.isHidden = true // The button will be unhidden once the content has loaded.
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
             
             upvoteButton = UIButton().then {
                 $0.accessibilityIdentifier = "Upvote Button"
-                $0.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
                 $0.isHidden = upvoteCallback == nil // The button will be unhidden once the content has loaded.
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
 
             goToCommentsButton = UIButton().then {
                 $0.accessibilityIdentifier = "Go to Comments Button"
-                $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")?.navIcon(true), for: [])
                 $0.isHidden = commentCallback == nil
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
@@ -133,7 +133,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             
             showTitleButton = UIButton().then {
                 $0.accessibilityIdentifier = "Show Title Button"
-                $0.setImage(UIImage(named: "size")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.textJustifyleft, overrideString: "size")?.navIcon(true), for: [])
                 $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
@@ -316,7 +316,7 @@ extension ImageMediaViewController {
         
         let alertController = DragDownAlertMenu(title: "Image options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share image URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share image URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {

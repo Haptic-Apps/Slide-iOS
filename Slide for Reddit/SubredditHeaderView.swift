@@ -85,7 +85,7 @@ class SubredditHeaderView: UIView {
         self.submit.accessoryType = .none
         self.submit.backgroundColor = ColorUtil.theme.foregroundColor
         self.submit.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.submit.imageView?.image = UIImage.init(named: "edit")?.menuIcon()
+        self.submit.imageView?.image = UIImage(named: "edit")?.menuIcon()
         self.submit.imageView?.tintColor = ColorUtil.theme.fontColor
         self.submit.layer.cornerRadius = 5
         self.submit.clipsToBounds = true
@@ -94,7 +94,7 @@ class SubredditHeaderView: UIView {
         self.sorting.accessoryType = .none
         self.sorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.sorting.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.sorting.imageView?.image = UIImage.init(named: "ic_sort_white")?.menuIcon()
+        self.sorting.imageView?.image = UIImage(named: "ic_sort_white")?.menuIcon()
         self.sorting.imageView?.tintColor = ColorUtil.theme.fontColor
         self.sorting.layer.cornerRadius = 5
         self.sorting.clipsToBounds = true
@@ -103,7 +103,7 @@ class SubredditHeaderView: UIView {
         self.mods.accessoryType = .none
         self.mods.backgroundColor = ColorUtil.theme.foregroundColor
         self.mods.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.mods.imageView?.image = UIImage.init(named: "mod")?.menuIcon()
+        self.mods.imageView?.image = UIImage(named: "mod")?.menuIcon()
         self.mods.imageView?.tintColor = ColorUtil.theme.fontColor
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
@@ -111,7 +111,7 @@ class SubredditHeaderView: UIView {
         self.flair.accessoryType = .none
         self.flair.backgroundColor = ColorUtil.theme.foregroundColor
         self.flair.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.flair.imageView?.image = UIImage.init(named: "flag")?.menuIcon()
+        self.flair.imageView?.image = UIImage(named: "flag")?.menuIcon()
         self.flair.imageView?.tintColor = ColorUtil.theme.fontColor
         self.flair.layer.cornerRadius = 5
         self.flair.clipsToBounds = true
@@ -227,7 +227,7 @@ class SubredditHeaderView: UIView {
     @objc func sort(_ selector: UITableViewCell) {
         let actionSheetController = DragDownAlertMenu(title: "Default sorting for r/\(self.subreddit!.displayName)", subtitle: "Overrides the default in Settings > General", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 
-        let selected = UIImage.init(named: "selected")!.menuIcon()
+        let selected = UIImage(named: "selected")!.menuIcon()
 
         for link in LinkSortType.cases {
             actionSheetController.addAction(title: link.description, icon: SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link ? selected : nil) {
@@ -247,7 +247,7 @@ class SubredditHeaderView: UIView {
         } else {
             let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 
-            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+            let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t ? selected : nil) {
@@ -373,7 +373,7 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self

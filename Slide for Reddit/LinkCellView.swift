@@ -55,7 +55,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
@@ -650,7 +650,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let url = self.link!.url!
             let alertController = DragDownAlertMenu(title: ContentType.isImage(uri: url) && !bannerImage.isHidden ? "Image options" : "Submission link options", subtitle: url.absoluteString, icon: url.absoluteString)
             
-            alertController.addAction(title: "Share\(ContentType.isImage(uri: url) && !bannerImage.isHidden ? " image" : "") URL", icon: UIImage(named: "share")!.menuIcon()) {
+            alertController.addAction(title: "Share\(ContentType.isImage(uri: url) && !bannerImage.isHidden ? " image" : "") URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
                 let shareItems: Array = [url]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 activityViewController.popoverPresentationController?.sourceView = self.contentView

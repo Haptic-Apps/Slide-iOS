@@ -50,25 +50,25 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.title = "Subreddit themes"
 
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage.init(named: "sync")!.navIcon(), for: UIControl.State.normal)
+        sync.setImage(UIImage(named: "sync")!.navIcon(), for: UIControl.State.normal)
         sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControl.Event.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let add = UIButton.init(type: .custom)
-        add.setImage(UIImage.init(named: "palette")!.navIcon(), for: UIControl.State.normal)
+        add.setImage(UIImage(named: "palette")!.navIcon(), for: UIControl.State.normal)
         add.addTarget(self, action: #selector(self.add(_:)), for: UIControl.Event.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
 
         let delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage.init(named: "nocolors")!.navIcon(), for: UIControl.State.normal)
+        delete.setImage(UIImage(named: "nocolors")!.navIcon(), for: UIControl.State.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControl.Event.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)
 
         let all = UIButton.init(type: .custom)
-        all.setImage(UIImage.init(named: "selectall")!.navIcon(), for: UIControl.State.normal)
+        all.setImage(UIImage(named: "selectall")!.navIcon(), for: UIControl.State.normal)
         all.addTarget(self, action: #selector(self.all(_:)), for: UIControl.Event.touchUpInside)
         all.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let allB = UIBarButtonItem.init(customView: all)

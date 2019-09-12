@@ -293,7 +293,7 @@ public class AutoCache: NSObject {
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
+        button.setImage(UIImage(named: "close")!.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
         popup.addSubview(button)
         button.rightAnchor == popup.rightAnchor - 4
         button.heightAnchor == 25

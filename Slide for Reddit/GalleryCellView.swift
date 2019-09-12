@@ -25,7 +25,7 @@ class GalleryCellView: UITableViewCell {
         bannerImage.contentMode = UIView.ContentMode.scaleAspectFit
 
         self.commentsImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        self.commentsImage.image = UIImage.init(named: "comments")?.navIcon(true)
+        self.commentsImage.image = UIImage(named: "comments")?.navIcon(true)
 
         self.typeImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
 
@@ -57,13 +57,13 @@ class GalleryCellView: UITableViewCell {
         
         switch ContentType.getContentType(submission: link) {
         case .ALBUM:
-            typeImage.image = UIImage.init(named: "image")?.navIcon(true)
+            typeImage.image = UIImage(named: "image")?.navIcon(true)
         case .EXTERNAL, .LINK, .REDDIT:
-            typeImage.image = UIImage.init(named: "world")?.navIcon(true)
+            typeImage.image = UIImage(named: "world")?.navIcon(true)
         case .SELF:
-            typeImage.image = UIImage.init(named: "size")?.navIcon(true)
+            typeImage.image = UIImage(named: "size")?.navIcon(true)
         case .EMBEDDED, .GIF, .STREAMABLE, .VIDEO, .VID_ME:
-            typeImage.image = UIImage.init(named: "play")?.navIcon(true)
+            typeImage.image = UIImage(named: "play")?.navIcon(true)
         default:
             typeImage.image = UIImage()
 

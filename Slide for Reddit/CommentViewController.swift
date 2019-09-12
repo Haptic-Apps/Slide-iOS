@@ -1067,13 +1067,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.tableHeaderView = savedHeaderView!
 
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.setImage(UIImage(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
 
         let search = UIButton.init(type: .custom)
-        search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControl.State.normal)
+        search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
         search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
@@ -1095,7 +1095,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !offline {
             let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
 
-            let selected = UIImage.init(named: "selected")!.menuIcon()
+            let selected = UIImage(named: "selected")!.menuIcon()
 
             for c in CommentSort.cases {
                 actionSheetController.addAction(title: c.description, icon: sort == c ? selected : nil) {
@@ -1336,14 +1336,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
             sort.accessibilityLabel = "Change sort type"
-            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sort.setImage(UIImage(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
             sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             sortB = UIBarButtonItem.init(customView: sort)
             
             let search = UIButton.init(type: .custom)
             search.accessibilityLabel = "Search"
-            search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControl.State.normal)
+            search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
             search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
             search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             searchB = UIBarButtonItem.init(customView: search)
@@ -1470,7 +1470,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.refresh(self)
             }
 
-            alertController.addAction(title: "Reply to submission", icon: UIImage(named: "reply")!.menuIcon()) {
+            alertController.addAction(title: "Reply to submission", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
                 self.reply(self.headerCell)
             }
 
@@ -2393,7 +2393,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 //                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightRight, indexPath: indexPath)
 //                })
 //                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
+//                action.image = UIImage(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
 //
 //                actions.append(action)
 //            }
@@ -2403,7 +2403,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 //                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightLeft, indexPath: indexPath)
 //                })
 //                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
+//                action.image = UIImage(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
 //
 //                actions.append(action)
 //            }
@@ -2428,7 +2428,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 //                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftLeft, indexPath: indexPath)
 //                })
 //                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
+//                action.image = UIImage(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
 //
 //                actions.append(action)
 //            }
@@ -2438,7 +2438,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 //                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftRight, indexPath: indexPath)
 //                })
 //                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
+//                action.image = UIImage(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
 //
 //                actions.append(action)
 //            }

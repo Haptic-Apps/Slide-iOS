@@ -28,19 +28,19 @@ class SearchViewController: ContentListingViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControl.State.normal)
+        edit.setImage(UIImage(named: "edit")?.navIcon(), for: UIControl.State.normal)
         edit.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
         let time = UIButton.init(type: .custom)
-        time.setImage(UIImage.init(named: "restore")?.navIcon(), for: UIControl.State.normal)
+        time.setImage(UIImage(named: "restore")?.navIcon(), for: UIControl.State.normal)
         time.addTarget(self, action: #selector(self.time(_:)), for: UIControl.Event.touchUpInside)
         time.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         timeB = UIBarButtonItem.init(customView: time)
 
         let filter = UIButton.init(type: .custom)
-        filter.setImage(UIImage.init(named: "filter")?.navIcon(), for: UIControl.State.normal)
+        filter.setImage(UIImage(named: "filter")?.navIcon(), for: UIControl.State.normal)
         filter.addTarget(self, action: #selector(self.filter(_:)), for: UIControl.Event.touchUpInside)
         filter.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         filterB = UIBarButtonItem.init(customView: filter)
@@ -86,7 +86,7 @@ class SearchViewController: ContentListingViewController {
     @objc func edit(_ sender: AnyObject) {
         let alert = DragDownAlertMenu(title: "Edit search", subtitle: self.search, icon: nil)
         
-        alert.addTextInput(title: "Search again", icon: UIImage(named: "search")?.menuIcon(), action: {
+        alert.addTextInput(title: "Search again", icon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), action: {
             let text = alert.getText() ?? ""
             self.search = text
             if let base = self.baseData as? SearchContributionLoader {

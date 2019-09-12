@@ -320,7 +320,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     func showMenu(_ selector: UIView?) {
         let actionSheetController = DragDownAlertMenu(title: "Default subreddit sorting", subtitle: "Will be applied to all subreddits", icon: nil, themeColor: nil, full: true)
 
-        let selected = UIImage.init(named: "selected")!.menuIcon()
+        let selected = UIImage(named: "selected")!.menuIcon()
 
         for link in LinkSortType.cases {
             actionSheetController.addAction(title: link.description, icon: SettingValues.defaultSorting == link ? selected : nil) {
@@ -341,7 +341,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         } else {
             let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: nil, full: true)
 
-            let selected = UIImage.init(named: "selected")!.menuIcon()
+            let selected = UIImage(named: "selected")!.menuIcon()
 
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: SettingValues.defaultTimePeriod == t ? selected : nil) {

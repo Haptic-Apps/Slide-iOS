@@ -241,35 +241,35 @@ class SettingsLayout: BubbleSettingTableViewController {
         
         switch SettingValues.postViewMode {
         case .CARD:
-            cardModeCell.imageView?.image = UIImage.init(named: "card")?.toolbarIcon()
+            cardModeCell.imageView?.image = UIImage(named: "card")?.toolbarIcon()
         case .CENTER:
-            cardModeCell.imageView?.image = UIImage.init(named: "centeredimage")?.toolbarIcon()
+            cardModeCell.imageView?.image = UIImage(named: "centeredimage")?.toolbarIcon()
         case .COMPACT:
-            cardModeCell.imageView?.image = UIImage.init(named: "compact")?.toolbarIcon()
+            cardModeCell.imageView?.image = UIImage(named: "compact")?.toolbarIcon()
         case .LIST:
-            cardModeCell.imageView?.image = UIImage.init(named: "list")?.toolbarIcon()
+            cardModeCell.imageView?.image = UIImage(named: "list")?.toolbarIcon()
         }
         
         switch SettingValues.postImageMode {
         case .CROPPED_IMAGE:
-            imageCell.imageView?.image = UIImage.init(named: "crop")?.toolbarIcon()
+            imageCell.imageView?.image = UIImage(named: "crop")?.toolbarIcon()
         case .FULL_IMAGE:
-            imageCell.imageView?.image = UIImage.init(named: "full")?.toolbarIcon()
+            imageCell.imageView?.image = UIImage(named: "full")?.toolbarIcon()
         case .THUMBNAIL:
-            imageCell.imageView?.image = UIImage.init(named: "thumb")?.toolbarIcon()
+            imageCell.imageView?.image = UIImage(named: "thumb")?.toolbarIcon()
         }
         
         switch SettingValues.actionBarMode {
         case .FULL:
-            actionBarCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(named: "code")?.toolbarIcon()
         case .FULL_LEFT:
-            actionBarCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(named: "code")?.toolbarIcon()
         case .NONE:
-            actionBarCell.imageView?.image = UIImage.init(named: "hide")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(named: "hide")?.toolbarIcon()
         case .SIDE:
-            actionBarCell.imageView?.image = UIImage.init(named: "up")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(named: "up")?.toolbarIcon()
         case .SIDE_RIGHT:
-            actionBarCell.imageView?.image = UIImage.init(named: "down")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(named: "down")?.toolbarIcon()
         }
     }
     

@@ -33,13 +33,13 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "size")?.navIcon(), for: UIControl.State.normal)
+            sort.setImage(UIImage(named: "size")?.navIcon(), for: UIControl.State.normal)
             sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)
             
             let nav = UIButton.init(type: .custom)
-            nav.setImage(UIImage.init(named: "nav")?.navIcon(), for: UIControl.State.normal)
+            nav.setImage(UIImage(named: "nav")?.navIcon(), for: UIControl.State.normal)
             nav.addTarget(self, action: #selector(self.openExternally(_:)), for: UIControl.Event.touchUpInside)
             nav.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let navB = UIBarButtonItem.init(customView: nav)
@@ -69,7 +69,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             }
         })
         
-        alert.addAction(title: "Share URL", icon: UIImage(named: "share")?.menuIcon()) {
+        alert.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")?.menuIcon()) {
             let shareItems: Array = [baseURL]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {

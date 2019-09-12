@@ -272,7 +272,7 @@ extension SettingsFont {
     func commentSizeCellWasTapped() {
         let actionSheetController = DragDownAlertMenu(title: "Comment font size", subtitle: "Applies to text displayed throughout Slide", icon: nil, themeColor: nil, full: true)
 
-        let selected = UIImage.init(named: "selected")!.menuIcon()
+        let selected = UIImage(named: "selected")!.menuIcon()
 
         for key in fontSizes.keys.sorted() {
             let description = fontSizes[key]!
@@ -287,7 +287,7 @@ extension SettingsFont {
     func submissionSizeCellWasTapped() {
         let actionSheetController = DragDownAlertMenu(title: "Submission font size", subtitle: "Applies to submission titles and subtitles", icon: nil, themeColor: nil, full: true)
 
-        let selected = UIImage.init(named: "selected")!.menuIcon()
+        let selected = UIImage(named: "selected")!.menuIcon()
 
         for key in fontSizes.keys.sorted() {
             let description = fontSizes[key]!
@@ -311,7 +311,7 @@ extension SettingsFont {
         let currentFamily = FontGenerator.fontOfSize(size: 16, submission: submission).familyName
         let fontsInFamily = UIFont.fontNames(forFamilyName: currentFamily)
 
-        let selected = UIImage.init(named: "selected")!.menuIcon()
+        let selected = UIImage(named: "selected")!.menuIcon()
 
         // Prune out the weights that aren't available for the selected font
         for font in fontsInFamily {

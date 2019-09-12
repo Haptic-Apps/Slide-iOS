@@ -53,7 +53,7 @@ class SubredditCellView: UITableViewCell {
 
         self.pin = UIImageView().then {
             $0.frame = CGRect(x: 0, y: 0, width: 10, height: 10)
-            $0.image = UIImage.init(named: "lock")!.menuIcon() // TODO: Should cache this image
+            $0.image = UIImage(named: "lock")!.menuIcon() // TODO: Should cache this image
             $0.isHidden = true
         }
         
@@ -150,7 +150,7 @@ class SubredditCellView: UITableViewCell {
         self.sideView.isHidden = true
         self.navController = nav
         title.text = "Go to u/\(profile)'s profile"
-        self.icon.image = UIImage.init(named: "profile")!.menuIcon()
+        self.icon.image = UIImage(named: "profile")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.theme.backgroundColor
@@ -167,7 +167,7 @@ class SubredditCellView: UITableViewCell {
         self.sideView.isHidden = true
         self.navController = nav
         title.text = "Search " + (sub == nil ? "Reddit" : "r/\(self.subreddit)")
-        self.icon.image = UIImage.init(named: "search")!.menuIcon()
+        self.icon.image = UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.theme.backgroundColor

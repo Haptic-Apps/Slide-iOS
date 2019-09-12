@@ -326,7 +326,7 @@ class ModalMediaViewController: UIViewController {
         embeddedVC.didMove(toParent: self)
         self.view.addSubview(embeddedVC.view)
 
-        closeButton.setImage(UIImage(named: "close")?.navIcon(true), for: .normal)
+        closeButton.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: .normal)
         closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         self.view.addSubview(closeButton)
     }

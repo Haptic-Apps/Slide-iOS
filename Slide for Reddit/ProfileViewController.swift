@@ -118,13 +118,13 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         tabBar = MDCTabBar()
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.setImage(UIImage(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         sortB = UIBarButtonItem.init(customView: sort)
         
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControl.State.normal)
+        more.setImage(UIImage(named: "info")?.navIcon(), for: UIControl.State.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         moreB = UIBarButtonItem.init(customView: more)
@@ -344,7 +344,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         self.automaticallyAdjustsScrollViewInsets = false
         
         var isModal13 = false
-        if #available(iOS 13, *), self.isModalInPresentation {
+        if #available(iOS 13, *), (self.navigationController?.viewControllers[0] == self) {
             isModal13 = true
         }
         tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)

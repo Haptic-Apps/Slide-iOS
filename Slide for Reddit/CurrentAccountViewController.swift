@@ -742,7 +742,7 @@ extension AccountHeaderView {
 private extension UITableViewCell {
     func configure(text: String, imageName: String, imageColor: UIColor) {
         textLabel?.text = text
-        imageView?.image = UIImage.init(named: imageName)?.menuIcon()
+        imageView?.image = UIImage(named: imageName)?.menuIcon()
         imageView?.tintColor = imageColor
         
         accessoryType = .none

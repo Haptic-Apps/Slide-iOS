@@ -77,7 +77,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if baseData is ProfileContributionLoader {
             let actionSheetController = DragDownAlertMenu(title: "Profile sorting", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
             
-            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+            let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
             
             for link in UserContentSortBy.cases {
                 actionSheetController.addAction(title: link.description, icon: userSort == link ? selected : nil) {
@@ -364,7 +364,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func showMenu(sender: UIButton?) {
         let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
         
-        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
         
         for link in LinkSortType.cases {
             actionSheetController.addAction(title: link.description, icon: sort == link ? selected : nil) {

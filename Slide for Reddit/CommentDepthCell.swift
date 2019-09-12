@@ -638,38 +638,38 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func showCommentMenu(_ animate: Bool = true) {
         upvoteButton = UIButton.init(type: .custom).then({
             if ActionStates.getVoteDirection(s: comment!) == .up {
-                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControl.Event.touchUpInside)
         })
         downvoteButton = UIButton.init(type: .custom).then({
             if ActionStates.getVoteDirection(s: comment!) == .down {
-                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true).getCopy(withColor: ColorUtil.downvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.navIcon(true).getCopy(withColor: ColorUtil.downvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControl.Event.touchUpInside)
         })
         replyButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "reply")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControl.Event.touchUpInside)
         })
         moreButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(named: "ic_more_vert_white")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControl.Event.touchUpInside)
         })
         editButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "edit")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(named: "edit")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         })
         deleteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "delete")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(named: "delete")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControl.Event.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "mod")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(named: "mod")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControl.Event.touchUpInside)
         })
         
@@ -1916,7 +1916,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView

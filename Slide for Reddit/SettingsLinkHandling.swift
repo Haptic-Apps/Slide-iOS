@@ -259,7 +259,7 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
                 cell.imageView?.image = chromeIcon
             } else if text == SettingValues.BROWSER_OPERA {
                 cell.textLabel?.text = "Opera"
-                cell.imageView?.image = UIImage.init(named: "world")?.toolbarIcon()
+                cell.imageView?.image = UIImage(named: "world")?.toolbarIcon()
             } else if text == SettingValues.BROWSER_FIREFOX {
                 cell.textLabel?.text = "Firefox"
                 cell.imageView?.image = firefoxIcon

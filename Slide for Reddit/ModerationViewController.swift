@@ -109,7 +109,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         self.automaticallyAdjustsScrollViewInsets = false
         
         var isModal13 = false
-        if #available(iOS 13, *), self.isModalInPresentation {
+        if #available(iOS 13, *), (self.navigationController?.viewControllers[0] == self) {
             isModal13 = true
         }
         tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
