@@ -295,14 +295,15 @@ public extension String {
         
         let start = self.index(self.startIndex, offsetBy: startIndex)
         let end = self.index(self.startIndex, offsetBy: startIndex + length)
-        return substring(with: start..<end)
+        let substring = self[start..<end]
+        return String(substring)
     }
     
     func subsequence(_ startIndex: Int, endIndex: Int) -> String {
         let start = self.index(self.startIndex, offsetBy: startIndex)
         let end = self.index(self.startIndex, offsetBy: endIndex)
-        
-        return substring(with: start..<end)
+        let substring = self[start..<end]
+        return String(substring)
     }
     
     subscript(i: Int) -> Character {
@@ -312,11 +313,11 @@ public extension String {
     
     //    /// get the left part of the string before the index
     //    func left(_ range:Range<String.Index>?) -> String {
-    //        return self.substring(to: (range?.lowerBound)!)
+    //        return String(self[..<(range?.lowerBound)!])
     //    }
     //    /// get the right part of the string after the index
     //    func right(_ range:Range<String.Index>?) -> String {
-    //        return self.substring(from: self.index((range?.lowerBound)!, offsetBy:1))
+    //        return String(self[self.index((range?.lowerBound)!, offsetBy:1)...])
     //    }
     
 }

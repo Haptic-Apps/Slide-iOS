@@ -135,7 +135,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
 
         if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
-            contentUrl = URL.init(string: (content?.substring(to: content!.index(of: ".")!))!)
+            contentUrl = URL.init(string: (String(content?[..<content!.index(of: ".")!] ?? "")))
         }
 
         let type = ContentType.getContentType(baseUrl: contentUrl)
