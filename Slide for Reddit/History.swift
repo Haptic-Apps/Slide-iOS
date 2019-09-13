@@ -33,7 +33,7 @@ class History {
         let fullname = s.getId()
         if let time = seenTimes.object(forKey: fullname) {
             if time is NSNumber {
-                return Double(time as! NSNumber)
+                return Double(truncating: time as! NSNumber)
             } else {
                 return 0
             }
@@ -73,7 +73,7 @@ class History {
     public static func getInboxSeen() -> Double {
         if let time = seenTimes.object(forKey: "inbox") {
             if time is NSNumber {
-                return Double(time as! NSNumber)
+                return Double(truncating: time as! NSNumber)
             } else {
                 return 0
             }
