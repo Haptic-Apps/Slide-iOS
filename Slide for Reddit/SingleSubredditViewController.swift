@@ -308,9 +308,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if cell is AutoplayBannerLinkCellView {
-            (cell as! AutoplayBannerLinkCellView).doLoadVideo()
-        }
     }
     
     override func viewWillLayoutSubviews() {
@@ -423,9 +420,70 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 showUI()
             }
         }
+
+        isScrollingDown = currentY > lastY
+        let scrollDirectionHasChanged = lastScrollDirectionWasDown != isScrollingDown
+        lastScrollDirectionWasDown = isScrollingDown
         
         lastYUsed = currentY
         lastY = currentY
+
+        let visibleVideoIndices = tableView.indexPathsForVisibleItems
+        if scrollDirectionHasChanged || Set(visibleVideoIndices) != Set(lastVisibleVideoIndices) {
+            updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100)
+        }
+        lastVisibleVideoIndices = visibleVideoIndices
+
+    }
+
+    var isScrollingDown = true
+    var lastScrollDirectionWasDown = false
+    var lastVisibleVideoIndices: [IndexPath] = []
+
+    var lastAutoPlayedVideoIndex: IndexPath?
+
+    /**
+     Decides which cell in the group of indices given should be autoplaying video.
+     */
+    func updateAutoPlayVideos(atIndices indices: [IndexPath], requiringVisibleCellHeightOf visibleHeightRequirement: CGFloat) {
+        var mapping: [(index: IndexPath, cell: AutoplayBannerLinkCellView)] = indices
+            .compactMap { index in
+                // Collect just cells that are autoplay video
+                if let cell = tableView.cellForItem(at: index) as? AutoplayBannerLinkCellView {
+                    return (index, cell)
+                } else {
+                    return nil
+                }
+            }
+            .sorted { (item1, item2) -> Bool in // Could use min/max instead
+                // Sort by Y in the direction in which we're scrolling
+                // (If we're scrolling down, the last element will be the lowest on-screen)
+                return isScrollingDown ? (item1.cell.frame.minY < item2.cell.frame.minY) : (item1.cell.frame.minY > item2.cell.frame.minY)
+            }
+            .filter { item in
+                // Keep only the cells that are at least some amount visible on-screen
+                let intersection = item.cell.frame.intersection(tableView.bounds)
+                if intersection.isNull {
+                    return false
+                } else {
+                    return intersection.height > visibleHeightRequirement
+                }
+            }
+
+        if let itemToAutoPlay = mapping.popLast() {
+            // Don't make the currently playing video reload
+            if itemToAutoPlay.index == lastAutoPlayedVideoIndex {
+                return
+            }
+
+            itemToAutoPlay.cell.doLoadVideo()
+            lastAutoPlayedVideoIndex = itemToAutoPlay.index
+
+            // Unload all the other videos
+            for item in mapping {
+                item.cell.endVideos()
+            }
+        }
     }
     
     func hideUI(inHeader: Bool) {
