@@ -30,7 +30,7 @@ public extension UIColor {
         }
     }
     
-    public func hsbaComponents() -> (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
+    func hsbaComponents() -> (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
         var h: CGFloat = 0.0
         var s: CGFloat = 0.0
         var b: CGFloat = 0.0
@@ -71,32 +71,32 @@ public extension UIColor {
      Swaps all UIColor.cgColor getter calls for a function block that returns a random color. This has the
      effect of randomizing all UIColors every time their getter is called.
      */
-    public static func 💀() {
+    static func 💀() {
         _ = self.rzl_swizzleImplementation
     }
     
-    public var redValue: CGFloat {
+    var redValue: CGFloat {
         if cgColor.components != nil && cgColor.components!.count >= 1 {
             return cgColor.components! [0]
         }
         return 0
     }
     
-    public var greenValue: CGFloat {
+    var greenValue: CGFloat {
         if cgColor.components != nil && cgColor.components!.count >= 2 {
             return cgColor.components! [1]
         }
         return 0
     }
     
-    public var blueValue: CGFloat {
+    var blueValue: CGFloat {
         if cgColor.components != nil && cgColor.components!.count >= 3 {
             return cgColor.components! [2]
         }
         return 0
     }
     
-    public var alphaValue: CGFloat {
+    var alphaValue: CGFloat {
         if cgColor.components != nil && cgColor.components!.count >= 4 {
             return cgColor.components! [3]
         }
