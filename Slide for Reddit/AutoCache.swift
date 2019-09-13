@@ -56,7 +56,7 @@ public class AutoCache: NSObject {
                     realmListing.links.append(submission)
                 }
                 realmListing.comments = true
-                realm.create(type(of: realmListing), value: realmListing, update: true)
+                realm.create(type(of: realmListing), value: realmListing, update: .all)
                 try realm.commitWrite()
             } catch {
                 print(error)
@@ -100,12 +100,12 @@ public class AutoCache: NSObject {
                             let realm = try! Realm()
                             realm.beginWrite()
                             for comment in comments {
-                                realm.create(type(of: content[comment]!), value: content[comment]!, update: true)
+                                realm.create(type(of: content[comment]!), value: content[comment]!, update: .all)
                                 if content[comment]! is RComment {
                                     link.comments.append(content[comment] as! RComment)
                                 }
                             }
-                            realm.create(type(of: link), value: link, update: true)
+                            realm.create(type(of: link), value: link, update: .all)
                             try realm.commitWrite()
                         } catch {
 
