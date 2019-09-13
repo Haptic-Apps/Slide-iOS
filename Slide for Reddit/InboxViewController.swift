@@ -52,7 +52,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         navigationController?.setNavigationBarHidden(false, animated: true)
         setupBaseBarColors()
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage(named: "edit")?.navIcon(), for: UIControl.State.normal)
+        edit.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.navIcon(), for: UIControl.State.normal)
         edit.addTarget(self, action: #selector(self.new(_:)), for: UIControl.Event.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)

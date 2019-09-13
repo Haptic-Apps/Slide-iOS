@@ -265,7 +265,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         case .FULL_LEFT:
             actionBarCell.imageView?.image = UIImage(named: "code")?.toolbarIcon()
         case .NONE:
-            actionBarCell.imageView?.image = UIImage(named: "hide")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(sfString: SFSymbol.xmark, overrideString: "hide")?.toolbarIcon()
         case .SIDE:
             actionBarCell.imageView?.image = UIImage(named: "up")?.toolbarIcon()
         case .SIDE_RIGHT:
@@ -417,7 +417,7 @@ class SettingsLayout: BubbleSettingTableViewController {
 
             }
 
-            alertController.addAction(title: "Hide button bar", icon: UIImage(named: "hide")!.menuIcon()) {
+            alertController.addAction(title: "Hide button bar", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 UserDefaults.standard.set("none", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .NONE
                 UserDefaults.standard.synchronize()

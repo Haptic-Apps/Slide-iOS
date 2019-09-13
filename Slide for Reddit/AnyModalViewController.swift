@@ -502,7 +502,7 @@ class AnyModalViewController: UIViewController {
         
         downloadButton = UIButton().then {
             $0.accessibilityIdentifier = "Download Button"
-            $0.setImage(UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "download")?.navIcon(true), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.navIcon(true), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
@@ -522,7 +522,7 @@ class AnyModalViewController: UIViewController {
 
         goToCommentsButton = UIButton().then {
             $0.accessibilityIdentifier = "Go to Comments Button"
-            $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")?.navIcon(true), for: [])
             $0.isHidden = commentCallback == nil
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }

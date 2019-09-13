@@ -88,7 +88,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.username.detailTextLabel?.numberOfLines = 0
         self.username.backgroundColor = ColorUtil.theme.foregroundColor
         self.username.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.username.imageView?.image = UIImage(named: "hide")?.toolbarIcon()
+        self.username.imageView?.image = UIImage(sfString: SFSymbol.xmark, overrideString: "hide")?.toolbarIcon()
         self.username.imageView?.tintColor = ColorUtil.theme.fontColor
         self.username.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
@@ -97,7 +97,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.backup.detailTextLabel?.numberOfLines = 0
         self.backup.backgroundColor = ColorUtil.theme.foregroundColor
         self.backup.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.backup.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDown, overrideString: "download")?.toolbarIcon()
+        self.backup.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.toolbarIcon()
         self.backup.imageView?.tintColor = ColorUtil.theme.fontColor
         self.backup.detailTextLabel?.textColor = ColorUtil.theme.fontColor
 
@@ -202,7 +202,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.autocache.detailTextLabel?.numberOfLines = 0
         self.autocache.backgroundColor = ColorUtil.theme.foregroundColor
         self.autocache.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.autocache.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDown, overrideString: "download")?.toolbarIcon()
+        self.autocache.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.toolbarIcon()
         self.autocache.imageView?.tintColor = ColorUtil.theme.fontColor
         self.autocache.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         

@@ -676,15 +676,15 @@ class SettingValues {
             case .PROFILE:
                 return UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()
             case .SUBREDDIT:
-                return UIImage(named: "subs")!.menuIcon()
+                return UIImage(sfString: .rCircleFill, overrideString: "subs")!.menuIcon()
             case .REPORT:
-                return UIImage(named: "flag")!.menuIcon()
+                return UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")!.menuIcon()
             case .BLOCK:
                 return UIImage(named: "block")!.menuIcon()
             case .SAVE:
                 return UIImage(named: "save")!.menuIcon()
             case .SUBSCRIBE:
-                return UIImage(named: "add")!.menuIcon()
+                return UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon()
             case .CROSSPOST:
                 return UIImage(named: "crosspost")!.menuIcon()
             case .READ_LATER:
@@ -695,9 +695,9 @@ class SettingValues {
             case .SHARE_CONTENT:
                 return UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()
             case .SHARE_REDDIT:
-                return UIImage(named: "comments")!.menuIcon()
+                return UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()
             case .CHROME:
-                return UIImage(named: "link")!.menuIcon()
+                return UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()
             case .SAFARI:
                 return UIImage(named: "world")!.menuIcon()
             case .FILTER:
@@ -705,7 +705,7 @@ class SettingValues {
             case .COPY:
                 return UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()
             case .HIDE:
-                return UIImage(named: "hide")!.menuIcon()
+                return UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()
             case .UPVOTE:
                 return UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)
             case .DOWNVOTE:

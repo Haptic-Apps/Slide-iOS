@@ -83,7 +83,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)
 
         if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
-            alert.addAction(title: "Remove tag", icon: UIImage(named: "delete")?.menuIcon(), enabled: true) {
+            alert.addAction(title: "Remove tag", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.menuIcon(), enabled: true) {
                 ColorUtil.removeTagForUser(name: self.name)
             }
         }
@@ -118,13 +118,13 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         tabBar = MDCTabBar()
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         sortB = UIBarButtonItem.init(customView: sort)
         
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage(named: "info")?.navIcon(), for: UIControl.State.normal)
+        more.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.navIcon(), for: UIControl.State.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         moreB = UIBarButtonItem.init(customView: more)

@@ -25,7 +25,7 @@ class GalleryCellView: UITableViewCell {
         bannerImage.contentMode = UIView.ContentMode.scaleAspectFit
 
         self.commentsImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        self.commentsImage.image = UIImage(named: "comments")?.navIcon(true)
+        self.commentsImage.image = UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")?.navIcon(true)
 
         self.typeImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
 

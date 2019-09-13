@@ -930,7 +930,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             return
         }
         let sort = ExpandedHitButton(type: .custom)
-        sort.setImage(UIImage(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         sortB = UIBarButtonItem.init(customView: sort)

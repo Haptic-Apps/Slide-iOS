@@ -107,34 +107,7 @@ extension UIImage {
     convenience init?(sfString: SFSymbol, overrideString: String) {
         if #available(iOS 13, *) {
             let config = UIImage.SymbolConfiguration(pointSize: 5, weight: UIImage.SymbolWeight.regular, scale: UIImage.SymbolScale.small)
-            let tempImage = UIImage(systemName: sfString.rawValue, withConfiguration: config)!
-            let size = CGSize.square(size: 40)
-            let hasAlpha = true
-            let scale: CGFloat = 0.0 // Use scale factor of main screen
-            let maxWidth = size.width
-            let maxHeight = size.height
-            
-            let imgWidth = tempImage.size.width
-            let imgHeight = tempImage.size.height
-
-            let widthRatio = maxWidth / imgWidth
-            
-            let heightRatio = maxHeight / imgHeight
-            
-            let bestRatio = min(widthRatio, heightRatio)
-
-            let newWidth = imgWidth * bestRatio,
-                newHeight = imgHeight * bestRatio
-
-            let biggerSize = CGSize(width: size.width, height: size.height)
-
-            UIGraphicsBeginImageContextWithOptions(biggerSize, !hasAlpha, scale)
-            tempImage.draw(in: CGRect(origin: CGPoint(x: (abs(size.width - newWidth) / 2), y: (abs(size.height - newHeight) / 2)), size: CGSize(width: newWidth, height: newHeight)))
-
-            let scaledImage = UIGraphicsGetImageFromCurrentImageContext()?.cgImage
-            UIGraphicsEndImageContext()
-
-            self.init(cgImage: scaledImage!)
+            self.init(systemName: sfString.rawValue, withConfiguration: config)
         } else {
             self.init(named: overrideString)
         }

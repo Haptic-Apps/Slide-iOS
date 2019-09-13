@@ -199,16 +199,16 @@ class PostActions: NSObject {
             self.modBan(cell)
         }
 
-        alertController.addAction(title: "Set flair", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon()) {
             cell.flairSelf()
         }
 
         if !cell.link!.nsfw {
-            alertController.addAction(title: "Mark as NSFW", icon: UIImage(named: "hide")!.menuIcon()) {
+            alertController.addAction(title: "Mark as NSFW", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 self.modNSFW(cell, true)
             }
         } else {
-            alertController.addAction(title: "Unmark as NSFW", icon: UIImage(named: "hide")!.menuIcon()) {
+            alertController.addAction(title: "Unmark as NSFW", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 self.modNSFW(cell, false)
             }
         }
@@ -240,16 +240,16 @@ class PostActions: NSObject {
         }
         
         if cell.link!.stickied {
-            alertController.addAction(title: "Un-sticky post", icon: UIImage(named: "flag")!.menuIcon()) {
+            alertController.addAction(title: "Un-sticky post", icon: UIImage(sfString: SFSymbol.pinSlashFill, overrideString: "flag")!.menuIcon()) {
                 self.modSticky(cell, sticky: false)
             }
         } else {
-            alertController.addAction(title: "Sticky post", icon: UIImage(named: "flag")!.menuIcon()) {
+            alertController.addAction(title: "Sticky post", icon: UIImage(sfString: SFSymbol.pinFill, overrideString: "flag")!.menuIcon()) {
                 self.modSticky(cell, sticky: true)
             }
         }
         
-        alertController.addAction(title: "Mark as spam", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Mark as spam", icon: UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")!.menuIcon()) {
             self.modRemove(cell, spam: true)
         }
 
@@ -596,7 +596,7 @@ class PostActions: NSObject {
                 textField.becomeFirstResponder()
                 textField.textColor = ColorUtil.theme.fontColor
                 textField.attributedPlaceholder = NSAttributedString(string: "Reason (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage(named: "flag"), color: ColorUtil.theme.fontColor)
+                textField.left(image: UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag"), color: ColorUtil.theme.fontColor)
                 textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
                 textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.leftViewPadding = 12

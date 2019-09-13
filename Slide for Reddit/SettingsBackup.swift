@@ -41,7 +41,7 @@ class SettingsBackup: BubbleSettingTableViewController {
         self.backup.backgroundColor = ColorUtil.theme.foregroundColor
         self.backup.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.backup.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.backup.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDown, overrideString: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
+        self.backup.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
         self.backup.imageView?.tintColor = ColorUtil.theme.fontColor
         
         self.restore.textLabel?.text = "Restore"

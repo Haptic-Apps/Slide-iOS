@@ -1067,7 +1067,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.tableHeaderView = savedHeaderView!
 
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
@@ -1336,7 +1336,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
             sort.accessibilityLabel = "Change sort type"
-            sort.setImage(UIImage(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
             sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             sortB = UIBarButtonItem.init(customView: sort)
@@ -1474,7 +1474,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 self.reply(self.headerCell)
             }
 
-            alertController.addAction(title: "Go to r/\(link.subreddit)", icon: UIImage(named: "subs")!.menuIcon()) {
+            alertController.addAction(title: "Go to r/\(link.subreddit)", icon: UIImage(sfString: .rCircleFill, overrideString: "subs")!.menuIcon()) {
                 VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
             }
 
@@ -1483,11 +1483,11 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }
 
-            alertController.addAction(title: "View r/\(link.subreddit)'s sidebar", icon: UIImage(named: "info")!.menuIcon()) {
+            alertController.addAction(title: "View r/\(link.subreddit)'s sidebar", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
                 Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
             }
 
-            alertController.addAction(title: allCollapsed ? "Expand child comments" : "Collapse child comments", icon: UIImage(named: "comments")!.menuIcon()) {
+            alertController.addAction(title: allCollapsed ? "Expand child comments" : "Collapse child comments", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
                 if self.allCollapsed {
                     self.expandAll()
                 } else {
@@ -1932,7 +1932,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)
 
         if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
-            alert.addAction(title: "Remove tag", icon: UIImage(named: "delete")?.menuIcon(), enabled: true) {
+            alert.addAction(title: "Remove tag", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.menuIcon(), enabled: true) {
                 ColorUtil.removeTagForUser(name: name)
                 self.tableView.reloadData()
             }

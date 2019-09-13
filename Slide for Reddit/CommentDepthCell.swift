@@ -661,11 +661,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControl.Event.touchUpInside)
         })
         editButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(named: "edit")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         })
         deleteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(named: "delete")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControl.Event.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
@@ -1211,7 +1211,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: par.navigationController, parentViewController: par)
         }
 
-        alertController.addAction(title: "Share comment permalink", icon: UIImage(named: "link")!.menuIcon()) {
+        alertController.addAction(title: "Share comment permalink", icon: UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()) {
             let activityViewController = UIActivityViewController(activityItems: [URL(string: self.comment!.permalink + "?context=5")], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = self.moreButton
@@ -1226,7 +1226,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
         }
         
-        alertController.addAction(title: "Report comment", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Report comment", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon()) {
             PostActions.report(self.comment!, parent: par, index: -1, delegate: nil)
         }
 
@@ -1234,7 +1234,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             par.tagUser(name: self.comment!.author)
         }
         
-        alertController.addAction(title: "Block u/\(comment!.author)", icon: UIImage(named: "hide")!.menuIcon()) {
+        alertController.addAction(title: "Block u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
             par.blockUser(name: self.comment!.author)
         }
         
@@ -1310,21 +1310,21 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         if comment!.author == AccountController.currentName && comment!.depth == 1 {
             if comment!.sticky {
-                alertController.addAction(title: "Un-pin comment", icon: UIImage(named: "flag")!.menuIcon()) {
+                alertController.addAction(title: "Un-pin comment", icon: UIImage(sfString: SFSymbol.pinSlashFill, overrideString: "flag")!.menuIcon()) {
                     self.modSticky(sticky: false)
                 }
             } else {
-                alertController.addAction(title: "Pin and Distinguish comment", icon: UIImage(named: "flag")!.menuIcon()) {
+                alertController.addAction(title: "Pin and Distinguish comment", icon: UIImage(sfString: SFSymbol.pinFill, overrideString: "flag")!.menuIcon()) {
                     self.modSticky(sticky: true)
                 }
             }
         }
 
-        alertController.addAction(title: "Remove comment", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon()) {
+        alertController.addAction(title: "Remove comment", icon: UIImage(sfString: SFSymbol.minusCircleFill, overrideString: "close")!.menuIcon()) {
             self.modRemove()
         }
         
-        alertController.addAction(title: "Remove as Spam", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Remove as Spam", icon: UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")!.menuIcon()) {
             self.modRemove(true)
         }
         

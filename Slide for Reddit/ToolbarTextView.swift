@@ -239,7 +239,7 @@ public class ToolbarTextView: NSObject {
                                                     textField.becomeFirstResponder()
                                                     textField.textColor = ColorUtil.theme.fontColor
                                                     textField.attributedPlaceholder = NSAttributedString(string: "Caption (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                                                    textField.left(image: UIImage(named: "link"), color: ColorUtil.theme.fontColor)
+                                                    textField.left(image: UIImage(sfString: SFSymbol.link, overrideString: "link"), color: ColorUtil.theme.fontColor)
                                                     textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
                                                     textField.backgroundColor = ColorUtil.theme.foregroundColor
                                                     textField.leftViewPadding = 12
@@ -304,7 +304,7 @@ public class ToolbarTextView: NSObject {
                                     textField.becomeFirstResponder()
                                     textField.textColor = ColorUtil.theme.fontColor
                                     textField.attributedPlaceholder = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                                    textField.left(image: UIImage(named: "link"), color: ColorUtil.theme.fontColor)
+                                    textField.left(image: UIImage(sfString: SFSymbol.link, overrideString: "link"), color: ColorUtil.theme.fontColor)
                                     textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
                                     textField.backgroundColor = ColorUtil.theme.foregroundColor
                                     textField.leftViewPadding = 12
@@ -416,7 +416,7 @@ public class ToolbarTextView: NSObject {
             textField.becomeFirstResponder()
             textField.textColor = ColorUtil.theme.fontColor
             textField.placeholder = "URL"
-            textField.left(image: UIImage(named: "link"), color: ColorUtil.theme.fontColor)
+            textField.left(image: UIImage(sfString: SFSymbol.link, overrideString: "link"), color: ColorUtil.theme.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8

@@ -220,7 +220,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             }
 
             if self.message!.wasComment {
-                alertController.addAction(title: "View comment thread", icon: UIImage(named: "comments")!.menuIcon()) {
+                alertController.addAction(title: "View comment thread", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
                     let url = "https://www.reddit.com\(self.message!.context)"
                     VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }

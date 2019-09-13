@@ -784,7 +784,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         if single && !offline {
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
             sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
@@ -796,7 +796,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             let subbB = UIBarButtonItem.init(customView: subb)
 
             let info = UIButton.init(type: .custom)
-            info.setImage(UIImage(named: "info")?.toolbarIcon(), for: UIControl.State.normal)
+            info.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.toolbarIcon(), for: UIControl.State.normal)
             info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControl.Event.touchUpInside)
             info.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let infoB = UIBarButtonItem.init(customView: info)
@@ -2098,11 +2098,11 @@ extension SingleSubredditViewController {
         }
 
         if sub.contains("/m/") {
-            alertController.addAction(title: "Manage multireddit", icon: UIImage(named: "info")!.menuIcon()) {
+            alertController.addAction(title: "Manage multireddit", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
                 self.displayMultiredditSidebar()
             }
         } else if !special {
-            alertController.addAction(title: "Show sidebar", icon: UIImage(named: "info")!.menuIcon()) {
+            alertController.addAction(title: "Show sidebar", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
                 self.doDisplaySidebar()
             }
         }
@@ -2115,7 +2115,7 @@ extension SingleSubredditViewController {
             self.shadowboxMode()
         }
 
-        alertController.addAction(title: "Hide read posts", icon: UIImage(named: "hide")!.menuIcon()) {
+        alertController.addAction(title: "Hide read posts", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
             self.hideReadPosts()
         }
 
@@ -2137,7 +2137,7 @@ extension SingleSubredditViewController {
         }
 
         if !special {
-            alertController.addAction(title: "Submit new post", icon: UIImage(named: "edit")!.menuIcon()) {
+            alertController.addAction(title: "Submit new post", icon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()) {
                 self.newPost(sender)
             }
         }
@@ -2801,7 +2801,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
         let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
-            $0.setImage(UIImage(named: "add")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
         }
@@ -2827,7 +2827,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
         let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
-            $0.setImage(UIImage(named: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {
@@ -2847,7 +2847,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
         let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
-            $0.setImage(UIImage(named: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {

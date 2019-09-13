@@ -45,13 +45,13 @@ class SubredditReorderViewController: UITableViewController {
         let syncB = UIBarButtonItem.init(customView: sync)
 
         let add = UIButton.init(type: .custom)
-        add.setImage(UIImage(named: "add")!.navIcon(), for: UIControl.State.normal)
+        add.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.navIcon(), for: UIControl.State.normal)
         add.addTarget(self, action: #selector(self.add(_:)), for: UIControl.Event.touchUpInside)
         add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let addB = UIBarButtonItem.init(customView: add)
 
         let delete = UIButton.init(type: .custom)
-        delete.setImage(UIImage(named: "delete")!.navIcon(), for: UIControl.State.normal)
+        delete.setImage(UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")!.navIcon(), for: UIControl.State.normal)
         delete.addTarget(self, action: #selector(self.remove(_:)), for: UIControl.Event.touchUpInside)
         delete.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let deleteB = UIBarButtonItem.init(customView: delete)

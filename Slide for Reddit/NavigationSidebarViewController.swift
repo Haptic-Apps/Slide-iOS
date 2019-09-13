@@ -1013,7 +1013,7 @@ class HorizontalSubredditGroup: UIView {
                 $0.heightAnchor == 50
                 $0.contentMode = .center
                 $0.widthAnchor == 50
-                $0.image = UIImage(named: "subs")!.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
+                $0.image = UIImage(sfString: .rCircleFill, overrideString: "subs")!.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
             }
             button.addSubview(dot)
             dot.centerXAnchor == button.centerXAnchor

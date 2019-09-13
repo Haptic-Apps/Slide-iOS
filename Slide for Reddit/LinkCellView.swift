@@ -1992,15 +1992,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let alertController = DragDownAlertMenu(title: "Manage your submission", subtitle: link.title, icon: link.thumbnailUrl)
         
         if link.isSelf {
-            alertController.addAction(title: "Edit selftext", icon: UIImage(named: "edit")!.menuIcon()) {
+            alertController.addAction(title: "Edit selftext", icon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()) {
                 self.editSelftext()
             }
         }
-        alertController.addAction(title: "Set flair", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon()) {
             self.flairSelf()
         }
         
-        alertController.addAction(title: "Delete submission", icon: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
+        alertController.addAction(title: "Delete submission", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
             self.deleteSelf(self)
         }
 
@@ -2025,7 +2025,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func deleteSelf(_ cell: LinkCellView) {
         let alertController = DragDownAlertMenu(title: "Really delete your submission?", subtitle: "This cannot be undone", icon: link!.thumbnailUrl)
         
-        alertController.addAction(title: "Delete", icon: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
+        alertController.addAction(title: "Delete", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
             if let delegate = self.del {
                 delegate.deleteSelf(self)
             }
@@ -2078,7 +2078,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             alert.addTextInput(title: "Set flair", icon: UIImage(named: "save-1")?.menuIcon(), action: {
                 self.submitFlairChange(flair, text: alert.getText() ?? "")
-            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
             
             alert.show(parentViewController)
         } else {

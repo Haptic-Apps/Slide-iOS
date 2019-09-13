@@ -71,13 +71,13 @@ public class LinkCellImageCache {
         menu = UIImage(sfString: SFSymbol.ellipsis, overrideString: "ic_more_vert_white")!.menuIcon()
 
         reply = UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()
-        hide = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.menuIcon()
-        edit = UIImage(named: "edit")!.menuIcon()
+        hide = UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()
+        edit = UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()
 
         mod = UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")!.menuIcon()
         modTinted = mod.getCopy(withColor: GMColor.red500Color())
 
-        readLater = UIImage(sfString: SFSymbol.trayAndArrowDown, overrideString: "readLater")!.menuIcon()
+        readLater = UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
         readLaterTinted = readLater.getCopy(withColor: GMColor.green500Color())
         
         var topColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.9))
@@ -96,7 +96,7 @@ public class LinkCellImageCache {
         nextColor = GMColor.red600Color()
         
         nsfw = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        nsfw = nsfw.overlayWith(image: UIImage(named: "hide")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))
+        nsfw = nsfw.overlayWith(image: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))
 
     }
 

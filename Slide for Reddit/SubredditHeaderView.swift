@@ -85,7 +85,7 @@ class SubredditHeaderView: UIView {
         self.submit.accessoryType = .none
         self.submit.backgroundColor = ColorUtil.theme.foregroundColor
         self.submit.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.submit.imageView?.image = UIImage(named: "edit")?.menuIcon()
+        self.submit.imageView?.image = UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon()
         self.submit.imageView?.tintColor = ColorUtil.theme.fontColor
         self.submit.layer.cornerRadius = 5
         self.submit.clipsToBounds = true
@@ -94,7 +94,7 @@ class SubredditHeaderView: UIView {
         self.sorting.accessoryType = .none
         self.sorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.sorting.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.sorting.imageView?.image = UIImage(named: "ic_sort_white")?.menuIcon()
+        self.sorting.imageView?.image = UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.menuIcon()
         self.sorting.imageView?.tintColor = ColorUtil.theme.fontColor
         self.sorting.layer.cornerRadius = 5
         self.sorting.clipsToBounds = true
@@ -111,7 +111,7 @@ class SubredditHeaderView: UIView {
         self.flair.accessoryType = .none
         self.flair.backgroundColor = ColorUtil.theme.foregroundColor
         self.flair.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.flair.imageView?.image = UIImage(named: "flag")?.menuIcon()
+        self.flair.imageView?.image = UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")?.menuIcon()
         self.flair.imageView?.tintColor = ColorUtil.theme.fontColor
         self.flair.layer.cornerRadius = 5
         self.flair.clipsToBounds = true
@@ -195,7 +195,7 @@ class SubredditHeaderView: UIView {
             
             alert.addTextInput(title: "Set flair", icon: UIImage(named: "save-1")?.menuIcon(), action: {
                 self.submitFlairChange(flair, text: alert.getText() ?? "")
-            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
             
             alert.show(parentController)
         } else {

@@ -28,7 +28,7 @@ class SearchViewController: ContentListingViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage(named: "edit")?.navIcon(), for: UIControl.State.normal)
+        edit.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.navIcon(), for: UIControl.State.normal)
         edit.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
@@ -101,7 +101,7 @@ class SearchViewController: ContentListingViewController {
                 base.getData(reload: true)
                 self.navigationItem.titleView = self.setTitle(title: self.search, subtitle: "r/\(self.sub)")
             }
-        }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(named: "edit")!.menuIcon(), textRequired: true, exitOnAction: true)
+        }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon(), textRequired: true, exitOnAction: true)
         
         alert.show(self)
     }
