@@ -110,16 +110,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 self.dataSource = nil
             }
         } else if MainViewController.needsReTheme {
-            (viewControllers?[0] as? SingleSubredditViewController)?.reTheme()
-            tabBar.removeFromSuperview()
-            if SettingValues.subredditBar {
-                setupTabBar(finalSubs)
-            }
-            setupBaseBarColors()
-            menuNav?.setColors("")
-            toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
-            self.doButtons()
-            MainViewController.needsReTheme = false
+            doRetheme()
         }
         didUpdate()
     }
@@ -129,7 +120,32 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         setupTabBar(finalSubs)
     }
     
-    public func viewWillAppearActions() {
+    func doRetheme() {
+        (viewControllers?[0] as? SingleSubredditViewController)?.reTheme()
+        tabBar.removeFromSuperview()
+        if SettingValues.subredditBar {
+            setupTabBar(finalSubs)
+        }
+        setupBaseBarColors()
+        menuNav?.setColors("")
+        toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        self.doButtons()
+        MainViewController.needsReTheme = false
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if #available(iOS 13.0, *) {
+            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                if themeChanged {
+                    viewWillAppearActions(override: true)
+                }
+            }
+        }
+    }
+
+    public func viewWillAppearActions(override: Bool = false) {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
@@ -137,7 +153,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         let shouldBeNight = ColorUtil.shouldBeNight()
-        if SubredditReorderViewController.changed || (shouldBeNight && ColorUtil.theme.title != SettingValues.nightTheme) || (!shouldBeNight && ColorUtil.theme.title != ColorUtil.defaultTheme) {
+        if SubredditReorderViewController.changed || (shouldBeNight && ColorUtil.theme.title != SettingValues.nightTheme) || (!shouldBeNight && ColorUtil.theme.title != UserDefaults.standard.string(forKey: "theme") ?? "light") {
             var subChanged = false
             if finalSubs.count != Subscriptions.subreddits.count {
                 subChanged = true
@@ -153,6 +169,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             if ColorUtil.doInit() {
                 SingleSubredditViewController.cellVersion += 1
                 MainViewController.needsReTheme = true
+                if override {
+                    doRetheme()
+                }
             }
             
             if subChanged || SubredditReorderViewController.changed {

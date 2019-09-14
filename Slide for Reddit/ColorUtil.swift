@@ -38,6 +38,7 @@ public class ColorUtil {
     }
     
     static var defaultTheme = ""
+    static var currentTheme = ""
     
     static var CUSTOM_FOREGROUND = "customForeground"
     static var CUSTOM_FONT = "customFont"
@@ -52,6 +53,9 @@ public class ColorUtil {
     static var CUSTOM_STATUSBAR_NIGHT = "customStatusNight"
 
     static func shouldBeNight() -> Bool {
+        if #available(iOS 13, *) {
+            return UITraitCollection.current.userInterfaceStyle == .dark
+        }
         let hour = Calendar.current.component(.hour, from: Date())
         let minute = Calendar.current.component(.minute, from: Date())
         return SettingValues.nightModeEnabled && /*todo pro*/ (hour >= SettingValues.nightStart + 12 || hour < SettingValues.nightEnd) &&  (hour == SettingValues.nightStart + 12 ? (minute >= SettingValues.nightStartMin) : true) && (hour == SettingValues.nightEnd  ? (minute < SettingValues.nightEndMin) : true)
@@ -60,56 +64,24 @@ public class ColorUtil {
     static func doInit() -> Bool {
         initializeThemes()
         theme = themes[0]
-        if let name = UserDefaults.standard.string(forKey: "theme") {
-            defaultTheme = name
-            for bTheme in themes {
-                if bTheme.title == name {
-                    theme = bTheme
-                    break
-                }
+        
+        let name = shouldBeNight() ? SettingValues.nightTheme : UserDefaults.standard.string(forKey: "theme") ?? "light"
+        defaultTheme = name
+        for bTheme in themes {
+            if bTheme.title == name {
+                theme = bTheme
+                break
             }
         }
-
+        
+        print("Switching theme to \(theme.title)")
         var toReturn = false
-        if theme.title != defaultTheme || (shouldBeNight() || (!shouldBeNight() && theme.title == SettingValues.nightTheme)) || (defaultTheme == SettingValues.nightTheme && theme.title != defaultTheme) {
-            if shouldBeNight() && theme.title != SettingValues.nightTheme {
-                for bTheme in themes {
-                    if bTheme.title == SettingValues.nightTheme {
-                        theme = bTheme
-                        break
-                    }
-                }
-                CachedTitle.titles.removeAll()
-                LinkCellImageCache.initialize()
-                SingleSubredditViewController.cellVersion += 1
-                toReturn = true
-            } else if !shouldBeNight() && theme.title != defaultTheme {
-                if let name = UserDefaults.standard.string(forKey: "theme") {
-                    for bTheme in themes {
-                        if bTheme.title == name {
-                            theme = bTheme
-                            break
-                        }
-                    }
-                }
-                CachedTitle.titles.removeAll()
-                LinkCellImageCache.initialize()
-                SingleSubredditViewController.cellVersion += 1
-                toReturn = true
-            } else if defaultTheme == SettingValues.nightTheme && theme.title != defaultTheme {
-                if let name = UserDefaults.standard.string(forKey: "theme") {
-                    for bTheme in themes {
-                        if bTheme.title == name {
-                            theme = bTheme
-                            break
-                        }
-                    }
-                }
-                CachedTitle.titles.removeAll()
-                LinkCellImageCache.initialize()
-                SingleSubredditViewController.cellVersion += 1
-                toReturn = true
-            }
+        if currentTheme != theme.title {
+            CachedTitle.titles.removeAll()
+            LinkCellImageCache.initialize()
+            SingleSubredditViewController.cellVersion += 1
+            toReturn = true
+            currentTheme = theme.title
         }
         
         let color = UserDefaults.standard.colorForKey(key: "basecolor")

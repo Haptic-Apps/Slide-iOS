@@ -285,7 +285,11 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         nightEnabled.isOn = SettingValues.nightModeEnabled
         nightEnabled.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.night.textLabel?.text = "Night Mode"
-        self.night.detailTextLabel?.text = "Tap to change night hours"
+        if #available(iOS 13, *) {
+            self.night.detailTextLabel?.text =  "Night mode follows iOS Dark Mode automatically"
+        } else {
+            self.night.detailTextLabel?.text =  "Tap to change night hours"
+        }
         self.night.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.theme.foregroundColor
@@ -525,7 +529,10 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             pickAccent()
         } else if indexPath.section == 1 && indexPath.row == 0 {
             if !VCPresenter.proDialogShown(feature: false, self) {
-                self.selectTime()
+                if #available(iOS 13, *) {
+                } else {
+                    self.selectTime()
+                }
             }
         } else if indexPath.section == 1 && indexPath.row == 1 {
             if !VCPresenter.proDialogShown(feature: false, self) {
