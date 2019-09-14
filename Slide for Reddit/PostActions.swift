@@ -85,7 +85,7 @@ class PostActions: NSObject {
         case .SUBSCRIBE:
             delegate.subscribe(link: cell.link!)
         case .SHARE_REDDIT:
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + link.permalink)!)], applicationActivities: nil)
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + (link.permalink.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed) ?? link.permalink))!)], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = cell.contentView
                 presenter.sourceRect = cell.contentView.bounds
