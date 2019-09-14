@@ -346,7 +346,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.aboutCell.accessoryType = .disclosureIndicator
         self.aboutCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.aboutCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.aboutCell.imageView?.image = UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.toolbarIcon()
+        self.aboutCell.imageView?.image = UIImage(sfString: SFSymbol.infoCircleFill, overrideString: "info")?.toolbarIcon()
             
         self.aboutCell.imageView?.tintColor = ColorUtil.theme.fontColor
 

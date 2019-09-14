@@ -1838,7 +1838,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             let up = UIButton(type: .custom)
             up.accessibilityLabel = "Navigate up one comment thread"
-            up.setImage(UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")?.toolbarIcon(), for: UIControl.State.normal)
+            up.setImage(UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up")?.toolbarIcon(), for: UIControl.State.normal)
             up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
             up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let upB = UIBarButtonItem(customView: up)
@@ -1852,7 +1852,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             let down = UIButton(type: .custom)
             down.accessibilityLabel = "Navigate down one comment thread"
-            down.setImage(UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")?.toolbarIcon(), for: UIControl.State.normal)
+            down.setImage(UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down")?.toolbarIcon(), for: UIControl.State.normal)
             down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
             down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let downB = UIBarButtonItem(customView: down)
