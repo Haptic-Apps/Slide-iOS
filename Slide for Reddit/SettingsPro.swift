@@ -79,7 +79,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.night.detailTextLabel?.numberOfLines = 0
         self.night.backgroundColor = ColorUtil.theme.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.night.imageView?.image = UIImage(named: "night")?.toolbarIcon()
+        self.night.imageView?.image = UIImage(sfString: SFSymbol.moonStarsFill, overrideString: "night")?.toolbarIcon()
         self.night.imageView?.tintColor = ColorUtil.theme.fontColor
         self.night.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
@@ -107,7 +107,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.custom.backgroundColor = ColorUtil.theme.foregroundColor
         self.custom.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.custom.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.custom.imageView?.image = UIImage(named: "accent")?.toolbarIcon()
+        self.custom.imageView?.image = UIImage(sfString: SFSymbol.eyedropperFull, overrideString: "accent")?.toolbarIcon()
         self.custom.imageView?.tintColor = ColorUtil.theme.fontColor
         
         self.themes.textLabel?.text = "Custom base themes"
@@ -116,14 +116,14 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.themes.detailTextLabel?.numberOfLines = 0
         self.themes.detailTextLabel?.textColor = .white
         self.themes.textLabel?.textColor = .white
-        self.themes.imageView?.image = UIImage(named: "colors")?.toolbarIcon().getCopy(withColor: .white)
+        self.themes.imageView?.image = UIImage(named: "palette")?.toolbarIcon().getCopy(withColor: .white)
         self.themes.imageView?.tintColor = .white
         
         self.restore.textLabel?.text = "Already a supporter?"
         self.restore.accessoryType = .disclosureIndicator
         self.restore.backgroundColor = ColorUtil.theme.foregroundColor
         self.restore.textLabel?.textColor = GMColor.lightGreen300Color()
-        self.restore.imageView?.image = UIImage(named: "restore")?.toolbarIcon().getCopy(withColor: GMColor.lightGreen300Color())
+        self.restore.imageView?.image = UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "restore")?.toolbarIcon().getCopy(withColor: GMColor.lightGreen300Color())
         self.restore.imageView?.tintColor = GMColor.lightGreen300Color()
         self.restore.detailTextLabel?.textColor = GMColor.lightGreen300Color()
         self.restore.detailTextLabel?.text = "Restore your purchase!"
@@ -175,7 +175,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.gallery.detailTextLabel?.numberOfLines = 0
         self.gallery.backgroundColor = ColorUtil.theme.foregroundColor
         self.gallery.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.gallery.imageView?.image = UIImage(named: "image")?.toolbarIcon()
+        self.gallery.imageView?.image = UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")?.toolbarIcon()
         self.gallery.imageView?.tintColor = ColorUtil.theme.fontColor
         self.gallery.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
@@ -184,7 +184,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.biometric.detailTextLabel?.numberOfLines = 0
         self.biometric.backgroundColor = ColorUtil.theme.foregroundColor
         self.biometric.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.biometric.imageView?.image = UIImage(named: "lockapp")?.toolbarIcon()
+        self.biometric.imageView?.image = UIImage(sfString: SFSymbol.lockFill, overrideString: "lockapp")?.toolbarIcon()
         self.biometric.imageView?.tintColor = ColorUtil.theme.fontColor
         self.biometric.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         

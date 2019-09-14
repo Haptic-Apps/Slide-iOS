@@ -249,7 +249,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.backupCell.accessoryType = .disclosureIndicator
         self.backupCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.backupCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.backupCell.imageView?.image = UIImage(named: "restore")?.toolbarIcon()
+        self.backupCell.imageView?.image = UIImage(sfString: SFSymbol.arrowCounterclockwise, overrideString: "restore")?.toolbarIcon()
         self.backupCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.gestureCell.textLabel?.text = "Gestures"
@@ -273,7 +273,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.postLayout.accessoryType = .disclosureIndicator
         self.postLayout.backgroundColor = ColorUtil.theme.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.postLayout.imageView?.image = UIImage(named: "layout")?.toolbarIcon()
+        self.postLayout.imageView?.image = UIImage(sfString: SFSymbol.squareStack3dUpFill, overrideString: "layout")?.toolbarIcon()
         self.postLayout.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.subThemes.textLabel?.text = "Subreddit themes"
@@ -318,7 +318,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.dataSaving.accessoryType = .disclosureIndicator
         self.dataSaving.backgroundColor = ColorUtil.theme.foregroundColor
         self.dataSaving.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.dataSaving.imageView?.image = UIImage(named: "data")?.toolbarIcon()
+        self.dataSaving.imageView?.image = UIImage(sfString: SFSymbol.wifiExclamationmark, overrideString: "data")?.toolbarIcon()
         self.dataSaving.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.content.textLabel?.text = "Content"
@@ -361,21 +361,21 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.licenseCell.accessoryType = .disclosureIndicator
         self.licenseCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.licenseCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.licenseCell.imageView?.image = UIImage(named: "code")?.toolbarIcon()
+        self.licenseCell.imageView?.image = UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")?.toolbarIcon()
         self.licenseCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.contributorsCell.textLabel?.text = "Slide project contributors"
         self.contributorsCell.accessoryType = .disclosureIndicator
         self.contributorsCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.contributorsCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.contributorsCell.imageView?.image = UIImage(named: "happy")?.toolbarIcon()
+        self.contributorsCell.imageView?.image = UIImage(sfString: SFSymbol.smileyFill, overrideString: "happy")?.toolbarIcon()
         self.contributorsCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.autoPlayCell.textLabel?.text = "Autoplay videos and gifs"
         self.autoPlayCell.accessoryType = .none
         self.autoPlayCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.autoPlayCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.autoPlayCell.imageView?.image = UIImage(named: "play")?.toolbarIcon()
+        self.autoPlayCell.imageView?.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.toolbarIcon()
         self.autoPlayCell.imageView?.tintColor = ColorUtil.theme.fontColor
         self.autoPlayCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoplaying videos can lead to more data use"

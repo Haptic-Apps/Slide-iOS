@@ -1221,7 +1221,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         if AccountController.isLoggedIn {
-            alertController.addAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(named: "save")!.menuIcon()) {
+            alertController.addAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()) {
                 par.saveComment(self.comment!)
             }
         }
@@ -1294,16 +1294,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.parent?.present(alert, animated: true, completion: nil)
         }
 
-        alertController.addAction(title: "Approve", icon: UIImage(named: "approve")!.menuIcon()) {
+        alertController.addAction(title: "Approve", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon()) {
             self.modApprove()
         }
 
-        alertController.addAction(title: "Ban u/\(comment!.author)", icon: UIImage(named: "ban")!.menuIcon()) {
+        alertController.addAction(title: "Ban u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.hammerFill, overrideString: "ban")!.menuIcon()) {
             //todo add ban!!!
         }
 
         if comment!.author == AccountController.currentName {
-            alertController.addAction(title: "Distinguish your comment", icon: UIImage(named: "save")!.menuIcon()) {
+            alertController.addAction(title: "Distinguish your comment", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()) {
                 self.modDistinguish()
             }
         }

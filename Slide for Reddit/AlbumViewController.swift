@@ -62,7 +62,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                 completion: nil)
         self.navItem?.title = "1/\(self.urlStringKeys.count)"
         let overview = UIButton.init(type: .custom)
-        overview.setImage(UIImage(named: "grid")?.navIcon(true), for: UIControl.State.normal)
+        overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
         overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
         overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let gridB = UIBarButtonItem.init(customView: overview)
@@ -156,7 +156,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                             completion: nil)
                     self.navItem?.title = "\(self.urlStringKeys.index(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
                     let overview = UIButton.init(type: .custom)
-                    overview.setImage(UIImage(named: "grid")?.navIcon(true), for: UIControl.State.normal)
+                    overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
                     overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
                     overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                     let gridB = UIBarButtonItem.init(customView: overview)

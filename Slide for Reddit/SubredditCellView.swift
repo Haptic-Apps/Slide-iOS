@@ -53,7 +53,7 @@ class SubredditCellView: UITableViewCell {
 
         self.pin = UIImageView().then {
             $0.frame = CGRect(x: 0, y: 0, width: 10, height: 10)
-            $0.image = UIImage(named: "lock")!.menuIcon() // TODO: Should cache this image
+            $0.image = UIImage(sfString: SFSymbol.pinFill, overrideString: "lock")!.menuIcon() // TODO: Should cache this image
             $0.isHidden = true
         }
         

@@ -39,7 +39,7 @@ class SubredditReorderViewController: UITableViewController {
         tableView.reloadData()
 
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage(named: "sync")!.navIcon(), for: UIControl.State.normal)
+        sync.setImage(UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "sync")!.navIcon(), for: UIControl.State.normal)
         sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControl.Event.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)
@@ -57,7 +57,7 @@ class SubredditReorderViewController: UITableViewController {
         let deleteB = UIBarButtonItem.init(customView: delete)
 
         let pin = UIButton.init(type: .custom)
-        pin.setImage(UIImage(named: "lock")!.navIcon(), for: UIControl.State.normal)
+        pin.setImage(UIImage(sfString: SFSymbol.pinFill, overrideString: "lock")!.navIcon(), for: UIControl.State.normal)
         pin.addTarget(self, action: #selector(self.pin(_:)), for: UIControl.Event.touchUpInside)
         pin.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let pinB = UIBarButtonItem.init(customView: pin)

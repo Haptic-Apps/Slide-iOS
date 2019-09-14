@@ -313,7 +313,7 @@ class AnyModalViewController: UIViewController {
             }
         }
 
-        alertController.addAction(title: "Share Video", icon: UIImage(named: "play")!.menuIcon()) {
+        alertController.addAction(title: "Share Video", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "play")!.menuIcon()) {
             self.shareVideo(baseURL, sender: sender)
         }
 
@@ -516,7 +516,7 @@ class AnyModalViewController: UIViewController {
         muteButton = UIButton().then {
             $0.accessibilityIdentifier = "Un-Mute video"
             $0.isHidden = true
-            $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
 

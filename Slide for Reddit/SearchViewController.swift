@@ -34,7 +34,7 @@ class SearchViewController: ContentListingViewController {
         let editB = UIBarButtonItem.init(customView: edit)
 
         let time = UIButton.init(type: .custom)
-        time.setImage(UIImage(named: "restore")?.navIcon(), for: UIControl.State.normal)
+        time.setImage(UIImage(sfString: SFSymbol.clockFill, overrideString: "restore")?.navIcon(), for: UIControl.State.normal)
         time.addTarget(self, action: #selector(self.time(_:)), for: UIControl.Event.touchUpInside)
         time.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         timeB = UIBarButtonItem.init(customView: time)
@@ -54,7 +54,7 @@ class SearchViewController: ContentListingViewController {
     @objc func time(_ sender: UIView) {
         let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
         
-        let selected = UIImage(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
         for t in SearchTimePeriod.cases {
             actionSheetController.addAction(title: t.path.firstUppercased, icon: (baseData as! SearchContributionLoader).time == t ? selected : nil) {
@@ -69,7 +69,7 @@ class SearchViewController: ContentListingViewController {
     @objc func filter(_ sender: UIView) {
         let actionSheetController = DragDownAlertMenu(title: "Select a sorting type", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
         
-        let selected = UIImage(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
         
         for t in SearchSortBy.cases {
             actionSheetController.addAction(title: t.path.firstUppercased, icon: (baseData as! SearchContributionLoader).sorting == t ? selected : nil) {

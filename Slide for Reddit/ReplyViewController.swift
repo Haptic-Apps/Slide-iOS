@@ -1110,7 +1110,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
         let send = UIButton.init(type: .custom)
         send.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        send.setImage(UIImage(named: "send")!.navIcon(), for: UIControl.State.normal)
+        send.setImage(UIImage(sfString: SFSymbol.paperplaneFill, overrideString: "send")!.navIcon(), for: UIControl.State.normal)
         send.addTarget(self, action: #selector(self.send(_:)), for: UIControl.Event.touchUpInside)
         send.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         send.accessibilityLabel = "Send"

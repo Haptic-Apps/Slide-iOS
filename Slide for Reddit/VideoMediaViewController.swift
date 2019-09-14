@@ -242,7 +242,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
             muteButton = UIButton().then {
                 $0.accessibilityIdentifier = "Un-mute video"
-                $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
                 $0.isHidden = true // The button will be unhidden once the content has loaded.
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
@@ -263,7 +263,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             
             showTitleButton = UIButton().then {
                 $0.accessibilityIdentifier = "Show Title Button"
-                $0.setImage(UIImage(named: "size")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.textbox, overrideString: "size")?.navIcon(true), for: [])
                 $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
@@ -1123,7 +1123,7 @@ extension VideoMediaViewController {
         }
         
         if !isYoutubeView {
-            alertController.addAction(title: "Share Video", icon: UIImage(named: "play")!.menuIcon()) {
+            alertController.addAction(title: "Share Video", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "play")!.menuIcon()) {
                 self.shareVideo(baseURL, sender: sender)
             }
         }

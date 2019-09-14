@@ -290,7 +290,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         self.night.accessoryType = .none
         self.night.backgroundColor = ColorUtil.theme.foregroundColor
         self.night.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.night.imageView?.image = UIImage(named: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
+        self.night.imageView?.image = UIImage(sfString: SFSymbol.moonStarsFill, overrideString: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
         self.night.imageView?.tintColor = ColorUtil.theme.navIconColor
         night.accessoryView = nightEnabled
 
@@ -327,7 +327,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         reduceColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
         reduceColorCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
-        self.reduceColorCell.imageView?.image = UIImage(named: "nocolors")?.toolbarIcon()
+        self.reduceColorCell.imageView?.image = UIImage(sfString: SFSymbol.circleLefthalfFill, overrideString: "nocolors")?.toolbarIcon()
         self.reduceColorCell.imageView?.tintColor = ColorUtil.theme.fontColor
         
         if SettingValues.reduceColor {

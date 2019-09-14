@@ -107,7 +107,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 }
                 
                 let image = UIImageView.init(frame: CGRect.init(x: 50, y: 50, width: 0, height: 0)).then {
-                    $0.image = UIImage(named: "down")?.getCopy(withSize: CGSize.square(size: 30), withColor: ColorUtil.theme.navIconColor)
+                    $0.image = UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")?.getCopy(withSize: CGSize.square(size: 30), withColor: ColorUtil.theme.navIconColor)
                     $0.contentMode = .center
                 }
                 jump.addSubview(image)
@@ -1095,7 +1095,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !offline {
             let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
 
-            let selected = UIImage(named: "selected")!.menuIcon()
+            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
             for c in CommentSort.cases {
                 actionSheetController.addAction(title: c.description, icon: sort == c ? selected : nil) {
@@ -1465,7 +1465,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             let alertController = DragDownAlertMenu(title: "Comment actions", subtitle: self.submission?.title ?? "", icon: self.submission?.thumbnailUrl)
 
-            alertController.addAction(title: "Refresh comments", icon: UIImage(named: "sync")!.menuIcon()) {
+            alertController.addAction(title: "Refresh comments", icon: UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "sync")!.menuIcon()) {
                 self.reset = true
                 self.refresh(self)
             }
@@ -1478,7 +1478,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
             }
 
-            alertController.addAction(title: "View related submissions", icon: UIImage(named: "size")!.menuIcon()) {
+            alertController.addAction(title: "View related submissions", icon: UIImage(sfString: SFSymbol.textbox, overrideString: "size")!.menuIcon()) {
                 let related = RelatedViewController.init(thing: self.submission!)
                 VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }
@@ -1838,7 +1838,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             let up = UIButton(type: .custom)
             up.accessibilityLabel = "Navigate up one comment thread"
-            up.setImage(UIImage(named: "up")?.toolbarIcon(), for: UIControl.State.normal)
+            up.setImage(UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")?.toolbarIcon(), for: UIControl.State.normal)
             up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
             up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let upB = UIBarButtonItem(customView: up)
@@ -1852,7 +1852,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             let down = UIButton(type: .custom)
             down.accessibilityLabel = "Navigate down one comment thread"
-            down.setImage(UIImage(named: "down")?.toolbarIcon(), for: UIControl.State.normal)
+            down.setImage(UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")?.toolbarIcon(), for: UIControl.State.normal)
             down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
             down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let downB = UIBarButtonItem(customView: down)
@@ -1926,7 +1926,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func tagUser(name: String) {
         let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
-        alert.addTextInput(title: "Set tag", icon: UIImage(named: "save-1")?.menuIcon(), action: {
+        alert.addTextInput(title: "Set tag", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "save-1")?.menuIcon(), action: {
             ColorUtil.setTagForUser(name: name, tag: alert.getText() ?? "")
             self.tableView.reloadData()
         }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)

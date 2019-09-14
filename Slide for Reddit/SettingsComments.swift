@@ -105,7 +105,7 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     func showJumpChooser() {
         let actionSheetController = DragDownAlertMenu(title: "Comment floating jump button", subtitle: "Can be long-pressed to jump up", icon: nil)
         
-        let selected = UIImage(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
         for t in SettingValues.CommentJumpMode.cases {
             actionSheetController.addAction(title: t.getTitle(), icon: SettingValues.commentJumpButton == t ? selected : nil) {

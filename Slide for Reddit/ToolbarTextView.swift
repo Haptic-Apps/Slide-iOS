@@ -434,7 +434,7 @@ public class ToolbarTextView: NSObject {
             textField.becomeFirstResponder()
             textField.textColor = ColorUtil.theme.fontColor
             textField.placeholder = "Caption (optional)"
-            textField.left(image: UIImage(named: "size"), color: ColorUtil.theme.fontColor)
+            textField.left(image: UIImage(sfString: SFSymbol.textbox, overrideString: "size"), color: ColorUtil.theme.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8

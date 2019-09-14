@@ -286,7 +286,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     func showMenuComments(_ selector: UIView?) {
         let actionSheetController = DragDownAlertMenu(title: "Default comment sorting", subtitle: "Will be applied to threads", icon: nil, themeColor: nil, full: true)
 
-        let selected = UIImage(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
         
         for link in CommentSort.cases {
             actionSheetController.addAction(title: link.description, icon: SettingValues.defaultCommentSorting == link ? selected : nil) {
@@ -303,7 +303,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     func showMenuSearch(_ selector: UIView?) {
         let actionSheetController = DragDownAlertMenu(title: "Default search sorting", subtitle: "Will be applied to all searches", icon: nil, themeColor: nil, full: true)
         
-        let selected = UIImage(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
         
         for link in SearchSortBy.cases {
             actionSheetController.addAction(title: "Sort by \(link.path.capitalize())", icon: SettingValues.defaultSearchSorting == link ? selected : nil) {
@@ -320,7 +320,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     func showMenu(_ selector: UIView?) {
         let actionSheetController = DragDownAlertMenu(title: "Default subreddit sorting", subtitle: "Will be applied to all subreddits", icon: nil, themeColor: nil, full: true)
 
-        let selected = UIImage(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
         for link in LinkSortType.cases {
             actionSheetController.addAction(title: link.description, icon: SettingValues.defaultSorting == link ? selected : nil) {
@@ -341,7 +341,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         } else {
             let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: nil, full: true)
 
-            let selected = UIImage(named: "selected")!.menuIcon()
+            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: SettingValues.defaultTimePeriod == t ? selected : nil) {

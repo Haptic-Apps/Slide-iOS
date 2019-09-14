@@ -27,19 +27,19 @@ class PostActions: NSObject {
     public static func showPostMenu(_ parent: UIViewController, sub: String) {
         let alertController = DragDownAlertMenu(title: "New submission", subtitle: "in r/" + sub, icon: nil)
         
-        alertController.addAction(title: "Image", icon: UIImage(named: "camera")!.menuIcon()) {
+        alertController.addAction(title: "Image", icon: UIImage(sfString: SFSymbol.cameraFill, overrideString: "camera")!.menuIcon()) {
             VCPresenter.showVC(viewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             }), popupIfPossible: true, parentNavigationController: nil, parentViewController: parent)
         }
         
-        alertController.addAction(title: "Link", icon: UIImage(named:"link")!.menuIcon()) {
+        alertController.addAction(title: "Link", icon: UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()) {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)
         }
         
-        alertController.addAction(title: "Selftext", icon: UIImage(named:"size")!.menuIcon()) {
+        alertController.addAction(title: "Selftext", icon: UIImage(sfString: SFSymbol.textbox, overrideString:"size")!.menuIcon()) {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)
@@ -178,10 +178,10 @@ class PostActions: NSObject {
         }
         
         if cell.link!.approved {
-            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(named: "approve")!.menuIcon(), enabled: false) {
+            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon(), enabled: false) {
             }
         } else {
-            alertController.addAction(title: "Approve", icon: UIImage(named: "approve")!.menuIcon()) {
+            alertController.addAction(title: "Approve", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon()) {
                 self.modApprove(cell)
             }
         }
@@ -195,7 +195,7 @@ class PostActions: NSObject {
             }
         }
 
-        alertController.addAction(title: "Ban u/\(cell.link!.author)", icon: UIImage(named: "ban")!.menuIcon()) {
+        alertController.addAction(title: "Ban u/\(cell.link!.author)", icon: UIImage(sfString: SFSymbol.hammerFill, overrideString: "ban")!.menuIcon()) {
             self.modBan(cell)
         }
 
@@ -234,7 +234,7 @@ class PostActions: NSObject {
         }
         
         if cell.link!.author == AccountController.currentName {
-            alertController.addAction(title: "Distinguish", icon: UIImage(named: "save")!.menuIcon()) {
+            alertController.addAction(title: "Distinguish", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()) {
                 self.modDistinguish(cell)
             }
         }

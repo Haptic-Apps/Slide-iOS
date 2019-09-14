@@ -58,7 +58,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         let editB = UIBarButtonItem.init(customView: edit)
 
         let read = UIButton.init(type: .custom)
-        read.setImage(UIImage(named: "seen")?.navIcon(), for: UIControl.State.normal)
+        read.setImage(UIImage(sfString: .eyeFill, overrideString: "seen")?.navIcon(), for: UIControl.State.normal)
         read.addTarget(self, action: #selector(self.read(_:)), for: UIControl.Event.touchUpInside)
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)

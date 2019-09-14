@@ -951,7 +951,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let settingsB = UIBarButtonItem.init(customView: settings)
         
         let offline = ExpandedHitButton(type: .custom)
-        offline.setImage(UIImage(named: "offline")?.toolbarIcon(), for: UIControl.State.normal)
+        offline.setImage(UIImage(sfString: SFSymbol.wifiSlash, overrideString: "offline")?.toolbarIcon(), for: UIControl.State.normal)
         offline.addTarget(self, action: #selector(self.restartVC), for: UIControl.Event.touchUpInside)
         offline.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let offlineB = UIBarButtonItem.init(customView: offline)

@@ -50,7 +50,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         self.title = "Subreddit themes"
 
         let sync = UIButton.init(type: .custom)
-        sync.setImage(UIImage(named: "sync")!.navIcon(), for: UIControl.State.normal)
+        sync.setImage(UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "sync")!.navIcon(), for: UIControl.State.normal)
         sync.addTarget(self, action: #selector(self.sync(_:)), for: UIControl.Event.touchUpInside)
         sync.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let syncB = UIBarButtonItem.init(customView: sync)

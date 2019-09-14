@@ -529,7 +529,7 @@ extension CurrentAccountViewController {
                 }
             } else {
                 //todo enabled
-                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(named: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
+                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
                 }
             }
         }

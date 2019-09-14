@@ -186,7 +186,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
                 self.doReply()
             }
 
-            alertController.addAction(title: ActionStates.isRead(s: self.message!) ? "Mark as unread" : "Mark as read", icon: UIImage(named: "seen")!.menuIcon()) {
+            alertController.addAction(title: ActionStates.isRead(s: self.message!) ? "Mark as unread" : "Mark as read", icon: ActionStates.isRead(s: self.message!) ? UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "seen")!.menuIcon() : UIImage(sfString: SFSymbol.eyeFill, overrideString: "seen")!.menuIcon()) {
                 if ActionStates.isRead(s: self.message!) {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {

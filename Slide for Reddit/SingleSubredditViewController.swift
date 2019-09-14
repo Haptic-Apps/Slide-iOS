@@ -894,7 +894,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
-            subb.setImage(UIImage(named: "addcircle")?.navIcon(), for: UIControl.State.normal)
+            subb.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "addcircle")?.navIcon(), for: UIControl.State.normal)
         } else {
             let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
             if AccountController.isLoggedIn {
@@ -902,7 +902,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
                     BannerUtil.makeBanner(text: "Subscribed to r/\(self.sub)", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                    self.subb.setImage(UIImage(named: "subbed")?.navIcon(), for: UIControl.State.normal)
+                    self.subb.setImage(UIImage(sfString: SFSymbol.bookmarkFill, overrideString: "subbed")?.navIcon(), for: UIControl.State.normal)
                 })
                 alrController.addAction(somethingAction)
             }
@@ -911,7 +911,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 BannerUtil.makeBanner(text: "r/\(self.sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                self.subb.setImage(UIImage(named: "subbed")?.navIcon(), for: UIControl.State.normal)
+                self.subb.setImage(UIImage(sfString: SFSymbol.bookmarkFill, overrideString: "subbed")?.navIcon(), for: UIControl.State.normal)
             })
             
             alrController.addAction(somethingAction)
@@ -1062,10 +1062,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
 
         if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
-            alert.addTextInput(title: "Search in \(sub)", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(named: "search")!, textRequired: true, exitOnAction: true)
+            alert.addTextInput(title: "Search in \(sub)", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
             alert.addAction(title: "Search all of Reddit", icon: nil, enabled: true, action: searchAllAction)
         } else {
-            alert.addTextInput(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(named: "search")!, textRequired: true, exitOnAction: true)
+            alert.addTextInput(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
         }
         
         alert.show(self)
@@ -1151,7 +1151,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     @objc func showSortMenu(_ selector: UIView?) {
         let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
 
-        let selected = UIImage(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         for link in LinkSortType.cases {
             actionSheetController.addAction(title: link.description, icon: sort == link ? selected : nil) {
@@ -2093,7 +2093,7 @@ extension SingleSubredditViewController {
             }
         }
 
-        alertController.addAction(title: "Sort (currently \(sort.path))", icon:  UIImage(named: "filter")!.menuIcon()) {
+        alertController.addAction(title: "Sort (currently \(sort.path))", icon: UIImage(named: "filter")!.menuIcon()) {
             self.showSortMenu(self.more)
         }
 
@@ -2107,11 +2107,11 @@ extension SingleSubredditViewController {
             }
         }
         
-        alertController.addAction(title: "Cache for offline viewing", icon: UIImage(named: "save-1")!.menuIcon()) {
+        alertController.addAction(title: "Cache for offline viewing", icon: UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")!.menuIcon()) {
             _ = AutoCache.init(baseController: self, subs: [self.sub])
         }
 
-        alertController.addAction(title: "Shadowbox", icon:  UIImage(named: "shadowbox")!.menuIcon()) {
+        alertController.addAction(title: "Shadowbox", icon: UIImage(named: "shadowbox")!.menuIcon()) {
             self.shadowboxMode()
         }
 
@@ -2119,11 +2119,11 @@ extension SingleSubredditViewController {
             self.hideReadPosts()
         }
 
-        alertController.addAction(title: "Refresh posts", icon: UIImage(named: "sync")!.menuIcon()) {
+        alertController.addAction(title: "Refresh posts", icon: UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "sync")!.menuIcon()) {
             self.refresh()
         }
 
-        alertController.addAction(title: "Gallery view", icon: UIImage(named: "image")!.menuIcon()) {
+        alertController.addAction(title: "Gallery view", icon: UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")!.menuIcon()) {
             self.galleryMode()
         }
 
@@ -2148,7 +2148,7 @@ extension SingleSubredditViewController {
             }
         }
 
-        alertController.addAction(title: "Add homescreen shortcut", icon: UIImage(named: "add_homescreen")!.menuIcon()) {
+        alertController.addAction(title: "Add homescreen shortcut", icon: UIImage(sfString: SFSymbol.plusSquareFill, overrideString: "add_homescreen")!.menuIcon()) {
             self.addToHomescreen()
         }
 

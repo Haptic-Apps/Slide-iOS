@@ -57,13 +57,13 @@ class GalleryCellView: UITableViewCell {
         
         switch ContentType.getContentType(submission: link) {
         case .ALBUM:
-            typeImage.image = UIImage(named: "image")?.navIcon(true)
+            typeImage.image = UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")?.navIcon(true)
         case .EXTERNAL, .LINK, .REDDIT:
             typeImage.image = UIImage(named: "world")?.navIcon(true)
         case .SELF:
-            typeImage.image = UIImage(named: "size")?.navIcon(true)
+            typeImage.image = UIImage(sfString: SFSymbol.textbox, overrideString: "size")?.navIcon(true)
         case .EMBEDDED, .GIF, .STREAMABLE, .VIDEO, .VID_ME:
-            typeImage.image = UIImage(named: "play")?.navIcon(true)
+            typeImage.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.navIcon(true)
         default:
             typeImage.image = UIImage()
 

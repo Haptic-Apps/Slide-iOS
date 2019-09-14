@@ -680,18 +680,18 @@ class SettingValues {
             case .REPORT:
                 return UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")!.menuIcon()
             case .BLOCK:
-                return UIImage(named: "block")!.menuIcon()
+                return UIImage(sfString: SFSymbol.handRaisedFill, overrideString: "block")!.menuIcon()
             case .SAVE:
-                return UIImage(named: "save")!.menuIcon()
+                return UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()
             case .SUBSCRIBE:
                 return UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon()
             case .CROSSPOST:
                 return UIImage(named: "crosspost")!.menuIcon()
             case .READ_LATER:
                 if link == nil {
-                    return UIImage(named: "readLater")!.menuIcon()
+                    return UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
                 }
-                return ReadLater.isReadLater(id: link!.getIdentifier()) ? UIImage(named: "restore")!.menuIcon() : UIImage(named: "readLater")!.menuIcon()
+                return ReadLater.isReadLater(id: link!.getIdentifier()) ? UIImage(sfString: SFSymbol.trayAndArrowUpFill, overrideString: "restore")!.menuIcon() : UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
             case .SHARE_CONTENT:
                 return UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()
             case .SHARE_REDDIT:
