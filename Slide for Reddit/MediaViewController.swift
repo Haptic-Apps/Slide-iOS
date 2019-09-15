@@ -144,7 +144,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         contentUrl = baseUrl.absoluteString.startsWith("//") ? URL(string: "https:\(baseUrl.absoluteString)") ?? baseUrl : baseUrl
         if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
-            contentUrl = URL.init(string: (content?.substring(to: content!.index(of: ".")!))!)
+            contentUrl = URL.init(string: (String(content?[..<content!.index(of: ".")!] ?? "")))
         }
         let type = ContentType.getContentType(baseUrl: contentUrl)
 

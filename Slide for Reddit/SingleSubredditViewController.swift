@@ -1388,14 +1388,14 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             try realm.beginWrite()
                             for submission in self.links {
                                 if submission.author != "PAGE_SEPARATOR" {
-                                    realm.create(type(of: submission), value: submission, update: true)
+                                    realm.create(type(of: submission), value: submission, update: .all)
                                     if let listing = self.realmListing {
                                         listing.links.append(submission)
                                     }
                                 }
                             }
                             
-                            realm.create(type(of: self.realmListing!), value: self.realmListing!, update: true)
+                            realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
                             try realm.commitWrite()
                         } catch {
 

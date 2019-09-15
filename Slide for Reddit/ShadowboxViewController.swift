@@ -348,7 +348,7 @@ extension UIPanGestureRecognizer {
 
 public extension UIPanGestureRecognizer {
     
-    public enum Direction: Int {
+    enum Direction: Int {
         
         case horizontal = 0
         case vertical
@@ -359,7 +359,7 @@ public extension UIPanGestureRecognizer {
         static var touchesBegan = "\(#file)+\(#line)"
     }
     
-    public var direction: UIPanGestureRecognizer.Direction? {
+    var direction: UIPanGestureRecognizer.Direction? {
         get {
             let object = objc_getAssociatedObject(self, &UIPanGestureRecognizerRuntimeKeys.directions)
             return object as? UIPanGestureRecognizer.Direction
