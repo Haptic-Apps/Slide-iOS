@@ -164,68 +164,16 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     lazy var currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
 
     func showMenu(sender: AnyObject, user: String) {
-        let vc = ProfileInfoViewController(accountNamed: user)
+        let vc = ProfileInfoViewController(accountNamed: user, parent: self)
         vc.modalPresentationStyle = .custom
         vc.transitioningDelegate = currentAccountTransitioningDelegate
         present(vc, animated: true)
-          /*  let date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
-            let df = DateFormatter()
-            df.dateFormat = "MM/dd/yyyy"
-            let alrController = UIAlertController(title: "", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertController.Style.actionSheet)
-            
-            let scrollView = UIScrollView(frame: rect)
-            scrollView.backgroundColor = UIColor.clear
-            
-            //todo add trophies
-            do {
-            scrollView.delaysContentTouches = false
-        
-            alrController.view.addSubview(scrollView)
-            if AccountController.isLoggedIn {
-                alrController.addAction(UIAlertAction.init(title: "Private message", style: .default, handler: { (_) in
-                }))
-                if user.isFriend {
-                    alrController.addAction(UIAlertAction.init(title: "Unfriend", style: .default, handler: { (_) in
-                                            }))
-                } else {
-                    alrController.addAction(UIAlertAction.init(title: "Friend", style: .default, handler: { (_) in
-                        
-                    }))
-                }
-            }
-            alrController.addAction(UIAlertAction.init(title: "Change color", style: .default, handler: { (_) in
-                self.pickColor(sender: sender)
-            }))
-            let tag = ColorUtil.getTagForUser(name: name)
-            alrController.addAction(UIAlertAction.init(title: "Tag user\((tag != nil) ? " (currently \(tag!))" : "")", style: .default, handler: { (_) in
-                self.tagUser()
-            }))
-            
-            alrController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
-            }))
-
-            alrController.modalPresentationStyle = .popover
-            if let presenter = alrController.popoverPresentationController {
-                presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
-                presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
-            }
-
-            alrController.modalPresentationStyle = .popover
-            if let presenter = alrController.popoverPresentationController {
-                presenter.sourceView = sender as! UIButton
-                presenter.sourceRect = (sender as! UIButton).bounds
-            }
-            
-            self.present(alrController, animated: true, completion: {})
-            */
-
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setupBaseBarColors()
     }
-    
     
     func close() {
         navigationController?.popViewController(animated: true)
@@ -282,7 +230,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         self.automaticallyAdjustsScrollViewInsets = false
         
         var isModal13 = false
-        if #available(iOS 13, *), (self.navigationController?.viewControllers[0] == self) {
+        if #available(iOS 13, *), self.presentingViewController != nil && (self.navigationController?.modalPresentationStyle == .formSheet || self.modalPresentationStyle == .formSheet || self.navigationController?.modalPresentationStyle == .pageSheet || self.modalPresentationStyle == .pageSheet) {
             isModal13 = true
         }
         tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)

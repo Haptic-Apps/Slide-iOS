@@ -18,6 +18,7 @@ import UIKit
 class ProfileInfoViewController: UIViewController {
     
     var user: Account?
+    weak var profile: UIViewController?
     var interactionController: ProfileInfoDismissInteraction?
     
     /// Overall height of the content view, including its out-of-bounds elements.
@@ -86,8 +87,9 @@ class ProfileInfoViewController: UIViewController {
     var header = ProfileHeaderView()
     var account: String
     
-    init(accountNamed: String) {
+    init(accountNamed: String, parent: UIViewController) {
         self.account = accountNamed
+        self.profile = parent
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -190,23 +192,33 @@ extension ProfileInfoViewController {
         backgroundView.addGestureRecognizer(recognizer)
     }
     
-    func generateButtons(trophy: Trophy) -> UIImageView {
+    func generateButtons(trophy: Trophy) -> UIView {
+        let baseView = UIView()
         let more = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 70, height: 70))
         more.sd_setImage(with: trophy.icon70!)
-        let singleTap = UITapGestureRecognizer(target: self, action: #selector(ProfileInfoViewController.trophyTapped(_:)))
-        singleTap.numberOfTapsRequired = 1
         
-        more.isUserInteractionEnabled = true
-        more.addGestureRecognizer(singleTap)
+        let subtitle = UILabel().then {
+            $0.textColor = ColorUtil.theme.fontColor
+            $0.font = UIFont.systemFont(ofSize: 10)
+            $0.text = trophy.title
+            $0.numberOfLines = 0
+        }
+        baseView.addSubview(more)
+        baseView.addSubview(subtitle)
         
+        more.horizontalAnchors == baseView.horizontalAnchors + 10
+        more.heightAnchor == 50
+        more.topAnchor == baseView.topAnchor
+        more.widthAnchor == 50
+        subtitle.heightAnchor == 15
+        subtitle.horizontalAnchors == baseView.horizontalAnchors
+        subtitle.topAnchor == more.bottomAnchor + 5
+        subtitle.widthAnchor == 70
+        
+        baseView.isUserInteractionEnabled = true
         return more
     }
 
-    @objc func trophyTapped(_ sender: AnyObject) {
-        
-    }
-
-    
     func getTrophies(_ user: Account) {
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.getTrophies(user.name, completion: { (result) in
@@ -218,14 +230,18 @@ extension ProfileInfoViewController {
                     DispatchQueue.main.async {
                         for trophy in trophies {
                             let b = self.generateButtons(trophy: trophy)
-                            b.frame = CGRect.init(x: i * 75, y: 0, width: 70, height: 70)
+                            b.sizeAnchors == CGSize(width: 70, height: 70)
                             b.addTapGestureRecognizer(action: {
                                 if trophy.url != nil {
-                                    self.dismiss(animated: true)
-                                    VCPresenter.showVC(viewController: WebsiteViewController(url: trophy.url!, subreddit: ""), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+                                    var trophyURL = trophy.url!.absoluteString
+                                    if !trophyURL.contains("reddit.com") {
+                                        trophyURL = "https://www.reddit.com" + trophyURL
+                                    }
+                                    VCPresenter.presentModally(viewController: WebsiteViewController(url: URL(string: trophyURL) ?? trophy.url!, subreddit: ""), self)
                                 }
                             })
                             self.header.trophyArea.addSubview(b)
+                            b.leftAnchor == self.header.trophyArea.leftAnchor + CGFloat(i * 75)
                             i += 1
                         }
                         if trophies.isEmpty {
@@ -371,14 +387,18 @@ extension ProfileInfoViewController: ProfileHeaderViewDelegate {
     }
     
     func didRequestSetColor() {
-        if let profile = parent as? ProfileViewController {
-            profile.pickColor(sender: self)
+        if let profile = profile as? ProfileViewController {
+            self.dismiss(animated: true) {
+                profile.pickColor(sender: self)
+            }
         }
     }
     
     func didRequestEditTag() {
-        if let profile = parent as? ProfileViewController {
-            profile.tagUser()
+        if let profile = profile as? ProfileViewController {
+            self.dismiss(animated: true) {
+                profile.tagUser()
+            }
         }
     }
 }
@@ -522,7 +542,7 @@ class ProfileHeaderView: UIView {
             return attributedString
         }()
         
-        self.friendCell.configure(text: self.user?.isFriend ?? false ? "Remove friend" : "Add friend", imageName: "profile", sfSymbolName: self.user?.isFriend ?? false ? SFSymbol.personBadgeMinusFill : SFSymbol.personBadgePlusFill, imageColor: GMColor.yellow500Color())
+        self.friendCell.configure(text: account?.isFriend ?? false ? "Remove friend" : "Add friend", imageName: "profile", sfSymbolName: self.user?.isFriend ?? false ? SFSymbol.personBadgeMinusFill : SFSymbol.personBadgePlusFill, imageColor: GMColor.yellow500Color())
         
         postKarmaLabel.attributedText = {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
