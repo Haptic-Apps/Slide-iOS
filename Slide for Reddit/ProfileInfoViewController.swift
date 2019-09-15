@@ -536,6 +536,7 @@ class ProfileHeaderView: UIView {
         if account == nil {
             return
         }
+        self.user = account
         commentKarmaLabel.attributedText = {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
             let attributedString = NSMutableAttributedString(string: "\(account?.commentKarma.delimiter ?? "0")", attributes: attrs)
