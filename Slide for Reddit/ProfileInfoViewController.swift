@@ -194,7 +194,7 @@ extension ProfileInfoViewController {
     
     func generateButtons(trophy: Trophy) -> UIView {
         let baseView = UIView()
-        let more = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 70, height: 70))
+        let more = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 50, height: 50))
         more.sd_setImage(with: trophy.icon70!)
         
         let subtitle = UILabel().then {
@@ -202,7 +202,9 @@ extension ProfileInfoViewController {
             $0.font = UIFont.systemFont(ofSize: 10)
             $0.text = trophy.title
             $0.numberOfLines = 0
+            $0.textAlignment = .center
         }
+        
         baseView.addSubview(more)
         baseView.addSubview(subtitle)
         
@@ -216,7 +218,7 @@ extension ProfileInfoViewController {
         subtitle.widthAnchor == 70
         
         baseView.isUserInteractionEnabled = true
-        return more
+        return baseView
     }
 
     func getTrophies(_ user: Account) {
