@@ -60,13 +60,13 @@ class CurrentAccountViewController: UIViewController {
     }
     
     var closeButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Close"
     }
 
     var settingsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: .gear, overrideString: "settings")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "App Settings"
     }
@@ -78,17 +78,17 @@ class CurrentAccountViewController: UIViewController {
         $0.spacing = 0
     }
     var modButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "Mod Queue"
     }
     var mailButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.trayFill, overrideString: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 8, right: 8)
         $0.accessibilityLabel = "Inbox"
     }
     var switchAccountsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.personAndPersonFill, overrideString: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
         $0.accessibilityLabel = "Switch Accounts"
     }
@@ -295,12 +295,12 @@ extension CurrentAccountViewController {
         updateModBadge()
         
         if AccountController.current != nil {
-            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(named: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                 guard let strongSelf = self else { return }
                 strongSelf.accountImageView.image = image
             }
         } else {
-            accountImageView.image = UIImage(named: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor)
+            accountImageView.image = UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor)
         }
         setEmptyState(!AccountController.isLoggedIn, animate: true)
         
@@ -439,7 +439,7 @@ extension CurrentAccountViewController {
     @objc func multiButtonPressed() {
         let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)
         
-        alert.addTextInput(title: "Create", icon: UIImage(named: "add")?.menuIcon(), enabled: true, action: {
+        alert.addTextInput(title: "Create", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon(), enabled: true, action: {
             var text = alert.getText() ?? ""
             text = text.replacingOccurrences(of: " ", with: "_")
             if text == "" {
@@ -523,30 +523,30 @@ extension CurrentAccountViewController {
 
         for accountName in AccountController.names.unique().sorted() {
             if accountName != AccountController.currentName {
-                optionMenu.addAction(title: accountName, icon: UIImage(named: "profile")!.menuIcon()) {
+                optionMenu.addAction(title: accountName, icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
                     self.setLoadingState(true)
                     self.delegate?.currentAccountViewController(self, didRequestAccountChangeToName: accountName)
                 }
             } else {
                 //todo enabled
-                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(named: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
+                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
                 }
             }
         }
         
         if AccountController.isLoggedIn {
-            optionMenu.addAction(title: "Browse as Guest", icon: UIImage(named: "hide")!.menuIcon()) {
+            optionMenu.addAction(title: "Browse as Guest", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 self.setEmptyState(true, animate: false)
                 self.delegate?.currentAccountViewController(self, didRequestGuestAccount: ())
             }
 
-            optionMenu.addAction(title: "Log out of u/\(AccountController.currentName)", icon: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
+            optionMenu.addAction(title: "Log out of u/\(AccountController.currentName)", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
                 self.setEmptyState(true, animate: false)
                 self.delegate?.currentAccountViewController(self, didRequestLogOut: ())
             }
         }
         
-        optionMenu.addAction(title: "Add a new account", icon: UIImage(named: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)) {
+        optionMenu.addAction(title: "Add a new account", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)) {
             self.delegate?.currentAccountViewController(self, didRequestNewAccount: ())
         }
         
@@ -618,23 +618,23 @@ class AccountHeaderView: UIView {
     }
     
     var savedCell = UITableViewCell().then {
-        $0.configure(text: "Saved Posts", imageName: "save", imageColor: GMColor.yellow500Color())
+        $0.configure(text: "Saved Posts", imageName: "save", sfSymbolName: .starFill, imageColor: GMColor.yellow500Color())
     }
 
     var cacheCell = UITableViewCell().then {
-        $0.configure(text: "Start Auto Cache now", imageName: "save-1", imageColor: GMColor.yellow500Color())
+        $0.configure(text: "Start Auto Cache now", imageName: "save-1", sfSymbolName: .arrow2Circlepath, imageColor: GMColor.yellow500Color())
     }
 
     var multiCell = UITableViewCell().then {
-        $0.configure(text: "Create a Multireddit", imageName: "add", imageColor: GMColor.yellow500Color())
+        $0.configure(text: "Create a Multireddit", imageName: "add", sfSymbolName: .folderBadgePlusFill, imageColor: GMColor.yellow500Color())
     }
 
     var likedCell = UITableViewCell().then {
-        $0.configure(text: "Liked Posts", imageName: "upvote", imageColor: GMColor.orange500Color())
+        $0.configure(text: "Liked Posts", imageName: "upvote", sfSymbolName: .arrowUp, imageColor: GMColor.orange500Color())
     }
     
     var detailsCell = UITableViewCell().then {
-        $0.configure(text: "Your profile", imageName: "profile", imageColor: ColorUtil.theme.fontColor)
+        $0.configure(text: "Your profile", imageName: "profile", sfSymbolName: .personCircleFill, imageColor: ColorUtil.theme.fontColor)
     }
     
     var infoStack = UIStackView().then {
@@ -739,10 +739,10 @@ extension AccountHeaderView {
 }
 
 // Styling
-private extension UITableViewCell {
-    func configure(text: String, imageName: String, imageColor: UIColor) {
+public extension UITableViewCell {
+    func configure(text: String, imageName: String, sfSymbolName: SFSymbol, imageColor: UIColor) {
         textLabel?.text = text
-        imageView?.image = UIImage.init(named: imageName)?.menuIcon()
+        imageView?.image = UIImage(sfString: sfSymbolName, overrideString: imageName)?.menuIcon()
         imageView?.tintColor = imageColor
         
         accessoryType = .none

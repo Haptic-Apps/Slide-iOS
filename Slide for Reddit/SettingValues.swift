@@ -369,7 +369,7 @@ class SettingValues {
         SettingValues.reduceColor = settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         
-        var columns = Int(round(UIApplication.shared.statusBarView!.frame.size.width / CGFloat(320)))
+        var columns = Int(round(UIApplication.shared.statusBarUIView!.frame.size.width / CGFloat(320)))
         if columns == 0 {
             columns = 1
         }
@@ -674,44 +674,44 @@ class SettingValues {
         public func getImage(_ link: RSubmission? = nil) -> UIImage {
             switch self {
             case .PROFILE:
-                return UIImage(named: "profile")!.menuIcon()
+                return UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()
             case .SUBREDDIT:
-                return UIImage(named: "subs")!.menuIcon()
+                return UIImage(sfString: .rCircleFill, overrideString: "subs")!.menuIcon()
             case .REPORT:
-                return UIImage(named: "flag")!.menuIcon()
+                return UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")!.menuIcon()
             case .BLOCK:
-                return UIImage(named: "block")!.menuIcon()
+                return UIImage(sfString: SFSymbol.handRaisedFill, overrideString: "block")!.menuIcon()
             case .SAVE:
-                return UIImage(named: "save")!.menuIcon()
+                return UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()
             case .SUBSCRIBE:
-                return UIImage(named: "add")!.menuIcon()
+                return UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon()
             case .CROSSPOST:
                 return UIImage(named: "crosspost")!.menuIcon()
             case .READ_LATER:
                 if link == nil {
-                    return UIImage(named: "readLater")!.menuIcon()
+                    return UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
                 }
-                return ReadLater.isReadLater(id: link!.getIdentifier()) ? UIImage(named: "restore")!.menuIcon() : UIImage(named: "readLater")!.menuIcon()
+                return ReadLater.isReadLater(id: link!.getIdentifier()) ? UIImage(sfString: SFSymbol.trayAndArrowUpFill, overrideString: "restore")!.menuIcon() : UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
             case .SHARE_CONTENT:
-                return UIImage(named: "share")!.menuIcon()
+                return UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()
             case .SHARE_REDDIT:
-                return UIImage(named: "comments")!.menuIcon()
+                return UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()
             case .CHROME:
-                return UIImage(named: "link")!.menuIcon()
+                return UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()
             case .SAFARI:
                 return UIImage(named: "world")!.menuIcon()
             case .FILTER:
                 return UIImage(named: "filter")!.menuIcon()
             case .COPY:
-                return UIImage(named: "copy")!.menuIcon()
+                return UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()
             case .HIDE:
-                return UIImage(named: "hide")!.menuIcon()
+                return UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()
             case .UPVOTE:
-                return UIImage(named: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)
+                return UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.menuIcon().getCopy(withColor: ColorUtil.upvoteColor)
             case .DOWNVOTE:
-                return UIImage(named: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)
+                return UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")!.menuIcon().getCopy(withColor: ColorUtil.downvoteColor)
             case .MODERATE:
-                return UIImage(named: "mod")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
+                return UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")!.menuIcon().getCopy(withColor: GMColor.lightGreen500Color())
             }
         }
     }
@@ -917,24 +917,24 @@ class SettingValues {
         case RELOAD = "reload"
         case HIDE_PERMANENTLY = "perm"
 
-        func getPhoto() -> String {
+        func getPhoto() -> UIImage? {
             switch self {
             case .HIDE_READ:
-                return "hide"
+                return UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")
             case .HIDE_PERMANENTLY:
-                return "hide"
+                return UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")
             case .NEW_POST:
-                return "edit"
+                return UIImage(sfString: SFSymbol.squareAndPencil, overrideString: "edit")
             case .SHADOWBOX:
-                return "shadowbox"
+                return UIImage(named: "shadowbox")
             case .SIDEBAR:
-                return "info"
+                return UIImage(sfString: SFSymbol.infoCircleFill, overrideString: "info")
             case .RELOAD:
-                return "sync"
+                return UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "sync")
             case .GALLERY:
-                return "image"
+                return UIImage(sfString: SFSymbol.photoFill, overrideString: "image")
             case .SEARCH:
-                return "search"
+                return UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")
             }
         }
 

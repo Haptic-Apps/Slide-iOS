@@ -55,19 +55,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         }
         
-        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
         }
 
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
@@ -466,7 +466,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
             if SettingValues.muteInlineVideos {
-                sound.setImage(UIImage(named: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+                sound.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
                 sound.isHidden = true
             } else {
                 sound.isHidden = true
@@ -490,7 +490,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             contentView.bringSubviewToFront(topVideoView)
             
             playView = UIImageView().then {
-                    $0.image = UIImage(named: "play")?.getCopy(withSize: CGSize.square(size: 60), withColor: .white)
+                    $0.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.getCopy(withSize: CGSize.square(size: 60), withColor: .white)
                     $0.contentMode = .center
                     $0.isHidden = true
             }
@@ -650,7 +650,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let url = self.link!.url!
             let alertController = DragDownAlertMenu(title: ContentType.isImage(uri: url) && !bannerImage.isHidden ? "Image options" : "Submission link options", subtitle: url.absoluteString, icon: url.absoluteString)
             
-            alertController.addAction(title: "Share\(ContentType.isImage(uri: url) && !bannerImage.isHidden ? " image" : "") URL", icon: UIImage(named: "share")!.menuIcon()) {
+            alertController.addAction(title: "Share\(ContentType.isImage(uri: url) && !bannerImage.isHidden ? " image" : "") URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
                 let shareItems: Array = [url]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 activityViewController.popoverPresentationController?.sourceView = self.contentView
@@ -661,17 +661,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 let imageToShare = [bannerImage.image!]
                 let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
                 activityViewController.popoverPresentationController?.sourceView = self.contentView
-                alertController.addAction(title: "Share image", icon: UIImage(named: "image")!.menuIcon(), action: {
+                alertController.addAction(title: "Share image", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "image")!.menuIcon(), action: {
                     self.parentViewController?.present(activityViewController, animated: true, completion: nil)
                 })
             }
 
-            alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+            alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
                 UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
                 BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
             }
 
-            alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+            alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
                 } else {
@@ -1992,15 +1992,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let alertController = DragDownAlertMenu(title: "Manage your submission", subtitle: link.title, icon: link.thumbnailUrl)
         
         if link.isSelf {
-            alertController.addAction(title: "Edit selftext", icon: UIImage(named: "edit")!.menuIcon()) {
+            alertController.addAction(title: "Edit selftext", icon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()) {
                 self.editSelftext()
             }
         }
-        alertController.addAction(title: "Set flair", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon()) {
             self.flairSelf()
         }
         
-        alertController.addAction(title: "Delete submission", icon: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
+        alertController.addAction(title: "Delete submission", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
             self.deleteSelf(self)
         }
 
@@ -2025,13 +2025,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func deleteSelf(_ cell: LinkCellView) {
         let alertController = DragDownAlertMenu(title: "Really delete your submission?", subtitle: "This cannot be undone", icon: link!.thumbnailUrl)
         
-        alertController.addAction(title: "Delete", icon: UIImage(named: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
+        alertController.addAction(title: "Delete", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
             if let delegate = self.del {
                 delegate.deleteSelf(self)
             }
         }
         
-        alertController.addAction(title: "Cancel", icon: UIImage(named: "close")!.menuIcon()) {
+        alertController.addAction(title: "Cancel", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon()) {
             alertController.dismiss(animated: true, completion: nil)
         }
 
@@ -2076,9 +2076,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if flair.editable {
             let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "\(flair.name)", icon: nil)
             
-            alert.addTextInput(title: "Set flair", icon: UIImage(named: "save-1")?.menuIcon(), action: {
+            alert.addTextInput(title: "Set flair", icon: UIImage(sfString: SFSymbol.flag, overrideString: "save-1")?.menuIcon(), action: {
                 self.submitFlairChange(flair, text: alert.getText() ?? "")
-            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
             
             alert.show(parentViewController)
         } else {

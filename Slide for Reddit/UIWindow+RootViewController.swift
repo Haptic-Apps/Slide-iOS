@@ -10,6 +10,29 @@ import UIKit
 /**
  *  UIWindow extension for setting the rootViewController on a UIWindow instance in a safe and animatable way.
  */
+
+public extension UIApplication {
+    var statusBarUIView: UIView? {
+        if #available(iOS 13.0, *) {
+            let tag = 38482458385
+            if let statusBar = self.keyWindow?.viewWithTag(tag) {
+                return statusBar
+            } else {
+                let statusBarView = UIView(frame: UIApplication.shared.statusBarFrame)
+                statusBarView.tag = tag
+
+                self.keyWindow?.addSubview(statusBarView)
+                return statusBarView
+            }
+        } else {
+            if responds(to: Selector(("statusBar"))) {
+                return statusBarUIView as? UIView
+            }
+        }
+        return nil
+    }
+}
+
 public extension UIWindow {
 
     /**

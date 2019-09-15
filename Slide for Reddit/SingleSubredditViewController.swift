@@ -201,7 +201,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
             inHeadView!.topAnchor == view.topAnchor
             inHeadView!.horizontalAnchors == view.horizontalAnchors
-            inHeadView!.heightAnchor == (UIApplication.shared.statusBarView?.frame.size.height ?? 0)
+            inHeadView!.heightAnchor == (UIApplication.shared.statusBarUIView?.frame.size.height ?? 0)
         }
 
         reloadNeedingColor()
@@ -333,7 +333,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
 
         if single {
-            UIApplication.shared.statusBarView?.backgroundColor = .clear
+            UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         }
         if fab != nil {
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
@@ -564,7 +564,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             self.fab!.clipsToBounds = true
             let title = "  " + SettingValues.fabType.getTitleShort()
             self.fab!.setTitle(title, for: .normal)
-            self.fab!.leftImage(image: (UIImage.init(named: SettingValues.fabType.getPhoto())?.navIcon(true))!, renderMode: UIImage.RenderingMode.alwaysOriginal)
+            self.fab!.leftImage(image: SettingValues.fabType.getPhoto()!.navIcon(true), renderMode: UIImage.RenderingMode.alwaysOriginal)
             self.fab!.elevate(elevation: 2)
             self.fab!.titleLabel?.textAlignment = .center
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -722,20 +722,17 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             UserDefaults.standard.synchronize()
         }
         
-        let actionSheetController: UIAlertController = UIAlertController(title: "Change button type", message: "", preferredStyle: .alert)
-
-        actionSheetController.addCancelButton()
+        let actionSheetController = DragDownAlertMenu(title: "Change button action", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
 
         for t in SettingValues.FabType.cases {
-            let saveActionButton: UIAlertAction = UIAlertAction(title: t.getTitle(), style: .default) { _ -> Void in
+            actionSheetController.addAction(title: t.getTitle(), icon: t.getPhoto()?.menuIcon(), action: {
                 UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_fabType)
                 SettingValues.fabType = t
                 self.setupFab(self.view.bounds.size)
-            }
-            actionSheetController.addAction(saveActionButton)
+            })
         }
 
-        self.present(actionSheetController, animated: true, completion: nil)
+        actionSheetController.show(self)
     }
 
     var lastVersion = 0
@@ -787,25 +784,25 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         if single && !offline {
             let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
             sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let sortB = UIBarButtonItem.init(customView: sort)
 
             subb = UIButton.init(type: .custom)
-            subb.setImage(UIImage.init(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
+            subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
             subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
             subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let subbB = UIBarButtonItem.init(customView: subb)
 
             let info = UIButton.init(type: .custom)
-            info.setImage(UIImage.init(named: "info")?.toolbarIcon(), for: UIControl.State.normal)
+            info.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.toolbarIcon(), for: UIControl.State.normal)
             info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControl.Event.touchUpInside)
             info.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let infoB = UIBarButtonItem.init(customView: info)
 
             more = UIButton.init(type: .custom)
-            more.setImage(UIImage.init(named: "moreh")?.menuIcon(), for: UIControl.State.normal)
+            more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
             more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
@@ -897,7 +894,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
-            subb.setImage(UIImage.init(named: "addcircle")?.navIcon(), for: UIControl.State.normal)
+            subb.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "addcircle")?.navIcon(), for: UIControl.State.normal)
         } else {
             let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
             if AccountController.isLoggedIn {
@@ -905,7 +902,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
                     self.subChanged = true
                     BannerUtil.makeBanner(text: "Subscribed to r/\(self.sub)", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                    self.subb.setImage(UIImage.init(named: "subbed")?.navIcon(), for: UIControl.State.normal)
+                    self.subb.setImage(UIImage(sfString: SFSymbol.bookmarkFill, overrideString: "subbed")?.navIcon(), for: UIControl.State.normal)
                 })
                 alrController.addAction(somethingAction)
             }
@@ -914,7 +911,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 BannerUtil.makeBanner(text: "r/\(self.sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
-                self.subb.setImage(UIImage.init(named: "subbed")?.navIcon(), for: UIControl.State.normal)
+                self.subb.setImage(UIImage(sfString: SFSymbol.bookmarkFill, overrideString: "subbed")?.navIcon(), for: UIControl.State.normal)
             })
             
             alrController.addAction(somethingAction)
@@ -1065,10 +1062,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
 
         if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
-            alert.addTextInput(title: "Search in \(sub)", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(named: "search")!, textRequired: true, exitOnAction: true)
+            alert.addTextInput(title: "Search in \(sub)", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
             alert.addAction(title: "Search all of Reddit", icon: nil, enabled: true, action: searchAllAction)
         } else {
-            alert.addTextInput(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(named: "search")!, textRequired: true, exitOnAction: true)
+            alert.addTextInput(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
         }
         
         alert.show(self)
@@ -1154,7 +1151,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     @objc func showSortMenu(_ selector: UIView?) {
         let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
 
-        let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         for link in LinkSortType.cases {
             actionSheetController.addAction(title: link.description, icon: sort == link ? selected : nil) {
@@ -1968,14 +1965,14 @@ extension SingleSubredditViewController {
 
         alertController.view.addSubview(MKColorPicker)
 
-        /*todo maybe ?alertController.addAction(image: UIImage.init(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
+        /*todo maybe ?alertController.addAction(image: UIImage(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
          if(!VCPresenter.proDialogShown(feature: false, self)){
          let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
          alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (c) in
          ColorUtil.setColorForSub(sub: self.sub, color: (self.navigationController?.navigationBar.barTintColor)!)
          self.reloadDataReset()
          self.navigationController?.navigationBar.barTintColor = c
-         UIApplication.shared.statusBarView?.backgroundColor = c
+         UIApplication.shared.statusBarUIView?.backgroundColor = c
          self.sideView.backgroundColor = c
          self.add.backgroundColor = c
          self.sideView.backgroundColor = c
@@ -2086,7 +2083,7 @@ extension SingleSubredditViewController {
         
         let special = !(sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/"))
         
-        alertController.addAction(title: "Search", icon: UIImage(named: "search")!.menuIcon()) {
+        alertController.addAction(title: "Search", icon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!.menuIcon()) {
             self.search()
         }
 
@@ -2096,37 +2093,37 @@ extension SingleSubredditViewController {
             }
         }
 
-        alertController.addAction(title: "Sort (currently \(sort.path))", icon:  UIImage(named: "filter")!.menuIcon()) {
+        alertController.addAction(title: "Sort (currently \(sort.path))", icon: UIImage(named: "filter")!.menuIcon()) {
             self.showSortMenu(self.more)
         }
 
         if sub.contains("/m/") {
-            alertController.addAction(title: "Manage multireddit", icon: UIImage(named: "info")!.menuIcon()) {
+            alertController.addAction(title: "Manage multireddit", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
                 self.displayMultiredditSidebar()
             }
         } else if !special {
-            alertController.addAction(title: "Show sidebar", icon: UIImage(named: "info")!.menuIcon()) {
+            alertController.addAction(title: "Show sidebar", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
                 self.doDisplaySidebar()
             }
         }
         
-        alertController.addAction(title: "Cache for offline viewing", icon: UIImage(named: "save-1")!.menuIcon()) {
+        alertController.addAction(title: "Cache for offline viewing", icon: UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")!.menuIcon()) {
             _ = AutoCache.init(baseController: self, subs: [self.sub])
         }
 
-        alertController.addAction(title: "Shadowbox", icon:  UIImage(named: "shadowbox")!.menuIcon()) {
+        alertController.addAction(title: "Shadowbox", icon: UIImage(named: "shadowbox")!.menuIcon()) {
             self.shadowboxMode()
         }
 
-        alertController.addAction(title: "Hide read posts", icon: UIImage(named: "hide")!.menuIcon()) {
+        alertController.addAction(title: "Hide read posts", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
             self.hideReadPosts()
         }
 
-        alertController.addAction(title: "Refresh posts", icon: UIImage(named: "sync")!.menuIcon()) {
+        alertController.addAction(title: "Refresh posts", icon: UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "sync")!.menuIcon()) {
             self.refresh()
         }
 
-        alertController.addAction(title: "Gallery view", icon: UIImage(named: "image")!.menuIcon()) {
+        alertController.addAction(title: "Gallery view", icon: UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")!.menuIcon()) {
             self.galleryMode()
         }
 
@@ -2140,7 +2137,7 @@ extension SingleSubredditViewController {
         }
 
         if !special {
-            alertController.addAction(title: "Submit new post", icon: UIImage(named: "edit")!.menuIcon()) {
+            alertController.addAction(title: "Submit new post", icon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()) {
                 self.newPost(sender)
             }
         }
@@ -2151,7 +2148,7 @@ extension SingleSubredditViewController {
             }
         }
 
-        alertController.addAction(title: "Add homescreen shortcut", icon: UIImage(named: "add_homescreen")!.menuIcon()) {
+        alertController.addAction(title: "Add homescreen shortcut", icon: UIImage(sfString: SFSymbol.plusSquareFill, overrideString: "add_homescreen")!.menuIcon()) {
             self.addToHomescreen()
         }
 
@@ -2804,7 +2801,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
         let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
-            $0.setImage(UIImage(named: "add")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
         }
@@ -2830,7 +2827,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
         let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
-            $0.setImage(UIImage(named: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {
@@ -2850,7 +2847,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
         let view = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
-            $0.setImage(UIImage(named: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {

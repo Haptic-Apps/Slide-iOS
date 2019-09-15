@@ -42,13 +42,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }
 
     var multiButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Create a Multireddit"
     }
 
     var editButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(named: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 24, bottom: 24, right: 16)
         $0.accessibilityLabel = "Edit your Subscriptions"
     }
@@ -1013,7 +1013,7 @@ class HorizontalSubredditGroup: UIView {
                 $0.heightAnchor == 50
                 $0.contentMode = .center
                 $0.widthAnchor == 50
-                $0.image = UIImage(named: "subs")!.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
+                $0.image = UIImage(sfString: .rCircleFill, overrideString: "subs")!.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
             }
             button.addSubview(dot)
             dot.centerXAnchor == button.centerXAnchor

@@ -27,19 +27,19 @@ class PostActions: NSObject {
     public static func showPostMenu(_ parent: UIViewController, sub: String) {
         let alertController = DragDownAlertMenu(title: "New submission", subtitle: "in r/" + sub, icon: nil)
         
-        alertController.addAction(title: "Image", icon: UIImage(named: "camera")!.menuIcon()) {
+        alertController.addAction(title: "Image", icon: UIImage(sfString: SFSymbol.cameraFill, overrideString: "camera")!.menuIcon()) {
             VCPresenter.showVC(viewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_IMAGE, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             }), popupIfPossible: true, parentNavigationController: nil, parentViewController: parent)
         }
         
-        alertController.addAction(title: "Link", icon: UIImage(named:"link")!.menuIcon()) {
+        alertController.addAction(title: "Link", icon: UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()) {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_LINK, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)
         }
         
-        alertController.addAction(title: "Selftext", icon: UIImage(named:"size")!.menuIcon()) {
+        alertController.addAction(title: "Selftext", icon: UIImage(sfString: SFSymbol.textbox, overrideString:"size")!.menuIcon()) {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)
@@ -85,7 +85,7 @@ class PostActions: NSObject {
         case .SUBSCRIBE:
             delegate.subscribe(link: cell.link!)
         case .SHARE_REDDIT:
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + link.permalink)!)], applicationActivities: nil)
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + (link.permalink.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed) ?? link.permalink))!)], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = cell.contentView
                 presenter.sourceRect = cell.contentView.bounds
@@ -161,7 +161,7 @@ class PostActions: NSObject {
         //todo remove with reason, new icons
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())
         
-        alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(named: "reports")!.menuIcon()) {
+        alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
             var reports = ""
             for report in cell.link!.reports {
                 reports += report + "\n"
@@ -178,47 +178,47 @@ class PostActions: NSObject {
         }
         
         if cell.link!.approved {
-            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(named: "approve")!.menuIcon(), enabled: false) {
+            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon(), enabled: false) {
             }
         } else {
-            alertController.addAction(title: "Approve", icon: UIImage(named: "approve")!.menuIcon()) {
+            alertController.addAction(title: "Approve", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon()) {
                 self.modApprove(cell)
             }
         }
         
         if cell.link!.removed {
-            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(named: "close")!.menuIcon(), enabled: false) {
+            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon(), enabled: false) {
             }
         } else {
-            alertController.addAction(title: "Remove", icon: UIImage(named: "close")!.menuIcon()) {
+            alertController.addAction(title: "Remove", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon()) {
                 self.modRemove(cell)
             }
         }
 
-        alertController.addAction(title: "Ban u/\(cell.link!.author)", icon: UIImage(named: "ban")!.menuIcon()) {
+        alertController.addAction(title: "Ban u/\(cell.link!.author)", icon: UIImage(sfString: SFSymbol.hammerFill, overrideString: "ban")!.menuIcon()) {
             self.modBan(cell)
         }
 
-        alertController.addAction(title: "Set flair", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon()) {
             cell.flairSelf()
         }
 
         if !cell.link!.nsfw {
-            alertController.addAction(title: "Mark as NSFW", icon: UIImage(named: "hide")!.menuIcon()) {
+            alertController.addAction(title: "Mark as NSFW", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 self.modNSFW(cell, true)
             }
         } else {
-            alertController.addAction(title: "Unmark as NSFW", icon: UIImage(named: "hide")!.menuIcon()) {
+            alertController.addAction(title: "Unmark as NSFW", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 self.modNSFW(cell, false)
             }
         }
         
         if !cell.link!.spoiler {
-            alertController.addAction(title: "Mark as spoiler", icon: UIImage(named: "reports")!.menuIcon()) {
+            alertController.addAction(title: "Mark as spoiler", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
                 self.modSpoiler(cell, true)
             }
         } else {
-            alertController.addAction(title: "Unmark as spoiler", icon: UIImage(named: "reports")!.menuIcon()) {
+            alertController.addAction(title: "Unmark as spoiler", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
                 self.modSpoiler(cell, false)
             }
         }
@@ -234,26 +234,26 @@ class PostActions: NSObject {
         }
         
         if cell.link!.author == AccountController.currentName {
-            alertController.addAction(title: "Distinguish", icon: UIImage(named: "save")!.menuIcon()) {
+            alertController.addAction(title: "Distinguish", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()) {
                 self.modDistinguish(cell)
             }
         }
         
         if cell.link!.stickied {
-            alertController.addAction(title: "Un-sticky post", icon: UIImage(named: "flag")!.menuIcon()) {
+            alertController.addAction(title: "Un-sticky post", icon: UIImage(sfString: SFSymbol.pinSlashFill, overrideString: "flag")!.menuIcon()) {
                 self.modSticky(cell, sticky: false)
             }
         } else {
-            alertController.addAction(title: "Sticky post", icon: UIImage(named: "flag")!.menuIcon()) {
+            alertController.addAction(title: "Sticky post", icon: UIImage(sfString: SFSymbol.pinFill, overrideString: "flag")!.menuIcon()) {
                 self.modSticky(cell, sticky: true)
             }
         }
         
-        alertController.addAction(title: "Mark as spam", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Mark as spam", icon: UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")!.menuIcon()) {
             self.modRemove(cell, spam: true)
         }
 
-        alertController.addAction(title: "u/\(cell.link!.author)'s profile", icon: UIImage(named: "profile")!.menuIcon()) {
+        alertController.addAction(title: "u/\(cell.link!.author)'s profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: cell.link!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
         }
@@ -596,7 +596,7 @@ class PostActions: NSObject {
                 textField.becomeFirstResponder()
                 textField.textColor = ColorUtil.theme.fontColor
                 textField.attributedPlaceholder = NSAttributedString(string: "Reason (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage.init(named: "flag"), color: ColorUtil.theme.fontColor)
+                textField.left(image: UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")?.menuIcon(), color: ColorUtil.theme.fontColor)
                 textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
                 textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.leftViewPadding = 12

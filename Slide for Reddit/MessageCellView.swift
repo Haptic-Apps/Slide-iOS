@@ -27,19 +27,19 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         }
         
-        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
         }
         
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
@@ -177,16 +177,16 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             }
             let alertController = DragDownAlertMenu(title: "Message from u/\(self.message!.author)", subtitle: self.message!.subject, icon: nil)
 
-            alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", icon: UIImage(named: "profile")!.menuIcon()) {
+            alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: self.message!.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
                 let prof = ProfileViewController.init(name: self.message!.author)
                 VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
             }
 
-            alertController.addAction(title: "Reply to message", icon: UIImage(named: "reply")!.menuIcon()) {
+            alertController.addAction(title: "Reply to message", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
                 self.doReply()
             }
 
-            alertController.addAction(title: ActionStates.isRead(s: self.message!) ? "Mark as unread" : "Mark as read", icon: UIImage(named: "seen")!.menuIcon()) {
+            alertController.addAction(title: ActionStates.isRead(s: self.message!) ? "Mark as unread" : "Mark as read", icon: ActionStates.isRead(s: self.message!) ? UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "seen")!.menuIcon() : UIImage(sfString: SFSymbol.eyeFill, overrideString: "seen")!.menuIcon()) {
                 if ActionStates.isRead(s: self.message!) {
                     let session = (UIApplication.shared.delegate as! AppDelegate).session
                     do {
@@ -220,7 +220,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             }
 
             if self.message!.wasComment {
-                alertController.addAction(title: "View comment thread", icon: UIImage(named: "comments")!.menuIcon()) {
+                alertController.addAction(title: "View comment thread", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
                     let url = "https://www.reddit.com\(self.message!.context)"
                     VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }

@@ -27,7 +27,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let count = ReadLater.readLaterIDs.count
         if count > 0 {
             let readLater = UIButton.init(type: .custom)
-            readLater.setImage(UIImage.init(named: "bin")?.navIcon(), for: UIControl.State.normal)
+            readLater.setImage(UIImage(named: "bin")?.navIcon(), for: UIControl.State.normal)
             readLater.addTarget(self, action: #selector(self.showReadLater(_:)), for: UIControl.Event.touchUpInside)
             
             readLaterBadge?.removeFromSuperview()
@@ -110,16 +110,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 self.dataSource = nil
             }
         } else if MainViewController.needsReTheme {
-            (viewControllers?[0] as? SingleSubredditViewController)?.reTheme()
-            tabBar.removeFromSuperview()
-            if SettingValues.subredditBar {
-                setupTabBar(finalSubs)
-            }
-            setupBaseBarColors()
-            menuNav?.setColors("")
-            toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
-            self.doButtons()
-            MainViewController.needsReTheme = false
+            doRetheme()
         }
         didUpdate()
     }
@@ -129,7 +120,32 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         setupTabBar(finalSubs)
     }
     
-    public func viewWillAppearActions() {
+    func doRetheme() {
+        (viewControllers?[0] as? SingleSubredditViewController)?.reTheme()
+        tabBar.removeFromSuperview()
+        if SettingValues.subredditBar {
+            setupTabBar(finalSubs)
+        }
+        setupBaseBarColors()
+        menuNav?.setColors("")
+        toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        self.doButtons()
+        MainViewController.needsReTheme = false
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if #available(iOS 13.0, *) {
+            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                if themeChanged {
+                    viewWillAppearActions(override: true)
+                }
+            }
+        }
+    }
+
+    public func viewWillAppearActions(override: Bool = false) {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
@@ -137,7 +153,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         let shouldBeNight = ColorUtil.shouldBeNight()
-        if SubredditReorderViewController.changed || (shouldBeNight && ColorUtil.theme.title != SettingValues.nightTheme) || (!shouldBeNight && ColorUtil.theme.title != ColorUtil.defaultTheme) {
+        if SubredditReorderViewController.changed || (shouldBeNight && ColorUtil.theme.title != SettingValues.nightTheme) || (!shouldBeNight && ColorUtil.theme.title != UserDefaults.standard.string(forKey: "theme") ?? "light") {
             var subChanged = false
             if finalSubs.count != Subscriptions.subreddits.count {
                 subChanged = true
@@ -153,6 +169,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             if ColorUtil.doInit() {
                 SingleSubredditViewController.cellVersion += 1
                 MainViewController.needsReTheme = true
+                if override {
+                    doRetheme()
+                }
             }
             
             if subChanged || SubredditReorderViewController.changed {
@@ -870,7 +889,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.automaticallyAdjustsScrollViewInsets = false
         
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         if SettingValues.subredditBar {
@@ -930,13 +949,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             return
         }
         let sort = ExpandedHitButton(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         sortB = UIBarButtonItem.init(customView: sort)
 
         let account = ExpandedHitButton(type: .custom)
-        account.setImage(UIImage(named: "profile")?.navIcon(), for: UIControl.State.normal)
+        account.setImage(UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon(), for: UIControl.State.normal)
         account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
         account.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         accountB = UIBarButtonItem(customView: account)
@@ -945,13 +964,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         accountB.accessibilityHint = "Open account page"
         
         let settings = ExpandedHitButton(type: .custom)
-        settings.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControl.State.normal)
+        settings.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
         //todo this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         settings.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let settingsB = UIBarButtonItem.init(customView: settings)
         
         let offline = ExpandedHitButton(type: .custom)
-        offline.setImage(UIImage.init(named: "offline")?.toolbarIcon(), for: UIControl.State.normal)
+        offline.setImage(UIImage(sfString: SFSymbol.wifiSlash, overrideString: "offline")?.toolbarIcon(), for: UIControl.State.normal)
         offline.addTarget(self, action: #selector(self.restartVC), for: UIControl.Event.touchUpInside)
         offline.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let offlineB = UIBarButtonItem.init(customView: offline)
@@ -965,7 +984,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         if !MainViewController.isOffline {
             more = UIButton(type: .custom).then {
-                $0.setImage(UIImage.init(named: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
+                $0.setImage(UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
                 $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
 
                 $0.accessibilityIdentifier = "Subreddit options button"
@@ -976,7 +995,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             more.sizeAnchors == .square(size: 56)
             
             menu = UIButton(type: .custom).then {
-                $0.setImage(UIImage.init(named: "search")?.toolbarIcon(), for: UIControl.State.normal)
+                $0.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
                 $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
                 $0.accessibilityIdentifier = "Nav drawer button"
                 $0.accessibilityLabel = "Navigate"
@@ -1061,7 +1080,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+        UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         
         menuNav?.view.isHidden = true
     }

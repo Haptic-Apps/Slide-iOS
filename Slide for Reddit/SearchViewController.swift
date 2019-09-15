@@ -28,19 +28,19 @@ class SearchViewController: ContentListingViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControl.State.normal)
+        edit.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.navIcon(), for: UIControl.State.normal)
         edit.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
         let time = UIButton.init(type: .custom)
-        time.setImage(UIImage.init(named: "restore")?.navIcon(), for: UIControl.State.normal)
+        time.setImage(UIImage(sfString: SFSymbol.clockFill, overrideString: "restore")?.navIcon(), for: UIControl.State.normal)
         time.addTarget(self, action: #selector(self.time(_:)), for: UIControl.Event.touchUpInside)
         time.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         timeB = UIBarButtonItem.init(customView: time)
 
         let filter = UIButton.init(type: .custom)
-        filter.setImage(UIImage.init(named: "filter")?.navIcon(), for: UIControl.State.normal)
+        filter.setImage(UIImage(named: "filter")?.navIcon(), for: UIControl.State.normal)
         filter.addTarget(self, action: #selector(self.filter(_:)), for: UIControl.Event.touchUpInside)
         filter.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         filterB = UIBarButtonItem.init(customView: filter)
@@ -54,7 +54,7 @@ class SearchViewController: ContentListingViewController {
     @objc func time(_ sender: UIView) {
         let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
         
-        let selected = UIImage(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
         for t in SearchTimePeriod.cases {
             actionSheetController.addAction(title: t.path.firstUppercased, icon: (baseData as! SearchContributionLoader).time == t ? selected : nil) {
@@ -69,7 +69,7 @@ class SearchViewController: ContentListingViewController {
     @objc func filter(_ sender: UIView) {
         let actionSheetController = DragDownAlertMenu(title: "Select a sorting type", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
         
-        let selected = UIImage(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
         
         for t in SearchSortBy.cases {
             actionSheetController.addAction(title: t.path.firstUppercased, icon: (baseData as! SearchContributionLoader).sorting == t ? selected : nil) {
@@ -86,7 +86,7 @@ class SearchViewController: ContentListingViewController {
     @objc func edit(_ sender: AnyObject) {
         let alert = DragDownAlertMenu(title: "Edit search", subtitle: self.search, icon: nil)
         
-        alert.addTextInput(title: "Search again", icon: UIImage(named: "search")?.menuIcon(), action: {
+        alert.addTextInput(title: "Search again", icon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), action: {
             let text = alert.getText() ?? ""
             self.search = text
             if let base = self.baseData as? SearchContributionLoader {
@@ -101,7 +101,7 @@ class SearchViewController: ContentListingViewController {
                 base.getData(reload: true)
                 self.navigationItem.titleView = self.setTitle(title: self.search, subtitle: "r/\(self.sub)")
             }
-        }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(named: "edit")!.menuIcon(), textRequired: true, exitOnAction: true)
+        }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon(), textRequired: true, exitOnAction: true)
         
         alert.show(self)
     }

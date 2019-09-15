@@ -35,7 +35,7 @@ public class VCPresenter {
             let button = UIButtonWithContext.init(type: .custom)
             button.parentController = newParent
             button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
+            button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
 
@@ -67,7 +67,7 @@ public class VCPresenter {
             button.accessibilityTraits = UIAccessibilityTraits.button
             button.parentController = parentNavigationController!
             button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage.init(named: "back")!.navIcon(), for: UIControl.State.normal)
+            button.setImage(UIImage(sfString: SFSymbol.arrowLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleBackButton(controller:)), for: .touchUpInside)
 
@@ -99,7 +99,7 @@ public class VCPresenter {
         button.parentController = newParent
         button.contextController = parentViewController
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
         
@@ -150,7 +150,7 @@ public class VCPresenter {
         button.parentController = newParent
         button.contextController = parentViewController
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage.init(named: "close")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
         

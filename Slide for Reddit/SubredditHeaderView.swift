@@ -39,7 +39,7 @@ class SubredditHeaderView: UIView {
                     DispatchQueue.main.async {
                         let sheet = DragDownAlertMenu(title: "Moderators", subtitle: "r/\(self.subreddit!.displayName)", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: false)
 
-                        sheet.addAction(title: "Message r/\(self.subreddit!.displayName) moderators", icon: UIImage(named: "mod")?.menuIcon(), action: {
+                        sheet.addAction(title: "Message r/\(self.subreddit!.displayName) moderators", icon: UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.menuIcon(), action: {
                             VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=/r/\(self.subreddit!.displayName)", self.parentController?.navigationController, self.parentController)
                         })
 
@@ -85,7 +85,7 @@ class SubredditHeaderView: UIView {
         self.submit.accessoryType = .none
         self.submit.backgroundColor = ColorUtil.theme.foregroundColor
         self.submit.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.submit.imageView?.image = UIImage.init(named: "edit")?.menuIcon()
+        self.submit.imageView?.image = UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon()
         self.submit.imageView?.tintColor = ColorUtil.theme.fontColor
         self.submit.layer.cornerRadius = 5
         self.submit.clipsToBounds = true
@@ -94,7 +94,7 @@ class SubredditHeaderView: UIView {
         self.sorting.accessoryType = .none
         self.sorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.sorting.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.sorting.imageView?.image = UIImage.init(named: "ic_sort_white")?.menuIcon()
+        self.sorting.imageView?.image = UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.menuIcon()
         self.sorting.imageView?.tintColor = ColorUtil.theme.fontColor
         self.sorting.layer.cornerRadius = 5
         self.sorting.clipsToBounds = true
@@ -103,7 +103,7 @@ class SubredditHeaderView: UIView {
         self.mods.accessoryType = .none
         self.mods.backgroundColor = ColorUtil.theme.foregroundColor
         self.mods.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.mods.imageView?.image = UIImage.init(named: "mod")?.menuIcon()
+        self.mods.imageView?.image = UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.menuIcon()
         self.mods.imageView?.tintColor = ColorUtil.theme.fontColor
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
@@ -111,7 +111,7 @@ class SubredditHeaderView: UIView {
         self.flair.accessoryType = .none
         self.flair.backgroundColor = ColorUtil.theme.foregroundColor
         self.flair.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.flair.imageView?.image = UIImage.init(named: "flag")?.menuIcon()
+        self.flair.imageView?.image = UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")?.menuIcon()
         self.flair.imageView?.tintColor = ColorUtil.theme.fontColor
         self.flair.layer.cornerRadius = 5
         self.flair.clipsToBounds = true
@@ -193,9 +193,9 @@ class SubredditHeaderView: UIView {
         if flair.editable {
             let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "\(flair.name)", icon: nil)
             
-            alert.addTextInput(title: "Set flair", icon: UIImage(named: "save-1")?.menuIcon(), action: {
+            alert.addTextInput(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "save-1")?.menuIcon(), action: {
                 self.submitFlairChange(flair, text: alert.getText() ?? "")
-            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
             
             alert.show(parentController)
         } else {
@@ -227,7 +227,7 @@ class SubredditHeaderView: UIView {
     @objc func sort(_ selector: UITableViewCell) {
         let actionSheetController = DragDownAlertMenu(title: "Default sorting for r/\(self.subreddit!.displayName)", subtitle: "Overrides the default in Settings > General", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 
-        let selected = UIImage.init(named: "selected")!.menuIcon()
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
         for link in LinkSortType.cases {
             actionSheetController.addAction(title: link.description, icon: SettingValues.getLinkSorting(forSubreddit: self.subreddit!.displayName) == link ? selected : nil) {
@@ -247,7 +247,7 @@ class SubredditHeaderView: UIView {
         } else {
             let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 
-            let selected = UIImage.init(named: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: SettingValues.getTimePeriod(forSubreddit: self.subreddit!.displayName) == t ? selected : nil) {
@@ -373,19 +373,19 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self
             self.parentController?.present(activityViewController, animated: true, completion: nil)
         }
         
-        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentController)
         }
         
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {

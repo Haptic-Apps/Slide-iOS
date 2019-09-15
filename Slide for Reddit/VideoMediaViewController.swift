@@ -95,7 +95,11 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         view.addSubview(volume)
         volume.delegate = self
         
-        if !((parent?.parent) is ShadowboxLinkViewController) {
+        var is13 = false
+        if #available(iOS 13, *) {
+            is13 = true
+        }
+        if !((parent?.parent) is ShadowboxLinkViewController) && !is13 {
             NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
     }
@@ -195,7 +199,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         view.addSubview(scrubber)
         scrubber.delegate = self
 
-        rewindImageView = UIImageView(image: UIImage(named: "rewind")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
+        rewindImageView = UIImageView(image: UIImage(sfString: SFSymbol.backwardEndFill, overrideString: "rewind")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
             $0.alpha = 0
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             $0.layer.cornerRadius = 20
@@ -203,7 +207,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
         view.addSubview(rewindImageView)
 
-        fastForwardImageView = UIImageView(image: UIImage(named: "fast_forward")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
+        fastForwardImageView = UIImageView(image: UIImage(sfString: SFSymbol.forwardEndFill, overrideString: "fast_forward")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
             $0.alpha = 0
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             $0.layer.cornerRadius = 20
@@ -222,27 +226,27 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         if data.buttons {
             menuButton = UIButton().then {
                 $0.accessibilityIdentifier = "More Button"
-                $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.navIcon(true), for: [])
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
             
             downloadButton = UIButton().then {
                 $0.accessibilityIdentifier = "Download Button"
-                $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.navIcon(true), for: [])
                 $0.isHidden = true // The button will be unhidden once the content has loaded.
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
             
             upvoteButton = UIButton().then {
                 $0.accessibilityIdentifier = "Upvote Button"
-                $0.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
                 $0.isHidden = upvoteCallback == nil // The button will be unhidden once the content has loaded.
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
 
             muteButton = UIButton().then {
                 $0.accessibilityIdentifier = "Un-mute video"
-                $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
                 $0.isHidden = true // The button will be unhidden once the content has loaded.
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
@@ -256,14 +260,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             
             goToCommentsButton = UIButton().then {
                 $0.accessibilityIdentifier = "Go to Comments Button"
-                $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")?.navIcon(true), for: [])
                 $0.isHidden = commentCallback == nil
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
             
             showTitleButton = UIButton().then {
                 $0.accessibilityIdentifier = "Show Title Button"
-                $0.setImage(UIImage(named: "size")?.navIcon(true), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.textbox, overrideString: "size")?.navIcon(true), for: [])
                 $0.isHidden = !(data.text != nil && !(data.text!.isEmpty))
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
@@ -1094,12 +1098,12 @@ extension VideoMediaViewController {
         
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "nav")!.menuIcon()) {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
                 open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
             }
         }
         
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
@@ -1107,7 +1111,7 @@ extension VideoMediaViewController {
             }
         }
         
-        alertController.addAction(title: "Share video URL", icon: UIImage(named: "reply")!.menuIcon()) {
+        alertController.addAction(title: "Share video URL", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
             let shareItems: Array = [baseURL]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
@@ -1123,7 +1127,7 @@ extension VideoMediaViewController {
         }
         
         if !isYoutubeView {
-            alertController.addAction(title: "Share Video", icon: UIImage(named: "play")!.menuIcon()) {
+            alertController.addAction(title: "Share Video", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "play")!.menuIcon()) {
                 self.shareVideo(baseURL, sender: sender)
             }
         }

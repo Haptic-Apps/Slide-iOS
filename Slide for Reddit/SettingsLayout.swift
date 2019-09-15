@@ -241,35 +241,35 @@ class SettingsLayout: BubbleSettingTableViewController {
         
         switch SettingValues.postViewMode {
         case .CARD:
-            cardModeCell.imageView?.image = UIImage.init(named: "card")?.toolbarIcon()
+            cardModeCell.imageView?.image = UIImage(named: "card")?.toolbarIcon()
         case .CENTER:
-            cardModeCell.imageView?.image = UIImage.init(named: "centeredimage")?.toolbarIcon()
+            cardModeCell.imageView?.image = UIImage(named: "centeredimage")?.toolbarIcon()
         case .COMPACT:
-            cardModeCell.imageView?.image = UIImage.init(named: "compact")?.toolbarIcon()
+            cardModeCell.imageView?.image = UIImage(named: "compact")?.toolbarIcon()
         case .LIST:
-            cardModeCell.imageView?.image = UIImage.init(named: "list")?.toolbarIcon()
+            cardModeCell.imageView?.image = UIImage(named: "list")?.toolbarIcon()
         }
         
         switch SettingValues.postImageMode {
         case .CROPPED_IMAGE:
-            imageCell.imageView?.image = UIImage.init(named: "crop")?.toolbarIcon()
+            imageCell.imageView?.image = UIImage(named: "crop")?.toolbarIcon()
         case .FULL_IMAGE:
-            imageCell.imageView?.image = UIImage.init(named: "full")?.toolbarIcon()
+            imageCell.imageView?.image = UIImage(named: "full")?.toolbarIcon()
         case .THUMBNAIL:
-            imageCell.imageView?.image = UIImage.init(named: "thumb")?.toolbarIcon()
+            imageCell.imageView?.image = UIImage(named: "thumb")?.toolbarIcon()
         }
         
         switch SettingValues.actionBarMode {
         case .FULL:
-            actionBarCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")?.toolbarIcon()
         case .FULL_LEFT:
-            actionBarCell.imageView?.image = UIImage.init(named: "code")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")?.toolbarIcon()
         case .NONE:
-            actionBarCell.imageView?.image = UIImage.init(named: "hide")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(sfString: SFSymbol.xmark, overrideString: "hide")?.toolbarIcon()
         case .SIDE:
-            actionBarCell.imageView?.image = UIImage.init(named: "up")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")?.toolbarIcon()
         case .SIDE_RIGHT:
-            actionBarCell.imageView?.image = UIImage.init(named: "down")?.toolbarIcon()
+            actionBarCell.imageView?.image = UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")?.toolbarIcon()
         }
     }
     
@@ -368,7 +368,7 @@ class SettingsLayout: BubbleSettingTableViewController {
             let alertController = DragDownAlertMenu(title: "Button bar mode", subtitle: "Sets the layout for the submission buttons", icon: nil)
             
 
-            alertController.addAction(title: "Full-sized button bar", icon: UIImage(named: "code")!.menuIcon()) {
+            alertController.addAction(title: "Full-sized button bar", icon: UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")!.menuIcon()) {
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL
                 UserDefaults.standard.synchronize()
@@ -380,7 +380,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Left-aligned full-sized button bar", icon: UIImage(named: "code")!.menuIcon()) {
+            alertController.addAction(title: "Left-aligned full-sized button bar", icon: UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")!.menuIcon()) {
                 UserDefaults.standard.set("left", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL_LEFT
                 UserDefaults.standard.synchronize()
@@ -392,7 +392,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Left-side vote buttons", icon: UIImage(named: "up")!.menuIcon()) {
+            alertController.addAction(title: "Left-side vote buttons", icon: UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")!.menuIcon()) {
                 UserDefaults.standard.set("side", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE
                 UserDefaults.standard.synchronize()
@@ -404,7 +404,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Right-side vote buttons", icon:  UIImage(named: "down")!.menuIcon()) {
+            alertController.addAction(title: "Right-side vote buttons", icon:  UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()) {
                 UserDefaults.standard.set("right", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE_RIGHT
                 UserDefaults.standard.synchronize()
@@ -417,7 +417,7 @@ class SettingsLayout: BubbleSettingTableViewController {
 
             }
 
-            alertController.addAction(title: "Hide button bar", icon: UIImage(named: "hide")!.menuIcon()) {
+            alertController.addAction(title: "Hide button bar", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 UserDefaults.standard.set("none", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .NONE
                 UserDefaults.standard.synchronize()

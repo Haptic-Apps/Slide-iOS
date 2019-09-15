@@ -52,13 +52,13 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         navigationController?.setNavigationBarHidden(false, animated: true)
         setupBaseBarColors()
         let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage.init(named: "edit")?.navIcon(), for: UIControl.State.normal)
+        edit.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.navIcon(), for: UIControl.State.normal)
         edit.addTarget(self, action: #selector(self.new(_:)), for: UIControl.Event.touchUpInside)
         edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
         let read = UIButton.init(type: .custom)
-        read.setImage(UIImage.init(named: "seen")?.navIcon(), for: UIControl.State.normal)
+        read.setImage(UIImage(sfString: .eyeFill, overrideString: "seen")?.navIcon(), for: UIControl.State.normal)
         read.addTarget(self, action: #selector(self.read(_:)), for: UIControl.Event.touchUpInside)
         read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)
@@ -135,7 +135,11 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         self.extendedLayoutIncludesOpaqueBars = true
         self.automaticallyAdjustsScrollViewInsets = false
 
-        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + UIApplication.shared.statusBarFrame.height
+        var isModal13 = false
+        if #available(iOS 13, *), (self.navigationController?.viewControllers[0] == self) {
+            isModal13 = true
+        }
+        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
 
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.sizeToFit()

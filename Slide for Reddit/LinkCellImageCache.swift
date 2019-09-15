@@ -49,45 +49,45 @@ public class LinkCellImageCache {
 
     // TODO: Call this whenever the theme changes.
     public static func initialize() {        
-        upvote = UIImage(named: "upvote")!.menuIcon()
+        upvote = UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.menuIcon()
         upvoteTinted = upvote.getCopy(withColor: ColorUtil.upvoteColor)
 
-        downvote = UIImage(named: "downvote")!.menuIcon()
+        downvote = UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")!.menuIcon()
         downvoteTinted = downvote.getCopy(withColor: ColorUtil.downvoteColor)
 
-        save = UIImage(named: "save")!.menuIcon()
+        save = UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()
         saveTinted = save.getCopy(withColor: ColorUtil.upvoteColor)
 
-        share = UIImage(named: "send")!.menuIcon()
+        share = UIImage(sfString: SFSymbol.paperplaneFill, overrideString: "send")!.menuIcon()
 
-        upvoteSmall = UIImage(named: "up")!.menuIcon()
+        upvoteSmall = UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")!.menuIcon()
         upvoteTintedSmall = upvoteSmall.getCopy(withColor: ColorUtil.upvoteColor)
         
-        downvoteSmall = UIImage(named: "down")!.menuIcon()
+        downvoteSmall = UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()
         downvoteTintedSmall = downvoteSmall.getCopy(withColor: ColorUtil.downvoteColor)
 
-        votesIcon = UIImage(named: "upvote")!.smallIcon()
-        commentsIcon = UIImage(named: "comments")!.smallIcon()
-        menu = UIImage(named: "ic_more_vert_white")!.menuIcon()
+        votesIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.smallIcon()
+        commentsIcon = UIImage(sfString: SFSymbol.bubbleRightFill, overrideString: "comments")!.smallIcon()
+        menu = UIImage(sfString: SFSymbol.ellipsis, overrideString: "ic_more_vert_white")!.menuIcon()
 
-        reply = UIImage(named: "reply")!.menuIcon()
-        hide = UIImage(named: "hide")!.menuIcon()
-        edit = UIImage(named: "edit")!.menuIcon()
+        reply = UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()
+        hide = UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()
+        edit = UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()
 
-        mod = UIImage(named: "mod")!.menuIcon()
+        mod = UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")!.menuIcon()
         modTinted = mod.getCopy(withColor: GMColor.red500Color())
 
-        readLater = UIImage(named: "readLater")!.menuIcon()
+        readLater = UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
         readLaterTinted = readLater.getCopy(withColor: GMColor.green500Color())
         
         var topColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.9))
         var nextColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.8))
 
         web = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        web = web.overlayWith(image: UIImage(named: "nav")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))
+        web = web.overlayWith(image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), posX: (75 / 2), posY: (75 / 2))
 
         spoiler = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        spoiler = spoiler.overlayWith(image: UIImage(named: "reports")!.getCopy(withSize: CGSize.square(size: 75), withColor: UIColor.white), posX: (75 / 2), posY: (75 / 2))
+        spoiler = spoiler.overlayWith(image: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.getCopy(withSize: CGSize.square(size: 75), withColor: UIColor.white), posX: (75 / 2), posY: (75 / 2))
 
         reddit = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         reddit = reddit.overlayWith(image: UIImage(named: "reddit")!.getCopy(withSize: CGSize.init(width: 90, height: 75)), posX: 30, posY: (75 / 2))
@@ -96,7 +96,7 @@ public class LinkCellImageCache {
         nextColor = GMColor.red600Color()
         
         nsfw = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        nsfw = nsfw.overlayWith(image: UIImage(named: "hide")!.getCopy(withSize: CGSize.square(size: 75)), posX: (75 / 2), posY: (75 / 2))
+        nsfw = nsfw.overlayWith(image: UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), posX: (75 / 2), posY: (75 / 2))
 
     }
 

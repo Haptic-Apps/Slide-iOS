@@ -638,38 +638,38 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func showCommentMenu(_ animate: Bool = true) {
         upvoteButton = UIButton.init(type: .custom).then({
             if ActionStates.getVoteDirection(s: comment!) == .up {
-                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).getCopy(withColor: ColorUtil.upvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.upvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage.init(named: "upvote")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControl.Event.touchUpInside)
         })
         downvoteButton = UIButton.init(type: .custom).then({
             if ActionStates.getVoteDirection(s: comment!) == .down {
-                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true).getCopy(withColor: ColorUtil.downvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.downvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage.init(named: "downvote")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControl.Event.touchUpInside)
         })
         replyButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "reply")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControl.Event.touchUpInside)
         })
         moreButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "ic_more_vert_white")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "ic_more_vert_white")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControl.Event.touchUpInside)
         })
         editButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "edit")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         })
         deleteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "delete")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControl.Event.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage.init(named: "mod")?.navIcon(true).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControl.Event.touchUpInside)
         })
         
@@ -1206,12 +1206,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let alertController = DragDownAlertMenu(title: "Comment by u/\(comment!.author)", subtitle: comment!.body, icon: nil)
 
-        alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", icon: UIImage(named: "profile")!.menuIcon()) {
+        alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: par.navigationController, parentViewController: par)
         }
 
-        alertController.addAction(title: "Share comment permalink", icon: UIImage(named: "link")!.menuIcon()) {
+        alertController.addAction(title: "Share comment permalink", icon: UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()) {
             let activityViewController = UIActivityViewController(activityItems: [URL(string: self.comment!.permalink + "?context=5")], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = self.moreButton
@@ -1221,24 +1221,24 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         if AccountController.isLoggedIn {
-            alertController.addAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(named: "save")!.menuIcon()) {
+            alertController.addAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()) {
                 par.saveComment(self.comment!)
             }
         }
         
-        alertController.addAction(title: "Report comment", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Report comment", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon()) {
             PostActions.report(self.comment!, parent: par, index: -1, delegate: nil)
         }
 
-        alertController.addAction(title: "Tag u/\(comment!.author)", icon: UIImage(named: "subs")!.menuIcon()) {
+        alertController.addAction(title: "Tag u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon()) {
             par.tagUser(name: self.comment!.author)
         }
         
-        alertController.addAction(title: "Block u/\(comment!.author)", icon: UIImage(named: "hide")!.menuIcon()) {
+        alertController.addAction(title: "Block u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
             par.blockUser(name: self.comment!.author)
         }
         
-        alertController.addAction(title: "Copy text", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy text", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
             
             alert.setupTheme()
@@ -1278,7 +1278,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func mod(_ par: CommentViewController) {
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Comment by u/\(comment!.author)", icon: nil, themeColor: GMColor.lightGreen500Color())
 
-        alertController.addAction(title: "\(comment!.reports.count) reports", icon: UIImage(named: "reports")!.menuIcon()) {
+        alertController.addAction(title: "\(comment!.reports.count) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
             var reports = ""
             for report in self.comment!.reports {
                 reports += report + "\n"
@@ -1294,41 +1294,41 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.parent?.present(alert, animated: true, completion: nil)
         }
 
-        alertController.addAction(title: "Approve", icon: UIImage(named: "approve")!.menuIcon()) {
+        alertController.addAction(title: "Approve", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon()) {
             self.modApprove()
         }
 
-        alertController.addAction(title: "Ban u/\(comment!.author)", icon: UIImage(named: "ban")!.menuIcon()) {
+        alertController.addAction(title: "Ban u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.hammerFill, overrideString: "ban")!.menuIcon()) {
             //todo add ban!!!
         }
 
         if comment!.author == AccountController.currentName {
-            alertController.addAction(title: "Distinguish your comment", icon: UIImage(named: "save")!.menuIcon()) {
+            alertController.addAction(title: "Distinguish your comment", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()) {
                 self.modDistinguish()
             }
         }
 
         if comment!.author == AccountController.currentName && comment!.depth == 1 {
             if comment!.sticky {
-                alertController.addAction(title: "Un-pin comment", icon: UIImage(named: "flag")!.menuIcon()) {
+                alertController.addAction(title: "Un-pin comment", icon: UIImage(sfString: SFSymbol.pinSlashFill, overrideString: "flag")!.menuIcon()) {
                     self.modSticky(sticky: false)
                 }
             } else {
-                alertController.addAction(title: "Pin and Distinguish comment", icon: UIImage(named: "flag")!.menuIcon()) {
+                alertController.addAction(title: "Pin and Distinguish comment", icon: UIImage(sfString: SFSymbol.pinFill, overrideString: "flag")!.menuIcon()) {
                     self.modSticky(sticky: true)
                 }
             }
         }
 
-        alertController.addAction(title: "Remove comment", icon: UIImage(named: "close")!.menuIcon()) {
+        alertController.addAction(title: "Remove comment", icon: UIImage(sfString: SFSymbol.minusCircleFill, overrideString: "close")!.menuIcon()) {
             self.modRemove()
         }
         
-        alertController.addAction(title: "Remove as Spam", icon: UIImage(named: "flag")!.menuIcon()) {
+        alertController.addAction(title: "Remove as Spam", icon: UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")!.menuIcon()) {
             self.modRemove(true)
         }
         
-        alertController.addAction(title: "u/\(comment!.author)'s profile", icon: UIImage(named: "profile")!.menuIcon()) {
+        alertController.addAction(title: "u/\(comment!.author)'s profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nil, parentViewController: par)
         }
@@ -1916,19 +1916,19 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
-        alertController.addAction(title: "Share URL", icon: UIImage(named: "share")!.menuIcon()) {
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.contentView
             self.parent?.present(activityViewController, animated: true, completion: nil)
         }
         
-        alertController.addAction(title: "Copy URL", icon: UIImage(named: "copy")!.menuIcon()) {
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
             UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
             BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parent)
         }
         
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {

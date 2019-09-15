@@ -38,7 +38,7 @@ class ReadLaterViewController: ContentListingViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let doneall = UIButton.init(type: .custom)
-        doneall.setImage(UIImage.init(named: "doneall")?.navIcon(), for: UIControl.State.normal)
+        doneall.setImage(UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "doneall")?.navIcon(), for: UIControl.State.normal)
         doneall.addTarget(self, action: #selector(self.doneAll), for: UIControl.Event.touchUpInside)
         doneall.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let doneallB = UIBarButtonItem.init(customView: doneall)

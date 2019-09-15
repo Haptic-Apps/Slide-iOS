@@ -107,7 +107,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 }
                 
                 let image = UIImageView.init(frame: CGRect.init(x: 50, y: 50, width: 0, height: 0)).then {
-                    $0.image = UIImage(named: "down")?.getCopy(withSize: CGSize.square(size: 30), withColor: ColorUtil.theme.navIconColor)
+                    $0.image = UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")?.getCopy(withSize: CGSize.square(size: 30), withColor: ColorUtil.theme.navIconColor)
                     $0.contentMode = .center
                 }
                 jump.addSubview(image)
@@ -518,7 +518,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     func doHeadView(_ size: CGSize) {
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarView?.frame.size.height ?? 20)))
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
         if submission != nil {
             self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.foregroundColor)
         }
@@ -1067,13 +1067,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         tableView.tableHeaderView = savedHeaderView!
 
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sort)
 
         let search = UIButton.init(type: .custom)
-        search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControl.State.normal)
+        search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
         search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
@@ -1095,7 +1095,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if !offline {
             let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
 
-            let selected = UIImage.init(named: "selected")!.menuIcon()
+            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
             for c in CommentSort.cases {
                 actionSheetController.addAction(title: c.description, icon: sort == c ? selected : nil) {
@@ -1336,14 +1336,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if navigationController != nil {
             let sort = UIButton.init(type: .custom)
             sort.accessibilityLabel = "Change sort type"
-            sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
             sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
             sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             sortB = UIBarButtonItem.init(customView: sort)
             
             let search = UIButton.init(type: .custom)
             search.accessibilityLabel = "Search"
-            search.setImage(UIImage.init(named: "search")?.navIcon(), for: UIControl.State.normal)
+            search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
             search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
             search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             searchB = UIBarButtonItem.init(customView: search)
@@ -1465,29 +1465,29 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
             let alertController = DragDownAlertMenu(title: "Comment actions", subtitle: self.submission?.title ?? "", icon: self.submission?.thumbnailUrl)
 
-            alertController.addAction(title: "Refresh comments", icon: UIImage(named: "sync")!.menuIcon()) {
+            alertController.addAction(title: "Refresh comments", icon: UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "sync")!.menuIcon()) {
                 self.reset = true
                 self.refresh(self)
             }
 
-            alertController.addAction(title: "Reply to submission", icon: UIImage(named: "reply")!.menuIcon()) {
+            alertController.addAction(title: "Reply to submission", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
                 self.reply(self.headerCell)
             }
 
-            alertController.addAction(title: "Go to r/\(link.subreddit)", icon: UIImage(named: "subs")!.menuIcon()) {
+            alertController.addAction(title: "Go to r/\(link.subreddit)", icon: UIImage(sfString: .rCircleFill, overrideString: "subs")!.menuIcon()) {
                 VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
             }
 
-            alertController.addAction(title: "View related submissions", icon: UIImage(named: "size")!.menuIcon()) {
+            alertController.addAction(title: "View related submissions", icon: UIImage(sfString: SFSymbol.squareStackFill, overrideString: "size")!.menuIcon()) {
                 let related = RelatedViewController.init(thing: self.submission!)
                 VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }
 
-            alertController.addAction(title: "View r/\(link.subreddit)'s sidebar", icon: UIImage(named: "info")!.menuIcon()) {
+            alertController.addAction(title: "View r/\(link.subreddit)'s sidebar", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
                 Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
             }
 
-            alertController.addAction(title: allCollapsed ? "Expand child comments" : "Collapse child comments", icon: UIImage(named: "comments")!.menuIcon()) {
+            alertController.addAction(title: allCollapsed ? "Expand child comments" : "Collapse child comments", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
                 if self.allCollapsed {
                     self.expandAll()
                 } else {
@@ -1838,35 +1838,35 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         } else {
             let up = UIButton(type: .custom)
             up.accessibilityLabel = "Navigate up one comment thread"
-            up.setImage(UIImage(named: "up")?.toolbarIcon(), for: UIControl.State.normal)
+            up.setImage(UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up")?.toolbarIcon(), for: UIControl.State.normal)
             up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
             up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let upB = UIBarButtonItem(customView: up)
 
             let nav = UIButton(type: .custom)
             nav.accessibilityLabel = "Change criteria for comment thread navigation"
-            nav.setImage(UIImage(named: "nav")?.toolbarIcon(), for: UIControl.State.normal)
+            nav.setImage(UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")?.toolbarIcon(), for: UIControl.State.normal)
             nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
             nav.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let navB = UIBarButtonItem(customView: nav)
 
             let down = UIButton(type: .custom)
             down.accessibilityLabel = "Navigate down one comment thread"
-            down.setImage(UIImage(named: "down")?.toolbarIcon(), for: UIControl.State.normal)
+            down.setImage(UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down")?.toolbarIcon(), for: UIControl.State.normal)
             down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
             down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let downB = UIBarButtonItem(customView: down)
 
             let more = UIButton(type: .custom)
             more.accessibilityLabel = "Post options"
-            more.setImage(UIImage(named: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
+            more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)
             mod.accessibilityLabel = "Moderator options"
-            mod.setImage(UIImage(named: "mod")?.toolbarIcon(), for: UIControl.State.normal)
+            mod.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.toolbarIcon(), for: UIControl.State.normal)
             mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
             mod.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             modB = UIBarButtonItem(customView: mod)
@@ -1926,13 +1926,13 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func tagUser(name: String) {
         let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
-        alert.addTextInput(title: "Set tag", icon: UIImage(named: "save-1")?.menuIcon(), action: {
+        alert.addTextInput(title: "Set tag", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "save-1")?.menuIcon(), action: {
             ColorUtil.setTagForUser(name: name, tag: alert.getText() ?? "")
             self.tableView.reloadData()
-        }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name),inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+        }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)
 
         if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
-            alert.addAction(title: "Remove tag", icon: UIImage(named: "delete")?.menuIcon(), enabled: true) {
+            alert.addAction(title: "Remove tag", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.menuIcon(), enabled: true) {
                 ColorUtil.removeTagForUser(name: name)
                 self.tableView.reloadData()
             }
@@ -2393,7 +2393,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 //                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightRight, indexPath: indexPath)
 //                })
 //                action.backgroundColor = SettingValues.commentActionRightRight.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
+//                action.image = UIImage(named: SettingValues.commentActionRightRight.getPhoto())?.navIcon()
 //
 //                actions.append(action)
 //            }
@@ -2403,7 +2403,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 //                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionRightLeft, indexPath: indexPath)
 //                })
 //                action.backgroundColor = SettingValues.commentActionRightLeft.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
+//                action.image = UIImage(named: SettingValues.commentActionRightLeft.getPhoto())?.navIcon()
 //
 //                actions.append(action)
 //            }
@@ -2428,7 +2428,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 //                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftLeft, indexPath: indexPath)
 //                })
 //                action.backgroundColor = SettingValues.commentActionLeftLeft.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
+//                action.image = UIImage(named: SettingValues.commentActionLeftLeft.getPhoto())?.navIcon()
 //
 //                actions.append(action)
 //            }
@@ -2438,7 +2438,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 //                    self.doAction(cell: cell as! CommentDepthCell, action: SettingValues.commentActionLeftRight, indexPath: indexPath)
 //                })
 //                action.backgroundColor = SettingValues.commentActionLeftRight.getColor()
-//                action.image = UIImage.init(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
+//                action.image = UIImage(named: SettingValues.commentActionLeftRight.getPhoto())?.navIcon()
 //
 //                actions.append(action)
 //            }

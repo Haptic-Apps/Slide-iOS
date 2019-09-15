@@ -62,7 +62,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                 completion: nil)
         self.navItem?.title = "1/\(self.urlStringKeys.count)"
         let overview = UIButton.init(type: .custom)
-        overview.setImage(UIImage.init(named: "grid")?.navIcon(true), for: UIControl.State.normal)
+        overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
         overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
         overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let gridB = UIBarButtonItem.init(customView: overview)
@@ -156,7 +156,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                             completion: nil)
                     self.navItem?.title = "\(self.urlStringKeys.index(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
                     let overview = UIButton.init(type: .custom)
-                    overview.setImage(UIImage.init(named: "grid")?.navIcon(true), for: UIControl.State.normal)
+                    overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
                     overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
                     overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                     let gridB = UIBarButtonItem.init(customView: overview)
@@ -228,7 +228,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         self.navigationController?.view.backgroundColor = UIColor.clear
         
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 5 + (UIApplication.shared.statusBarView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 5 + (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true
@@ -237,7 +237,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: UIColor.white])
 
         let close = UIButton.init(type: .custom)
-        close.setImage(UIImage.init(named: "close")?.navIcon(true), for: UIControl.State.normal)
+        close.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: UIControl.State.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let closeB = UIBarButtonItem.init(customView: close)

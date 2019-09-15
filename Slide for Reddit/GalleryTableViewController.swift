@@ -27,7 +27,7 @@ class GalleryTableViewController: MediaTableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .black
+        UIApplication.shared.statusBarUIView?.backgroundColor = .black
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -52,7 +52,7 @@ class GalleryTableViewController: MediaTableViewController {
             blurView!.edgeAnchors == exit.edgeAnchors
             
             let image = UIImageView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
-                $0.image = UIImage(named: "close")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                $0.image = UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                 $0.contentMode = .center
             }
             exit.addSubview(image)
@@ -70,7 +70,7 @@ class GalleryTableViewController: MediaTableViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+        UIApplication.shared.statusBarUIView?.backgroundColor = .clear
     }
     
     override func viewWillDisappear(_ animated: Bool) {

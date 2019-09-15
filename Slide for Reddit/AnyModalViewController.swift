@@ -168,7 +168,14 @@ class AnyModalViewController: UIViewController {
         volume.animation = .slideDown
         view.addSubview(volume)
         
-        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+        var is13 = false
+        if #available(iOS 13, *) {
+            is13 = true
+        }
+
+        if !is13 {
+            NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+        }
         
         if urlToLoad != nil && self.embeddedPlayer == nil {
             let url = VideoMediaViewController.format(sS: urlToLoad!.absoluteString, true)
@@ -285,12 +292,12 @@ class AnyModalViewController: UIViewController {
         
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
-            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "nav")!.menuIcon()) {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
                 open.openInChrome(baseURL, callbackURL: nil, createNewTab: true)
             }
         }
         
-        alertController.addAction(title: "Open in default app", icon: UIImage(named: "nav")!.menuIcon()) {
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
@@ -298,7 +305,7 @@ class AnyModalViewController: UIViewController {
             }
         }
 
-        alertController.addAction(title: "Share video URL", icon: UIImage(named: "reply")!.menuIcon()) {
+        alertController.addAction(title: "Share video URL", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
             let shareItems: Array = [baseURL]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
@@ -313,7 +320,7 @@ class AnyModalViewController: UIViewController {
             }
         }
 
-        alertController.addAction(title: "Share Video", icon: UIImage(named: "play")!.menuIcon()) {
+        alertController.addAction(title: "Share Video", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "play")!.menuIcon()) {
             self.shareVideo(baseURL, sender: sender)
         }
 
@@ -366,8 +373,8 @@ class AnyModalViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        savedColor = UIApplication.shared.statusBarView?.backgroundColor
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+        savedColor = UIApplication.shared.statusBarUIView?.backgroundColor
+        UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         super.viewWillAppear(animated)
         if self.videoView.player == nil {
             if self.embeddedPlayer != nil {
@@ -397,9 +404,9 @@ class AnyModalViewController: UIViewController {
         super.viewWillDisappear(animated)
         timer?.invalidate()
         
-        UIApplication.shared.statusBarView?.isHidden = false
+        UIApplication.shared.statusBarUIView?.isHidden = false
         if savedColor != nil {
-            UIApplication.shared.statusBarView?.backgroundColor = savedColor
+            UIApplication.shared.statusBarUIView?.backgroundColor = savedColor
         }
         videoView.player?.play()
         
@@ -470,7 +477,7 @@ class AnyModalViewController: UIViewController {
         view.addSubview(scrubber)
         scrubber.delegate = self
 
-        rewindImageView = UIImageView(image: UIImage(named: "rewind")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
+        rewindImageView = UIImageView(image: UIImage(sfString: SFSymbol.backwardEndFill, overrideString: "rewind")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
             $0.alpha = 0
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             $0.layer.cornerRadius = 10
@@ -478,7 +485,7 @@ class AnyModalViewController: UIViewController {
         }
         view.addSubview(rewindImageView)
 
-        fastForwardImageView = UIImageView(image: UIImage(named: "fast_forward")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
+        fastForwardImageView = UIImageView(image: UIImage(sfString: SFSymbol.forwardEndFill, overrideString: "fast_forward")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
             $0.alpha = 0
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             $0.layer.cornerRadius = 10
@@ -496,19 +503,19 @@ class AnyModalViewController: UIViewController {
         
         menuButton = UIButton().then {
             $0.accessibilityIdentifier = "More Button"
-            $0.setImage(UIImage(named: "moreh")?.navIcon(true), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.navIcon(true), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         downloadButton = UIButton().then {
             $0.accessibilityIdentifier = "Download Button"
-            $0.setImage(UIImage(named: "download")?.navIcon(true), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.navIcon(true), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         upvoteButton = UIButton().then {
             $0.accessibilityIdentifier = "Upvote Button"
-            $0.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
             $0.isHidden = upvoteCallback == nil // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
@@ -516,18 +523,18 @@ class AnyModalViewController: UIViewController {
         muteButton = UIButton().then {
             $0.accessibilityIdentifier = "Un-Mute video"
             $0.isHidden = true
-            $0.setImage(UIImage(named: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
 
         goToCommentsButton = UIButton().then {
             $0.accessibilityIdentifier = "Go to Comments Button"
-            $0.setImage(UIImage(named: "comments")?.navIcon(true), for: [])
+            $0.setImage(UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")?.navIcon(true), for: [])
             $0.isHidden = commentCallback == nil
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
 
-        closeButton.setImage(UIImage(named: "close")?.navIcon(true), for: .normal)
+        closeButton.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: .normal)
         closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
         self.view.addSubview(closeButton)
 
@@ -538,7 +545,7 @@ class AnyModalViewController: UIViewController {
         if upvoteCallback != nil {
             self.upvoteCallback!()
             self.isUpvoted = !self.isUpvoted
-            self.upvoteButton.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+            self.upvoteButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
         }
     }
     
@@ -713,7 +720,7 @@ extension AnyModalViewController {
     @objc func fullscreen(_ sender: AnyObject) {
         fullscreen = true
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+            let statusBar: UIView = UIApplication.shared.statusBarUIView ?? UIView()
             statusBar.isHidden = true
             
             self.background?.alpha = 1
@@ -728,7 +735,7 @@ extension AnyModalViewController {
         fullscreen = false
         self.bottomButtons.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+            let statusBar: UIView = UIApplication.shared.statusBarUIView ?? UIView()
             statusBar.isHidden = false
             self.closeButton.alpha = 1
             

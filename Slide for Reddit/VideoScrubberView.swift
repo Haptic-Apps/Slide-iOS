@@ -56,8 +56,8 @@ class VideoScrubberView: UIView {
 
     var playButton = UIButton(type: .system)
 
-    let playButtonImage = UIImage(named: "play")?.getCopy(withSize: .square(size: 45))
-    let pauseButtonImage = UIImage(named: "pause")?.getCopy(withSize: .square(size: 45))
+    let playButtonImage = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.getCopy(withSize: .square(size: 45))
+    let pauseButtonImage = UIImage(sfString: SFSymbol.pauseFill, overrideString: "pause")?.getCopy(withSize: .square(size: 45))
     let largeThumbImage = UIImage(named: "circle")?.getCopy(withSize: .square(size: 30), withColor: .white)
     let smallThumbImage = UIImage(named: "circle")?.getCopy(withSize: .square(size: 20), withColor: .white)
     
@@ -79,7 +79,7 @@ class VideoScrubberView: UIView {
 //        slider.thumbTintColor = ColorUtil.accentColorForSub(sub: "")
         slider.minimumTrackTintColor = ColorUtil.accentColorForSub(sub: "")
         slider.maximumTrackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.4)
-        slider.setThumbImage(UIImage.init(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white), for: .normal)
+        slider.setThumbImage(UIImage(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white), for: .normal)
         self.addSubview(slider)
         
         self.addSubview(playButton)
@@ -105,7 +105,7 @@ class VideoScrubberView: UIView {
         timeTotalLabel.centerYAnchor == slider.centerYAnchor + 1
         timeTotalLabel.leftAnchor == self.leftAnchor + 8
 
-        playButton.setImage(UIImage.init(named: "pause")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
+        playButton.setImage(UIImage(sfString: SFSymbol.pauseFill, overrideString: "pause")?.getCopy(withSize: CGSize.square(size: 45)), for: .normal)
         playButton.tintColor = UIColor.white
         playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
 

@@ -28,11 +28,11 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     }
     
     func setAlphaOfBackgroundViews(alpha: CGFloat) {
-        let statusBarWindow = UIApplication.shared.value(forKey: "statusBarWindow") as? UIWindow
+        /*let statusBarWindow = UIApplication.shared.value(forKey: "statusBarWindow") as? UIWindow
         UIView.animate(withDuration: 0.2) {
             statusBarWindow?.alpha = alpha
             self.navigationController?.view.alpha = alpha
-        }
+        }*/
     }
     
     override var prefersStatusBarHidden: Bool {

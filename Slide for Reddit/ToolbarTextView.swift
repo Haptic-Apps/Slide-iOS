@@ -32,17 +32,17 @@ public class ToolbarTextView: NSObject {
         scrollView.backgroundColor = ColorUtil.theme.backgroundColor
         var i = 0
         for button in ([
-            generateButtons(image: "save", action: #selector(ToolbarTextView.saveDraft(_:))),
-            generateButtons(image: "folder", action: #selector(ToolbarTextView.openDrafts(_:))),
-            generateButtons(image: "image", action: #selector(ToolbarTextView.uploadImage(_:))),
-            generateButtons(image: "draw", action: #selector(ToolbarTextView.draw(_:))),
-            generateButtons(image: "link", action: #selector(ToolbarTextView.link(_:))),
-            generateButtons(image: "bold", action: #selector(ToolbarTextView.bold(_:))),
-            generateButtons(image: "italic", action: #selector(ToolbarTextView.italics(_:))),
-            generateButtons(image: "list", action: #selector(ToolbarTextView.list(_:))),
-            generateButtons(image: "list_number", action: #selector(ToolbarTextView.numberedList(_:))),
-            generateButtons(image: "size", action: #selector(ToolbarTextView.size(_:))),
-            generateButtons(image: "strikethrough", action: #selector(ToolbarTextView.strike(_:))), ]) {
+            generateButtons(image: "save", sfString: SFSymbol.starFill, action: #selector(ToolbarTextView.saveDraft(_:))),
+            generateButtons(image: "folder", sfString: SFSymbol.folderFill, action: #selector(ToolbarTextView.openDrafts(_:))),
+            generateButtons(image: "image", sfString: SFSymbol.photoFill, action: #selector(ToolbarTextView.uploadImage(_:))),
+            generateButtons(image: "draw", sfString: SFSymbol.scribble, action: #selector(ToolbarTextView.draw(_:))),
+            generateButtons(image: "link", sfString: SFSymbol.link, action: #selector(ToolbarTextView.link(_:))),
+            generateButtons(image: "bold", sfString: SFSymbol.bold, action: #selector(ToolbarTextView.bold(_:))),
+            generateButtons(image: "italic", sfString: SFSymbol.italic, action: #selector(ToolbarTextView.italics(_:))),
+            generateButtons(image: "list", sfString: SFSymbol.listBullet, action: #selector(ToolbarTextView.list(_:))),
+            generateButtons(image: "list_number", sfString: SFSymbol.listNumber, action: #selector(ToolbarTextView.numberedList(_:))),
+            generateButtons(image: "size", sfString: SFSymbol.textformatSize, action: #selector(ToolbarTextView.size(_:))),
+            generateButtons(image: "strikethrough", sfString: SFSymbol.strikethrough, action: #selector(ToolbarTextView.strike(_:))), ]) {
             button.0.frame = CGRect.init(x: i * 50, y: 0, width: 50, height: 50)
             button.0.isUserInteractionEnabled = true
             button.0.addTarget(self, action: button.1, for: UIControl.Event.touchUpInside)
@@ -61,9 +61,13 @@ public class ToolbarTextView: NSObject {
         }
     }
 
-    func generateButtons(image: String, action: Selector) -> (UIButton, Selector) {
+    func generateButtons(image: String, sfString: SFSymbol?, action: Selector) -> (UIButton, Selector) {
         let more = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 50, height: 50))
-        more.setImage(UIImage.init(named: image)?.menuIcon(), for: UIControl.State.normal)
+        if sfString != nil {
+            more.setImage(UIImage(sfString: sfString!, overrideString: image)?.menuIcon(), for: UIControl.State.normal)
+        } else {
+            more.setImage(UIImage(named: image)?.menuIcon(), for: UIControl.State.normal)
+        }
         return (more, action)
     }
 
@@ -239,7 +243,7 @@ public class ToolbarTextView: NSObject {
                                                     textField.becomeFirstResponder()
                                                     textField.textColor = ColorUtil.theme.fontColor
                                                     textField.attributedPlaceholder = NSAttributedString(string: "Caption (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                                                    textField.left(image: UIImage.init(named: "link"), color: ColorUtil.theme.fontColor)
+                                                    textField.left(image: UIImage(sfString: SFSymbol.link, overrideString: "link")?.menuIcon(), color: ColorUtil.theme.fontColor)
                                                     textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
                                                     textField.backgroundColor = ColorUtil.theme.foregroundColor
                                                     textField.leftViewPadding = 12
@@ -304,7 +308,7 @@ public class ToolbarTextView: NSObject {
                                     textField.becomeFirstResponder()
                                     textField.textColor = ColorUtil.theme.fontColor
                                     textField.attributedPlaceholder = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                                    textField.left(image: UIImage.init(named: "link"), color: ColorUtil.theme.fontColor)
+                                    textField.left(image: UIImage(sfString: SFSymbol.link, overrideString: "link")?.menuIcon(), color: ColorUtil.theme.fontColor)
                                     textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
                                     textField.backgroundColor = ColorUtil.theme.foregroundColor
                                     textField.leftViewPadding = 12
@@ -416,7 +420,7 @@ public class ToolbarTextView: NSObject {
             textField.becomeFirstResponder()
             textField.textColor = ColorUtil.theme.fontColor
             textField.placeholder = "URL"
-            textField.left(image: UIImage.init(named: "link"), color: ColorUtil.theme.fontColor)
+            textField.left(image: UIImage(sfString: SFSymbol.link, overrideString: "link")?.menuIcon(), color: ColorUtil.theme.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
@@ -434,7 +438,7 @@ public class ToolbarTextView: NSObject {
             textField.becomeFirstResponder()
             textField.textColor = ColorUtil.theme.fontColor
             textField.placeholder = "Caption (optional)"
-            textField.left(image: UIImage.init(named: "size"), color: ColorUtil.theme.fontColor)
+            textField.left(image: UIImage(sfString: SFSymbol.textbox, overrideString: "size")?.menuIcon(), color: ColorUtil.theme.fontColor)
             textField.leftViewPadding = 12
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8

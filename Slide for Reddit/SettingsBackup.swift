@@ -41,7 +41,7 @@ class SettingsBackup: BubbleSettingTableViewController {
         self.backup.backgroundColor = ColorUtil.theme.foregroundColor
         self.backup.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.backup.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.backup.imageView?.image = UIImage.init(named: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
+        self.backup.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
         self.backup.imageView?.tintColor = ColorUtil.theme.fontColor
         
         self.restore.textLabel?.text = "Restore"
@@ -49,7 +49,7 @@ class SettingsBackup: BubbleSettingTableViewController {
         self.restore.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.restore.textLabel?.textColor = ColorUtil.theme.fontColor
         self.restore.detailTextLabel?.text = "Restore your backup data from iCloud"
-        self.restore.imageView?.image = UIImage.init(named: "restore")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
+        self.restore.imageView?.image = UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "restore")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
         self.restore.imageView?.tintColor = ColorUtil.theme.fontColor
     }
 

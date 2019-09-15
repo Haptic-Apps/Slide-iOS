@@ -78,12 +78,12 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     func tagUser() {
         let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
-        alert.addTextInput(title: "Set tag", icon: UIImage(named: "save-1")?.menuIcon(), action: {
+        alert.addTextInput(title: "Set tag", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "save-1")?.menuIcon(), action: {
             ColorUtil.setTagForUser(name: self.name, tag: alert.getText() ?? "")
-        }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(named: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+        }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)
 
         if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
-            alert.addAction(title: "Remove tag", icon: UIImage(named: "delete")?.menuIcon(), enabled: true) {
+            alert.addAction(title: "Remove tag", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.menuIcon(), enabled: true) {
                 ColorUtil.removeTagForUser(name: self.name)
             }
         }
@@ -118,13 +118,13 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         tabBar = MDCTabBar()
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage.init(named: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         sortB = UIBarButtonItem.init(customView: sort)
         
         let more = UIButton.init(type: .custom)
-        more.setImage(UIImage.init(named: "info")?.navIcon(), for: UIControl.State.normal)
+        more.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.navIcon(), for: UIControl.State.normal)
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
         more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         moreB = UIBarButtonItem.init(customView: more)
@@ -161,132 +161,18 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         }
     }
     
-    func showMenu(sender: AnyObject, user: Account) {
-        let date = Date(timeIntervalSince1970: TimeInterval(user.createdUtc))
-        let df = DateFormatter()
-        df.dateFormat = "MM/dd/yyyy"
-        let alrController = UIAlertController(title: "", message: "\(user.linkKarma) post karma\n\(user.commentKarma) comment karma\nRedditor since \(df.string(from: date))", preferredStyle: UIAlertController.Style.actionSheet)
-        
-        let margin: CGFloat = 8.0
-        let rect = CGRect.init(x: margin, y: margin + 23, width: alrController.view.bounds.size.width - margin * 4.0, height: 75)
-        let scrollView = UIScrollView(frame: rect)
-        scrollView.backgroundColor = UIColor.clear
-        
-        //todo add trophies
-        do {
-            try session?.getTrophies(user.name, completion: { (result) in
-                switch result {
-                case .failure(let error):
-                    print(error)
-                    alrController.title = ""
-                case .success(let trophies):
-                    var i = 0
-                    DispatchQueue.main.async {
-                        for trophy in trophies {
-                            let b = self.generateButtons(trophy: trophy)
-                            b.frame = CGRect.init(x: i * 75, y: 0, width: 70, height: 70)
-                            b.addTapGestureRecognizer(action: {
-                                if trophy.url != nil {
-                                    self.dismiss(animated: true)
-                                    VCPresenter.showVC(viewController: WebsiteViewController(url: trophy.url!, subreddit: ""), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
-                                }
-                            })
-                            scrollView.addSubview(b)
-                            i += 1
-                        }
-                        scrollView.contentSize = CGSize.init(width: i * 75, height: 70)
-                        if trophies.count == 0 {
-                            alrController.title = ""
-                        } else {
-                            alrController.title = "\n\n\n\n\n"
-                        }
-                    }
-                }
-            })
-        } catch {
-            
-        }
-        scrollView.delaysContentTouches = false
-    
-        alrController.view.addSubview(scrollView)
-        if AccountController.isLoggedIn {
-            alrController.addAction(UIAlertAction.init(title: "Private message", style: .default, handler: { (_) in
-                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(name: user.name, completion: { (_) in })), parentVC: self)
-            }))
-            if user.isFriend {
-                alrController.addAction(UIAlertAction.init(title: "Unfriend", style: .default, handler: { (_) in
-                    do {
-                        try self.session?.unfriend(user.name, completion: { (_) in
-                            DispatchQueue.main.async {
-                                BannerUtil.makeBanner(text: "Unfriended u/\(user.name)", seconds: 3, context: self)
-                            }
-                        })
-                    } catch {
-                        
-                    }
-                }))
-            } else {
-                alrController.addAction(UIAlertAction.init(title: "Friend", style: .default, handler: { (_) in
-                    do {
-                        try self.session?.friend(user.name, completion: { (result) in
-                            if result.error != nil {
-                                print(result.error!)
-                            }
-                            DispatchQueue.main.async {
-                                BannerUtil.makeBanner(text: "Friended u/\(user.name)", seconds: 3, context: self)
-                            }
-                        })
-                    } catch {
-                        
-                    }
-                }))
-            }
-        }
-        alrController.addAction(UIAlertAction.init(title: "Change color", style: .default, handler: { (_) in
-            self.pickColor(sender: sender)
-        }))
-        let tag = ColorUtil.getTagForUser(name: name)
-        alrController.addAction(UIAlertAction.init(title: "Tag user\((tag != nil) ? " (currently \(tag!))" : "")", style: .default, handler: { (_) in
-            self.tagUser()
-        }))
-        
-        alrController.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: { (_) in
-        }))
+    lazy var currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
 
-        alrController.modalPresentationStyle = .popover
-        if let presenter = alrController.popoverPresentationController {
-            presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
-            presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
-        }
-
-        alrController.modalPresentationStyle = .popover
-        if let presenter = alrController.popoverPresentationController {
-            presenter.sourceView = sender as! UIButton
-            presenter.sourceRect = (sender as! UIButton).bounds
-        }
-        
-        self.present(alrController, animated: true, completion: {})
-        
+    func showMenu(sender: AnyObject, user: String) {
+        let vc = ProfileInfoViewController(accountNamed: user, parent: self)
+        vc.modalPresentationStyle = .custom
+        vc.transitioningDelegate = currentAccountTransitioningDelegate
+        present(vc, animated: true)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setupBaseBarColors()
-    }
-    
-    func generateButtons(trophy: Trophy) -> UIImageView {
-        let more = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 70, height: 70))
-        more.sd_setImage(with: trophy.icon70!)
-        let singleTap = UITapGestureRecognizer(target: self, action: #selector(ProfileViewController.trophyTapped(_:)))
-        singleTap.numberOfTapsRequired = 1
-        
-        more.isUserInteractionEnabled = true
-        more.addGestureRecognizer(singleTap)
-        
-        return more
-    }
-
-    @objc func trophyTapped(_ sender: AnyObject) {
     }
     
     func close() {
@@ -343,7 +229,11 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         self.extendedLayoutIncludesOpaqueBars = true
         self.automaticallyAdjustsScrollViewInsets = false
         
-        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + UIApplication.shared.statusBarFrame.height
+        var isModal13 = false
+        if #available(iOS 13, *), self.presentingViewController != nil && (self.navigationController?.modalPresentationStyle == .formSheet || self.modalPresentationStyle == .formSheet || self.navigationController?.modalPresentationStyle == .pageSheet || self.modalPresentationStyle == .pageSheet) {
+            isModal13 = true
+        }
+        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
         tabBar.sizeToFit()
         
         self.dataSource = self
@@ -428,18 +318,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     }
 
     @objc func showMenu(_ sender: AnyObject) {
-        do {
-            try session?.getUserProfile(self.name, completion: { (result) in
-                switch result {
-                case .failure(let error):
-                    print(error)
-                case .success(let account):
-                    self.showMenu(sender: sender, user: account)
-                }
-            })
-        } catch {
-            
-        }
+        self.showMenu(sender: sender, user: self.name)
     }
     var selected = false
     

@@ -142,7 +142,7 @@ extension EmbeddableMediaViewController {
         if upvoteCallback != nil {
             self.upvoteCallback!()
             isUpvoted = !isUpvoted
-            self.upvoteButton.setImage(UIImage(named: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
+            self.upvoteButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
         }
     }
 }

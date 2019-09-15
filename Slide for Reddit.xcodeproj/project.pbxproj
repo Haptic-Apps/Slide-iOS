@@ -281,6 +281,12 @@
 		BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45E01E23EED800764BB8 /* SettingValues.swift */; };
 		BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494271E307D57006618F3 /* GalleryTableViewController.swift */; };
 		BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494291E307DDA006618F3 /* GalleryCellView.swift */; };
+		BEC4A1A22322F74D00EE5114 /* SFSymbolsEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */; };
+		BEC4A1A4232E98CF00EE5114 /* ProfileInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */; };
+		BEC4A1A6232EA2BC00EE5114 /* ProfileInfoPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A5232EA2BC00EE5114 /* ProfileInfoPresentationController.swift */; };
+		BEC4A1A8232EA30B00EE5114 /* ProfileInfoPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A7232EA30B00EE5114 /* ProfileInfoPresentationManager.swift */; };
+		BEC4A1AA232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A9232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift */; };
+		BEC4A1AC232EA3D200EE5114 /* ProfileInfoDismissInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1AB232EA3D200EE5114 /* ProfileInfoDismissInteraction.swift */; };
 		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
 		BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECF52462012B8E700A310F9 /* YTPlayerView.m */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
@@ -677,6 +683,12 @@
 		BEBF45E01E23EED800764BB8 /* SettingValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingValues.swift; sourceTree = "<group>"; };
 		BEC494271E307D57006618F3 /* GalleryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryTableViewController.swift; sourceTree = "<group>"; };
 		BEC494291E307DDA006618F3 /* GalleryCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCellView.swift; sourceTree = "<group>"; };
+		BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolsEnum.swift; sourceTree = "<group>"; };
+		BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInfoViewController.swift; sourceTree = "<group>"; };
+		BEC4A1A5232EA2BC00EE5114 /* ProfileInfoPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInfoPresentationController.swift; sourceTree = "<group>"; };
+		BEC4A1A7232EA30B00EE5114 /* ProfileInfoPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInfoPresentationManager.swift; sourceTree = "<group>"; };
+		BEC4A1A9232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInfoPresentationAnimator.swift; sourceTree = "<group>"; };
+		BEC4A1AB232EA3D200EE5114 /* ProfileInfoDismissInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInfoDismissInteraction.swift; sourceTree = "<group>"; };
 		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
 		BECF52452012B8E700A310F9 /* YTPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YTPlayerView.h; sourceTree = "<group>"; };
 		BECF52462012B8E700A310F9 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YTPlayerView.m; sourceTree = "<group>"; };
@@ -794,6 +806,7 @@
 				0924E526219E088800C31D5E /* UIWindow+RootViewController.swift */,
 				BE1DA5C5220803BB001C7DB4 /* UIAlert+Extensions.swift */,
 				096A7D142215D9AB0067106C /* AVAudioSession+Extensions.swift */,
+				BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -812,6 +825,10 @@
 				09D6603521E8F199003D632C /* CurrentAccountPresentationController.swift */,
 				09D6603721E8F1A8003D632C /* CurrentAccountPresentationAnimator.swift */,
 				09D6603A21E90829003D632C /* CurrentAccountDismissInteraction.swift */,
+				BEC4A1A7232EA30B00EE5114 /* ProfileInfoPresentationManager.swift */,
+				BEC4A1A5232EA2BC00EE5114 /* ProfileInfoPresentationController.swift */,
+				BEC4A1A9232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift */,
+				BEC4A1AB232EA3D200EE5114 /* ProfileInfoDismissInteraction.swift */,
 			);
 			name = Presentation;
 			sourceTree = "<group>";
@@ -1254,6 +1271,7 @@
 				BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */,
 				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
 				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
+				BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1892,6 +1910,7 @@
 				BE602AFA229F3A5200AF0DC3 /* LinkBubble.swift in Sources */,
 				BE6EA6E21E1DA1A300E9E709 /* ContributionLoader.swift in Sources */,
 				098B5A4520EFC5E800FE201B /* RSubmission+Extensions.swift in Sources */,
+				BEC4A1AC232EA3D200EE5114 /* ProfileInfoDismissInteraction.swift in Sources */,
 				BE6EA6DA1E1C1FC700E9E709 /* Watchers.swift in Sources */,
 				BE7360A11FB9089B00CA32AD /* TapBehindModalViewController.swift in Sources */,
 				BE3521801E3D3BDD00C30B8D /* LinkParser.swift in Sources */,
@@ -1924,6 +1943,7 @@
 				0984BE4E2114C4040091C2E1 /* PostContentPresentationManager.swift in Sources */,
 				BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */,
 				09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */,
+				BEC4A1A8232EA30B00EE5114 /* ProfileInfoPresentationManager.swift in Sources */,
 				BE6EA6E81E1DA86100E9E709 /* ProfileViewController.swift in Sources */,
 				BE35217E1E3D325A00C30B8D /* SettingsFont.swift in Sources */,
 				BE780B601E32CA8F00DAA1EB /* RelatedContributionLoader.swift in Sources */,
@@ -1933,6 +1953,7 @@
 				09C5A40D212B09A8000339FD /* BottomMenuPresentationController.swift in Sources */,
 				BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,
+				BEC4A1AA232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift in Sources */,
 				BE3B74392107AA1200658DE9 /* UIAlertController+Extensions.swift in Sources */,
 				BE2B8A0B1E2602CD0053D493 /* SubredditReorderViewController.swift in Sources */,
 				098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */,
@@ -2011,8 +2032,10 @@
 				BE0C4F9A21BCC0B7006C54FF /* SettingsIcon.swift in Sources */,
 				B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */,
 				BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */,
+				BEC4A1A6232EA2BC00EE5114 /* ProfileInfoPresentationController.swift in Sources */,
 				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
 				09D6603621E8F199003D632C /* CurrentAccountPresentationController.swift in Sources */,
+				BEC4A1A22322F74D00EE5114 /* SFSymbolsEnum.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
 				09BBDBF621F977F900FC8BF9 /* FontSelectionTableViewController.swift in Sources */,
 				098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */,
@@ -2022,6 +2045,7 @@
 				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
 				B776BB46CB68FCCCA9E843A9 /* CacheSettings.swift in Sources */,
+				BEC4A1A4232E98CF00EE5114 /* ProfileInfoViewController.swift in Sources */,
 				B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */,
 				B776BC55CA329427879F17B4 /* ModMailContributionLoader.swift in Sources */,
 				B776B5282EE4DA559E97F9B3 /* ModerationViewController.swift in Sources */,
