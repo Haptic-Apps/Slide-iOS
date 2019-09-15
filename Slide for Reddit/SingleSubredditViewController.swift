@@ -564,7 +564,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             self.fab!.clipsToBounds = true
             let title = "  " + SettingValues.fabType.getTitleShort()
             self.fab!.setTitle(title, for: .normal)
-            self.fab!.leftImage(image: (UIImage(named: SettingValues.fabType.getPhoto())?.navIcon(true))!, renderMode: UIImage.RenderingMode.alwaysOriginal)
+            self.fab!.leftImage(image: SettingValues.fabType.getPhoto()!.navIcon(true), renderMode: UIImage.RenderingMode.alwaysOriginal)
             self.fab!.elevate(elevation: 2)
             self.fab!.titleLabel?.textAlignment = .center
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -725,7 +725,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let actionSheetController = DragDownAlertMenu(title: "Change button action", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
 
         for t in SettingValues.FabType.cases {
-            actionSheetController.addAction(title: t.getTitle(), icon: UIImage(named: t.getPhoto())?.menuIcon(), action: {
+            actionSheetController.addAction(title: t.getTitle(), icon: t.getPhoto()?.menuIcon(), action: {
                 UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_fabType)
                 SettingValues.fabType = t
                 self.setupFab(self.view.bounds.size)

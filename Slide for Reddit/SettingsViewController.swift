@@ -256,7 +256,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.gestureCell.accessoryType = .disclosureIndicator
         self.gestureCell.backgroundColor = ColorUtil.theme.foregroundColor
         self.gestureCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.gestureCell.imageView?.image = UIImage(named: "gestures")?.toolbarIcon()
+        self.gestureCell.imageView?.image = UIImage(sfString: .scribble, overrideString: "gestures")?.toolbarIcon()
         self.gestureCell.imageView?.tintColor = ColorUtil.theme.fontColor
         self.gestureCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.gestureCell.detailTextLabel?.text = "Swipe and tap gestures for submissions and comments"
