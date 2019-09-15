@@ -361,7 +361,7 @@ class SettingsCustomTheme: UITableViewController {
                 textField.becomeFirstResponder()
                 textField.textColor = ColorUtil.theme.fontColor
                 textField.attributedPlaceholder = NSAttributedString(string: "HEX String", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage(named: "pallete"), color: ColorUtil.theme.fontColor)
+                textField.left(image: UIImage(named: "pallete")?.menuIcon(), color: ColorUtil.theme.fontColor)
                 textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
                 textField.backgroundColor = ColorUtil.theme.foregroundColor
                 textField.leftViewPadding = 12

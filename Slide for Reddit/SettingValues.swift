@@ -917,24 +917,24 @@ class SettingValues {
         case RELOAD = "reload"
         case HIDE_PERMANENTLY = "perm"
 
-        func getPhoto() -> String {
+        func getPhoto() -> UIImage? {
             switch self {
             case .HIDE_READ:
-                return "hide"
+                return UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")
             case .HIDE_PERMANENTLY:
-                return "hide"
+                return UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")
             case .NEW_POST:
-                return "edit"
+                return UIImage(sfString: SFSymbol.squareAndPencil, overrideString: "edit")
             case .SHADOWBOX:
-                return "shadowbox"
+                return UIImage(named: "shadowbox")
             case .SIDEBAR:
-                return "info"
+                return UIImage(sfString: SFSymbol.infoCircleFill, overrideString: "info")
             case .RELOAD:
-                return "sync"
+                return UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "sync")
             case .GALLERY:
-                return "image"
+                return UIImage(sfString: SFSymbol.photoFill, overrideString: "image")
             case .SEARCH:
-                return "search"
+                return UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")
             }
         }
 
