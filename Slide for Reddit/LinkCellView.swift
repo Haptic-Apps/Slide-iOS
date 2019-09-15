@@ -839,6 +839,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if timeView.isHidden {
             timeView.isHidden = false
+            progressDot.isHidden = false
         }
         timeView.text = "\(total)  "
         
@@ -1857,12 +1858,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
                 strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.default)
                 strongSelf.updater?.isPaused = false
-                UIView.animate(withDuration: 0.3, animations: {
-                    strongSelf.bannerImage.alpha = 0
-                }, completion: { (_) in
-                    strongSelf.bannerImage.isHidden = true
-                    strongSelf.bannerImage.alpha = 1
-                })
             }
             }, failure: nil)
     }
