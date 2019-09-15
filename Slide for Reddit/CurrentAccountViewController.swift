@@ -739,7 +739,7 @@ extension AccountHeaderView {
 }
 
 // Styling
-private extension UITableViewCell {
+public extension UITableViewCell {
     func configure(text: String, imageName: String, sfSymbolName: SFSymbol, imageColor: UIColor) {
         textLabel?.text = text
         imageView?.image = UIImage(sfString: sfSymbolName, overrideString: imageName)?.menuIcon()

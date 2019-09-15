@@ -1478,7 +1478,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
             }
 
-            alertController.addAction(title: "View related submissions", icon: UIImage(sfString: SFSymbol.textbox, overrideString: "size")!.menuIcon()) {
+            alertController.addAction(title: "View related submissions", icon: UIImage(sfString: SFSymbol.squareStackFill, overrideString: "size")!.menuIcon()) {
                 let related = RelatedViewController.init(thing: self.submission!)
                 VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }
