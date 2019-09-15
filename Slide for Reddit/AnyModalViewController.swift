@@ -168,7 +168,14 @@ class AnyModalViewController: UIViewController {
         volume.animation = .slideDown
         view.addSubview(volume)
         
-        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+        var is13 = false
+        if #available(iOS 13, *) {
+            is13 = true
+        }
+
+        if !is13 {
+            NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+        }
         
         if urlToLoad != nil && self.embeddedPlayer == nil {
             let url = VideoMediaViewController.format(sS: urlToLoad!.absoluteString, true)

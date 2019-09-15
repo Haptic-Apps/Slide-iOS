@@ -95,7 +95,11 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         view.addSubview(volume)
         volume.delegate = self
         
-        if !((parent?.parent) is ShadowboxLinkViewController) {
+        var is13 = false
+        if #available(iOS 13, *) {
+            is13 = true
+        }
+        if !((parent?.parent) is ShadowboxLinkViewController) && !is13 {
             NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
     }

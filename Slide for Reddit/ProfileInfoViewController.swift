@@ -544,7 +544,7 @@ class ProfileHeaderView: UIView {
             return attributedString
         }()
         
-        self.friendCell.configure(text: account?.isFriend ?? false ? "Remove friend" : "Add friend", imageName: "profile", sfSymbolName: self.user?.isFriend ?? false ? SFSymbol.personBadgeMinusFill : SFSymbol.personBadgePlusFill, imageColor: GMColor.yellow500Color())
+        self.friendCell.configure(text: account?.isFriend ?? false ? "Remove friend" : "Add friend", imageName: "profile", sfSymbolName: account?.isFriend ?? false ? SFSymbol.personBadgeMinusFill : SFSymbol.personBadgePlusFill, imageColor: GMColor.yellow500Color())
         
         postKarmaLabel.attributedText = {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
