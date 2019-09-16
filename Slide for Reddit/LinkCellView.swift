@@ -490,7 +490,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             contentView.bringSubviewToFront(topVideoView)
             
             playView = UIImageView().then {
-                    $0.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.getCopy(withSize: CGSize.square(size: 60), withColor: .white)
+                    $0.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     $0.contentMode = .center
                     $0.isHidden = true
             }
@@ -839,6 +839,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if timeView.isHidden {
             timeView.isHidden = false
+            progressDot.isHidden = false
         }
         timeView.text = "\(total)  "
         
@@ -1041,8 +1042,25 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func endVideos() {
+        if !(self is AutoplayBannerLinkCellView) {
+            return
+        }
+        videoPreloaded = false
+        isLoadingVideo = false
+        videoCompletion = nil
         if videoView != nil && AnyModalViewController.linkID.isEmpty && (!full || videoLoaded) {
             videoView?.player?.pause()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                if (self.videoView?.player?.currentItem?.tracks.count ?? 1) > 1 {
+                    do {
+                        try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                    } catch {
+                    }
+                }
+                self.videoView!.player?.replaceCurrentItem(with: nil)
+                self.videoView!.player = nil
+            }
+
             self.updater?.invalidate()
             self.updater = nil
             self.bannerImage.isHidden = false
@@ -1054,8 +1072,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.contentView.bringSubviewToFront(topVideoView!)
             self.progressDot.isHidden = true
             self.timeView.isHidden = true
-            self.videoView!.player?.replaceCurrentItem(with: nil)
-            self.videoView!.player = nil
         }
     }
     
@@ -1503,7 +1519,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.contentView.bringSubviewToFront(topVideoView!)
                 self.shouldLoadVideo = true
                 if full {
+                    self.videoCompletion = nil
                     doLoadVideo()
+                } else {
+                    self.videoCompletion = nil
+                    self.preloadVideo()
                 }
                 videoOverride = true
             } else if self is FullLinkCellView {
@@ -1816,18 +1836,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var videoURL: URL?
     weak var videoTask: URLSessionDataTask?
     var videoLoaded = false
+    var videoPreloaded = false
+    var isLoadingVideo = false
+    var videoCompletion: (() -> Void)?
     
-    func doLoadVideo() {
-        if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
-            if playView != nil {
-                playView.isHidden = false
-            }
-            return
-        }
-        
-        videoLoaded = true
-
+    func preloadVideo() {
         let baseUrl: URL
+        self.isLoadingVideo = true
+        self.videoPreloaded = false
         if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!) {
             baseUrl = URL.init(string: link!.videoPreview)!
         } else {
@@ -1838,33 +1854,62 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.videoTask = videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
             guard let strongSelf = self else { return }
             strongSelf.videoURL = URL(string: urlString)!
+            strongSelf.videoPreloaded = true
+            strongSelf.isLoadingVideo = false
             DispatchQueue.main.async {
-                strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
-                strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
+                strongSelf.videoCompletion?()
+            }
+            }, failure: nil)
+    }
+
+    func doLoadVideo() {
+        if videoPreloaded {
+            print("Doing playVideo()")
+            playVideo()
+        } else if isLoadingVideo {
+            print("Doing isLoadingVideo")
+            videoCompletion = {
+                self.playVideo()
+            }
+        } else {
+            videoCompletion = {
+                self.playVideo()
+            }
+            print("Doing full video load")
+            preloadVideo()
+        }
+    }
+    
+    func playVideo() {
+        print("playVideo()")
+        if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
+            if playView != nil {
+                playView.isHidden = false
+            }
+            return
+        }
+        
+        let strongSelf = self
+        print(strongSelf.videoURL)
+
+        strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
+        strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
 //                Is currently causing issues with not resuming after buffering
 //                if #available(iOS 10.0, *) {
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
-                strongSelf.setOnce = false
-                strongSelf.videoView?.player?.play()
-                strongSelf.videoID = strongSelf.link?.getId() ?? ""
-                if SettingValues.muteInlineVideos {
-                    strongSelf.videoView?.player?.isMuted = true
-                } else {
-                    strongSelf.videoView?.player?.isMuted = false
-                }
-                strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
-                strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
-                strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.default)
-                strongSelf.updater?.isPaused = false
-                UIView.animate(withDuration: 0.3, animations: {
-                    strongSelf.bannerImage.alpha = 0
-                }, completion: { (_) in
-                    strongSelf.bannerImage.isHidden = true
-                    strongSelf.bannerImage.alpha = 1
-                })
-            }
-            }, failure: nil)
+        strongSelf.setOnce = false
+        strongSelf.videoView?.player?.play()
+        strongSelf.videoID = strongSelf.link?.getId() ?? ""
+        if SettingValues.muteInlineVideos {
+            strongSelf.videoView?.player?.isMuted = true
+        } else {
+            strongSelf.videoView?.player?.isMuted = false
+        }
+        strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
+        strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
+        strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.default)
+        strongSelf.updater?.isPaused = false
     }
     
     public static var cachedInternet: Bool?
