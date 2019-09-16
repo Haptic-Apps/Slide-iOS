@@ -49,7 +49,7 @@ class Collections {
     public static func getCollectionIDs(title: String = "NONE") -> [Link] {
         var toReturn = [Link]()
         for value in collectionIDs.allKeys {
-            if value is String && ((collectionIDs[value] as! String).lowercased() == title) {
+            if value is String && ((collectionIDs[value] as! String).lowercased() == title.lowercased()) {
                 var id = value as! String
                 if id.contains("_") {
                     id = id.substring(3, length: id.length - 3)

@@ -25,7 +25,7 @@ class ReadLater {
     public static func getReadLaterIDs(sub: String = "all") -> [Link] {
         var toReturn = [Link]()
         for value in readLaterIDs.allKeys {
-            if value is String && ((readLaterIDs[value] as! String).lowercased() == sub || sub == "all") {
+            if value is String && ((readLaterIDs[value] as! String).lowercased() == sub.lowercased() || sub == "all") {
                 var id = value as! String
                 if id.contains("_") {
                     id = id.substring(3, length: id.length - 3)

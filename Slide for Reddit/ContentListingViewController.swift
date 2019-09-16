@@ -150,7 +150,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             refresh()
         }
         
-        if self.navigationController != nil && !((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader)) {
+        if self.navigationController != nil && !((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is CollectionsContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader)) {
             if !(self.navigationController?.delegate is SloppySwiper) {
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
                 self.navigationController!.delegate = swiper!
@@ -198,7 +198,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
         var top = 0
         
-        top += ((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) ? 45 : 0)
+        top += ((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is CollectionsContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) ? 45 : 0)
         
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
 
@@ -496,7 +496,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 }
                 
                 //New xcode is complaining about computation times...
-                let headerOffset = CGFloat((self.baseData is FriendsContributionLoader || self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0)
+                let headerOffset = CGFloat((self.baseData is FriendsContributionLoader || self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is CollectionsContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0)
                 let totalOffset = (-1 * (headerOffset + (self.navigationController?.navigationBar.frame.size.height ?? 64)))
                 self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + totalOffset - top)
             } else {
