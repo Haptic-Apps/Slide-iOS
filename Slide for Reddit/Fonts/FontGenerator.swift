@@ -14,8 +14,12 @@ class FontGenerator {
     public static func fontOfSize(size: CGFloat, submission: Bool) -> UIFont {
         let fontName = UserDefaults.standard.string(forKey: submission ? "postfont" : "commentfont") ?? ( submission ? "AvenirNext-DemiBold" : "AvenirNext-Medium")
         let adjustedSize = size + CGFloat(submission ? SettingValues.postFontOffset : SettingValues.commentFontOffset)
-        let font = UIFont(name: fontName, size: adjustedSize) ?? UIFont.systemFont(ofSize: adjustedSize)
-        return font
+
+        if let fontMapping = FontMapping.fromStoredName(name: fontName) {
+            return fontMapping.font(ofSize: adjustedSize) ?? UIFont.systemFont(ofSize: adjustedSize)
+        } else {
+            return UIFont.systemFont(ofSize: adjustedSize)
+        }
     }
     
     public static func boldFontOfSize(size: CGFloat, submission: Bool) -> UIFont {

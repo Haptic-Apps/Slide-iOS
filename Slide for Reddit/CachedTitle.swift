@@ -14,11 +14,13 @@ class CachedTitle {
     static var removed: [String] = []
     static var approved: [String] = []
 
+    static let baseFontSize: CGFloat = 18
+
     static func addTitle(s: RSubmission) {
         titles[s.getId()] = titleForSubmission(submission: s, full: false, white: false)
     }
 
-    static var titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
+    static var titleFont = FontGenerator.fontOfSize(size: baseFontSize, submission: true)
 
     static func getTitle(submission: RSubmission, full: Bool, _ refresh: Bool, _ white: Bool = false) -> NSAttributedString {
         let title = titles[submission.getId()]
@@ -85,11 +87,13 @@ class CachedTitle {
                 let count = Int(award.split(":")[1]) ?? 0
                 print("URL IS \(url) and count is \(count)")
                 attributedTitle.append(spacer)
-                    let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                    flairView.sd_setImage(with: URL(string: url), completed: nil)
-                let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
-                    
-                    attributedTitle.append(flairImage)
+                DispatchQueue.main.async {
+                        let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                        flairView.sd_setImage(with: URL(string: url), completed: nil)
+                    let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
+
+                        attributedTitle.append(flairImage)
+                }
                     
                     if count > 1 {
                         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
