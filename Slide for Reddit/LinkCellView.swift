@@ -310,6 +310,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
+        if #available(iOS 13, *) {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            self.save.addInteraction(interaction)
+        }
         
         self.menu = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Post menu"
@@ -2882,4 +2886,41 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+@available(iOS 13.0, *)
+extension LinkCellView: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+
+            return self.makeContextMenu()
+        })
+
+    }
+    func makeContextMenu() -> UIMenu {
+
+        // Create a UIAction for sharing
+        var buttons = [UIAction]()
+        let create = UIAction(title: "Create a collection", image: UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "add")) { _ in
+            let bottom = DragDownAlertMenu(title: "Create a collection", subtitle: "", icon: nil)
+            bottom.addTextInput(title: "Save", icon: nil, action: {
+                if let title = bottom.getText() {
+                    Collections.addToCollectionCreate(id: self.link!.getId(), title: title)
+                    BannerUtil.makeBanner(text: "Saved to \(title)", seconds: 3, context: self.parentViewController)
+                }
+            }, inputPlaceholder: "", inputIcon: UIImage(sfString: SFSymbol.textbox, overrideString: "size")!, textRequired: true, exitOnAction: true)
+            bottom.show(self.parentViewController)
+        }
+        buttons.append(create)
+        for item in Collections.getAllCollections() {
+            buttons.append(UIAction(title: item, image: nil, handler: { (_) in
+                Collections.addToCollection(link: self.link!, title: item)
+                BannerUtil.makeBanner(text: "Saved to \(item)", seconds: 3, context: self.parentViewController)
+            }))
+        }
+
+        // Create and return a UIMenu with the share action
+        return UIMenu(title: "Save into a Collection", children: buttons)
+    }
+
 }

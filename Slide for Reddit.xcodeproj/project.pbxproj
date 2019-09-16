@@ -287,6 +287,10 @@
 		BEC4A1A8232EA30B00EE5114 /* ProfileInfoPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A7232EA30B00EE5114 /* ProfileInfoPresentationManager.swift */; };
 		BEC4A1AA232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A9232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift */; };
 		BEC4A1AC232EA3D200EE5114 /* ProfileInfoDismissInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1AB232EA3D200EE5114 /* ProfileInfoDismissInteraction.swift */; };
+		BEC4A1AE232F381600EE5114 /* Collections.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1AD232F381600EE5114 /* Collections.swift */; };
+		BEC4A1B2232F3B4F00EE5114 /* collections.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEC4A1B1232F3B4F00EE5114 /* collections.plist */; };
+		BEC4A1B4232F3F1800EE5114 /* CollectionsContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */; };
+		BEC4A1B6232F3F9A00EE5114 /* CollectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */; };
 		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
 		BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECF52462012B8E700A310F9 /* YTPlayerView.m */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
@@ -689,6 +693,10 @@
 		BEC4A1A7232EA30B00EE5114 /* ProfileInfoPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInfoPresentationManager.swift; sourceTree = "<group>"; };
 		BEC4A1A9232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInfoPresentationAnimator.swift; sourceTree = "<group>"; };
 		BEC4A1AB232EA3D200EE5114 /* ProfileInfoDismissInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInfoDismissInteraction.swift; sourceTree = "<group>"; };
+		BEC4A1AD232F381600EE5114 /* Collections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collections.swift; sourceTree = "<group>"; };
+		BEC4A1B1232F3B4F00EE5114 /* collections.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = collections.plist; sourceTree = "<group>"; };
+		BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsContributionLoader.swift; sourceTree = "<group>"; };
+		BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsViewController.swift; sourceTree = "<group>"; };
 		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
 		BECF52452012B8E700A310F9 /* YTPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YTPlayerView.h; sourceTree = "<group>"; };
 		BECF52462012B8E700A310F9 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YTPlayerView.m; sourceTree = "<group>"; };
@@ -1139,6 +1147,7 @@
 				BE780B681E3527D900DAA1EB /* Drafts.swift */,
 				BE1CD01420F51C37007746B6 /* RemovalReasons.swift */,
 				BE17A24B215FFD91002C6CE6 /* ReadLater.swift */,
+				BEC4A1AD232F381600EE5114 /* Collections.swift */,
 			);
 			name = ContentUtilities;
 			sourceTree = "<group>";
@@ -1272,6 +1281,9 @@
 				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
 				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
 				BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */,
+				BEC4A1B1232F3B4F00EE5114 /* collections.plist */,
+				BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */,
+				BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1598,6 +1610,7 @@
 				BE1DA5DC2208AC80001C7DB4 /* ic_tronteal@2x~ipad.png in Resources */,
 				BE35216D1E3D22B000C30B8D /* RobotoCondensed-Bold.ttf in Resources */,
 				BE3521781E3D2E3600C30B8D /* Roboto-Italic.ttf in Resources */,
+				BEC4A1B2232F3B4F00EE5114 /* collections.plist in Resources */,
 				BE1B57DE21CE965000FF6F98 /* ic_cottoncandy@2x.png in Resources */,
 				BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */,
 				BE1DA5E02208AC80001C7DB4 /* ic_outrun@2x~ipad.png in Resources */,
@@ -1981,6 +1994,7 @@
 				BEE5BF841E14836E00E3C9AE /* MediaVCDelegate.swift in Sources */,
 				09D6603821E8F1A8003D632C /* CurrentAccountPresentationAnimator.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
+				BEC4A1B4232F3F1800EE5114 /* CollectionsContributionLoader.swift in Sources */,
 				096A7D172215EC920067106C /* SettingsAudio.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
 				09526EFA214C39F0005A3F6B /* CGPoint+Extensions.swift in Sources */,
@@ -2005,6 +2019,7 @@
 				09B51D072114E80000BCB745 /* PostContentPresentationAnimator.swift in Sources */,
 				BE6EA6CA1E1C1E9400E9E709 /* Files.swift in Sources */,
 				BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */,
+				BEC4A1AE232F381600EE5114 /* Collections.swift in Sources */,
 				BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */,
 				BE47AF71225C574700A61FB0 /* ManageMultireddit.swift in Sources */,
 				BE8FCA081E0C46090063B8EF /* AppDelegate.swift in Sources */,
@@ -2057,6 +2072,7 @@
 				BE257A7D21F8D9710082A47E /* SettingsThemeChooser.swift in Sources */,
 				BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */,
 				0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */,
+				BEC4A1B6232F3F9A00EE5114 /* CollectionsViewController.swift in Sources */,
 				B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */,
 				B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */,
 				B776BB7F8D38650384698FD1 /* LiveThreadViewController.swift in Sources */,

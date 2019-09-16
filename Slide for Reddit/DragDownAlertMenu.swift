@@ -36,7 +36,7 @@ class AlertMenuInputAction: AlertMenuAction {
         self.exitOnAction = exitOnAction
         self.textRequired = textRequired
         super.init(title: title, icon: icon, action: action)
-        inputField.setImageMode(image: inputIcon, accentColor: accentColor, placeholder: inputPlaceholder)
+        inputField.setImageMode(image: inputIcon.getCopy(withSize: CGSize.square(size: 20)), accentColor: accentColor, placeholder: inputPlaceholder)
         inputField.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
         inputField.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
         inputField.text = inputValue

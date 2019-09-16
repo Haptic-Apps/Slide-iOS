@@ -39,6 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var seenFile: String?
     var commentsFile: String?
     var readLaterFile: String?
+    var collectionsFile: String?
     var totalBackground = true
     var isPro = false
     
@@ -119,6 +120,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         seenFile = documentDirectory.appending("/seen.plist")
         commentsFile = documentDirectory.appending("/comments.plist")
         readLaterFile = documentDirectory.appending("/readlater.plist")
+        collectionsFile = documentDirectory.appending("/collections.plist")
 
         let config = Realm.Configuration(
                 schemaVersion: 20,
@@ -156,7 +158,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             print("file myData.plist already exits at path.")
         }
-        
+
+        if !fileManager.fileExists(atPath: collectionsFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "collections", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: collectionsFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
+
         if !fileManager.fileExists(atPath: commentsFile!) {
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist") {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
@@ -176,6 +193,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.seenTimes = NSMutableDictionary.init(contentsOfFile: seenFile!)!
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
+        Collections.collectionIDs = NSMutableDictionary.init(contentsOfFile: collectionsFile!)!
 
         SettingValues.initialize()
         
@@ -653,6 +671,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
+        Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
@@ -665,6 +684,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
+        Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 

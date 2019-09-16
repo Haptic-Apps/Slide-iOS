@@ -106,7 +106,7 @@ extension UIImage {
     }
     convenience init?(sfString: SFSymbol, overrideString: String) {
         if #available(iOS 13, *) {
-            let config = UIImage.SymbolConfiguration(pointSize: 5, weight: UIImage.SymbolWeight.regular, scale: UIImage.SymbolScale.small)
+            let config = UIImage.SymbolConfiguration(pointSize: 15, weight: UIImage.SymbolWeight.regular, scale: UIImage.SymbolScale.small)
             self.init(systemName: sfString.rawValue, withConfiguration: config)
         } else {
             self.init(named: overrideString)

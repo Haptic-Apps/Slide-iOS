@@ -499,6 +499,14 @@ extension CurrentAccountViewController {
 
 // MARK: - AccountHeaderViewDelegate
 extension CurrentAccountViewController: AccountHeaderViewDelegate {
+    func didRequestCollections() {
+        //todo collections
+        let vc = CollectionsViewController()
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.navigationBar.isTranslucent = false
+        present(navVC, animated: true)
+    }
+    
     func didRequestCache() {
         self.cacheButtonPressed()
     }
@@ -595,6 +603,7 @@ extension CurrentAccountViewController {
 protocol AccountHeaderViewDelegate: AnyObject {
     func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int)
     func didRequestCache()
+    func didRequestCollections()
     func didRequestNewMulti()
 }
 
@@ -628,6 +637,10 @@ class AccountHeaderView: UIView {
     var multiCell = UITableViewCell().then {
         $0.configure(text: "Create a Multireddit", imageName: "add", sfSymbolName: .folderBadgePlusFill, imageColor: GMColor.yellow500Color())
     }
+    
+    var collectionsCell = UITableViewCell().then {
+        $0.configure(text: "View your Collections", imageName: "add", sfSymbolName: .squareStack3dUpFill, imageColor: GMColor.yellow500Color())
+    }
 
     var likedCell = UITableViewCell().then {
         $0.configure(text: "Liked Posts", imageName: "upvote", sfSymbolName: .arrowUp, imageColor: GMColor.orange500Color())
@@ -653,7 +666,7 @@ class AccountHeaderView: UIView {
         
         addSubviews(infoStack, cellStack)
         infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell, multiCell, cacheCell)
+        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell, multiCell, collectionsCell, cacheCell)
         
         self.clipsToBounds = true
         
@@ -699,6 +712,12 @@ class AccountHeaderView: UIView {
         likedCell.heightAnchor == 50
         
         cellStack.bottomAnchor == bottomAnchor
+        
+        if #available(iOS 13, *) {
+            collectionsCell.heightAnchor == 50
+        } else {
+            collectionsCell.isHidden = true
+        }
     }
     
     func setupActions() {
@@ -717,6 +736,10 @@ class AccountHeaderView: UIView {
         multiCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.didRequestNewMulti()
+        }
+        collectionsCell.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.didRequestCollections()
         }
         cacheCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
