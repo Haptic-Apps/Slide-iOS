@@ -42,9 +42,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         alrController.modalPresentationStyle = .fullScreen
         self.present(alrController, animated: true, completion: {})
     }
-
+    
     var swiper: SloppySwiper?
-
+    
     func hide(index: Int) {
         baseData.content.remove(at: index)
         flowLayout.reset(modal: presentingViewController != nil)
@@ -58,6 +58,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        self.lastVisibleVideoIndices.removeAll()
+        self.lastAutoPlayedVideoIndex = nil
         for index in tableView.indexPathsForVisibleItems {
             if let cell = tableView.cellForItem(at: index) as? LinkCellView {
                 cell.endVideos()
@@ -72,7 +74,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             return .lightContent
         }
     }
-
+    
     @objc func showSortMenu(_ selector: UIButton?) {
         if baseData is ProfileContributionLoader {
             let actionSheetController = DragDownAlertMenu(title: "Profile sorting", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
@@ -93,23 +95,23 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         //Not implemented
     }
     public var inHeadView = UIView()
-
+    
     var baseData: ContributionLoader
     var session: Session?
     var tableView: UICollectionView!
     var loaded = false
-
+    
     init(dataSource: ContributionLoader) {
         baseData = dataSource
         super.init(nibName: nil, bundle: nil)
         baseData.delegate = self
         setBarColors(color: baseData.color)
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     func failed(error: Error) {
         print(error.localizedDescription)
         loaded = true
@@ -119,11 +121,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             self.endAndResetRefresh()
         }
     }
-
+    
     @objc func drefresh(_ sender: AnyObject) {
         refresh()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.automaticallyAdjustsScrollViewInsets = false
@@ -132,7 +134,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.navigationController?.setToolbarHidden(true, animated: false)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.navigationController?.delegate = self
-
+        
         if !loaded && !loading {
             self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
             refreshControl.beginRefreshing()
@@ -142,6 +144,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
             self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
         }
+        autoplayOnce()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -159,10 +162,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         
         setupBaseBarColors()
     }
-
+    
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
     var emptyStateView = EmptyStateView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBaseBarColors()
@@ -173,20 +176,20 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.view.addSubview(tableView)
         tableView.verticalAnchors == view.verticalAnchors
         tableView.horizontalAnchors == view.safeHorizontalAnchors
-
+        
         self.tableView.delegate = self
         self.tableView.dataSource = self
-
+        
         refreshControl = UIRefreshControl()
         refreshControl.tintColor = ColorUtil.theme.fontColor
-
+        
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
         tableView.addSubview(refreshControl)
         refreshControl.centerAnchors == tableView.centerAnchors
-
+        
         tableView.alwaysBounceVertical = true
-
+        
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner")
         self.tableView.register(AutoplayBannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "autoplay")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb")
@@ -195,13 +198,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
         self.tableView.register(FriendCellView.classForCoder(), forCellWithReuseIdentifier: "friend")
         tableView.backgroundColor = ColorUtil.theme.backgroundColor
-
+        
         var top = 0
         
         top += ((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is CollectionsContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader) ? 45 : 0)
         
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
-
+        
         self.view.addSubview(emptyStateView)
         if self is ReadLaterViewController {
             emptyStateView.setText(title: "No Saved Posts", message: "Go add posts to Read Later to see them here.")
@@ -211,28 +214,28 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         emptyStateView.isHidden = true
         emptyStateView.edgeAnchors == self.tableView.edgeAnchors
         self.view.bringSubviewToFront(emptyStateView)
-
+        
         session = (UIApplication.shared.delegate as! AppDelegate).session
-
+        
         flowLayout.reset(modal: presentingViewController != nil)
         tableView.reloadData()
     }
     
     var oldsize = CGFloat(0)
-
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-
+        
         if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
             flowLayout.reset(modal: presentingViewController != nil)
             tableView.reloadData()
         }
     }
-
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-
+        
         oldsize = self.view.bounds.width
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
@@ -241,18 +244,18 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             }, completion: nil
         )
     }
-
+    
     var tC: UIViewController?
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return baseData.content.count
     }
-
+    
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
@@ -269,19 +272,19 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             default:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
             }
-
+            
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
             
             (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "", np: false)
-
+            
             c?.layer.shouldRasterize = true
             c?.layer.rasterizationScale = UIScreen.main.scale
             
             if self is ReadLaterViewController {
                 c?.readLater.isHidden = false
             }
-
+            
             cell = c
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
@@ -311,13 +314,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             (cell as! AutoplayBannerLinkCellView).doLoadVideo()
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, width: CGFloat, indexPath: IndexPath) -> CGSize {
         let itemWidth = width
-
+        
         if indexPath.row < baseData.content.count {
             let thing = baseData.content[indexPath.row]
-
+            
             if thing is RSubmission {
                 let submission = thing as! RSubmission
                 return SingleSubredditViewController.sizeWith(submission, width, false)
@@ -325,7 +328,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 let comment = thing as! RComment
                 if estimatedHeights[comment.id] == nil {
                     let titleText = CommentCellView.getTitle(comment)
-
+                    
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: comment.htmlText)
                     
                     estimatedHeights[comment.id] = height + 20
@@ -337,7 +340,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 let message = thing as! RMessage
                 if estimatedHeights[message.id] == nil {
                     let titleText = MessageCellView.getTitleText(message: message)
-
+                    
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16 - (message.subject.unescapeHTML.hasPrefix("re:") ? 30 : 0), titleString: titleText, htmlString: message.htmlBody)
                     
                     estimatedHeights[message.id] = height + 20
@@ -347,20 +350,20 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         }
         return CGSize(width: itemWidth, height: 90)
     }
-
+    
     var estimatedHeights: [String: CGFloat] = [:]
-
+    
     var showing = false
-
+    
     func showLoader() {
         showing = true
         //todo maybe add this later
     }
-
+    
     var sort = LinkSortType.hot
     var userSort = UserContentSortBy.new
     var time = TimeFilterWithin.day
-
+    
     func showMenu(sender: UIButton?) {
         let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
         
@@ -374,7 +377,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         
         actionSheetController.show(self)
     }
-
+    
     func showTimeMenuUser(s: UserContentSortBy, selector: UIButton?) {
         if s == .hot || s == .new {
             userSort = s
@@ -394,7 +397,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             actionSheetController.show(self)
         }
     }
-
+    
     func showTimeMenu(s: LinkSortType, selector: UIButton?) {
         if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
@@ -430,9 +433,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             (cell as! LinkCellView).endVideos()
         }
     }
-
+    
     var refreshControl: UIRefreshControl!
-
+    
     func refresh() {
         loading = true
         emptyStateView.isHidden = true
@@ -443,7 +446,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         tableView.reloadData()
         baseData.getData(reload: true)
     }
-
+    
     func loadMore() {
         if loading || !loaded {
             return
@@ -455,11 +458,144 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         baseData.getData(reload: false)
     }
     
+    var lastYUsed = CGFloat.zero
+    var lastY = CGFloat.zero
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let currentY = scrollView.contentOffset.y
         if scrollView.contentSize.height > 0 && (scrollView.contentSize.height - (scrollView.contentOffset.y + scrollView.frame.size.height) < 300) {
             if loaded && !loading && baseData.canGetMore {
                 self.loadMore()
             }
+        }
+        
+        isScrollingDown = currentY > lastY
+        let scrollDirectionHasChanged = lastScrollDirectionWasDown != isScrollingDown
+        lastScrollDirectionWasDown = isScrollingDown
+        
+        lastYUsed = currentY
+        lastY = currentY
+        
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
+            let visibleVideoIndices = tableView.indexPathsForVisibleItems
+            let visibleVideoIndexSet = Set(visibleVideoIndices)
+            
+            var autoplayedVideoNoLongerVisible = false
+            
+            let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
+            
+            let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
+                // Collect just cells that are autoplay video
+                if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                    return (index, cell)
+                } else {
+                    return nil
+                }
+            }
+            
+            let centermost = mapping.filter { item in
+                if !(item.cell is AutoplayBannerLinkCellView) {
+                    return false
+                }
+                // Keep only the cells that are at least some amount visible on-screen
+                let intersection = item.cell.frame.intersection(tableView.bounds)
+                if intersection.isNull {
+                    return false
+                } else {
+                    return intersection.height > 100
+                }
+            }
+            .min { (item1, item2) -> Bool in
+                // Get item with center closest to screen center
+                (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
+                } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
+            
+            if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
+                autoplayedVideoNoLongerVisible = true
+                lastAutoPlayedVideoIndex = nil
+            }
+            if scrollDirectionHasChanged || visibleVideoIndexSet != Set(lastVisibleVideoIndices) || autoplayedVideoNoLongerVisible {
+                updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100, mapping: mapping, centermost: centermost)
+            }
+            lastVisibleVideoIndices = visibleVideoIndices
+        }
+    }
+    
+    var isScrollingDown = true
+    var lastScrollDirectionWasDown = false
+    var lastVisibleVideoIndices: [IndexPath] = []
+    
+    var lastAutoPlayedVideoIndex: IndexPath?
+    
+    /**
+     Decides which cell in the group of indices given should be autoplaying video.
+     */
+    func updateAutoPlayVideos(atIndices indices: [IndexPath], requiringVisibleCellHeightOf visibleHeightRequirement: CGFloat, mapping: [(index: IndexPath, cell: LinkCellView)], centermost: (index: IndexPath, cell: AutoplayBannerLinkCellView)?) {
+        
+        if let itemToAutoPlay = centermost {
+            // Don't make the currently playing video reload
+            if itemToAutoPlay.index == lastAutoPlayedVideoIndex {
+                return
+            }
+            
+            print("Playing \(itemToAutoPlay.cell.link?.title ?? "unknown")")
+            itemToAutoPlay.cell.doLoadVideo()
+            lastAutoPlayedVideoIndex = itemToAutoPlay.index
+        }
+        for item in mapping {
+            // Unload all the other videos
+            if let centermost = centermost, centermost.index == item.index {
+                continue
+            }
+            if let autoplay = item.cell as? AutoplayBannerLinkCellView, autoplay.videoView.player != nil {
+                print("Stopping \(item.cell.link?.title ?? "unknown")")
+                autoplay.endVideos()
+            }
+        }
+    }
+    func autoplayOnce() {
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
+            let visibleVideoIndices = tableView.indexPathsForVisibleItems
+            let visibleVideoIndexSet = Set(visibleVideoIndices)
+
+            var autoplayedVideoNoLongerVisible = false
+            
+            let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
+                
+            let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
+                // Collect just cells that are autoplay video
+                if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                    return (index, cell)
+                } else {
+                    return nil
+                }
+            }
+            
+            let centermost = mapping.filter { item in
+                if !(item.cell is AutoplayBannerLinkCellView) {
+                    return false
+                }
+                // Keep only the cells that are at least some amount visible on-screen
+                let intersection = item.cell.frame.intersection(tableView.bounds)
+                if intersection.isNull {
+                    return false
+                } else {
+                    return intersection.height > 100
+                }
+            }
+            .min { (item1, item2) -> Bool in
+                // Get item with center closest to screen center
+                (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
+            } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
+            
+            if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
+                autoplayedVideoNoLongerVisible = true
+                lastAutoPlayedVideoIndex = nil
+            }
+            if visibleVideoIndexSet != Set(lastVisibleVideoIndices) || autoplayedVideoNoLongerVisible {
+                updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100, mapping: mapping, centermost: centermost)
+            }
+            lastVisibleVideoIndices = visibleVideoIndices
         }
     }
     
@@ -473,9 +609,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
         self.tableView.addSubview(self.refreshControl)
     }
-
+    
     var loading: Bool = false
-
+    
     func doneLoading(before: Int) {
         loading = false
         loaded = true
@@ -485,7 +621,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             if self.baseData.content.count == 0 {
                 self.emptyStateView.isHidden = false
             }
-
+            
             if before == 0 || before > self.baseData.content.count {
                 self.flowLayout.reset(modal: self.presentingViewController != nil)
                 self.tableView.reloadData()
@@ -504,7 +640,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 for i in before..<self.baseData.content.count {
                     paths.append(IndexPath.init(item: i, section: 0))
                 }
-
+                
                 self.flowLayout.reset(modal: self.presentingViewController != nil)
                 self.tableView.insertItems(at: paths)
             }
@@ -519,72 +655,72 @@ extension ContentListingViewController: LinkCellViewDelegate {
         let comment = CommentViewController.init(submission: id, subreddit: subreddit)
         VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: navigationController, parentViewController: self)
     }
-
+    
     func deleteSelf(_ cell: LinkCellView) {
         //Dont implememt
     }
-
+    
     func more(_ cell: LinkCellView) {
         PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
     }
-
+    
     func upvote(_ cell: LinkCellView) {
         do {
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (_) in
-
+                
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
             History.addSeen(s: cell.link!)
             cell.refresh()
             cell.refreshTitle(force: true)
         } catch {
-
+            
         }
     }
-
+    
     func downvote(_ cell: LinkCellView) {
         do {
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (_) in
-
+                
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
             History.addSeen(s: cell.link!)
             cell.refresh()
             cell.refreshTitle(force: true)
         } catch {
-
+            
         }
     }
-
+    
     func save(_ cell: LinkCellView) {
         do {
             try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (_) in
-
+                
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
             History.addSeen(s: cell.link!)
             cell.refresh()
         } catch {
-
+            
         }
     }
-
+    
     func reply(_ cell: LinkCellView) {
-
+        
     }
-
+    
     func hide(_ cell: LinkCellView) {
     }
-
+    
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: self)
     }
-
+    
     func readLater(_ cell: LinkCellView) {
         guard cell.link != nil else {
             return
         }
-
+        
         if self is ReadLaterViewController {
             ReadLater.removeReadLater(id: cell.link!.getId())
             let savedIndex = tableView.indexPath(for: cell)?.row ?? 0
@@ -611,44 +747,44 @@ extension ContentListingViewController: LinkCellViewDelegate {
         }
         cell.refresh()
     }
-
+    
 }
 
 class EmptyStateView: UIView {
-
+    
     var titleLabel = UILabel().then {
         $0.textAlignment = .center
         $0.numberOfLines = 0
     }
-
+    
     public override init(frame: CGRect) {
         super.init(frame: frame)
     }
-
+    
     convenience init() {
         self.init(frame: .zero)
-
+        
         addSubview(titleLabel)
         titleLabel.centerAnchors == centerAnchors
-
+        
         setText(title: "Title Placeholder", message: "Message Placeholder")
     }
-
+    
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     func setText(title: String, message: String?) {
         let finalText: NSMutableAttributedString!
         if let message = message {
             let firstPart = NSMutableAttributedString.init(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([
                 convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor.withAlphaComponent(0.8),
                 convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16),
-                ]))
+            ]))
             let secondPart = NSMutableAttributedString.init(string: "\n" + message, attributes: convertToOptionalNSAttributedStringKeyDictionary([
                 convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor.withAlphaComponent(0.5),
                 convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 14),
-                ]))
+            ]))
             firstPart.append(secondPart)
             finalText = firstPart
         } else {
@@ -660,26 +796,26 @@ class EmptyStateView: UIView {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
-	return input.rawValue
+    return input.rawValue
 }

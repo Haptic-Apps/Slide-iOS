@@ -281,6 +281,54 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
         self.navigationController?.setNavigationBarHidden(false, animated: true)
+        
+        autoplayOnce()
+    }
+    
+    func autoplayOnce() {
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
+            let visibleVideoIndices = tableView.indexPathsForVisibleItems
+            let visibleVideoIndexSet = Set(visibleVideoIndices)
+
+            var autoplayedVideoNoLongerVisible = false
+            
+            let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
+                
+            let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
+                // Collect just cells that are autoplay video
+                if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                    return (index, cell)
+                } else {
+                    return nil
+                }
+            }
+            
+            let centermost = mapping.filter { item in
+                if !(item.cell is AutoplayBannerLinkCellView) {
+                    return false
+                }
+                // Keep only the cells that are at least some amount visible on-screen
+                let intersection = item.cell.frame.intersection(tableView.bounds)
+                if intersection.isNull {
+                    return false
+                } else {
+                    return intersection.height > 100
+                }
+            }
+            .min { (item1, item2) -> Bool in
+                // Get item with center closest to screen center
+                (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
+            } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
+            
+            if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
+                autoplayedVideoNoLongerVisible = true
+                lastAutoPlayedVideoIndex = nil
+            }
+            if visibleVideoIndexSet != Set(lastVisibleVideoIndices) || autoplayedVideoNoLongerVisible {
+                updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100, mapping: mapping, centermost: centermost)
+            }
+            lastVisibleVideoIndices = visibleVideoIndices
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -323,6 +371,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        self.lastVisibleVideoIndices.removeAll()
+        self.lastAutoPlayedVideoIndex = nil
         for index in tableView.indexPathsForVisibleItems {
             if let cell = tableView.cellForItem(at: index) as? LinkCellView {
                 cell.endVideos()
@@ -433,16 +483,44 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             let visibleVideoIndexSet = Set(visibleVideoIndices)
 
             var autoplayedVideoNoLongerVisible = false
-            if let lastVideoIndex = lastAutoPlayedVideoIndex, !visibleVideoIndices.contains(lastVideoIndex) {
+            
+            let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
+                
+            let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
+                // Collect just cells that are autoplay video
+                if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                    return (index, cell)
+                } else {
+                    return nil
+                }
+            }
+            
+            let centermost = mapping.filter { item in
+                if !(item.cell is AutoplayBannerLinkCellView) {
+                    return false
+                }
+                // Keep only the cells that are at least some amount visible on-screen
+                let intersection = item.cell.frame.intersection(tableView.bounds)
+                if intersection.isNull {
+                    return false
+                } else {
+                    return intersection.height > 100
+                }
+            }
+            .min { (item1, item2) -> Bool in
+                // Get item with center closest to screen center
+                (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
+            } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
+            
+            if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
                 autoplayedVideoNoLongerVisible = true
                 lastAutoPlayedVideoIndex = nil
             }
             if scrollDirectionHasChanged || visibleVideoIndexSet != Set(lastVisibleVideoIndices) || autoplayedVideoNoLongerVisible {
-                updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100)
+                updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100, mapping: mapping, centermost: centermost)
             }
             lastVisibleVideoIndices = visibleVideoIndices
         }
-
     }
 
     var isScrollingDown = true
@@ -454,31 +532,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     /**
      Decides which cell in the group of indices given should be autoplaying video.
      */
-    func updateAutoPlayVideos(atIndices indices: [IndexPath], requiringVisibleCellHeightOf visibleHeightRequirement: CGFloat) {
-        let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
-        let mapping: [(index: IndexPath, cell: AutoplayBannerLinkCellView)] = indices
-            .compactMap { index in
-                // Collect just cells that are autoplay video
-                if let cell = tableView.cellForItem(at: index) as? AutoplayBannerLinkCellView {
-                    return (index, cell)
-                } else {
-                    return nil
-                }
-            }
-        let centermost = mapping
-            .filter { item in
-                // Keep only the cells that are at least some amount visible on-screen
-                let intersection = item.cell.frame.intersection(tableView.bounds)
-                if intersection.isNull {
-                    return false
-                } else {
-                    return intersection.height > visibleHeightRequirement
-                }
-            }
-            .min { (item1, item2) -> Bool in
-                // Get item with center closest to screen center
-                (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
-            }
+    func updateAutoPlayVideos(atIndices indices: [IndexPath], requiringVisibleCellHeightOf visibleHeightRequirement: CGFloat, mapping: [(index: IndexPath, cell: LinkCellView)], centermost: (index: IndexPath, cell: AutoplayBannerLinkCellView)?) {
 
         if let itemToAutoPlay = centermost {
             // Don't make the currently playing video reload
@@ -495,8 +549,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             if let centermost = centermost, centermost.index == item.index {
                 continue
             }
-            print("Stopping \(item.cell.link?.title ?? "unknown")")
-            item.cell.endVideos()
+            if let autoplay = item.cell as? AutoplayBannerLinkCellView, autoplay.videoView.player != nil {
+                print("Stopping \(item.cell.link?.title ?? "unknown")")
+                autoplay.endVideos()
+            }
         }
     }
     
@@ -1502,6 +1558,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     self.flowLayout.invalidateLayout()
                                     UIView.transition(with: self.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
                                         self.tableView.reloadData()
+                                        self.autoplayOnce()
                                     }, completion: nil)
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {

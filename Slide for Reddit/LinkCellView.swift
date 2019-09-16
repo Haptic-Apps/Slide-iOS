@@ -848,23 +848,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         timeView.text = "\(total)  "
         
         if oldPercent == -1 || (buffering && progressDot.layer.animation(forKey: "opacity") == nil) {
-            let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
-            pulseAnimation.duration = 0.5
-            pulseAnimation.toValue = 1.2
-            pulseAnimation.fromValue = 0.2
-            pulseAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-            pulseAnimation.autoreverses = false
-            pulseAnimation.repeatCount = Float.greatestFiniteMagnitude
-            
             let fadeAnimation = CABasicAnimation(keyPath: "opacity")
             fadeAnimation.duration = 0.5
             fadeAnimation.toValue = 0
-            fadeAnimation.fromValue = 2.5
+            fadeAnimation.fromValue = 0
             fadeAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
             fadeAnimation.autoreverses = false
             fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
             
-            progressDot.layer.add(pulseAnimation, forKey: "scale")
             progressDot.layer.add(fadeAnimation, forKey: "fade")
 
             timeView.isHidden = true
@@ -1054,16 +1045,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         videoCompletion = nil
         if videoView != nil && AnyModalViewController.linkID.isEmpty && (!full || videoLoaded) {
             videoView?.player?.pause()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+           /* this was causing too many issues DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 if (self.videoView?.player?.currentItem?.tracks.count ?? 1) > 1 {
                     do {
                         try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
                     } catch {
                     }
                 }
-                self.videoView!.player?.replaceCurrentItem(with: nil)
-                self.videoView!.player = nil
-            }
+            }*/
+            self.videoView!.player?.replaceCurrentItem(with: nil)
+            self.videoView!.player = nil
 
             self.updater?.invalidate()
             self.updater = nil
