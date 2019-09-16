@@ -428,11 +428,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         lastYUsed = currentY
         lastY = currentY
 
-        let visibleVideoIndices = tableView.indexPathsForVisibleItems
-        if scrollDirectionHasChanged || Set(visibleVideoIndices) != Set(lastVisibleVideoIndices) {
-            updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100)
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
+            let visibleVideoIndices = tableView.indexPathsForVisibleItems
+            if scrollDirectionHasChanged || Set(visibleVideoIndices) != Set(lastVisibleVideoIndices) {
+                updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100)
+            }
+            lastVisibleVideoIndices = visibleVideoIndices
         }
-        lastVisibleVideoIndices = visibleVideoIndices
 
     }
 
@@ -446,6 +448,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
      Decides which cell in the group of indices given should be autoplaying video.
      */
     func updateAutoPlayVideos(atIndices indices: [IndexPath], requiringVisibleCellHeightOf visibleHeightRequirement: CGFloat) {
+        let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
         var mapping: [(index: IndexPath, cell: AutoplayBannerLinkCellView)] = indices
             .compactMap { index in
                 // Collect just cells that are autoplay video
@@ -458,7 +461,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             .sorted { (item1, item2) -> Bool in // Could use min/max instead
                 // Sort by Y in the direction in which we're scrolling
                 // (If we're scrolling down, the last element will be the lowest on-screen)
-                return isScrollingDown ? (item1.cell.frame.minY < item2.cell.frame.minY) : (item1.cell.frame.minY > item2.cell.frame.minY)
+                return (abs(item1.cell.frame.midY - center.y) > abs(item2.cell.frame.midY - center.y))
             }
             .filter { item in
                 // Keep only the cells that are at least some amount visible on-screen
@@ -476,11 +479,15 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 return
             }
 
+            print("Playing \(itemToAutoPlay.cell.link?.title)")
             itemToAutoPlay.cell.doLoadVideo()
             lastAutoPlayedVideoIndex = itemToAutoPlay.index
 
             // Unload all the other videos
-            for item in mapping {
+        }
+        for item in mapping {
+            if item.index != lastAutoPlayedVideoIndex {
+                print("Stopping \(item.cell.link?.title)")
                 item.cell.endVideos()
             }
         }
@@ -2220,8 +2227,10 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-        if cell is AutoplayBannerLinkCellView && (cell as! AutoplayBannerLinkCellView).videoView != nil {
-            (cell as! AutoplayBannerLinkCellView).endVideos()
+        if let cell = cell as? AutoplayBannerLinkCellView {
+            if cell.videoView != nil {
+                cell.endVideos()
+            }
         }
     }
 }
