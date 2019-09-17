@@ -1113,6 +1113,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let ratio = imageHeight / imageWidth
         return viewWidth * ratio
     }
+    
+    let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
 
     func refreshLink(_ submission: RSubmission, np: Bool) {
         self.link = submission
@@ -1201,11 +1203,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 for attr in attrs {
                     if let value = attr.value as? YYTextHighlight {
                         if let profile = value.userInfo?["profile"] as? String {
-                            let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
                             if let parent = UIApplication.shared.keyWindow?.topViewController() {
                                 let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
                                 vc.modalPresentationStyle = .custom
-                                vc.transitioningDelegate = currentAccountTransitioningDelegate
+                                vc.transitioningDelegate = self.currentAccountTransitioningDelegate
                                 parent.present(vc, animated: true)
                                 if #available(iOS 10.0, *) {
                                     HapticUtility.hapticActionStrong()

@@ -12,8 +12,22 @@ import SDWebImage
 import SloppySwiper
 import UIKit
 
-class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate, UINavigationControllerDelegate {
+class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate, UINavigationControllerDelegate, AutoplayScrollViewDelegate {
+    var currentPlayingIndex: IndexPath? = nil
     
+    var isScrollingDown = true
+    
+    var lastScrollDirectionWasDown = false
+    
+    var lastYUsed = CGFloat.zero
+    
+    var lastY = CGFloat.zero
+    
+    func getTableView() -> UICollectionView {
+        return self.tableView
+    }
+    
+    var autoplayHandler: AutoplayScrollViewHandler!
     func headerOffset() -> Int {
         return 0
     }
@@ -58,8 +72,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        self.lastVisibleVideoIndices.removeAll()
-        self.lastAutoPlayedVideoIndex = nil
         for index in tableView.indexPathsForVisibleItems {
             if let cell = tableView.cellForItem(at: index) as? LinkCellView {
                 cell.endVideos()
@@ -104,6 +116,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     init(dataSource: ContributionLoader) {
         baseData = dataSource
         super.init(nibName: nil, bundle: nil)
+        autoplayHandler = AutoplayScrollViewHandler(delegate: self)
         baseData.delegate = self
         setBarColors(color: baseData.color)
     }
@@ -144,7 +157,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
             self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
         }
-        autoplayOnce()
+        //todo autoplayOnce()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -458,147 +471,18 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         baseData.getData(reload: false)
     }
     
-    var lastYUsed = CGFloat.zero
-    var lastY = CGFloat.zero
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOffset.y
-        if scrollView.contentSize.height > 0 && (scrollView.contentSize.height - (scrollView.contentOffset.y + scrollView.frame.size.height) < 300) {
-            if loaded && !loading && baseData.canGetMore {
+        autoplayHandler.scrollViewDidScroll(scrollView)
+    }
+
+    func didScrollExtras(_ currentY: CGFloat) {
+        if self.tableView.contentSize.height > 0 && (tableView.contentSize.height - (tableView.contentOffset.y + tableView.frame.size.height) < 300) {
+            if self.loaded && !self.loading && self.baseData.canGetMore {
                 self.loadMore()
             }
         }
-        
-        isScrollingDown = currentY > lastY
-        let scrollDirectionHasChanged = lastScrollDirectionWasDown != isScrollingDown
-        lastScrollDirectionWasDown = isScrollingDown
-        
-        lastYUsed = currentY
-        lastY = currentY
-        
-        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
-            let visibleVideoIndices = tableView.indexPathsForVisibleItems
-            let visibleVideoIndexSet = Set(visibleVideoIndices)
 
-            if visibleVideoIndexSet != Set(lastVisibleVideoIndices) {
-                
-                let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
-                    
-                let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
-                    // Collect just cells that are autoplay video
-                    if let cell = tableView.cellForItem(at: index) as? LinkCellView {
-                        return (index, cell)
-                    } else {
-                        return nil
-                    }
-                }
-                
-                let centermost = mapping.filter { item in
-                    if !(item.cell is AutoplayBannerLinkCellView) {
-                        return false
-                    }
-                    // Keep only the cells that are at least some amount visible on-screen
-                    let intersection = item.cell.frame.intersection(tableView.bounds)
-                    if intersection.isNull {
-                        return false
-                    } else {
-                        return intersection.height > 100
-                    }
-                }
-                .min { (item1, item2) -> Bool in
-                    // Get item with center closest to screen center
-                    (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
-                } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
-                
-                if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
-                    lastAutoPlayedVideoIndex = nil
-                }
-                
-                if lastAutoPlayedVideoIndex == nil {
-                    updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100, mapping: mapping, centermost: centermost)
-                }
-            }
-
-            lastVisibleVideoIndices = visibleVideoIndices
-        }
-    }
-    
-    var isScrollingDown = true
-    var lastScrollDirectionWasDown = false
-    var lastVisibleVideoIndices: [IndexPath] = []
-    
-    var lastAutoPlayedVideoIndex: IndexPath?
-    
-    /**
-     Decides which cell in the group of indices given should be autoplaying video.
-     */
-    func updateAutoPlayVideos(atIndices indices: [IndexPath], requiringVisibleCellHeightOf visibleHeightRequirement: CGFloat, mapping: [(index: IndexPath, cell: LinkCellView)], centermost: (index: IndexPath, cell: AutoplayBannerLinkCellView)?) {
-        
-        if let itemToAutoPlay = centermost {
-            // Don't make the currently playing video reload
-            if itemToAutoPlay.index == lastAutoPlayedVideoIndex {
-                return
-            }
-            
-            print("Playing \(itemToAutoPlay.cell.link?.title ?? "unknown")")
-            itemToAutoPlay.cell.doLoadVideo()
-            lastAutoPlayedVideoIndex = itemToAutoPlay.index
-        }
-        for item in mapping {
-            // Unload all the other videos
-            if let centermost = centermost, centermost.index == item.index {
-                continue
-            }
-            if let autoplay = item.cell as? AutoplayBannerLinkCellView, autoplay.videoView.player != nil {
-                print("Stopping \(item.cell.link?.title ?? "unknown")")
-                autoplay.endVideos()
-            }
-        }
-    }
-    func autoplayOnce() {
-        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
-            let visibleVideoIndices = tableView.indexPathsForVisibleItems
-            let visibleVideoIndexSet = Set(visibleVideoIndices)
-
-            var autoplayedVideoNoLongerVisible = false
-            
-            let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
-                
-            let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
-                // Collect just cells that are autoplay video
-                if let cell = tableView.cellForItem(at: index) as? LinkCellView {
-                    return (index, cell)
-                } else {
-                    return nil
-                }
-            }
-            
-            let centermost = mapping.filter { item in
-                if !(item.cell is AutoplayBannerLinkCellView) {
-                    return false
-                }
-                // Keep only the cells that are at least some amount visible on-screen
-                let intersection = item.cell.frame.intersection(tableView.bounds)
-                if intersection.isNull {
-                    return false
-                } else {
-                    return intersection.height > 100
-                }
-            }
-            .min { (item1, item2) -> Bool in
-                // Get item with center closest to screen center
-                (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
-            } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
-            
-            if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
-                autoplayedVideoNoLongerVisible = true
-                lastAutoPlayedVideoIndex = nil
-            }
-            if visibleVideoIndexSet != Set(lastVisibleVideoIndices) || autoplayedVideoNoLongerVisible {
-                updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100, mapping: mapping, centermost: centermost)
-            }
-            lastVisibleVideoIndices = visibleVideoIndices
-        }
     }
     
     func endAndResetRefresh() {
