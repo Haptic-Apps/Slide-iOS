@@ -445,6 +445,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             fab = nil
         }
     }
+    
+    var lastCenter = CGPoint.zero
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
@@ -476,10 +478,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
             let visibleVideoIndices = tableView.indexPathsForVisibleItems
             let visibleVideoIndexSet = Set(visibleVideoIndices)
+            let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
 
-            if visibleVideoIndexSet != Set(lastVisibleVideoIndices) {
-                
-                let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
+            if visibleVideoIndexSet != Set(lastVisibleVideoIndices) || abs(lastCenter.y - center.y) > 50 {
+                self.lastCenter = center
                     
                 let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
                     // Collect just cells that are autoplay video
@@ -1705,7 +1707,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
         } else if big {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)))
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER) ? CGFloat(10) : CGFloat(0)))
             if h == 0 {
                 submissionHeight = 200
             } else {
@@ -1867,7 +1869,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false))!
         let textSize = layout.textBoundingSize
 
-        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5)
+        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD ? -5 : 0)
         return CGSize(width: itemWidth, height: totalHeight)
     }
     
