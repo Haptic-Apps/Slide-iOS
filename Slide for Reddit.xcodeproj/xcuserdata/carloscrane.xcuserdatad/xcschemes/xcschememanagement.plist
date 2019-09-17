@@ -9,12 +9,12 @@
 			<key>orderHint</key>
 			<integer>47</integer>
 		</dict>
-		<key>Share to Slide.xcscheme</key>
+		<key>Share to Slide.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
-		<key>Slide Release.xcscheme</key>
+		<key>Slide Release.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>2</integer>
@@ -24,7 +24,7 @@
 			<key>orderHint</key>
 			<integer>36</integer>
 		</dict>
-		<key>Slide for Apple Watch.xcscheme</key>
+		<key>Slide for Apple Watch.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>3</integer>
@@ -34,7 +34,7 @@
 			<key>orderHint</key>
 			<integer>4</integer>
 		</dict>
-		<key>Slide for Reddit.xcscheme</key>
+		<key>Slide for Reddit.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
