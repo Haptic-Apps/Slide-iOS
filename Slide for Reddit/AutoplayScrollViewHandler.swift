@@ -63,12 +63,12 @@ class AutoplayScrollViewHandler {
                 let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
                 if delegate.isScrollingDown {
                     //print("Diff for scroll down is \(abs(videoViewCenter.y - center.y)) and \(scrollView.frame.size.height / 4 )")
-                    if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 4 {
+                    if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 3 {
                         needsReplace = true
                     }
                 } else {
                     //print("Diff for scroll up is \(abs(videoViewCenter.y - center.y)) and \(scrollView.frame.size.height * (3 / 4))")
-                    if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height * (3 / 4) {
+                    if abs(videoViewCenter.midY - center.y) < scrollView.frame.size.height * (2 / 3) {
                         needsReplace = true
                     }
                 }
@@ -82,11 +82,11 @@ class AutoplayScrollViewHandler {
                     if let currentCell = item.cell as? AutoplayBannerLinkCellView {
                         let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
                         if delegate.isScrollingDown {
-                            if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 4 {
+                            if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 3 {
                                 continue
                             }
                         } else {
-                            if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height * (3 / 4) {
+                            if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height * (2 / 3) {
                                 continue
                             }
                         }
@@ -107,6 +107,7 @@ class AutoplayScrollViewHandler {
                         }
                     }
                 } else {
+                    delegate.currentPlayingIndex = nil
                     for item in mapping {
                         if item.cell is AutoplayBannerLinkCellView {
                             item.cell.endVideos()

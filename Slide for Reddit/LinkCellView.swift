@@ -1047,6 +1047,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let wasPlayingAudio = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1 && !self.videoView.player!.isMuted
             
             videoView?.player?.pause()
+            
             self.videoView!.player?.replaceCurrentItem(with: nil)
             self.videoView!.player = nil
 
@@ -1535,6 +1536,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if big {
             bannerImage.isHidden = false
             self.endVideos()
+            bannerImage.alpha = 1
             var videoOverride = false
             if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
                 videoView?.isHidden = false
