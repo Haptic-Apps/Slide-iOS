@@ -82,7 +82,7 @@ public class TextDisplayStackView: UIStackView {
                             if let parent = UIApplication.shared.keyWindow?.topViewController() {
                                 let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
                                 vc.modalPresentationStyle = .custom
-                                vc.transitioningDelegate = currentAccountTransitioningDelegate
+                                vc.transitioningDelegate = self.currentAccountTransitioningDelegate
                                 parent.present(vc, animated: true)
                             }
                             return
@@ -156,7 +156,7 @@ public class TextDisplayStackView: UIStackView {
                             if let parent = UIApplication.shared.keyWindow?.topViewController() {
                                 let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
                                 vc.modalPresentationStyle = .custom
-                                vc.transitioningDelegate = currentAccountTransitioningDelegate
+                                vc.transitioningDelegate = self.currentAccountTransitioningDelegate
                                 parent.present(vc, animated: true)
                             }
                             return

@@ -1207,6 +1207,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                                 vc.modalPresentationStyle = .custom
                                 vc.transitioningDelegate = currentAccountTransitioningDelegate
                                 parent.present(vc, animated: true)
+                                HapticUtility.hapticActionStrong()
                             }
                             return
                         } else if let url = value.userInfo?["url"] as? URL {
