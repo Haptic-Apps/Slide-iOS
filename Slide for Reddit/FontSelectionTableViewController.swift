@@ -18,6 +18,7 @@ enum FontMapping {
     case system
     case systemRounded
     case systemSerif
+    case systemMonospaced
     case named(string: String)
 
     static func fromStoredName(name: String) -> FontMapping {
@@ -28,6 +29,8 @@ enum FontMapping {
             return .systemRounded
         case "Slide.System-Serif":
             return .systemSerif
+        case "Slide.System-Monospaced":
+            return .systemMonospaced
         default:
             return .named(string: name)
         }
@@ -41,6 +44,8 @@ enum FontMapping {
             return UIFont.withDesignRounded(forSize: size)
         case .systemSerif:
             return UIFont.withDesignSerif(forSize: size)
+        case .systemMonospaced:
+            return UIFont.withDesignMonospaced(forSize: size)
         case .named(let name):
             return UIFont(name: name, size: size) ?? UIFont.systemFont(ofSize: size)
         }
@@ -54,6 +59,8 @@ enum FontMapping {
             return "Slide.System-Rounded"
         case .systemSerif:
             return "Slide.System-Serif"
+        case .systemMonospaced:
+            return "Slide.System-Monospaced"
         case .named:
             return self.font(ofSize: 16)?.fontName ?? "Unknown Font Name"
         }
@@ -64,9 +71,11 @@ enum FontMapping {
         case .system:
             return "San Francisco"
         case .systemRounded:
-            return "San Francisco Rounded"
+            return "SF Rounded"
         case .systemSerif:
-            return "San Francisco Serif"
+            return "SF Serif"
+        case .systemMonospaced:
+            return "SF Monospaced"
         case .named(let name):
             return name
         }
@@ -78,6 +87,7 @@ enum FontMapping {
                 .system,
                 .systemRounded,
                 .systemSerif,
+                .systemMonospaced,
             ]
         } else {
             return [.system]
