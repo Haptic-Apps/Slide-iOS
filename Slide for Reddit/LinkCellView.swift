@@ -1065,7 +1065,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                      if (self.videoView?.player?.currentItem?.tracks.count ?? 1) > 1 {
                          do {
-                            try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                            try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                              try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
                          } catch {
                          }
