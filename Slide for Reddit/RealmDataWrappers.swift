@@ -165,6 +165,7 @@ class RealmDataWrapper {
             rSubmission.reports.append("\(array[0]): \(array[1])")
         }
         
+        rSubmission.awards.removeAll()
         for item in submission.baseJson["all_awardings"] as? [AnyObject] ?? [] {
             if let award = item as? JSONDictionary {
                 if award["icon_url"] != nil && award["count"] != nil {
@@ -274,6 +275,7 @@ class RealmDataWrapper {
             
         }
         
+        rSubmission.awards.removeAll()
         for item in submission.baseJson["all_awardings"] as? [AnyObject] ?? [] {
             if let award = item as? JSONDictionary {
                 if award["icon_url"] != nil && award["count"] != nil {
