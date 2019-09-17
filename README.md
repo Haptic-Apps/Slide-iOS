@@ -2,27 +2,29 @@
 
 <img src="/slide_ios_rounded.png" align="left" width="150" hspace="10" vspace="10">
 
-Slide is an open-source, ad-free Reddit browser written in Swift 4 for iOS (now available on the [App Store](https://itunes.apple.com/us/app/slide-for-reddit/id1260626828)). Feel free to join us on [the official subreddit](https://www.reddit.com/r/slide_ios) for discussion or requests!
+Slide is a powerful open-source, ad-free, Swift-based Reddit browser for iOS. Feel free to join us on [the official subreddit](https://www.reddit.com/r/slide_ios) for discussion or requests!
+
+<a href="https://apps.apple.com/us/app/slide-for-reddit/id1260626828?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2018-08-20&kind=iossoftware&bubble=ios_apps) no-repeat;width:135px;height:40px;"></a>
 
 <br>
 <br>
 <br>
 <br>
 
-## Contributing
+## Getting started
 
-
-### Getting started
-
-To get started with Slide iOS development, you need to set up Cocoapods integration and open the Coacoapods workspace, not the default xcworkspace. **NOTE: You must open the .xcworkspace file instead of the .xcodeproj file for dependencies to load. If you are having issues with Pods or are setting up the Slide repository for the first time, try the steps below.**
+To get started with Slide iOS development, you need to set up CocoaPods integration and open the Coacoapods workspace, not the default xcworkspace. **NOTE: You must open the .xcworkspace file instead of the .xcodeproj file for dependencies to load. If you are having issues with Pods or are setting up the Slide repository for the first time, try the steps below.**
 
 Below are the steps to getting started:
 
 1. Clone this repo and open the Terminal
 2. In Terminal, run `pod install`
 3. Open "Slide for Reddit.xcworkspace" through Finder
-4. Go to the **project** build settings and change `USR_DOMAIN` to something else
+4. Go to the **project** build settings and change `USR_DOMAIN` to something else (see below for an alternative).
 
+### Make your life easier:
+
+You can automate the process of changing your credentials and `USR_DOMAIN`, which we recommend. Alter [/scripts/install-filter.sh](/scripts.install-filter.sh) with the information it asks for, then run it (`sh ./scripts/install-filter.sh`). Once done, you can freely change branches and pull without needing to mess around with your signing info.
 
 ### If you are having trouble building on XCode 10 or MacOS Mojave
 
@@ -36,12 +38,12 @@ Select "none" for your team, go to the "Capabilities" section of the project bui
 If you still run into problems, feel free to shoot me a message on Reddit or Discord (above).
 
 
-### What needs to be done
+## What needs to be done
 
 Any issues are fair game, but any issue with the "Help Wanted" or "Enhancement" tags are issues that we would particularly love help with. If you have any questions or want to be pointed in the right direction, feel free to send me a PM on Reddit to [/u/ccrama](https://www.reddit.com/u/ccrama), or join us on [Discord](https://discord.gg/hVWAY8A)!
 
 
-### Issues
+## Issues
 
 In any project, it's likely that a few bugs will slip through the cracks, so it helps greatly if people document any bugs they find to ensure that they get fixed promptly.
 
@@ -50,9 +52,9 @@ You can view a list of known issues and feature requests using [the issue tracke
 Where appropriate, a screenshot works wonders to help us see exactly what the issue is. You can upload screenshots directly using the GitHub issue tracker or by attaching a link (to Imgur, for example); whichever is easier for you.
 
 
-### Code
+## Code
 
-If you are a developer and wish to contribute to the app please fork the project and submit a pull request.
+If you are a developer and wish to contribute to the app, please fork the project and submit a pull request.
 
 If you have any questions, feel free to message me on Discord or [drop me a message](https://www.reddit.com/message/compose/?to=ccrama) on Reddit.
 
