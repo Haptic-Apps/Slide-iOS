@@ -1196,6 +1196,28 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
             })
         }
+        title.highlightLongPressAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
+                for attr in attrs {
+                    if let value = attr.value as? YYTextHighlight {
+                        if let profile = value.userInfo?["profile"] as? String {
+                            let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
+                            if let parent = UIApplication.shared.keyWindow?.topViewController() {
+                                let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+                                vc.modalPresentationStyle = .custom
+                                vc.transitioningDelegate = currentAccountTransitioningDelegate
+                                parent.present(vc, animated: true)
+                            }
+                            return
+                        } else if let url = value.userInfo?["url"] as? URL {
+                            self.linkLongTapped(url: url)
+                            return
+                        }
+                    }
+                }
+            })
+        }
+
     }
     
     @objc func doDTap(_ sender: AnyObject) {

@@ -22,7 +22,8 @@ public class TextDisplayStackView: UIStackView {
     static let TABLE_START_TAG = "<table>"
     static let HR_TAG = "<hr/>"
     static let TABLE_END_TAG = "</table>"
-    
+    let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
+
     var estimatedWidth = CGFloat(0)
     var estimatedHeight = CGFloat(0)
     weak var parentLongPress: UILongPressGestureRecognizer?
@@ -62,11 +63,11 @@ public class TextDisplayStackView: UIStackView {
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
-                    if attr.value is YYTextHighlight {
-                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                    if let value = attr.value as? YYTextHighlight {
+                        if let url = value.userInfo?["url"] as? URL {
                             self.delegate.linkTapped(url: url, text: "")
                             return
-                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
+                        } else if value.userInfo?["spoiler"] as? Bool ?? false {
                             self.delegate.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
                         }
                     }
@@ -76,8 +77,16 @@ public class TextDisplayStackView: UIStackView {
         self.longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                 for attr in attrs {
-                    if attr.value is YYTextHighlight {
-                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                    if let value = attr.value as? YYTextHighlight {
+                        if let profile = value.userInfo?["profile"] as? String {
+                            if let parent = UIApplication.shared.keyWindow?.topViewController() {
+                                let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+                                vc.modalPresentationStyle = .custom
+                                vc.transitioningDelegate = currentAccountTransitioningDelegate
+                                parent.present(vc, animated: true)
+                            }
+                            return
+                        } else if let url = value.userInfo?["url"] as? URL {
                             self.delegate.linkLongTapped(url: url)
                             return
                         }
@@ -85,7 +94,7 @@ public class TextDisplayStackView: UIStackView {
                 }
             })
         }
-
+        
         self.isUserInteractionEnabled = true
         self.firstTextView.highlightLongPressAction = longTouchLinkAction
         self.firstTextView.highlightTapAction = touchLinkAction
@@ -128,11 +137,11 @@ public class TextDisplayStackView: UIStackView {
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
-                    if attr.value is YYTextHighlight {
-                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                    if let value = attr.value as? YYTextHighlight {
+                        if let url = value.userInfo?["url"] as? URL {
                             self.delegate.linkTapped(url: url, text: "")
                             return
-                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
+                        } else if value.userInfo?["spoiler"] as? Bool ?? false {
                             self.delegate.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
                         }
                     }
@@ -142,8 +151,16 @@ public class TextDisplayStackView: UIStackView {
         self.longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                 for attr in attrs {
-                    if attr.value is YYTextHighlight {
-                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
+                    if let value = attr.value as? YYTextHighlight {
+                        if let profile = value.userInfo?["profile"] as? String {
+                            if let parent = UIApplication.shared.keyWindow?.topViewController() {
+                                let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+                                vc.modalPresentationStyle = .custom
+                                vc.transitioningDelegate = currentAccountTransitioningDelegate
+                                parent.present(vc, animated: true)
+                            }
+                            return
+                        } else if let url = value.userInfo?["url"] as? URL {
                             self.delegate.linkLongTapped(url: url)
                             return
                         }
