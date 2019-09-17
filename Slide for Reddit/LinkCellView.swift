@@ -1044,15 +1044,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         isLoadingVideo = false
         videoCompletion = nil
         if videoView != nil && AnyModalViewController.linkID.isEmpty && (!full || videoLoaded) {
+            let wasPlayingAudio = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1 && !self.videoView.player!.isMuted
+            
             videoView?.player?.pause()
-           /* this was causing too many issues DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                if (self.videoView?.player?.currentItem?.tracks.count ?? 1) > 1 {
-                    do {
-                        try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-                    } catch {
-                    }
-                }
-            }*/
             self.videoView!.player?.replaceCurrentItem(with: nil)
             self.videoView!.player = nil
 
@@ -1067,6 +1061,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.contentView.bringSubviewToFront(topVideoView!)
             self.progressDot.isHidden = true
             self.timeView.isHidden = true
+            if wasPlayingAudio {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                     if (self.videoView?.player?.currentItem?.tracks.count ?? 1) > 1 {
+                         do {
+                            try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                             try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                         } catch {
+                         }
+                     }
+                }
+             }
         }
     }
     

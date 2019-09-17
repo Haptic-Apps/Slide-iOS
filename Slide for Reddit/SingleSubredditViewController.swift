@@ -291,9 +291,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             let visibleVideoIndexSet = Set(visibleVideoIndices)
 
             var autoplayedVideoNoLongerVisible = false
-            
-            let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
-                
+                            
             let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
                 // Collect just cells that are autoplay video
                 if let cell = tableView.cellForItem(at: index) as? LinkCellView {
@@ -315,10 +313,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     return intersection.height > 100
                 }
             }
-            .min { (item1, item2) -> Bool in
-                // Get item with center closest to screen center
-                (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
-            } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
+            .first as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
             
             if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
                 autoplayedVideoNoLongerVisible = true
@@ -482,43 +477,45 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             let visibleVideoIndices = tableView.indexPathsForVisibleItems
             let visibleVideoIndexSet = Set(visibleVideoIndices)
 
-            var autoplayedVideoNoLongerVisible = false
-            
-            let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
+            if visibleVideoIndexSet != Set(lastVisibleVideoIndices) {
                 
-            let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
-                // Collect just cells that are autoplay video
-                if let cell = tableView.cellForItem(at: index) as? LinkCellView {
-                    return (index, cell)
-                } else {
-                    return nil
+                let center = CGPoint(x: self.tableView.center.x + self.tableView.contentOffset.x, y: self.tableView.center.y + self.tableView.contentOffset.y)
+                    
+                let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
+                    // Collect just cells that are autoplay video
+                    if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                        return (index, cell)
+                    } else {
+                        return nil
+                    }
+                }
+                
+                let centermost = mapping.filter { item in
+                    if !(item.cell is AutoplayBannerLinkCellView) {
+                        return false
+                    }
+                    // Keep only the cells that are at least some amount visible on-screen
+                    let intersection = item.cell.frame.intersection(tableView.bounds)
+                    if intersection.isNull {
+                        return false
+                    } else {
+                        return intersection.height > 100
+                    }
+                }
+                .min { (item1, item2) -> Bool in
+                    // Get item with center closest to screen center
+                    (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
+                } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
+                
+                if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
+                    lastAutoPlayedVideoIndex = nil
+                }
+                
+                if lastAutoPlayedVideoIndex == nil {
+                    updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100, mapping: mapping, centermost: centermost)
                 }
             }
-            
-            let centermost = mapping.filter { item in
-                if !(item.cell is AutoplayBannerLinkCellView) {
-                    return false
-                }
-                // Keep only the cells that are at least some amount visible on-screen
-                let intersection = item.cell.frame.intersection(tableView.bounds)
-                if intersection.isNull {
-                    return false
-                } else {
-                    return intersection.height > 100
-                }
-            }
-            .min { (item1, item2) -> Bool in
-                // Get item with center closest to screen center
-                (abs(item1.cell.frame.midY - center.y) < abs(item2.cell.frame.midY - center.y))
-            } as? (index: IndexPath, cell: AutoplayBannerLinkCellView)
-            
-            if let lastVideoIndex = lastAutoPlayedVideoIndex, (!visibleVideoIndices.contains(lastVideoIndex) || (centermost != nil && centermost!.index.row != lastVideoIndex.row) || centermost == nil) {
-                autoplayedVideoNoLongerVisible = true
-                lastAutoPlayedVideoIndex = nil
-            }
-            if scrollDirectionHasChanged || visibleVideoIndexSet != Set(lastVisibleVideoIndices) || autoplayedVideoNoLongerVisible {
-                updateAutoPlayVideos(atIndices: visibleVideoIndices, requiringVisibleCellHeightOf: 100, mapping: mapping, centermost: centermost)
-            }
+
             lastVisibleVideoIndices = visibleVideoIndices
         }
     }
