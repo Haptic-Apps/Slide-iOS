@@ -73,7 +73,7 @@ class SettingsFont: BubbleSettingTableViewController {
         UserDefaults.standard.set(size, forKey: SettingValues.pref_postFontSize)
         UserDefaults.standard.synchronize()
         SubredditReorderViewController.changed = true
-        CachedTitle.titleFont = FontGenerator.fontOfSize(size: CachedTitle.baseFontSize, submission: true)
+        CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
         FontGenerator.initialize()
         refresh()
     }
@@ -157,19 +157,18 @@ class SettingsFont: BubbleSettingTableViewController {
     }
     
     func refresh() {
-        let submissionFont = FontGenerator.fontOfSize(size: 16, submission: true)
-        let commentFont = FontGenerator.fontOfSize(size: 16, submission: false)
+        self.submissionPreview.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: true)
+        self.commentPreview.textLabel?.font = FontGenerator.fontOfSize(size: 16, submission: false)
 
-        self.submissionPreview.textLabel?.font = submissionFont
-        self.commentPreview.textLabel?.font = commentFont
+        self.submissionFont.detailTextLabel?.text = FontGenerator.fontOfSize(size: 16, submission: true).familyName
+        if self.submissionFont.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).familyName {
+            self.submissionFont.detailTextLabel?.text = "System Default"
+        }
 
-        let subFontKey = UserDefaults.standard.string(forKey: "postfont") ?? ""
-        let subFontDisplayName = FontMapping.fromStoredName(name: subFontKey)?.displayedName ?? "Unknown Font Name"
-        self.submissionFont.detailTextLabel?.text = subFontDisplayName
-
-        let commentFontKey = UserDefaults.standard.string(forKey: "commentfont") ?? ""
-        let commentFontDisplayName = FontMapping.fromStoredName(name: commentFontKey)?.displayedName ?? "Unknown Font Name"
-        self.commentFont.detailTextLabel?.text = commentFontDisplayName
+        self.commentFont.detailTextLabel?.text = FontGenerator.fontOfSize(size: 16, submission: false).familyName
+        if self.commentFont.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).familyName {
+            self.commentFont.detailTextLabel?.text = "System Default"
+        }
 
         self.submissionSize.detailTextLabel?.text = fontSizes[SettingValues.postFontOffset] ?? "Default"
         self.commentSize.detailTextLabel?.text = fontSizes[SettingValues.commentFontOffset] ?? "Default"
@@ -177,24 +176,21 @@ class SettingsFont: BubbleSettingTableViewController {
         self.submissionWeight.detailTextLabel?.text = FontGenerator.fontOfSize(size: 12, submission: true).fontName
         self.commentWeight.detailTextLabel?.text = FontGenerator.fontOfSize(size: 12, submission: false).fontName
 
-        // Enable/disable if we have font variants to choose from for submission font
-        if UIFont.fontNames(forFamilyName: submissionFont.familyName).count > 1 {
-            self.submissionWeight.contentView.alpha = 1
-            self.submissionWeight.isUserInteractionEnabled = true
-        } else {
+        if self.submissionWeight.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).fontName || UIFont.fontNames(forFamilyName: FontGenerator.fontOfSize(size: 16, submission: true).familyName).count < 2 {
             self.submissionWeight.detailTextLabel?.text = "Default"
             self.submissionWeight.contentView.alpha = 0.7
             self.submissionWeight.isUserInteractionEnabled = false
-        }
-
-        // Enable/disable if we have font variants to choose from for comment font
-        if UIFont.fontNames(forFamilyName: commentFont.familyName).count > 1 {
-            self.commentWeight.contentView.alpha = 1
-            self.commentWeight.isUserInteractionEnabled = true
         } else {
+            self.submissionWeight.contentView.alpha = 1
+            self.submissionWeight.isUserInteractionEnabled = true
+        }
+        if commentWeight.detailTextLabel?.text == UIFont.systemFont(ofSize: 16).fontName || UIFont.fontNames(forFamilyName: FontGenerator.fontOfSize(size: 16, submission: false).familyName).count < 2 {
             self.commentWeight.detailTextLabel?.text = "Default"
             self.commentWeight.contentView.alpha = 0.7
             self.commentWeight.isUserInteractionEnabled = false
+        } else {
+            self.commentWeight.contentView.alpha = 1
+            self.commentWeight.isUserInteractionEnabled = true
         }
 
         self.tableView.reloadData()
@@ -325,7 +321,7 @@ extension SettingsFont {
                 
                 UserDefaults.standard.synchronize()
                 FontGenerator.initialize()
-                CachedTitle.titleFont = FontGenerator.fontOfSize(size: CachedTitle.baseFontSize, submission: true)
+                CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
                 CachedTitle.titles.removeAll()
                 self.refresh()
             }
@@ -369,7 +365,7 @@ extension SettingsFont: FontSelectionTableViewControllerDelegate {
         // Update the VC
         UserDefaults.standard.synchronize()
         FontGenerator.initialize()
-        CachedTitle.titleFont = FontGenerator.fontOfSize(size: CachedTitle.baseFontSize, submission: true)
+        CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
         CachedTitle.titles.removeAll()
         refresh()
     }
