@@ -1043,7 +1043,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         videoPreloaded = false
         isLoadingVideo = false
         videoCompletion = nil
-        if videoView != nil && AnyModalViewController.linkID.isEmpty && (!full || videoLoaded) {
+        if videoView != nil && (AnyModalViewController.linkID.isEmpty && (!full || videoLoaded) || full) {
             let wasPlayingAudio = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1 && !self.videoView.player!.isMuted
             
             videoView?.player?.pause()
