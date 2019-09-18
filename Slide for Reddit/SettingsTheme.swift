@@ -518,6 +518,25 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         VCPresenter.presentModally(viewController: chooseVC, self)
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if #available(iOS 13.0, *) {
+            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                if themeChanged {
+                    _ = ColorUtil.doInit()
+                    SingleSubredditViewController.cellVersion += 1
+                    MainViewController.needsReTheme = true
+                    self.setupViews()
+                    self.tableView.reloadData()
+                    self.tochange!.doCells()
+                    self.tochange!.tableView.reloadData()
+                    self.setupBaseBarColors()
+                }
+            }
+        }
+    }
+
     var selectedTableView = UIView()
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
