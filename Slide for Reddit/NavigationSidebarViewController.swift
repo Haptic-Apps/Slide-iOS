@@ -82,7 +82,27 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             if UIScreen.main.bounds.height >= 812 {
                 bottomOffset = 84
             }
+        } else if UIApplication.shared.isSplitOrSlideOver {
+            bottomOffset = 84
+            if let w = UIApplication.shared.delegate?.window, let window = w {
+                bottomOffset += (window.screen.bounds.height - window.frame.height) / 2
+            }
         }
+    }
+    
+    public func didSlideOver() {
+        if UIApplication.shared.isSplitOrSlideOver {
+            bottomOffset = 84
+            if let w = UIApplication.shared.delegate?.window, let window = w {
+                bottomOffset += (window.screen.bounds.height - window.frame.height) / 2
+            }
+        } else {
+            bottomOffset = 84
+            if let w = UIApplication.shared.delegate?.window, let window = w {
+                bottomOffset += (window.screen.bounds.height - window.frame.height) / 2
+            }
+        }
+        collapse()
     }
     
     required init?(coder aDecoder: NSCoder) {

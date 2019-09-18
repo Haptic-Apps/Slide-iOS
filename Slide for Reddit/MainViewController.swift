@@ -143,6 +143,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 }
             }
         }
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            menuNav?.didSlideOver()
+        }
     }
 
     public func viewWillAppearActions(override: Bool = false) {
