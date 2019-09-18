@@ -1037,7 +1037,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func endVideos() {
-        if !(self is AutoplayBannerLinkCellView) {
+        if !(self is AutoplayBannerLinkCellView || self is FullLinkCellView) {
             return
         }
         videoPreloaded = false
