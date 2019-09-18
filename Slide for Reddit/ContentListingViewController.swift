@@ -157,7 +157,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
             self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
         }
-        //todo autoplayOnce()
+        autoplayHandler.autoplayOnce(self.tableView)
     }
     
     override func viewDidAppear(_ animated: Bool) {

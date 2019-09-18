@@ -298,7 +298,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
-        //todo autoplayOnce()
+        autoplayHandler.autoplayOnce(self.tableView)
     }
     
 
@@ -1455,7 +1455,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     self.flowLayout.invalidateLayout()
                                     UIView.transition(with: self.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
                                         self.tableView.reloadData()
-                                        //todo this self.autoplayOnce()
+                                        self.autoplayHandler.autoplayOnce(self.tableView)
                                     }, completion: nil)
                                     var top = CGFloat(0)
                                     if #available(iOS 11, *) {
