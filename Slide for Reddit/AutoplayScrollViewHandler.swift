@@ -44,7 +44,7 @@ class AutoplayScrollViewHandler {
         delegate.lastYUsed = currentY
         delegate.lastY = currentY
 
-        if (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi)) {
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
             let visibleVideoIndices = delegate.getTableView().indexPathsForVisibleItems
             
             let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
@@ -82,11 +82,11 @@ class AutoplayScrollViewHandler {
                     if let currentCell = item.cell as? AutoplayBannerLinkCellView {
                         let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
                         if delegate.isScrollingDown {
-                            if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 3 {
+                            if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 {
                                 continue
                             }
                         } else {
-                            if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height * (2 / 3) {
+                            if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 {
                                 continue
                             }
                         }

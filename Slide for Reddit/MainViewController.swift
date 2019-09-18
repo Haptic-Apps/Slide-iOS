@@ -564,7 +564,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if self.splitViewController != nil && UIDevice.current.orientation == .portrait {
             nextOffset = 64
         }
-
+        
         menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: min(height - menuNav!.minTopOffset, height * 0.9))
     }
     
