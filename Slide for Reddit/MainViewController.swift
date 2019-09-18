@@ -143,10 +143,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 }
             }
         }
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            menuNav?.didSlideOver()
-        }
     }
 
     public func viewWillAppearActions(override: Bool = false) {
@@ -818,6 +814,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
             self.menuNav?.doRotate(false)
             self.getSubredditVC()?.showUI(false)
+        }
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            menuNav?.didSlideOver()
         }
     }
     

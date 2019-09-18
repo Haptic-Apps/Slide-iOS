@@ -376,11 +376,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
-        self.fab?.removeFromSuperview()
-        self.fab = nil
-        
-        self.setupFab(size)
+                
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
 
@@ -390,6 +386,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
                 //todo content offset
+                self.setupFab(size)
             }, completion: nil
         )
 
