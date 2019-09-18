@@ -53,6 +53,9 @@ public class ColorUtil {
     static var CUSTOM_STATUSBAR_NIGHT = "customStatusNight"
 
     static func shouldBeNight() -> Bool {
+        if !SettingValues.nightModeEnabled {
+            return false
+        }
         if #available(iOS 13, *) {
             return UITraitCollection.current.userInterfaceStyle == .dark
         }

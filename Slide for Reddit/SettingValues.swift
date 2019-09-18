@@ -366,7 +366,7 @@ class SettingValues {
         let pad = UIDevice.current.userInterfaceIdiom == .pad
         let settings = UserDefaults.standard
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
-        SettingValues.reduceColor = settings.bool(forKey: SettingValues.pref_reduceColor)
+        SettingValues.reduceColor = settings.object(forKey: SettingValues.pref_reduceColor) == nil ? true : settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         
         var columns = Int(round(UIApplication.shared.statusBarUIView!.frame.size.width / CGFloat(320)))
