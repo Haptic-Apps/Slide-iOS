@@ -1078,7 +1078,17 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
 
-        navigationItem.rightBarButtonItems = [sortB, searchB]
+        let split = UIButton.init(type: .custom)
+        split.setImage(UIImage.init(sfString: SFSymbol.rectangleExpandVertical, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
+        split.addTarget(self, action: #selector(self.split(_:)), for: UIControl.Event.touchUpInside)
+        split.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let splitB = UIBarButtonItem.init(customView: split)
+
+        if #available(iOS 13, *), UIDevice.current.userInterfaceIdiom == .pad {
+            navigationItem.rightBarButtonItems = [sortB, searchB, splitB]
+        } else {
+            navigationItem.rightBarButtonItems = [sortB, searchB]
+        }
         navigationItem.leftBarButtonItem = savedBack
 
         navigationItem.titleView = savedTitleView
@@ -1121,6 +1131,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     var indicator: MDCActivityIndicator = MDCActivityIndicator()
 
+    func split(_ sender: AnyObject) {
+        UIApplication.shared.requestSceneSessionActivation(nil, userActivity: NSUserActivity(activityType: "comment"), options: nil, errorHandler: nil)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false
