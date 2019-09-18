@@ -1892,10 +1892,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
     func doLoadVideo() {
         if videoPreloaded {
-            print("Doing playVideo()")
             playVideo()
         } else if isLoadingVideo {
-            print("Doing isLoadingVideo")
             videoCompletion = {
                 self.playVideo()
             }
@@ -1903,13 +1901,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             videoCompletion = {
                 self.playVideo()
             }
-            print("Doing full video load")
             preloadVideo()
         }
     }
     
     func playVideo() {
-        print("playVideo()")
         if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
             if playView != nil {
                 playView.isHidden = false
@@ -1918,7 +1914,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         let strongSelf = self
-        print(strongSelf.videoURL)
 
         strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none

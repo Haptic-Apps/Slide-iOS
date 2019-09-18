@@ -1727,8 +1727,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
         if thumb {
             estimatedUsableWidth -= thumbheight //is the same as the width
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumb and label
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //between edge and thumb
         } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title label padding
         }

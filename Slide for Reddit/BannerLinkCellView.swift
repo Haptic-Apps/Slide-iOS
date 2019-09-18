@@ -36,7 +36,7 @@ final class BannerLinkCellView: LinkCellView {
                 } else {
                     title.horizontalAnchors == contentView.horizontalAnchors + ctwelve
                 }
-                title.bottomAnchor <= bannerImage.topAnchor - ceight
+                title.bottomAnchor == bannerImage.topAnchor - ceight
 
                 bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
                 
