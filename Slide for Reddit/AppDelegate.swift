@@ -111,18 +111,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        if #available(iOS 13, *) {
-            return true
-        }
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
 
-        self.window = doFirstLaunchActions(launchOptions)
-        return true
-    }
-    
-    public func doFirstLaunchActions(_ launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> UIWindow {
         UIPanGestureRecognizer.swizzle()
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
@@ -255,17 +246,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UIApplication.shared.applicationIconBadgeNumber = 0
 
-        var window = UIWindow(frame: UIScreen.main.bounds)
+        self.window = UIWindow(frame: UIScreen.main.bounds)
         resetStack()
-        window.makeKeyAndVisible()
+        window?.makeKeyAndVisible()
         
         let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
         
         if remoteNotif != nil {
             if let url = remoteNotif!.userInfo?["permalink"] as? String {
-                VCPresenter.openRedditLink(url, window.rootViewController as? UINavigationController, window.rootViewController)
+                VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
             } else {
-                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window.rootViewController as? UINavigationController, parentViewController: window.rootViewController)
+                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
             }
         }
 
@@ -293,8 +284,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             
         }
-        return window
+        
+        return true
     }
+    
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
         print("Received: \(userInfo)")
     }
