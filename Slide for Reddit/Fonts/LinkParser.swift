@@ -83,7 +83,7 @@ class LinkParser {
                         
                         if type != .SPOILER {
                             linksCallback?(url)
-                            if let value = indexCallback?() {
+                            if let value = indexCallback?(), !SettingValues.disablePreviews {
                                 let positionString = NSMutableAttributedString.init(string: " †\(value)", attributes: [NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10)])
                                 string.insert(positionString, at: range.location + range.length)
                             }
