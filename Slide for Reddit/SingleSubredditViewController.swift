@@ -571,6 +571,16 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if self.fab != nil {
             self.fab!.removeFromSuperview()
             self.fab = nil
+            for view in self.navigationController?.toolbar.subviews ?? [UIView]() {
+                if view.tag == 1337 {
+                    view.removeFromSuperview()
+                }
+            }
+            for view in self.parentController?.toolbar?.subviews ?? [UIView]() {
+                if view.tag == 1337 {
+                    view.removeFromSuperview()
+                }
+            }
         }
         if !MainViewController.isOffline && !SettingValues.hiddenFAB {
             self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
@@ -582,8 +592,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             self.fab!.setTitle(title, for: .normal)
             self.fab!.leftImage(image: SettingValues.fabType.getPhoto()!.navIcon(true), renderMode: UIImage.RenderingMode.alwaysOriginal)
             self.fab!.elevate(elevation: 2)
+            self.fab!.tag = 1337
             self.fab!.titleLabel?.textAlignment = .center
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+            
             
             let width = title.size(with: self.fab!.titleLabel!.font).width + CGFloat(65)
             self.fab!.frame = CGRect.init(x: (size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
