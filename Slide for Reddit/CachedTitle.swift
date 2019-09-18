@@ -87,13 +87,11 @@ class CachedTitle {
                 let count = Int(award.split(":")[1]) ?? 0
                 print("URL IS \(url) and count is \(count)")
                 attributedTitle.append(spacer)
-                DispatchQueue.main.async {
-                        let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                        flairView.sd_setImage(with: URL(string: url), completed: nil)
-                    let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
+                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                flairView.sd_setImage(with: URL(string: url), completed: nil)
+                let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
 
-                        attributedTitle.append(flairImage)
-                }
+                attributedTitle.append(flairImage)
                     
                     if count > 1 {
                         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
