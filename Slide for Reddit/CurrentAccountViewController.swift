@@ -17,7 +17,7 @@ import UIKit
 
 protocol CurrentAccountViewControllerDelegate: AnyObject {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void)
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String)
+    func currentAccountViewController(_ controller: CurrentAccountViewController?, didRequestAccountChangeToName accountName: String)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestGuestAccount: Void)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestLogOut: Void)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestNewAccount: Void)

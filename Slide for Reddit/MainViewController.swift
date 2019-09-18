@@ -965,7 +965,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
         accountB.accessibilityHint = "Open account page"
-        
+        if #available(iOS 13, *) {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            self.accountB.customView?.addInteraction(interaction)
+        }
+
         let settings = ExpandedHitButton(type: .custom)
         settings.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
         //todo this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
@@ -1233,7 +1237,7 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
         }
     }
 
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestAccountChangeToName accountName: String) {
+    func currentAccountViewController(_ controller: CurrentAccountViewController?, didRequestAccountChangeToName accountName: String) {
 
         AccountController.switchAccount(name: accountName)
         if !UserDefaults.standard.bool(forKey: "done" + accountName) {
@@ -1318,4 +1322,34 @@ class ExpandedHitButton: UIButton {
         let hitFrame = relativeFrame.inset(by: hitTestEdgeInsets)
         return hitFrame.contains(point)
     }
+}
+
+@available(iOS 13.0, *)
+extension MainViewController: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+
+            return self.makeContextMenu()
+        })
+
+    }
+    func makeContextMenu() -> UIMenu {
+
+        // Create a UIAction for sharing
+        var buttons = [UIAction]()
+        for accountName in AccountController.names.unique().sorted() {
+            if accountName == AccountController.currentName {
+                buttons.append(UIAction(title: accountName, image: UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon(), handler: { (_) in
+                }))
+            } else {
+                buttons.append(UIAction(title: accountName, image: nil, handler: { (_) in
+                    self.currentAccountViewController(nil, didRequestAccountChangeToName: accountName)
+                }))
+            }
+        }
+
+        // Create and return a UIMenu with the share action
+        return UIMenu(title: "Switch Accounts", children: buttons)
+    }
+
 }
