@@ -13,21 +13,16 @@ import UIKit
 
 public extension UIApplication {
     var statusBarUIView: UIView? {
-        if #available(iOS 13.0, *) {
-            let tag = 100000
-            if let statusBar = self.keyWindow?.viewWithTag(tag) {
-                return statusBar
-            } else {
-                let statusBarView = UIView(frame: UIApplication.shared.statusBarFrame)
-                statusBarView.tag = tag
-
-                self.keyWindow?.addSubview(statusBarView)
-                return statusBarView
-            }
+        let tag = 100000
+        if let statusBar = self.keyWindow?.viewWithTag(tag) {
+            return statusBar
         } else {
-           return UIApplication.shared.statusBarView
+            let statusBarView = UIView(frame: UIApplication.shared.statusBarFrame)
+            statusBarView.tag = tag
+
+            self.keyWindow?.addSubview(statusBarView)
+            return statusBarView
         }
-        return nil
     }
 }
 
