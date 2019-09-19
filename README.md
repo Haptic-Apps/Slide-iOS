@@ -24,7 +24,8 @@ Below are the steps to getting started:
 
 ### Make your life easier:
 
-You can automate the process of changing your credentials and `USR_DOMAIN`, which we recommend. Alter [/scripts/install-filter.sh](/scripts.install-filter.sh) with the information it asks for, then run it (`sh ./scripts/install-filter.sh`). Once done, you can freely change branches and pull without needing to mess around with your signing info.
+You can automate the process of changing your credentials and `USR_DOMAIN`, which we recommend. Alter [/scripts/install-filter.sh](/scripts.install-filter.sh) with the information it asks for, then run it (`sh ./setup-signing-filter.sh --install`). Once done, you can freely change branches and pull without needing to mess around with your signing info. You can undo the changes it makes by specifying `--uninstall` instead of `--install`.
+
 
 ### If you are having trouble building on XCode 10 or MacOS Mojave
 
