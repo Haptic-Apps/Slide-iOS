@@ -25,9 +25,7 @@ public extension UIApplication {
                 return statusBarView
             }
         } else {
-            if responds(to: Selector(("statusBar"))) {
-                return statusBarUIView as? UIView
-            }
+           return UIApplication.shared.statusBarView
         }
         return nil
     }
