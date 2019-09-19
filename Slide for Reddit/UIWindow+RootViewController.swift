@@ -14,7 +14,7 @@ import UIKit
 public extension UIApplication {
     var statusBarUIView: UIView? {
         if #available(iOS 13.0, *) {
-            let tag = 38482458385
+            let tag = 100000
             if let statusBar = self.keyWindow?.viewWithTag(tag) {
                 return statusBar
             } else {
