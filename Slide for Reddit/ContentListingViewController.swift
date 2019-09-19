@@ -13,7 +13,7 @@ import SloppySwiper
 import UIKit
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate, UINavigationControllerDelegate, AutoplayScrollViewDelegate {
-    var currentPlayingIndex: IndexPath? = nil
+    var currentPlayingIndex = [IndexPath]()
     
     var isScrollingDown = true
     

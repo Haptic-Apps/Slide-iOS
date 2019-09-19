@@ -21,8 +21,8 @@ import SDCAlertView
 
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, UINavigationControllerDelegate, AutoplayScrollViewDelegate {
-    var currentPlayingIndex: IndexPath? = nil
-    
+    var currentPlayingIndex = [IndexPath]()
+
     var isScrollingDown = true
     
     var lastScrollDirectionWasDown = false
