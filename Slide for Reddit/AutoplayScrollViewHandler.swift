@@ -15,7 +15,7 @@ import UIKit
      }
 */
 
-protocol AutoplayScrollViewDelegate {
+protocol AutoplayScrollViewDelegate: class {
     func didScrollExtras(_ currentY: CGFloat)
     var isScrollingDown: Bool { get set }
     var lastScrollDirectionWasDown: Bool { get set }
@@ -27,7 +27,7 @@ protocol AutoplayScrollViewDelegate {
 
 class AutoplayScrollViewHandler {
 
-    var delegate: AutoplayScrollViewDelegate
+    weak var delegate: AutoplayScrollViewDelegate?
     init(delegate: AutoplayScrollViewDelegate) {
         self.delegate = delegate
     }
@@ -35,6 +35,9 @@ class AutoplayScrollViewHandler {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
 
+        guard let delegate = self.delegate else {
+            return
+        }
         delegate.isScrollingDown = currentY > delegate.lastY
         delegate.didScrollExtras(currentY)
         
@@ -87,7 +90,7 @@ class AutoplayScrollViewHandler {
                 }
             }
             
-            self.delegate.currentPlayingIndex = chosenPlayItems.map({ (item) -> IndexPath in
+            delegate.currentPlayingIndex = chosenPlayItems.map({ (item) -> IndexPath in
                 return item.index
             })
         }
@@ -95,6 +98,9 @@ class AutoplayScrollViewHandler {
     
     func autoplayOnce(_ scrollView: UIScrollView) {
         let center = CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY)
+        guard let delegate = self.delegate else {
+            return
+        }
 
         if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
             let visibleVideoIndices = delegate.getTableView().indexPathsForVisibleItems
@@ -139,7 +145,7 @@ class AutoplayScrollViewHandler {
                 }
             }
             
-            self.delegate.currentPlayingIndex = chosenPlayItems.map({ (item) -> IndexPath in
+            delegate.currentPlayingIndex = chosenPlayItems.map({ (item) -> IndexPath in
                 return item.index
             })
         }
