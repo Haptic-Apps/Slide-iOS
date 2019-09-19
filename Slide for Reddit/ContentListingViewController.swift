@@ -579,15 +579,39 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
     
     func save(_ cell: LinkCellView) {
-        do {
-            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (_) in
+        if baseData is CollectionsContributionLoader {
+            var message = ""
+            if let ctitle = (baseData as? CollectionsContributionLoader)?.collectionTitle {
+                if Collections.getCollectionIDs(title: ctitle).count == 1 {
+                    message = "Deleting the last post in \(ctitle) will delete the collection entirely"
+                }
+                let alert = UIAlertController(title: "Remove from this collection?", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Remove", style: UIAlertAction.Style.destructive, handler: { (_) in
+                    Collections.removeFromCollection(link: cell.link!, title: ctitle)
+                    self.baseData.content = self.baseData.content.filter { (object) -> Bool in
+                        if let link = object as? RSubmission {
+                            if link.getId() == cell.link!.getId() {
+                                return false
+                            }
+                        }
+                        return true
+                    }
+                    self.tableView.reloadData()
+                }))
+                alert.addCancelButton()
+                self.present(alert, animated: true, completion: nil)
+            }
+        } else {
+            do {
+                try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (_) in
+                    
+                })
+                ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
+                History.addSeen(s: cell.link!)
+                cell.refresh()
+            } catch {
                 
-            })
-            ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
-            History.addSeen(s: cell.link!)
-            cell.refresh()
-        } catch {
-            
+            }
         }
     }
     

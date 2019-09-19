@@ -1179,6 +1179,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
         for link in LinkSortType.cases {
+            if link == LinkSortType.best && sub.lowercased() != "frontpage"{
+                continue
+            }
             actionSheetController.addAction(title: link.description, icon: sort == link ? selected : nil) {
                 self.showTimeMenu(s: link, selector: selector)
             }

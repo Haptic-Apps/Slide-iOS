@@ -341,6 +341,8 @@ class SettingValues {
                     return s
                 }
             }
+        } else if forSubreddit == "frontpage" {
+            return .best
         }
         return defaultSorting
     }

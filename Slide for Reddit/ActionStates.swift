@@ -152,6 +152,8 @@ class ActionStates {
             return true
         } else if unSavedFullnames.contains(s.getId()) {
             return false
+        } else if Collections.isSavedCollectionAny(link: s) {
+            return true
         } else {
             return s.saved
         }
