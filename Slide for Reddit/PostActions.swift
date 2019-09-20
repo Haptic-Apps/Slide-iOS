@@ -274,7 +274,7 @@ class PostActions: NSObject {
                 case .success:
                     CachedTitle.approved.append(id)
                     if CachedTitle.removed.contains(id) {
-                        CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
+                        CachedTitle.removed.remove(at: CachedTitle.removed.firstIndex(of: id)!)
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission \(!set ? "un" : "")locked!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
@@ -301,7 +301,7 @@ class PostActions: NSObject {
                 case .success:
                     CachedTitle.approved.append(id)
                     if CachedTitle.removed.contains(id) {
-                        CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
+                        CachedTitle.removed.remove(at: CachedTitle.removed.firstIndex(of: id)!)
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Spoiler tag set!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
@@ -328,7 +328,7 @@ class PostActions: NSObject {
                 case .success:
                     CachedTitle.approved.append(id)
                     if CachedTitle.removed.contains(id) {
-                        CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
+                        CachedTitle.removed.remove(at: CachedTitle.removed.firstIndex(of: id)!)
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "NSFW tag set!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
@@ -355,7 +355,7 @@ class PostActions: NSObject {
                 case .success:
                     CachedTitle.approved.append(id)
                     if CachedTitle.removed.contains(id) {
-                        CachedTitle.removed.remove(at: CachedTitle.removed.index(of: id)!)
+                        CachedTitle.removed.remove(at: CachedTitle.removed.firstIndex(of: id)!)
                     }
                     DispatchQueue.main.async {
                         cell.refreshLink(cell.link!, np: false)
@@ -463,7 +463,7 @@ class PostActions: NSObject {
         
         for reason in reasons {
             sheet.addAction(title: reason, icon: nil) {
-                let index = reasons.index(of: reason) ?? 0
+                let index = reasons.firstIndex(of: reason) ?? 0
                 if index == 0 {
                     modRemoveReason(cell, reason: "")
                 } else if index == 1 {
@@ -492,7 +492,7 @@ class PostActions: NSObject {
                 case .success:
                     CachedTitle.removed.append(id)
                     if CachedTitle.approved.contains(id) {
-                        CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
+                        CachedTitle.approved.remove(at: CachedTitle.approved.firstIndex(of: id)!)
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission removed!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
@@ -518,7 +518,7 @@ class PostActions: NSObject {
                 case .success:
                     CachedTitle.removed.append(id)
                     if CachedTitle.approved.contains(id) {
-                        CachedTitle.approved.remove(at: CachedTitle.approved.index(of: id)!)
+                        CachedTitle.approved.remove(at: CachedTitle.approved.firstIndex(of: id)!)
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission removed!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)

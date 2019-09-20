@@ -391,7 +391,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func goToSubreddit(subreddit: String) {
         menuNav?.dismiss(animated: true) {
             if self.finalSubs.contains(subreddit) {
-                let index = self.finalSubs.index(of: subreddit)
+                let index = self.finalSubs.firstIndex(of: subreddit)
                 if index == nil {
                     return
                 }
@@ -400,7 +400,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 
                 if SettingValues.subredditBar && !SettingValues.reduceColor {
                     self.color1 = ColorUtil.baseColor
-                    self.color2 = ColorUtil.getColorForSub(sub: (firstViewController as! SingleSubredditViewController).sub)
+                    self.color2 = ColorUtil.getColorForSub(sub: (firstViewController ).sub)
                 } else {
                     self.color1 = ColorUtil.theme.backgroundColor
                     self.color2 = ColorUtil.theme.backgroundColor
@@ -788,7 +788,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
         if !selected {
-            let page = finalSubs.index(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
+            let page = finalSubs.firstIndex(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
             if !tabBar.items.isEmpty {
                 tabBar.setSelectedItem(tabBar.items[page!], animated: true)
             }
@@ -1143,7 +1143,7 @@ extension MainViewController: UIPageViewControllerDataSource {
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        var index = finalSubs.index(of: (viewController as! SingleSubredditViewController).sub)
+        var index = finalSubs.firstIndex(of: (viewController as! SingleSubredditViewController).sub)
         if let vc = viewController as? SingleSubredditViewController {
             index = finalSubs.firstIndex(of: vc.sub)
         }
@@ -1166,7 +1166,7 @@ extension MainViewController: UIPageViewControllerDataSource {
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = finalSubs.index(of: (viewController as! SingleSubredditViewController).sub) else {
+        guard let viewControllerIndex = finalSubs.firstIndex(of: (viewController as! SingleSubredditViewController).sub) else {
             return nil
         }
         
@@ -1188,7 +1188,7 @@ extension MainViewController: UIPageViewControllerDataSource {
 
 extension MainViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        let page = finalSubs.index(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
+        let page = finalSubs.firstIndex(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
         //        let page = tabBar.items.index(of: tabBar.selectedItem!)
         // TODO: Crashes here
         guard page != nil else {
@@ -1292,14 +1292,14 @@ class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
 extension MainViewController: MDCTabBarDelegate {
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
         selected = true
-        let firstViewController = SingleSubredditViewController(subName: finalSubs[tabBar.items.index(of: item)!], parent: self)
+        let firstViewController = SingleSubredditViewController(subName: finalSubs[tabBar.items.firstIndex(of: item)!], parent: self)
 
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,
                            completion: nil)
         
-        self.doCurrentPage(tabBar.items.index(of: item)!)
+        self.doCurrentPage(tabBar.items.firstIndex(of: item)!)
     }
 }
 

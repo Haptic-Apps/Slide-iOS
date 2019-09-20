@@ -32,7 +32,7 @@ class Drafts {
     }
     
     public static func deleteDraft(s: String) {
-        drafts.remove(at: drafts.index(of: s as NSString)!)
+        drafts.remove(at: drafts.firstIndex(of: s as NSString)!)
         saveAndUpdate()
     }
     

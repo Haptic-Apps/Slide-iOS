@@ -863,7 +863,7 @@ extension VideoMediaViewController {
                 return
             }
             guard let data = data,
-                let jsonObj = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? NSDictionary,
+                let jsonObj = ((try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? NSDictionary) as NSDictionary??),
                 let dict = jsonObj else {
                 failureBlock()
                 return

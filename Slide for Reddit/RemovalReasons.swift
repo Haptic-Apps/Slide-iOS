@@ -33,7 +33,7 @@ class RemovalReasons {
     }
     
     public static func deleteReason(s: String) {
-        reasons.remove(at: reasons.index(of: s as NSString)!)
+        reasons.remove(at: reasons.firstIndex(of: s as NSString)!)
         saveAndUpdate()
     }
     

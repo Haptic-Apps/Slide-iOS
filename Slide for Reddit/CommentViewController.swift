@@ -2075,7 +2075,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func walkTree(n: String) -> [String] {
         var toReturn: [String] = []
         if content[n] is RComment {
-            let bounds = comments.index(where: { ($0 == n) })! + 1
+            let bounds = comments.firstIndex(where: { ($0 == n) })! + 1
             let parentDepth = (cDepth[n] ?? 0)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
                 if (cDepth[comments[obj]] ?? 0) > parentDepth {
@@ -2091,7 +2091,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     func walkTreeFlat(n: String) -> [String] {
         var toReturn: [String] = []
         if content[n] is RComment {
-            let bounds = comments.index(where: { ($0 == n) })! + 1
+            let bounds = comments.firstIndex(where: { ($0 == n) })! + 1
             let parentDepth = (cDepth[n] ?? 0)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
                 let depth = (cDepth[comments[obj]] ?? 0)
@@ -2109,7 +2109,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         var toReturn: [String] = []
         toReturn.append(n)
         if content[n] is RComment {
-            let bounds = comments.index(where: { $0 == n })! + 1
+            let bounds = comments.firstIndex(where: { $0 == n })! + 1
             let parentDepth = (cDepth[n] ?? 0)
             for obj in stride(from: bounds, to: comments.count, by: 1) {
                 let currentDepth = cDepth[comments[obj]] ?? 0
@@ -2615,7 +2615,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                             cell.showMenu(nil)
                         } else if cell.isCollapsed {
                             if hiddenPersons.contains((id)) {
-                                hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
+                                hiddenPersons.remove(at: hiddenPersons.firstIndex(of: id)!)
                             }
                             if let oldHeight = oldHeights[id] {
                                 UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
@@ -2648,7 +2648,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                         }
                     } else {
                         if hiddenPersons.contains((id)) && childNumber > 0 {
-                            hiddenPersons.remove(at: hiddenPersons.index(of: id)!)
+                            hiddenPersons.remove(at: hiddenPersons.firstIndex(of: id)!)
                             if let oldHeight = oldHeights[id] {
                                 UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
                                     cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)

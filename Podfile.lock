@@ -1,52 +1,59 @@
 PODS:
-  - Alamofire (4.8.2)
+  - Alamofire (4.9.0)
   - Anchorage (4.3.1)
   - BadgeSwift (7.0.0)
   - BiometricAuthentication (3.0)
-  - DTCoreText (1.6.22):
-    - DTCoreText/Core (= 1.6.22)
+  - DTCoreText (1.6.23):
+    - DTCoreText/Core (= 1.6.23)
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTCoreText/Core (1.6.22):
+  - DTCoreText/Core (1.6.23):
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTFoundation/Core (1.7.13)
-  - DTFoundation/DTAnimatedGIF (1.7.13)
-  - DTFoundation/DTHTMLParser (1.7.13):
+  - DTFoundation/Core (1.7.14)
+  - DTFoundation/DTAnimatedGIF (1.7.14)
+  - DTFoundation/DTHTMLParser (1.7.14):
     - DTFoundation/Core
-  - DTFoundation/UIKit (1.7.13):
+  - DTFoundation/UIKit (1.7.14):
     - DTFoundation/Core
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (85.8.0):
+  - MaterialComponents/ActivityIndicator (91.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (85.8.0)
-  - MaterialComponents/Ink (85.8.0):
+  - MaterialComponents/AnimationTiming (91.1.0)
+  - MaterialComponents/Elevation (91.1.0):
+    - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (85.8.0)
-  - MaterialComponents/private/Application (85.8.0)
-  - MaterialComponents/private/Math (85.8.0)
-  - MaterialComponents/ProgressView (85.8.0):
+  - MaterialComponents/Ink (91.1.0):
+    - MaterialComponents/private/Color
+    - MaterialComponents/private/Math
+  - MaterialComponents/Palettes (91.1.0)
+  - MaterialComponents/private/Application (91.1.0)
+  - MaterialComponents/private/Color (91.1.0)
+  - MaterialComponents/private/Math (91.1.0)
+  - MaterialComponents/ProgressView (91.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/Ripple (85.8.0):
+  - MaterialComponents/Ripple (91.1.0):
     - MaterialComponents/AnimationTiming
+    - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/ShadowElevations (85.8.0)
-  - MaterialComponents/ShadowLayer (85.8.0):
+  - MaterialComponents/ShadowElevations (91.1.0)
+  - MaterialComponents/ShadowLayer (91.1.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (85.8.0):
+  - MaterialComponents/Tabs (91.1.0):
     - MaterialComponents/AnimationTiming
+    - MaterialComponents/Elevation
     - MaterialComponents/Ink
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
@@ -55,7 +62,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (85.8.0):
+  - MaterialComponents/Typography (91.1.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -67,29 +74,29 @@ PODS:
   - MTColorDistance (0.0.3)
   - OpalImagePicker (2.1.0)
   - QuickLayout (3.0.0)
-  - Realm (3.17.1):
-    - Realm/Headers (= 3.17.1)
-  - Realm/Headers (3.17.1)
-  - RealmSwift (3.17.1):
-    - Realm (= 3.17.1)
+  - Realm (3.18.0):
+    - Realm/Headers (= 3.18.0)
+  - Realm/Headers (3.18.0)
+  - RealmSwift (3.18.0):
+    - Realm (= 3.18.0)
   - reddift (2.0.3):
     - HTMLSpecialCharacters
     - MiniKeychain
   - RLBAlertsPickers (1.1.1)
   - SDCAlertView (10.0)
-  - SDWebImage (5.0.6):
-    - SDWebImage/Core (= 5.0.6)
-  - SDWebImage/Core (5.0.6)
+  - SDWebImage (5.1.1):
+    - SDWebImage/Core (= 5.1.1)
+  - SDWebImage/Core (5.1.1)
   - SloppySwiper (0.6)
   - Starscream (3.0.6)
   - SubtleVolume (1.1.0)
   - SwiftEntryKit (1.0.1):
     - QuickLayout (= 3.0.0)
   - SwiftLinkPreview (3.0.1)
-  - SwiftLint (0.34.0)
+  - SwiftLint (0.35.0)
   - SwiftSpreadsheet (1.2.1)
   - SwiftyJSON (5.0.0)
-  - Then (2.5.0)
+  - Then (2.6.0)
   - YYText (1.0.7)
 
 DEPENDENCIES:
@@ -170,7 +177,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   DTCoreText:
-    :commit: 7746c601985b06bade170a8f5f4bcafbb6f0a9c8
+    :commit: 5412f51dddad970029a46a26b70c7cf7aff2ef7e
     :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
@@ -192,16 +199,16 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ccrama/SwiftEntryKit
 
 SPEC CHECKSUMS:
-  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  Alamofire: afc3e7c6db61476cb45cdd23fed06bad03bbc321
   Anchorage: a187da0bc9b07440637d42c8744b8c82a4490295
   BadgeSwift: 5cfacfad916d85e2f68d93dbb9ade4e9555903da
   BiometricAuthentication: e39b1a55040d679d5dbc4fa90d76e067c432de7f
-  DTCoreText: ad5135357a0e792f735970ed67d3ecda8b602d3d
-  DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
+  DTCoreText: 67023bb51b26711d5f640c851f4845aea14c24c9
+  DTFoundation: 25aa19bb7c6e225b1dfae195604fb8cf1da0ab4c
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: d3c6936b52687041650c99d2298d16fb2767f97a
+  MaterialComponents: 5225abc67ef52773d10a74583b8e662c032766ff
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -210,23 +217,23 @@ SPEC CHECKSUMS:
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   OpalImagePicker: 40e9d4c27018538a704d8da34b2ff3a2a54a3dc8
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
-  Realm: c204f1a890f07dea43b14132a6aad118c054b8f2
-  RealmSwift: 4d3c9233544b9cd08a8913e0872b9038eb99b054
+  Realm: 7b3d04740facf45e958a514b466a32b04f1113d6
+  RealmSwift: c817b5f374668cf08f649afb05f55d92a787649c
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
-  RLBAlertsPickers: c93e83c13526a5840b67eb52f702d3f83eeaac6a
+  RLBAlertsPickers: e8d2b6dd7d97d32e1f940a6b3bd3e8913bd6ad90
   SDCAlertView: 5fbc48cae6d7bf9781097e3f27883924ef3b922c
-  SDWebImage: 920f1a2ff1ca8296ad34f6e0510a1ef1d70ac965
+  SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
-  SwiftEntryKit: ef368c3e6f47b79806f47376194a50489736ef68
+  SwiftEntryKit: b56480d9a03c30b3fe92f0ab9c2305530a138fe6
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
-  SwiftLint: 79d48a17c6565dc286c37efb8322c7b450f95c67
+  SwiftLint: 5553187048b900c91aa03552807681bb6b027846
   SwiftSpreadsheet: b3dc6d89bd5fd18f38fe88c29898fbc481660a04
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
-  Then: 0157115e883545c77967b452fe74a1d25fb796e1
+  Then: 90cd104fd951cec1980a03f57704ad8f784d4d79
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 27236275aabf0857d445e4614b701856f7c13914
+PODFILE CHECKSUM: 7150437bda8ddb804a9de3a9683747f649f69ee3
 
 COCOAPODS: 1.7.1
