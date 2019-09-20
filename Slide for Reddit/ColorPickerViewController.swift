@@ -220,7 +220,7 @@ public class ColorPickerViewController: UIViewController {
     
     var continuous: Bool = true // if set, value change events are generated any time the value changes due to dragging. default = YES
     
-    var actionBlock: (GradientSlider, CGFloat) -> () = { slider, newValue in }
+    var actionBlock: (GradientSlider, CGFloat) -> Void = { slider, newValue in }
     
     @IBInspectable var thickness: CGFloat = defaultThickness {
         didSet {

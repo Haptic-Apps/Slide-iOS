@@ -11,7 +11,7 @@ import UIKit
 
 class SettingsThemeChooser: UITableViewController {
     
-    var callback: ((ColorUtil.Theme) -> ())?
+    var callback: ((ColorUtil.Theme) -> Void)?
     var nightOnly: Bool = true
     
     override func viewWillAppear(_ animated: Bool) {
