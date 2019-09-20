@@ -160,7 +160,7 @@ import UIKit
     static var defaultThickness: CGFloat = 2.0
     static var defaultThumbSize: CGFloat = 28.0
     
-    //MARK: Properties
+    // MARK: Properties
     @IBInspectable var hasRainbow: Bool = false {didSet {updateTrackColors()}}//Uses saturation & lightness from minColor
     @IBInspectable var minColor: UIColor = UIColor.blue {didSet {updateTrackColors()}}
     @IBInspectable var maxColor: UIColor = UIColor.orange {didSet {updateTrackColors()}}
@@ -278,7 +278,7 @@ import UIKit
         }
     }
     
-    //MARK: - Convienience Colors
+    // MARK: - Convienience Colors
     
     func setGradientForHueWithSaturation(saturation: CGFloat, brightness: CGFloat) {
         minColor = UIColor(hue: 0.0, saturation: saturation, brightness: brightness, alpha: 1.0)
@@ -321,7 +321,7 @@ import UIKit
         maxColor = UIColor.white
     }
     
-    //MARK: - Private Properties
+    // MARK: - Private Properties
     
     private var _value: CGFloat = 0.0 // default 0.0. this value will be pinned to min/max
     
@@ -362,7 +362,7 @@ import UIKit
         return iconLayer
     }()
     
-    //MARK: - Init
+    // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -417,7 +417,7 @@ import UIKit
         //needsDisplayOnBoundsChange = true
     }
     
-    //MARK: - Layout
+    // MARK: - Layout
     
     override open var intrinsicContentSize: CGSize {
         return CGSize(width: UIView.noIntrinsicMetric, height: thumbSize)
@@ -467,7 +467,7 @@ import UIKit
         updateThumbPosition(animated: false)
     }
     
-    //MARK: - Touch Tracking
+    // MARK: - Touch Tracking
     
     override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
         let pt = touch.location(in: self)
@@ -503,7 +503,7 @@ import UIKit
         
     }
     
-    //MARK: - Private Functions
+    // MARK: - Private Functions
     
     private func updateThumbPosition(animated: Bool) {
         let diff = maximumValue - minimumValue
