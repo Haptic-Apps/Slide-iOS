@@ -2497,7 +2497,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             History.addSeen(s: cell.link!)
             cell.refresh()
             cell.refreshTitle(force: true)
-        } catch  {
+        } catch {
             
         }
     }

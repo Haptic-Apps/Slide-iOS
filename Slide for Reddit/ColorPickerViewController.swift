@@ -161,13 +161,13 @@ import UIKit
     static var defaultThumbSize:CGFloat = 28.0
     
     //MARK: Properties
-    @IBInspectable var hasRainbow:Bool  = false {didSet{updateTrackColors()}}//Uses saturation & lightness from minColor
-    @IBInspectable var minColor:UIColor = UIColor.blue {didSet{updateTrackColors()}}
-    @IBInspectable var maxColor:UIColor = UIColor.orange {didSet{updateTrackColors()}}
+    @IBInspectable var hasRainbow:Bool  = false {didSet {updateTrackColors()}}//Uses saturation & lightness from minColor
+    @IBInspectable var minColor:UIColor = UIColor.blue {didSet {updateTrackColors()}}
+    @IBInspectable var maxColor:UIColor = UIColor.orange {didSet {updateTrackColors()}}
     
     @IBInspectable var value: CGFloat {
-        get{ return _value }
-        set{ set(value: newValue, animated:true) }
+        get { return _value }
+        set { set(value: newValue, animated:true) }
     }
     
     func set(value: CGFloat, animated:Bool = true) {
@@ -179,7 +179,7 @@ import UIKit
     @IBInspectable var maximumValue: CGFloat = 1.0 // default 1.0. the current value may change if outside new max value
     
     @IBInspectable var minimumValueImage: UIImage? = nil { // default is nil. image that appears to left of control (e.g. speaker off)
-        didSet{
+        didSet {
             if let img = minimumValueImage {
                 let imgLayer = _minTrackImageLayer ?? {
                     let l = CALayer()
@@ -191,7 +191,7 @@ import UIKit
                 imgLayer.bounds = CGRect(x: 0, y: 0, width: img.size.width, height: img.size.height)
                 _minTrackImageLayer = imgLayer
                 
-            }else{
+            } else {
                 _minTrackImageLayer?.removeFromSuperlayer()
                 _minTrackImageLayer = nil
             }
@@ -199,7 +199,7 @@ import UIKit
         }
     }
     @IBInspectable var maximumValueImage: UIImage? = nil { // default is nil. image that appears to right of control (e.g. speaker max)
-        didSet{
+        didSet {
             if let img = maximumValueImage {
                 let imgLayer = _maxTrackImageLayer ?? {
                     let l = CALayer()
@@ -211,7 +211,7 @@ import UIKit
                 imgLayer.bounds = CGRect(x: 0, y: 0, width: img.size.width, height: img.size.height)
                 _maxTrackImageLayer = imgLayer
                 
-            }else{
+            } else {
                 _maxTrackImageLayer?.removeFromSuperlayer()
                 _maxTrackImageLayer = nil
             }
@@ -224,17 +224,17 @@ import UIKit
     var actionBlock: (GradientSlider, CGFloat) -> () = { slider, newValue in  }
     
     @IBInspectable var thickness: CGFloat = defaultThickness {
-        didSet{
+        didSet {
             _trackLayer.cornerRadius = thickness / 2.0
             self.layer.setNeedsLayout()
         }
     }
     
     var trackBorderColor: UIColor? {
-        set{
+        set {
             _trackLayer.borderColor = newValue?.cgColor
         }
-        get{
+        get {
             if let color = _trackLayer.borderColor {
                 return UIColor(cgColor: color)
             }
@@ -243,16 +243,16 @@ import UIKit
     }
     
     var trackBorderWidth:CGFloat {
-        set{
+        set {
             _trackLayer.borderWidth = newValue
         }
-        get{
+        get {
             return _trackLayer.borderWidth
         }
     }
     
     var thumbSize:CGFloat = defaultThumbSize {
-        didSet{
+        didSet {
             _thumbLayer.cornerRadius = thumbSize / 2.0
             _thumbLayer.bounds = CGRect(x: 0, y: 0, width: thumbSize, height: thumbSize)
             self.invalidateIntrinsicContentSize()
@@ -260,7 +260,7 @@ import UIKit
     }
     
     @IBInspectable var thumbIcon:UIImage? = nil {
-        didSet{
+        didSet {
             _thumbIconLayer.contents = thumbIcon?.cgImage
         }
     }
@@ -280,42 +280,42 @@ import UIKit
     
     //MARK: - Convienience Colors
     
-    func setGradientForHueWithSaturation(saturation:CGFloat,brightness:CGFloat){
+    func setGradientForHueWithSaturation(saturation:CGFloat,brightness:CGFloat) {
         minColor = UIColor(hue: 0.0, saturation: saturation, brightness: brightness, alpha: 1.0)
         hasRainbow = true
     }
     
-    func setGradientForSaturationWithHue(hue:CGFloat,brightness:CGFloat){
+    func setGradientForSaturationWithHue(hue:CGFloat,brightness:CGFloat) {
         hasRainbow = false
         minColor = UIColor(hue: hue, saturation: 0.0, brightness: brightness, alpha: 1.0)
         maxColor = UIColor(hue: hue, saturation: 1.0, brightness: brightness, alpha: 1.0)
     }
     
-    func setGradientForBrightnessWithHue(hue:CGFloat,saturation:CGFloat){
+    func setGradientForBrightnessWithHue(hue:CGFloat,saturation:CGFloat) {
         hasRainbow = false
         minColor = UIColor.black
         maxColor = UIColor(hue: hue, saturation: saturation, brightness: 1.0, alpha: 1.0)
     }
     
-    func setGradientForRedWithGreen(green:CGFloat,blue:CGFloat){
+    func setGradientForRedWithGreen(green:CGFloat,blue:CGFloat) {
         hasRainbow = false
         minColor = UIColor(red: 0.0, green: green, blue: blue, alpha: 1.0)
         maxColor = UIColor(red: 1.0, green: green, blue: blue, alpha: 1.0)
     }
     
-    func setGradientForGreenWithRed(red:CGFloat,blue:CGFloat){
+    func setGradientForGreenWithRed(red:CGFloat,blue:CGFloat) {
         hasRainbow = false
         minColor = UIColor(red: red, green: 0.0, blue: blue, alpha: 1.0)
         maxColor = UIColor(red: red, green: 1.0, blue: blue, alpha: 1.0)
     }
     
-    func setGradientForBlueWithRed(red:CGFloat,green:CGFloat){
+    func setGradientForBlueWithRed(red:CGFloat,green:CGFloat) {
         hasRainbow = false
         minColor = UIColor(red: red, green: green, blue: 0.0, alpha: 1.0)
         maxColor = UIColor(red: red, green: green, blue: 1.0, alpha: 1.0)
     }
     
-    func setGradientForGrayscale(){
+    func setGradientForGrayscale() {
         hasRainbow = false
         minColor = UIColor.black
         maxColor = UIColor.white
@@ -445,7 +445,7 @@ import UIKit
         if let maxImgLayer = _maxTrackImageLayer {
             maxImgLayer.position = CGPoint(x: self.bounds.width, y: h/2.0)
             w -= (maxImgLayer.bounds.width + 13.0)
-        }else{
+        } else {
             w -= 2.0
         }
         
@@ -458,7 +458,7 @@ import UIKit
             layerSize = min(max(icon.size.height,icon.size.width),layerSize)
             _thumbIconLayer.cornerRadius = 0.0
             _thumbIconLayer.backgroundColor = UIColor.clear.cgColor
-        }else{
+        } else {
             _thumbIconLayer.cornerRadius = layerSize/2.0
         }
         _thumbIconLayer.position = CGPoint(x: halfSize, y: halfSize)
@@ -494,7 +494,7 @@ import UIKit
     }
     
     override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
-        if let pt = touch?.location(in: self){
+        if let pt = touch?.location(in: self) {
             let newValue = valueForLocation(point: pt)
             set(value: newValue, animated: false)
         }
@@ -513,12 +513,12 @@ import UIKit
         let trackWidth = _trackLayer.bounds.width - thumbSize
         let left = _trackLayer.position.x - trackWidth/2.0
         
-        if !animated{
+        if !animated {
             CATransaction.begin() //Move the thumb position without animations
             CATransaction.setValue(true, forKey: kCATransactionDisableActions)
             _thumbLayer.position = CGPoint(x: left + (trackWidth * perc), y: halfHeight)
             CATransaction.commit()
-        }else{
+        } else {
             _thumbLayer.position = CGPoint(x: left + (trackWidth * perc), y: halfHeight)
         }
     }
@@ -531,14 +531,14 @@ import UIKit
             let amt = minImgLayer.bounds.width + 13.0
             w -= amt
             left += amt
-        }else{
+        } else {
             w -= 2.0
             left += 2.0
         }
         
         if let maxImgLayer = _maxTrackImageLayer {
             w -= (maxImgLayer.bounds.width + 13.0)
-        }else{
+        } else {
             w -= 2.0
         }
         

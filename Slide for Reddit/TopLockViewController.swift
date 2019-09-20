@@ -55,7 +55,7 @@ public class TopLockViewController: UIViewController {
         if SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate() {
             BioMetricAuthenticator.authenticateWithBioMetrics(reason: "") {[weak self] (result) in
                 if let strongSelf = self {
-                    switch result{
+                    switch result {
                     case .success(_):
                         strongSelf.dismiss(animated: true, completion: nil)
                     case .failure(let error):
