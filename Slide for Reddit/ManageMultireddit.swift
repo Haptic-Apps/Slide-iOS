@@ -139,7 +139,6 @@ class ManageMultireddit: UITableViewController {
         return 0
     }
     
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.separatorStyle = .none

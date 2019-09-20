@@ -321,7 +321,6 @@ import UIKit
         maxColor = UIColor.white
     }
     
-    
     //MARK: - Private Properties
     
     private var _value:CGFloat = 0.0 // default 0.0. this value will be pinned to min/max
@@ -464,7 +463,6 @@ import UIKit
         }
         _thumbIconLayer.position = CGPoint(x: halfSize, y: halfSize)
         _thumbIconLayer.bounds = CGRect(x: 0, y: 0, width: layerSize, height: layerSize)
-        
         
         updateThumbPosition(animated: false)
     }

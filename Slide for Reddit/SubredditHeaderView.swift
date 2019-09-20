@@ -223,7 +223,6 @@ class SubredditHeaderView: UIView {
         }
     }
 
-
     @objc func sort(_ selector: UITableViewCell) {
         let actionSheetController = DragDownAlertMenu(title: "Default sorting for r/\(self.subreddit!.displayName)", subtitle: "Overrides the default in Settings > General", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 

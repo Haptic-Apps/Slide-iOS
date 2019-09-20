@@ -17,7 +17,6 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         return 0
     }
     
-
     var tableView: UICollectionView!
     var id: String
 

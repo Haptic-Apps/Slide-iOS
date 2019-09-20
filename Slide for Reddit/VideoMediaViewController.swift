@@ -595,7 +595,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 print(error)
             }
         }
-
         
         self.setProgressViewVisible(false)
         self.size.isHidden = true

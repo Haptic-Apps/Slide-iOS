@@ -27,7 +27,6 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         
     }
     
-
     var type: ContentType.CType = ContentType.CType.UNKNOWN
     
     var textView: TextDisplayStackView!

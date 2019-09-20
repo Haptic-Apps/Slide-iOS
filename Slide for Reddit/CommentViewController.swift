@@ -44,7 +44,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         })
         alrController.addAction(somethingAction)
         
-        
         alrController.addCancelButton()
         
         alrController.modalPresentationStyle = .fullScreen

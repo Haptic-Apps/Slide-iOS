@@ -471,7 +471,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         baseData.getData(reload: false)
     }
     
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         autoplayHandler.scrollViewDidScroll(scrollView)
     }
