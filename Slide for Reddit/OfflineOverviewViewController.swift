@@ -14,7 +14,7 @@ import UserNotifications
 class OfflineOverviewViewController: UITableViewController {
     
     var subComments: [String: Bool]
-    var subTime: [String:NSDate]
+    var subTime: [String: NSDate]
     var subs: [String]
     
     init(subs: [String]) {

@@ -157,7 +157,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     func showActionSub(cell: UITableViewCell) {
         let alertController = DragDownAlertMenu(title: "Select a submission gesture", subtitle: cell.textLabel?.text ?? "", icon: nil)
         for action in SettingValues.SubmissionAction.cases {
-            alertController.addAction(title: action == .NONE && cell == forceTouchSubmissionCell ? "Peek content" : action.getTitle(), icon:  action == .NONE && cell == forceTouchSubmissionCell ? UIImage(named: "fullscreen")!.menuIcon() : UIImage(named: action.getPhoto())!.menuIcon()) {
+            alertController.addAction(title: action == .NONE && cell == forceTouchSubmissionCell ? "Peek content" : action.getTitle(), icon: action == .NONE && cell == forceTouchSubmissionCell ? UIImage(named: "fullscreen")!.menuIcon() : UIImage(named: action.getPhoto())!.menuIcon()) {
                 if cell == self.doubleTapSubActionCell {
                     SettingValues.submissionActionDoubleTap = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionDoubleTap)

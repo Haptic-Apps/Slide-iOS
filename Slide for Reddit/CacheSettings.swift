@@ -156,7 +156,7 @@ class CacheSettings: BubbleSettingTableViewController {
                 actionSheetController.setupTheme()
                 
                 actionSheetController.attributedTitle = NSAttributedString(string: "Posts to cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                actionSheetController.attributedMessage = NSAttributedString(string:  "How many posts will cache in each subreddit", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                actionSheetController.attributedMessage = NSAttributedString(string: "How many posts will cache in each subreddit", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
 
                 actionSheetController.addChild(pickerView)
                 
@@ -186,7 +186,7 @@ class CacheSettings: BubbleSettingTableViewController {
                 actionSheetController.setupTheme()
                 
                 actionSheetController.attributedTitle = NSAttributedString(string: "Comment cache depth", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                actionSheetController.attributedMessage = NSAttributedString(string:  "How deep comment chains will load to", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                actionSheetController.attributedMessage = NSAttributedString(string: "How deep comment chains will load to", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
 
                 actionSheetController.addChild(pickerView)
                 

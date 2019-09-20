@@ -118,7 +118,7 @@ class FontGenerator {
 }
 extension UIFont {
     
-    func withTraits(traits:UIFontDescriptor.SymbolicTraits...) -> UIFont {
+    func withTraits(traits: UIFontDescriptor.SymbolicTraits...) -> UIFont {
         let descriptor = self.fontDescriptor
             .withSymbolicTraits(UIFontDescriptor.SymbolicTraits(traits)) ?? self.fontDescriptor
         return UIFont(descriptor: descriptor, size: 0)

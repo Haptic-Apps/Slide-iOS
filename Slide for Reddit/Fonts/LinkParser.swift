@@ -115,7 +115,7 @@ extension NSMutableAttributedString {
                 attributedText.yy_textBackgroundBorder = YYTextBorder(fill: color, cornerRadius: 3)
                 attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange(location: 0, length: attributedText.length))
                 let highlight = YYTextHighlight()
-                highlight.userInfo = ["spoiler":true]
+                highlight.userInfo = ["spoiler": true]
                 attributedText.yy_setTextHighlight(highlight, range: NSRange(location: 0, length: attributedText.length))
                 self.replaceCharacters(in: match.range, with: attributedText)
             }

@@ -39,7 +39,7 @@ class PostActions: NSObject {
             })), parentVC: parent)
         }
         
-        alertController.addAction(title: "Selftext", icon: UIImage(sfString: SFSymbol.textbox, overrideString:"size")!.menuIcon()) {
+        alertController.addAction(title: "Selftext", icon: UIImage(sfString: SFSymbol.textbox, overrideString: "size")!.menuIcon()) {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(subreddit: sub, type: ReplyViewController.ReplyType.SUBMIT_TEXT, completion: { (submission) in
                 VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
             })), parentVC: parent)

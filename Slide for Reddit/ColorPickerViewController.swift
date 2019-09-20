@@ -157,20 +157,20 @@ import UIKit
 
 @IBDesignable class GradientSlider: UIControl {
     
-    static var defaultThickness:CGFloat = 2.0
-    static var defaultThumbSize:CGFloat = 28.0
+    static var defaultThickness: CGFloat = 2.0
+    static var defaultThumbSize: CGFloat = 28.0
     
     //MARK: Properties
-    @IBInspectable var hasRainbow:Bool  = false {didSet {updateTrackColors()}}//Uses saturation & lightness from minColor
-    @IBInspectable var minColor:UIColor = UIColor.blue {didSet {updateTrackColors()}}
-    @IBInspectable var maxColor:UIColor = UIColor.orange {didSet {updateTrackColors()}}
+    @IBInspectable var hasRainbow: Bool  = false {didSet {updateTrackColors()}}//Uses saturation & lightness from minColor
+    @IBInspectable var minColor: UIColor = UIColor.blue {didSet {updateTrackColors()}}
+    @IBInspectable var maxColor: UIColor = UIColor.orange {didSet {updateTrackColors()}}
     
     @IBInspectable var value: CGFloat {
         get { return _value }
-        set { set(value: newValue, animated:true) }
+        set { set(value: newValue, animated: true) }
     }
     
-    func set(value: CGFloat, animated:Bool = true) {
+    func set(value: CGFloat, animated: Bool = true) {
         _value = max(min(value,self.maximumValue),self.minimumValue)
         updateThumbPosition(animated: animated)
     }
@@ -242,7 +242,7 @@ import UIKit
         }
     }
     
-    var trackBorderWidth:CGFloat {
+    var trackBorderWidth: CGFloat {
         set {
             _trackLayer.borderWidth = newValue
         }
@@ -251,7 +251,7 @@ import UIKit
         }
     }
     
-    var thumbSize:CGFloat = defaultThumbSize {
+    var thumbSize: CGFloat = defaultThumbSize {
         didSet {
             _thumbLayer.cornerRadius = thumbSize / 2.0
             _thumbLayer.bounds = CGRect(x: 0, y: 0, width: thumbSize, height: thumbSize)
@@ -259,13 +259,13 @@ import UIKit
         }
     }
     
-    @IBInspectable var thumbIcon:UIImage? = nil {
+    @IBInspectable var thumbIcon: UIImage? = nil {
         didSet {
             _thumbIconLayer.contents = thumbIcon?.cgImage
         }
     }
     
-    var thumbColor:UIColor {
+    var thumbColor: UIColor {
         get {
             if let color = _thumbIconLayer.backgroundColor {
                 return UIColor(cgColor: color)
@@ -280,36 +280,36 @@ import UIKit
     
     //MARK: - Convienience Colors
     
-    func setGradientForHueWithSaturation(saturation:CGFloat,brightness:CGFloat) {
+    func setGradientForHueWithSaturation(saturation: CGFloat,brightness: CGFloat) {
         minColor = UIColor(hue: 0.0, saturation: saturation, brightness: brightness, alpha: 1.0)
         hasRainbow = true
     }
     
-    func setGradientForSaturationWithHue(hue:CGFloat,brightness:CGFloat) {
+    func setGradientForSaturationWithHue(hue: CGFloat,brightness: CGFloat) {
         hasRainbow = false
         minColor = UIColor(hue: hue, saturation: 0.0, brightness: brightness, alpha: 1.0)
         maxColor = UIColor(hue: hue, saturation: 1.0, brightness: brightness, alpha: 1.0)
     }
     
-    func setGradientForBrightnessWithHue(hue:CGFloat,saturation:CGFloat) {
+    func setGradientForBrightnessWithHue(hue: CGFloat,saturation: CGFloat) {
         hasRainbow = false
         minColor = UIColor.black
         maxColor = UIColor(hue: hue, saturation: saturation, brightness: 1.0, alpha: 1.0)
     }
     
-    func setGradientForRedWithGreen(green:CGFloat,blue:CGFloat) {
+    func setGradientForRedWithGreen(green: CGFloat,blue: CGFloat) {
         hasRainbow = false
         minColor = UIColor(red: 0.0, green: green, blue: blue, alpha: 1.0)
         maxColor = UIColor(red: 1.0, green: green, blue: blue, alpha: 1.0)
     }
     
-    func setGradientForGreenWithRed(red:CGFloat,blue:CGFloat) {
+    func setGradientForGreenWithRed(red: CGFloat,blue: CGFloat) {
         hasRainbow = false
         minColor = UIColor(red: red, green: 0.0, blue: blue, alpha: 1.0)
         maxColor = UIColor(red: red, green: 1.0, blue: blue, alpha: 1.0)
     }
     
-    func setGradientForBlueWithRed(red:CGFloat,green:CGFloat) {
+    func setGradientForBlueWithRed(red: CGFloat,green: CGFloat) {
         hasRainbow = false
         minColor = UIColor(red: red, green: green, blue: 0.0, alpha: 1.0)
         maxColor = UIColor(red: red, green: green, blue: 1.0, alpha: 1.0)
@@ -323,9 +323,9 @@ import UIKit
     
     //MARK: - Private Properties
     
-    private var _value:CGFloat = 0.0 // default 0.0. this value will be pinned to min/max
+    private var _value: CGFloat = 0.0 // default 0.0. this value will be pinned to min/max
     
-    private var _thumbLayer:CALayer = {
+    private var _thumbLayer: CALayer = {
         let thumb = CALayer()
         thumb.cornerRadius = defaultThumbSize/2.0
         thumb.bounds = CGRect(x: 0, y: 0, width: defaultThumbSize, height: defaultThumbSize)
@@ -339,7 +339,7 @@ import UIKit
         return thumb
     }()
     
-    private var _trackLayer:CAGradientLayer = {
+    private var _trackLayer: CAGradientLayer = {
         let track = CAGradientLayer()
         track.cornerRadius = defaultThickness / 2.0
         track.startPoint = CGPoint(x: 0.0, y: 0.5)
@@ -350,10 +350,10 @@ import UIKit
         return track
     }()
     
-    private var _minTrackImageLayer:CALayer? = nil
-    private var _maxTrackImageLayer:CALayer? = nil
+    private var _minTrackImageLayer: CALayer? = nil
+    private var _maxTrackImageLayer: CALayer? = nil
     
-    private var _thumbIconLayer:CALayer = {
+    private var _thumbIconLayer: CALayer = {
         let size = defaultThumbSize - 4
         let iconLayer = CALayer()
         iconLayer.cornerRadius = size/2.0
@@ -424,7 +424,7 @@ import UIKit
     }
     
     override open var alignmentRectInsets: UIEdgeInsets {
-        return UIEdgeInsets(top: 4.0,left:  2.0,bottom:  4.0,right:  2.0)
+        return UIEdgeInsets(top: 4.0,left: 2.0,bottom: 4.0,right: 2.0)
     }
     
     override open func layoutSublayers(of layer: CALayer) {
@@ -556,15 +556,15 @@ import UIKit
             return
         }
         //Otherwise make a rainbow with the saturation & lightness of the min color
-        var h:CGFloat = 0.0
-        var s:CGFloat = 0.0
-        var l:CGFloat = 0.0
-        var a:CGFloat = 1.0
+        var h: CGFloat = 0.0
+        var s: CGFloat = 0.0
+        var l: CGFloat = 0.0
+        var a: CGFloat = 1.0
         
         minColor.getHue(&h, saturation: &s, brightness: &l, alpha: &a)
         
         let cnt = 40
-        let step:CGFloat = 1.0 / CGFloat(cnt)
+        let step: CGFloat = 1.0 / CGFloat(cnt)
         let locations: [CGFloat] = (0...cnt).map { i in return (step * CGFloat(i)) }
         _trackLayer.colors = locations.map { return UIColor(hue: $0, saturation: s, brightness: l, alpha: a).cgColor }
         _trackLayer.locations = locations as [NSNumber]

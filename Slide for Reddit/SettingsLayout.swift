@@ -403,7 +403,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Right-side vote buttons", icon:  UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()) {
+            alertController.addAction(title: "Right-side vote buttons", icon: UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()) {
                 UserDefaults.standard.set("right", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE_RIGHT
                 UserDefaults.standard.synchronize()
