@@ -218,7 +218,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                 } else if let web = embeds["html"] as? String {
                     self.web.alpha = 1
                     self.web.allowsInlineMediaPlayback = true
-                    self.web.loadHTMLString(web.decodeHTML().replacingOccurrences(of: "//", with: "https://") , baseURL: URL(string: "https://"))
+                    self.web.loadHTMLString(web.decodeHTML().replacingOccurrences(of: "//", with: "https://"), baseURL: URL(string: "https://"))
                 }
                 let imageSize = CGSize.init(width: width, height: height)
                 var aspect = imageSize.width / imageSize.height

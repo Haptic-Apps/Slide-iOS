@@ -138,7 +138,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func configureInit() {
         self.isAccessibilityElement = true
         self.backgroundColor = ColorUtil.theme.backgroundColor
-        self.commentBody = TextDisplayStackView(fontSize: 16, submission: false, color: .blue,  width: contentView.frame.size.width, delegate: self).then({
+        self.commentBody = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, width: contentView.frame.size.width, delegate: self).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
             $0.ignoreHeight = true
