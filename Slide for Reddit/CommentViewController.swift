@@ -2867,7 +2867,7 @@ class ParentCommentViewController: UIViewController {
     var childView = UIView()
     var scrollView = UIScrollView()
     var estimatedSize: CGSize
-    var dismissHandler: (()-> Void)?
+    var dismissHandler: (() -> Void)?
     init(view: UIView, size: CGSize) {
         self.estimatedSize = size
         super.init(nibName: nil, bundle: nil)
