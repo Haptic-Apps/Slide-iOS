@@ -13,11 +13,11 @@ import MaterialComponents
 import reddift
 import RLBAlertsPickers
 import SafariServices
-import SDWebImage
 import SDCAlertView
+import SDWebImage
 import Then
-import YYText
 import UIKit
+import YYText
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)

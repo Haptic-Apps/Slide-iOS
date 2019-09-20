@@ -10,8 +10,8 @@ import Anchorage
 import RealmSwift
 import reddift
 import RLBAlertsPickers
-import UIKit
 import SDCAlertView
+import UIKit
 
 protocol SubmissionMoreDelegate: class {
     func save(_ cell: LinkCellView)

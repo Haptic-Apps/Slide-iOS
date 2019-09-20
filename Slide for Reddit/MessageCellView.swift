@@ -9,8 +9,8 @@
 import Anchorage
 import AudioToolbox
 import reddift
-import YYText
 import UIKit
+import YYText
 
 class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     

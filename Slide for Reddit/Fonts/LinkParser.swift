@@ -7,8 +7,8 @@
 //
 
 import DTCoreText
-import YYText
 import UIKit
+import YYText
 
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSMutableAttributedString {

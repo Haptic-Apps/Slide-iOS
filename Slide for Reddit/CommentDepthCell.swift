@@ -11,10 +11,10 @@ import AudioToolbox
 import RealmSwift
 import reddift
 import RLBAlertsPickers
-import YYText
-import UIKit
-import SDWebImage
 import SDCAlertView
+import SDWebImage
+import UIKit
+import YYText
 
 protocol TTTAttributedCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)

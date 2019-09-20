@@ -8,8 +8,8 @@
 
 import Anchorage
 import reddift
-import UIKit
 import SDCAlertView
+import UIKit
 
 class SettingsViewMode: BubbleSettingTableViewController {
     

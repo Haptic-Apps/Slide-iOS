@@ -13,11 +13,11 @@ import MKColorPicker
 import RealmSwift
 import reddift
 import RLBAlertsPickers
+import SDCAlertView
 import SDWebImage
 import SloppySwiper
-import YYText
 import UIKit
-import SDCAlertView
+import YYText
 
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, UINavigationControllerDelegate, AutoplayScrollViewDelegate {

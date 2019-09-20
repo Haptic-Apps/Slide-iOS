@@ -9,8 +9,8 @@
 import Anchorage
 import reddift
 import RLBAlertsPickers
-import UIKit
 import SDCAlertView
+import UIKit
 
 class SearchViewController: ContentListingViewController {
 

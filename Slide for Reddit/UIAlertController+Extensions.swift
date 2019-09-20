@@ -6,8 +6,8 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import SDCAlertView
+import UIKit
 
 public extension AlertController {
     func showWindowless() {

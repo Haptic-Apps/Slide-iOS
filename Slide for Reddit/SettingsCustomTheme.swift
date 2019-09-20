@@ -9,8 +9,8 @@
 import Anchorage
 import MKColorPicker
 import RLBAlertsPickers
-import UIKit
 import SDCAlertView
+import UIKit
 
 class SettingsCustomTheme: UITableViewController {
     

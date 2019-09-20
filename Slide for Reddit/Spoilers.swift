@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import YYText
 import UIKit
+import YYText
 
 public class WrapSpoilers: NSObject {
     

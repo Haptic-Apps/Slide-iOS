@@ -7,8 +7,8 @@
 //
 
 import Anchorage
-import UIKit
 import SDCAlertView
+import UIKit
 
 class CacheSettings: BubbleSettingTableViewController {
 

@@ -6,8 +6,8 @@
 //  Copyright © 2019 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import SwiftLinkPreview
+import UIKit
 
 public class LinkBubble: UIView {
     static let slp = SwiftLinkPreview(session: URLSession.shared,

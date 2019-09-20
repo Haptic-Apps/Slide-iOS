@@ -12,10 +12,10 @@ import MaterialComponents.MDCActivityIndicator
 import RealmSwift
 import reddift
 import RLBAlertsPickers
-import SloppySwiper
 import SDCAlertView
-import YYText
+import SloppySwiper
 import UIKit
+import YYText
 
 class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate {
     

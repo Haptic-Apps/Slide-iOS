@@ -7,8 +7,8 @@
 //
 
 import reddift
-import YYText
 import UIKit
+import YYText
 
 class GalleryCellView: UITableViewCell {
     

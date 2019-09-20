@@ -11,8 +11,8 @@ import AudioToolbox
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
-import YYText
 import UIKit
+import YYText
 
 class SubredditHeaderView: UIView {
 
