@@ -75,7 +75,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 })
                 ActionStates.setVoteDirection(s: lnk, direction: ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up)
                 History.addSeen(s: lnk)
-            } catch  {
+            } catch {
                 
             }
         }

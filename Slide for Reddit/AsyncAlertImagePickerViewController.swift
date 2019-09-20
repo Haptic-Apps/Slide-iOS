@@ -8,8 +8,8 @@
 
 import Anchorage
 import RLBAlertsPickers
-import SDWebImage
 import SDCAlertView
+import SDWebImage
 import UIKit
 
 extension AlertController {

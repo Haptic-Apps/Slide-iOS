@@ -9,8 +9,8 @@
 import Anchorage
 import AudioToolbox
 import reddift
-import YYText
 import UIKit
+import YYText
 
 class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
     
@@ -84,7 +84,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.title.bottomAnchor == self.contentView.bottomAnchor - 4
             
             let touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
+                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                     for attr in attrs {
                         if attr.value is YYTextHighlight {
                             if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
@@ -218,7 +218,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                 } else if let web = embeds["html"] as? String {
                     self.web.alpha = 1
                     self.web.allowsInlineMediaPlayback = true
-                    self.web.loadHTMLString(web.decodeHTML().replacingOccurrences(of: "//", with: "https://") , baseURL: URL(string: "https://"))
+                    self.web.loadHTMLString(web.decodeHTML().replacingOccurrences(of: "//", with: "https://"), baseURL: URL(string: "https://"))
                 }
                 let imageSize = CGSize.init(width: width, height: height)
                 var aspect = imageSize.width / imageSize.height

@@ -61,7 +61,7 @@ class ProfileInfoPresentationController: UIPresentationController {
             coordinator.animate(alongsideTransition: { _ in
                 self.dimmingView.alpha = 0
                 self.backgroundView.alpha = 0
-            }, completion: { context in
+            }, completion: { _ in
                 self.dimmingView.alpha = 1
                 self.backgroundView.alpha = 0.7
             })

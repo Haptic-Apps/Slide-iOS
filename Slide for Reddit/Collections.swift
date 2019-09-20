@@ -39,7 +39,7 @@ class Collections {
     public static func getAllCollections() -> [String] {
         var collections = [String]()
         for item in collectionIDs.allValues {
-            if item is String && !collections.contains(item as! String){
+            if item is String && !collections.contains(item as! String) {
                 collections.append(item as! String)
             }
         }

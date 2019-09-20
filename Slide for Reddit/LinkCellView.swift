@@ -13,11 +13,11 @@ import MaterialComponents
 import reddift
 import RLBAlertsPickers
 import SafariServices
-import SDWebImage
 import SDCAlertView
+import SDWebImage
 import Then
-import YYText
 import UIKit
+import YYText
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -2910,7 +2910,7 @@ private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) ->
 @available(iOS 13.0, *)
 extension LinkCellView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
 
             return self.makeContextMenu()
         })

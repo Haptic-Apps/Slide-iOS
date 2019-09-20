@@ -8,7 +8,6 @@
 
 import AudioToolbox
 import reddift
-import reddift
 import SDWebImage
 import UIKit
 

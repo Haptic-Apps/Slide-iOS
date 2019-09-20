@@ -3,14 +3,14 @@
 // Copyright (c) 2018 Haptic Apps. All rights reserved.
 //
 
-import Anchorage
 import Alamofire
+import Anchorage
 import MobileCoreServices
 import OpalImagePicker
 import Photos
 import RLBAlertsPickers
-import SwiftyJSON
 import SDCAlertView
+import SwiftyJSON
 import UIKit
 
 public class ToolbarTextView: NSObject {

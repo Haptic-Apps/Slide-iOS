@@ -434,7 +434,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
                                                cache: DisabledCache.instance)
                     slp.preview(icon!, onSuccess: { (response) in
                         image.loadImageWithPulsingAnimation(atUrl: URL(string: response.image ?? response.icon ?? ""), withPlaceHolderImage: LinkCellImageCache.web)
-                    }, onError: {(_) in })
+                    }, onError: { (_) in })
                 }
             } else {
                 image.image = LinkCellImageCache.web
@@ -560,7 +560,7 @@ extension DragDownAlertMenu {
         get {
             return true
         }
-        set {}
+        set { } // swiftlint:disable:this unused_setter_value
     }
 }
 
@@ -678,7 +678,7 @@ class DragDownPresentationController: UIPresentationController {
         if let coordinator = presentedViewController.transitionCoordinator {
             coordinator.animate(alongsideTransition: { _ in
                 self.backgroundView.alpha = 0
-            }, completion: { context in
+            }, completion: { _ in
                 self.backgroundView.alpha = 0.7
             })
         } else {

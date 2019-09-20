@@ -55,8 +55,8 @@ public class TopLockViewController: UIViewController {
         if SettingValues.biometrics && BioMetricAuthenticator.canAuthenticate() {
             BioMetricAuthenticator.authenticateWithBioMetrics(reason: "") {[weak self] (result) in
                 if let strongSelf = self {
-                    switch result{
-                    case .success(_):
+                    switch result {
+                    case .success:
                         strongSelf.dismiss(animated: true, completion: nil)
                     case .failure(let error):
                         // do nothing on canceled
@@ -66,9 +66,9 @@ public class TopLockViewController: UIViewController {
                         BioMetricAuthenticator.authenticateWithPasscode(reason: "Enter your password to unlock Slide", cancelTitle: "Exit", completion: { [weak self](result) in
                             if let strongSelf = self {
                                 switch result {
-                                case .success(_):
+                                case .success:
                                     strongSelf.dismiss(animated: true, completion: nil)
-                                case .failure(_):
+                                case .failure:
                                     strongSelf.unlockButton.isHidden = false
                                 }
                             }

@@ -9,8 +9,8 @@
 import Anchorage
 import AVKit
 import RLBAlertsPickers
-import SDWebImage
 import SDCAlertView
+import SDWebImage
 import UIKit
 
 class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {

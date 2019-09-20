@@ -464,7 +464,7 @@ extension CurrentAccountViewController {
                                 })
                             }), self)
                         }
-                    case .failure(_):
+                    case .failure:
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: self)
                         }
@@ -596,7 +596,7 @@ extension CurrentAccountViewController {
         get {
             return true
         }
-        set {}
+        set { } // swiftlint:disable:this unused_setter_value
     }
 }
 

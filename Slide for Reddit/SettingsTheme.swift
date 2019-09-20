@@ -730,7 +730,7 @@ final public class PickerViewViewControllerColored: UIViewController {
     
     public typealias Values = [[String]]
     public typealias Index = (column: Int, row: Int)
-    public typealias Action = (_ vc: UIViewController, _ picker: UIPickerView, _ index: Index, _ values: Values) -> ()
+    public typealias Action = (_ vc: UIViewController, _ picker: UIPickerView, _ index: Index, _ values: Values) -> Void
     
     fileprivate var action: Action?
     fileprivate var values: Values = [[]]
@@ -784,7 +784,6 @@ extension PickerViewViewControllerColored: UIPickerViewDataSource, UIPickerViewD
     public func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return values.count
     }
-    
     
     // returns the # of rows in each component..
     public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {

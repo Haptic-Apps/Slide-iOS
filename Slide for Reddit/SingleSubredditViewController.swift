@@ -13,11 +13,11 @@ import MKColorPicker
 import RealmSwift
 import reddift
 import RLBAlertsPickers
+import SDCAlertView
 import SDWebImage
 import SloppySwiper
-import YYText
 import UIKit
-import SDCAlertView
+import YYText
 
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, UINavigationControllerDelegate, AutoplayScrollViewDelegate {
@@ -31,7 +31,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         return tableView
     }
     
-
     override var prefersStatusBarHidden: Bool {
         return SettingValues.fullyHideNavbar
     }
@@ -301,7 +300,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         autoplayHandler.autoplayOnce(self.tableView)
     }
     
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -377,7 +375,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
                 
-
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
 
         coordinator.animate(
@@ -592,7 +589,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             self.fab!.tag = 1337
             self.fab!.titleLabel?.textAlignment = .center
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-            
             
             let width = title.size(with: self.fab!.titleLabel!.font).width + CGFloat(65)
             self.fab!.frame = CGRect.init(x: (size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
@@ -2470,7 +2466,6 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         })
         alrController.addAction(somethingAction)
         
-        
         alrController.addCancelButton()
         
         alrController.modalPresentationStyle = .fullScreen
@@ -2502,7 +2497,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             History.addSeen(s: cell.link!)
             cell.refresh()
             cell.refreshTitle(force: true)
-        } catch  {
+        } catch {
             
         }
     }

@@ -12,10 +12,10 @@ import MaterialComponents.MDCActivityIndicator
 import RealmSwift
 import reddift
 import RLBAlertsPickers
-import SloppySwiper
 import SDCAlertView
-import YYText
+import SloppySwiper
 import UIKit
+import YYText
 
 class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate {
     
@@ -44,7 +44,6 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         })
         alrController.addAction(somethingAction)
         
-        
         alrController.addCancelButton()
         
         alrController.modalPresentationStyle = .fullScreen
@@ -65,7 +64,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
                 UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(upvote(_:)), discoverabilityTitle: "Like post"),
                 UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(reply(_:)), discoverabilityTitle: "Reply to post"),
-                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(save(_:)), discoverabilityTitle: "Save post")
+                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(save(_:)), discoverabilityTitle: "Save post"),
             ]
         }
     }
@@ -145,7 +144,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if self.jump != nil {
             UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
                 self.jump?.transform = CGAffineTransform(translationX: 0, y: 70)
-            }, completion: { finished in
+            }, completion: { _ in
                 self.jump?.removeFromSuperview()
             })
         }
@@ -290,7 +289,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 CATransaction.setDisableActions(true)
                                 self.tableView.performBatchUpdates({
                                     self.tableView.insertRows(at: paths, with: .fade)
-                                }, completion: { (done) in
+                                }, completion: { (_) in
                                     self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
                                     CATransaction.commit()
                                 })
@@ -2868,7 +2867,7 @@ class ParentCommentViewController: UIViewController {
     var childView = UIView()
     var scrollView = UIScrollView()
     var estimatedSize: CGSize
-    var dismissHandler: (()-> Void)?
+    var dismissHandler: (() -> Void)?
     init(view: UIView, size: CGSize) {
         self.estimatedSize = size
         super.init(nibName: nil, bundle: nil)

@@ -10,7 +10,6 @@ import Anchorage
 import AVKit
 import reddift
 import UIKit
-import UIKit.UIGestureRecognizerSubclass
 
 class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     

@@ -3,6 +3,7 @@
 // Copyright (c) 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import MaterialComponents.MDCProgressView
 import RealmSwift
 import reddift
@@ -10,7 +11,6 @@ import SDCAlertView
 import SDWebImage
 import SwiftEntryKit
 import UIKit
-import Anchorage
 
 public class AutoCache: NSObject {
     static var subs = [String]()

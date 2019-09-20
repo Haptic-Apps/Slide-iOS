@@ -831,7 +831,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
             UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(search), discoverabilityTitle: "Search"),
             UIKeyCommand(input: "h", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
-            UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh), discoverabilityTitle: "Reload")
+            UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh), discoverabilityTitle: "Reload"),
         ]
     }
     
@@ -1327,7 +1327,7 @@ class ExpandedHitButton: UIButton {
 @available(iOS 13.0, *)
 extension MainViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
 
             return self.makeContextMenu()
         })

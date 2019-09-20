@@ -9,8 +9,8 @@
 import Anchorage
 import MKColorPicker
 import RLBAlertsPickers
-import UIKit
 import SDCAlertView
+import UIKit
 
 class SettingsCustomTheme: UITableViewController {
     
@@ -303,16 +303,16 @@ class SettingsCustomTheme: UITableViewController {
         switch indexPath.row {
         case 0:
             color = foregroundColor
-            alert.attributedMessage = NSAttributedString(string:  "Foreground color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedMessage = NSAttributedString(string: "Foreground color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         case 1:
             color = backgroundColor
-            alert.attributedMessage = NSAttributedString(string:  "Background color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedMessage = NSAttributedString(string: "Background color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         case 2:
             color = fontColor
-            alert.attributedMessage = NSAttributedString(string:  "Font color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedMessage = NSAttributedString(string: "Font color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         default:
             color = navIconColor
-            alert.attributedMessage = NSAttributedString(string:  "Icons color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedMessage = NSAttributedString(string: "Icons color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         }
 
         let selection: ColorPickerViewController.Selection? = { color in
@@ -412,11 +412,11 @@ class SettingsCustomTheme: UITableViewController {
         
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string:  color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         vc.set(color: color) { new in
             color = new
-            alert.attributedTitle = NSAttributedString(string:  color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         }
         
         alert.addCancelButton()

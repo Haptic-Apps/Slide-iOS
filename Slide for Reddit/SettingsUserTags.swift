@@ -23,7 +23,7 @@ class SettingsUserTags: UITableViewController {
             UserDefaults.standard.set(true, forKey: "setCcrama")
             UserDefaults.standard.synchronize()
         }
-        for item in UserDefaults.standard.dictionaryRepresentation().keys.filter({$0.startsWith("tag+")}) {
+        for item in UserDefaults.standard.dictionaryRepresentation().keys.filter({ $0.startsWith("tag+") }) {
            tags[item.split("+")[1]] = UserDefaults.standard.string(forKey: item)
         }
         
@@ -198,7 +198,7 @@ private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) ->
 }
 
 extension Dictionary {
-    subscript(i:Int) -> (key:Key,value:Value) {
+    subscript(i: Int) -> (key: Key, value: Value) {
         get {
             return self[index(startIndex, offsetBy: i)];
         }

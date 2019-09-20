@@ -494,7 +494,7 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
         get {
             return true
         }
-        set {}
+        set { } // swiftlint:disable:this unused_setter_value
     }
 }
 extension UINavigationController {

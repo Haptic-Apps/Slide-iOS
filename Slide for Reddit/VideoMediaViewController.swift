@@ -9,8 +9,8 @@
 import Alamofire
 import Anchorage
 import AVFoundation
-import SDWebImage
 import SDCAlertView
+import SDWebImage
 import SubtleVolume
 import Then
 import UIKit
@@ -595,7 +595,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 print(error)
             }
         }
-
         
         self.setProgressViewVisible(false)
         self.size.isHidden = true
