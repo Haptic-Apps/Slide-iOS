@@ -1086,7 +1086,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     case .success:
                         self.parent!.approved.append(self.comment!.id)
                         if self.parent!.removed.contains(self.comment!.id) {
-                            self.parent!.removed.remove(at: self.parent!.removed.index(of: self.comment!.id)!)
+                            self.parent!.removed.remove(at: self.parent!.removed.firstIndex(of: self.comment!.id)!)
                         }
                         DispatchQueue.main.async {
                             self.parent!.tableView.reloadData()
@@ -1160,7 +1160,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     case .success:
                         self.parent!.removed.append(self.comment!.id)
                         if self.parent!.approved.contains(self.comment!.id) {
-                            self.parent!.approved.remove(at: self.parent!.approved.index(of: self.comment!.id)!)
+                            self.parent!.approved.remove(at: self.parent!.approved.firstIndex(of: self.comment!.id)!)
                         }
                         DispatchQueue.main.async {
                             self.parent!.tableView.reloadData()

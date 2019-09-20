@@ -124,7 +124,7 @@ class CacheSettings: BubbleSettingTableViewController {
         } else if changed == cacheContentSwitch {
             //todo this setting
         } else if !changed.isOn {
-            selected.remove(at: selected.index(of: changed.accessibilityIdentifier!)!)
+            selected.remove(at: selected.firstIndex(of: changed.accessibilityIdentifier!)!)
             Subscriptions.setOffline(subs: selected) {
             }
         } else {

@@ -154,7 +154,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                             direction: .forward,
                                             animated: true,
                                             completion: nil)
-                    self.navItem?.title = "\(self.urlStringKeys.index(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
+                    self.navItem?.title = "\(self.urlStringKeys.firstIndex(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
                     let overview = UIButton.init(type: .custom)
                     overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
                     overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
@@ -330,12 +330,12 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
-        navItem?.title = "\(urlStringKeys.index(of: ((viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(urlStringKeys.count)"
+        navItem?.title = "\(urlStringKeys.firstIndex(of: ((viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(urlStringKeys.count)"
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = urlStringKeys.index(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!) else {
+        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!) else {
             return nil
         }
         
@@ -354,7 +354,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = urlStringKeys.index(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!) else {
+        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!) else {
             return nil
         }
         

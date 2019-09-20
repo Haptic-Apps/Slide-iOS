@@ -145,7 +145,7 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
         guard completed else {
             return
         }
-        let page = vCs.index(of: self.viewControllers!.first!)
+        let page = vCs.firstIndex(of: self.viewControllers!.first!)
 
         if !selected {
             tabBar.setSelectedItem(tabBar.items[page!], animated: true)
@@ -180,7 +180,7 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = vCs.index(of: viewController) else {
+        guard let viewControllerIndex = vCs.firstIndex(of: viewController) else {
             return nil
         }
 
@@ -199,7 +199,7 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = vCs.index(of: viewController) else {
+        guard let viewControllerIndex = vCs.firstIndex(of: viewController) else {
             return nil
         }
 
@@ -222,8 +222,8 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
 extension CollectionsViewController: MDCTabBarDelegate {
 
     func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
-        let firstViewController = vCs[tabBar.items.index(of: item)!]
-        currentIndex = tabBar.items.index(of: item)!
+        let firstViewController = vCs[tabBar.items.firstIndex(of: item)!]
+        currentIndex = tabBar.items.firstIndex(of: item)!
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,

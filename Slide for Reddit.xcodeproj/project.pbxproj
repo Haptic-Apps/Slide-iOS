@@ -1469,17 +1469,19 @@
 					BE20851C21588F3A00D8F33C = {
 						CreatedOnToolsVersion = 10.0;
 						DevelopmentTeam = FTT89576VQ;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					BE257A6A21F64AA30082A47E = {
 						CreatedOnToolsVersion = 10.1;
 						DevelopmentTeam = FTT89576VQ;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					BE8FCA031E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
 						DevelopmentTeam = FTT89576VQ;
-						LastSwiftMigration = 1010;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1499,14 +1501,14 @@
 					BE8FCA171E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
 						DevelopmentTeam = FTT89576VQ;
-						LastSwiftMigration = 1010;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
 					BE8FCA221E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
 						DevelopmentTeam = FTT89576VQ;
-						LastSwiftMigration = 1010;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
@@ -2250,7 +2252,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
@@ -2276,7 +2278,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
@@ -2305,7 +2307,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Open-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2332,7 +2334,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Open-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2486,7 +2488,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -2521,7 +2523,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -2537,7 +2539,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide for Reddit.app/Slide for Reddit";
 			};
 			name = Debug;
@@ -2554,7 +2556,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide for Reddit.app/Slide for Reddit";
 			};
 			name = Release;
@@ -2570,7 +2572,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Slide for Reddit";
 			};
 			name = Debug;
@@ -2586,7 +2588,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Slide for Reddit";
 			};
 			name = Release;

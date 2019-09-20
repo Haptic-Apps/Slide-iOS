@@ -46,7 +46,7 @@ class AccountController {
             try LocalKeystore.removeToken(of: name)
             try OAuth2TokenRepository.removeToken(of: name)
 
-            names.remove(at: names.index(of: name)!)
+            names.remove(at: names.firstIndex(of: name)!)
             UserDefaults.standard.set(name, forKey: "GUEST")
             UserDefaults.standard.synchronize()
 

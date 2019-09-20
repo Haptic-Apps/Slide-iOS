@@ -1957,7 +1957,7 @@ extension SingleSubredditViewController {
     @objc func hideAll(_ sender: AnyObject) {
         for submission in links {
             if History.getSeen(s: submission) {
-                let index = links.index(of: submission)!
+                let index = links.firstIndex(of: submission)!
                 links.remove(at: index)
             }
         }
