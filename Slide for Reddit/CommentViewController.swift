@@ -64,7 +64,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                 UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
                 UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(upvote(_:)), discoverabilityTitle: "Like post"),
                 UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(reply(_:)), discoverabilityTitle: "Reply to post"),
-                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(save(_:)), discoverabilityTitle: "Save post")
+                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(save(_:)), discoverabilityTitle: "Save post"),
             ]
         }
     }
