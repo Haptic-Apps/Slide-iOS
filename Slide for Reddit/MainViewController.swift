@@ -1327,7 +1327,7 @@ class ExpandedHitButton: UIButton {
 @available(iOS 13.0, *)
 extension MainViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
 
             return self.makeContextMenu()
         })

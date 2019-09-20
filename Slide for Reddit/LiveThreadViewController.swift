@@ -264,7 +264,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                                 CATransaction.setDisableActions(true)
                                 self.tableView.performBatchUpdates({
                                     self.tableView.insertItems(at: [IndexPath(row: 0, section: 0)])
-                                }, completion: { (done) in
+                                }, completion: { (_) in
                                     self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
                                     CATransaction.commit()
                                 })

@@ -640,7 +640,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 */
                 text1.attributedText = content
                 text1.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
                                 if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
@@ -931,7 +931,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
                 text1.attributedText = content
                 text1.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
+                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
                                 if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {

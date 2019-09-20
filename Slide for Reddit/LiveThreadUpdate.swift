@@ -84,7 +84,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.title.bottomAnchor == self.contentView.bottomAnchor - 4
             
             let touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
+                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                     for attr in attrs {
                         if attr.value is YYTextHighlight {
                             if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {

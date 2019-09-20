@@ -144,7 +144,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         if self.jump != nil {
             UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
                 self.jump?.transform = CGAffineTransform(translationX: 0, y: 70)
-            }, completion: { finished in
+            }, completion: { _ in
                 self.jump?.removeFromSuperview()
             })
         }
@@ -289,7 +289,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                 CATransaction.setDisableActions(true)
                                 self.tableView.performBatchUpdates({
                                     self.tableView.insertRows(at: paths, with: .fade)
-                                }, completion: { (done) in
+                                }, completion: { (_) in
                                     self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
                                     CATransaction.commit()
                                 })

@@ -678,7 +678,7 @@ class DragDownPresentationController: UIPresentationController {
         if let coordinator = presentedViewController.transitionCoordinator {
             coordinator.animate(alongsideTransition: { _ in
                 self.backgroundView.alpha = 0
-            }, completion: { context in
+            }, completion: { _ in
                 self.backgroundView.alpha = 0.7
             })
         } else {
