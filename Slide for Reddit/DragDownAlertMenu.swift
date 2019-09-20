@@ -434,7 +434,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
                                                cache: DisabledCache.instance)
                     slp.preview(icon!, onSuccess: { (response) in
                         image.loadImageWithPulsingAnimation(atUrl: URL(string: response.image ?? response.icon ?? ""), withPlaceHolderImage: LinkCellImageCache.web)
-                    }, onError: {(_) in })
+                    }, onError: { (_) in })
                 }
             } else {
                 image.image = LinkCellImageCache.web

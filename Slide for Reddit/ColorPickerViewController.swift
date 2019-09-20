@@ -160,9 +160,9 @@ public class ColorPickerViewController: UIViewController {
     static var defaultThumbSize: CGFloat = 28.0
     
     // MARK: Properties
-    @IBInspectable var hasRainbow: Bool = false {didSet {updateTrackColors()}}//Uses saturation & lightness from minColor
-    @IBInspectable var minColor: UIColor = UIColor.blue {didSet {updateTrackColors()}}
-    @IBInspectable var maxColor: UIColor = UIColor.orange {didSet {updateTrackColors()}}
+    @IBInspectable var hasRainbow: Bool = false { didSet { updateTrackColors() } }//Uses saturation & lightness from minColor
+    @IBInspectable var minColor: UIColor = UIColor.blue { didSet { updateTrackColors() } }
+    @IBInspectable var maxColor: UIColor = UIColor.orange { didSet { updateTrackColors() } }
     
     @IBInspectable var value: CGFloat {
         get { return _value }
@@ -220,7 +220,7 @@ public class ColorPickerViewController: UIViewController {
     
     var continuous: Bool = true // if set, value change events are generated any time the value changes due to dragging. default = YES
     
-    var actionBlock: (GradientSlider, CGFloat) -> () = { slider, newValue in  }
+    var actionBlock: (GradientSlider, CGFloat) -> () = { slider, newValue in }
     
     @IBInspectable var thickness: CGFloat = defaultThickness {
         didSet {
@@ -429,7 +429,7 @@ public class ColorPickerViewController: UIViewController {
     override open func layoutSublayers(of layer: CALayer) {
         super.layoutSublayers(of: layer)
         
-        if layer != self.layer {return}
+        if layer != self.layer { return }
         
         var w = self.bounds.width
         let h = self.bounds.height
