@@ -960,7 +960,7 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         get {
             return true
         }
-        set {}
+        set { } // swiftlint:disable:this unused_setter_value
     }
 }
 extension AVAsset {
