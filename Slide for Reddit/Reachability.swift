@@ -1,7 +1,6 @@
 import Foundation
 import SystemConfiguration
 
-import SystemConfiguration.CaptiveNetwork
 import UIKit
 
 public let ReachabilityStatusChangedNotification = "ReachabilityStatusChangedNotification"
