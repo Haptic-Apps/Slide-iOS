@@ -161,7 +161,7 @@ import UIKit
     static var defaultThumbSize: CGFloat = 28.0
     
     //MARK: Properties
-    @IBInspectable var hasRainbow: Bool  = false {didSet {updateTrackColors()}}//Uses saturation & lightness from minColor
+    @IBInspectable var hasRainbow: Bool = false {didSet {updateTrackColors()}}//Uses saturation & lightness from minColor
     @IBInspectable var minColor: UIColor = UIColor.blue {didSet {updateTrackColors()}}
     @IBInspectable var maxColor: UIColor = UIColor.orange {didSet {updateTrackColors()}}
     
@@ -327,7 +327,7 @@ import UIKit
     
     private var _thumbLayer: CALayer = {
         let thumb = CALayer()
-        thumb.cornerRadius = defaultThumbSize/2.0
+        thumb.cornerRadius = defaultThumbSize / 2.0
         thumb.bounds = CGRect(x: 0, y: 0, width: defaultThumbSize, height: defaultThumbSize)
         thumb.backgroundColor = UIColor.white.cgColor
         thumb.shadowColor = UIColor.black.cgColor
@@ -356,7 +356,7 @@ import UIKit
     private var _thumbIconLayer: CALayer = {
         let size = defaultThumbSize - 4
         let iconLayer = CALayer()
-        iconLayer.cornerRadius = size/2.0
+        iconLayer.cornerRadius = size / 2.0
         iconLayer.bounds = CGRect(x: 0, y: 0, width: size, height: size)
         iconLayer.backgroundColor = UIColor.white.cgColor
         return iconLayer
@@ -437,29 +437,29 @@ import UIKit
         var left: CGFloat = 2.0
         
         if let minImgLayer = _minTrackImageLayer {
-            minImgLayer.position = CGPoint(x: 0.0, y: h/2.0)
+            minImgLayer.position = CGPoint(x: 0.0, y: h / 2.0)
             left = minImgLayer.bounds.width + 13.0
         }
         w -= left
         
         if let maxImgLayer = _maxTrackImageLayer {
-            maxImgLayer.position = CGPoint(x: self.bounds.width, y: h/2.0)
+            maxImgLayer.position = CGPoint(x: self.bounds.width, y: h / 2.0)
             w -= (maxImgLayer.bounds.width + 13.0)
         } else {
             w -= 2.0
         }
         
         _trackLayer.bounds = CGRect(x: 0, y: 0, width: w, height: thickness)
-        _trackLayer.position = CGPoint(x: w/2.0 + left, y: h/2.0)
+        _trackLayer.position = CGPoint(x: w / 2.0 + left, y: h / 2.0)
         
-        let halfSize = thumbSize/2.0
+        let halfSize = thumbSize / 2.0
         var layerSize = thumbSize - 4.0
         if let icon = thumbIcon {
             layerSize = min(max(icon.size.height,icon.size.width),layerSize)
             _thumbIconLayer.cornerRadius = 0.0
             _thumbIconLayer.backgroundColor = UIColor.clear.cgColor
         } else {
-            _thumbIconLayer.cornerRadius = layerSize/2.0
+            _thumbIconLayer.cornerRadius = layerSize / 2.0
         }
         _thumbIconLayer.position = CGPoint(x: halfSize, y: halfSize)
         _thumbIconLayer.bounds = CGRect(x: 0, y: 0, width: layerSize, height: layerSize)
@@ -474,7 +474,7 @@ import UIKit
         
         let center = _thumbLayer.position
         let diameter = max(thumbSize,44.0)
-        let r = CGRect(x: center.x - diameter/2.0, y: center.y - diameter/2.0, width: diameter, height: diameter)
+        let r = CGRect(x: center.x - diameter / 2.0, y: center.y - diameter / 2.0, width: diameter, height: diameter)
         if r.contains(pt) {
             sendActions(for: .touchDown)
             return true
@@ -511,7 +511,7 @@ import UIKit
         
         let halfHeight = self.bounds.height / 2.0
         let trackWidth = _trackLayer.bounds.width - thumbSize
-        let left = _trackLayer.position.x - trackWidth/2.0
+        let left = _trackLayer.position.x - trackWidth / 2.0
         
         if !animated {
             CATransaction.begin() //Move the thumb position without animations

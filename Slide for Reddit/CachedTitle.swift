@@ -337,7 +337,7 @@ class CachedTitle {
             rect.size.height = 1.25 * fontSize
         } else if 16 <= fontSize && fontSize <= 24 {
             rect.size.width = 0.5 * fontSize + 12
-            rect.size.height =  0.5 * fontSize + 12
+            rect.size.height = 0.5 * fontSize + 12
         } else {
             rect.size.width = fontSize
             rect.size.height = fontSize

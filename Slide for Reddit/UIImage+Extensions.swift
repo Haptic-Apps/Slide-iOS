@@ -76,7 +76,7 @@ extension UIImage {
             }
         }
         
-        rect = CGRect( x: CGFloat(minX), y: CGFloat(minY), width: CGFloat(maxX-minX), height: CGFloat(maxY-minY))
+        rect = CGRect( x: CGFloat(minX), y: CGFloat(minY), width: CGFloat(maxX - minX), height: CGFloat(maxY - minY))
         let imageScale: CGFloat = self.scale
         let cgiImage = self.cgImage?.cropping(to: rect)
         return UIImage(cgImage: cgiImage!, scale: imageScale, orientation: self.imageOrientation)
