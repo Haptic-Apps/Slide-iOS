@@ -349,8 +349,8 @@ public class ColorPickerViewController: UIViewController {
         return track
     }()
     
-    private var _minTrackImageLayer: CALayer? = nil
-    private var _maxTrackImageLayer: CALayer? = nil
+    private var _minTrackImageLayer: CALayer?
+    private var _maxTrackImageLayer: CALayer?
     
     private var _thumbIconLayer: CALayer = {
         let size = defaultThumbSize - 4
