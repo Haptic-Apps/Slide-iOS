@@ -47,7 +47,7 @@ class CurrentAccountPresentationController: UIPresentationController {
             containerView.addSubview(accountView.view)
         }
 
-        if let coordinator = presentedViewController.transitionCoordinator {
+        if presentedViewController.transitionCoordinator != nil {
             UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
                 self.dimmingView.effect = self.blurEffect
             })
