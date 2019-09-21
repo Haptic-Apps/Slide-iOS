@@ -1406,7 +1406,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         do {
                             let realm = try Realm()
                            // TODO: - insert
-                            try realm.beginWrite()
+                            realm.beginWrite()
                             for submission in self.links {
                                 if submission.author != "PAGE_SEPARATOR" {
                                     realm.create(type(of: submission), value: submission, update: .all)
