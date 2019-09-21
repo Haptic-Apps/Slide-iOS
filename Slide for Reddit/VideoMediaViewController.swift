@@ -1010,6 +1010,8 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
             break
         case .unknown:
             break
+        @unknown default:
+            break
         }
     }
 
@@ -1029,6 +1031,8 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         case .videoNotFound:
             break
         case .unknown:
+            break
+        @unknown default:
             break
         }
     }
