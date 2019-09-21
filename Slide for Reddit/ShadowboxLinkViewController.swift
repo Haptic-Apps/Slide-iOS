@@ -37,7 +37,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     var baseURL: URL?
     
     var submission: RSubmission! {
-        return content as! RSubmission
+        return content as? RSubmission
     }
 
     var titleLabel: YYLabel!
