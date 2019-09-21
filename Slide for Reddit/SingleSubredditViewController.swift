@@ -1697,8 +1697,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         
         if thumb {
             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
+            innerPadding -= 5 //ThumbLinkCellView L#65
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT ? 4 : 0) //between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and bottom box
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
             } else {
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
@@ -1735,14 +1736,19 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
         if thumb {
             estimatedUsableWidth -= thumbheight //is the same as the width
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //between edge and thumb
+            if !SettingValues.actionBarMode.isSide() {
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //title label padding
+            } else {
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //title label padding
+            }
         } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title label padding
         }
         
-        if SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
+        if big && SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
-        } else {
+        } else if big {
             let bannerPadding = (SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
@@ -1755,17 +1761,21 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if SettingValues.actionBarMode.isSide() {
             estimatedUsableWidth -= 40
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
-            if thumb {
-                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
+            if !thumb {
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //title side padding
+            } else {
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title side padding
             }
         }
         
         let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
         let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false))!
         let textSize = layout.textBoundingSize
+        print("\(submission.title) estimated title size is \(textSize)")
 
         let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD ? -5 : 0)
+        print("Total size is \(totalHeight) by \(itemWidth)")
+
         return CGSize(width: itemWidth, height: totalHeight)
     }
     
