@@ -359,6 +359,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             height += CGFloat(46)
         }
         
+        if #available(iOS 13, *), !textView.text.isEmpty {
+            self.isModalInPresentation = true
+        }
+        
         scrollView.contentSize = CGSize.init(width: scrollView.frame.size.width, height: height)
     }
 
