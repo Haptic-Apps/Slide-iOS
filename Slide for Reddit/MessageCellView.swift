@@ -168,7 +168,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             return
         }
         if !self.cancelled {
-            //todo show menu
+           // TODO: - show menu
             //read reply full thread
             if #available(iOS 10.0, *) {
                 HapticUtility.hapticActionStrong()

@@ -264,8 +264,8 @@ class ContentType {
         if (submission?.isSelf)! {
             return CType.SELF
         }
-        // TODO: Decide whether internal youtube links should be EMBEDDED or LINK
-        /* todo this if (basicType == (CType.LINK) && submission?.mediaEmbed != nil && !submission?.mediaEmbed!.content.isEmpty{
+        // TODO: - Decide whether internal youtube links should be EMBEDDED or LINK
+        /* if (basicType == (CType.LINK) && submission?.mediaEmbed != nil && !submission?.mediaEmbed!.content.isEmpty{
          return CType.EMBEDDED;
          }*/
         

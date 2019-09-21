@@ -842,7 +842,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             if !self.comments.isEmpty {
                                 do {
                                     let realm = try Realm()
-                                    //todo insert
+                                   // TODO: - insert
                                     realm.beginWrite()
                                     for comment in self.comments {
                                         if let content = self.content[comment] {
@@ -1236,7 +1236,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if keyboardHeight == 0 {
                 keyboardHeight = keyboardRectangle.height
             }
-//todo content insets
+// TODO: - content insets
 
         }
     }
@@ -2662,7 +2662,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                 tableView.endUpdates()
                             }
                             unhideAll(comment: comment.getId(), i: row!)
-                            //todo hide child number
+                           // TODO: - hide child number
                         } else {
                             if childNumber > 0 {
                                 if childNumber > 0 {
@@ -2914,7 +2914,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         }
         
         if SettingValues.commentActionForceTouch != .PARENT_PREVIEW {
-            //todo maybe
+           // TODO: - maybe
             /*let textView =
             let locationInTextView = textView.convert(location, to: textView)
             
@@ -2969,7 +2969,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             let layout = YYTextLayout(containerSize: size, text: parentCell.title.attributedText!)!
             let textSize = layout.textBoundingSize
 
-            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textSize.height) //todo fix height
+            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textSize.height)// TODO: - fix height
             let detailViewController = ParentCommentViewController(view: parentCell.contentView, size: size)
             detailViewController.preferredContentSize = CGSize(width: size.width, height: min(size.height, 300))
 

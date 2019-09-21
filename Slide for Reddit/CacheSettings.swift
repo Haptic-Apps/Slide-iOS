@@ -91,7 +91,8 @@ class CacheSettings: BubbleSettingTableViewController {
     }
 
     func save(_ selector: AnyObject?) {
-        /* todo this
+        // TODO: - this
+        /*
         SubredditReorderViewController.changed = true
         Subscriptions.set(name: AccountController.currentName, subs: subs, completion: {
             self.dismiss(animated: true, completion: nil)
@@ -122,7 +123,7 @@ class CacheSettings: BubbleSettingTableViewController {
                 changed.isOn = false
             }
         } else if changed == cacheContentSwitch {
-            //todo this setting
+           // TODO: - this setting
         } else if !changed.isOn {
             selected.remove(at: selected.firstIndex(of: changed.accessibilityIdentifier!)!)
             Subscriptions.setOffline(subs: selected) {

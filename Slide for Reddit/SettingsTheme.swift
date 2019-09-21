@@ -92,7 +92,8 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
 
         alertController.view.addSubview(MKColorPicker)
 
-        /*todo maybe ? let custom = UIAlertAction(title: "Custom color", style: .default, handler: { (alert: UIAlertAction!) in
+        // TODO: - maybe ?
+        /* let custom = UIAlertAction(title: "Custom color", style: .default, handler: { (alert: UIAlertAction!) in
             if(!VCPresenter.proDialogShown(feature: false, self)){
                 let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
                 alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (color) in

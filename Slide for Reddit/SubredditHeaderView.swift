@@ -47,7 +47,7 @@ class SubredditHeaderView: UIView {
                             sheet.addAction(title: "u/\(user.name)", icon: nil, action: {
                                 VCPresenter.showVC(viewController: ProfileViewController.init(name: user.name), popupIfPossible: false, parentNavigationController: self.parentController?.navigationController, parentViewController: self.parentController)
                             })
-                            //todo maybe tags or colors?
+                           // TODO: - maybe tags or colors?
                         }
                         
                         sheet.show(self.parentController)

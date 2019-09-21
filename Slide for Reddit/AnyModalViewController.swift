@@ -677,7 +677,7 @@ class AnyModalViewController: UIViewController {
         })
     }
 
-    // TODO: Also fade background to black?
+    // TODO: - Also fade background to black?
     @objc func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
             return

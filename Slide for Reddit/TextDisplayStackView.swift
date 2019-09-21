@@ -352,7 +352,7 @@ public class TextDisplayStackView: UIStackView {
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
                     $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.theme.fontColor), for: .normal)
-                    //todo icon
+                   // TODO: - icon
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
                     $0.backgroundColor = UIColor.clear
                     $0.addTapGestureRecognizer(action: {

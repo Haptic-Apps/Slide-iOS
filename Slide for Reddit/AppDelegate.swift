@@ -402,7 +402,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 for case let message as Message in listing.children.reversed() {
                     if Double(message.createdUtc) > lastMessageUpdateTime {
                         newCount += 1
-                        // TODO: If there's more than one new notification, maybe just post
+                        // TODO: - If there's more than one new notification, maybe just post
                         // a message saying "You have new unread messages."
                         postLocalNotification(message.body, message.author, message.wasComment ? message.context : nil, message.id)
                     }

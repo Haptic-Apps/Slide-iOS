@@ -43,7 +43,7 @@ class CurrentAccountPresentationController: UIPresentationController {
         if let containerView = containerView {
             containerView.insertSubview(dimmingView, at: 0)
             containerView.insertSubview(backgroundView, at: 0)
-//            accountView.view.removeFromSuperview() // TODO: Risky?
+//            accountView.view.removeFromSuperview() // TODO: - Risky?
             containerView.addSubview(accountView.view)
         }
 

@@ -370,7 +370,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     
     func showLoader() {
         showing = true
-        //todo maybe add this later
+       // TODO: - maybe add this later
     }
     
     var sort = LinkSortType.hot

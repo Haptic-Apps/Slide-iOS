@@ -272,7 +272,7 @@ class SubredditReorderViewController: UITableViewController {
 
             if AccountController.isLoggedIn {
                 cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { _ -> Void in
-                    //todo unsub
+                   // TODO: - unsub
                     var top: [String] = []
                     for i in rows {
                         top.append(self.subs[i.row])

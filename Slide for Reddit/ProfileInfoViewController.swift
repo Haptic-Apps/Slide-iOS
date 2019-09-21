@@ -272,7 +272,7 @@ extension ProfileInfoViewController {
             try (UIApplication.shared.delegate as! AppDelegate).session?.getUserProfile(named, completion: { (result) in
                 switch result {
                 case .failure(let error):
-                    //todo handle this
+                   // TODO: - handle this
                     break
                 case .success(let account):
                     self.user = account
@@ -418,20 +418,20 @@ extension ProfileInfoViewController {
     }
 
     @objc func colorChangeRequested() {
-//todo this
+        // TODO: - this
         
     }
 
     @objc func tagUserRequested() {
-        //todo this
+       // TODO: - this
     }
 
     @objc func friendRequested(_ sender: UIButton) {
-        //todo this
+       // TODO: - this
     }
     
     @objc func unfreindRequested(_ sender: UIButton) {
-        //todo this
+       // TODO: - this
     }
 }
 

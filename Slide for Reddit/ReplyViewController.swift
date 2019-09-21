@@ -636,7 +636,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let html = (toReplyTo as! RMessage).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 
-                /* todo this
+                // TODO: - this
+                /*
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
                 activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
                 text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
@@ -926,7 +927,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 let html = (toReplyTo as! RSubmission).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 
-                /* todo this
+                // TODO: - this
+                /*
                 let activeLinkAttributes = NSMutableDictionary(dictionary: text1.activeLinkAttributes)
                 activeLinkAttributes[kCTForegroundColorAttributeName] = ColorUtil.baseAccent
                 text1.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
@@ -1202,7 +1204,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 
             })
         } catch {
-            //todo success but null child
+           // TODO: - success but null child
             self.submissionCallback(nil, error)
         }
     }

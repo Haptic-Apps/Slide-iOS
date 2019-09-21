@@ -207,7 +207,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
         buttons.addArrangedSubviews( upvote, downvote)
         self.baseBody.addSubview(buttons)
-        //todo add gestures here
+       // TODO: - add gestures here
         self.view.addSubview(baseBody)
         self.view.addSubview(topBody)
         baseBody.horizontalAnchors == self.view.horizontalAnchors + 12
@@ -280,7 +280,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             
             score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
             
-            //todo what to do here titleLabel.setText(CachedTitle.getTitle(submission: link, full: false, false, true))
+           // TODO: - what to do here titleLabel.setText(CachedTitle.getTitle(submission: link, full: false, false, true))
         }
         
         if archived || !AccountController.isLoggedIn {

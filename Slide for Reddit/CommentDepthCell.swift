@@ -149,7 +149,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment title"
             $0.numberOfLines = 0
-            $0.highlightTapAction = self.commentBody.touchLinkAction //todo this!!!
+            $0.highlightTapAction = self.commentBody.touchLinkAction// TODO: - this!!!
             $0.highlightLongPressAction = self.commentBody.longTouchLinkAction
             $0.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         })
@@ -243,7 +243,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         if !self.cancelled {
             if SettingValues.swapLongPress || self.isCollapsed {
-                //todo this is probably wrong
+               // TODO: - this is probably wrong
                 self.pushedSingleTap(nil)
             } else {
                 if comment != nil {
@@ -1300,7 +1300,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         alertController.addAction(title: "Ban u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.hammerFill, overrideString: "ban")!.menuIcon()) {
-            //todo add ban!!!
+           // TODO: - add ban!!!
         }
 
         if comment!.author == AccountController.currentName {
@@ -1539,7 +1539,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         loading = true
         
         title.attributedText = TextDisplayStackView.createAttributedChunk(baseHTML: "Loading...", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
-        //todo possibly animate?
+       // TODO: - possibly animate?
     }
 
     public var isCollapsed = false
@@ -1549,7 +1549,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if title == nil {
             configureInit()
         }
-        if SettingValues.commentActionForceTouch == .NONE { //todo change this
+        if SettingValues.commentActionForceTouch == .NONE {// TODO: - change this
         }
         self.accessibilityValue = """
         Depth \(comment.depth).
@@ -1861,14 +1861,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
         return nil
-        /* todo this
+        // TODO: - this
+        /*
         if let attr = title.firstTextView.link(at: locationInTextView) {
             if let url = attr.result.url {
                 return (url, title.bounds)
             }
 
         }
-        return nil*/
+        return nil
+        */
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {

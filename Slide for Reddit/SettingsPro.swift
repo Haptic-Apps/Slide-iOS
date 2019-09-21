@@ -288,7 +288,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 let price1Str = "Go pro for \(numberFormatter.string(from: items[0].price) ?? "$4.99")"
                 let price2Str = "Go pro and donate for \(numberFormatter.string(from: items[1].price) ?? "$7.99")"
                 
-                /* todo this
+                // TODO: - this
+                /*
                 let priceOldStr = "Go pro for \(price1Str)"
                 let priceOldStr2 = "Go pro and donate for \(price2Str)"
                 if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {

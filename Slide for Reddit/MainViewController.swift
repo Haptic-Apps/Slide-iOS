@@ -412,7 +412,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                                         completion: nil)
                 self.doCurrentPage(index!)
             } else {
-                //todo better sanitation
+               // TODO: - better sanitation
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
             }
         }
@@ -972,7 +972,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
         let settings = ExpandedHitButton(type: .custom)
         settings.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
-        //todo this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
+       // TODO: - this settings.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControlEvents.touchUpInside)
         settings.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let settingsB = UIBarButtonItem.init(customView: settings)
         
@@ -1190,7 +1190,7 @@ extension MainViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         let page = finalSubs.firstIndex(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
         //        let page = tabBar.items.index(of: tabBar.selectedItem!)
-        // TODO: Crashes here
+        // TODO: - Crashes here
         guard page != nil else {
             return
         }
