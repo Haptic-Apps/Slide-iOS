@@ -132,9 +132,9 @@ extension EmbeddableMediaViewController {
                 viewToMove.frame = newFrame
                 self.parent?.view.alpha = 0
                 self.dismiss(animated: true)
-            }) { (_) in
+            }, completion: { _ in
                 self.commentCallback!()
-            }
+            })
         }
     }
     

@@ -346,8 +346,8 @@ class ModalMediaViewController: UIViewController {
             viewToMove.frame = newFrame
             self.view.alpha = 0
             self.dismiss(animated: true)
-        }) { (_) in
-        }
+        }, completion: { _ in
+        })
     }
 
     func configureLayout() {
