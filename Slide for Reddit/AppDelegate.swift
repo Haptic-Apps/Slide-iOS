@@ -598,7 +598,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return true
         } else if url.query?.components(separatedBy: "&").count ?? 0 < 0 {
             print("Returning \(url.absoluteString)")
-            var parameters: [String: String] = url.getKeyVals()!
+            let parameters: [String: String] = url.getKeyVals()!
             
             if let code = parameters["code"], let state = parameters["state"] {
                 print(state)

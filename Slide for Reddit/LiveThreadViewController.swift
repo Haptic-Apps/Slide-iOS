@@ -87,7 +87,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     func startPulse(_ complete: Bool) {
         if !doneOnce {
             doneOnce = true
-            var progressDot = UIView()
+            let progressDot = UIView()
             progressDot.alpha = 0.7
             progressDot.backgroundColor = .clear
             
@@ -154,7 +154,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         let itemWidth = width - 10
         let id = data["id"] as! String
         if estimatedHeights[id] == nil {
-            var content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
+            let content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
             
             if let body = data["body_html"] as? String {
                 if !body.isEmpty() {

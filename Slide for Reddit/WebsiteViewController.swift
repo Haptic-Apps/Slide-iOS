@@ -180,7 +180,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        var request = navigationAction.request
+        let request = navigationAction.request
         let url = request.url
         
         if url != nil {

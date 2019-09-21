@@ -2332,7 +2332,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds {
             numberOfColumns = 1
         }
-        var tableWidth = self.tableView.frame.size.width
+        let tableWidth = self.tableView.frame.size.width
         switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub), cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) / numberOfColumns ) {
         case .thumb:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView

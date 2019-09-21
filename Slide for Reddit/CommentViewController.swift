@@ -2359,7 +2359,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
     let parentOP = parents[thing]
         if let cell = cell as? CommentDepthCell {
-            var innerContent = content[thing]
+            let innerContent = content[thing]
             if innerContent is RComment {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(thing)
