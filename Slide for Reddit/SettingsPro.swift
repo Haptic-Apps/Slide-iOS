@@ -288,9 +288,10 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                 let price1Str = "Go pro for \(numberFormatter.string(from: items[0].price) ?? "$4.99")"
                 let price2Str = "Go pro and donate for \(numberFormatter.string(from: items[1].price) ?? "$7.99")"
                 
+                /* todo this
                 let priceOldStr = "Go pro for \(price1Str)"
                 let priceOldStr2 = "Go pro and donate for \(price2Str)"
-                /* todo this if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
+                if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
                     //Is a sale
                     
                     let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
