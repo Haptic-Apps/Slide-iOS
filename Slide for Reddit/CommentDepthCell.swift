@@ -1606,7 +1606,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         if commentBody.ignoreHeight {            
-            commentBody.estimatedWidth = width - CGFloat(12) - CGFloat(sideWidth) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth - (SettingValues.wideIndicators ? 0 : 2)))
+            commentBody.estimatedWidth = width - CGFloat(12) - CGFloat(sideWidth) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth - 1)) - CGFloat(SettingValues.wideIndicators ? 4 : 0)
             title.preferredMaxLayoutWidth = commentBody.estimatedWidth
         }
 
