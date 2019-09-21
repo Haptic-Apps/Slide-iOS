@@ -93,7 +93,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             
             let startAngle = -CGFloat.pi / 2
             
-            let center = CGPoint (x: 20 / 2, y: 20 / 2)
+            let center = CGPoint(x: 20 / 2, y: 20 / 2)
             let radius = CGFloat(20 / 2)
             let arc = CGFloat.pi * CGFloat(2) * 1
             

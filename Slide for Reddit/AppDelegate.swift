@@ -349,7 +349,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func getData(_ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 
-        self.backgroundTaskId = UIApplication.shared.beginBackgroundTask (withName: "Download New Messages") {
+        self.backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Download New Messages") {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
             self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
         }
