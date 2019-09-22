@@ -501,10 +501,24 @@ extension CurrentAccountViewController {
 extension CurrentAccountViewController: AccountHeaderViewDelegate {
     func didRequestCollections() {
        // TODO: - collections
-        let vc = CollectionsViewController()
-        let navVC = UINavigationController(rootViewController: vc)
-        navVC.navigationBar.isTranslucent = false
-        present(navVC, animated: true)
+        if Collections.collectionIDs.count == 0 {
+            let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
+            
+            alert.setupTheme()
+            alert.attributedTitle = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            
+            alert.addCloseButton()
+            alert.addBlurView()
+            present(alert, animated: true, completion: nil)
+
+        } else {
+            let vc = CollectionsViewController()
+            let navVC = UINavigationController(rootViewController: vc)
+            navVC.navigationBar.isTranslucent = false
+            present(navVC, animated: true)
+        }
     }
     
     func didRequestCache() {
