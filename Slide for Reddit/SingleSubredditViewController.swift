@@ -1769,6 +1769,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
         
         let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
+        print("Size is \(size)")
         let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false))!
         let textSize = layout.textBoundingSize
 

@@ -45,7 +45,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
         if portraitCount == 0 {
             portraitCount = 1
         }
-        
+                
         let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
         if portraitCount == 1 && pad {
             portraitCount = 2
@@ -101,6 +101,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
                 
                 // 4
                 let width = columnWidth - (cellPadding * 2)
+
                 let height1 = delegate.collectionView(collectionView!, width: width, indexPath: indexPath).height
                 let height = cellPadding + height1 + cellPadding
 
