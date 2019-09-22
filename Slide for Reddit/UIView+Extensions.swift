@@ -30,7 +30,7 @@ extension UIView {
         return container
     }
     
-    // TODO: Make static
+    // TODO: - Make static
     func flexSpace() -> UIView {
         return UIView().then {
             $0.setContentHuggingPriority(UILayoutPriority(rawValue: 0), for: .horizontal)

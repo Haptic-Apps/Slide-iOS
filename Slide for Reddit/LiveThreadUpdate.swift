@@ -175,7 +175,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             if !body.isEmpty() {
                 let html = body.unescapeHTML
                 content?.append(NSAttributedString(string: "\n"))
-                //todo maybe link parsing here?
+               // TODO: - maybe link parsing here?
                 content?.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
                 let size = CGSize(width: self.contentView.frame.size.width - 18, height: CGFloat.greatestFiniteMagnitude)
 

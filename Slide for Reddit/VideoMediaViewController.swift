@@ -421,7 +421,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
     }
 
-    // TODO: Also fade background to black?
+    // TODO: - Also fade background to black?
     @objc func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
             return
@@ -598,7 +598,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         
         self.setProgressViewVisible(false)
         self.size.isHidden = true
-//        self.downloadButton.isHidden = true //todo maybe download videos in the future?
+//        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
         let playerItem = AVPlayerItem(url: SettingValues.shouldAutoPlay() ? URL(string: url)! : URL(fileURLWithPath: getKeyFromURL()))
         videoView.player = AVPlayer(playerItem: playerItem)
         videoView.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
@@ -971,7 +971,7 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         }
         
         self.setProgressViewVisible(false)
-        //        self.downloadButton.isHidden = true //todo maybe download videos in the future?
+        //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
         if isYoutubeView && SettingValues.muteYouTube {
             self.youtubeMute = true
             playerView.webView?.stringByEvaluatingJavaScript(from: "player.mute();")
@@ -1010,6 +1010,8 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
             break
         case .unknown:
             break
+        @unknown default:
+            break
         }
     }
 
@@ -1024,11 +1026,13 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         case .invalidParam:
             break
         case .notEmbeddable:
-            // TODO: Redirect user to YouTube app or web view
+            // TODO: - Redirect user to YouTube app or web view
             print("Video is not embeddable!")
         case .videoNotFound:
             break
         case .unknown:
+            break
+        @unknown default:
             break
         }
     }

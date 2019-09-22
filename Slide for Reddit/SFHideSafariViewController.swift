@@ -15,14 +15,4 @@ class SFHideSafariViewController: SFSafariViewController {
             return .lightContent
         }
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        UIApplication.shared.statusBarStyle = ColorUtil.theme.isLight ? .default : .lightContent
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(true)
-        UIApplication.shared.statusBarStyle = .lightContent
-    }
 }

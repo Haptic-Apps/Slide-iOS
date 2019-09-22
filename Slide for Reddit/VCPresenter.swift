@@ -190,7 +190,7 @@ public class VCPresenter {
     }
 
     public static func presentAlert(_ alertController: UIViewController, parentVC: UIViewController) {
-        //todo for iOS 13 alertController.modalPresentationStyle = .formSheet
+       // TODO: - for iOS 13 alertController.modalPresentationStyle = .formSheet
         parentVC.present(alertController, animated: true, completion: nil)
     }
 

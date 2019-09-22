@@ -363,7 +363,7 @@ public class ToolbarTextView: NSObject {
         var count = 0
         for image in assets {
             count += 1
-            let parameters = [:] as [String: String]//todo albums
+            let parameters = [:] as [String: String] // TODO: - albums
             var name = UUID.init().uuidString
             PHImageManager.default().requestImageData(for: image, options: nil, resultHandler: { (data, uti, _, info) in
                 if let fileName = (info?["PHImageFileURLKey"] as? NSURL)?.lastPathComponent {

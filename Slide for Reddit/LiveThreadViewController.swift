@@ -87,13 +87,13 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     func startPulse(_ complete: Bool) {
         if !doneOnce {
             doneOnce = true
-            var progressDot = UIView()
+            let progressDot = UIView()
             progressDot.alpha = 0.7
             progressDot.backgroundColor = .clear
             
             let startAngle = -CGFloat.pi / 2
             
-            let center = CGPoint (x: 20 / 2, y: 20 / 2)
+            let center = CGPoint(x: 20 / 2, y: 20 / 2)
             let radius = CGFloat(20 / 2)
             let arc = CGFloat.pi * CGFloat(2) * 1
             
@@ -154,13 +154,13 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         let itemWidth = width - 10
         let id = data["id"] as! String
         if estimatedHeights[id] == nil {
-            var content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
+            let content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
             
             if let body = data["body_html"] as? String {
                 if !body.isEmpty() {
                     let html = body.unescapeHTML
                     content.append(NSAttributedString(string: "\n"))
-                    //todo maybe link parsing here?
+                   // TODO: - maybe link parsing here?
                     content.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
                 }
             }

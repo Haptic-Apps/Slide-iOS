@@ -122,7 +122,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     func showAction(cell: UITableViewCell) {
-        var type = cell.textLabel?.text ?? ""
+        let type = cell.textLabel?.text ?? ""
 
         let alertController = DragDownAlertMenu(title: "Select a comment gesture", subtitle: type, icon: nil)
         for action in cell == self.forceTouchActionCell ? SettingValues.CommentAction.cases3D : SettingValues.CommentAction.cases {

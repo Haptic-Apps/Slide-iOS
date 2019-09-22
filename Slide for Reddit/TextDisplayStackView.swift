@@ -352,7 +352,7 @@ public class TextDisplayStackView: UIStackView {
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
                     $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.theme.fontColor), for: .normal)
-                    //todo icon
+                   // TODO: - icon
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
                     $0.backgroundColor = UIColor.clear
                     $0.addTapGestureRecognizer(action: {
@@ -630,7 +630,7 @@ public class TextDisplayStackView: UIStackView {
     public static func parseCodeTags(_ html: String) -> [String] {
         let startTag = "<pre><code>"
         let endTag = "</code></pre>"
-        var startSeperated = html.components(separatedBy: startTag)
+        let startSeperated = html.components(separatedBy: startTag)
         var preSeperated = [String]()
         
         var text = ""
@@ -677,7 +677,7 @@ public class TextDisplayStackView: UIStackView {
         
         var preSeperated = [String]()
         for html in blocks {
-            var startSeperated = html.components(separatedBy: startTag)
+            let startSeperated = html.components(separatedBy: startTag)
             
             var text = ""
             var code = ""
@@ -704,10 +704,10 @@ public class TextDisplayStackView: UIStackView {
         var newBlocks = [String]()
         for block in blocks {
             if block.contains(TABLE_START_TAG) {
-                var startSeperated = block.components(separatedBy: TABLE_START_TAG)
+                let startSeperated = block.components(separatedBy: TABLE_START_TAG)
                 newBlocks.append(startSeperated[0].trimmed())
                 for i in 1 ..< startSeperated.count {
-                    var split = startSeperated[i].components(separatedBy: TABLE_END_TAG)
+                    let split = startSeperated[i].components(separatedBy: TABLE_END_TAG)
                     let table = "<table>" + split[0] + "</table>"
                     newBlocks.append(table)
                     if split.count > 1 {
@@ -724,7 +724,7 @@ public class TextDisplayStackView: UIStackView {
     
     public static func estimateHeight(fontSize: CGFloat, submission: Bool, width: CGFloat, titleString: NSAttributedString, htmlString: String) -> CGFloat {
         var totalHeight = CGFloat(0)
-        let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
+        _ = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
         var blocks: [String]
         var hasLinks = false
         if htmlString.contains("<table") || htmlString.contains("<pre><code") || htmlString.contains("<cite") {

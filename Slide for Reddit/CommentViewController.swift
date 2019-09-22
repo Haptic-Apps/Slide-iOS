@@ -185,7 +185,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         
         let startAngle = -CGFloat.pi / 2
         
-        let center = CGPoint (x: 20 / 2, y: 20 / 2)
+        let center = CGPoint(x: 20 / 2, y: 20 / 2)
         let radius = CGFloat(20 / 2)
         let arc = CGFloat.pi * CGFloat(2) * 1
         
@@ -842,7 +842,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                             if !self.comments.isEmpty {
                                 do {
                                     let realm = try Realm()
-                                    //todo insert
+                                   // TODO: - insert
                                     realm.beginWrite()
                                     for comment in self.comments {
                                         if let content = self.content[comment] {
@@ -1236,7 +1236,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             if keyboardHeight == 0 {
                 keyboardHeight = keyboardRectangle.height
             }
-//todo content insets
+// TODO: - content insets
 
         }
     }
@@ -2359,7 +2359,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
     let parentOP = parents[thing]
         if let cell = cell as? CommentDepthCell {
-            var innerContent = content[thing]
+            let innerContent = content[thing]
             if innerContent is RComment {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(thing)
@@ -2662,7 +2662,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
                                 tableView.endUpdates()
                             }
                             unhideAll(comment: comment.getId(), i: row!)
-                            //todo hide child number
+                           // TODO: - hide child number
                         } else {
                             if childNumber > 0 {
                                 if childNumber > 0 {
@@ -2914,7 +2914,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         }
         
         if SettingValues.commentActionForceTouch != .PARENT_PREVIEW {
-            //todo maybe
+           // TODO: - maybe
             /*let textView =
             let locationInTextView = textView.convert(location, to: textView)
             
@@ -2942,11 +2942,11 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         }
 
         let parentCell = CommentDepthCell(style: .default, reuseIdentifier: "test")
-        if let cell2 = parentCell as? CommentDepthCell, let comment = contents as? RComment {
-            cell2.contentView.layer.cornerRadius = 10
-            cell2.contentView.clipsToBounds = true
-            cell2.commentBody.ignoreHeight = false
-            cell2.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
+        if let comment = contents as? RComment {
+            parentCell.contentView.layer.cornerRadius = 10
+            parentCell.contentView.clipsToBounds = true
+            parentCell.commentBody.ignoreHeight = false
+            parentCell.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
             if contents is RComment {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(comment.getIdentifier())
@@ -2958,19 +2958,19 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
                     t = highlight(t)
                 }
                 
-                cell2.setComment(comment: contents as! RComment, depth: 0, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
+                parentCell.setComment(comment: contents as! RComment, depth: 0, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
             } else {
-                cell2.setMore(more: (contents as! RMore), depth: cDepth[comment.getIdentifier()]!, depthColors: commentDepthColors, parent: self)
+                parentCell.setMore(more: (contents as! RMore), depth: cDepth[comment.getIdentifier()]!, depthColors: commentDepthColors, parent: self)
             }
-            cell2.content = comment
-            cell2.contentView.isUserInteractionEnabled = false
+            parentCell.content = comment
+            parentCell.contentView.isUserInteractionEnabled = false
 
             var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: cell2.title.attributedText!)!
+            let layout = YYTextLayout(containerSize: size, text: parentCell.title.attributedText!)!
             let textSize = layout.textBoundingSize
 
-            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: cell2.commentBody.estimatedHeight + 24 + textSize.height) //todo fix height
-            let detailViewController = ParentCommentViewController(view: cell2.contentView, size: size)
+            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textSize.height)// TODO: - fix height
+            let detailViewController = ParentCommentViewController(view: parentCell.contentView, size: size)
             detailViewController.preferredContentSize = CGSize(width: size.width, height: min(size.height, 300))
 
             previewingContext.sourceRect = cell.frame

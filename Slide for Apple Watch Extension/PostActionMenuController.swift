@@ -51,8 +51,8 @@ class PostActionMenuController: WKInterfaceController {
         })
     }
     
-    override init () {
-        super.init ()
+    override init() {
+        super.init()
         self.setTitle("Back")
     }
     

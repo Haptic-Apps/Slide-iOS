@@ -403,7 +403,7 @@ extension CurrentAccountViewController {
     func updateModBadge() {
         if let account = AccountController.current {
             modBadge.isHidden = !account.hasModMail
-            // TODO: How do we know the mod mail count?
+            // TODO: - How do we know the mod mail count?
             modBadge.text = ""
         } else {
             modBadge.isHidden = true
@@ -500,7 +500,7 @@ extension CurrentAccountViewController {
 // MARK: - AccountHeaderViewDelegate
 extension CurrentAccountViewController: AccountHeaderViewDelegate {
     func didRequestCollections() {
-        //todo collections
+       // TODO: - collections
         let vc = CollectionsViewController()
         let navVC = UINavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
@@ -536,7 +536,7 @@ extension CurrentAccountViewController {
                     self.delegate?.currentAccountViewController(self, didRequestAccountChangeToName: accountName)
                 }
             } else {
-                //todo enabled
+               // TODO: - enabled
                 optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
                 }
             }

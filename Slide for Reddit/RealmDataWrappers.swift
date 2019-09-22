@@ -436,7 +436,7 @@ class RealmDataWrapper {
             let array = item as! [Any]
             rComment.reports.append("\(array[0]): \(array[1])")
         }
-        //todo rComment.pinned = comment.pinned
+       // TODO: - rComment.pinned = comment.pinned
         rComment.score = comment.score
         rComment.depth = depth
         

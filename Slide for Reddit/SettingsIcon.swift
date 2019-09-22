@@ -36,7 +36,7 @@ class SettingsIcon: BubbleSettingTableViewController {
     
     func doChecks() {
        
-        //todo accessory view
+       // TODO: - accessory view
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {

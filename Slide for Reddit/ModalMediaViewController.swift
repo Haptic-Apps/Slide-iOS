@@ -189,7 +189,7 @@ class ModalMediaViewController: UIViewController {
         } else {
             var urlBase = baseUrl.absoluteString
             urlBase = urlBase.replacingOccurrences(of: "m.imgur.com", with: "i.imgur.com")
-            var changedUrl = URL(string: "\(urlBase).png")!
+            let changedUrl = URL(string: "\(urlBase).png")!
             var request = URLRequest(url: changedUrl)
             request.httpMethod = "HEAD"
             let task = URLSession.shared.dataTask(with: request) { (_, response, _) -> Void in
@@ -346,8 +346,8 @@ class ModalMediaViewController: UIViewController {
             viewToMove.frame = newFrame
             self.view.alpha = 0
             self.dismiss(animated: true)
-        }) { (_) in
-        }
+        }, completion: { _ in
+        })
     }
 
     func configureLayout() {

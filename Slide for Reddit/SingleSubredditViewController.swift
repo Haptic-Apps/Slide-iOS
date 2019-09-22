@@ -382,7 +382,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.flowLayout.reset(modal: self.presentingViewController != nil)
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
-                //todo content offset
+               // TODO: - content offset
                 self.setupFab(size)
             }, completion: nil
         )
@@ -773,7 +773,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         
         self.automaticallyAdjustsScrollViewInsets = false
 
-        // TODO: Can just use .self instead of .classForCoder()
+        // TODO: - Can just use .self instead of .classForCoder()
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(AutoplayBannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
@@ -979,7 +979,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             count += 1
         }
 
-        //todo save realm
+       // TODO: - save realm
         DispatchQueue.main.async {
             if !indexPaths.isEmpty {
                 self.tableView.performBatchUpdates({
@@ -1009,7 +1009,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             count += 1
         }
         
-        //todo save realm
+       // TODO: - save realm
         DispatchQueue.main.async {
             if !indexPaths.isEmpty {
                 self.flowLayout.reset(modal: self.presentingViewController != nil)
@@ -1166,7 +1166,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     func showLoader() {
         showing = true
-        //todo maybe?
+       // TODO: - maybe?
     }
 
     @objc func showSortMenu(_ selector: UIView?) {
@@ -1405,8 +1405,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         self.nomore = !listing.paginator.hasMore() || values.isEmpty
                         do {
                             let realm = try Realm()
-                            //todo insert
-                            try realm.beginWrite()
+                           // TODO: - insert
+                            realm.beginWrite()
                             for submission in self.links {
                                 if submission.author != "PAGE_SEPARATOR" {
                                     realm.create(type(of: submission), value: submission, update: .all)
@@ -1779,7 +1779,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         return CGSize(width: itemWidth, height: totalHeight)
     }
     
-    // TODO: This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
+    // TODO: - This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
     static func cellType(forSubmission submission: RSubmission, _ isCollection: Bool, cellWidth: CGFloat) -> CurrentType {
         var target: CurrentType = .none
 
@@ -1999,7 +1999,8 @@ extension SingleSubredditViewController {
 
         alertController.view.addSubview(MKColorPicker)
 
-        /*todo maybe ?alertController.addAction(image: UIImage(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
+        // TODO: - maybe ?
+        /*alertController.addAction(image: UIImage(named: "accent"), title: "Custom color", color: ColorUtil.accentColorForSub(sub: sub), style: .default, isEnabled: true) { (action) in
          if(!VCPresenter.proDialogShown(feature: false, self)){
          let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
          alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (c) in
@@ -2332,7 +2333,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds {
             numberOfColumns = 1
         }
-        var tableWidth = self.tableView.frame.size.width
+        let tableWidth = self.tableView.frame.size.width
         switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub), cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) / numberOfColumns ) {
         case .thumb:
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
@@ -2362,7 +2363,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 // MARK: - Collection View Prefetching Data Source
 //extension SingleSubredditViewController: UICollectionViewDataSourcePrefetching {
 //    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-//        // TODO: Implement
+//        // TODO: - Implement
 //    }
 //}
 
@@ -2626,7 +2627,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         }
         actionSheetController.addAction(cancelActionButton)
 
-        //todo make this work on ipad
+       // TODO: - make this work on ipad
         self.present(actionSheetController, animated: true, completion: nil)
 
     }

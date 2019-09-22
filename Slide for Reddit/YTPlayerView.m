@@ -387,7 +387,7 @@ NSString static *const kYTPlayerSyndicationRegexPattern = @"^https://tpc.googles
     NSMutableArray *levels = [[NSMutableArray alloc] init];
     for (NSString *rawQualityValue in rawQualityValues) {
         YTPlaybackQuality quality = [YTPlayerView playbackQualityForString:rawQualityValue];
-        [levels addObject:[NSNumber numberWithInt:quality]];
+        [levels addObject:[NSNumber numberWithInteger:quality]];
     }
     return levels;
 }

@@ -65,7 +65,7 @@ class EmbeddableMediaViewController: UIViewController {
     func updateProgress(_ percent: CGFloat, _ total: String) {
         let startAngle = -CGFloat.pi / 2
 
-        let center = CGPoint (x: 90 / 2, y: 60 / 2)
+        let center = CGPoint(x: 90 / 2, y: 60 / 2)
         let radius = CGFloat(60 / 2)
         let arc = CGFloat.pi * CGFloat(2) * percent
         
@@ -132,9 +132,9 @@ extension EmbeddableMediaViewController {
                 viewToMove.frame = newFrame
                 self.parent?.view.alpha = 0
                 self.dismiss(animated: true)
-            }) { (_) in
+            }, completion: { _ in
                 self.commentCallback!()
-            }
+            })
         }
     }
     

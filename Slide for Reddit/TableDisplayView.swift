@@ -92,16 +92,16 @@ class TableDisplayView: UIScrollView {
             } else if !columnStarted
                 && (current == tableColumnStart || current == tableHeaderStart) {
                 columnStarted = true
-                //todo maybe gravity = Gravity.START;
+               // TODO: - maybe gravity = Gravity.START;
             } else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
                 columnStarted = true
-                //todo maybe gravity = Gravity.END;
+               // TODO: - maybe gravity = Gravity.END;
             } else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
                 columnStarted = true
-                //todo maybe gravity = Gravity.CENTER;
+               // TODO: - maybe gravity = Gravity.CENTER;
             } else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
                 columnStarted = true
-                //todo maybe gravity = Gravity.START;
+               // TODO: - maybe gravity = Gravity.START;
             } else if current == tableColumnEnd || current == tableHeaderEnd {
                 if currentString.startsWith("<td") {
                     let index = currentString.indexOf(">")
@@ -253,16 +253,16 @@ class TableDisplayView: UIScrollView {
             } else if !columnStarted
                 && (current == tableColumnStart || current == tableHeaderStart) {
                 columnStarted = true
-                //todo maybe gravity = Gravity.START;
+               // TODO: - maybe gravity = Gravity.START;
             } else if !columnStarted && (current == tableColumnStartRight || current == tableHeaderStartRight) {
                 columnStarted = true
-                //todo maybe gravity = Gravity.END;
+               // TODO: - maybe gravity = Gravity.END;
             } else if !columnStarted && (current == tableColumnStartCenter || current == tableHeaderStartCenter) {
                 columnStarted = true
-                //todo maybe gravity = Gravity.CENTER;
+               // TODO: - maybe gravity = Gravity.CENTER;
             } else if !columnStarted && (current == tableColumnStartLeft || current == tableHeaderStartLeft) {
                 columnStarted = true
-                //todo maybe gravity = Gravity.START;
+               // TODO: - maybe gravity = Gravity.START;
             } else if current == tableColumnEnd || current == tableHeaderEnd {
                 if currentString.startsWith("<td") {
                     let index = currentString.indexOf(">")

@@ -147,7 +147,7 @@ public class AutoCache: NSObject {
             try (UIApplication.shared.delegate as! AppDelegate).session?.getList(Paginator.init(), subreddit: subreddit, sort: SettingValues.defaultSorting, timeFilterWithin: SettingValues.defaultTimePeriod, limit: SettingValues.cachedPostsCount, completion: { (result) in
                 switch result {
                 case .failure(let error):
-                    //todo error reporting?
+                   // TODO: - error reporting?
                     print(error)
                     DispatchQueue.main.async {
                         AutoCache.cacheSub(index + 1, progress: progress, completion: completion, total: total, failed: failed)

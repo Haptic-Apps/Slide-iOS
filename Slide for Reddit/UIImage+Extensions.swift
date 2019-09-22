@@ -100,7 +100,7 @@ extension UIImage {
             return nil
         }
         
-        let context = CGContext (data: bitmapData, width: width, height: height, bitsPerComponent: 8, bytesPerRow: bitmapBytesPerRow, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue)
+        let context = CGContext(data: bitmapData, width: width, height: height, bitsPerComponent: 8, bytesPerRow: bitmapBytesPerRow, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue)
         
         return context
     }
@@ -127,7 +127,7 @@ extension UIImage {
         return self.getCopy(withSize: size).getCopy(withColor: color)
     }
 
-    // TODO: These should make only one copy and do in-place operations on those
+    // TODO: - These should make only one copy and do in-place operations on those
     func navIcon(_ white: Bool = false) -> UIImage {
         return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: SettingValues.reduceColor && !white ? ColorUtil.theme.navIconColor : .white)
     }

@@ -94,7 +94,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
-        //todo maybe? contentView.blink(color: GMColor.orange500Color())
+       // TODO: - maybe? contentView.blink(color: GMColor.orange500Color())
         del?.upvote(self)
     }
     
@@ -816,7 +816,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         let startAngle = -CGFloat.pi / 2
         
-        let center = CGPoint (x: 20 / 2, y: 20 / 2)
+        let center = CGPoint(x: 20 / 2, y: 20 / 2)
         let radius = CGFloat(20 / 2)
         let arc = CGFloat.pi * CGFloat(2) * percent
         
@@ -1722,8 +1722,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
             
-            let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
             /* Maybe enable this later
+             let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
              if AccountController.currentName == submission.author {
              authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
              } else if userColor != ColorUtil.baseColor {
@@ -1747,7 +1747,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             outer.heightAnchor == 48
         }
 
-        //todo maybe? self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
+       // TODO: - maybe? self.contentView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
         if full {
             self.setNeedsLayout()
             self.layoutForType()
@@ -1993,7 +1993,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var setOnce = false
-    // TODO: This is problematic. We shouldn't be setting up a display link for individual cells.
+    // TODO: - This is problematic. We shouldn't be setting up a display link for individual cells.
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         guard let player = videoView.player else {
             return
@@ -2087,7 +2087,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let navEditorViewController: UINavigationController = UINavigationController(rootViewController: reply)
         parentViewController?.present(navEditorViewController, animated: true, completion: nil)
-        //todo new implementation
+       // TODO: - new implementation
     }
     
     func deleteSelf(_ cell: LinkCellView) {
@@ -2110,7 +2110,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var crosspostDone = false
 
     func flairSelf() {
-        //todo this
+       // TODO: - this
         var list: [FlairTemplate] = []
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.flairList(link!.subreddit, link: link!.id, completion: { (result) in
@@ -2437,7 +2437,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                            viewControllerForLocation location: CGPoint) -> UIViewController? {
-        /* todo thisif full {
+        // TODO: - this
+        /* if full {
             let locationInTextView = textView.convert(location, to: textView)
             
             if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
@@ -2631,13 +2632,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         return layout
     }
     
-    /* todo this
+    // TODO: - this
+    /*
     func getInfo(locationInTextView: CGPoint) -> (URL, CGRect)? {
         if let attr = textView.firstTextView.link(at: locationInTextView) {
             return (attr.result.url!, attr.accessibilityFrame)
         }
         return nil
-    }*/
+    }
+    */
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         if viewControllerToCommit is AlbumViewController {
@@ -2664,7 +2667,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 if let strongSelf = self {
                     strongSelf.upvote()
                 }
-            }) //todo check this
+            })// TODO: - check this
             if History.getSeen(s: link) && !full && !SettingValues.newIndicator {
                 self.title.alpha = 0.3
             } else {
@@ -2772,7 +2775,7 @@ protocol MaterialView {
     func elevate(elevation: Double)
 }
 
-// TODO: This function will be on every UIView, not just those that conform to MaterialView.
+// TODO: - This function will be on every UIView, not just those that conform to MaterialView.
 extension UIView: MaterialView {
     func elevate(elevation: Double) {
         self.layer.masksToBounds = false

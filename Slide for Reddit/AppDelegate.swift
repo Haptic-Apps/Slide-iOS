@@ -349,7 +349,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func getData(_ completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 
-        self.backgroundTaskId = UIApplication.shared.beginBackgroundTask (withName: "Download New Messages") {
+        self.backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Download New Messages") {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
             self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
         }
@@ -402,7 +402,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 for case let message as Message in listing.children.reversed() {
                     if Double(message.createdUtc) > lastMessageUpdateTime {
                         newCount += 1
-                        // TODO: If there's more than one new notification, maybe just post
+                        // TODO: - If there's more than one new notification, maybe just post
                         // a message saying "You have new unread messages."
                         postLocalNotification(message.body, message.author, message.wasComment ? message.context : nil, message.id)
                     }
@@ -598,7 +598,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return true
         } else if url.query?.components(separatedBy: "&").count ?? 0 < 0 {
             print("Returning \(url.absoluteString)")
-            var parameters: [String: String] = url.getKeyVals()!
+            let parameters: [String: String] = url.getKeyVals()!
             
             if let code = parameters["code"], let state = parameters["state"] {
                 print(state)

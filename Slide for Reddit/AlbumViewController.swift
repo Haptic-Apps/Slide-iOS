@@ -167,7 +167,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 prefetcher.prefetchURLs(thumbs)
             } catch {
                 print(error)
-                //todo fallback
+               // TODO: - fallback
             }
         }
     }

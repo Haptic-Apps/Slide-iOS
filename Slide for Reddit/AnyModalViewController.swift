@@ -557,8 +557,8 @@ class AnyModalViewController: UIViewController {
             viewToMove!.frame = newFrame
             self.view.alpha = 0
             self.dismiss(animated: true)
-        }) { (_) in
-        }
+        }, completion: { _ in
+        })
     }
     
     func configureLayout() {
@@ -677,7 +677,7 @@ class AnyModalViewController: UIViewController {
         })
     }
 
-    // TODO: Also fade background to black?
+    // TODO: - Also fade background to black?
     @objc func toggleForcedLandscapeFullscreen(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else {
             return

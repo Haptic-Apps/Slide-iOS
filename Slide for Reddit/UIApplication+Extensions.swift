@@ -11,7 +11,7 @@ import Foundation
 extension UIApplication {
 
     var statusBarView: UIView? {
-        return statusBarUIView as? UIView
+        return statusBarUIView
     }
     
 }

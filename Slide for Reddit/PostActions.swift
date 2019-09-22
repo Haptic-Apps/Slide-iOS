@@ -158,7 +158,7 @@ class PostActions: NSObject {
     }
     
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {
-        //todo remove with reason, new icons
+       // TODO: - remove with reason, new icons
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())
         
         alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {

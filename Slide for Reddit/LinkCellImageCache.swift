@@ -47,7 +47,7 @@ public class LinkCellImageCache {
         static let medium = CGSize(width: 20, height: 20)
     }
 
-    // TODO: Call this whenever the theme changes.
+    // TODO: - Call this whenever the theme changes.
     public static func initialize() {        
         upvote = UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.menuIcon()
         upvoteTinted = upvote.getCopy(withColor: ColorUtil.upvoteColor)
