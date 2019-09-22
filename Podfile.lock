@@ -66,6 +66,7 @@ PODS:
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
+  - MessengerKit (1.0.4)
   - MiniKeychain (1.0.8)
   - MKColorPicker (1.2)
   - MotionAnimator (2.8.1):
@@ -110,6 +111,7 @@ DEPENDENCIES:
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/ProgressView
   - MaterialComponents/Tabs
+  - MessengerKit (from `https://github.com/ccrama/MessengerKit-1.git`)
   - MKColorPicker (from `https://github.com/ccrama/MKColorPicker`)
   - MTColorDistance
   - OpalImagePicker
@@ -162,6 +164,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   DTCoreText:
     :git: https://github.com/Cocoanetics/DTCoreText
+  MessengerKit:
+    :git: https://github.com/ccrama/MessengerKit-1.git
   MKColorPicker:
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
@@ -179,6 +183,9 @@ CHECKOUT OPTIONS:
   DTCoreText:
     :commit: 5412f51dddad970029a46a26b70c7cf7aff2ef7e
     :git: https://github.com/Cocoanetics/DTCoreText
+  MessengerKit:
+    :commit: 6fda3c9af448febc80448529efdef4a9d1f3e792
+    :git: https://github.com/ccrama/MessengerKit-1.git
   MKColorPicker:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
@@ -210,6 +217,7 @@ SPEC CHECKSUMS:
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
   MaterialComponents: 5225abc67ef52773d10a74583b8e662c032766ff
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
+  MessengerKit: 040a55ea27a4c06d4d141a55c4d98ccee4af7afc
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
@@ -234,6 +242,6 @@ SPEC CHECKSUMS:
   Then: 90cd104fd951cec1980a03f57704ad8f784d4d79
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 7150437bda8ddb804a9de3a9683747f649f69ee3
+PODFILE CHECKSUM: e95214e562507d471be690d7caef563c791b0b18
 
 COCOAPODS: 1.7.1

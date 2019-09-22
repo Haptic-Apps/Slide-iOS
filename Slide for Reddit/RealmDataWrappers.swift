@@ -473,7 +473,36 @@ class RealmDataWrapper {
         rMessage.subject = message.subject
         return rMessage
     }
-    
+
+    static func messageToRThread(message: Message) -> RThread {
+        let title = message.baseJson["link_title"] as? String ?? ""
+        var bodyHtml = message.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
+        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
+        let rMessage = RThread()
+        rMessage.htmlBody = bodyHtml
+        rMessage.name = message.name
+        rMessage.id = message.getId()
+        
+        rMessage.author = message.author
+        rMessage.subreddit = message.subreddit
+        rMessage.created = NSDate(timeIntervalSince1970: TimeInterval(message.createdUtc))
+        rMessage.isNew = message.new
+        rMessage.linkTitle = title
+        rMessage.context = message.context
+        rMessage.wasComment = message.wasComment
+        rMessage.subject = message.subject
+        if message.baseJson["replies"] != nil {
+            let json = message.baseJson as JSONDictionary
+            if let j = json["replies"] as? JSONDictionary, let data = j["data"] as? JSONDictionary, let things = data["children"] as? JSONArray {
+                for thing in things {
+                    rMessage.messages.append(RealmDataWrapper.messageToRMessage(message: Message.init(json: (thing as! JSONDictionary)["data"] as! JSONDictionary)))
+
+                }
+            }
+        }
+        return rMessage
+    }
+
     //Takes a More from reddift and turns it into a Realm model
     static func moreToRMore(more: More) -> RMore {
         let rMore = RMore()
@@ -619,6 +648,29 @@ class RMessage: Object {
     @objc dynamic var subreddit = ""
     @objc dynamic var subject = ""
     
+    func getId() -> String {
+        return id
+    }
+}
+
+class RThread: Object {
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    @objc dynamic var id = ""
+    @objc dynamic var name = ""
+    @objc dynamic var author = ""
+    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var htmlBody = ""
+    @objc dynamic var isNew = false
+    @objc dynamic var linkTitle = ""
+    @objc dynamic var context = ""
+    @objc dynamic var wasComment = false
+    @objc dynamic var subreddit = ""
+    @objc dynamic var subject = ""
+    var messages = List<RMessage>()
+
     func getId() -> String {
         return id
     }

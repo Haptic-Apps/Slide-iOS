@@ -51,13 +51,17 @@ class InboxContributionLoader: ContributionLoader {
                         }
                         let before = self.content.count
                         for message in listing.children.compactMap({ $0 }) {
-                            self.content.append(RealmDataWrapper.messageToRMessage(message: message as! Message))
-                            if (message as! Message).baseJson["replies"] != nil {
-                                let json = (message as! Message).baseJson as JSONDictionary
-                                if let j = json["replies"] as? JSONDictionary, let data = j["data"] as? JSONDictionary, let things = data["children"] as? JSONArray {
-                                    for thing in things {
-                                        self.content.append(RealmDataWrapper.messageToRMessage(message: Message.init(json: (thing as! JSONDictionary)["data"] as! JSONDictionary)))
+                            if self.messages == .messages {
+                                self.content.append(RealmDataWrapper.messageToRThread(message: message as! Message))
+                            } else {
+                                self.content.append(RealmDataWrapper.messageToRMessage(message: message as! Message))
+                                if (message as! Message).baseJson["replies"] != nil {
+                                    let json = (message as! Message).baseJson as JSONDictionary
+                                    if let j = json["replies"] as? JSONDictionary, let data = j["data"] as? JSONDictionary, let things = data["children"] as? JSONArray {
+                                        for thing in things {
+                                            self.content.append(RealmDataWrapper.messageToRMessage(message: Message.init(json: (thing as! JSONDictionary)["data"] as! JSONDictionary)))
 
+                                        }
                                     }
                                 }
                             }
