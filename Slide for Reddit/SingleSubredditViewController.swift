@@ -1771,10 +1771,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
         let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false))!
         let textSize = layout.textBoundingSize
-        print("\(submission.title) estimated title size is \(textSize)")
 
         let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD ? -5 : 0)
-        print("Total size is \(totalHeight) by \(itemWidth)")
 
         return CGSize(width: itemWidth, height: totalHeight)
     }
