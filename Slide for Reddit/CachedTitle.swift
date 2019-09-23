@@ -87,12 +87,14 @@ class CachedTitle {
                 let count = Int(award.split(":")[1]) ?? 0
                 print("URL IS \(url) and count is \(count)")
                 attributedTitle.append(spacer)
-                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                flairView.sd_setImage(with: URL(string: url), completed: nil)
-                let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
+                if let urlAsURL = URL(string: url),
+                    let flairData = try? Data(contentsOf: urlAsURL),
+                    let flairImage = UIImage.sd_image(with: flairData) {
 
-                attributedTitle.append(flairImage)
+                    let flairAttrString = NSMutableAttributedString.yy_attachmentString(withContent: flairImage.imageScaled(to: CGSize.square(size: 20)), contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
                     
+                    attributedTitle.append(flairAttrString)
+                }
                     if count > 1 {
                         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
                         attributedTitle.append(gilded)
@@ -361,16 +363,16 @@ class CachedTitle {
 }
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
