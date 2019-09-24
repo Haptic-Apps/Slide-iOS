@@ -22,12 +22,11 @@ public extension AlertController {
         }
     }
 
+    //https://stackoverflow.com/a/51723032/3697225
     func showWindowless() {
         self.alertWindow = UIWindow.init(frame: UIScreen.main.bounds)
-        self.alertWindow.backgroundColor = .red
 
         let viewController = UIViewController()
-        viewController.view.backgroundColor = .green
         self.alertWindow.rootViewController = viewController
 
         let topWindow = UIApplication.shared.windows.last
@@ -37,6 +36,13 @@ public extension AlertController {
 
         self.alertWindow.makeKeyAndVisible()
         self.alertWindow.rootViewController?.present(self, animated: true, completion: nil)
+    }
+    
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        self.alertWindow.isHidden = true
+        self.alertWindow = nil
     }
 }
 
@@ -51,6 +57,7 @@ public extension UIAlertController {
         }
     }
 
+    //https://stackoverflow.com/a/51723032/3697225
     func showWindowless() {
         self.alertWindow = UIWindow.init(frame: UIScreen.main.bounds)
         self.alertWindow.backgroundColor = .red
@@ -66,6 +73,13 @@ public extension UIAlertController {
 
         self.alertWindow.makeKeyAndVisible()
         self.alertWindow.rootViewController?.present(self, animated: true, completion: nil)
+    }
+    
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        self.alertWindow.isHidden = true
+        self.alertWindow = nil
     }
 }
 public extension UIActivityViewController {
