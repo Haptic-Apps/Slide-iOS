@@ -43,7 +43,7 @@ extension ProfileInfoPresentationAnimator: UIViewControllerAnimatedTransitioning
         controller.contentView.frame = initialContentViewFrame
 
         // Use this offset for any other elements you need to vertically animate alongside the content view
-        let deltaY = dismissedContentViewFrame.origin.y - presentedContentViewFrame.origin.y
+        // unused let deltaY = dismissedContentViewFrame.origin.y - presentedContentViewFrame.origin.y
 
         var curve = UIView.AnimationOptions.curveEaseInOut
         var spring = CGFloat(0.7)

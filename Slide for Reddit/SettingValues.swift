@@ -373,7 +373,7 @@ class SettingValues {
         SettingValues.reduceColor = settings.object(forKey: SettingValues.pref_reduceColor) == nil ? true : settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         
-        var columns = 2
+        let columns = 2 // TODO - Maybe calculate per device?
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 

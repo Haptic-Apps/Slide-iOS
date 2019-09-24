@@ -59,24 +59,25 @@ class SlideInPresentationController: UIPresentationController {
     }
 
     override func presentationTransitionWillBegin() {
+        if let dim = dimmingView {
+            containerView?.insertSubview(dim, at: 0)
 
-        containerView?.insertSubview(dimmingView, at: 0)
+            NSLayoutConstraint.activate(
+                NSLayoutConstraint.constraints(withVisualFormat: "V:|[dimmingView]|",
+                                               options: [], metrics: nil, views: ["dimmingView": dim]))
+            NSLayoutConstraint.activate(
+                NSLayoutConstraint.constraints(withVisualFormat: "H:|[dimmingView]|",
+                                               options: [], metrics: nil, views: ["dimmingView": dim]))
 
-        NSLayoutConstraint.activate(
-            NSLayoutConstraint.constraints(withVisualFormat: "V:|[dimmingView]|",
-                                           options: [], metrics: nil, views: ["dimmingView": dimmingView]))
-        NSLayoutConstraint.activate(
-            NSLayoutConstraint.constraints(withVisualFormat: "H:|[dimmingView]|",
-                                           options: [], metrics: nil, views: ["dimmingView": dimmingView]))
+            guard let coordinator = presentedViewController.transitionCoordinator else {
+                dim.alpha = 1.0
+                return
+            }
 
-        guard let coordinator = presentedViewController.transitionCoordinator else {
-            dimmingView.alpha = 1.0
-            return
+            coordinator.animate(alongsideTransition: { _ in
+                self.dimmingView.alpha = 1.0
+            })
         }
-
-        coordinator.animate(alongsideTransition: { _ in
-            self.dimmingView.alpha = 1.0
-        })
     }
 
     override func dismissalTransitionWillBegin() {
