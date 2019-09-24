@@ -459,6 +459,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 if !SettingValues.flatMode {
                     $0.layer.cornerRadius = 15
                 }
+                $0.tag = 42
                 $0.backgroundColor = .clear
                 $0.layer.masksToBounds = true
             }
