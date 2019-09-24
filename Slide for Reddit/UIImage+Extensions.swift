@@ -113,6 +113,15 @@ extension UIImage {
         }
     }
 
+    convenience init?(sfStringHQ: SFSymbol, overrideString: String) {
+        if #available(iOS 13, *) {
+            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: UIImage.SymbolWeight.regular, scale: UIImage.SymbolScale.large)
+            self.init(systemName: sfStringHQ.rawValue, withConfiguration: config)
+        } else {
+            self.init(named: overrideString)
+        }
+    }
+
     func getCopy(withColor color: UIColor) -> UIImage {
         var image = withRenderingMode(.alwaysTemplate)
         UIGraphicsBeginImageContextWithOptions(size, false, scale)

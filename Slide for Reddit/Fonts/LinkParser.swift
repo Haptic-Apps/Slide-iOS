@@ -94,6 +94,24 @@ class LinkParser {
                     }
                 }
             })
+            string.beginEditing()
+            string.enumerateAttribute(
+                .font,
+                in: NSRange(location: 0, length: string.length)
+            ) { (value, range, _) in
+                if let f = value as? UIFont,
+                    let newFontDescriptor = font.fontDescriptor.withSymbolicTraits(f.fontDescriptor.symbolicTraits) {
+
+                    let newFont = UIFont(
+                        descriptor: newFontDescriptor,
+                        size: f.pointSize
+                    )
+
+                    string.removeAttribute(.font, range: range)
+                    string.addAttribute(.font, value: newFont, range: range)
+                }
+            }
+            string.endEditing()
             string.highlightTarget(color: color)
         }
         return string

@@ -295,12 +295,14 @@ extension CurrentAccountViewController {
         updateModBadge()
         
         if AccountController.current != nil {
+            accountImageView.contentMode = .scaleAspectFill
             accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                 guard let strongSelf = self else { return }
                 strongSelf.accountImageView.image = image
             }
         } else {
-            accountImageView.image = UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor)
+            accountImageView.contentMode = .center
+            accountImageView.image = UIImage(sfStringHQ: SFSymbol.personFill, overrideString: "profile")?.getCopy(withSize: CGSize.square(size: 50), withColor: ColorUtil.theme.fontColor)
         }
         setEmptyState(!AccountController.isLoggedIn, animate: true)
         
@@ -507,7 +509,7 @@ extension CurrentAccountViewController: AccountHeaderViewDelegate {
             alert.setupTheme()
             alert.attributedTitle = NSAttributedString(string: "You haven't created a collection yet!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
             
-            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize:16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
             
             alert.addCloseButton()
             alert.addBlurView()

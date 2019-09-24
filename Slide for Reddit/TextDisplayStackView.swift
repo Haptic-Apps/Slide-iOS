@@ -567,7 +567,7 @@ public class TextDisplayStackView: UIStackView {
         createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
         let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>").replacingOccurrences(of: "<code>", with: "<font color=\"blue\">").replacingOccurrences(of: "</code>", with: "</font>")
-        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontFamily: font.familyName, DTDefaultFontSize: font.pointSize, DTDefaultFontName: font.fontName], documentAttributes: nil).generatedAttributedString()!
+        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontSize: font.pointSize], documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
         while html.mutableString.contains("\t•\t") {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
