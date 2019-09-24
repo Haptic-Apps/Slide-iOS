@@ -669,11 +669,26 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 5:
                 ch = CacheSettings()
             case 6:
-                let realm = try! Realm()
-                try! realm.write {
-                    realm.deleteAll()
+                do {
+                    let realm = try Realm()
+
+                    let sub = realm.objects(RSubmission.self)
+                    let message = realm.objects(RMessage.self)
+                    let more = realm.objects(RMore.self)
+                    let comment = realm.objects(RComment.self)
+                    let listing = realm.objects(RListing.self)
+
+                    try! realm.write {
+                        realm.delete(listing)
+                        realm.delete(comment)
+                        realm.delete(more)
+                        realm.delete(message)
+                        realm.delete(sub)
+                    }
+                } catch let error as NSError {
+                    print("error - \(error.localizedDescription)")
                 }
-                
+
                 SDImageCache.shared.clearMemory()
                 SDImageCache.shared.clearDisk()
                 
