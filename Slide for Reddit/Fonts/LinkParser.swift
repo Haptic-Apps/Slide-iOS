@@ -99,16 +99,25 @@ class LinkParser {
                 .font,
                 in: NSRange(location: 0, length: string.length)
             ) { (value, range, _) in
-                if let f = value as? UIFont,
-                    let newFontDescriptor = font.fontDescriptor.withSymbolicTraits(f.fontDescriptor.symbolicTraits) {
-
+                
+                if let f = value as? UIFont {
+                    let isItalic = f.fontDescriptor.symbolicTraits.contains(UIFontDescriptor.SymbolicTraits.traitItalic)
+                    let isBold = f.fontDescriptor.symbolicTraits.contains(UIFontDescriptor.SymbolicTraits.traitBold)
+                    var traitSet = font.fontDescriptor.symbolicTraits
+                    if isItalic {
+                        traitSet.update(with: UIFontDescriptor.SymbolicTraits.traitItalic)
+                    }
+                    if isBold {
+                        traitSet.update(with: UIFontDescriptor.SymbolicTraits.traitBold)
+                    }
+                    let newFontDescriptor = font.fontDescriptor.withSymbolicTraits(traitSet)
+                    if let fontDescriptor = newFontDescriptor {
                     let newFont = UIFont(
-                        descriptor: newFontDescriptor,
-                        size: f.pointSize
-                    )
-
-                    string.removeAttribute(.font, range: range)
-                    string.addAttribute(.font, value: newFont, range: range)
+                        descriptor: fontDescriptor,
+                        size: f.pointSize)
+                        string.removeAttribute(.font, range: range)
+                        string.addAttribute(.font, value: newFont, range: range)
+                    }
                 }
             }
             string.endEditing()
