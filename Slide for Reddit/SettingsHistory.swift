@@ -19,6 +19,11 @@ class SettingsHistory: BubbleSettingTableViewController {
     var saveNSFWHistory = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    
+    var hideSeenCell: UITableViewCell = InsetCell()
+    var hideSeen = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var readOnScrollCell: UITableViewCell = InsetCell()
     var readOnScroll = UISwitch().then {
@@ -41,6 +46,9 @@ class SettingsHistory: BubbleSettingTableViewController {
         } else if changed == saveNSFWHistory {
             SettingValues.saveNSFWHistory = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_saveNSFWHistory)
+        } else if changed == hideSeen {
+            SettingValues.hideSeen = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hideSeen)
         } else if changed == dot {
             SettingValues.newIndicator = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_newIndicator)
@@ -82,6 +90,12 @@ class SettingsHistory: BubbleSettingTableViewController {
         dotCell.detailTextLabel?.numberOfLines = 0
         dotCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         dotCell.detailTextLabel?.text = "Enabling this will disable the 'grayed out' effect of read submissions"
+        
+        createCell(hideSeenCell, hideSeen, isOn: SettingValues.hideSeen, text: "Hide read posts automatically")
+        hideSeenCell.detailTextLabel?.numberOfLines = 0
+        hideSeenCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        hideSeenCell.detailTextLabel?.text = "Enabling this may lead to no posts loading in a subreddit"
+
         clearHistory.textLabel?.text = "Clear submission history"
         clearHistory.backgroundColor = ColorUtil.theme.foregroundColor
         clearHistory.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -133,6 +147,7 @@ class SettingsHistory: BubbleSettingTableViewController {
             case 1: return self.saveNSFWHistoryCell
             case 2: return self.readOnScrollCell
             case 3: return self.dotCell
+            case 4: return self.hideSeenCell
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -148,7 +163,7 @@ class SettingsHistory: BubbleSettingTableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 4   // section 0 has 2 rows
+        case 0: return 5   // section 0 has 2 rows
         case 1: return 2
         default: fatalError("Unknown number of sections")
         }

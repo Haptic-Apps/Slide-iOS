@@ -70,7 +70,7 @@ class PostFilter {
             contains(PostFilter.flairs, value: link.flair) ||
             containedIn(PostFilter.selftext, value: link.htmlBody) ||
             containedIn(PostFilter.titles, value: link.title) ||
-            (link.nsfw && !SettingValues.nsfwEnabled)
+            (link.nsfw && !SettingValues.nsfwEnabled) || link.hidden || History.getSeen(s: link) && SettingValues.hideSeen
         
         if mainMatch {
             //No need to check further

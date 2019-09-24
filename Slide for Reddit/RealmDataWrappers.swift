@@ -155,6 +155,7 @@ class RealmDataWrapper {
         rSubmission.removalNote = submission.baseJson["mod_note"] as? String ?? ""
         rSubmission.removed = !rSubmission.removedBy.isEmpty()
         rSubmission.cakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
+        rSubmission.hidden = submission.baseJson["hidden"] as? Bool ?? false
 
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
             let array = item as! [Any]
@@ -319,6 +320,7 @@ class RealmDataWrapper {
         rSubmission.removedBy = submission.baseJson["banned_by"] as? String ?? ""
         rSubmission.removalReason = submission.baseJson["ban_note"] as? String ?? ""
         rSubmission.removalNote = submission.baseJson["mod_note"] as? String ?? ""
+        rSubmission.hidden = submission.baseJson["hidden"] as? Bool ?? false
         rSubmission.removed = !rSubmission.removedBy.isEmpty()
         rSubmission.nsfw = submission.over18
         rSubmission.banner = big
@@ -526,6 +528,7 @@ class RSubmission: Object {
     @objc dynamic var subreddit = ""
     @objc dynamic var archived = false
     @objc dynamic var locked = false
+    @objc dynamic var hidden = false
     @objc dynamic var urlString = ""
     @objc dynamic var distinguished = ""
     @objc dynamic var videoPreview = ""

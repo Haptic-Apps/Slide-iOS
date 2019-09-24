@@ -125,6 +125,7 @@ class SettingValues {
     public static let pref_commentDepth = "MAX_COMMENT_DEPTH"
     public static let pref_postsToCache = "POST_CACHE_COUNT"
     public static let pref_shareButton = "SHARE_BUTTON_ENABLED"
+    public static let pref_hideSeen = "HIDE_SEEN"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -249,6 +250,7 @@ class SettingValues {
     public static var commentJumpButton = CommentJumpMode.RIGHT
     public static var alwaysShowHeader = false
     public static var disablePreviews = false
+    public static var hideSeen = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -509,6 +511,7 @@ class SettingValues {
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
         SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (pad ? "multi" : "single")) ?? (pad ? .SPLIT : .SINGLE)
+        SettingValues.hideSeen = settings.bool(forKey: SettingValues.pref_hideSeen)
 
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
         SettingValues.actionBarMode = ActionBarMode.init(rawValue: settings.string(forKey: SettingValues.pref_actionbarMode) ?? "full") ?? .FULL
