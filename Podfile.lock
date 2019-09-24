@@ -23,35 +23,35 @@ PODS:
   - Embassy (4.0.8)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (91.1.0):
+  - MaterialComponents/ActivityIndicator (92.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (91.1.0)
-  - MaterialComponents/Elevation (91.1.0):
+  - MaterialComponents/AnimationTiming (92.0.0)
+  - MaterialComponents/Elevation (92.0.0):
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Ink (91.1.0):
+  - MaterialComponents/Ink (92.0.0):
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (91.1.0)
-  - MaterialComponents/private/Application (91.1.0)
-  - MaterialComponents/private/Color (91.1.0)
-  - MaterialComponents/private/Math (91.1.0)
-  - MaterialComponents/ProgressView (91.1.0):
+  - MaterialComponents/Palettes (92.0.0)
+  - MaterialComponents/private/Application (92.0.0)
+  - MaterialComponents/private/Color (92.0.0)
+  - MaterialComponents/private/Math (92.0.0)
+  - MaterialComponents/ProgressView (92.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/Ripple (91.1.0):
+  - MaterialComponents/Ripple (92.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/ShadowElevations (91.1.0)
-  - MaterialComponents/ShadowLayer (91.1.0):
+  - MaterialComponents/ShadowElevations (92.0.0)
+  - MaterialComponents/ShadowLayer (92.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (91.1.0):
+  - MaterialComponents/Tabs (92.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Elevation
     - MaterialComponents/Ink
@@ -62,7 +62,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (91.1.0):
+  - MaterialComponents/Typography (92.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -183,7 +183,7 @@ CHECKOUT OPTIONS:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
-    :commit: f732da5c626f395ecb42304fc680c3529f5b6ce2
+    :commit: 776e1046352855ae5ff24928b579ea7fd66bd33c
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: 8a5ecb09650a68bc20f29ba321dad4725482fb56
@@ -208,7 +208,7 @@ SPEC CHECKSUMS:
   Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 5225abc67ef52773d10a74583b8e662c032766ff
+  MaterialComponents: 0fccf7f7e232145c164dc60da6fdefd011e9bf28
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
