@@ -139,7 +139,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if #available(iOS 13.0, *) {
             if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
                 if themeChanged {
-                    viewWillAppearActions(override: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        if UIApplication.shared.applicationState == .active {
+                            self.viewWillAppearActions(override: true)
+                        }
+                    }
                 }
             }
         }
@@ -814,9 +818,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
             self.menuNav?.doRotate(false)
             self.getSubredditVC()?.showUI(false)
-        }
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            menuNav?.didSlideOver()
+            if UIDevice.current.userInterfaceIdiom == .pad && UIApplication.shared.applicationState == .active {
+                self.menuNav?.didSlideOver()
+            }
         }
     }
     
