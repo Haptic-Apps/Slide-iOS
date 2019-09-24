@@ -38,10 +38,10 @@ public extension AlertController {
         self.alertWindow.rootViewController?.present(self, animated: true, completion: nil)
     }
     
-    override public func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        self.alertWindow.isHidden = true
+        self.alertWindow?.isHidden = true
         self.alertWindow = nil
     }
 }
@@ -75,10 +75,10 @@ public extension UIAlertController {
         self.alertWindow.rootViewController?.present(self, animated: true, completion: nil)
     }
     
-    override open func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        self.alertWindow.isHidden = true
+        self.alertWindow?.isHidden = true
         self.alertWindow = nil
     }
 }
