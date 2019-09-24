@@ -308,12 +308,6 @@ public extension String {
     
 }
 
-public extension NSString {
-    func substring(_ startIndex: Int, length: Int) -> NSString {
-        return self.subsequence(startIndex, endIndex: startIndex + length)
-    }
-}
-
 private enum ThreadLocalIdentifier {
     case dateFormatter(String)
     
