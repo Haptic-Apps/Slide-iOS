@@ -880,6 +880,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
     var inHeadView = UIView()
     
+    @objc public func onAccountChangedNotificationPosted() {
+        DispatchQueue.main.async { [weak self] in
+            self?.doProfileIcon()
+        }
+    }
+
     override func viewDidLoad() {
         self.navToMux = self.navigationController!.navigationBar
         self.color1 = ColorUtil.theme.backgroundColor
@@ -939,7 +945,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         })
 
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountRefreshRequested), name: .accountRefreshRequested, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChangedToGuest, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
+
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
         swipe.direction = .up
         
@@ -956,6 +964,31 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var menuB = UIBarButtonItem()
     var drawerButton = UIImageView()
     
+    func doProfileIcon() {
+        let account = ExpandedHitButton(type: .custom)
+        let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
+        if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
+            account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
+        } else {
+            account.setImage(accountImage, for: UIControl.State.normal)
+        }
+        account.layer.cornerRadius = 5
+        account.clipsToBounds = true
+        account.contentMode = .scaleAspectFill
+        account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
+        account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        account.sizeAnchors == CGSize.square(size: 30)
+        accountB = UIBarButtonItem(customView: account)
+        accountB.accessibilityIdentifier = "Account button"
+        accountB.accessibilityLabel = "Account"
+        accountB.accessibilityHint = "Open account page"
+        if #available(iOS 13, *) {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            self.accountB.customView?.addInteraction(interaction)
+        }
+        didUpdate()
+    }
+    
     func doButtons() {
         if menu.superview != nil && !MainViewController.needsReTheme {
             return
@@ -967,9 +1000,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         sortB = UIBarButtonItem.init(customView: sort)
 
         let account = ExpandedHitButton(type: .custom)
-        account.setImage(UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon(), for: UIControl.State.normal)
+        let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
+        if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
+            print("Loading \(image)")
+            account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
+        } else {
+            account.setImage(accountImage, for: UIControl.State.normal)
+        }
+        account.layer.cornerRadius = 5
+        account.clipsToBounds = true
+        account.contentMode = .scaleAspectFill
         account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
-        account.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        account.sizeAnchors == CGSize.square(size: 30)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
