@@ -51,7 +51,12 @@ class Filter: UITableViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
-            return .default
+                        if #available(iOS 13, *) {
+                return .darkContent
+            } else {
+                return .default
+            }
+
         } else {
             return .lightContent
         }

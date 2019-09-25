@@ -56,10 +56,12 @@ class SettingsCustomTheme: UITableViewController {
     
     override func viewDidLoad() {
         self.title = "Edit Custom Theme"
+        
         if !inputTheme.isEmpty() {
             let colors = UserDefaults.standard.string(forKey: "Theme+" + inputTheme)?.removingPercentEncoding ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme) ?? ""
             if !colors.isEmpty {
                 let split = colors.split("#")
+                print(colors)
                 foregroundColor = UIColor(hex: split[2])
                 backgroundColor = UIColor(hex: split[3])
                 fontColor = UIColor(hex: split[4])
@@ -150,7 +152,7 @@ class SettingsCustomTheme: UITableViewController {
             self.present(alert, animated: true, completion: nil)
         } else {
             var colorString = "slide://colors"
-            colorString += ("#" + self.title!).addPercentEncoding
+            colorString += ("#" + self.inputTheme).addPercentEncoding
             
             colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
             UserDefaults.standard.set(colorString, forKey: "Theme+" + inputTheme)
