@@ -36,6 +36,22 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                 }
             }
         }
+        
+        if let s = self as? MainViewController {
+            let fadeTextAnimation = CATransition()
+            fadeTextAnimation.duration = 0.15
+            fadeTextAnimation.type = CATransitionType.fade
+
+            if percentComplete > 0.1 && percentComplete <= 0.9 {
+                if  s.navigationItem.titleView is ExpandingUILabel {
+                    s.navigationController?.navigationBar.layer.add(fadeTextAnimation, forKey: "fadeView")
+                    s.navigationItem.titleView = s.leftItemNext
+                }
+            } else if !(s.navigationItem.titleView is ExpandingUILabel) {
+                s.navigationController?.navigationBar.layer.add(fadeTextAnimation, forKey: "fadeView")
+                s.navigationItem.titleView = s.leftItem
+            }
+        }
     }
 
     static func fadeFromColor(fromColor: UIColor, toColor: UIColor, withPercentage: CGFloat) -> UIColor {

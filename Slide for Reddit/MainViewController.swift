@@ -48,21 +48,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
-            if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItem = accountB
-                navigationItem.rightBarButtonItems = [sortB, readLaterB]
-            } else {
-                navigationItem.rightBarButtonItems = [sortB, readLaterB]
-                doLeftItem()
-            }
+            navigationItem.leftBarButtonItem = accountB
+            navigationItem.rightBarButtonItems = [sortB, readLaterB]
+            doLeftItem()
         } else {
-            if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItems = [accountB]
-                navigationItem.rightBarButtonItems = [sortB]
-            } else {
-                navigationItem.rightBarButtonItems = [sortB]
-                doLeftItem()
-            }
+            navigationItem.leftBarButtonItems = [accountB]
+            navigationItem.rightBarButtonItems = [sortB]
+            doLeftItem()
         }
     }
     
@@ -698,7 +690,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         tabBar.backgroundColor = .clear
         tabBar.sizeToFit()
         //self.viewToMux = self.tabBar
-        self.navigationItem.titleView = tabBar
         
         for item in tabBar.items {
             if item.title == currentTitle {
@@ -740,9 +731,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         menuNav?.view.frame.size.width = splitViewController == nil ? view.frame.width : splitViewController!.primaryColumnWidth
     }
     
+    var leftItem = UIView()
     func doLeftItem() {
-        let label = UILabel()
-        label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
+        let label = ExpandingUILabel()
+        label.text = "   \(SettingValues.reduceColor ? "    " : "")\(self.currentTitle)"
         label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
@@ -756,13 +748,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             sideView.layer.cornerRadius = 7.5
             sideView.clipsToBounds = true
         }
-        
         label.sizeToFit()
-        let leftItem = UIBarButtonItem(customView: label)
-        
-        if !SettingValues.subredditBar {
-            self.navigationItem.leftBarButtonItems = SettingValues.subredditBar ? [leftItem] : [accountB, leftItem]
-        }
+        var widthFrame = label.frame
+        widthFrame.size.width = CGFloat.greatestFiniteMagnitude
+        label.frame = widthFrame
+        self.leftItem = label
+        self.navigationItem.titleView = self.leftItem
     }
     
     func doCurrentPage(_ page: Int) {
@@ -1404,4 +1395,10 @@ extension MainViewController: UIContextMenuInteractionDelegate {
         return UIMenu(title: "Switch Accounts", children: buttons)
     }
 
+}
+
+class ExpandingUILabel: UILabel {
+    override var intrinsicContentSize: CGSize {
+      return UIView.layoutFittingExpandedSize
+    }
 }
