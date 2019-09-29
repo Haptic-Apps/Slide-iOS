@@ -42,7 +42,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var youtubeResolution = CGSize(width: 16, height: 9)
     var videoView = VideoView()
-    var youtubeView = YTPlayerView()
+    var youtubeView = WKYTPlayerView()
     var downloadedOnce = false
     
     var size = UILabel()
@@ -296,7 +296,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     @objc func unmute() {
         if isYoutubeView {
-            youtubeView.webView?.stringByEvaluatingJavaScript(from: "player.unMute();")
+            _ = youtubeView.webView?.stringByEvaluatingJavaScriptFromString(script: "player.unMute();")
             youtubeMute = false
         }
         
@@ -481,7 +481,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             showSpinner()
         }
 
-        videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
+        _ = videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
             self?.getVideo(urlString)
             }, failure: {
                 self.parent?.dismiss(animated: true, completion: {
@@ -903,7 +903,11 @@ extension VideoMediaViewController {
                 muteButton.isHidden = false
             }
             if !sliderBeingUsed {
-                self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(youtubeView.currentTime()), preferredTimescale: 1000))
+                youtubeView.getCurrentTime { [weak self] (currentTime: Float, error: Error?) in
+                    if error == nil {
+                        self?.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(currentTime), preferredTimescale: 1000))
+                    }
+                }
             }
         }
 
@@ -957,10 +961,14 @@ extension VideoMediaViewController {
 
 }
 
-extension VideoMediaViewController: YTPlayerViewDelegate {
+extension VideoMediaViewController: WKYTPlayerViewDelegate {
     
-    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
-        scrubber.totalDuration = CMTime(seconds: playerView.duration(), preferredTimescale: 1000)
+    func playerViewDidBecomeReady(_ playerView: WKYTPlayerView) {
+        playerView.getDuration { [weak self] (duration: TimeInterval, error: Error?) in
+            if error == nil {
+                self?.scrubber.totalDuration = CMTime(seconds: duration, preferredTimescale: 1000)
+            }
+        }
         DispatchQueue.global(qos: .background).async {
             do {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
@@ -974,7 +982,7 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
         if isYoutubeView && SettingValues.muteYouTube {
             self.youtubeMute = true
-            playerView.webView?.stringByEvaluatingJavaScript(from: "player.mute();")
+            _ = playerView.webView?.stringByEvaluatingJavaScriptFromString(script: "player.mute();")
         }
         
         self.loaded = true
@@ -986,13 +994,13 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         hideSpinner()
     }
     
-    func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float) {
+    func playerView(_ playerView: WKYTPlayerView, didPlayTime playTime: Float) {
 //        if !sliderBeingUsed {
 //            self.scrubber.updateWithTime(elapsedTime: CMTime(seconds: Double(playTime), preferredTimescale: 1000))
 //        }
     }
 
-    func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
+    func playerView(_ playerView: WKYTPlayerView, didChangeTo state: WKYTPlayerState) {
         switch state {
         case .buffering:
             break
@@ -1001,9 +1009,10 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
 //            self.scrubber.updateWithTime(elapsedTime: scrubber.totalDuration)
             scrubber.setPlayButton()
         case .paused:
-            break
+            scrubber.setPlayButton()
         case .playing:
-            break
+            self.startTimerToHide(1)
+            scrubber.setPauseButton()
         case .queued:
             break
         case .unstarted:
@@ -1015,11 +1024,11 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         }
     }
 
-    func playerView(_ playerView: YTPlayerView, didChangeTo quality: YTPlaybackQuality) {
+    func playerView(_ playerView: WKYTPlayerView, didChangeTo quality: WKYTPlaybackQuality) {
 
     }
 
-    func playerView(_ playerView: YTPlayerView, receivedError error: YTPlayerError) {
+    func playerView(_ playerView: WKYTPlayerView, receivedError error: WKYTPlayerError) {
         switch error {
         case .html5Error:
             break
@@ -1037,7 +1046,7 @@ extension VideoMediaViewController: YTPlayerViewDelegate {
         }
     }
 
-    func playerViewPreferredWebViewBackgroundColor(_ playerView: YTPlayerView) -> UIColor {
+    func playerViewPreferredWebViewBackgroundColor(_ playerView: WKYTPlayerView) -> UIColor {
         return .clear
     }
 
@@ -1191,7 +1200,11 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
 
     func sliderDidBeginDragging() {
         if isYoutubeView {
-            wasPlayingWhenPaused = youtubeView.playerState() == .playing
+            youtubeView.getPlayerState { [weak self] (state: WKYTPlayerState, error: Error?) in
+                if error == nil {
+                    self?.wasPlayingWhenPaused = state == .playing
+                }
+            }
             youtubeView.pauseVideo()
         } else {
             if let player = videoView.player {
@@ -1215,30 +1228,27 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         sliderBeingUsed = false
     }
     
-    func toggleReturnPlaying() -> Bool {
+    func togglePlaying() {
         self.handleShowUI()
         if let player = videoView.player {
             if player.rate != 0 {
                 player.pause()
-                return false
             } else {
                 player.play()
-                self.startTimerToHide()
-                return true
             }
         }
 
         if isYoutubeView {
-            if youtubeView.playerState() == .playing {
-                youtubeView.pauseVideo()
-                return false
-            } else {
-                youtubeView.playVideo()
-                self.startTimerToHide()
-                return true
+            youtubeView.getPlayerState { [weak self] (state: WKYTPlayerState, error: Error?) in
+                if error == nil {
+                    if state == .playing {
+                        self?.youtubeView.pauseVideo()
+                    } else {
+                        self?.youtubeView.playVideo()
+                    }
+                }
             }
         }
-        return false
     }
     
     //From https://stackoverflow.com/a/39100999/3697225
