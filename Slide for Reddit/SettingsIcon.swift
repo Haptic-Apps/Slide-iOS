@@ -21,16 +21,18 @@ class SettingsIcon: BubbleSettingTableViewController {
         (id: "community", title: "Community icons", iconRows: [
             (id: "cottoncandy", title: "Cotton Candy"),
             (id: "outrun", title: "Outrun"),
-            (id: "default", title: "Standard"),
             (id: "stars", title: "Starry night u/TyShark"),
             (id: "ghost", title: "Ghost"),
-            (id: "blue", title: "Blue"),
             (id: "mint", title: "Mint u/Baselt95"),
+        ]),
+        (id: "basic", title: "Basic icons", iconRows: [
+            (id: "red", title: "Red"),
+            (id: "default", title: "Standard"),
+            (id: "yellow", title: "Yellow"),
             (id: "green", title: "Green"),
             (id: "lightblue", title: "Light Blue"),
+            (id: "blue", title: "Blue"),
             (id: "purple", title: "Purple"),
-            (id: "red", title: "Red"),
-            (id: "yellow", title: "Yellow"),
         ]),
     ]
     
