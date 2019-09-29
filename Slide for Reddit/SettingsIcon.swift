@@ -11,28 +11,28 @@ import reddift
 import UIKit
 
 class SettingsIcon: BubbleSettingTableViewController {
-    var iconSections = [
-        (id: "premium", title: "Premium icons", iconRows: [
-            (id: "retroapple", title: "Retro"),
-            (id: "tronteal", title: "Tron"),
-            (id: "pink", title: "Pink"),
-            (id: "black", title: "Black"),
+    let iconSections: [(id: String, title: String, iconRows: [(id: String, title: String)])] = [
+        ("premium", "Premium icons", [
+            ("retroapple", "Retro"),
+            ("tronteal", "Tron"),
+            ("pink", "Pink"),
+            ("black", "Black"),
         ]),
-        (id: "community", title: "Community icons", iconRows: [
-            (id: "cottoncandy", title: "Cotton Candy"),
-            (id: "outrun", title: "Outrun"),
-            (id: "stars", title: "Starry night u/TyShark"),
-            (id: "ghost", title: "Ghost"),
-            (id: "mint", title: "Mint u/Baselt95"),
+        ("community", "Community icons", [
+            ("cottoncandy", "Cotton Candy"),
+            ("outrun", "Outrun"),
+            ("stars", "Starry night u/TyShark"),
+            ("ghost", "Ghost"),
+            ("mint", "Mint u/Baselt95"),
         ]),
-        (id: "basic", title: "Basic icons", iconRows: [
-            (id: "red", title: "Red"),
-            (id: "default", title: "Standard"),
-            (id: "yellow", title: "Yellow"),
-            (id: "green", title: "Green"),
-            (id: "lightblue", title: "Light Blue"),
-            (id: "blue", title: "Blue"),
-            (id: "purple", title: "Purple"),
+        ("basic", "Basic icons", [
+            ("red", "Red"),
+            ("default", "Standard"),
+            ("yellow", "Yellow"),
+            ("green", "Green"),
+            ("lightblue", "Light Blue"),
+            ("blue", "Blue"),
+            ("purple", "Purple"),
         ]),
     ]
     
