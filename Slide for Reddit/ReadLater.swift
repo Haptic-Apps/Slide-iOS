@@ -83,6 +83,7 @@ class ReadLater {
             readLaterIDs.removeObject(forKey: shortId)
         }
         readLaterIDs.removeObject(forKey: id)
+        AppDelegate.removeDict[id] = 0
     }
 
     enum ReadWhere: String {

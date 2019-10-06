@@ -118,5 +118,6 @@ class Collections {
             collectionIDs.removeObject(forKey: shortId)
         }
         collectionIDs.removeObject(forKey: id)
+        AppDelegate.removeDict[id] = 0
     }
 }

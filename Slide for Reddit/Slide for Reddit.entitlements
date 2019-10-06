@@ -6,7 +6,8 @@
 	<string>development</string>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
-		<string>iCloud.history</string>
+		<string>iCloud.ccrama.me.redditslide</string>
+		<string>iCloud.ccrama.me.redditslide-debug</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>

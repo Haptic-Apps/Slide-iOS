@@ -9,6 +9,7 @@
 import Anchorage
 import AVKit
 import BiometricAuthentication
+import CloudKit
 import DTCoreText
 import RealmSwift
 import reddift
@@ -110,6 +111,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    static var removeDict = NSMutableDictionary()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
@@ -194,6 +197,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
         Collections.collectionIDs = NSMutableDictionary.init(contentsOfFile: collectionsFile!)!
+
+        fetchFromiCloud("readlater", dictionaryToAppend: ReadLater.readLaterIDs)
+        fetchFromiCloud("collections", dictionaryToAppend: Collections.collectionIDs) { () in
+            let removeDict = NSMutableDictionary()
+            self.fetchFromiCloud("removed", dictionaryToAppend: removeDict) { () in
+                let removeKeys = removeDict.allKeys as! [String]
+                for item in removeKeys {
+                    Collections.collectionIDs.removeObject(forKey: item)
+                    ReadLater.readLaterIDs.removeObject(forKey: item)
+                }
+            }
+        }
 
         SettingValues.initialize()
         
@@ -665,6 +680,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
+    
+    func saveToiCloud(_ dictionary: NSDictionary, _ key: String) {
+        let collectionsRecord = CKRecord(recordType: key)
+        for item in dictionary {
+            collectionsRecord.setValue(item.value, forKey: item.key as! String)
+        }
+        CKContainer.default().privateCloudDatabase.save(collectionsRecord) { (record, error) in
+            if error != nil {
+                print(error.debugDescription)
+            }
+        }
+    }
+    
+    func fetchFromiCloud(_ key: String, dictionaryToAppend: NSMutableDictionary, completion: (() -> Void)? = nil) {
+        let privateDatabase = CKContainer.default().privateCloudDatabase
+        var toReturn = NSDictionary()
+        let query = CKQuery(recordType: key, predicate: NSPredicate(value: true))
+                  
+        privateDatabase.perform(query, inZoneWith: nil) { (records, error) in
+            records?.forEach({ (record) in
+                 
+                guard error == nil else{
+                    print(error?.localizedDescription as Any)
+                    return
+                }
+                
+                for item in record {
+                    dictionaryToAppend[item.0] = record.value(forKey: item.0)
+                }
+            })
+            completion?()
+        }
+    }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         totalBackground = true
@@ -672,6 +720,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
+        
+        saveToiCloud(Collections.collectionIDs, "collections")
+        saveToiCloud(ReadLater.readLaterIDs, "readlater")
+        saveToiCloud(AppDelegate.removeDict, "removed")
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
