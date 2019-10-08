@@ -683,34 +683,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func saveToiCloud(_ dictionary: NSDictionary, _ key: String) {
         let collectionsRecord = CKRecord(recordType: key)
-        for item in dictionary {
-            collectionsRecord.setValue(item.value, forKey: item.key as! String)
-        }
-        CKContainer.default().privateCloudDatabase.save(collectionsRecord) { (record, error) in
-            if error != nil {
-                print(error.debugDescription)
+        do {
+            if let data: NSData = try PropertyListSerialization.data(fromPropertyList: dictionary, format: PropertyListSerialization.PropertyListFormat.xml, options: 0) as NSData {
+                if let datastring = NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue) {
+                   collectionsRecord.setValue(datastring, forKey: "data_xml")
+               } else {
+                   print("Could not turn nsdata to string")
+               }
             }
+            
+            print("Saving to iCloud \(key)")
+            CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase.save(collectionsRecord) { (_, error) in
+                if error != nil {
+                    print("iCloud error")
+                    print(error.debugDescription)
+                }
+            }
+        } catch {
+            print("Error serializing dictionary")
         }
     }
     
     func fetchFromiCloud(_ key: String, dictionaryToAppend: NSMutableDictionary, completion: (() -> Void)? = nil) {
-        let privateDatabase = CKContainer.default().privateCloudDatabase
-        var toReturn = NSDictionary()
-        let query = CKQuery(recordType: key, predicate: NSPredicate(value: true))
-                  
+        let privateDatabase = CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase
+        
+        let query = CKQuery(recordType: CKRecord.RecordType(stringLiteral: key), predicate: NSPredicate(value: true))
+        print("Reading from iCloud")
         privateDatabase.perform(query, inZoneWith: nil) { (records, error) in
-            records?.forEach({ (record) in
-                 
-                guard error == nil else{
-                    print(error?.localizedDescription as Any)
-                    return
+            if error != nil {
+                print("Error fetching records...")
+                print(error?.localizedDescription)
+            } else {
+                if let unwrappedRecord = records?[0] {
+                    if let object = unwrappedRecord.object(forKey: "data_xml") as? String {
+                        if let data = object.data(using: String.Encoding.utf8) {
+                            do {
+                                let dict = try PropertyListSerialization.propertyList(from: data, options: PropertyListSerialization.ReadOptions.mutableContainersAndLeaves, format: nil) as? NSMutableDictionary
+                                for item in dict ?? [:] {
+                                    dictionaryToAppend[item.key] = item.value
+                                }
+                                completion?()
+                            } catch {
+                                print("Could not de-serialize list")
+                            }
+                        }
+                    }
+                } else {
+                    print("No record found!")
                 }
-                
-                for item in record {
-                    dictionaryToAppend[item.0] = record.value(forKey: item.0)
-                }
-            })
-            completion?()
+            }
         }
     }
 
