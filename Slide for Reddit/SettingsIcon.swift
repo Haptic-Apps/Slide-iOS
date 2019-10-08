@@ -11,13 +11,31 @@ import reddift
 import UIKit
 
 class SettingsIcon: BubbleSettingTableViewController {
+    let iconSections: [(id: String, title: String, iconRows: [(id: String, title: String)])] = [
+        ("premium", "Premium icons", [
+            ("retroapple", "Retro"),
+            ("tronteal", "Tron"),
+            ("pink", "Pink"),
+            ("black", "Black"),
+        ]),
+        ("community", "Community icons", [
+            ("cottoncandy", "Cotton Candy"),
+            ("outrun", "Outrun"),
+            ("stars", "Starry night u/TyShark"),
+            ("ghost", "Ghost"),
+            ("mint", "Mint u/Baselt95"),
+        ]),
+        ("basic", "Basic icons", [
+            ("red", "Red"),
+            ("default", "Standard"),
+            ("yellow", "Yellow"),
+            ("green", "Green"),
+            ("lightblue", "Light Blue"),
+            ("blue", "Blue"),
+            ("purple", "Purple"),
+        ]),
+    ]
     
-    var premium = ["retroapple", "tronteal", "pink", "black"]
-    var community = ["cottoncandy", "outrun", "default", "stars", "ghost", "blue", "mint", "green", "lightblue", "purple", "red", "yellow"]
-    
-    var premiumNames = ["Retro", "Tron", "Pink", "Black"]
-    var communityNames = ["Cotton Candy", "Outrun", "Standard", "Starry night u/TyShark", "Ghost", "Blue", "Mint u/Baselt95", "Green", "Light Blue", "Purple", "Red", "Yellow"]
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(IconCell.classForCoder(), forCellReuseIdentifier: "icon")
@@ -25,55 +43,45 @@ class SettingsIcon: BubbleSettingTableViewController {
     
     override func loadView() {
         super.loadView()
-        headers = ["Premium icons", "Community icons"]
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
-        // set the title
-        self.title = "App icon"
         
-        doChecks()
+        headers = iconSections.map({ $0.title })
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.title = "App icon"
+
         self.tableView.tableFooterView = UIView()
     }
     
-    func doChecks() {
-       
-       // TODO: - accessory view
-    }
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return iconSections.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "icon") as! IconCell
+        let iconSection = iconSections[indexPath.section]
+        let iconRow = iconSection.iconRows[indexPath.row]
         
-        let title = indexPath.section == 0 ? premiumNames[indexPath.row] : communityNames[indexPath.row]
-        cell.title.text = title
+        cell.title.text = iconRow.title
+        cell.iconView.image = iconRow.id == "default"
+            ? UIImage(named: "AppIcon")
+            : UIImage(named: "ic_" + iconRow.id)
         
-        let isDefault = indexPath.row == 2 && indexPath.section == 1
-        
-        cell.iconView.image = isDefault ? UIImage(named: "AppIcon") : UIImage(named: "ic_" + (indexPath.section == 0 ? premium[indexPath.row] : community[indexPath.row]))
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         tableView.deselectRow(at: indexPath, animated: true)
-        let title = indexPath.section == 0 ? premium[indexPath.row] : community[indexPath.row]
-        let isDefault = indexPath.row == 2 && indexPath.section == 1
-
-        if indexPath.section == 1 || !VCPresenter.proDialogShown(feature: true, self) {
+        let iconSection = iconSections[indexPath.section]
+        let iconRow = iconSection.iconRows[indexPath.row]
+        
+        if iconSection.id != "premium" || !VCPresenter.proDialogShown(feature: true, self) {
             if #available(iOS 10.3, *) {
-                if isDefault {
-                    UIApplication.shared.setAlternateIconName(nil) { (error) in
-                        if let error = error {
-                            print("err: \(error)")
-                        }
-                    }
-                } else {
-                    UIApplication.shared.setAlternateIconName(title) { (error) in
-                        if let error = error {
-                            print("err: \(error)")
-                        }
+                UIApplication.shared.setAlternateIconName(
+                    iconRow.id == "default"
+                        ? nil
+                        : iconRow.id
+                ) { (error) in
+                    if let error = error {
+                        print("err: \(error)")
                     }
                 }
             }
@@ -81,13 +89,8 @@ class SettingsIcon: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0: return premium.count    // section 0 has 2 rows
-        case 1: return community.count    // section 1 has 1 row
-        default: fatalError("Unknown number of sections")
-        }
+        return iconSections[section].iconRows.count
     }
-    
 }
 
 public class IconCell: InsetCell {
@@ -104,7 +107,7 @@ public class IconCell: InsetCell {
     
     func setupView() {
         self.contentView.addSubviews(title, iconView)
-        
+
         title.heightAnchor == 60
         title.rightAnchor == self.contentView.rightAnchor
         title.leftAnchor == self.iconView.rightAnchor + 8
