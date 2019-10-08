@@ -198,10 +198,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
         Collections.collectionIDs = NSMutableDictionary.init(contentsOfFile: collectionsFile!)!
 
-        fetchFromiCloud("readlater", dictionaryToAppend: ReadLater.readLaterIDs)
-        fetchFromiCloud("collections", dictionaryToAppend: Collections.collectionIDs) { () in
+        fetchFromiCloud("readlater", dictionaryToAppend: ReadLater.readLaterIDs) { (record) in
+            self.readLaterRecord = record
+        }
+        fetchFromiCloud("collections", dictionaryToAppend: Collections.collectionIDs) { (record) in
+            self.collectionRecord = record
             let removeDict = NSMutableDictionary()
-            self.fetchFromiCloud("removed", dictionaryToAppend: removeDict) { () in
+            self.fetchFromiCloud("removed", dictionaryToAppend: removeDict) { (record) in
+                self.deletedRecord = record
                 let removeKeys = removeDict.allKeys as! [String]
                 for item in removeKeys {
                     Collections.collectionIDs.removeObject(forKey: item)
@@ -681,11 +685,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
     
-    func saveToiCloud(_ dictionary: NSDictionary, _ key: String) {
-        let collectionsRecord = CKRecord(recordType: key)
+    var readLaterRecord: CKRecord?
+    var collectionRecord: CKRecord?
+    var deletedRecord: CKRecord?
+    
+    func saveToiCloud(_ dictionary: NSDictionary, _ key: String, _ record: CKRecord?) {
+        let collectionsRecord: CKRecord
+        if record != nil {
+            collectionsRecord = record!
+        } else {
+            collectionsRecord = CKRecord(recordType: key)
+        }
         do {
             if let data: NSData = try PropertyListSerialization.data(fromPropertyList: dictionary, format: PropertyListSerialization.PropertyListFormat.xml, options: 0) as NSData {
                 if let datastring = NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue) {
+                    print(datastring)
                    collectionsRecord.setValue(datastring, forKey: "data_xml")
                } else {
                    print("Could not turn nsdata to string")
@@ -704,7 +718,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func fetchFromiCloud(_ key: String, dictionaryToAppend: NSMutableDictionary, completion: (() -> Void)? = nil) {
+    func fetchFromiCloud(_ key: String, dictionaryToAppend: NSMutableDictionary, completion: ((_ record: CKRecord) -> Void)? = nil) {
         let privateDatabase = CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase
         
         let query = CKQuery(recordType: CKRecord.RecordType(stringLiteral: key), predicate: NSPredicate(value: true))
@@ -720,9 +734,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             do {
                                 let dict = try PropertyListSerialization.propertyList(from: data, options: PropertyListSerialization.ReadOptions.mutableContainersAndLeaves, format: nil) as? NSMutableDictionary
                                 for item in dict ?? [:] {
+                                    print(item.key)
+                                    print(item.value)
                                     dictionaryToAppend[item.key] = item.value
                                 }
-                                completion?()
+                                completion?(unwrappedRecord)
+                                return
                             } catch {
                                 print("Could not de-serialize list")
                             }
@@ -742,9 +759,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
         
-        saveToiCloud(Collections.collectionIDs, "collections")
-        saveToiCloud(ReadLater.readLaterIDs, "readlater")
-        saveToiCloud(AppDelegate.removeDict, "removed")
+        saveToiCloud(Collections.collectionIDs, "collections", self.collectionRecord)
+        saveToiCloud(ReadLater.readLaterIDs, "readlater", self.readLaterRecord)
+        saveToiCloud(AppDelegate.removeDict, "removed", self.deletedRecord)
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
