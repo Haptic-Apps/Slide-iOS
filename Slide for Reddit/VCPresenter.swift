@@ -21,7 +21,7 @@ public class VCPresenter {
         if #available(iOS 13, *) {
             override13 = true
         }
-        if UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController {
+        if (UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController) || viewController is WebsiteViewController || viewController is SFHideSafariViewController {
             override13 = false
         }
         if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil && !(parentViewController is CommentViewController) {
