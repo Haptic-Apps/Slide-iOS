@@ -17,11 +17,17 @@ public class VCPresenter {
             parentViewController?.present(viewController, animated: true)
             return
         }
-        
+        var override13 = false
+        if #available(iOS 13, *) {
+            override13 = true
+        }
+        if UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController {
+            override13 = false
+        }
         if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil && !(parentViewController is CommentViewController) {
             (parentViewController!.splitViewController)?.showDetailViewController(UINavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if (parentViewController?.splitViewController != nil) || ((parentNavigationController != nil && parentNavigationController!.modalPresentationStyle != .pageSheet) && popupIfPossible && UIApplication.shared.statusBarOrientation.isLandscape) || parentNavigationController == nil {
+        } else if (parentViewController?.splitViewController != nil) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
             
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true
@@ -44,9 +50,11 @@ public class VCPresenter {
             //Let's figure out how to present it
             let small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
-            if small {
+            if small || override13 {
                 newParent.modalPresentationStyle = .pageSheet
-                newParent.modalTransitionStyle = .crossDissolve
+                if !override13 {
+                    newParent.modalTransitionStyle = .crossDissolve
+                }
             } else {
                 newParent.modalPresentationStyle = .fullScreen
                 newParent.modalTransitionStyle = .crossDissolve
