@@ -882,6 +882,20 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
                 filteredContent.append(item)
             }
         }
+        
+        filteredContent = filteredContent.sorted(by: { (a, b) -> Bool in
+            let aPrefix = a.lowercased().hasPrefix(searchString!.lowercased())
+            let bPrefix = b.lowercased().hasPrefix(searchString!.lowercased())
+            if aPrefix && bPrefix {
+                return a.lowercased() < b.lowercased()
+            } else if aPrefix {
+                return true
+            } else if bPrefix {
+                return false
+            } else {
+                return a.lowercased() < b.lowercased()
+            }
+        })
     }
 
 }

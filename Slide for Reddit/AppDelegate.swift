@@ -198,22 +198,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
         Collections.collectionIDs = NSMutableDictionary.init(contentsOfFile: collectionsFile!)!
 
-        fetchFromiCloud("readlater", dictionaryToAppend: ReadLater.readLaterIDs) { (record) in
-            self.readLaterRecord = record
-        }
-        fetchFromiCloud("collections", dictionaryToAppend: Collections.collectionIDs) { (record) in
-            self.collectionRecord = record
-            let removeDict = NSMutableDictionary()
-            self.fetchFromiCloud("removed", dictionaryToAppend: removeDict) { (record) in
-                self.deletedRecord = record
-                let removeKeys = removeDict.allKeys as! [String]
-                for item in removeKeys {
-                    Collections.collectionIDs.removeObject(forKey: item)
-                    ReadLater.readLaterIDs.removeObject(forKey: item)
-                }
-            }
-        }
-
         SettingValues.initialize()
         
         let dictionary = Bundle.main.infoDictionary!
@@ -664,6 +648,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let topLock = TopLockViewController()
             topLock.modalPresentationStyle = .overFullScreen
             UIApplication.shared.keyWindow?.topViewController()?.present(topLock, animated: false, completion: nil)
+        }
+        fetchFromiCloud("readlater", dictionaryToAppend: ReadLater.readLaterIDs) { (record) in
+            self.readLaterRecord = record
+        }
+        fetchFromiCloud("collections", dictionaryToAppend: Collections.collectionIDs) { (record) in
+            self.collectionRecord = record
+            let removeDict = NSMutableDictionary()
+            self.fetchFromiCloud("removed", dictionaryToAppend: removeDict) { (record) in
+                self.deletedRecord = record
+                let removeKeys = removeDict.allKeys as! [String]
+                for item in removeKeys {
+                    Collections.collectionIDs.removeObject(forKey: item)
+                    ReadLater.readLaterIDs.removeObject(forKey: item)
+                }
+            }
         }
     }
 

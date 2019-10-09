@@ -68,6 +68,7 @@ class ReadLater {
     
     public static func addReadLater(id: String, subreddit: String) {
         readLaterIDs.setValue(subreddit, forKey: id)
+        AppDelegate.removeDict.removeObject(forKey: id)
         delegate?.didUpdate()
     }
 

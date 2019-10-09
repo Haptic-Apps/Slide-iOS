@@ -98,11 +98,13 @@ class Collections {
     
     public static func addToCollection(id: String, title: String) {
         collectionIDs.setValue(title, forKey: id)
+        AppDelegate.removeDict.removeObject(forKey: id)
         delegate?.didUpdate()
     }
 
     public static func addToCollectionCreate(id: String, title: String) {
         collectionIDs.setValue(title, forKey: id)
+        AppDelegate.removeDict.removeObject(forKey: id)
         delegate?.didUpdate()
     }
 
