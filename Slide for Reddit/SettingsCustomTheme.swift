@@ -55,10 +55,12 @@ class SettingsCustomTheme: UITableViewController {
     }
     
     override func viewDidLoad() {
-        self.title = "Edit Custom Theme"
-        
+        self.title = "New Custom Theme"
+        doToolbar(UIColor.black)
+
         if !inputTheme.isEmpty() {
-            let colors = UserDefaults.standard.string(forKey: "Theme+" + inputTheme)?.removingPercentEncoding ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme) ?? ""
+            print("Input theme is \(inputTheme)")
+            let colors = UserDefaults.standard.string(forKey: "Theme+" + inputTheme)?.removingPercentEncoding ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>").addPercentEncoding)?.removingPercentEncoding ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>"))?.removingPercentEncoding ?? ""
             if !colors.isEmpty {
                 let split = colors.split("#")
                 print(colors)
@@ -67,6 +69,7 @@ class SettingsCustomTheme: UITableViewController {
                 fontColor = UIColor(hex: split[4])
                 navIconColor = UIColor(hex: split[5])
                 statusbarEnabled = Bool(split[8])!
+                doToolbar(navIconColor)
                 isCurrentTheme = foregroundColor.hexString() == ColorUtil.theme.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.theme.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.theme.fontColor.hexString() && navIconColor.hexString() == ColorUtil.theme.navIconColor.hexString()
                 self.title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
                 self.setupViews()
@@ -136,9 +139,11 @@ class SettingsCustomTheme: UITableViewController {
                 colorString += ("#" + (self.themeText?.replacingOccurrences(of: "#", with: "<H>") ?? today_string)).addPercentEncoding
                 
                 colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
-                UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string).replacingOccurrences(of: "#", with: "<H>").addPercentEncoding)
+                UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string))
                 UserDefaults.standard.synchronize()
                 SettingsTheme.needsRestart = true
+                
+                ColorUtil.initializeThemes()
                 self.dismiss(animated: true, completion: nil)
             }))
             
@@ -161,6 +166,7 @@ class SettingsCustomTheme: UITableViewController {
                 _ = ColorUtil.doInit()
                 MainViewController.needsReTheme = true
             }
+            ColorUtil.initializeThemes()
             SettingsTheme.needsRestart = true
             self.dismiss(animated: true, completion: nil)
         }
@@ -174,6 +180,10 @@ class SettingsCustomTheme: UITableViewController {
     
     func setupViews() {
         setupBaseBarColors()
+        
+        if #available(iOS 13.0, *) {
+            self.isModalInPresentation = true
+        }
         
         self.view.backgroundColor = backgroundColor
         // set the title
@@ -216,16 +226,34 @@ class SettingsCustomTheme: UITableViewController {
         self.statusbar.accessoryView = statusbarSwitch
         
         self.tableView.tableFooterView = UIView()
-        
+    }
+    
+    func doToolbar(_ iconColor: UIColor) {
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon().getCopy(withColor: iconColor), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(close), for: .touchUpInside)
         
         let barButton = UIBarButtonItem.init(customView: button)
         navigationItem.leftBarButtonItem = barButton
-
+        
+        let save = UIButtonWithContext(type: UIButton.ButtonType.system)
+        save.setTitle("Save", for: UIControl.State.normal)
+        save.tintColor = iconColor
+        save.addTarget(self, action: #selector(self.save), for: .touchUpInside)
+        
+        let saveButton = UIBarButtonItem.init(customView: save)
+        navigationItem.rightBarButtonItem = saveButton
+    }
+    
+    @objc func close() {
+        let alert = UIAlertController.init(title: "Discard changes?", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction.init(title: "No", style: .cancel))
+        present(alert, animated: true)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -327,6 +355,7 @@ class SettingsCustomTheme: UITableViewController {
                 self.fontColor = color
             default:
                 self.navIconColor = color
+                self.doToolbar(color)
             }
             self.cleanup()
         }
@@ -353,6 +382,7 @@ class SettingsCustomTheme: UITableViewController {
                         self.fontColor = color
                     default:
                         self.navIconColor = color
+                        self.doToolbar(color)
                     }
                     self.cleanup()
                 } else {

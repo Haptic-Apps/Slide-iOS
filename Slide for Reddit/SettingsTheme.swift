@@ -137,8 +137,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         present(alertController, animated: true, completion: nil)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    func redoThemes() {
         self.customThemes.removeAll()
         self.themes.removeAll()
         
@@ -149,6 +148,11 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 themes.append(theme)
             }
         }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        redoThemes()
         self.tableView.register(ThemeCellView.classForCoder(), forCellReuseIdentifier: "theme")
     }
 
@@ -230,6 +234,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         if doneOnce || SettingsTheme.needsRestart {
             SettingsTheme.needsRestart = false
             self.setupViews()
+            self.redoThemes()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
             self.tableView.reloadData()
@@ -587,7 +592,9 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                     VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
                 }))
                 alert.addAction(UIAlertAction(title: "Share Theme", style: .default, handler: { (_) in
-                    let textShare = [UserDefaults.standard.string(forKey: "Theme+" + self.customThemes[indexPath.row - 1].title.addPercentEncoding)]
+                    let inputTheme = self.customThemes[indexPath.row - 1].title
+                    let textShare = UserDefaults.standard.string(forKey: "Theme+" + inputTheme) ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>").addPercentEncoding) ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>")) ?? ""
+
                     let activityViewController = UIActivityViewController(activityItems: textShare, applicationActivities: nil)
                     activityViewController.popoverPresentationController?.sourceView = self.shareButton.customView
                     self.present(activityViewController, animated: true, completion: nil)
