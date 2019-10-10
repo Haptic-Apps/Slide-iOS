@@ -595,7 +595,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                     let inputTheme = self.customThemes[indexPath.row - 1].title
                     let textShare = UserDefaults.standard.string(forKey: "Theme+" + inputTheme) ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>").addPercentEncoding) ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>")) ?? ""
 
-                    let activityViewController = UIActivityViewController(activityItems: textShare, applicationActivities: nil)
+                    let activityViewController = UIActivityViewController(activityItems: [textShare], applicationActivities: nil)
                     activityViewController.popoverPresentationController?.sourceView = self.shareButton.customView
                     self.present(activityViewController, animated: true, completion: nil)
                 }))
