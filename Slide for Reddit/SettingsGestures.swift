@@ -42,7 +42,9 @@ class SettingsGestures: BubbleSettingTableViewController {
     var rightSubActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "rightsub")
     
     var forceTouchActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "3dcomment")
-    
+
+    var sideShortcutActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "side")
+
     var canForceTouch = false
 
     var commentCell = InsetCell()
@@ -69,8 +71,10 @@ class SettingsGestures: BubbleSettingTableViewController {
     func showCommentGesturesMenu() {
         let alertController = DragDownAlertMenu(title: "Comment gesture mode", subtitle: "This setting changes the comment swipe gesture", icon: nil)
         
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+
         for item in SettingValues.CommentGesturesMode.cases {
-            alertController.addAction(title: item.description(), icon: UIImage()) {
+            alertController.addAction(title: item.description(), icon: item == SettingValues.commentGesturesMode ? selected : UIImage()) {
                 UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_commentGesturesMode)
                 SettingValues.commentGesturesMode = item
                 UserDefaults.standard.synchronize()
@@ -80,12 +84,32 @@ class SettingsGestures: BubbleSettingTableViewController {
         }
         alertController.show(self)
     }
-    
+
+    func showShortcutActionsMenu() {
+        let alertController = DragDownAlertMenu(title: "Edge swipe gesture mode", subtitle: "This setting changes the edge swipe gesture of the main subreddit screen", icon: nil)
+        
+        for item in SettingValues.SideGesturesMode.cases {
+            alertController.addAction(title: item.description(), icon: UIImage(named: item.getPhoto())!.menuIcon()) {
+                UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_sideGesture)
+                SettingValues.sideGesture = item
+                UserDefaults.standard.synchronize()
+                self.sideShortcutActionCell.detailTextLabel?.text = SettingValues.sideGesture.description()
+                self.updateCells()
+            }
+        }
+        alertController.show(self)
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 && indexPath.section == 1 {
             showCommentGesturesMenu()
+            return
+        }
+        
+        if indexPath.section == 2 {
+            showShortcutActionsMenu()
             return
         }
         
@@ -156,6 +180,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     
     func showActionSub(cell: UITableViewCell) {
         let alertController = DragDownAlertMenu(title: "Select a submission gesture", subtitle: cell.textLabel?.text ?? "", icon: nil)
+        
         for action in SettingValues.SubmissionAction.cases {
             alertController.addAction(title: action == .NONE && cell == forceTouchSubmissionCell ? "Peek content" : action.getTitle(), icon: action == .NONE && cell == forceTouchSubmissionCell ? UIImage(named: "fullscreen")!.menuIcon() : UIImage(named: action.getPhoto())!.menuIcon()) {
                 if cell == self.doubleTapSubActionCell {
@@ -200,7 +225,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Gestures"
-        self.headers = ["Submissions", "Comments"]
+        self.headers = ["Submissions", "Comments", "Main view edge shortcut"]
         createCell(submissionGesturesCell, submissionGestures, isOn: SettingValues.submissionGesturesEnabled, text: "Enable submission gestures")
         self.submissionGesturesCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.submissionGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -283,6 +308,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         createCell(leftSubActionCell, nil, isOn: false, text: "Left submission swipe")
         createCell(rightSubActionCell, nil, isOn: false, text: "Right submission swipe")
         createCell(forceTouchSubmissionCell, nil, isOn: false, text: "3D-Touch submission action")
+        createCell(sideShortcutActionCell, nil, isOn: false, text: "Edge swipe shortcut")
 
         createLeftView(cell: forceTouchSubmissionCell, image: SettingValues.submissionActionForceTouch == .NONE ? "fullscreen" : SettingValues.submissionActionForceTouch.getPhoto(), color: SettingValues.submissionActionForceTouch == .NONE ? GMColor.lightGreen500Color() :SettingValues.submissionActionForceTouch.getColor())
         self.forceTouchSubmissionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
@@ -347,6 +373,13 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.rightSubActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
         self.rightSubActionCell.imageView?.layer.cornerRadius = 5
 
+        createLeftView(cell: sideShortcutActionCell, image: SettingValues.sideGesture.getPhoto(), color: SettingValues.sideGesture.getColor())
+        self.sideShortcutActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.sideShortcutActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.sideShortcutActionCell.detailTextLabel?.numberOfLines = 0
+        self.sideShortcutActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
+        self.sideShortcutActionCell.imageView?.layer.cornerRadius = 5
+
         if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
             self.rightRightActionCell.isUserInteractionEnabled = false
             self.rightRightActionCell.contentView.alpha = 0.5
@@ -396,7 +429,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -427,6 +460,8 @@ class SettingsGestures: BubbleSettingTableViewController {
             case 5: return self.forceTouchSubmissionCell
             default: fatalError("Unknown row in section 0")
             }
+        case 2:
+            return self.sideShortcutActionCell
         default: fatalError("Unknown section")
         }
         
@@ -436,6 +471,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         switch section {
         case 0: return 5 + (canForceTouch ? 1 : 0)
         case 1: return 6 + (canForceTouch ? 1 : 0)
+        case 2: return 1
         default: fatalError("Unknown number of sections")
         }
     }

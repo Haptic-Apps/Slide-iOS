@@ -126,6 +126,7 @@ class SettingValues {
     public static let pref_postsToCache = "POST_CACHE_COUNT"
     public static let pref_shareButton = "SHARE_BUTTON_ENABLED"
     public static let pref_hideSeen = "HIDE_SEEN"
+    public static let pref_sideGesture = "SIDE_GESTURE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -150,6 +151,8 @@ class SettingValues {
     public static var submissionActionRight = SubmissionAction.SAVE
     public static var commentGesturesMode = CommentGesturesMode.NONE
     public static var submissionActionForceTouch = SubmissionAction.NONE
+
+    public static var sideGesture = SideGesturesMode.NONE
 
     public static var browser = "firefox"
     public static var subredditBar = true
@@ -322,7 +325,62 @@ class SettingValues {
             }
         }
     }
-    
+
+    enum SideGesturesMode: String {
+        static let cases: [SideGesturesMode] = [.SUBS, .POST, .SIDEBAR, .INBOX, .NONE]
+        
+        case SUBS = "subs"
+        case POST = "post"
+        case SIDEBAR = "sidebar"
+        case NONE = "none"
+        case INBOX = "inbox"
+
+        func description() -> String {
+            switch self {
+            case .SUBS:
+                return "Open subreddit drawer"
+            case .POST:
+                return "Submit a post to the current subreddit"
+            case .INBOX:
+                return "Opens your Inbox"
+            case .SIDEBAR:
+                return "Open the current subreddit sidebar"
+            case .NONE:
+                return "No side swipe gesture"
+            }
+        }
+        
+        func getPhoto() -> String {
+            switch self {
+            case .SUBS :
+                return "subs"
+            case .POST:
+                return "edit"
+            case .INBOX:
+                return "inbox"
+            case .SIDEBAR:
+                return "info"
+            case .NONE:
+                return "close"
+            }
+        }
+        
+        func getColor() -> UIColor {
+            switch self {
+            case .SUBS :
+                return GMColor.blue500Color()
+            case .POST:
+                return GMColor.green500Color()
+            case .INBOX:
+                return GMColor.lightBlue500Color()
+            case .SIDEBAR:
+                return GMColor.orange500Color()
+            case .NONE:
+                return GMColor.red500Color()
+            }
+        }
+    }
+
     public static func shouldAutoPlay() -> Bool {
         switch SettingValues.autoPlayMode {
         case .ALWAYS:
@@ -530,6 +588,9 @@ class SettingValues {
         SettingValues.submissionActionDoubleTap = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionDoubleTap) ?? "none") ?? .NONE
         SettingValues.submissionActionRight = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionRight) ?? "upvote") ?? .UPVOTE
         SettingValues.submissionActionLeft = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionLeft) ?? "downvote") ?? .DOWNVOTE
+
+        SettingValues.sideGesture = SideGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_sideGesture) ?? "none") ?? .NONE
+
         SettingValues.submissionActionForceTouch = SubmissionAction.init(rawValue: settings.string(forKey: SettingValues.pref_submissionActionForceTouch) ?? "none") ?? .NONE
 
         SettingValues.internalImageView = settings.object(forKey: SettingValues.pref_internalImageView) == nil ? true : settings.bool(forKey: SettingValues.pref_internalImageView)

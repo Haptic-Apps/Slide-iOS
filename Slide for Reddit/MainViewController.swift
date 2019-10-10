@@ -958,6 +958,30 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         //        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
         //        drawerButton.heightAnchor == 40
         //        drawerButton.widthAnchor == 40
+        
+        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
+        edgePan.edges = .right
+
+        self.view.addGestureRecognizer(edgePan)
+    }
+    
+    @objc func screenEdgeSwiped() {
+        switch SettingValues.sideGesture {
+        case .SUBS:
+            menuNav?.expand()
+        case .INBOX:
+            doProfileIcon()
+        case .POST:
+            if let vc = self.viewControllers?[0] as? SingleSubredditViewController {
+                vc.newPost(self)
+            }
+        case .SIDEBAR:
+            if let vc = self.viewControllers?[0] as? SingleSubredditViewController {
+                vc.doDisplaySidebar()
+            }
+        case .NONE:
+            return
+        }
     }
     
     public static var isOffline = false

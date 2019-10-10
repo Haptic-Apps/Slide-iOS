@@ -690,6 +690,15 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                         realm.delete(message)
                         realm.delete(sub)
                     }
+                    if let path = realm.configuration.fileURL?.absoluteString {
+                        do {
+                            try FileManager().removeItem(atPath: path)
+                        } catch {
+                        }
+                    } else {
+                        print("Realm file not found")
+                    }
+                    
                 } catch let error as NSError {
                     print("error - \(error.localizedDescription)")
                 }
