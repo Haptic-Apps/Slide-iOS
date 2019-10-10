@@ -377,7 +377,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.sideShortcutActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.sideShortcutActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.sideShortcutActionCell.detailTextLabel?.numberOfLines = 0
-        self.sideShortcutActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
+        self.sideShortcutActionCell.detailTextLabel?.text = SettingValues.sideGesture.description()
         self.sideShortcutActionCell.imageView?.layer.cornerRadius = 5
 
         if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {

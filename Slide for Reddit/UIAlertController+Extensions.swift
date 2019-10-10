@@ -60,10 +60,8 @@ public extension UIAlertController {
     //https://stackoverflow.com/a/51723032/3697225
     func showWindowless() {
         self.alertWindow = UIWindow.init(frame: UIScreen.main.bounds)
-        self.alertWindow.backgroundColor = .red
 
         let viewController = UIViewController()
-        viewController.view.backgroundColor = .green
         self.alertWindow.rootViewController = viewController
 
         let topWindow = UIApplication.shared.windows.last
