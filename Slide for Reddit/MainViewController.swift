@@ -12,6 +12,7 @@ import BadgeSwift
 import MaterialComponents.MaterialTabs
 import RealmSwift
 import reddift
+import SideMenu
 import SDCAlertView
 import StoreKit
 import UIKit
@@ -112,6 +113,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         } else if MainViewController.needsReTheme {
             doRetheme()
         }
+        
         didUpdate()
     }
     
@@ -804,6 +806,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         } else {
             selected = false
         }
+        setupSideGestures()
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -959,10 +962,34 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         //        drawerButton.heightAnchor == 40
         //        drawerButton.widthAnchor == 40
         
-        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
-        edgePan.edges = .right
+    }
+    
+    var edgePan: UIScreenEdgePanGestureRecognizer?
+    
+    func setupSideGestures() {
+        if edgePan != nil {
+            self.view.removeGestureRecognizer(edgePan!)
+        }
+        
+        if SettingValues.sideGesture == .SUBS || SettingValues.sideGesture == .POST {
+            self.edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
+            edgePan?.edges = .right
 
-        self.view.addGestureRecognizer(edgePan)
+            self.view.addGestureRecognizer(edgePan!)
+        } else if SettingValues.sideGesture == .NONE {
+            return
+        } else {
+            let vc: UIViewController
+            if SettingValues.sideGesture == .INBOX {
+                vc = InboxViewController()
+            } else {
+                vc = SubSidebarViewController(subname: MainViewController.current)
+            }
+            let rightMenuNavigationController = Side(rootViewController: vc)
+            SideMenuManager.default.rightMenuNavigationController = rightMenuNavigationController
+            
+            SideMenuManager.default.addScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
+        }
     }
     
     @objc func screenEdgeSwiped() {
@@ -970,7 +997,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         case .SUBS:
             menuNav?.expand()
         case .INBOX:
-            doProfileIcon()
+            showCurrentAccountMenu(nil)
         case .POST:
             if let vc = self.viewControllers?[0] as? SingleSubredditViewController {
                 vc.newPost(self)

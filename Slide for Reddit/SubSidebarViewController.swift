@@ -15,13 +15,20 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
     var scrollView = UIScrollView()
     var subreddit: Subreddit?
     var filteredContent: [String] = []
-    var parentController: (UIViewController & MediaVCDelegate)?
+    var subname: String
 
-    init(sub: Subreddit, parent: UIViewController & MediaVCDelegate) {
+    init(sub: Subreddit) {
+        self.subname = sub.displayName
         super.init(nibName: nil, bundle: nil)
         self.subreddit = sub
-        self.parentController = parent
     }
+    
+    init(subname: String) {
+        self.subname = subname
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    var doneOnce = false
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -30,6 +37,24 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         setupBaseBarColors(ColorUtil.getColorForSub(sub: (subreddit?.displayName)!))
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         self.navigationController?.setToolbarHidden(true, animated: true)
+        if self.subreddit == nil {
+             do {
+                 try (UIApplication.shared.delegate as! AppDelegate).session?.about(subname, completion: { (result) in
+                    switch result {
+                    case .success(let r):
+                        self.subreddit = r
+                        DispatchQueue.main.async {
+                            self.doSubStuff()
+                        }
+                    default:
+                        DispatchQueue.main.async {
+                            BannerUtil.makeBanner(text: "Subreddit sidebar not found", seconds: 3, context: self.parent)
+                        }
+                    }
+                })
+            } catch {
+            }
+        }
     }
 
     func doSubreddit(sub: Subreddit, _ width: CGFloat) {
@@ -61,23 +86,29 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         super.viewDidLoad()
         scrollView.frame = CGRect.zero
         self.setBarColors(color: ColorUtil.getColorForSub(sub: subreddit!.displayName))
+        doSubStuff()
+    }
+    
+    func doSubStuff() {
+        if self.subreddit != nil {
+            doneOnce = true
+            subbed.isOn = Subscriptions.isSubscriber(subreddit!.displayName)
+            subbed.onTintColor = ColorUtil.accentColorForSub(sub: subreddit!.displayName)
+            subbed.addTarget(self, action: #selector(doSub(_:)), for: .valueChanged)
 
-        subbed.isOn = Subscriptions.isSubscriber(subreddit!.displayName)
-        subbed.onTintColor = ColorUtil.accentColorForSub(sub: subreddit!.displayName)
-        subbed.addTarget(self, action: #selector(doSub(_:)), for: .valueChanged)
-
-        self.view.addSubview(scrollView)
-        scrollView.edgeAnchors == self.view.edgeAnchors
-        title = subreddit!.displayName
-        self.setupBaseBarColors()
-        color = ColorUtil.getColorForSub(sub: subreddit!.displayName)
-        
-        setNavColors()
-        
-        scrollView.backgroundColor = ColorUtil.theme.backgroundColor
-        scrollView.isUserInteractionEnabled = true
-        
-        self.doSubreddit(sub: subreddit!, UIScreen.main.bounds.width)
+            self.view.addSubview(scrollView)
+            scrollView.edgeAnchors == self.view.edgeAnchors
+            title = subreddit!.displayName
+            self.setupBaseBarColors()
+            color = ColorUtil.getColorForSub(sub: subreddit!.displayName)
+            
+            setNavColors()
+            
+            scrollView.backgroundColor = ColorUtil.theme.backgroundColor
+            scrollView.isUserInteractionEnabled = true
+            
+            self.doSubreddit(sub: subreddit!, UIScreen.main.bounds.width)
+        }
     }
 
     @objc func doSub(_ changed: UISwitch) {
