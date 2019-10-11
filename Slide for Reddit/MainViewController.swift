@@ -970,7 +970,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         case .SUBS:
             menuNav?.expand()
         case .INBOX:
-            doProfileIcon()
+            self.showCurrentAccountMenu(nil)
         case .POST:
             if let vc = self.viewControllers?[0] as? SingleSubredditViewController {
                 vc.newPost(self)
