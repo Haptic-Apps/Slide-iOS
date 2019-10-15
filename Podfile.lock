@@ -1,7 +1,7 @@
 PODS:
   - Alamofire (4.9.0)
   - Anchorage (4.3.1)
-  - BadgeSwift (7.0.0)
+  - BadgeSwift (8.0.0)
   - BiometricAuthentication (3.0)
   - DTCoreText (1.6.23):
     - DTCoreText/Core (= 1.6.23)
@@ -20,38 +20,38 @@ PODS:
     - DTFoundation/Core
   - DTFoundation/UIKit (1.7.14):
     - DTFoundation/Core
-  - Embassy (4.0.8)
+  - Embassy (4.1.0)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (92.0.0):
+  - MaterialComponents/ActivityIndicator (92.3.1):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (92.0.0)
-  - MaterialComponents/Elevation (92.0.0):
+  - MaterialComponents/AnimationTiming (92.3.1)
+  - MaterialComponents/Elevation (92.3.1):
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Ink (92.0.0):
+  - MaterialComponents/Ink (92.3.1):
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (92.0.0)
-  - MaterialComponents/private/Application (92.0.0)
-  - MaterialComponents/private/Color (92.0.0)
-  - MaterialComponents/private/Math (92.0.0)
-  - MaterialComponents/ProgressView (92.0.0):
+  - MaterialComponents/Palettes (92.3.1)
+  - MaterialComponents/private/Application (92.3.1)
+  - MaterialComponents/private/Color (92.3.1)
+  - MaterialComponents/private/Math (92.3.1)
+  - MaterialComponents/ProgressView (92.3.1):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/Ripple (92.0.0):
+  - MaterialComponents/Ripple (92.3.1):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/ShadowElevations (92.0.0)
-  - MaterialComponents/ShadowLayer (92.0.0):
+  - MaterialComponents/ShadowElevations (92.3.1)
+  - MaterialComponents/ShadowLayer (92.3.1):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (92.0.0):
+  - MaterialComponents/Tabs (92.3.1):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Elevation
     - MaterialComponents/Ink
@@ -62,7 +62,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (92.0.0):
+  - MaterialComponents/Typography (92.3.1):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -74,21 +74,21 @@ PODS:
   - MTColorDistance (0.0.3)
   - OpalImagePicker (2.1.0)
   - QuickLayout (3.0.0)
-  - Realm (3.18.0):
-    - Realm/Headers (= 3.18.0)
-  - Realm/Headers (3.18.0)
-  - RealmSwift (3.18.0):
-    - Realm (= 3.18.0)
+  - Realm (3.19.0):
+    - Realm/Headers (= 3.19.0)
+  - Realm/Headers (3.19.0)
+  - RealmSwift (3.19.0):
+    - Realm (= 3.19.0)
   - reddift (2.0.3):
     - HTMLSpecialCharacters
     - MiniKeychain
   - RLBAlertsPickers (1.1.1)
   - SDCAlertView (10.0)
-  - SDWebImage (5.1.1):
-    - SDWebImage/Core (= 5.1.1)
-  - SDWebImage/Core (5.1.1)
+  - SDWebImage (5.2.3):
+    - SDWebImage/Core (= 5.2.3)
+  - SDWebImage/Core (5.2.3)
   - SloppySwiper (0.6)
-  - Starscream (3.0.6)
+  - Starscream (3.1.1)
   - SubtleVolume (1.1.0)
   - SwiftEntryKit (1.0.1):
     - QuickLayout (= 3.0.0)
@@ -102,10 +102,10 @@ PODS:
 DEPENDENCIES:
   - Alamofire (~> 4.3)
   - Anchorage (~> 4.3)
-  - BadgeSwift (~> 7.0)
+  - BadgeSwift (~> 8.0)
   - BiometricAuthentication
   - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
-  - Embassy (~> 4.0.8)
+  - Embassy (~> 4.1.0)
   - LicensesViewController (~> 0.7.0)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/ProgressView
@@ -119,7 +119,7 @@ DEPENDENCIES:
   - SDCAlertView (from `https://github.com/ccrama/SDCAlertView`)
   - SDWebImage
   - SloppySwiper (from `https://github.com/ccrama/SloppySwiper`)
-  - Starscream (~> 3.0.2)
+  - Starscream (~> 3.1.1)
   - SubtleVolume
   - SwiftEntryKit (from `https://github.com/ccrama/SwiftEntryKit`)
   - SwiftLinkPreview (~> 3.0.1)
@@ -177,7 +177,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   DTCoreText:
-    :commit: 5412f51dddad970029a46a26b70c7cf7aff2ef7e
+    :commit: 9fccb9b0de0b2eb40c6b33067b03f55f3803c153
     :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
@@ -201,14 +201,14 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Alamofire: afc3e7c6db61476cb45cdd23fed06bad03bbc321
   Anchorage: a187da0bc9b07440637d42c8744b8c82a4490295
-  BadgeSwift: 5cfacfad916d85e2f68d93dbb9ade4e9555903da
+  BadgeSwift: a81547ffde1f462bb5fc02e3fa3fdcbc1b888354
   BiometricAuthentication: e39b1a55040d679d5dbc4fa90d76e067c432de7f
   DTCoreText: 67023bb51b26711d5f640c851f4845aea14c24c9
   DTFoundation: 25aa19bb7c6e225b1dfae195604fb8cf1da0ab4c
-  Embassy: fe6a3f8dd2d705881c172dcb144fb97b9408f4cd
+  Embassy: 296c51c4b16b8377b413f48f413a99aa736adc22
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 0fccf7f7e232145c164dc60da6fdefd011e9bf28
+  MaterialComponents: 81dd553fe0d41647210843c7f3ba3cdedd2a5522
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -217,14 +217,14 @@ SPEC CHECKSUMS:
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   OpalImagePicker: 40e9d4c27018538a704d8da34b2ff3a2a54a3dc8
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
-  Realm: 7b3d04740facf45e958a514b466a32b04f1113d6
-  RealmSwift: c817b5f374668cf08f649afb05f55d92a787649c
+  Realm: 995d585bcf699aaff226715886c849a29dd3d07f
+  RealmSwift: 35f284a537989f2187b413e5917091948cb87a3f
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: c93e83c13526a5840b67eb52f702d3f83eeaac6a
   SDCAlertView: 5fbc48cae6d7bf9781097e3f27883924ef3b922c
-  SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
+  SDWebImage: 46a7f73228f84ce80990c786e4372cf4db5875ce
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
-  Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
   SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
   SwiftEntryKit: ef368c3e6f47b79806f47376194a50489736ef68
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
@@ -234,6 +234,6 @@ SPEC CHECKSUMS:
   Then: 90cd104fd951cec1980a03f57704ad8f784d4d79
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 7150437bda8ddb804a9de3a9683747f649f69ee3
+PODFILE CHECKSUM: 891b8bacae6ec601fc789146a1ab9678a9feedca
 
 COCOAPODS: 1.7.1
