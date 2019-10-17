@@ -9,7 +9,7 @@ target 'Slide for Reddit' do
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
   pod 'SDWebImage'
   pod 'MKColorPicker', :git => 'https://github.com/ccrama/MKColorPicker'
-  pod 'BadgeSwift', '~> 7.0'
+  pod 'BadgeSwift', '~> 8.0'
   pod 'LicensesViewController', '~> 0.7.0'
   pod 'BiometricAuthentication'
   pod 'OpalImagePicker'
@@ -19,12 +19,12 @@ target 'Slide for Reddit' do
   pod 'SwiftEntryKit', :git => 'https://github.com/ccrama/SwiftEntryKit'
   pod 'SubtleVolume'
   pod 'SDCAlertView', :git => 'https://github.com/ccrama/SDCAlertView'
-  pod 'Embassy', '~> 4.0.8'
+  pod 'Embassy', '~> 4.1.0'
   pod 'MTColorDistance'
   pod 'SwiftLinkPreview', '~> 3.0.1'
   pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'
   pod 'SwiftSpreadsheet'
-  pod 'Starscream', '~> 3.0.2'
+  pod 'Starscream', '~> 3.1.1'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
   pod 'SloppySwiper', :git => 'https://github.com/ccrama/SloppySwiper'
   pod 'YYText'
@@ -48,7 +48,12 @@ target 'Slide for Reddit' do
 
   post_install do |installer|
     installer.pods_project.targets.each do |target|
-        if ['Embassy', 'HTMLSpecialCharacters', 'MiniKeychain'].include? target.name
+        if [
+          'HTMLSpecialCharacters',
+          'MiniKeychain',
+          'RLBAlertsPickers',
+          'SwiftLinkPreview'
+        ].include? target.name
             target.build_configurations.each do |config|
                 config.build_settings['SWIFT_VERSION'] = '4.2'
             end
