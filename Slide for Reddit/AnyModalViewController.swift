@@ -936,19 +936,18 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         sliderBeingUsed = false
     }
     
-    func toggleReturnPlaying() -> Bool {
+    func togglePlaying() {
         self.handleShowUI()
         if let player = videoView.player {
             if player.rate != 0 {
                 player.pause()
-                return false
+                self.scrubber.setPlayButton()
             } else {
                 player.play()
                 self.startTimerToHide()
-                return true
+                self.scrubber.setPauseButton()
             }
         }
-        return false
     }
 
     override func accessibilityPerformEscape() -> Bool {

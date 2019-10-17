@@ -14,7 +14,7 @@ protocol VideoScrubberViewDelegate: class {
     func sliderValueChanged(toSeconds: Float)
     func sliderDidBeginDragging()
     func sliderDidEndDragging()
-    func toggleReturnPlaying() -> Bool
+    func togglePlaying()
 }
 
 //extension UISlider {
@@ -187,13 +187,7 @@ extension VideoScrubberView {
     }
 
     @objc func playButtonTapped(_ sender: UIButton) {
-        if let delegate = delegate {
-            if delegate.toggleReturnPlaying() {
-                setPauseButton()
-            } else {
-                setPlayButton()
-            }
-        }
+        delegate?.togglePlaying()
     }
 }
 
