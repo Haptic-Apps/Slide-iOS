@@ -56,7 +56,6 @@
 		B776B1E23F4DEC18069F1579 /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BC65995FE8D1EE75E2AB /* MediaViewController.swift */; };
 		B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BFA91C6E10E78077FCE0 /* AutoCache.swift */; };
 		B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */; };
-		B776B496CD1CCCF42B176B00 /* YTPlayer.html in Resources */ = {isa = PBXBuildFile; fileRef = B776BD038659E2DE04B541FA /* YTPlayer.html */; };
 		B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BBAC46362B38981E24E0 /* SettingsBackup.swift */; };
 		B776B5282EE4DA559E97F9B3 /* ModerationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BECBFCB8F58AC234156A /* ModerationViewController.swift */; };
 		B776B69E386227A51C8E10DF /* MediaTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B6C1FAE60A1FD45C11A0 /* MediaTableViewController.swift */; };
@@ -294,7 +293,6 @@
 		BEC4A1B6232F3F9A00EE5114 /* CollectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */; };
 		BEC4A1B82331533400EE5114 /* AutoplayScrollViewHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */; };
 		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
-		BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BECF52462012B8E700A310F9 /* YTPlayerView.m */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
 		BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED7B6B91F2258E700E31A82 /* CachedTitle.swift */; };
 		BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */; };
@@ -461,7 +459,6 @@
 		B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModQueueContributionLoader.swift; sourceTree = "<group>"; };
 		B776BBAC46362B38981E24E0 /* SettingsBackup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsBackup.swift; sourceTree = "<group>"; };
 		B776BC65995FE8D1EE75E2AB /* MediaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaViewController.swift; sourceTree = "<group>"; };
-		B776BD038659E2DE04B541FA /* YTPlayer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = YTPlayer.html; sourceTree = "<group>"; };
 		B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableDisplayView.swift; sourceTree = "<group>"; };
 		B776BECBFCB8F58AC234156A /* ModerationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModerationViewController.swift; sourceTree = "<group>"; };
 		B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbum.swift; sourceTree = "<group>"; };
@@ -571,7 +568,6 @@
 		BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditHeaderView.swift; sourceTree = "<group>"; };
 		BE2E9F0723492B4300FE07B4 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsLayout.swift; sourceTree = "<group>"; };
-		BE2F3F531EF70FC1003C1B28 /* Slide for Reddit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Slide for Reddit-Bridging-Header.h"; sourceTree = "<group>"; };
 		BE2F3F571EF886D9003C1B28 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsData.swift; sourceTree = "<group>"; };
 		BE2F3F5C1EF96877003C1B28 /* SettingsContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsContent.swift; sourceTree = "<group>"; };
@@ -702,8 +698,6 @@
 		BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsViewController.swift; sourceTree = "<group>"; };
 		BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoplayScrollViewHandler.swift; sourceTree = "<group>"; };
 		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
-		BECF52452012B8E700A310F9 /* YTPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YTPlayerView.h; sourceTree = "<group>"; };
-		BECF52462012B8E700A310F9 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YTPlayerView.m; sourceTree = "<group>"; };
 		BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmDataWrappers.swift; sourceTree = "<group>"; };
 		BED7B6B91F2258E700E31A82 /* CachedTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedTitle.swift; sourceTree = "<group>"; };
 		BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteViewController.swift; sourceTree = "<group>"; };
@@ -999,16 +993,6 @@
 			name = Settings;
 			sourceTree = "<group>";
 		};
-		BE2F3F501EF70EB2003C1B28 /* YTPlayerHelper */ = {
-			isa = PBXGroup;
-			children = (
-				BECF52452012B8E700A310F9 /* YTPlayerView.h */,
-				BECF52462012B8E700A310F9 /* YTPlayerView.m */,
-				BE2F3F531EF70FC1003C1B28 /* Slide for Reddit-Bridging-Header.h */,
-			);
-			name = YTPlayerHelper;
-			sourceTree = "<group>";
-		};
 		BE3521641E3D22B000C30B8D /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -1263,8 +1247,6 @@
 				B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */,
 				BECF52432012AF7A00A310F9 /* VCPresenter.swift */,
 				BE6EA6CE1E1C1FAD00E9E709 /* VidMe */,
-				B776BD038659E2DE04B541FA /* YTPlayer.html */,
-				BE2F3F501EF70EB2003C1B28 /* YTPlayerHelper */,
 				BEEA03CC20E1B53E007A8928 /* HapticUtility.swift */,
 				BEEA03CE20E2A411007A8928 /* BannerUtil.swift */,
 				0984BE552114D1CD0091C2E1 /* Presentation */,
@@ -1462,7 +1444,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1010;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
 					BE20851021588F3900D8F33C = {
@@ -1520,10 +1502,9 @@
 			};
 			buildConfigurationList = BE8FC9FF1E0C46090063B8EF /* Build configuration list for PBXProject "Slide for Reddit" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
@@ -1643,7 +1624,6 @@
 				BE0C4F9121BCBE83006C54FF /* ic_lightblue@3x.png in Resources */,
 				BE1DA5DE2208AC80001C7DB4 /* ic_black@2x~ipad.png in Resources */,
 				BE1DA5D92208AC80001C7DB4 /* ic_cottoncandy@2x~ipad.png in Resources */,
-				B776B496CD1CCCF42B176B00 /* YTPlayer.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1785,6 +1765,7 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
 				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
+				"${BUILT_PRODUCTS_DIR}/YoutubePlayer-in-WKWebView/YoutubePlayer_in_WKWebView.framework",
 				"${BUILT_PRODUCTS_DIR}/reddift/reddift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -1821,6 +1802,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YoutubePlayer_in_WKWebView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/reddift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1898,7 +1880,6 @@
 				BE9428EA20C46B5600E1A33A /* PostActions.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
 				BEEA03CD20E1B53E007A8928 /* HapticUtility.swift in Sources */,
-				BECF52472012B8E700A310F9 /* YTPlayerView.m in Sources */,
 				09D6603421E8F189003D632C /* CurrentAccountPresentationManager.swift in Sources */,
 				BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */,
 				BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */,
@@ -2347,6 +2328,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2409,6 +2391,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";

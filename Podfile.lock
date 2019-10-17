@@ -97,6 +97,7 @@ PODS:
   - SwiftSpreadsheet (1.2.1)
   - SwiftyJSON (5.0.0)
   - Then (2.6.0)
+  - YoutubePlayer-in-WKWebView (0.3.3)
   - YYText (1.0.7)
 
 DEPENDENCIES:
@@ -127,6 +128,7 @@ DEPENDENCIES:
   - SwiftSpreadsheet
   - SwiftyJSON
   - Then
+  - YoutubePlayer-in-WKWebView (~> 0.3.0)
   - YYText
 
 SPEC REPOS:
@@ -157,6 +159,7 @@ SPEC REPOS:
     - SwiftSpreadsheet
     - SwiftyJSON
     - Then
+    - YoutubePlayer-in-WKWebView
     - YYText
 
 EXTERNAL SOURCES:
@@ -232,6 +235,7 @@ SPEC CHECKSUMS:
   SwiftSpreadsheet: b3dc6d89bd5fd18f38fe88c29898fbc481660a04
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   Then: 90cd104fd951cec1980a03f57704ad8f784d4d79
+  YoutubePlayer-in-WKWebView: 7694e858c5c3472ed067d6fe34eb9b944845e63c
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
 PODFILE CHECKSUM: 891b8bacae6ec601fc789146a1ab9678a9feedca
