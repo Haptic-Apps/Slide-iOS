@@ -2698,6 +2698,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             postContentTransitioningDelegate.sourceImageView = self.videoView
             controller.transitioningDelegate = postContentTransitioningDelegate
             controller.modalPresentationStyle = .custom
+            controller.forceStartUnmuted = !self.videoView.player!.isMuted
             
             parentViewController?.present(controller, animated: true, completion: nil)
         }
