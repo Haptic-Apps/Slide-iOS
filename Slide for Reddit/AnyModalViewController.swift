@@ -256,13 +256,13 @@ class AnyModalViewController: UIViewController {
         setOnce = false
     }
 
-    @objc func toggleMuted() {
+    @objc func muteButtonPressed() {
         guard let player = self.videoView.player else {
             return
         }
 
         if player.isMuted {
-            unmute()
+            unmute(overrideMuteSwitch: true)
         } else {
             mute()
         }
@@ -280,7 +280,7 @@ class AnyModalViewController: UIViewController {
         setMuteButtonImage(muted: true)
     }
     
-    @objc func unmute() {
+    @objc func unmute(overrideMuteSwitch: Bool = false) {
         guard let player = self.videoView.player else {
             return
         }
@@ -289,7 +289,7 @@ class AnyModalViewController: UIViewController {
 
         //SettingValues.autoplayAudioMode.activate()
 
-        if SettingValues.modalVideosRespectHardwareMuteSwitch {
+        if SettingValues.modalVideosRespectHardwareMuteSwitch && !overrideMuteSwitch {
             try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
         } else {
             try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
@@ -311,7 +311,7 @@ class AnyModalViewController: UIViewController {
     func connectActions() {
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
-        muteButton.addTarget(self, action: #selector(toggleMuted), for: .touchUpInside)
+        muteButton.addTarget(self, action: #selector(muteButtonPressed), for: .touchUpInside)
         upvoteButton.addTarget(self, action: #selector(upvote(_:)), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
 
@@ -433,7 +433,7 @@ class AnyModalViewController: UIViewController {
 
         videoView.player?.play()
         if !SettingValues.muteInlineVideos || forceStartUnmuted {
-            unmute()
+            unmute(overrideMuteSwitch: forceStartUnmuted)
         } else {
             mute()
         }
@@ -885,7 +885,7 @@ extension AnyModalViewController {
 
             if hasAudioTracks || forceStartUnmuted {
                 if !SettingValues.muteVideosInModal || forceStartUnmuted {
-                    unmute()
+                    unmute(overrideMuteSwitch: forceStartUnmuted)
                 } else {
                     mute()
                 }
