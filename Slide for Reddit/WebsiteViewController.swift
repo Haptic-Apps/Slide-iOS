@@ -18,6 +18,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var myProgressView: UIProgressView = UIProgressView()
     var sub: String
     var register: Bool
+    var blocking11 = false
     
     init(url: URL, subreddit: String) {
         self.url = url
@@ -136,7 +137,46 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         self.webView.scrollView.frame = self.view.frame
         self.webView.scrollView.setZoomScale(1, animated: false)
+        if #available(iOS 11, *) {
+            if UserDefaults.standard.bool(forKey: "adblock-loaded") {
+                WKContentRuleListStore.default().lookUpContentRuleList(forIdentifier: "slide-ad-blocking") { [weak self] (contentRuleList, error) in
+                    guard let strongSelf = self else {return}
+                    if let error = error {
+                        print(error.localizedDescription)
+                        UserDefaults.standard.set(false, forKey: "adblock-loaded")
+                        strongSelf.setupBlocking()
+                        return
+                    }
+                    if let list = contentRuleList {
+                        strongSelf.blocking11 = true
+                        strongSelf.webView.configuration.userContentController.add(list)
+                    }
+                }
+            } else {
+                setupBlocking()
+            }
+        }
         loadUrl()
+    }
+    
+    @available(iOS 11.0, *)
+    func setupBlocking() {
+        if let jsonFilePath = Bundle.main.path(forResource: "adaway.json", ofType: nil),
+            let jsonFileContent = try? String(contentsOfFile: jsonFilePath, encoding: String.Encoding.utf8) {
+            WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "slide-ad-blocking", encodedContentRuleList: jsonFileContent) { [weak self] (contentRuleList, error) in
+                guard let strongSelf = self else {return}
+                if let error = error {
+                    strongSelf.blocking11 = false
+                    print(error.localizedDescription)
+                    return
+                }
+                if let list = contentRuleList {
+                    strongSelf.blocking11 = true
+                    strongSelf.webView.configuration.userContentController.add(list)
+                    UserDefaults.standard.set(true, forKey: "adblock-loaded")
+                }
+            }
+        }
     }
     
     var setObserver = false
@@ -221,15 +261,16 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             }
         }
 
-        if url == nil || !(isAd(url: url!)) {
-            
-            decisionHandler(WKNavigationActionPolicy.allow)
-            
-            } else {
-            
-            decisionHandler(WKNavigationActionPolicy.cancel)
+        if !blocking11 {
+            if url == nil || !(isAd(url: url!)) {
+                
+                decisionHandler(WKNavigationActionPolicy.allow)
+                
+                } else {
+                
+                decisionHandler(WKNavigationActionPolicy.cancel)
+            }
         }
-
     }
     
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebView.NavigationType) -> Bool {

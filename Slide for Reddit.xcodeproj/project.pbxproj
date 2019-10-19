@@ -279,6 +279,7 @@
 		BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DA1E23383D00764BB8 /* seen.plist */; };
 		BEBF45DD1E23384500764BB8 /* comments.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DC1E23384500764BB8 /* comments.plist */; };
 		BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45E01E23EED800764BB8 /* SettingValues.swift */; };
+		BEC2FE19235BA2B100374013 /* adaway.json in Resources */ = {isa = PBXBuildFile; fileRef = BEC2FE18235BA2B100374013 /* adaway.json */; };
 		BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494271E307D57006618F3 /* GalleryTableViewController.swift */; };
 		BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494291E307DDA006618F3 /* GalleryCellView.swift */; };
 		BEC4A1A22322F74D00EE5114 /* SFSymbolsEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */; };
@@ -684,6 +685,7 @@
 		BEBF45DA1E23383D00764BB8 /* seen.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = seen.plist; sourceTree = "<group>"; };
 		BEBF45DC1E23384500764BB8 /* comments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = comments.plist; sourceTree = "<group>"; };
 		BEBF45E01E23EED800764BB8 /* SettingValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingValues.swift; sourceTree = "<group>"; };
+		BEC2FE18235BA2B100374013 /* adaway.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = adaway.json; sourceTree = "<group>"; };
 		BEC494271E307D57006618F3 /* GalleryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryTableViewController.swift; sourceTree = "<group>"; };
 		BEC494291E307DDA006618F3 /* GalleryCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCellView.swift; sourceTree = "<group>"; };
 		BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolsEnum.swift; sourceTree = "<group>"; };
@@ -1174,6 +1176,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BEC2FE18235BA2B100374013 /* adaway.json */,
 				BE4AB49C21BC4DAE001092C4 /* App Icons */,
 				BE3B7434210135BD00658DE9 /* html */,
 				090D6B7A20F3D8610052F3F6 /* Media */,
@@ -1610,6 +1613,7 @@
 				BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */,
 				BE1DA5E32208AC80001C7DB4 /* ic_tronblue@2x~ipad.png in Resources */,
 				BE1DA5D62208AC80001C7DB4 /* ic_purple@2x~ipad.png in Resources */,
+				BEC2FE19235BA2B100374013 /* adaway.json in Resources */,
 				BE35216C1E3D22B000C30B8D /* Roboto-Medium.ttf in Resources */,
 				BE17A24E215FFE76002C6CE6 /* readlater.plist in Resources */,
 				BE1DA5E12208AC80001C7DB4 /* ic_red@2x~ipad.png in Resources */,
