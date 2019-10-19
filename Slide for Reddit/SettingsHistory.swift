@@ -91,7 +91,7 @@ class SettingsHistory: BubbleSettingTableViewController {
         dotCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         dotCell.detailTextLabel?.text = "Enabling this will disable the 'grayed out' effect of read submissions"
         
-        createCell(hideSeenCell, hideSeen, isOn: SettingValues.hideSeen, text: "Hide read posts automatically")
+        createCell(hideSeenCell, hideSeen, isOn: !SettingValues.hideSeen, text: "Hide read posts automatically")
         hideSeenCell.detailTextLabel?.numberOfLines = 0
         hideSeenCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         hideSeenCell.detailTextLabel?.text = "Enabling this may lead to no posts loading in a subreddit"

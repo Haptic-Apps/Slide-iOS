@@ -2455,7 +2455,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 self.title.alpha = 1
             }
-        if let url = link.url, let controller = parentViewController?.getControllerForUrl(baseUrl: url) {
+        if let url = link?.url, let controller = parentViewController?.getControllerForUrl(baseUrl: url) {
                 return controller
             }
         //}
