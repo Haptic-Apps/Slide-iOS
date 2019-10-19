@@ -270,6 +270,8 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                 
                 decisionHandler(WKNavigationActionPolicy.cancel)
             }
+        } else {
+            decisionHandler(WKNavigationActionPolicy.allow)
         }
     }
     
