@@ -260,7 +260,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
 }
 extension WKWebView {
-    func stringByEvaluatingJavaScriptFromString(script: String) -> String {
+    func stringByEvaluatingJavaScriptFromString(script: String) -> String? {
         var resultString: String?
         var finished: Bool = false
         self.evaluateJavaScript(script, completionHandler: {(result: Any?, error: Error?) -> Void in
@@ -275,7 +275,7 @@ extension WKWebView {
         while !finished {
             RunLoop.current.run(mode: RunLoop.Mode.default, before: NSDate.distantFuture)
         }
-        return resultString!
+        return resultString
     }
 }
 

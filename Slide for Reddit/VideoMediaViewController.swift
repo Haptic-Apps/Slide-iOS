@@ -950,7 +950,7 @@ extension VideoMediaViewController {
 
         if !sliderBeingUsed {
             scrubber.updateWithTime(elapsedTime: player.currentTime())
-            let duration = Float(CMTimeGetSeconds(player.currentItem!.duration))
+            let duration = Float(CMTimeGetSeconds(player.currentItem?.duration ?? CMTime()))
             let time = Float(CMTimeGetSeconds(player.currentTime()))
             if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
                 handlingPlayerItemDidreachEnd = true

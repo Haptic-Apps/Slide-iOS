@@ -962,7 +962,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
                                             self.menuId = comment
                                             self.tableView.reloadData()
                                             loaded = true
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
                                                 self.goToCell(i: index)
                                             }
                                             break

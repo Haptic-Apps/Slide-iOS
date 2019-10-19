@@ -740,8 +740,12 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         case 3:
             switch indexPath.row {
             case 0:
-                let url = UserDefaults.standard.string(forKey: "vlink")!
-                VCPresenter.openRedditLink(url, self.navigationController, self)
+                var url = UserDefaults.standard.string(forKey: "vlink") ?? ""
+                if url.isEmpty {
+                    url = "https://www.reddit.com/r/slide_ios"
+                } else {
+                    VCPresenter.openRedditLink(url, self.navigationController, self)
+                }
             case 1:
                 ch = SingleSubredditViewController.init(subName: "slide_ios", single: true)
             case 2:
