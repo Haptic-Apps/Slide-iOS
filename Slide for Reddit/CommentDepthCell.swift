@@ -2244,18 +2244,20 @@ private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: 
 @available(iOS 13.0, *)
 extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        if self.commentBody.firstTextView.frame.contains(location) {
+        if self.commentBody.firstTextView.point(inside: location, with: nil) {
             let point = self.commentBody.firstTextView.convert(location, from: self.contentView)
-            let layoutManager = YYTextLayout(containerSize: self.commentBody.firstTextView.frame.size, text: self.commentBody.firstTextView.attributedText!)
-            if let locationFinal = layoutManager?.textPosition(for: point, lineIndex: layoutManager!.lineIndex(for: point)), let firstText = self.commentBody?.firstTextView, let attributes = firstText.attributedText?.attributes(at: Int(locationFinal), effectiveRange: nil) {
-                for attribute in attributes {
-                    if attribute.value is NSURL {
-                        if let url = (attribute.value as! NSURL).absoluteURL {
-                            return getConfigurationFor(url: url)
+            if let attributedText = self.commentBody.firstTextView.attributedText, let layoutManager = YYTextLayout(containerSize: self.commentBody.firstTextView.frame.size, text: attributedText) {
+                let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
+                if locationFinal < 1000000 {
+                    let attributes = attributedText.attributes(at: Int(locationFinal), effectiveRange: nil)
+                    for attribute in attributes {
+                        if attribute.value is NSURL {
+                            if let url = (attribute.value as! NSURL).absoluteURL {
+                                return getConfigurationFor(url: url)
+                            }
                         }
                     }
                 }
-
             }
         } else if self.commentBody.links.frame.contains(location) {
             /* TODO - find the links from the subviews?
