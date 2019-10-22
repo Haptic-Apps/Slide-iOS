@@ -1649,7 +1649,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         refresh(sender)
         updateToolbar()
     }
-
+    
     var currentSort: CommentNavType = .PARENTS
 
     enum CommentNavType {
@@ -2363,27 +2363,28 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
     }
     let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
     let parentOP = parents[thing]
-        if let cell = cell as? CommentDepthCell {
-            let innerContent = content[thing]
-            if innerContent is RComment {
-                var count = 0
-                let hiddenP = hiddenPersons.contains(thing)
-                if hiddenP {
-                    count = getChildNumber(n: innerContent!.getIdentifier())
-                }
-                var t = text[thing]!
-                if isSearching {
-                    t = highlight(t)
-                }
-
-                cell.setComment(comment: innerContent as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath, width: self.tableView.frame.size.width)
-            } else {
-                cell.setMore(more: (innerContent as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
+    if let cell = cell as? CommentDepthCell {
+        let innerContent = content[thing]
+        if innerContent is RComment {
+            var count = 0
+            let hiddenP = hiddenPersons.contains(thing)
+            if hiddenP {
+                count = getChildNumber(n: innerContent!.getIdentifier())
             }
-            cell.content = content[thing]
+            var t = text[thing]!
+            if isSearching {
+                t = highlight(t)
+            }
+
+            cell.setComment(comment: innerContent as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath, width: self.tableView.frame.size.width)
+        } else {
+            cell.setMore(more: (innerContent as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
         }
-        return cell
+        cell.content = content[thing]
     }
+    
+    return cell
+}
 
 //    @available(iOS 11.0, *)
 //    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

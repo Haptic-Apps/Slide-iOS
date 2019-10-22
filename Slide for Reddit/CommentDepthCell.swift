@@ -1443,6 +1443,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             self.commentBody.addGestureRecognizer(tapGestureRecognizer2)
 
+            if #available(iOS 13, *) {
+                let previewing = UIContextMenuInteraction(delegate: self)
+                self.addInteraction(previewing)
+            }
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
             long.delegate = self
@@ -1915,6 +1919,8 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
     }
 
     func linkLongTapped(url: URL) {
+        if #available(iOS 13.0, *) {
+        } else {
         longBlocking = true
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
@@ -1953,6 +1959,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         }
         
         alertController.show(parent)
+        }
     }
 }
 
@@ -2232,4 +2239,69 @@ private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) ->
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+}
+
+@available(iOS 13.0, *)
+extension CommentDepthCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        if self.commentBody.firstTextView.frame.contains(location) {
+            let point = self.commentBody.firstTextView.convert(location, from: self.contentView)
+            let layoutManager = YYTextLayout(containerSize: self.commentBody.firstTextView.frame.size, text: self.commentBody.firstTextView.attributedText!)
+            if let locationFinal = layoutManager?.textPosition(for: point, lineIndex: layoutManager!.lineIndex(for: point)), let firstText = self.commentBody?.firstTextView, let attributes = firstText.attributedText?.attributes(at: Int(locationFinal), effectiveRange: nil) {
+                for attribute in attributes {
+                    if attribute.value is NSURL {
+                        if let url = (attribute.value as! NSURL).absoluteURL {
+                            return getConfigurationFor(url: url)
+                        }
+                    }
+                }
+
+            }
+        } else if self.commentBody.links.frame.contains(location) {
+            for view in self.commentBody.links.subviews[0].subviews {
+                if view is UIButton {
+                }
+            }
+        }
+        return nil
+    }
+    
+    func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            if let vc = self.parent?.getControllerForUrl(baseUrl: url) {
+                if vc is ModalMediaViewController {
+                    return vc
+                } else {
+                    return UINavigationController(rootViewController: vc)
+                }
+            }
+            return nil
+        }) { (element) -> UIMenu? in
+            var children = [UIMenuElement]()
+            
+            children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
+                let shareItems: Array = [url]
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = self.contentView
+                self.parent?.present(activityViewController, animated: true, completion: nil)
+            })
+            children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
+                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parent)
+            })
+
+            children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
+                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            })
+            
+            let open = OpenInChromeController.init()
+            if open.isChromeInstalled() {
+                children.append(UIAction(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()) { _ in
+                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                })
+            }
+
+            return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
+        }
+    }
 }

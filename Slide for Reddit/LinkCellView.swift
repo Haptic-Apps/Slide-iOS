@@ -310,10 +310,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.isOpaque = false
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
-        if #available(iOS 13, *) {
-            let interaction = UIContextMenuInteraction(delegate: self)
-            self.save.addInteraction(interaction)
-        }
         
         self.menu = UIButton(type: .custom).then {
             $0.accessibilityIdentifier = "Post menu"
@@ -603,7 +599,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
                 self.addGestureRecognizer(comment)
             }
-            
+            if #available(iOS 13, *) {
+                let interaction = UIContextMenuInteraction(delegate: self)
+                self.save.addInteraction(interaction)
+                if self.thumbImageContainer != nil {
+                    self.thumbImageContainer.addInteraction(interaction)
+                }
+            }
+
             if longPress == nil {
                 longPress = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.handleLongPress(_:)))
                 longPress?.minimumPressDuration = 0.36
@@ -2914,12 +2917,54 @@ private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) ->
 @available(iOS 13.0, *)
 extension LinkCellView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
-
-            return self.makeContextMenu()
-        })
-
+        if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.point(inside: location, with: nil) {
+            return getConfigurationFor(url: url)
+        } else {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+                return self.makeContextMenu()
+            })
+        }
     }
+    
+    func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
+                if vc is ModalMediaViewController {
+                    return vc
+                } else {
+                    return UINavigationController(rootViewController: vc)
+                }
+            }
+            return nil
+        }) { (element) -> UIMenu? in
+            var children = [UIMenuElement]()
+            
+            children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
+                let shareItems: Array = [url]
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = self.contentView
+                self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+            })
+            children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
+                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+            })
+
+            children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
+                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            })
+            
+            let open = OpenInChromeController.init()
+            if open.isChromeInstalled() {
+                children.append(UIAction(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()) { _ in
+                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                })
+            }
+
+            return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
+        }
+    }
+    
     func makeContextMenu() -> UIMenu {
 
         // Create a UIAction for sharing
