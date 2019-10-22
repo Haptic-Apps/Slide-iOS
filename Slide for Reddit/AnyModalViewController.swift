@@ -16,6 +16,8 @@ class AnyModalViewController: UIViewController {
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
     let volumeHeight: CGFloat = 3
     static var linkID = ""
+
+    var forceStartUnmuted = false
     
     var safeAreaInsets: UIEdgeInsets {
         if #available(iOS 11.0, tvOS 11.0, *) {
@@ -206,7 +208,11 @@ class AnyModalViewController: UIViewController {
                         let avPlayerItem = AVPlayerItem(url: strongSelf.baseURL!)
                         strongSelf.videoView?.player = AVPlayer(playerItem: avPlayerItem)
                         strongSelf.embeddedPlayer = strongSelf.videoView!.player
-                        strongSelf.videoView?.player?.isMuted = SettingValues.muteVideosInModal
+                        if SettingValues.muteVideosInModal {
+                            strongSelf.mute()
+                        } else {
+                            strongSelf.unmute()
+                        }
                         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
                         strongSelf.scrubber.totalDuration = strongSelf.videoView.player!.currentItem!.asset.duration
                         strongSelf.hideSpinner()
@@ -249,25 +255,63 @@ class AnyModalViewController: UIViewController {
         displayLink = nil
         setOnce = false
     }
+
+    @objc func muteButtonPressed() {
+        guard let player = self.videoView.player else {
+            return
+        }
+
+        if player.isMuted {
+            unmute(overrideMuteSwitch: true)
+        } else {
+            mute()
+        }
+    }
+
+    @objc func mute() {
+        guard let player = self.videoView.player else {
+            return
+        }
+
+        // Set the category to ambient to prevent the player from silencing background audio
+        try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+
+        player.isMuted = true
+        setMuteButtonImage(muted: true)
+    }
     
-    @objc func unmute() {
-        self.videoView.player?.isMuted = false
+    @objc func unmute(overrideMuteSwitch: Bool = false) {
+        guard let player = self.videoView.player else {
+            return
+        }
+
+        player.isMuted = false
 
         //SettingValues.autoplayAudioMode.activate()
-        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
 
-        UIView.animate(withDuration: 0.5, animations: {
-            self.muteButton.alpha = 0
-        }, completion: { (_) in
-            self.muteButton.isHidden = true
-            self.muteButton.alpha = 1
-        })
+        if SettingValues.modalVideosRespectHardwareMuteSwitch && !overrideMuteSwitch {
+            try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+        } else {
+            try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+        }
+
+        setMuteButtonImage(muted: false)
+    }
+
+    func setMuteButtonImage(muted: Bool) {
+        let image: UIImage?
+        if muted {
+            image = UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true)
+        } else {
+            image = UIImage(sfString: SFSymbol.volume3Fill, overrideString: "audio")?.navIcon(true)
+        }
+        muteButton.setImage(image, for: [])
     }
 
     func connectActions() {
         menuButton.addTarget(self, action: #selector(showContextMenu(_:)), for: .touchUpInside)
         downloadButton.addTarget(self, action: #selector(downloadVideoToLibrary(_:)), for: .touchUpInside)
-        muteButton.addTarget(self, action: #selector(unmute), for: .touchUpInside)
+        muteButton.addTarget(self, action: #selector(muteButtonPressed), for: .touchUpInside)
         upvoteButton.addTarget(self, action: #selector(upvote(_:)), for: .touchUpInside)
         goToCommentsButton.addTarget(self, action: #selector(openComments(_:)), for: .touchUpInside)
 
@@ -388,7 +432,11 @@ class AnyModalViewController: UIViewController {
         displayLink?.isPaused = false
 
         videoView.player?.play()
-        self.videoView.player?.isMuted = SettingValues.muteInlineVideos
+        if !SettingValues.muteInlineVideos || forceStartUnmuted {
+            unmute(overrideMuteSwitch: forceStartUnmuted)
+        } else {
+            mute()
+        }
 
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: closeButton)
     }
@@ -503,32 +551,35 @@ class AnyModalViewController: UIViewController {
         
         menuButton = UIButton().then {
             $0.accessibilityIdentifier = "More Button"
+            $0.accessibilityLabel = "More"
             $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.navIcon(true), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         downloadButton = UIButton().then {
             $0.accessibilityIdentifier = "Download Button"
+            $0.accessibilityLabel = "Download"
             $0.setImage(UIImage(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.navIcon(true), for: [])
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
         
         upvoteButton = UIButton().then {
             $0.accessibilityIdentifier = "Upvote Button"
+            $0.accessibilityLabel = "Upvote"
             $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.navIcon(true).getCopy(withColor: isUpvoted ? ColorUtil.upvoteColor : UIColor.white), for: [])
             $0.isHidden = upvoteCallback == nil // The button will be unhidden once the content has loaded.
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
 
         muteButton = UIButton().then {
-            $0.accessibilityIdentifier = "Un-Mute video"
-            $0.isHidden = true
-            $0.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+            $0.accessibilityIdentifier = "Toggle Mute"
+            $0.accessibilityLabel = "Toggle Mute"
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
 
         goToCommentsButton = UIButton().then {
             $0.accessibilityIdentifier = "Go to Comments Button"
+            $0.accessibilityLabel = "Go to comments"
             $0.setImage(UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")?.navIcon(true), for: [])
             $0.isHidden = commentCallback == nil
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
@@ -823,42 +874,32 @@ extension AnyModalViewController {
         }
         let hasAudioTracks = (player.currentItem?.tracks.count ?? 1) > 1
 
-        if hasAudioTracks {
-            if player.isMuted && muteButton.isHidden && SettingValues.muteVideosInModal {
-                muteButton.isHidden = false
-            }
-        }
-        
+        /*
+         Some streaming formats don't report the number of audio tracks accurately
+         until a bit of time has passed. We react to that here, setting the audio
+         session and the mute button state accordingly.
+         */
         if !setOnce || lastTracks != hasAudioTracks {
             setOnce = true
             lastTracks = hasAudioTracks
 
-            if hasAudioTracks {
-                if !SettingValues.muteVideosInModal {
-                    if SettingValues.modalVideosRespectHardwareMuteSwitch {
-                        try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
-                    } else {
-                        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-                    }
-                    player.isMuted = false
+            if hasAudioTracks || forceStartUnmuted {
+                if !SettingValues.muteVideosInModal || forceStartUnmuted {
+                    unmute(overrideMuteSwitch: forceStartUnmuted)
                 } else {
-                    try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                    mute()
                 }
             } else {
                 // If there's no audio track, set the category to ambient to prevent the player
                 // from silencing background audio
-                do {
-                    try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-                } catch {
-                    NSLog(error.localizedDescription)
-                }
+                mute()
             }
         }
 
         if !sliderBeingUsed {
-            if let player = videoView.player {
-                scrubber.updateWithTime(elapsedTime: player.currentTime())
-            }
+
+            scrubber.updateWithTime(elapsedTime: player.currentTime())
+
             if toReturnTo == nil {
                 guard let embeddedPlayer = embeddedPlayer else {
                     return
