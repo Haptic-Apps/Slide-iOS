@@ -2258,10 +2258,11 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
 
             }
         } else if self.commentBody.links.frame.contains(location) {
+            /* TODO - find the links from the subviews?
             for view in self.commentBody.links.subviews[0].subviews {
                 if view is UIButton {
                 }
-            }
+            }*/
         }
         return nil
     }

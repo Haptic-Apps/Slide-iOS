@@ -47,8 +47,8 @@ class SettingsHistory: BubbleSettingTableViewController {
             SettingValues.saveNSFWHistory = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_saveNSFWHistory)
         } else if changed == hideSeen {
-            SettingValues.hideSeen = !changed.isOn
-            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hideSeen)
+            SettingValues.hideSeen = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideSeen)
         } else if changed == dot {
             SettingValues.newIndicator = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_newIndicator)
@@ -91,7 +91,7 @@ class SettingsHistory: BubbleSettingTableViewController {
         dotCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         dotCell.detailTextLabel?.text = "Enabling this will disable the 'grayed out' effect of read submissions"
         
-        createCell(hideSeenCell, hideSeen, isOn: !SettingValues.hideSeen, text: "Hide read posts automatically")
+        createCell(hideSeenCell, hideSeen, isOn: SettingValues.hideSeen, text: "Hide read posts automatically")
         hideSeenCell.detailTextLabel?.numberOfLines = 0
         hideSeenCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         hideSeenCell.detailTextLabel?.text = "Enabling this may lead to no posts loading in a subreddit"
