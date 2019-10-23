@@ -605,6 +605,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 if self.thumbImageContainer != nil {
                     self.thumbImageContainer.addInteraction(interaction)
                 }
+                if full && self.textView != nil {
+                    self.contentView.addInteraction(interaction)
+                }
             }
 
             if longPress == nil {
@@ -2917,14 +2920,58 @@ private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) ->
 
 @available(iOS 13.0, *)
 extension LinkCellView: UIContextMenuInteractionDelegate {
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        if self.textView != nil && self.textView.frame.contains(interaction.location(in: self.contentView)) {
+            return UITargetedPreview(view: self.textView)
+        } else if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.contentView)) {
+            return UITargetedPreview(view: self.thumbImageContainer)
+        } else {
+            return UITargetedPreview(view: self.save)
+        }
+
+    }
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.point(inside: location, with: nil) {
+        print(location)
+        if full && self.textView != nil && self.textView.frame.contains(location) {
+            let innerPoint = self.contentView.convert(location, to: self.textView)
+            if self.textView.firstTextView.frame.contains(innerPoint) {
+                return getConfigurationForTextView(self.textView.firstTextView, innerPoint)
+            } else if self.textView.overflow.frame.contains(innerPoint) {
+                let innerLocation = self.contentView.convert(innerPoint, to: self.textView.overflow)
+                print(innerLocation)
+                for view in self.textView.overflow.subviews {
+                    if view.frame.contains(innerLocation) && view is YYLabel {
+                        return getConfigurationForTextView(view as! YYLabel, innerLocation)
+                    }
+                }
+            }
+        } else if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.frame.contains(location) {
             return getConfigurationFor(url: url)
         } else {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
                 return self.makeContextMenu()
             })
         }
+        return nil
+    }
+    
+    func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
+        let point = label.superview?.convert(location, to: label) ?? location
+                if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
+            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
+            if locationFinal < 1000000 {
+                let attributes = attributedText.attributes(at: Int(locationFinal), effectiveRange: nil)
+                for attribute in attributes {
+                    if attribute.value is NSURL {
+                        if let url = (attribute.value as! NSURL).absoluteURL {
+                            return getConfigurationFor(url: url)
+                        }
+                    }
+                }
+            }
+        }
+        return nil
     }
     
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {

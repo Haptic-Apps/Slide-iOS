@@ -1445,7 +1445,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
             if #available(iOS 13, *) {
                 let previewing = UIContextMenuInteraction(delegate: self)
-                self.addInteraction(previewing)
+                self.commentBody.addInteraction(previewing)
             }
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
@@ -2244,19 +2244,19 @@ private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: 
 @available(iOS 13.0, *)
 extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        if self.commentBody.firstTextView.point(inside: location, with: nil) {
-            let point = self.commentBody.firstTextView.convert(location, from: self.contentView)
-            if let attributedText = self.commentBody.firstTextView.attributedText, let layoutManager = YYTextLayout(containerSize: self.commentBody.firstTextView.frame.size, text: attributedText) {
-                let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
-                if locationFinal < 1000000 {
-                    let attributes = attributedText.attributes(at: Int(locationFinal), effectiveRange: nil)
-                    for attribute in attributes {
-                        if attribute.value is NSURL {
-                            if let url = (attribute.value as! NSURL).absoluteURL {
-                                return getConfigurationFor(url: url)
-                            }
-                        }
-                    }
+        print(location)
+        print(self.commentBody.firstTextView.frame)
+        print(self.commentBody.overflow.frame)
+        if self.commentBody.firstTextView.frame.contains(location) {
+            return getConfigurationForTextView(self.commentBody.firstTextView, location)
+        } else if self.commentBody.overflow.frame.contains(location) {
+            let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
+            print(innerLocation)
+            for view in self.commentBody.overflow.subviews {
+                print("Inside? \(view.frame)")
+                if view.frame.contains(innerLocation) && view is YYLabel {
+                    print("IN!")
+                    return getConfigurationForTextView(view as! YYLabel, innerLocation)
                 }
             }
         } else if self.commentBody.links.frame.contains(location) {
@@ -2265,6 +2265,26 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                 if view is UIButton {
                 }
             }*/
+        }
+        return nil
+    }
+    
+    func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
+        let point = label.superview?.convert(location, to: label) ?? location
+        
+        print("Converted \(location) to \(point)")
+        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
+            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
+            if locationFinal < 1000000 {
+                let attributes = attributedText.attributes(at: Int(locationFinal), effectiveRange: nil)
+                for attribute in attributes {
+                    if attribute.value is NSURL {
+                        if let url = (attribute.value as! NSURL).absoluteURL {
+                            return getConfigurationFor(url: url)
+                        }
+                    }
+                }
+            }
         }
         return nil
     }
