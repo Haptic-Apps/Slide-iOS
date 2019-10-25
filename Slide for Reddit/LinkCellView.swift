@@ -601,13 +601,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             if #available(iOS 13, *) {
                 let interaction = UIContextMenuInteraction(delegate: self)
-                self.save.addInteraction(interaction)
-                if self.thumbImageContainer != nil {
-                    self.thumbImageContainer.addInteraction(interaction)
-                }
-                if full && self.textView != nil {
-                    self.contentView.addInteraction(interaction)
-                }
+                self.contentView.addInteraction(interaction)
             }
 
             if longPress == nil {
@@ -2666,6 +2660,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     public var parentViewController: (UIViewController & MediaVCDelegate)?
+    weak var previewedVC: UIViewController?
     public var navViewController: UIViewController?
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
@@ -2920,11 +2915,17 @@ private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) ->
 
 @available(iOS 13.0, *)
 extension LinkCellView: UIContextMenuInteractionDelegate {
-    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        animator.addCompletion {
+            if let vc = self.previewedVC {
+                VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parentViewController)
+            }
+        }
+    }
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        if self.textView != nil && self.textView.frame.contains(interaction.location(in: self.contentView)) {
+        if full && self.textView != nil && self.textView.frame.contains(interaction.location(in: self.contentView)) {
             return UITargetedPreview(view: self.textView)
-        } else if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.contentView)) {
+        } else if thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.contentView)) {
             return UITargetedPreview(view: self.thumbImageContainer)
         } else {
             return UITargetedPreview(view: self.save)
@@ -2932,7 +2933,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
 
     }
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        print(location)
+        let saveArea = self.contentView.convert(location, to: self.buttons)
         if full && self.textView != nil && self.textView.frame.contains(location) {
             let innerPoint = self.contentView.convert(location, to: self.textView)
             if self.textView.firstTextView.frame.contains(innerPoint) {
@@ -2948,7 +2949,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             }
         } else if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.frame.contains(location) {
             return getConfigurationFor(url: url)
-        } else {
+        } else if save.frame.contains(saveArea) {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
                 return self.makeContextMenu()
             })
@@ -2974,13 +2975,18 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         return nil
     }
     
+    func contextMenuInteractionDidEnd(_ interaction: UIContextMenuInteraction) {
+        self.previewedVC = nil
+    }
+    
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
             if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
-                if vc is ModalMediaViewController {
-                    return vc
-                } else {
+                self.previewedVC = vc
+                if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
                     return UINavigationController(rootViewController: vc)
+                } else {
+                    return vc
                 }
             }
             return nil

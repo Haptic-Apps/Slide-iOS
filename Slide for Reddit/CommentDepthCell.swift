@@ -34,6 +34,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var oldConstraints: [NSLayoutConstraint] = []
     var oldLocation: CGPoint = CGPoint.zero
     var oldHeight: CGFloat = -1
+    weak var previewedVC: UIViewController?
     
     /* probably an issue here */
     @objc func textViewDidChange(_ textView: UITextView) {
@@ -2243,19 +2244,21 @@ private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: 
 
 @available(iOS 13.0, *)
 extension CommentDepthCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        animator.addCompletion {
+            if let vc = self.previewedVC {
+                VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parent)
+            }
+        }
+    }
+    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        print(location)
-        print(self.commentBody.firstTextView.frame)
-        print(self.commentBody.overflow.frame)
         if self.commentBody.firstTextView.frame.contains(location) {
             return getConfigurationForTextView(self.commentBody.firstTextView, location)
         } else if self.commentBody.overflow.frame.contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
-            print(innerLocation)
             for view in self.commentBody.overflow.subviews {
-                print("Inside? \(view.frame)")
                 if view.frame.contains(innerLocation) && view is YYLabel {
-                    print("IN!")
                     return getConfigurationForTextView(view as! YYLabel, innerLocation)
                 }
             }
@@ -2269,10 +2272,13 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         return nil
     }
     
+    func contextMenuInteractionDidEnd(_ interaction: UIContextMenuInteraction) {
+        self.previewedVC = nil
+    }
+    
     func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
         let point = label.superview?.convert(location, to: label) ?? location
         
-        print("Converted \(location) to \(point)")
         if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
             let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
             if locationFinal < 1000000 {
@@ -2292,10 +2298,11 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
             if let vc = self.parent?.getControllerForUrl(baseUrl: url) {
-                if vc is ModalMediaViewController {
-                    return vc
-                } else {
+                self.previewedVC = vc
+                if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
                     return UINavigationController(rootViewController: vc)
+                } else {
+                    return vc
                 }
             }
             return nil

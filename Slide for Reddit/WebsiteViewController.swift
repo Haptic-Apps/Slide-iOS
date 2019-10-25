@@ -110,7 +110,8 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         if setObserver {
             webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
         }
