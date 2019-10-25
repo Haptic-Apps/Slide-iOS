@@ -2661,6 +2661,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     weak var previewedVC: UIViewController?
+    var previewedURL: URL?
     public var navViewController: UIViewController?
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
@@ -2918,7 +2919,14 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         animator.addCompletion {
             if let vc = self.previewedVC {
-                VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parentViewController)
+                if vc is WebsiteViewController || vc is SFSafariViewController {
+                    self.previewedVC = nil
+                    if let url = self.previewedURL {
+                        self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+                    }
+                } else {
+                    VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parentViewController)
+                }
             }
         }
     }
@@ -2981,6 +2989,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            self.previewedURL = url
             if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {

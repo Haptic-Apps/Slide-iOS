@@ -35,7 +35,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var oldLocation: CGPoint = CGPoint.zero
     var oldHeight: CGFloat = -1
     weak var previewedVC: UIViewController?
-    
+    var previewedURL: URL?
+
     /* probably an issue here */
     @objc func textViewDidChange(_ textView: UITextView) {
         let split = textView.text.split("\n").suffix(1)
@@ -2247,7 +2248,14 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         animator.addCompletion {
             if let vc = self.previewedVC {
-                VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parent)
+                if vc is WebsiteViewController || vc is SFHideSafariViewController {
+                    self.previewedVC = nil
+                    if let url = self.previewedURL {
+                        self.parent?.doShow(url: url, heroView: nil, heroVC: nil)
+                    }
+                } else {
+                    VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parent)
+                }
             }
         }
     }
@@ -2296,6 +2304,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     }
     
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
+        self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
             if let vc = self.parent?.getControllerForUrl(baseUrl: url) {
                 self.previewedVC = vc
