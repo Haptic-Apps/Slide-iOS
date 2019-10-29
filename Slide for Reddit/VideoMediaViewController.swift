@@ -21,7 +21,21 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         return contentType == ContentType.CType.VIDEO
     }
     
-    var youtubeMute = false
+    var youtubeMute = false {
+        didSet(fromValue) {
+            let startAlpha = youtubeMute ? 0 : 1
+            let endAlpha = youtubeMute ? 1 : 0
+            
+            UIView.animate(withDuration: 0.5, animations: {
+                self.muteButton.alpha = CGFloat(startAlpha)
+            }, completion: { [weak self] (_) in
+                if let strongSelf = self {
+                    strongSelf.muteButton.isHidden = strongSelf.youtubeMute
+                    strongSelf.muteButton.alpha = CGFloat(endAlpha)
+                }
+            })
+        }
+    }
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
     let volumeHeight: CGFloat = 3
     var setOnce = false
@@ -296,20 +310,16 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     @objc func unmute() {
         if isYoutubeView {
-            _ = youtubeView.webView?.stringByEvaluatingJavaScriptFromString(script: "player.unMute();")
-            youtubeMute = false
+            // TODO: - An error is thrown when this is evaluated. Resolve why to allow error handling
+            youtubeView.webView?.evaluateJavaScript("player.unMute()") { [weak self] (_, _) in
+                if let strongSelf = self {
+                    strongSelf.youtubeMute = false
+                    strongSelf.videoView.player?.isMuted = false
+                    
+                    try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                }
+            }
         }
-        
-        self.videoView.player?.isMuted = false
-
-        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-
-        UIView.animate(withDuration: 0.5, animations: {
-            self.muteButton.alpha = 0
-        }, completion: { (_) in
-            self.muteButton.isHidden = true
-            self.muteButton.alpha = 1
-        })
     }
     
     func connectActions() {
@@ -483,10 +493,10 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         _ = videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
             self?.getVideo(urlString)
-            }, failure: {
-                self.parent?.dismiss(animated: true, completion: {
-                    self.failureCallback?(URL.init(string: url)!)
-                })
+        }, failure: {
+            self.parent?.dismiss(animated: true, completion: {
+                self.failureCallback?(URL.init(string: url)!)
+            })
         })
     }
     
@@ -983,8 +993,12 @@ extension VideoMediaViewController: WKYTPlayerViewDelegate {
         self.setProgressViewVisible(false)
         //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
         if isYoutubeView && SettingValues.muteYouTube {
-            self.youtubeMute = true
-            _ = playerView.webView?.stringByEvaluatingJavaScriptFromString(script: "player.mute();")
+            // TODO: - An error is thrown when this is evaluated. Resolve why to allow error handling
+            playerView.webView?.evaluateJavaScript("player.mute()", completionHandler: { [weak self] (_, _) in
+                if let strongSelf = self {
+                    strongSelf.youtubeMute = true
+                }
+            })
         }
         
         self.loaded = true
@@ -1204,10 +1218,12 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         if isYoutubeView {
             youtubeView.getPlayerState { [weak self] (state: WKYTPlayerState, error: Error?) in
                 if error == nil {
-                    self?.wasPlayingWhenPaused = state == .playing
+                    if let strongSelf = self {
+                        strongSelf.wasPlayingWhenPaused = state == .playing
+                        strongSelf.youtubeView.pauseVideo()
+                    }
                 }
             }
-            youtubeView.pauseVideo()
         } else {
             if let player = videoView.player {
                 wasPlayingWhenPaused = player.rate != 0
