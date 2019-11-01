@@ -271,7 +271,7 @@ extension ProfileInfoViewController {
         do {
             try (UIApplication.shared.delegate as! AppDelegate).session?.getUserProfile(named, completion: { (result) in
                 switch result {
-                case .failure(let error):
+                case .failure(_):
                    // TODO: - handle this
                     break
                 case .success(let account):

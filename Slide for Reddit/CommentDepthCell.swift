@@ -2320,7 +2320,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                 }
             }
             return nil
-        }) { (element) -> UIMenu? in
+        }, actionProvider: { (_) -> UIMenu? in
             var children = [UIMenuElement]()
             
             children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
@@ -2346,6 +2346,6 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             }
 
             return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
-        }
+        })
     }
 }

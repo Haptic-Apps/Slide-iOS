@@ -141,7 +141,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         if #available(iOS 11, *) {
             if UserDefaults.standard.bool(forKey: "adblock-loaded") {
                 WKContentRuleListStore.default().lookUpContentRuleList(forIdentifier: "slide-ad-blocking") { [weak self] (contentRuleList, error) in
-                    guard let strongSelf = self else {return}
+                    guard let strongSelf = self else { return }
                     if let error = error {
                         print(error.localizedDescription)
                         UserDefaults.standard.set(false, forKey: "adblock-loaded")
@@ -165,7 +165,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         if let jsonFilePath = Bundle.main.path(forResource: "adaway.json", ofType: nil),
             let jsonFileContent = try? String(contentsOfFile: jsonFilePath, encoding: String.Encoding.utf8) {
             WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "slide-ad-blocking", encodedContentRuleList: jsonFileContent) { [weak self] (contentRuleList, error) in
-                guard let strongSelf = self else {return}
+                guard let strongSelf = self else { return }
                 if let error = error {
                     strongSelf.blocking11 = false
                     print(error.localizedDescription)

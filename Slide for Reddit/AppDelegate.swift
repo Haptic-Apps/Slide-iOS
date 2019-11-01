@@ -696,13 +696,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             collectionsRecord = CKRecord(recordType: key)
         }
         do {
-            if let data: NSData = try PropertyListSerialization.data(fromPropertyList: dictionary, format: PropertyListSerialization.PropertyListFormat.xml, options: 0) as NSData {
-                if let datastring = NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue) {
-                    print(datastring)
-                   collectionsRecord.setValue(datastring, forKey: "data_xml")
-               } else {
-                   print("Could not turn nsdata to string")
-               }
+            let data: NSData = try PropertyListSerialization.data(fromPropertyList: dictionary, format: PropertyListSerialization.PropertyListFormat.xml, options: 0) as NSData
+            if let datastring = NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue) {
+                print(datastring)
+               collectionsRecord.setValue(datastring, forKey: "data_xml")
+            } else {
+                print("Could not turn nsdata to string")
             }
             
             print("Saving to iCloud \(key)")
@@ -725,7 +724,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         privateDatabase.perform(query, inZoneWith: nil) { (records, error) in
             if error != nil {
                 print("Error fetching records...")
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "")
             } else {
                 if let unwrappedRecord = records?[0] {
                     if let object = unwrappedRecord.object(forKey: "data_xml") as? String {

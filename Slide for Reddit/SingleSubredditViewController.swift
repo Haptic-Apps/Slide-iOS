@@ -819,7 +819,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
             subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
             subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let subbB = UIBarButtonItem.init(customView: subb)
 
             let info = UIButton.init(type: .custom)
             info.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.toolbarIcon(), for: UIControl.State.normal)
@@ -2394,7 +2393,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             if let strongSelf = self {
                 strongSelf.tableView.reloadData()
             }
-            return true
+            return
         })
         VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
     }

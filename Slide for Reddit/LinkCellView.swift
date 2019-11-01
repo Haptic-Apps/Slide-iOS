@@ -2246,7 +2246,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
-                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): comments.font, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): comments.textColor]))
+                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): comments.font ?? UIFont.systemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): comments.textColor ?? ColorUtil.theme.fontColor]))
             
             var attrsNew: [String: Any] = [:]
             if scoreRatio.length > 0 {
@@ -2344,7 +2344,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 outer.addTapGestureRecognizer {
                     let shareItems: Array = [link.url]
-                    let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                    let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems as [Any], applicationActivities: nil)
                     if let presenter = activityViewController.popoverPresentationController {
                         presenter.sourceView = outer
                         presenter.sourceRect = outer.bounds
@@ -3004,7 +3004,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 }
             }
             return nil
-        }) { (element) -> UIMenu? in
+        }, actionProvider: { (_) -> UIMenu? in
             var children = [UIMenuElement]()
             
             children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
@@ -3030,7 +3030,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             }
 
             return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
-        }
+        })
     }
     
     func makeContextMenu() -> UIMenu {

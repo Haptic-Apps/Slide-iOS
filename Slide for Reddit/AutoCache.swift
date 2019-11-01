@@ -215,7 +215,6 @@ public class AutoCache: NSObject {
                 big = false
             }
 
-            let shouldShowLq = false
             if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                     || SettingValues.noImages && submission.isSelf {
                 big = false

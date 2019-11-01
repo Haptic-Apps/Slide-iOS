@@ -593,9 +593,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             History.addSeen(s: cell.link!, skipDuplicates: true)
             cell.refresh()
             if parent is PagingCommentViewController {
-                (parent as! PagingCommentViewController).reloadCallback?()
+                _ = (parent as! PagingCommentViewController).reloadCallback?()
             }
-            CachedTitle.getTitle(submission: cell.link!, full: false, true)
+            _ = CachedTitle.getTitle(submission: cell.link!, full: false, true)
         } catch {
 
         }
