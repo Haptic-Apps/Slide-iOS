@@ -9,10 +9,10 @@
 import Foundation
 
 // https://stackoverflow.com/a/29179878/7138792
-private extension BinaryInteger {
+public extension BinaryInteger {
     var degreesToRadians: CGFloat { return CGFloat(Int(self)) * .pi / 180 }
 }
-private extension FloatingPoint {
+public extension FloatingPoint {
     var degreesToRadians: Self { return self * .pi / 180 }
     var radiansToDegrees: Self { return self * 180 / .pi }
 }

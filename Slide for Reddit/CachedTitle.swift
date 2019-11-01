@@ -85,7 +85,6 @@ class CachedTitle {
             for award in submission.awards {
                 let url = award.split("*")[0]
                 let count = Int(award.split(":")[1]) ?? 0
-                print("URL IS \(url) and count is \(count)")
                 attributedTitle.append(spacer)
                 if let urlAsURL = URL(string: url),
                     let flairData = try? Data(contentsOf: urlAsURL),

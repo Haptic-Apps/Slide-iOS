@@ -319,6 +319,9 @@ extension SettingsFont {
 
         // Prune out the weights that aren't available for the selected font
         for font in fontsInFamily {
+            if font.contains("Italic") || font.contains("Oblique") {
+                continue
+            }
             actionSheetController.addAction(title: font, icon: font == FontGenerator.fontOfSize(size: 16, submission: submission).fontName ? selected : nil) {
                 // Update the stored font weight
                 UserDefaults.standard.set(font, forKey: submission ? "postfont" : "commentfont")

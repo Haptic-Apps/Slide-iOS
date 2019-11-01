@@ -127,5 +127,4 @@ extension UIFont {
     func makeBold() -> UIFont {
         return withTraits(traits: .traitBold)
     }
-    
 }

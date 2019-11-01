@@ -11,7 +11,14 @@ import UIKit
 import YYText
 
 class LinkParser {
-    public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSMutableAttributedString {
+    public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, bold: UIFont? = nil, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSMutableAttributedString {
+        var finalBold: UIFont
+        if bold == nil {
+            finalBold = font.makeBold()
+        } else {
+            finalBold = bold!
+        }
+        
         let string = NSMutableAttributedString.init(attributedString: attributedString)
         string.removeAttribute(convertToNSAttributedStringKey(kCTForegroundColorFromContextAttributeName as String), range: NSRange.init(location: 0, length: string.length))
         if string.length > 0 {
@@ -103,19 +110,16 @@ class LinkParser {
                 if let f = value as? UIFont {
                     let isItalic = f.fontDescriptor.symbolicTraits.contains(UIFontDescriptor.SymbolicTraits.traitItalic)
                     let isBold = f.fontDescriptor.symbolicTraits.contains(UIFontDescriptor.SymbolicTraits.traitBold)
-                    var traitSet = font.fontDescriptor.symbolicTraits
-                    if isItalic {
-                        traitSet.update(with: UIFontDescriptor.SymbolicTraits.traitItalic)
-                    }
+                    
+                    var newFont = UIFont(descriptor: font.fontDescriptor, size: f.pointSize)
                     if isBold {
-                        traitSet.update(with: UIFontDescriptor.SymbolicTraits.traitBold)
+                        newFont = UIFont(descriptor: finalBold.fontDescriptor, size: f.pointSize)
                     }
-                    let newFontDescriptor = font.fontDescriptor.withSymbolicTraits(traitSet)
-                    if let fontDescriptor = newFontDescriptor {
-                    let newFont = UIFont(
-                        descriptor: fontDescriptor,
-                        size: f.pointSize)
-                        string.removeAttribute(.font, range: range)
+                    string.removeAttribute(.font, range: range)
+                    if isItalic {
+                        string.addAttributes([.font: newFont, convertToNSAttributedStringKey(YYTextGlyphTransformAttributeName): CGAffineTransform(a: 1, b: tan(0.degreesToRadians), c: tan(15.degreesToRadians), d: 1, tx: 0, ty: 0)], range: range)
+                        string.yy_setColor(fontColor, range: range)
+                    } else {
                         string.addAttribute(.font, value: newFont, range: range)
                     }
                 }
@@ -125,7 +129,6 @@ class LinkParser {
         }
         return string
     }
-
 }
 
 // Used from https://gist.github.com/aquajach/4d9398b95a748fd37e88
