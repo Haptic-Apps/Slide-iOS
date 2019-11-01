@@ -2919,13 +2919,18 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         animator.addCompletion {
             if let vc = self.previewedVC {
-                if vc is WebsiteViewController || vc is SFSafariViewController {
+                if vc is WebsiteViewController || vc is SFHideSafariViewController {
                     self.previewedVC = nil
                     if let url = self.previewedURL {
                         self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
                     }
                 } else {
-                    VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parentViewController)
+                    if self.parentViewController != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {
+                        vc.modalPresentationStyle = .overFullScreen
+                        self.parentViewController?.present(vc, animated: true)
+                    } else {
+                        VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parentViewController)
+                    }
                 }
             }
         }

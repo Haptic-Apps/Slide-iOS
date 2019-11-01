@@ -2254,7 +2254,12 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                         self.parent?.doShow(url: url, heroView: nil, heroVC: nil)
                     }
                 } else {
-                    VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parent)
+                    if self.parent != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {
+                        vc.modalPresentationStyle = .overFullScreen
+                        self.parent?.present(vc, animated: true)
+                    } else {
+                        VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parent)
+                    }
                 }
             }
         }
