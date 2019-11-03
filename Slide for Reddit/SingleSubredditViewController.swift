@@ -220,7 +220,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
 
         reloadNeedingColor()
-        self.flowLayout.reset(modal: self.presentingViewController != nil)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
         tableView.reloadData()
         self.automaticallyAdjustsScrollViewInsets = false
         
@@ -231,7 +231,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     
     func reTheme() {
         self.reloadNeedingColor()
-        flowLayout.reset(modal: presentingViewController != nil)
+        flowLayout.reset(modal: presentingViewController != nil, vc: self)
         CachedTitle.titles.removeAll()
         LinkCellImageCache.initialize()
         self.tableView.reloadData()
@@ -332,7 +332,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
-            flowLayout.reset(modal: presentingViewController != nil)
+            flowLayout.reset(modal: presentingViewController != nil, vc: self)
             tableView.reloadData()
         }
     }
@@ -379,7 +379,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
-                self.flowLayout.reset(modal: self.presentingViewController != nil)
+                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
                // TODO: - content offset
@@ -727,7 +727,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     DispatchQueue.main.async {
                         self.hasHeader = true
                         if self.loaded && !self.loading {
-                            self.flowLayout.reset(modal: self.presentingViewController != nil)
+                            self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                             self.tableView.reloadData()
                             if UIDevice.current.userInterfaceIdiom != .pad {
                                 var newOffset = self.tableView.contentOffset
@@ -793,7 +793,15 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if #available(iOS 11.0, *) {
             top += 20
         }
- 
+                
+        if self.navigationController != nil {
+            if #available(iOS 13.0, *) {
+                if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
+                    top -= 32
+                }
+            }
+        }
+
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -989,7 +997,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
                 }, completion: { (_) in
-                    self.flowLayout.reset(modal: self.presentingViewController != nil)
+                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                     self.tableView.reloadData()
                 })
             }
@@ -1016,11 +1024,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
        // TODO: - save realm
         DispatchQueue.main.async {
             if !indexPaths.isEmpty {
-                self.flowLayout.reset(modal: self.presentingViewController != nil)
+                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
                 }, completion: { (_) in
-                    self.flowLayout.reset(modal: self.presentingViewController != nil)
+                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                     self.tableView.reloadData()
                 })
             }
@@ -1054,7 +1062,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     func reloadDataReset() {
-        self.flowLayout.reset(modal: self.presentingViewController != nil)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
         tableView.reloadData()
         tableView.layoutIfNeeded()
         setupFab(UIScreen.main.bounds.size)
@@ -1220,7 +1228,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
         
         links = []
-        self.flowLayout.reset(modal: self.presentingViewController != nil)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
         flowLayout.invalidateLayout()
         UIView.transition(with: self.tableView, duration: 0.10, options: .transitionCrossDissolve, animations: {
             self.tableView.reloadData()
@@ -1333,7 +1341,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         for i in 0..<self.links.count {
                                             paths.append(IndexPath.init(item: i, section: 0))
                                         }
-                                        self.flowLayout.reset(modal: self.presentingViewController != nil)
+                                        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                                         self.tableView.reloadData()
                                         
                                         self.refreshControl.endRefreshing()
@@ -1344,12 +1352,25 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         self.nomore = true
                                         self.offline = true
                                         
-                                        var top = CGFloat(0)
-                                        if #available(iOS 11, *) {
-                                            top += 26
-                                            if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
-                                                top -= 18
+                                        var is13Popover = false
+                                        if self.navigationController != nil {
+                                            if #available(iOS 13.0, *) {
+                                                if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
+                                                    is13Popover = true
+                                                }
                                             }
+                                        }
+
+                                        var top = CGFloat(0)
+                                        if !is13Popover {
+                                            if #available(iOS 11, *) {
+                                                top += 26
+                                                if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
+                                                    top -= 18
+                                                }
+                                            }
+                                        } else {
+                                            top -= 4
                                         }
                                         let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
                                         self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top)
@@ -1429,7 +1450,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         self.preloadImages(values)
                         DispatchQueue.main.async {
                             if self.links.isEmpty {
-                                self.flowLayout.reset(modal: self.presentingViewController != nil)
+                                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                                 self.tableView.reloadData()
                                 
                                 self.refreshControl.endRefreshing()
@@ -1460,12 +1481,26 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         self.tableView.reloadData()
                                         self.autoplayHandler.autoplayOnce(self.tableView)
                                     }, completion: nil)
-                                    var top = CGFloat(0)
-                                    if #available(iOS 11, *) {
-                                        top += 26
-                                        if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
-                                            top -= 18
+                                    var is13Popover = false
+                                    
+                                    if self.navigationController != nil {
+                                        if #available(iOS 13.0, *) {
+                                            if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
+                                                is13Popover = true
+                                            }
                                         }
+                                    }
+
+                                    var top = CGFloat(0)
+                                    if !is13Popover {
+                                        if #available(iOS 11, *) {
+                                            top += 26
+                                            if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
+                                                top -= 18
+                                            }
+                                        }
+                                    } else {
+                                        top -= 4
                                     }
                                     let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
                                     let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight(false))
@@ -1969,7 +2004,7 @@ extension SingleSubredditViewController {
                 links.remove(at: index)
             }
         }
-        self.flowLayout.reset(modal: self.presentingViewController != nil)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
         tableView.reloadData()
     }
     
@@ -2456,7 +2491,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
 extension SingleSubredditViewController: SubmissionMoreDelegate {
     func hide(index: Int) {
         links.remove(at: index)
-        self.flowLayout.reset(modal: self.presentingViewController != nil)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
         tableView.reloadData()
     }
 
@@ -2551,17 +2586,17 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
                 }, completion: { (_) in
                     self.tableView.isUserInteractionEnabled = true
-                    self.flowLayout.reset(modal: self.presentingViewController != nil)
+                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                     self.tableView.reloadData()
                 })
             } else {
-                self.flowLayout.reset(modal: self.presentingViewController != nil)
+                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                 tableView.reloadData()
             }
             BannerUtil.makeBanner(text: "Hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, top: false, callback: {
                 self.links.insert(item, at: location)
                 self.tableView.insertItems(at: [IndexPath.init(item: location + self.headerOffset(), section: 0)])
-                self.flowLayout.reset(modal: self.presentingViewController != nil)
+                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
                 self.tableView.reloadData()
                 do {
                     try self.session?.setHide(false, name: cell.link!.getId(), completion: { (_) in })
