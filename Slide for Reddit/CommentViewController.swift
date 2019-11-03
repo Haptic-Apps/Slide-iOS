@@ -17,7 +17,7 @@ import SloppySwiper
 import UIKit
 import YYText
 
-class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
     
     func hide(index: Int) {
         if index >= 0 {
@@ -81,7 +81,9 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var didDisappearCompletely = false
     var live = false
     var liveTimer = Timer()
-    
+    var refreshControl: UIRefreshControl!
+    var tableView: UITableView!
+
     var jump: UIView!
 
     func isMenuShown() -> Bool {
@@ -620,7 +622,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     var oldPosition: CGPoint = CGPoint.zero
-    override func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
         if scrollView.contentOffset.y > oldPosition.y {
             oldPosition = scrollView.contentOffset
             return true
@@ -762,6 +764,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     }
     
     @objc func refresh(_ sender: AnyObject) {
+        self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
@@ -1122,15 +1125,24 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        self.view = UIView.init(frame: CGRect.zero)
+        self.view.addSubview(tableView)
+
+        tableView.verticalAnchors == view.verticalAnchors
+        tableView.horizontalAnchors == view.safeHorizontalAnchors
+
         self.automaticallyAdjustsScrollViewInsets = false
         self.registerForPreviewing(with: self, sourceView: self.tableView)
 
         self.tableView.allowsSelection = false
         //self.tableView.layer.speed = 1.5
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         self.navigationController?.view.backgroundColor = ColorUtil.theme.backgroundColor
         refreshControl = UIRefreshControl()
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -self.refreshControl!.frame.size.height)
         refreshControl?.tintColor = ColorUtil.theme.fontColor
         refreshControl?.attributedTitle = NSAttributedString(string: "")
         refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControl.Event.valueChanged)
@@ -1140,10 +1152,8 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
             top = 0
         }
         tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        if #available(iOS 10.0, *) {
-        } else {
-            tableView.addSubview(refreshControl!)
-        }
+        tableView.addSubview(refreshControl!)
+        tableView.alwaysBounceVertical = true
 
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
 
@@ -1720,12 +1730,12 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
     
-    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.goingToCell = false
         self.isGoingDown = false
     }
     
-    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         self.goingToCell = false
         self.isGoingDown = false
     }
@@ -1902,14 +1912,14 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         }
     }
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (isSearching ? self.filteredData.count : self.comments.count - self.hidden.count)
     }
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if SettingValues.collapseFully {
             let datasetPosition = (indexPath as NSIndexPath).row
             if dataArray.isEmpty {
@@ -2290,7 +2300,7 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
     var lastY = CGFloat(0)
     var oldY = CGFloat(0)
 
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
 
         if !SettingValues.pinToolbar && !isReply {
@@ -2351,40 +2361,40 @@ class CommentViewController: MediaTableViewController, TTTAttributedCellDelegate
         self.removeJumpButton()
     }
 
-override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    var cell: UITableViewCell! = nil
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell: UITableViewCell! = nil
 
-    let datasetPosition = (indexPath as NSIndexPath).row
+        let datasetPosition = (indexPath as NSIndexPath).row
 
-    cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
-    if content.isEmpty || text.isEmpty || cDepth.isEmpty || dataArray.isEmpty {
-        self.refresh(self)
+        cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
+        if content.isEmpty || text.isEmpty || cDepth.isEmpty || dataArray.isEmpty {
+            self.refresh(self)
+            return cell
+        }
+        let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
+        let parentOP = parents[thing]
+        if let cell = cell as? CommentDepthCell {
+            let innerContent = content[thing]
+            if innerContent is RComment {
+                var count = 0
+                let hiddenP = hiddenPersons.contains(thing)
+                if hiddenP {
+                    count = getChildNumber(n: innerContent!.getIdentifier())
+                }
+                var t = text[thing]!
+                if isSearching {
+                    t = highlight(t)
+                }
+
+                cell.setComment(comment: innerContent as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath, width: self.tableView.frame.size.width)
+            } else {
+                cell.setMore(more: (innerContent as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
+            }
+            cell.content = content[thing]
+        }
+        
         return cell
     }
-    let thing = isSearching ? filteredData[datasetPosition] : dataArray[datasetPosition]
-    let parentOP = parents[thing]
-    if let cell = cell as? CommentDepthCell {
-        let innerContent = content[thing]
-        if innerContent is RComment {
-            var count = 0
-            let hiddenP = hiddenPersons.contains(thing)
-            if hiddenP {
-                count = getChildNumber(n: innerContent!.getIdentifier())
-            }
-            var t = text[thing]!
-            if isSearching {
-                t = highlight(t)
-            }
-
-            cell.setComment(comment: innerContent as! RComment, depth: cDepth[thing]!, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath, width: self.tableView.frame.size.width)
-        } else {
-            cell.setMore(more: (innerContent as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
-        }
-        cell.content = content[thing]
-    }
-    
-    return cell
-}
 
 //    @available(iOS 11.0, *)
 //    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

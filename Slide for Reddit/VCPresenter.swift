@@ -21,10 +21,18 @@ public class VCPresenter {
         if #available(iOS 13, *) {
             override13 = true
         }
-        if (UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
+        var parentIs13 = false
+        if parentNavigationController != nil {
+            if #available(iOS 13.0, *) {
+                if parentNavigationController!.modalPresentationStyle == .pageSheet && parentNavigationController!.viewControllers.count == 1 && !(parentNavigationController!.viewControllers[0] is MainViewController) {
+                    parentIs13 = true
+                }
+            }
+        }
+        if (UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
             override13 = false
         }
-        if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil && !(parentViewController is CommentViewController) {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(UINavigationController(rootViewController: viewController), sender: nil)
             return
         } else if (parentViewController?.splitViewController != nil) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
