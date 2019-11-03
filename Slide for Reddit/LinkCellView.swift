@@ -2936,12 +2936,15 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }
     }
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = .clear
+
         if full && self.textView != nil && self.textView.frame.contains(interaction.location(in: self.contentView)) {
-            return UITargetedPreview(view: self.textView)
+            return UITargetedPreview(view: self.textView, parameters: parameters)
         } else if thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.contentView)) {
-            return UITargetedPreview(view: self.thumbImageContainer)
+            return UITargetedPreview(view: self.thumbImageContainer, parameters: parameters)
         } else {
-            return UITargetedPreview(view: self.save)
+            return UITargetedPreview(view: self.save, parameters: parameters)
         }
 
     }

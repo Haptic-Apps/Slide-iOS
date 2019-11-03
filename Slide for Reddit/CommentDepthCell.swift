@@ -925,9 +925,13 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 let alert = UIAlertController(title: "Discard your comment?", message: nil, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Save draft", style: .default, handler: { (_) in
                     self.toolbar?.saveDraft(nil)
+                    del.isReply = false
+                    self.body?.text = ""
                     completion(true)
                 }))
                 alert.addAction(UIAlertAction(title: "Delete draft", style: .destructive, handler: { (_) in
+                    del.isReply = false
+                    self.body?.text = ""
                     completion(true)
                 }))
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
@@ -2265,6 +2269,23 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         }
     }
     
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = .clear
+        let location = interaction.location(in: self.commentBody)
+        if self.commentBody.firstTextView.frame.contains(location) {
+            return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(self.commentBody.firstTextView, location, self.previewedURL?.absoluteString) ?? parameters)
+        } else if self.commentBody.overflow.frame.contains(location) {
+            let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
+            for view in self.commentBody.overflow.subviews {
+                if view.frame.contains(innerLocation) && view is YYLabel {
+                    return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(view as! YYLabel, innerLocation, self.previewedURL?.absoluteString, self.commentBody) ?? parameters)
+                }
+            }
+        }
+        return UITargetedPreview(view: self.commentBody, parameters: parameters)
+    }
+    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         if self.commentBody.firstTextView.frame.contains(location) {
             return getConfigurationForTextView(self.commentBody.firstTextView, location)
@@ -2287,6 +2308,40 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     
     func contextMenuInteractionDidEnd(_ interaction: UIContextMenuInteraction) {
         self.previewedVC = nil
+    }
+    
+    func getLocationForPreviewedText(_ label: YYLabel, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+        if inputURL == nil {
+            return nil
+        }
+        let point = label.superview?.convert(location, to: label) ?? location
+        var params: UIPreviewParameters?
+        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
+            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
+            if locationFinal < 1000000 {
+                attributedText.enumerateAttribute(
+                    .link,
+                    in: NSRange(location: 0, length: attributedText.length)
+                ) { (value, range, _) in
+                    if let url = value as? NSURL {
+                        if url.absoluteString == inputURL! {
+                            let baseRects = layoutManager.selectionRects(for: YYTextRange(range: range))
+                            var cgs = [NSValue]()
+                            for rect in baseRects {
+                                if changeRectTo != nil {
+                                    cgs.append(NSValue(cgRect: changeRectTo!.convert(rect.rect, from: label)))
+                                } else {
+                                    cgs.append(NSValue(cgRect: rect.rect))
+                                }
+                            }
+                            params = UIPreviewParameters(textLineRects: cgs)
+                            params?.backgroundColor = .clear
+                        }
+                    }
+                }
+            }
+        }
+        return params
     }
     
     func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
