@@ -127,6 +127,7 @@ class SettingValues {
     public static let pref_shareButton = "SHARE_BUTTON_ENABLED"
     public static let pref_hideSeen = "HIDE_SEEN"
     public static let pref_sideGesture = "SIDE_GESTURE"
+    public static let pref_disable13Popup = "DISABLE_13_POPUP"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -254,6 +255,7 @@ class SettingValues {
     public static var alwaysShowHeader = false
     public static var disablePreviews = false
     public static var hideSeen = true
+    public static var disable13Popup = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -505,6 +507,7 @@ class SettingValues {
         }
         
         SettingValues.hideImageSelftext = settings.object(forKey: SettingValues.pref_hideImageSelftext) == nil ? true : settings.bool(forKey: SettingValues.pref_hideImageSelftext)
+        SettingValues.disable13Popup = settings.bool(forKey: SettingValues.pref_disable13Popup)
 
         SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
         SettingValues.smallerTag = settings.object(forKey: SettingValues.pref_smallTag) == nil ? true : settings.bool(forKey: SettingValues.pref_smallTag)

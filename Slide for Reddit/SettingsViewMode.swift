@@ -25,11 +25,19 @@ class SettingsViewMode: BubbleSettingTableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
+    var thireenPopup = InsetCell()
+    var thireenPopupSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == subredditBarSwitch {
             MainViewController.needsRestart = true
             SettingValues.subredditBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subBar)
+        } else if changed == thireenPopupSwitch {
+            SettingValues.disable13Popup = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disable13Popup)
         }
         UserDefaults.standard.synchronize()
     }
@@ -57,6 +65,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         self.title = "App Mode"
         
         createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
+        createCell(thireenPopup, thireenPopupSwitch, isOn: SettingValues.disable13Popup, text: "Disable iOS 13 popup behavior")
         createCell(singleMode, isOn: false, text: "Single-column posts")
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
         createCell(splitMode, isOn: false, text: "Split-content")
@@ -157,6 +166,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             switch indexPath.row {
             case 0: return self.multicolumnCount
             case 1: return self.subredditBar
+            case 2: return self.thireenPopup
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -223,9 +233,13 @@ class SettingsViewMode: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        var thirteenOffset = 0
+        if #available(iOS 13, *) {
+            thirteenOffset = 1
+        }
         switch section {
         case 0: return 3
-        case 1: return 2
+        case 1: return 2 + thirteenOffset
         default: fatalError("Unknown number of sections")
         }
     }

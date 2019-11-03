@@ -387,7 +387,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.autoPlayCell.detailTextLabel?.numberOfLines = 0
         self.autoPlayCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
-        viewModeCell.textLabel?.text = "App mode"
+        viewModeCell.textLabel?.text = "Multi-Column and app behavior"
         viewModeCell.accessoryType = .disclosureIndicator
         viewModeCell.backgroundColor = ColorUtil.theme.foregroundColor
         viewModeCell.textLabel?.textColor = ColorUtil.theme.fontColor
