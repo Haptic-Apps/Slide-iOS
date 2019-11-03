@@ -57,7 +57,7 @@ public class BannerUtil {
         attributes.exitAnimation = EKAttributes.Animation(translate: EKAttributes.Animation.Translate.init(duration: 0.15), scale: EKAttributes.Animation.RangeAnimation.init(from: 0.80, to: 1, duration: 0.25), fade: nil)
         attributes.entranceAnimation = EKAttributes.Animation(translate: EKAttributes.Animation.Translate.init(duration: 0.2), scale: EKAttributes.Animation.RangeAnimation.init(from: 0.80, to: 1, duration: 0.25), fade: nil)
         attributes.scroll = .enabled(swipeable: true, pullbackAnimation: .easeOut)
-        attributes.entryBackground = EKAttributes.BackgroundStyle.color(color: UIColor.clear)
+        attributes.entryBackground = EKAttributes.BackgroundStyle.color(color: EKColor(light: UIColor.clear, dark: UIColor.clear))
         attributes.precedence = .enqueue(priority: .normal)
         attributes.statusBar = .inferred
         //attributes.hapticFeedbackType = color.hexString() == GMColor.red500Color().hexString() ? .warning : .success
