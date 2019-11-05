@@ -157,10 +157,10 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     }
     
     @objc func fullscreen(_ sender: AnyObject) {
-        if (parent as! ModalMediaViewController).fullscreen {
-            (parent as! ModalMediaViewController).unFullscreen(self)
-        } else {
-            (parent as! ModalMediaViewController).fullscreen(self)
+        if let strongParent = parent as? ModalMediaViewController, strongParent.fullscreen {
+            strongParent.unFullscreen(self)
+        } else if let strongParent = parent as? ModalMediaViewController {
+            strongParent.fullscreen(self)
         }
     }
 

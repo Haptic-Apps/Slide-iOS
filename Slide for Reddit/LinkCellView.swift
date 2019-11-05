@@ -2935,19 +2935,66 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             }
         }
     }
+    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
-
+        
         if full && self.textView != nil && self.textView.frame.contains(interaction.location(in: self.contentView)) {
+            let location = interaction.location(in: self.textView)
+            
+            if self.textView.firstTextView.frame.contains(location) {
+                return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(self.textView.firstTextView, location, self.previewedURL?.absoluteString) ?? parameters)
+            } else if self.textView.overflow.frame.contains(location) {
+                let innerLocation = self.textView.convert(location, to: self.textView.overflow)
+                for view in self.textView.overflow.subviews {
+                    if view.frame.contains(innerLocation) && view is YYLabel {
+                        return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(view as! YYLabel, innerLocation, self.previewedURL?.absoluteString, self.textView) ?? parameters)
+                    }
+                }
+            }
             return UITargetedPreview(view: self.textView, parameters: parameters)
         } else if thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.contentView)) {
             return UITargetedPreview(view: self.thumbImageContainer, parameters: parameters)
         } else {
             return UITargetedPreview(view: self.save, parameters: parameters)
         }
-
     }
+    
+    func getLocationForPreviewedText(_ label: YYLabel, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+        if inputURL == nil {
+            return nil
+        }
+        let point = label.superview?.convert(location, to: label) ?? location
+        var params: UIPreviewParameters?
+        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
+            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
+            if locationFinal < 1000000 {
+                attributedText.enumerateAttribute(
+                    .link,
+                    in: NSRange(location: 0, length: attributedText.length)
+                ) { (value, range, _) in
+                    if let url = value as? NSURL {
+                        if url.absoluteString == inputURL! {
+                            let baseRects = layoutManager.selectionRects(for: YYTextRange(range: range))
+                            var cgs = [NSValue]()
+                            for rect in baseRects {
+                                if changeRectTo != nil {
+                                    cgs.append(NSValue(cgRect: changeRectTo!.convert(rect.rect, from: label)))
+                                } else {
+                                    cgs.append(NSValue(cgRect: rect.rect))
+                                }
+                            }
+                            params = UIPreviewParameters(textLineRects: cgs)
+                            params?.backgroundColor = .clear
+                        }
+                    }
+                }
+            }
+        }
+        return params
+    }
+    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         let saveArea = self.contentView.convert(location, to: self.buttons)
         if full && self.textView != nil && self.textView.frame.contains(location) {
@@ -2996,8 +3043,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
     
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
+        self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
-            self.previewedURL = url
             if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {

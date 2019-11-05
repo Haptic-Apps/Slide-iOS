@@ -1448,44 +1448,45 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         }
                         
                         self.preloadImages(values)
-                        DispatchQueue.main.async {
-                            if self.links.isEmpty {
-                                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
-                                self.tableView.reloadData()
+                        DispatchQueue.main.async { [weak self] in
+                            guard let strongSelf = self else { return }
+                            if strongSelf.links.isEmpty {
+                                strongSelf.flowLayout.reset(modal: strongSelf.presentingViewController != nil, vc: strongSelf)
+                                strongSelf.tableView.reloadData()
                                 
-                                self.refreshControl.endRefreshing()
-                                self.indicator?.stopAnimating()
-                                self.indicator?.isHidden = true
-                                self.loading = false
+                                strongSelf.refreshControl.endRefreshing()
+                                strongSelf.indicator?.stopAnimating()
+                                strongSelf.indicator?.isHidden = true
+                                strongSelf.loading = false
                                 if MainViewController.first {
                                     MainViewController.first = false
-                                    self.parentController?.checkForMail()
+                                    strongSelf.parentController?.checkForMail()
                                 }
                                 if listing.children.isEmpty {
-                                    BannerUtil.makeBanner(text: "No posts found!\nMake sure this sub exists and you have permission to view it", color: GMColor.red500Color(), seconds: 5, context: self)
+                                    BannerUtil.makeBanner(text: "No posts found!\nMake sure this sub exists and you have permission to view it", color: GMColor.red500Color(), seconds: 5, context: strongSelf)
                                 } else {
-                                    BannerUtil.makeBanner(text: "No posts found!\nCheck your filter settings, or tap here to reload.", color: GMColor.red500Color(), seconds: 5, context: self) {
-                                        self.refresh()
+                                    BannerUtil.makeBanner(text: "No posts found!\nCheck your filter settings, or tap here to reload.", color: GMColor.red500Color(), seconds: 5, context: strongSelf) {
+                                        strongSelf.refresh()
                                     }
                                 }
                             } else {
-                                self.oldPosition = CGPoint.zero
+                                strongSelf.oldPosition = CGPoint.zero
                                 var paths = [IndexPath]()
-                                for i in before..<self.links.count {
-                                    paths.append(IndexPath.init(item: i + self.headerOffset(), section: 0))
+                                for i in before..<strongSelf.links.count {
+                                    paths.append(IndexPath.init(item: i + strongSelf.headerOffset(), section: 0))
                                 }
 
                                 if before == 0 {
-                                    self.flowLayout.invalidateLayout()
-                                    UIView.transition(with: self.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
-                                        self.tableView.reloadData()
-                                        self.autoplayHandler.autoplayOnce(self.tableView)
+                                    strongSelf.flowLayout.invalidateLayout()
+                                    UIView.transition(with: strongSelf.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+                                        strongSelf.tableView.reloadData()
+                                        strongSelf.autoplayHandler.autoplayOnce(strongSelf.tableView)
                                     }, completion: nil)
                                     var is13Popover = false
                                     
-                                    if self.navigationController != nil {
+                                    if strongSelf.navigationController != nil {
                                         if #available(iOS 13.0, *) {
-                                            if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
+                                            if strongSelf.navigationController!.modalPresentationStyle == .pageSheet && strongSelf.navigationController!.viewControllers.count == 1 && !(strongSelf.navigationController!.viewControllers[0] is MainViewController) {
                                                 is13Popover = true
                                             }
                                         }
@@ -1495,29 +1496,29 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     if !is13Popover {
                                         if #available(iOS 11, *) {
                                             top += 26
-                                            if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
+                                            if UIDevice.current.userInterfaceIdiom == .pad || !strongSelf.hasTopNotch {
                                                 top -= 18
                                             }
                                         }
                                     } else {
                                         top -= 4
                                     }
-                                    let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-                                    let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight(false))
-                                    self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top + headerHeight)
+                                    let navoffset = (-1 * ( (strongSelf.navigationController?.navigationBar.frame.size.height ?? 64)))
+                                    let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : strongSelf.headerHeight(false))
+                                    strongSelf.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top + headerHeight)
                                 } else {
-                                    self.flowLayout.invalidateLayout()
-                                    self.tableView.insertItems(at: paths)
+                                    strongSelf.flowLayout.invalidateLayout()
+                                    strongSelf.tableView.insertItems(at: paths)
                                 }
-                                self.tableView.isUserInteractionEnabled = true
+                                strongSelf.tableView.isUserInteractionEnabled = true
 
-                                self.indicator?.stopAnimating()
-                                self.indicator?.isHidden = true
-                                self.refreshControl.endRefreshing()
-                                self.loading = false
+                                strongSelf.indicator?.stopAnimating()
+                                strongSelf.indicator?.isHidden = true
+                                strongSelf.refreshControl.endRefreshing()
+                                strongSelf.loading = false
                                 if MainViewController.first {
                                     MainViewController.first = false
-                                    self.parentController?.checkForMail()
+                                    strongSelf.parentController?.checkForMail()
                                 }
                                 
                             }

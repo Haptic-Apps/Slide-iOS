@@ -2038,19 +2038,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func hideAll(comment: String, i: Int) {
         if !isCurrentlyChanging {
             isCurrentlyChanging = true
-            DispatchQueue.global(qos: .background).async {
-                let counter = self.hideNumber(n: comment, iB: i) - 1
-                self.doArrays()
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                guard let strongSelf = self else { return }
+                let counter = strongSelf.hideNumber(n: comment, iB: i) - 1
+                strongSelf.doArrays()
                 DispatchQueue.main.async {
-                    self.tableView.beginUpdates()
+                    strongSelf.tableView.beginUpdates()
 
                     var indexPaths: [IndexPath] = []
                     for row in i...counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
-                    self.tableView.deleteRows(at: indexPaths, with: .fade)
-                    self.tableView.endUpdates()
-                    self.isCurrentlyChanging = false
+                    strongSelf.tableView.deleteRows(at: indexPaths, with: .fade)
+                    strongSelf.tableView.endUpdates()
+                    strongSelf.isCurrentlyChanging = false
                 }
             }
         }
@@ -2059,19 +2060,21 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func unhideAll(comment: String, i: Int) {
         if !isCurrentlyChanging {
             isCurrentlyChanging = true
-            DispatchQueue.global(qos: .background).async {
-                let counter = self.unhideNumber(n: comment, iB: i)
-                self.doArrays()
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                guard let strongSelf = self else { return }
+
+                let counter = strongSelf.unhideNumber(n: comment, iB: i)
+                strongSelf.doArrays()
                 DispatchQueue.main.async {
-                    self.tableView.beginUpdates()
+                    strongSelf.tableView.beginUpdates()
 
                     var indexPaths: [IndexPath] = []
                     for row in (i + 1)...counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
-                    self.tableView.insertRows(at: indexPaths, with: .fade)
-                    self.tableView.endUpdates()
-                    self.isCurrentlyChanging = false
+                    strongSelf.tableView.insertRows(at: indexPaths, with: .fade)
+                    strongSelf.tableView.endUpdates()
+                    strongSelf.isCurrentlyChanging = false
                 }
             }
         }
