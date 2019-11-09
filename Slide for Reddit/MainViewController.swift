@@ -962,6 +962,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         edgePan.edges = .right
 
         self.view.addGestureRecognizer(edgePan)
+        for rec in self.view.gestureRecognizers ?? [] {
+            rec.require(toFail: edgePan)
+        }
     }
     
     @objc func screenEdgeSwiped() {

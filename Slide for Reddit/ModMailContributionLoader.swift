@@ -63,7 +63,7 @@ class ModMailContributionLoader: ContributionLoader {
                         self.paginator = listing.paginator
                         self.canGetMore = self.paginator.hasMore()
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading(before: before)
+                            self.delegate?.doneLoading(before: before, filter: false)
                         }
                     }
                 })

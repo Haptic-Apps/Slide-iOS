@@ -57,7 +57,7 @@ class ModQueueContributionLoader: ContributionLoader {
                         }
                         self.paginator = listing.paginator
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading(before: before)
+                            self.delegate?.doneLoading(before: before, filter: false)
                         }
                     }
                 })

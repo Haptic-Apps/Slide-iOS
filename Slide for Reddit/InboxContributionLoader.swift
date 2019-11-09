@@ -43,7 +43,7 @@ class InboxContributionLoader: ContributionLoader {
                     case .failure(let error):
                         print(error)
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading(before: 0)
+                            self.delegate?.doneLoading(before: 0, filter: false)
                         }
                     case .success(let listing):
                         if reload {
@@ -65,7 +65,7 @@ class InboxContributionLoader: ContributionLoader {
                         self.paginator = listing.paginator
                         self.canGetMore = self.paginator.hasMore()
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading(before: before)
+                            self.delegate?.doneLoading(before: before, filter: false)
                         }
                     }
                 })

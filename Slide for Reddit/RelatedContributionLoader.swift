@@ -61,7 +61,7 @@ class RelatedContributionLoader: ContributionLoader {
 
                         self.paginator = listing.1.paginator
                         DispatchQueue.main.async {
-                            self.delegate?.doneLoading(before: before)
+                            self.delegate?.doneLoading(before: before, filter: true)
                         }
                     }
                 })
