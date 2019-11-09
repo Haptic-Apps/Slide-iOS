@@ -102,8 +102,10 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     @objc func readerMode(_ sender: AnyObject) {
-        let safariVC = SFHideSafariViewController(url: webView.url!, entersReaderIfAvailable: true)
-        present(safariVC, animated: true, completion: nil)
+        if let url = website.url ?? url {
+            let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: true)
+            present(safariVC, animated: true, completion: nil)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
