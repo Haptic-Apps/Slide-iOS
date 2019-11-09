@@ -68,6 +68,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if oldHeight == size.height {
             return
         }
+        print("HEIGHT IS NOW \(size.height)")
         oldHeight = size.height
         textView.removeConstraints(oldConstraints)
         oldConstraints = batch {
@@ -959,6 +960,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 $0.layer.cornerRadius = 10
                 $0.font = UIFont.systemFont(ofSize: 16)
                 $0.isScrollEnabled = false
+                $0.delegate = self
             })
             
             self.reply.addSubview(body!)

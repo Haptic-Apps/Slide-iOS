@@ -1120,8 +1120,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             actionSheetController.show(self)
         }
     }
-
+    
     var indicator: MDCActivityIndicator = MDCActivityIndicator()
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1153,7 +1157,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
         tableView.addSubview(refreshControl!)
-        tableView.alwaysBounceVertical = true
 
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
 
@@ -1243,18 +1246,27 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     @objc func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
-            if keyboardHeight == 0 {
-                keyboardHeight = keyboardRectangle.height
+            let keyboardHeight = keyboardRectangle.height
+            if keyboardHeight != 0 {
+                var top = CGFloat(64)
+                let bottom = CGFloat(45)
+                if #available(iOS 11.0, *) {
+                    top = 0
+                }
+                tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom + keyboardHeight, right: 0)
             }
-// TODO: - content insets
-
         }
     }
 
     var normalInsets = UIEdgeInsets(top: 0, left: 0, bottom: 45, right: 0)
 
     @objc func keyboardWillHide(_ notification: Notification) {
-        tableView.contentInset = normalInsets
+        var top = CGFloat(64)
+        let bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            top = 0
+        }
+        tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
     }
 
     var single = true
