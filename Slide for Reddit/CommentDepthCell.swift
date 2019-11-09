@@ -68,7 +68,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if oldHeight == size.height {
             return
         }
-        print("HEIGHT IS NOW \(size.height)")
         oldHeight = size.height
         textView.removeConstraints(oldConstraints)
         oldConstraints = batch {

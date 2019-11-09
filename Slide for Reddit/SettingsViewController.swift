@@ -708,11 +708,22 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 } catch {
                     print(error)
                 }
+                
+                let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
+                let defaultParentURL = defaultURL.deletingLastPathComponent()
+                let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
+
+                autoreleasepool {
+                    let realm = try! Realm()
+                    try! realm.writeCopy(toFile: compactedURL)
+                    try! FileManager.default.removeItem(at: defaultURL)
+                    try! FileManager.default.moveItem(at: compactedURL, to: defaultURL)
+                }
+
                 let countBytes = ByteCountFormatter()
                 countBytes.allowedUnits = [.useMB]
                 countBytes.countStyle = .file
                 let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize() + UInt(checkRealmFileSize())))
-                
                 self.clearCell.detailTextLabel?.text = fileSize
 
                 BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)

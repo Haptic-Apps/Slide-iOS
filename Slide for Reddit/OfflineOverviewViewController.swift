@@ -41,6 +41,9 @@ class OfflineOverviewViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
+        if #available(iOS 13.0, *) {
+            self.isModalInPresentation = true
+        }
         self.navigationItem.titleView = setTitle(title: "Offline content", subtitle: "No internet connection detected")
     }
     

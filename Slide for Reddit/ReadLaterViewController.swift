@@ -6,6 +6,7 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import reddift
 import RLBAlertsPickers
 import UIKit
@@ -89,10 +90,12 @@ public extension UIViewController {
         stackView.axis = .vertical
 
         let width = max(titleLabel.frame.size.width, subTitleLabel.frame.size.width)
-        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
+        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 45)
 
         titleLabel.sizeToFit()
         subTitleLabel.sizeToFit()
+        
+        stackView.heightAnchor == 45
 
         return stackView
     }
