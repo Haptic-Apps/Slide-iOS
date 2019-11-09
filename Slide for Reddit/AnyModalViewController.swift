@@ -168,7 +168,6 @@ class AnyModalViewController: UIViewController {
         volume.barTintColor = .white
         volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
         volume.animation = .slideDown
-        view.addSubview(volume)
         
         var is13 = false
         if #available(iOS 13, *) {
@@ -176,6 +175,7 @@ class AnyModalViewController: UIViewController {
         }
 
         if !is13 {
+            view.addSubview(volume)
             NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
         

@@ -92,14 +92,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         volume.barTintColor = .white
         volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
         volume.animation = .slideDown
-        view.addSubview(volume)
-        volume.delegate = self
         
         var is13 = false
         if #available(iOS 13, *) {
             is13 = true
         }
         if !((parent?.parent) is ShadowboxLinkViewController) && !is13 {
+            view.addSubview(volume)
+            volume.delegate = self
             NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
     }

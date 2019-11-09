@@ -1450,7 +1450,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         self.preloadImages(values)
                         DispatchQueue.main.async { [weak self] in
                             guard let strongSelf = self else { return }
-                            if strongSelf.links.isEmpty {
+                            if strongSelf.links.isEmpty && !SettingValues.hideSeen {
                                 strongSelf.flowLayout.reset(modal: strongSelf.presentingViewController != nil, vc: strongSelf)
                                 strongSelf.tableView.reloadData()
                                 
@@ -1469,6 +1469,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         strongSelf.refresh()
                                     }
                                 }
+                            } else if strongSelf.links.isEmpty && newLinks.count != 0 && strongSelf.paginator.hasMore() {
+                                strongSelf.loading = false
+                                strongSelf.loadMore()
                             } else {
                                 strongSelf.oldPosition = CGPoint.zero
                                 var paths = [IndexPath]()
