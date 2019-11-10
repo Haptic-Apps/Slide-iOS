@@ -10,13 +10,14 @@ import Anchorage
 import AudioToolbox
 import reddift
 import UIKit
+import WebKit
 import YYText
 
 class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     var title: YYLabel!
     var image = UIImageView()
-    var web = UIWebView()
+    var web = WKWebView()
     
     func attributedLabel(_ label: YYTextView!, didSelectLinkWith url: URL!) {
         parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
@@ -217,7 +218,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                     })
                 } else if let web = embeds["html"] as? String {
                     self.web.alpha = 1
-                    self.web.allowsInlineMediaPlayback = true
+                    self.web.configuration.allowsInlineMediaPlayback = true
                     self.web.loadHTMLString(web.decodeHTML().replacingOccurrences(of: "//", with: "https://"), baseURL: URL(string: "https://"))
                 }
                 let imageSize = CGSize.init(width: width, height: height)

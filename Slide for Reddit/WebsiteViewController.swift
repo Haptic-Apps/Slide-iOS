@@ -277,10 +277,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             decisionHandler(WKNavigationActionPolicy.allow)
         }
     }
-    
-    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebView.NavigationType) -> Bool {
-        return request.url == nil || !(isAd(url: request.url!))
-    }
 
     func isAd(url: URL) -> Bool {
       let host = url.host
