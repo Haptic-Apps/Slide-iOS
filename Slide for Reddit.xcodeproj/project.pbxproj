@@ -266,6 +266,8 @@
 		BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */; };
 		BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9742371F0409BA00BF48E0 /* SettingsComments.swift */; };
 		BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE981D341E31855500BD3846 /* OpenInChrome.swift */; };
+		BE99C9F72378AC91007911E2 /* Slide_Screenshot_Automation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */; };
+		BE99C9FF2378ACF6007911E2 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */; };
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
 		BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2381E35D64F00BF761C /* MessageCellView.swift */; };
@@ -344,6 +346,13 @@
 			remoteInfo = "Slide for Reddit";
 		};
 		BE8FCA241E0C46090063B8EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE8FCA031E0C46090063B8EF;
+			remoteInfo = "Slide for Reddit";
+		};
+		BE99C9F92378AC91007911E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
 			proxyType = 1;
@@ -672,6 +681,10 @@
 		BE97422F1F0011E500BF48E0 /* TextLinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextLinkCellView.swift; sourceTree = "<group>"; };
 		BE9742371F0409BA00BF48E0 /* SettingsComments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsComments.swift; sourceTree = "<group>"; };
 		BE981D341E31855500BD3846 /* OpenInChrome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenInChrome.swift; sourceTree = "<group>"; };
+		BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Slide Screenshot Automation.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slide_Screenshot_Automation.swift; sourceTree = "<group>"; };
+		BE99C9F82378AC91007911E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		BEB2B2381E35D64F00BF761C /* MessageCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCellView.swift; sourceTree = "<group>"; };
@@ -769,6 +782,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				05B4954EEA46A4492FCAB86A /* Pods_Slide_for_RedditUITests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE99C9F12378AC91007911E2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1171,7 @@
 				BE20851221588F3900D8F33C /* Slide for Apple Watch */,
 				BE20852121588F3B00D8F33C /* Slide for Apple Watch Extension */,
 				BE257A6C21F64AA30082A47E /* Open in Slide */,
+				BE99C9F52378AC91007911E2 /* Slide Screenshot Automation */,
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				BE8FCA051E0C46090063B8EF /* Products */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
@@ -1169,6 +1190,7 @@
 				BE20851121588F3900D8F33C /* Slide for Apple Watch.app */,
 				BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */,
 				BE257A6B21F64AA30082A47E /* Open in Slide.appex */,
+				BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1319,6 +1341,16 @@
 			name = LinkCellViews;
 			sourceTree = "<group>";
 		};
+		BE99C9F52378AC91007911E2 /* Slide Screenshot Automation */ = {
+			isa = PBXGroup;
+			children = (
+				BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */,
+				BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */,
+				BE99C9F82378AC91007911E2 /* Info.plist */,
+			);
+			path = "Slide Screenshot Automation";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1440,13 +1472,31 @@
 			productReference = BE8FCA231E0C46090063B8EF /* Slide for RedditUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		BE99C9F32378AC91007911E2 /* Slide Screenshot Automation */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE99C9FD2378AC91007911E2 /* Build configuration list for PBXNativeTarget "Slide Screenshot Automation" */;
+			buildPhases = (
+				BE99C9F02378AC91007911E2 /* Sources */,
+				BE99C9F12378AC91007911E2 /* Frameworks */,
+				BE99C9F22378AC91007911E2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BE99C9FA2378AC91007911E2 /* PBXTargetDependency */,
+			);
+			name = "Slide Screenshot Automation";
+			productName = "Slide Screenshot Automation";
+			productReference = BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		BE8FC9FC1E0C46090063B8EF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1010;
+				LastSwiftUpdateCheck = 1120;
 				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
@@ -1501,6 +1551,12 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
+					BE99C9F32378AC91007911E2 = {
+						CreatedOnToolsVersion = 11.2.1;
+						DevelopmentTeam = 68GVUVA6AU;
+						ProvisioningStyle = Automatic;
+						TestTargetID = BE8FCA031E0C46090063B8EF;
+					};
 				};
 			};
 			buildConfigurationList = BE8FC9FF1E0C46090063B8EF /* Build configuration list for PBXProject "Slide for Reddit" */;
@@ -1522,6 +1578,7 @@
 				BE20851021588F3900D8F33C /* Slide for Apple Watch */,
 				BE20851C21588F3A00D8F33C /* Slide for Apple Watch Extension */,
 				BE257A6A21F64AA30082A47E /* Open in Slide */,
+				BE99C9F32378AC91007911E2 /* Slide Screenshot Automation */,
 			);
 		};
 /* End PBXProject section */
@@ -1639,6 +1696,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BE8FCA211E0C46090063B8EF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE99C9F22378AC91007911E2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2099,6 +2163,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BE99C9F02378AC91007911E2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE99C9F72378AC91007911E2 /* Slide_Screenshot_Automation.swift in Sources */,
+				BE99C9FF2378ACF6007911E2 /* SnapshotHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2126,6 +2199,11 @@
 			isa = PBXTargetDependency;
 			target = BE8FCA031E0C46090063B8EF /* Slide for Reddit */;
 			targetProxy = BE8FCA241E0C46090063B8EF /* PBXContainerItemProxy */;
+		};
+		BE99C9FA2378AC91007911E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE8FCA031E0C46090063B8EF /* Slide for Reddit */;
+			targetProxy = BE99C9F92378AC91007911E2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2584,6 +2662,51 @@
 			};
 			name = Release;
 		};
+		BE99C9FB2378AC91007911E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 68GVUVA6AU;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-Screenshot-Automation";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Slide for Reddit";
+			};
+			name = Debug;
+		};
+		BE99C9FC2378AC91007911E2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 68GVUVA6AU;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-Screenshot-Automation";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Slide for Reddit";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2646,6 +2769,15 @@
 			buildConfigurations = (
 				BE8FCA331E0C46090063B8EF /* Debug */,
 				BE8FCA341E0C46090063B8EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BE99C9FD2378AC91007911E2 /* Build configuration list for PBXNativeTarget "Slide Screenshot Automation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE99C9FB2378AC91007911E2 /* Debug */,
+				BE99C9FC2378AC91007911E2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

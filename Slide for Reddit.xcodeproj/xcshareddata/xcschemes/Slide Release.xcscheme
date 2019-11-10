@@ -37,6 +37,16 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BE99C9F32378AC91007911E2"
+               BuildableName = "Slide Screenshot Automation.xctest"
+               BlueprintName = "Slide Screenshot Automation"
+               ReferencedContainer = "container:Slide for Reddit.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
