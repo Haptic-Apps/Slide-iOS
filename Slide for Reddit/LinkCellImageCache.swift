@@ -95,8 +95,9 @@ public class LinkCellImageCache {
         topColor = GMColor.red400Color()
         nextColor = GMColor.red600Color()
         
+        let nsfwimg = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white)
         nsfw = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        nsfw = nsfw.overlayWith(image: UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), posX: (75 / 2), posY: (75 / 2))
+        nsfw = nsfw.overlayWith(image: nsfwimg, posX: ((150 - (nsfwimg.size.width)) / 2), posY: ((150 - (nsfwimg.size.height)) / 2))
 
     }
 

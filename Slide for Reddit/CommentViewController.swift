@@ -1043,6 +1043,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func showSearchBar() {
         searchBar.alpha = 0
+        
+        let cancelButtonAttributes = [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]
+        UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes, for: .normal)
+
+        isSearch = true
         savedHeaderView = tableView.tableHeaderView
         tableView.tableHeaderView = UIView()
         savedTitleView = navigationItem.titleView
@@ -1067,7 +1072,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func hideSearchBar() {
         navigationController?.setNavigationBarHidden(false, animated: true)
         tableView.tableHeaderView = savedHeaderView!
-
+        isSearch = false
+        
+        searchBar.tintColor = ColorUtil.theme.fontColor
         let sort = UIButton.init(type: .custom)
         sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
@@ -2314,11 +2321,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var isHiding = false
     var lastY = CGFloat(0)
     var oldY = CGFloat(0)
+    
+    var isSearch = false
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
 
-        if !SettingValues.pinToolbar && !isReply {
+        if !SettingValues.pinToolbar && !isReply && !isSearch {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)

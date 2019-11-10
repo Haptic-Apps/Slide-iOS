@@ -23,35 +23,35 @@ PODS:
   - Embassy (4.1.0)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (93.3.0):
+  - MaterialComponents/ActivityIndicator (94.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (93.3.0)
-  - MaterialComponents/Elevation (93.3.0):
+  - MaterialComponents/AnimationTiming (94.0.0)
+  - MaterialComponents/Elevation (94.0.0):
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Ink (93.3.0):
+  - MaterialComponents/Ink (94.0.0):
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (93.3.0)
-  - MaterialComponents/private/Application (93.3.0)
-  - MaterialComponents/private/Color (93.3.0)
-  - MaterialComponents/private/Math (93.3.0)
-  - MaterialComponents/ProgressView (93.3.0):
+  - MaterialComponents/Palettes (94.0.0)
+  - MaterialComponents/private/Application (94.0.0)
+  - MaterialComponents/private/Color (94.0.0)
+  - MaterialComponents/private/Math (94.0.0)
+  - MaterialComponents/ProgressView (94.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
     - MotionAnimator (~> 2.1)
-  - MaterialComponents/Ripple (93.3.0):
+  - MaterialComponents/Ripple (94.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/ShadowElevations (93.3.0)
-  - MaterialComponents/ShadowLayer (93.3.0):
+  - MaterialComponents/ShadowElevations (94.0.0)
+  - MaterialComponents/ShadowLayer (94.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (93.3.0):
+  - MaterialComponents/Tabs (94.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Elevation
     - MaterialComponents/Ink
@@ -62,7 +62,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (93.3.0):
+  - MaterialComponents/Typography (94.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
   - MDFInternationalization (2.0.0)
@@ -74,19 +74,19 @@ PODS:
   - MTColorDistance (0.0.3)
   - OpalImagePicker (2.1.0)
   - QuickLayout (3.0.0)
-  - Realm (3.20.0):
-    - Realm/Headers (= 3.20.0)
-  - Realm/Headers (3.20.0)
-  - RealmSwift (3.20.0):
-    - Realm (= 3.20.0)
+  - Realm (4.0.0):
+    - Realm/Headers (= 4.0.0)
+  - Realm/Headers (4.0.0)
+  - RealmSwift (4.0.0):
+    - Realm (= 4.0.0)
   - reddift (2.0.3):
     - HTMLSpecialCharacters
     - MiniKeychain
   - RLBAlertsPickers (1.1.1)
   - SDCAlertView (10.0)
-  - SDWebImage (5.2.5):
-    - SDWebImage/Core (= 5.2.5)
-  - SDWebImage/Core (5.2.5)
+  - SDWebImage (5.3.1):
+    - SDWebImage/Core (= 5.3.1)
+  - SDWebImage/Core (5.3.1)
   - SloppySwiper (0.6)
   - Starscream (3.1.1)
   - SubtleVolume (1.1.0)
@@ -132,7 +132,7 @@ DEPENDENCIES:
   - YYText
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Alamofire
     - Anchorage
     - BadgeSwift
@@ -211,7 +211,7 @@ SPEC CHECKSUMS:
   Embassy: 296c51c4b16b8377b413f48f413a99aa736adc22
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 6b2eb24aa0c1d1a6453f05a6bbe3ed6c80843161
+  MaterialComponents: af933df927a64ba202b3162bd59ff0fe746686cb
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
@@ -220,12 +220,12 @@ SPEC CHECKSUMS:
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   OpalImagePicker: 40e9d4c27018538a704d8da34b2ff3a2a54a3dc8
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
-  Realm: 8b2ca5bc6479a91f379b6b42b5922e396cd5ba5a
-  RealmSwift: 1949ef26a279e1845bd51d591b9103adfcd121df
+  Realm: 0c5b8f398daeec5b29824e41c453ff9e126e31d8
+  RealmSwift: 02e1f604f7091ec535145055764ca53efa8cdc92
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: c93e83c13526a5840b67eb52f702d3f83eeaac6a
   SDCAlertView: 5fbc48cae6d7bf9781097e3f27883924ef3b922c
-  SDWebImage: 4eabf2fa6695c95c47724214417a9c036c965e4a
+  SDWebImage: 7137d57385fb632129838c1e6ab9528a22c666cc
   SloppySwiper: 37e38f6da8df5c805914c6f32ec6ec8da63abe7c
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
   SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
@@ -240,4 +240,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f2b885fe4a188552e0cf6ec8cc1edfc8b7db7042
 
-COCOAPODS: 1.7.1
+COCOAPODS: 1.8.4

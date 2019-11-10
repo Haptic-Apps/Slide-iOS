@@ -170,17 +170,26 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-
+        
+        resetFrame(withSize: self.view.frame.size)
+    }
+    
+    func resetFrame(withSize: CGSize) {
         // Recalculate youtube frame size
         self.youtubeView.frame = AVMakeRect(aspectRatio: youtubeResolution, insideRect: self.view.bounds)
 
         // Recalculate player size
         var size = videoView.player?.currentItem?.presentationSize ?? self.view.bounds.size
         if size == CGSize.zero {
-            size = self.view.bounds.size
+            size = withSize
         }
 
         self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds) // CALayer position contains NaN: [nan nan]
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        resetFrame(withSize: size)
     }
 
 //    override func didReceiveMemoryWarning() {
