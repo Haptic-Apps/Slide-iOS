@@ -1,16 +1,15 @@
 # Uncomment the lines below you want to change by removing the # in the beginning
 
 # A list of devices you want to take the screenshots from
-# devices([
-#   "iPhone 8",
-#   "iPhone 8 Plus",
-#   "iPhone SE",
-#   "iPhone X",
-#   "iPad Pro (12.9-inch)",
+devices([
+   "iPhone 8",
+   "iPhone 11 Pro",
+   "iPad Pro (11-inch)",
 #   "iPad Pro (9.7-inch)",
 #   "Apple TV 1080p"
-# ])
-
+])
+#os("13.2")
+ios_version("13.2")
 # languages([
 #   "en-US",
 #   "de-DE",
