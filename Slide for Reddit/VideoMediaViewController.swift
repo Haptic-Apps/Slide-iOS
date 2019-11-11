@@ -23,17 +23,11 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var youtubeMute = false {
         didSet(fromValue) {
-            let startAlpha = youtubeMute ? 0 : 1
-            let endAlpha = youtubeMute ? 1 : 0
+            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.volume3Fill, overrideString: "audio")?.navIcon(true).getCopy(withColor: GMColor.red500Color())
             
             UIView.animate(withDuration: 0.5, animations: {
-                self.muteButton.alpha = CGFloat(startAlpha)
-            }, completion: { [weak self] (_) in
-                if let strongSelf = self {
-                    strongSelf.muteButton.isHidden = strongSelf.youtubeMute
-                    strongSelf.muteButton.alpha = CGFloat(endAlpha)
-                }
-            })
+                self.muteButton.setImage(changeImage, for: UIControl.State.normal)
+            }, completion: nil)
         }
     }
     let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
