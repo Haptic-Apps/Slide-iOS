@@ -2156,16 +2156,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     @objc func unmute() {
-//        SettingValues.autoplayAudioMode.activate()
-        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
-        self.videoView?.player?.isMuted = false
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            self.sound.alpha = 0
-        }, completion: { (_) in
-            self.sound.isHidden = true
-            self.sound.alpha = 1
-        })
+        if self.videoView?.player?.isMuted ?? true {
+            try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+            self.videoView?.player?.isMuted = false
+            
+            UIView.animate(withDuration: 0.5, animations: {
+                self.sound.setImage(UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(), for: UIControl.State.normal)
+            }, completion: nil)
+        } else {
+            try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            self.videoView?.player?.isMuted = true
+            
+            UIView.animate(withDuration: 0.5, animations: {
+                self.sound.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+            }, completion: nil)
+        }
     }
     
     func submitFlairChange(_ flair: FlairTemplate, text: String? = "") {

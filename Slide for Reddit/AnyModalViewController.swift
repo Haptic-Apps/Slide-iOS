@@ -303,7 +303,7 @@ class AnyModalViewController: UIViewController {
         if muted {
             image = UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true)
         } else {
-            image = UIImage(sfString: SFSymbol.volume3Fill, overrideString: "audio")?.navIcon(true)
+            image = UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(true)
         }
         muteButton.setImage(image, for: [])
     }

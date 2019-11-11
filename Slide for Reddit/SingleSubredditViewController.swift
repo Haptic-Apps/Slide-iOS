@@ -1494,6 +1494,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                             }
                                         }
                                     }
+                                    
+                                    let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : strongSelf.headerHeight(false))
 
                                     var top = CGFloat(0)
                                     if !is13Popover {
@@ -1505,9 +1507,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         }
                                     } else {
                                         top -= 4
+                                        if headerHeight != 0 {
+                                            top -= 12
+                                        }
                                     }
                                     let navoffset = (-1 * ( (strongSelf.navigationController?.navigationBar.frame.size.height ?? 64)))
-                                    let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : strongSelf.headerHeight(false))
                                     strongSelf.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top + headerHeight)
                                 } else {
                                     strongSelf.flowLayout.invalidateLayout()

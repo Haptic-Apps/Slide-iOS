@@ -23,7 +23,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var youtubeMute = false {
         didSet(fromValue) {
-            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.volume3Fill, overrideString: "audio")?.navIcon(true).getCopy(withColor: GMColor.red500Color())
+            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(true).getCopy(withColor: GMColor.red500Color())
             
             UIView.animate(withDuration: 0.5, animations: {
                 self.muteButton.setImage(changeImage, for: UIControl.State.normal)

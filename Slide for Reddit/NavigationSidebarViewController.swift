@@ -575,6 +575,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             self.searchBar.tintColor = ColorUtil.theme.fontColor
             self.searchBar.textColor = ColorUtil.theme.fontColor
             self.searchBar.backgroundColor = .clear
+            self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
             self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         }
     }
