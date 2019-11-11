@@ -73,6 +73,11 @@ class WrappingFlowLayout: UICollectionViewLayout {
             numberOfColumns = 1
         }
         
+        if vc is ContentListingViewController && numberOfColumns > 2 {
+            numberOfColumns = 2
+            portraitCount = 1
+        }
+        
         cellPadding = (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT)) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))
         prepare()
     }
