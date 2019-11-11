@@ -23,7 +23,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var youtubeMute = false {
         didSet(fromValue) {
-            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(true).getCopy(withColor: GMColor.red500Color())
+            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(true)
             
             UIView.animate(withDuration: 0.5, animations: {
                 self.muteButton.setImage(changeImage, for: UIControl.State.normal)
@@ -313,14 +313,37 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     @objc func unmute() {
         if isYoutubeView {
-            // TODO: - An error is thrown when this is evaluated. Resolve why to allow error handling
-            youtubeView.webView?.evaluateJavaScript("player.unMute()") { [weak self] (_, _) in
-                if let strongSelf = self {
-                    strongSelf.youtubeMute = false
-                    strongSelf.videoView.player?.isMuted = false
-                    
-                    try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+            if youtubeMute {
+                // TODO: - An error is thrown when this is evaluated. Resolve why to allow error handling
+                youtubeView.webView?.evaluateJavaScript("player.unMute()") { [weak self] (_, _) in
+                    if let strongSelf = self {
+                        strongSelf.youtubeMute = false
+                        strongSelf.videoView.player?.isMuted = false
+                        
+                        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                    }
                 }
+            } else {
+                youtubeView.webView?.evaluateJavaScript("player.mute()") { [weak self] (_, _) in
+                    if let strongSelf = self {
+                        strongSelf.youtubeMute = true
+                        strongSelf.videoView.player?.isMuted = true
+                        
+                        try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                    }
+                }
+            }
+        } else {
+            if youtubeMute {
+                self.youtubeMute = false
+                self.videoView.player?.isMuted = false
+                
+                try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+            } else {
+                self.youtubeMute = true
+                self.videoView.player?.isMuted = true
+                
+                try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             }
         }
     }
@@ -938,12 +961,14 @@ extension VideoMediaViewController {
             
             if hasAudioTracks {
                 if isYoutubeView ? !SettingValues.muteYouTube : !SettingValues.muteVideosInModal {
+                    youtubeMute = false
                     if SettingValues.modalVideosRespectHardwareMuteSwitch {
                         try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
                     } else {
                         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
                     }
                 } else {
+                    youtubeMute = true
                     try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                 }
             } else {
