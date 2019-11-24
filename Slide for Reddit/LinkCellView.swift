@@ -137,6 +137,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var bannerImage: UIImageView!
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
+    var thumbText: UILabel!
     var title: YYLabel!
     var score: UILabel!
     var box: UIStackView!
@@ -236,8 +237,32 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
         }
+        self.thumbText = UILabel().then {
+            $0.accessibilityIdentifier = "Link Type Label"
+            if !ColorUtil.shouldBeNight() {
+                $0.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                $0.textColor = ColorUtil.theme.foregroundColor
+            } else {
+                $0.backgroundColor = ColorUtil.theme.foregroundColor.withAlphaComponent(0.5)
+                $0.textColor = ColorUtil.theme.fontColor
+            }
+            $0.textAlignment = .center
+            $0.adjustsFontSizeToFitWidth = true
+            $0.isHidden = false
+            
+            $0.font = UIFont.boldSystemFont(ofSize: 10)
+            if #available(iOS 11.0, *) {
+                $0.accessibilityIgnoresInvertColors = true
+            }
+            $0.clipsToBounds = true
+        }
         self.thumbImageContainer.addSubview(self.thumbImage)
+        self.thumbImage.addSubview(self.thumbText)
+        
         self.thumbImage.edgeAnchors == self.thumbImageContainer.edgeAnchors
+        self.thumbText.horizontalAnchors == self.thumbImage.horizontalAnchors
+        self.thumbText.heightAnchor == 20
+        self.thumbText.bottomAnchor == self.thumbImage.bottomAnchor
         
         self.bannerImage = UIImageView().then {
             $0.accessibilityIdentifier = "Banner Image"
@@ -1528,6 +1553,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
             } else {
                 thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.thumbnailUrl), withPlaceHolderImage: LinkCellImageCache.web)
+                thumbText.isHidden = false
+                thumbText.text = type.rawValue.uppercased()
             }
         } else {
             thumbImage.image = nil

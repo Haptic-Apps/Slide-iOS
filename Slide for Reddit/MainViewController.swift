@@ -139,9 +139,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
                 if themeChanged {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                        if UIApplication.shared.applicationState == .active {
-                            self.viewWillAppearActions(override: true)
-                        }
+                        self.viewWillAppearActions(override: true)
                     }
                 }
             }
