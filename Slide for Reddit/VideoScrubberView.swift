@@ -72,7 +72,7 @@ class VideoScrubberView: UIView {
 //        slider.setThumbImage(UIImage(named: "circle")?.getCopy(withSize: .square(size: 72), withColor: slider.tintColor), for: .normal)
         slider.minimumValue = 0
         slider.maximumValue = 1
-//        slider.isContinuous = true
+        slider.isContinuous = true
 //        slider.setThumbImage(UIImage(), for: .normal)
 //        slider.setMinimumTrackImage(UIImage.image(with: slider.tintColor).getCopy(withSize: .square(size: 72)), for: .normal)
 //        slider.setMaximumTrackImage(UIImage.image(with: slider.tintColor.withAlphaComponent(0.4)).getCopy(withSize: .square(size: 72)), for: .normal)

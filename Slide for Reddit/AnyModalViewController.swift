@@ -945,7 +945,7 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         
         let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
         let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), preferredTimescale: 1000)
-        self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
+        self.videoView.player?.seek(to: newCMTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { _ in
             self.videoView.player?.play()
         }
     }
@@ -955,9 +955,8 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         //        self.videoView.player?.pause()
         
         let targetTime = CMTime(seconds: Double(toSeconds), preferredTimescale: 1000)
-        
         let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
-        self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
+        self.videoView.player?.seek(to: targetTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
     }
     
     func sliderDidBeginDragging() {
