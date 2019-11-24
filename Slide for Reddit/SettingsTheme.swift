@@ -394,17 +394,13 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             
             navigationItem.leftBarButtonItem = barButton
         } else if changed == nightEnabled {
-            if !VCPresenter.proDialogShown(feature: false, self) {
-                SettingValues.nightModeEnabled = changed.isOn
-                UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
-                _ = ColorUtil.doInit()
-                SingleSubredditViewController.cellVersion += 1
-                MainViewController.needsReTheme = true
-                self.tochange!.doCells()
-                self.tochange!.tableView.reloadData()
-            } else {
-                nightEnabled.isOn = false
-            }
+            SettingValues.nightModeEnabled = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
+            _ = ColorUtil.doInit()
+            SingleSubredditViewController.cellVersion += 1
+            MainViewController.needsReTheme = true
+            self.tochange!.doCells()
+            self.tochange!.tableView.reloadData()
         }
         self.setupViews()
         if SettingValues.reduceColor {
@@ -553,16 +549,12 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         } else if indexPath.section == 0 && indexPath.row == 1 {
             pickAccent()
         } else if indexPath.section == 1 && indexPath.row == 0 {
-            if !VCPresenter.proDialogShown(feature: false, self) {
-                if #available(iOS 13, *) {
-                } else {
-                    self.selectTime()
-                }
+            if #available(iOS 13, *) {
+            } else {
+                self.selectTime()
             }
         } else if indexPath.section == 1 && indexPath.row == 1 {
-            if !VCPresenter.proDialogShown(feature: false, self) {
-                self.selectTheme()
-            }
+            self.selectTheme()
         } else if indexPath.section == 2 && indexPath.row == 0 {
             if !VCPresenter.proDialogShown(feature: false, self) {
                 let theme = SettingsCustomTheme()
