@@ -48,7 +48,12 @@ class Sidebar: NSObject {
     func doDisplaySidebar(_ sub: Subreddit) {
         guard let parent = parent else { return }
         inner = SubSidebarViewController(sub: sub, parent: parent)
-        VCPresenter.presentAlert(UINavigationController(rootViewController: inner!), parentVC: parent)
+        
+        if #available(iOS 13.0, *) {
+            VCPresenter.presentAlert(UINavigationController(rootViewController: inner!), parentVC: parent)
+        } else {
+            VCPresenter.showVC(viewController: inner!, popupIfPossible: false, parentNavigationController: parent.navigationController, parentViewController: parent)
+        }
     }
 
     func subscribe(_ sub: Subreddit) {

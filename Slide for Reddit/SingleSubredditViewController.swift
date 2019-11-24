@@ -240,7 +240,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if single && !isModal && !(self.navigationController!.delegate is SloppySwiper) {
+        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) ?? false{
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
             for view in view.subviews {

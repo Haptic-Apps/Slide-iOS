@@ -1541,8 +1541,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 thumbImage.image = LinkCellImageCache.web
             }
         } else if thumb && !big {
+            thumbText.isHidden = true
             if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
                 thumbImage.image = LinkCellImageCache.nsfw
+                thumbText.isHidden = false
+                thumbText.text = type.rawValue.uppercased()
             } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
                 if submission.spoiler {
                     thumbImage.image = LinkCellImageCache.spoiler
@@ -1552,9 +1555,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     thumbImage.image = LinkCellImageCache.web
                 }
             } else {
-                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.thumbnailUrl), withPlaceHolderImage: LinkCellImageCache.web)
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
+                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.thumbnailUrl), withPlaceHolderImage: LinkCellImageCache.web)
             }
         } else {
             thumbImage.image = nil
