@@ -69,7 +69,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         createCell(singleMode, isOn: false, text: "Single-column posts")
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
         createCell(splitMode, isOn: false, text: "Split-content")
-        createCell(multicolumnCount, isOn: false, text: "Multi-column count")
+        createCell(multicolumnCount, isOn: false, text: "Multi-column count (customize with Pro)")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
         self.singleMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
@@ -113,13 +113,14 @@ class SettingsViewMode: BubbleSettingTableViewController {
         case .MULTI_COLUMN:
             self.multicolumnMode.accessoryType = .checkmark
         }
-        
+                
         if !SettingValues.isPro {
-            multicolumnMode.isUserInteractionEnabled = false
-            multicolumnMode.textLabel!.isEnabled = false
-            multicolumnMode.detailTextLabel!.isEnabled = false
+            multicolumnCount.isUserInteractionEnabled = false
+            multicolumnCount.textLabel!.isEnabled = false
+            multicolumnCount.detailTextLabel!.isEnabled = false
+            multicolumnCount.contentView.alpha = 0.8
         }
-        
+
         if UIDevice.current.userInterfaceIdiom != .pad {
             self.splitMode.isUserInteractionEnabled = false
             self.splitMode.textLabel!.isEnabled = false

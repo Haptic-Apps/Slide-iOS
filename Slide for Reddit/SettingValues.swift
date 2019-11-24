@@ -970,7 +970,7 @@ class SettingValues {
 
     public enum FabType: String {
 
-        public static let cases: [FabType] = [.HIDE_READ, .HIDE_PERMANENTLY, .SHADOWBOX, .NEW_POST, .SIDEBAR, .RELOAD, .SEARCH]
+        public static let cases: [FabType] = [.HIDE_READ, .HIDE_PERMANENTLY, .SHADOWBOX, .GALLERY, .NEW_POST, .SIDEBAR, .RELOAD, .SEARCH]
 
         case HIDE_READ = "hide"
         case SHADOWBOX = "shadowbox"
@@ -1071,7 +1071,7 @@ class SettingValues {
             case .SINGLE:
                 return "Single column display of submissions"
             case .MULTI_COLUMN:
-                return "Multiple column display of submissions (requires Pro)"
+                return "Multiple column display of submissions"
             }
         }
     }

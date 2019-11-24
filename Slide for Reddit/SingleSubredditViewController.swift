@@ -1142,18 +1142,16 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     func galleryMode() {
-        if !VCPresenter.proDialogShown(feature: true, self) {
-            let controller = GalleryTableViewController()
-            var gLinks: [RSubmission] = []
-            for l in links {
-                if l.banner {
-                    gLinks.append(l)
-                }
+        let controller = GalleryTableViewController()
+        var gLinks: [RSubmission] = []
+        for l in links {
+            if l.banner {
+                gLinks.append(l)
             }
-            controller.setLinks(links: gLinks)
-            controller.modalPresentationStyle = .overFullScreen
-            present(controller, animated: true, completion: nil)
         }
+        controller.setLinks(links: gLinks)
+        controller.modalPresentationStyle = .overFullScreen
+        present(controller, animated: true, completion: nil)
     }
 
     func shadowboxMode() {
