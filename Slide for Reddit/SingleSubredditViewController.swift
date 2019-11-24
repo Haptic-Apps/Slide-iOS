@@ -449,6 +449,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
         
+        if self.fab?.isHidden ?? false {
+            return
+        }
+        
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
         }, completion: { _ in

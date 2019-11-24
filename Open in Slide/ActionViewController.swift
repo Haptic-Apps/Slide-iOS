@@ -25,7 +25,7 @@ class ActionViewController: UIViewController {
         let length = self.extensionContext!.inputItems.count
         for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
             count += 1
-            for provider in item.attachments! {
+            for provider in item.attachments ?? [] {
                 if provider.hasItemConformingToTypeIdentifier("public.url") {
                     provider.loadItem(forTypeIdentifier: "public.url", options: nil, completionHandler: { (url, _) -> Void in
                         if let shareURL = url as? NSURL {
@@ -33,7 +33,8 @@ class ActionViewController: UIViewController {
                             
                             if !absolute.matches(regex: "(?i)redd\\.it/\\w+") && !absolute.matches(regex: "(?i)reddit\\.com/[^/]*") {
                                 //Not a Reddit URL
-                                self.extensionContext?.cancelRequest(withError: NSError())
+                                //causing crashes, need to revisit self.extensionContext?.cancelRequest(withError: NSError())
+                                return
                             }
                             
                             urlFound = true

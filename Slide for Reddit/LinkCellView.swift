@@ -1882,7 +1882,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let videoType = VideoMediaViewController.VideoType.fromPath(url)
         self.videoTask = videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
             guard let strongSelf = self else { return }
-            strongSelf.videoURL = URL(string: urlString)!
+            let videoURL =  URL(string: urlString)
+            if videoURL == nil {
+                //TODO - Show video failed warning
+                return
+            }
+            strongSelf.videoURL = videoURL!
+            
             strongSelf.videoPreloaded = true
             strongSelf.isLoadingVideo = false
             DispatchQueue.main.async {
