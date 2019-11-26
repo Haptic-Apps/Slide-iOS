@@ -1148,7 +1148,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         
         alert.addBlurView()
 
-        alert.addCancelButton()
+        alert.addCloseButton()
         present(alert, animated: true, completion: nil)
     }
 
@@ -1479,7 +1479,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                 }
                                 
                                 if listing.children.isEmpty {
-                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit with \(strongSelf.sort.path.substring(1, length: strongSelf.sort.path.length - 1)) sorting")
+                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit with \(strongSelf.sort.path.substring(1, length: strongSelf.sort.path.length - 1)) sorting.")
                                     strongSelf.emptyStateView.isHidden = false
                                 } else {
                                     strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "Some posts were filtered while loading this subreddit. Check your filter settings and tap here to reload")
