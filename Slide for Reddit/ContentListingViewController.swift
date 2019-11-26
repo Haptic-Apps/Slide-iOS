@@ -684,6 +684,7 @@ class EmptyStateView: UIView {
         
         addSubview(titleLabel)
         titleLabel.centerAnchors == centerAnchors
+        titleLabel.widthAnchor == self.widthAnchor - 50
         
         setText(title: "Title Placeholder", message: "Message Placeholder")
     }

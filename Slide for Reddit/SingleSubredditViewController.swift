@@ -225,16 +225,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         tableView.reloadData()
         self.automaticallyAdjustsScrollViewInsets = false
         
-        self.tableView.addSubview(emptyStateView)
+        self.view.addSubview(emptyStateView)
         emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit")
         
         emptyStateView.isHidden = true
-        emptyStateView.widthAnchor == 300
-        emptyStateView.edgeAnchors == self.tableView.edgeAnchors
-        emptyStateView.centerXAnchor == self.tableView.centerXAnchor
-        emptyStateView.centerYAnchor == self.tableView.centerYAnchor - 150
         emptyStateView.isUserInteractionEnabled = false
-        
+        emptyStateView.edgeAnchors == self.tableView.edgeAnchors
+
         self.view.bringSubviewToFront(emptyStateView)
 
         if #available(iOS 11.0, *) {
@@ -1482,14 +1479,15 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                 }
                                 
                                 if listing.children.isEmpty {
-                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit with the selected sorting")
+                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit with \(strongSelf.sort.path.substring(1, length: strongSelf.sort.path.length - 1)) sorting")
                                     strongSelf.emptyStateView.isHidden = false
                                 } else {
                                     strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "Some posts were filtered while loading this subreddit. Check your filter settings and tap here to reload")
                                     strongSelf.emptyStateView.addTapGestureRecognizer {
                                         strongSelf.refresh()
                                     }
-                                    strongSelf.emptyStateView.isHidden = true
+                                    strongSelf.emptyStateView.isUserInteractionEnabled = true
+                                    strongSelf.emptyStateView.isHidden = false
                                 }
                             } else if strongSelf.links.isEmpty && newLinks.count != 0 && strongSelf.paginator.hasMore() {
                                 strongSelf.loading = false
@@ -2815,7 +2813,6 @@ public class NothingHereCell: UICollectionViewCell {
         text.topAnchor == self.contentView.topAnchor + 10
         text.bottomAnchor == self.contentView.bottomAnchor - 10
         text.centerXAnchor == self.contentView.centerXAnchor
-        text.heightAnchor == 30
     }
 }
 
