@@ -260,9 +260,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbImage.addSubview(self.thumbText)
         
         self.thumbImage.edgeAnchors == self.thumbImageContainer.edgeAnchors
-        self.thumbText.horizontalAnchors == self.thumbImage.horizontalAnchors
+        self.thumbText.horizontalAnchors == self.thumbImage.horizontalAnchors - 2
         self.thumbText.heightAnchor == 20
-        self.thumbText.bottomAnchor == self.thumbImage.bottomAnchor
+        self.thumbText.bottomAnchor == self.thumbImage.bottomAnchor + 2
         
         self.bannerImage = UIImageView().then {
             $0.accessibilityIdentifier = "Banner Image"
@@ -1531,8 +1531,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
+            thumbText.isHidden = true
             if submission.nsfw {
                 thumbImage.image = LinkCellImageCache.nsfw
+                thumbText.isHidden = false
+                thumbText.text = type.rawValue.uppercased()
             } else if submission.spoiler {
                 thumbImage.image = LinkCellImageCache.spoiler
             } else if type == .REDDIT {
@@ -1561,7 +1564,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         } else {
             thumbImage.image = nil
+            thumbText.isHidden = true
             self.thumbImage.frame.size.width = 0
+        }
+        
+        if full {
+            self.thumbText.isHidden = true
         }
         
         if big {

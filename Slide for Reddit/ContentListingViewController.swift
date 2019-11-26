@@ -512,6 +512,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             // If there is no data after loading, show the empty state view.
             if self.baseData.content.count == 0 {
                 self.emptyStateView.isHidden = false
+            } else {
+                self.emptyStateView.isHidden = true
             }
             
             if before == 0 || before > self.baseData.content.count {
