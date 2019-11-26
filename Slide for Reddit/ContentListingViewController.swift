@@ -697,9 +697,9 @@ class EmptyStateView: UIView {
         if let message = message {
             let firstPart = NSMutableAttributedString.init(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([
                 convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor.withAlphaComponent(0.8),
-                convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16),
+                convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 20),
             ]))
-            let secondPart = NSMutableAttributedString.init(string: "\n" + message, attributes: convertToOptionalNSAttributedStringKeyDictionary([
+            let secondPart = NSMutableAttributedString.init(string: "\n\n" + message, attributes: convertToOptionalNSAttributedStringKeyDictionary([
                 convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor.withAlphaComponent(0.5),
                 convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 14),
             ]))

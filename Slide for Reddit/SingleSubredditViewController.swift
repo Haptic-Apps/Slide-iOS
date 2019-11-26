@@ -24,6 +24,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     var currentPlayingIndex = [IndexPath]()
 
     var isScrollingDown = true
+    var emptyStateView = EmptyStateView()
     
     var lastScrollDirectionWasDown = false
     
@@ -224,6 +225,18 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         tableView.reloadData()
         self.automaticallyAdjustsScrollViewInsets = false
         
+        self.tableView.addSubview(emptyStateView)
+        emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit")
+        
+        emptyStateView.isHidden = true
+        emptyStateView.widthAnchor == 300
+        emptyStateView.edgeAnchors == self.tableView.edgeAnchors
+        emptyStateView.centerXAnchor == self.tableView.centerXAnchor
+        emptyStateView.centerYAnchor == self.tableView.centerYAnchor - 150
+        emptyStateView.isUserInteractionEnabled = false
+        
+        self.view.bringSubviewToFront(emptyStateView)
+
         if #available(iOS 11.0, *) {
             self.tableView.contentInsetAdjustmentBehavior = .never
         }
@@ -240,7 +253,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) ?? false{
+        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) {
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
             for view in view.subviews {
@@ -788,6 +801,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(LoadingCell.classForCoder(), forCellWithReuseIdentifier: "loading")
+        self.tableView.register(NothingHereCell.classForCoder(), forCellWithReuseIdentifier: "nothing")
         self.tableView.register(ReadLaterCell.classForCoder(), forCellWithReuseIdentifier: "readlater")
         self.tableView.register(PageCell.classForCoder(), forCellWithReuseIdentifier: "page")
         self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header")
@@ -1260,6 +1274,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     func load(reset: Bool) {
         self.reset = reset
+        self.emptyStateView.isHidden = true
         PagingCommentViewController.savedComment = nil
         LinkCellView.checkedWifi = false
         if sub.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
@@ -1382,7 +1397,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                             self.load(reset: true)
                                         } else {
                                             if self.links.isEmpty {
-                                                BannerUtil.makeBanner(text: "No offline content found! You can set up subreddit caching in Settings > Auto Cache", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 5, context: self)
+                                                self.emptyStateView.setText(title: "No offline content found!", message: "When online, you can set up subreddit caching in Settings > Auto Cache")
+                                                self.emptyStateView.isHidden = false
                                             } else {
                                                 self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Content \(DateFormatter().timeSince(from: updated, numericDates: true)) old")
                                             }
@@ -1464,12 +1480,16 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     MainViewController.first = false
                                     strongSelf.parentController?.checkForMail()
                                 }
+                                
                                 if listing.children.isEmpty {
-                                    BannerUtil.makeBanner(text: "No posts found!\nMake sure this sub exists and you have permission to view it", color: GMColor.red500Color(), seconds: 5, context: strongSelf)
+                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit with the selected sorting")
+                                    strongSelf.emptyStateView.isHidden = false
                                 } else {
-                                    BannerUtil.makeBanner(text: "No posts found!\nCheck your filter settings, or tap here to reload.", color: GMColor.red500Color(), seconds: 5, context: strongSelf) {
+                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "Some posts were filtered while loading this subreddit. Check your filter settings and tap here to reload")
+                                    strongSelf.emptyStateView.addTapGestureRecognizer {
                                         strongSelf.refresh()
                                     }
+                                    strongSelf.emptyStateView.isHidden = true
                                 }
                             } else if strongSelf.links.isEmpty && newLinks.count != 0 && strongSelf.paginator.hasMore() {
                                 strongSelf.loading = false
@@ -2294,7 +2314,7 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (loaded && (!loading || self.links.count > 0) ? headerOffset() : 0) + links.count + (loaded && !reset ? 1 : 0)
+        return (loaded && (!loading || self.links.count > 0) ? headerOffset() : 0) + links.count + (loaded && !reset && self.links.count != 0 ? 1 : 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -2308,6 +2328,10 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             row -= 1
         }
         if row >= self.links.count {
+            if nomore {
+                let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nothing", for: indexPath) as! NothingHereCell
+                return cell
+            }
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
             cell.loader.color = ColorUtil.theme.fontColor
             cell.loader.startAnimating()
@@ -2767,6 +2791,31 @@ public class LoadingCell: UICollectionViewCell {
         loader.topAnchor == self.contentView.topAnchor + 10
         loader.bottomAnchor == self.contentView.bottomAnchor - 10
         loader.centerXAnchor == self.contentView.centerXAnchor
+    }
+}
+
+public class NothingHereCell: UICollectionViewCell {
+    var text = UILabel()
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupView() {
+        
+        self.contentView.addSubview(text)
+        
+        var title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        text.attributedText = title
+        text.topAnchor == self.contentView.topAnchor + 10
+        text.bottomAnchor == self.contentView.bottomAnchor - 10
+        text.centerXAnchor == self.contentView.centerXAnchor
+        text.heightAnchor == 30
     }
 }
 
