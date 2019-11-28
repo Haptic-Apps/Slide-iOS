@@ -1147,7 +1147,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             if reload {
                 self.load(reset: true)
             } else {
-                self.filterContent()
+                self.applyFilters()
             }
         }))
 
@@ -1487,10 +1487,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     strongSelf.emptyStateView.isHidden = false
                                 } else {
                                     strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "All posts were filtered while loading this subreddit. Check your global filters in Slide's Settings, or tap here to view this sub's content filters")
+                                    strongSelf.emptyStateView.isHidden = false
                                     strongSelf.emptyStateView.addTapGestureRecognizer {
                                         strongSelf.filterContent(true)
                                     }
-                                    strongSelf.emptyStateView.isHidden = false
                                 }
                             } else if strongSelf.links.isEmpty && newLinks.count != 0 && strongSelf.paginator.hasMore() {
                                 strongSelf.loading = false
