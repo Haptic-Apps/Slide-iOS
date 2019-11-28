@@ -35,6 +35,7 @@ target 'Slide for Reddit' do
   pod 'Then'
   pod 'SwiftLint'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
+  pod 'TGPControls'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths

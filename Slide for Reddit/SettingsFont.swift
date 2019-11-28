@@ -6,6 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
+import TGPControls
+import SloppySwiper
 import reddift
 import UIKit
 
@@ -15,6 +18,7 @@ class SettingsFont: BubbleSettingTableViewController {
     var typeCell: UITableViewCell = InsetCell()
     var enlarge = UISwitch()
     var type = UISwitch()
+    var slider: TGPDiscreteSlider!
 
     var previewCell: UITableViewCell = InsetCell()
     var preview = UISwitch()
@@ -137,13 +141,35 @@ class SettingsFont: BubbleSettingTableViewController {
         commentPreview.textLabel?.text = "I'm a text preview!"
 
         commentSize.textLabel?.text = "Font size"
-        commentSize.addTapGestureRecognizer { [weak self] in
-            self?.commentSizeCellWasTapped()
+        
+        slider = TGPDiscreteSlider()
+        slider.incrementValue = 1
+        slider.minimumValue = -8
+        slider.tickCount = 16
+        slider.tickSize = CGSize(width: 3, height: 10)
+        slider.tickStyle = 2 //rounded
+        slider.value = CGFloat(SettingValues.commentFontOffset)
+        slider.addTarget(self, action: #selector(valueChanged(_:event:)), for: .valueChanged)
+        slider.minimumTrackTintColor = ColorUtil.baseAccent
+        slider.maximumTrackTintColor = ColorUtil.theme.fontColor
+        
+        commentSize.contentView.addSubview(slider)
+        if let label = commentSize.textLabel {
+            label.topAnchor == commentSize.contentView.topAnchor + 20
+            label.leftAnchor == commentSize.contentView.leftAnchor + 21
         }
-
+        
+        slider.horizontalAnchors == commentSize.contentView.horizontalAnchors
+        slider.heightAnchor == 60
+        slider.bottomAnchor == commentSize.contentView.bottomAnchor
         commentFont.textLabel?.text = "Font"
         commentFont.addTapGestureRecognizer { [weak self] in
             self?.commentFontCellWasTapped()
+        }
+        
+        
+        if let swiper = self.navigationController?.delegate as? SloppySwiper {
+            swiper.panRecognizer.delegate = self
         }
 
         commentWeight.textLabel?.text = "Font variant"
@@ -154,6 +180,22 @@ class SettingsFont: BubbleSettingTableViewController {
         refresh()
         self.tableView.tableFooterView = UIView()
 
+    }
+    
+    @objc func valueChanged(_ sender: TGPDiscreteSlider, event: UIEvent) {
+        SettingValues.commentFontOffset = Int(Double(sender.value))
+        let submissionFont = FontGenerator.fontOfSize(size: 16, submission: true)
+        let commentFont = FontGenerator.fontOfSize(size: 16, submission: false)
+
+        self.submissionPreview.textLabel?.font = submissionFont
+        self.commentPreview.textLabel?.font = commentFont
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 1 && indexPath.row == 2 {
+            return 90
+        }
+        return 60
     }
     
     func refresh() {
@@ -170,9 +212,6 @@ class SettingsFont: BubbleSettingTableViewController {
         let commentFontKey = UserDefaults.standard.string(forKey: "commentfont") ?? ""
         let commentFontDisplayName = FontMapping.fromStoredName(name: commentFontKey).displayedName
         self.commentFont.detailTextLabel?.text = commentFontDisplayName
-
-        self.submissionSize.detailTextLabel?.text = fontSizes[SettingValues.postFontOffset] ?? "Default"
-        self.commentSize.detailTextLabel?.text = fontSizes[SettingValues.commentFontOffset] ?? "Default"
 
         self.submissionWeight.detailTextLabel?.text = FontGenerator.fontOfSize(size: 12, submission: true).fontName
         self.commentWeight.detailTextLabel?.text = FontGenerator.fontOfSize(size: 12, submission: false).fontName
@@ -383,5 +422,14 @@ private extension UITableViewCell {
         backgroundColor = ColorUtil.theme.foregroundColor
         textLabel?.textColor = ColorUtil.theme.fontColor
         detailTextLabel?.textColor = ColorUtil.theme.fontColor.withAlphaComponent(0.7)
+    }
+}
+
+extension SettingsFont: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if slider.bounds.contains( touch.location(in: self.commentSize.contentView)) {
+            return false
+        }
+        return true
     }
 }

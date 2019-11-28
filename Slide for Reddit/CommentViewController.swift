@@ -791,7 +791,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if offline {
                     self.loadOffline()
                 } else {
-                    try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, completion: { (result) -> Void in
+                    try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, limit: 100, completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error)
@@ -1475,7 +1475,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         var row = Double(0)
         for cell in cells {
-            UIView.animate(withDuration: 0.5, delay: 0.05 * row, options: .curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
                 cell.alpha = 1
             }, completion: nil)
             row += 1
