@@ -1123,7 +1123,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         Sidebar.init(parent: self, subname: self.sub).displaySidebar()
     }
 
-    func filterContent() {
+    func filterContent(_ reload: Bool = false) {
         let alert = AlertController(title: "Content to hide on", message: "r/\(sub)", preferredStyle: .alert)
 
         let settings = Filter(subreddit: sub, parent: self)
@@ -1143,10 +1143,16 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         filterView.verticalAnchors == alert.contentView.verticalAnchors
         filterView.horizontalAnchors == alert.contentView.horizontalAnchors + 8
         filterView.heightAnchor == CGFloat(50 * settings.tableView(settings.tableView, numberOfRowsInSection: 0))
-                
+        alert.addAction(AlertAction(title: "Apply", style: .preferred, handler: { (_) in
+            if reload {
+                self.load(reset: true)
+            } else {
+                self.filterContent()
+            }
+        }))
+
         alert.addBlurView()
 
-        alert.addCloseButton()
         present(alert, animated: true, completion: nil)
     }
 
@@ -1480,11 +1486,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit with \(strongSelf.sort.path.substring(1, length: strongSelf.sort.path.length - 1)) sorting.")
                                     strongSelf.emptyStateView.isHidden = false
                                 } else {
-                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "Some posts were filtered while loading this subreddit. Check your filter settings and tap here to reload")
+                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "All posts were filtered while loading this subreddit. Check your global filters in Slide's Settings, or tap here to view this sub's content filters")
                                     strongSelf.emptyStateView.addTapGestureRecognizer {
-                                        strongSelf.refresh()
+                                        strongSelf.filterContent(true)
                                     }
-                                    strongSelf.emptyStateView.isUserInteractionEnabled = true
                                     strongSelf.emptyStateView.isHidden = false
                                 }
                             } else if strongSelf.links.isEmpty && newLinks.count != 0 && strongSelf.paginator.hasMore() {
