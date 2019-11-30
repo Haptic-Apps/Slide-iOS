@@ -1533,7 +1533,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             thumb = true
             thumbText.isHidden = true
             if submission.nsfw {
-                thumbImage.image = LinkCellImageCache.nsfw
+                thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
             } else if submission.spoiler {
@@ -1546,7 +1546,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else if thumb && !big {
             thumbText.isHidden = true
             if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
-                thumbImage.image = LinkCellImageCache.nsfw
+                thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
             } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
@@ -1566,6 +1566,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             thumbImage.image = nil
             thumbText.isHidden = true
             self.thumbImage.frame.size.width = 0
+        }
+        
+        if !SettingValues.thumbTag || full {
+            thumbText.isHidden = true
         }
         
         if full {

@@ -72,6 +72,11 @@ class SettingsLayout: BubbleSettingTableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
+    var thumbInfoCell: UITableViewCell = InsetCell()
+    var thumbInfo = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var hideCell: UITableViewCell = InsetCell()
     var hide = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -456,7 +461,8 @@ class SettingsLayout: BubbleSettingTableViewController {
         self.title = "Submission layout"
         
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
-        
+        createCell(thumbInfoCell, thumbInfo, isOn: SettingValues.thumbTag, text: "Show link type on thumbnail")
+
         createCell(cardModeCell, isOn: false, text: "Card type")
         cardModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
@@ -569,6 +575,7 @@ class SettingsLayout: BubbleSettingTableViewController {
             case 0: return self.largerThumbnailCell
             case 1: return self.leftThumbCell
             case 2: return self.thumbLinkCell
+            case 3: return self.thumbInfoCell
                 
             default: fatalError("Unknown row in section 3")
             }
@@ -593,7 +600,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         case 0: return 1
         case 1: return 4
         case 2: return 7
-        case 3: return 3
+        case 3: return 4
         case 4: return 7
         default: fatalError("Unknown number of sections")
         }

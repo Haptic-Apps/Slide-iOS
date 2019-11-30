@@ -128,6 +128,7 @@ class SettingValues {
     public static let pref_hideSeen = "HIDE_SEEN"
     public static let pref_sideGesture = "SIDE_GESTURE"
     public static let pref_disable13Popup = "DISABLE_13_POPUP"
+    public static let pref_thumbTag = "THUMB_TAG"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -256,6 +257,7 @@ class SettingValues {
     public static var disablePreviews = false
     public static var hideSeen = true
     public static var disable13Popup = true
+    public static var thumbTag = true
 
     enum PostViewType: String {
         case LIST = "list"
@@ -532,6 +534,7 @@ class SettingValues {
         SettingValues.leftThumbnail = settings.bool(forKey: SettingValues.pref_leftThumbnail)
         SettingValues.hideAutomod = settings.bool(forKey: SettingValues.pref_hideAutomod)
         SettingValues.biometrics = settings.bool(forKey: SettingValues.pref_biometrics)
+        SettingValues.thumbTag = settings.bool(forKey: SettingValues.pref_thumbTag)
         SettingValues.enlargeLinks = settings.object(forKey: SettingValues.pref_enlargeLinks) == nil ? true : settings.bool(forKey: SettingValues.pref_enlargeLinks)
         SettingValues.commentFullScreen = settings.object(forKey: SettingValues.pref_commentFullScreen) == nil ? !pad : settings.bool(forKey: SettingValues.pref_commentFullScreen)
         SettingValues.showLinkContentType = settings.object(forKey: SettingValues.pref_showLinkContentType) == nil ? true : settings.bool(forKey: SettingValues.pref_showLinkContentType)

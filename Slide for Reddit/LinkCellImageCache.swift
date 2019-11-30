@@ -39,6 +39,7 @@ public class LinkCellImageCache {
     
     static var web = UIImage()
     static var nsfw = UIImage()
+    static var nsfwUp = UIImage()
     static var reddit = UIImage()
     static var spoiler = UIImage()
     
@@ -96,9 +97,11 @@ public class LinkCellImageCache {
         nextColor = GMColor.red600Color()
         
         let nsfwimg = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white)
+        let nsfwimg2 = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white)
         nsfw = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
+        nsfwUp = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         nsfw = nsfw.overlayWith(image: nsfwimg, posX: ((150 - (nsfwimg.size.width)) / 2), posY: ((150 - (nsfwimg.size.height)) / 2))
-
+        nsfwUp = nsfwUp.overlayWith(image: nsfwimg2, posX: ((150 - (nsfwimg2.size.width)) / 2), posY: ((125 - (nsfwimg2.size.height)) / 2))
     }
 
 }
