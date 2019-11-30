@@ -127,6 +127,9 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if changed == selftext {
             SettingValues.showFirstParagraph = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showFirstParagraph)
+        } else if changed == thumbInfo {
+            SettingValues.thumbTag = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_thumbTag)
         } else if changed == largerThumbnail {
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
