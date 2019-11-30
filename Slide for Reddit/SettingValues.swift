@@ -75,6 +75,7 @@ class SettingValues {
     public static let pref_nightMode = "NIGHT_ENABLED"
     public static let pref_nightModeFilter = "NIGHT_FILTER"
     public static let pref_multiColumnCount = "MULTICOLUMN_COUNT"
+    public static let pref_galleryCount = "GALLERY_COUNT"
     public static let pref_nameScrubbing = "NAME_SCRUBBING"
     public static let pref_autoCache = "AUTO_CACHE"
     public static let pref_pro = "RELEASE_PRO_ENABLED"
@@ -180,6 +181,7 @@ class SettingValues {
     public static var commentCountLastVisit = true
     public static var rightThumbnail = true
     public static var multiColumnCount = 2
+    public static var galleryCount = 2
     public static var nameScrubbing = true
     public static var muteYouTube = true
     public static var autoCache = false
@@ -435,6 +437,7 @@ class SettingValues {
         
         let columns = 2 // TODO - Maybe calculate per device?
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
+        SettingValues.galleryCount = settings.object(forKey: SettingValues.pref_galleryCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_galleryCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 
         var basePath = settings.string(forKey: SettingValues.pref_defaultSorting)

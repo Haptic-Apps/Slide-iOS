@@ -2416,7 +2416,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         }
         
         if isGallery {
-            numberOfColumns = 2
+            numberOfColumns = CGFloat(SettingValues.galleryCount)
         }
 
         let tableWidth = self.tableView.frame.size.width

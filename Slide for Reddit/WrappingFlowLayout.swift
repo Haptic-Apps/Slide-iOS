@@ -78,7 +78,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
             portraitCount = 1
         }
         if isGallery {
-            numberOfColumns = 2
+            numberOfColumns = SettingValues.galleryCount
         }
         cellPadding = (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT)) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))
         prepare()

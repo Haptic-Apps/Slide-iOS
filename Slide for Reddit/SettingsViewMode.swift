@@ -17,6 +17,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
     var splitMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "split")
     var multicolumnMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multi")
     var multicolumnCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multicount")
+    var galleryCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "gallerycount")
 
     var numberColumns: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "number")
     
@@ -70,6 +71,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
         createCell(splitMode, isOn: false, text: "Split-content")
         createCell(multicolumnCount, isOn: false, text: "Multi-column count (customize with Pro)")
+        createCell(galleryCount, isOn: false, text: "Gallery-mode column count (Pro)")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
         self.singleMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
@@ -95,6 +97,12 @@ class SettingsViewMode: BubbleSettingTableViewController {
         self.multicolumnCount.textLabel?.textColor = ColorUtil.theme.fontColor
         self.multicolumnCount.detailTextLabel?.numberOfLines = 0
 
+        self.galleryCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
+        self.galleryCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.galleryCount.backgroundColor = ColorUtil.theme.foregroundColor
+        self.galleryCount.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.galleryCount.detailTextLabel?.numberOfLines = 0
+
         self.setSelected()
 
         self.tableView.tableFooterView = UIView()
@@ -113,12 +121,20 @@ class SettingsViewMode: BubbleSettingTableViewController {
         case .MULTI_COLUMN:
             self.multicolumnMode.accessoryType = .checkmark
         }
-                
+            
+        self.galleryCount.isUserInteractionEnabled = true
+        self.galleryCount.textLabel!.isEnabled = true
+        self.galleryCount.detailTextLabel!.isEnabled = true
+
         if !SettingValues.isPro {
             multicolumnCount.isUserInteractionEnabled = false
             multicolumnCount.textLabel!.isEnabled = false
             multicolumnCount.detailTextLabel!.isEnabled = false
             multicolumnCount.contentView.alpha = 0.8
+            galleryCount.isUserInteractionEnabled = false
+            galleryCount.textLabel!.isEnabled = false
+            galleryCount.detailTextLabel!.isEnabled = false
+            galleryCount.contentView.alpha = 0.8
         }
 
         if UIDevice.current.userInterfaceIdiom != .pad {
@@ -137,6 +153,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             self.multicolumnCount.detailTextLabel!.isEnabled = true
         }
         
+        
         var portraitCount = SettingValues.multiColumnCount / 2
         if portraitCount == 0 {
             portraitCount = 1
@@ -148,6 +165,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         }
 
         self.multicolumnCount.detailTextLabel?.text = "\(SettingValues.multiColumnCount) landscape, \(portraitCount) portrait"
+        self.galleryCount.detailTextLabel?.text = "\(SettingValues.galleryCount) across"
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -166,8 +184,9 @@ class SettingsViewMode: BubbleSettingTableViewController {
         case 1:
             switch indexPath.row {
             case 0: return self.multicolumnCount
-            case 1: return self.subredditBar
-            case 2: return self.thireenPopup
+            case 1: return self.galleryCount
+            case 2: return self.subredditBar
+            case 3: return self.thireenPopup
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -193,6 +212,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
             }
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()
+        } else if indexPath.section == 1 && indexPath.row == 1 {
+            showGalleryColumn()
         }
         
         SubredditReorderViewController.changed = true
@@ -232,7 +253,40 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
         self.present(actionSheetController, animated: true, completion: nil)
     }
-    
+
+    func showGalleryColumn() {
+        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let actionSheetController = AlertController(title: "Gallery column count", message: nil, preferredStyle: .alert)
+
+        actionSheetController.addCloseButton()
+
+        let values = pad ? [["1", "2", "3", "4", "5"]] : [["1", "2", "3"]]
+        let pickerView = PickerViewViewControllerColored(values: values, initialSelection: [(0, SettingValues.galleryCount - 1)], action: { (_, _, chosen, _) in
+            SettingValues.galleryCount = chosen.row + 1
+            UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_galleryCount)
+            UserDefaults.standard.synchronize()
+            SubredditReorderViewController.changed = true
+            self.setSelected()
+        })
+
+        actionSheetController.setupTheme()
+        
+        actionSheetController.attributedTitle = NSAttributedString(string: "Gallery column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        actionSheetController.addChild(pickerView)
+        
+        let pv = pickerView.view!
+        actionSheetController.contentView.addSubview(pv)
+        
+        pv.edgeAnchors == actionSheetController.contentView.edgeAnchors - 14
+        pv.heightAnchor == CGFloat(216)
+        pickerView.didMove(toParent: actionSheetController)
+        
+        actionSheetController.addBlurView()
+
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var thirteenOffset = 0
         if #available(iOS 13, *) {
@@ -240,7 +294,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         }
         switch section {
         case 0: return 3
-        case 1: return 2 + thirteenOffset
+        case 1: return 3 + thirteenOffset
         default: fatalError("Unknown number of sections")
         }
     }
