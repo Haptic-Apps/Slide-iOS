@@ -1162,7 +1162,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     func galleryMode() {
         UserDefaults.standard.set(!isGallery, forKey: "isgallery+" + sub)
         UserDefaults.standard.synchronize()
-        load(reset: true)
+        isGallery = !isGallery
+        self.refresh(true)
     }
 
     func shadowboxMode() {
