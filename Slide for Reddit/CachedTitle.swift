@@ -17,29 +17,30 @@ class CachedTitle {
     static let baseFontSize: CGFloat = 18
 
     static func addTitle(s: RSubmission) {
-        titles[s.getId()] = titleForSubmission(submission: s, full: false, white: false)
+        titles[s.getId()] = titleForSubmission(submission: s, full: false, white: false, gallery: false)
     }
 
     static var titleFont = FontGenerator.fontOfSize(size: baseFontSize, submission: true)
+    static var titleFontSmall = FontGenerator.fontOfSize(size: 14, submission: true)
 
-    static func getTitle(submission: RSubmission, full: Bool, _ refresh: Bool, _ white: Bool = false) -> NSAttributedString {
+    static func getTitle(submission: RSubmission, full: Bool, _ refresh: Bool, _ white: Bool = false, gallery: Bool) -> NSAttributedString {
         let title = titles[submission.getId()]
-        if title == nil || refresh || full || white {
+        if title == nil || refresh || full || white || gallery {
             if white {
-                return titleForSubmission(submission: submission, full: full, white: white)
+                return titleForSubmission(submission: submission, full: full, white: white, gallery: gallery)
             }
             if !full {
-                titles[submission.getId()] = titleForSubmission(submission: submission, full: full, white: white)
+                titles[submission.getId()] = titleForSubmission(submission: submission, full: full, white: white, gallery: gallery)
                 return titles[submission.getId()]!
             } else {
-                return titleForSubmission(submission: submission, full: full, white: white)
+                return titleForSubmission(submission: submission, full: full, white: white, gallery: gallery)
             }
         } else {
             return title!
         }
     }
 
-    static func titleForSubmission(submission: RSubmission, full: Bool, white: Bool) -> NSAttributedString {
+    static func titleForSubmission(submission: RSubmission, full: Bool, white: Bool, gallery: Bool) -> NSAttributedString {
 
         var colorF = ColorUtil.theme.fontColor
         if white {
@@ -48,6 +49,11 @@ class CachedTitle {
         let brightF = colorF
         colorF = colorF.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.20))
 
+        if gallery {
+            let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFontSmall, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): brightF]))
+
+            return attributedTitle
+        }
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): titleFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): brightF]))
 
         let spacer = NSMutableAttributedString.init(string: "  ")

@@ -63,14 +63,14 @@ class PostFilter {
         return false
     }
 
-    public static func matches(_ link: RSubmission, baseSubreddit: String) -> Bool {
+    public static func matches(_ link: RSubmission, baseSubreddit: String, gallery: Bool) -> Bool {
         let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) ||
             PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) ||
             PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) ||
             contains(PostFilter.flairs, value: link.flair) ||
             containedIn(PostFilter.selftext, value: link.htmlBody) ||
             containedIn(PostFilter.titles, value: link.title) ||
-            (link.nsfw && !SettingValues.nsfwEnabled) || link.hidden || History.getSeen(s: link) && SettingValues.hideSeen
+            (link.nsfw && !SettingValues.nsfwEnabled) || (link.nsfw && gallery && !(SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSubreddit))) || link.hidden || History.getSeen(s: link) && SettingValues.hideSeen
         
         if mainMatch {
             //No need to check further
@@ -90,7 +90,7 @@ class PostFilter {
                 contentMatch = true
             }
         case .SELF, .NONE:
-            if isSelftext(baseSubreddit) {
+            if isSelftext(baseSubreddit) || gallery {
                 contentMatch = true
             }
         case .ALBUM:
@@ -132,7 +132,7 @@ class PostFilter {
         return [isImage(sub), isAlbum(sub), isGif(sub), isVideo(sub), isUrl(sub), isSelftext(sub), isNsfw(sub)]
     }
 
-    public static func filter(_ input: [Object], previous: [RSubmission]?, baseSubreddit: String) -> [Object] {
+    public static func filter(_ input: [Object], previous: [RSubmission]?, baseSubreddit: String, gallery: Bool = false) -> [Object] {
         var ids: [String] = []
         var toReturn: [Object] = []
         if previous != nil {
@@ -143,7 +143,7 @@ class PostFilter {
 
         for link in input {
             if link is RSubmission {
-                if !matches(link as! RSubmission, baseSubreddit: baseSubreddit) && !ids.contains((link as! RSubmission).getId()) {
+                if !matches(link as! RSubmission, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains((link as! RSubmission).getId()) {
                     toReturn.append(link)
                 }
             } else if link is RComment {

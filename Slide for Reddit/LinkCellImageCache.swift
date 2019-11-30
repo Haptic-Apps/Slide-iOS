@@ -38,6 +38,7 @@ public class LinkCellImageCache {
     static var edit = UIImage()
     
     static var web = UIImage()
+    static var webBig = UIImage()
     static var nsfw = UIImage()
     static var nsfwUp = UIImage()
     static var reddit = UIImage()
@@ -86,6 +87,9 @@ public class LinkCellImageCache {
 
         web = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         web = web.overlayWith(image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), posX: (75 / 2), posY: (75 / 2))
+
+        webBig = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize(width: 400, height: 275))
+        webBig = webBig.overlayWith(image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), posX: ((400 - 75) / 2), posY: (200 / 2))
 
         spoiler = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         spoiler = spoiler.overlayWith(image: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.getCopy(withSize: CGSize.square(size: 75), withColor: UIColor.white), posX: (75 / 2), posY: (75 / 2))

@@ -474,7 +474,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             contentView.addSubviews(bannerImage, thumbImageContainer, title, infoContainer, tagbody)
         }
         
-        if self is AutoplayBannerLinkCellView || self is FullLinkCellView {
+        if self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView {
             self.videoView = VideoView().then {
                 $0.accessibilityIdentifier = "Video view"
                 if !SettingValues.flatMode {
@@ -1063,7 +1063,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func endVideos() {
-        if !(self is AutoplayBannerLinkCellView || self is FullLinkCellView) {
+        if !(self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) {
             return
         }
         videoPreloaded = false
@@ -1080,7 +1080,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.updater?.invalidate()
             self.updater = nil
             self.bannerImage.isHidden = false
-            self.playView.isHidden = SettingValues.autoPlayMode != .TAP || full
+            self.playView.isHidden = self is GalleryLinkCellView || SettingValues.autoPlayMode != .TAP || full
             videoView?.isHidden = false
             topVideoView?.isHidden = false
             sound.isHidden = true
@@ -1175,7 +1175,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             return
         }
 
-        let attText = CachedTitle.getTitle(submission: link, full: full, force, false)
+        let attText = CachedTitle.getTitle(submission: link, full: full, force, false, gallery: false)
         /* Bad test code...
          if !link.awards.isEmpty {
             let string = NSMutableAttributedString.init(attributedString: attText)
@@ -1380,7 +1380,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var shouldLoadVideo = false
     
     private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
-        if self is AutoplayBannerLinkCellView {
+        if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView {
             self.endVideos()
             do {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
@@ -1435,7 +1435,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         submissionHeight = CGFloat(submission.height)
         
-        type = test && SettingValues.linkAlwaysThumbnail ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
+        type = test && SettingValues.linkAlwaysThumbnail && !(self is GalleryLinkCellView) ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
         
         if embedded && !submission.isSelf {
             type = .LINK
@@ -1453,7 +1453,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let fullImage = ContentType.fullImage(t: type)
         let shouldAutoplay = SettingValues.shouldAutoPlay()
         
-        let overrideFull = ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || self is FullLinkCellView) && shouldAutoplay
+        let overrideFull = ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && shouldAutoplay
 
         if !fullImage && submissionHeight < 75 {
             big = false
@@ -1529,6 +1529,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (bannerPadding * 2))
         }
         
+        if self is GalleryLinkCellView {
+            big = true
+            thumb = false
+        }
+        
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
             thumbText.isHidden = true
@@ -1581,7 +1586,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.endVideos()
             bannerImage.alpha = 1
             var videoOverride = false
-            if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay)) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
+            if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay) || self is GalleryLinkCellView) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
                 sound.isHidden = true
@@ -1597,14 +1602,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     self.preloadVideo()
                 }
                 videoOverride = true
-            } else if self is FullLinkCellView {
+            } else if self is FullLinkCellView || self is GalleryLinkCellView {
                 self.videoView.isHidden = true
                 self.topVideoView.isHidden = true
                 self.timeView.isHidden = true
                 self.progressDot.isHidden = true
             }
             
-            if (self is AutoplayBannerLinkCellView || self is FullLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay)) {
+            if (self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay)) {
                 videoView?.isHidden = false
                 topVideoView?.isHidden = false
                 sound.isHidden = true
@@ -1616,7 +1621,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 videoOverride = true
             }
             
-            let imageSize = CGSize.init(width: submission.width, height: ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) && !((self is AutoplayBannerLinkCellView || self is FullLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay))) ? 200 : submission.height)
+            let imageSize = CGSize.init(width: submission.width == 0 ? 400 : submission.width, height: ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) && !((self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay))) ? 200 : (submission.height == 0 ? 275 : submission.height))
             
             aspect = imageSize.width / imageSize.height
             if aspect == 0 || aspect > 10000 || aspect.isNaN {
@@ -1634,10 +1639,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
             // Pulse the background color of the banner image until it loads
             lq = shouldShowLq
-            let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
-            loadedImage = bannerImageUrl
-            bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil)
-            
+            if submission.bannerUrl == "" || submission.width == 0 {
+                bannerImage.image = LinkCellImageCache.webBig
+            } else {
+                let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
+                loadedImage = bannerImageUrl
+                bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil)
+            }
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
             self.bannerHeightConstraint = batch {
                 self.bannerImage.heightAnchor == self.submissionHeight ~ .low
@@ -1940,24 +1948,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
 
     func doLoadVideo() {
-        if videoPreloaded {
-            playVideo()
-        } else if isLoadingVideo {
-            videoCompletion = {
-                self.playVideo()
+        if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView {
+            if videoPreloaded {
+                playVideo()
+            } else if isLoadingVideo {
+                videoCompletion = {
+                    self.playVideo()
+                }
+            } else {
+                videoCompletion = {
+                    self.playVideo()
+                }
+                preloadVideo()
             }
-        } else {
-            videoCompletion = {
-                self.playVideo()
-            }
-            preloadVideo()
         }
     }
     
     func playVideo() {
         if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
-            if playView != nil {
-                playView.isHidden = false
+            if self.playView != nil {
+                self.playView.isHidden = false
             }
             return
         }
@@ -2235,7 +2245,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentViewController)
                         self.link!.flair = (text != nil && !text!.isEmpty) ? text! : flair.text
-                        _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false)
+                        _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                         if self.textView != nil {
                             self.showBody(width: self.contentView.frame.size.width - 24)

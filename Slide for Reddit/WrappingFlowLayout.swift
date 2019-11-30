@@ -38,7 +38,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
     override var collectionViewContentSize: CGSize {
         return CGSize(width: contentWidth, height: contentHeight)
     }
-    func reset(modal: Bool, vc: UIViewController) {
+    func reset(modal: Bool, vc: UIViewController, isGallery: Bool) {
         cache = []
         contentHeight = 0
         var portraitCount = SettingValues.multiColumnCount / 2
@@ -77,7 +77,9 @@ class WrappingFlowLayout: UICollectionViewLayout {
             numberOfColumns = 2
             portraitCount = 1
         }
-        
+        if isGallery {
+            numberOfColumns = 2
+        }
         cellPadding = (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT)) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))
         prepare()
     }

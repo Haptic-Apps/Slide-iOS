@@ -245,6 +245,7 @@
 		BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7BFB471F1997BA009CA2E1 /* MapKit.framework */; };
 		BE8264E721934221002A540E /* VideoMediaDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8264E621934221002A540E /* VideoMediaDownloader.swift */; };
 		BE8264E92194AE0E002A540E /* OfflineOverviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */; };
+		BE854973239310E300D51DDC /* GalleryLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE854972239310E300D51DDC /* GalleryLinkCellView.swift */; };
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
 		BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */; };
@@ -654,6 +655,7 @@
 		BE7BFB471F1997BA009CA2E1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BE8264E621934221002A540E /* VideoMediaDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaDownloader.swift; sourceTree = "<group>"; };
 		BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineOverviewViewController.swift; sourceTree = "<group>"; };
+		BE854972239310E300D51DDC /* GalleryLinkCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryLinkCellView.swift; sourceTree = "<group>"; };
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
 		BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
@@ -1337,6 +1339,7 @@
 				BE9428E920C46B5600E1A33A /* PostActions.swift */,
 				BE36886120E5709300987320 /* FullLinkCellView.swift */,
 				BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */,
+				BE854972239310E300D51DDC /* GalleryLinkCellView.swift */,
 			);
 			name = LinkCellViews;
 			sourceTree = "<group>";
@@ -2102,6 +2105,7 @@
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
 				0984BE532114CEA50091C2E1 /* SlideInPresentationController.swift in Sources */,
 				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,
+				BE854973239310E300D51DDC /* GalleryLinkCellView.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
 				BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */,
 				BE97422E1F0011BE00BF48E0 /* ThumbnailLinkCellView.swift in Sources */,

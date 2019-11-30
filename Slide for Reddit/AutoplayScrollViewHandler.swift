@@ -62,7 +62,7 @@ class AutoplayScrollViewHandler {
             }
             
             for currentIndex in delegate.currentPlayingIndex {
-                if let currentCell = delegate.getTableView().cellForItem(at: currentIndex) as? AutoplayBannerLinkCellView {
+                if let currentCell = delegate.getTableView().cellForItem(at: currentIndex) as? LinkCellView, currentCell is AutoplayBannerLinkCellView || currentCell is GalleryLinkCellView {
                     let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
                     //print("Diff for scroll down is \(abs(videoViewCenter.y - center.y)) and \(scrollView.frame.size.height / 4 )")
                     if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 && currentCell.videoView.player != nil {
@@ -73,8 +73,8 @@ class AutoplayScrollViewHandler {
             
             var chosenPlayItems = [(index: IndexPath, cell: LinkCellView)]()
             for item in mapping {
-                if let currentCell = item.cell as? AutoplayBannerLinkCellView {
-                    let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
+                if item.cell is AutoplayBannerLinkCellView || item.cell is GalleryLinkCellView {
+                    let videoViewCenter = item.cell.videoView.convert(item.cell.videoView.bounds, to: nil)
                     if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 {
                         continue
                     }
@@ -86,7 +86,7 @@ class AutoplayScrollViewHandler {
                 if !delegate.currentPlayingIndex.contains(where: { (index2) -> Bool in
                     return item.index.row == index2.row
                 }) {
-                    (item.cell as! AutoplayBannerLinkCellView).doLoadVideo()
+                    item.cell.doLoadVideo()
                 }
             }
             

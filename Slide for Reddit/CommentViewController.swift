@@ -597,7 +597,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if parent is PagingCommentViewController {
                 _ = (parent as! PagingCommentViewController).reloadCallback?()
             }
-            _ = CachedTitle.getTitle(submission: cell.link!, full: false, true)
+            _ = CachedTitle.getTitle(submission: cell.link!, full: false, true, gallery: false)
         } catch {
 
         }

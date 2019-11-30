@@ -77,6 +77,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     var times = 0
     var startTime = Date()
+    
+    var isGallery = true
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
@@ -221,7 +223,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
 
         reloadNeedingColor()
-        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
         self.automaticallyAdjustsScrollViewInsets = false
         
@@ -241,7 +243,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     
     func reTheme() {
         self.reloadNeedingColor()
-        flowLayout.reset(modal: presentingViewController != nil, vc: self)
+        flowLayout.reset(modal: presentingViewController != nil, vc: self, isGallery: isGallery)
         CachedTitle.titles.removeAll()
         LinkCellImageCache.initialize()
         self.tableView.reloadData()
@@ -342,7 +344,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         if self.view.bounds.width != oldsize {
             oldsize = self.view.bounds.width
-            flowLayout.reset(modal: presentingViewController != nil, vc: self)
+            flowLayout.reset(modal: presentingViewController != nil, vc: self, isGallery: isGallery)
             tableView.reloadData()
         }
     }
@@ -389,7 +391,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
-                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
                // TODO: - content offset
@@ -741,7 +743,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     DispatchQueue.main.async {
                         self.hasHeader = true
                         if self.loaded && !self.loading {
-                            self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                            self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                             self.tableView.reloadData()
                             if UIDevice.current.userInterfaceIdiom != .pad {
                                 var newOffset = self.tableView.contentOffset
@@ -795,6 +797,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         // TODO: - Can just use .self instead of .classForCoder()
         self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(AutoplayBannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)")
+        self.tableView.register(GalleryLinkCellView.classForCoder(), forCellWithReuseIdentifier: "gallery\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
         self.tableView.register(LoadingCell.classForCoder(), forCellWithReuseIdentifier: "loading")
@@ -1012,7 +1015,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
                 }, completion: { (_) in
-                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                     self.tableView.reloadData()
                 })
             }
@@ -1039,11 +1042,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
        // TODO: - save realm
         DispatchQueue.main.async {
             if !indexPaths.isEmpty {
-                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: indexPaths)
                 }, completion: { (_) in
-                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                     self.tableView.reloadData()
                 })
             }
@@ -1077,7 +1080,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     func reloadDataReset() {
-        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
         tableView.layoutIfNeeded()
         setupFab(UIScreen.main.bounds.size)
@@ -1157,16 +1160,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     }
 
     func galleryMode() {
-        let controller = GalleryTableViewController()
-        var gLinks: [RSubmission] = []
-        for l in links {
-            if l.banner {
-                gLinks.append(l)
-            }
-        }
-        controller.setLinks(links: gLinks)
-        controller.modalPresentationStyle = .overFullScreen
-        present(controller, animated: true, completion: nil)
+        UserDefaults.standard.set(!isGallery, forKey: "isgallery+" + sub)
+        UserDefaults.standard.synchronize()
+        load(reset: true)
     }
 
     func shadowboxMode() {
@@ -1245,7 +1241,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
         
         links = []
-        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         flowLayout.invalidateLayout()
         UIView.transition(with: self.tableView, duration: 0.10, options: .transitionCrossDissolve, animations: {
             self.tableView.reloadData()
@@ -1275,6 +1271,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     func load(reset: Bool) {
         self.reset = reset
+        self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
         self.emptyStateView.isHidden = true
         PagingCommentViewController.savedComment = nil
         LinkCellView.checkedWifi = false
@@ -1359,7 +1356,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                         for i in 0..<self.links.count {
                                             paths.append(IndexPath.init(item: i, section: 0))
                                         }
-                                        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                                        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                                         self.tableView.reloadData()
                                         
                                         self.refreshControl.endRefreshing()
@@ -1434,7 +1431,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
-                        var values = PostFilter.filter(converted, previous: self.links, baseSubreddit: self.sub).map { $0 as! RSubmission }
+                        var values = PostFilter.filter(converted, previous: self.links, baseSubreddit: self.sub, gallery: self.isGallery).map { $0 as! RSubmission }
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
                             let pageItem = RSubmission()
                             pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
@@ -1470,7 +1467,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         DispatchQueue.main.async { [weak self] in
                             guard let strongSelf = self else { return }
                             if strongSelf.links.isEmpty && !SettingValues.hideSeen {
-                                strongSelf.flowLayout.reset(modal: strongSelf.presentingViewController != nil, vc: strongSelf)
+                                strongSelf.flowLayout.reset(modal: strongSelf.presentingViewController != nil, vc: strongSelf, isGallery: strongSelf.isGallery)
                                 strongSelf.tableView.reloadData()
                                 
                                 strongSelf.refreshControl.endRefreshing()
@@ -1649,7 +1646,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
     }
     
-    static func sizeWith(_ submission: RSubmission, _ width: CGFloat, _ isCollection: Bool) -> CGSize {
+    static func sizeWith(_ submission: RSubmission, _ width: CGFloat, _ isCollection: Bool, _ isGallery: Bool) -> CGSize {
         let itemWidth = width
         var thumb = submission.thumbnail
         var big = submission.banner
@@ -1674,7 +1671,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
         } else if big {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER) ? CGFloat(10) : CGFloat(0)))
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER) ? CGFloat(10) : CGFloat(0)))
             if h == 0 {
                 submissionHeight = 200
             } else {
@@ -1720,7 +1717,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             thumb = true
         }
         
-        if type == .LINK && SettingValues.linkAlwaysThumbnail {
+        if type == .LINK && SettingValues.linkAlwaysThumbnail && !isGallery {
             thumb = true
             big = false
         }
@@ -1730,14 +1727,19 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             big = false
         }
         
+        if isGallery {
+            big = true
+            thumb = false
+        }
+        
         if big {
-            let imageSize = CGSize.init(width: submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) ? 200 : submission.height))
+            let imageSize = CGSize.init(width: submission.width == 0 ? 400 : submission.width, height: ((SettingValues.postImageMode == .CROPPED_IMAGE) && !isGallery && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) ? 200 : (submission.height == 0 ? 275 : submission.height)))
             
             var aspect = imageSize.width / imageSize.height
             if aspect == 0 || aspect > 10000 || aspect.isNaN {
                 aspect = 1
             }
-            if SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
+            if SettingValues.postImageMode == .CROPPED_IMAGE && !isGallery && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
                 aspect = width / 200
                 if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1
@@ -1766,40 +1768,40 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let textHeight = CGFloat(submission.isSelf ? 5 : 0)
         
         if thumb {
-            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
+            innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between top and thumbnail
             innerPadding -= 5 //ThumbLinkCellView L#65
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and bottom box
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between box and end
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between thumbnail and bottom
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between thumbnail and bottom
             }
         } else if big {
             if SettingValues.postViewMode == .CENTER {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 16) //between label
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 16) //between label
                 if SettingValues.actionBarMode.isFull() {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between banner and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between banner and box
                 } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between buttons and bottom
                 }
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between banner and label
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between banner and label
                 if SettingValues.actionBarMode.isFull() {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between label and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between label and box
                 } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between buttons and bottom
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between buttons and bottom
                 }
             }
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between box and end
             }
         } else {
             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and title
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between body and box
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between body and box
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between box and end
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 4 : 8) //between title and bottom
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between title and bottom
             }
         }
         
@@ -1807,20 +1809,20 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if thumb {
             estimatedUsableWidth -= thumbheight //is the same as the width
             if !SettingValues.actionBarMode.isSide() {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 12 : 20) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //title label padding
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 12 : 20) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //title label padding
             } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //title label padding
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //title label padding
             }
         } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title label padding
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 16 : 24) //title label padding
         }
         
         if big && SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
         } else if big {
-            let bannerPadding = (SettingValues.postViewMode != .CARD) ? CGFloat(5) : CGFloat(0)
-            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
+            let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
+            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
         var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
         
@@ -1839,7 +1841,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         }
         
         let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false))!
+        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false, gallery: isGallery))!
         let textSize = layout.textBoundingSize
 
         let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD ? -5 : 0)
@@ -1867,14 +1869,14 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
         let fullImage = ContentType.fullImage(t: type)
 
-        var submissionHeight = height
+        var submissionHeight = height == 0 ? 275 : height
         if !fullImage && submissionHeight < 75 {
             big = false
             thumb = true
         } else if big && SettingValues.postImageMode == .CROPPED_IMAGE {
             submissionHeight = 200
         } else if big {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: cellWidth)
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: cellWidth)
             if h == 0 {
                 submissionHeight = 200
             } else {
@@ -2035,7 +2037,7 @@ extension SingleSubredditViewController {
                 links.remove(at: index)
             }
         }
-        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
     }
     
@@ -2270,6 +2272,11 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
                 cell.endVideos()
             }
         }
+        if let cell = cell as? GalleryLinkCellView {
+            if cell.videoView != nil {
+                cell.endVideos()
+            }
+        }
     }
 }
 
@@ -2372,6 +2379,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         
         if lastVersion != SingleSubredditViewController.cellVersion {
             self.tableView.register(BannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)")
+            self.tableView.register(GalleryLinkCellView.classForCoder(), forCellWithReuseIdentifier: "gallery\(SingleSubredditViewController.cellVersion)")
             self.tableView.register(AutoplayBannerLinkCellView.classForCoder(), forCellWithReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)")
             self.tableView.register(ThumbnailLinkCellView.classForCoder(), forCellWithReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)")
             self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)")
@@ -2405,18 +2413,27 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds {
             numberOfColumns = 1
         }
-        let tableWidth = self.tableView.frame.size.width
-        switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub), cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) / numberOfColumns ) {
-        case .thumb:
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
-        case .autoplay:
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)", for: indexPath) as! AutoplayBannerLinkCellView
-        case .banner:
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
-        default:
-            cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
+        
+        if isGallery {
+            numberOfColumns = 2
         }
 
+        let tableWidth = self.tableView.frame.size.width
+        if isGallery {
+            cell = tableView.dequeueReusableCell(withReuseIdentifier: "gallery\(SingleSubredditViewController.cellVersion)", for: indexPath) as! GalleryLinkCellView
+        } else {
+            switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub), cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) / numberOfColumns ) {
+            case .thumb:
+                cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
+            case .autoplay:
+                cell = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay\(SingleSubredditViewController.cellVersion)", for: indexPath) as! AutoplayBannerLinkCellView
+            case .banner:
+                cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
+            default:
+                cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
+            }
+        }
+        
         cell.preservesSuperviewLayoutMargins = false
         cell.del = self
         cell.layer.shouldRasterize = true
@@ -2516,7 +2533,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             if submission.author == "PAGE_SEPARATOR" {
                 return CGSize(width: width, height: 80)
             }
-            return SingleSubredditViewController.sizeWith(submission, width, Subscriptions.isCollection(sub))
+            return SingleSubredditViewController.sizeWith(submission, width, Subscriptions.isCollection(sub), isGallery)
         }
         return CGSize(width: width, height: 80)
     }
@@ -2526,7 +2543,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
 extension SingleSubredditViewController: SubmissionMoreDelegate {
     func hide(index: Int) {
         links.remove(at: index)
-        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
     }
 
@@ -2621,17 +2638,17 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
                 }, completion: { (_) in
                     self.tableView.isUserInteractionEnabled = true
-                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                     self.tableView.reloadData()
                 })
             } else {
-                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
                 tableView.reloadData()
             }
             BannerUtil.makeBanner(text: "Hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, top: false, callback: {
                 self.links.insert(item, at: location)
                 self.tableView.insertItems(at: [IndexPath.init(item: location + self.headerOffset(), section: 0)])
-                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self)
+                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.reloadData()
                 do {
                     try self.session?.setHide(false, name: cell.link!.getId(), completion: { (_) in })
