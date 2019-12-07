@@ -336,8 +336,11 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
             self.isToolbarHidden = false
             if fab == nil {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.setupFab(self.view.bounds.size)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in
+                    guard let strongSelf = self else {return}
+                    if strongSelf.fab == nil {
+                        strongSelf.setupFab(strongSelf.view.bounds.size)
+                    }
                 }
             } else {
                 show(true)
@@ -479,11 +482,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
-        
-        if self.fab?.isHidden ?? false {
-            return
-        }
-        
+                
         UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
         }, completion: { _ in

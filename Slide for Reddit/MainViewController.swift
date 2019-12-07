@@ -86,7 +86,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     lazy var currentAccountTransitioningDelegate = CurrentAccountPresentationManager()
     
     override func viewWillAppear(_ animated: Bool) {
-        menuNav?.view.isHidden = false
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.navigationController?.setToolbarHidden(true, animated: false)
@@ -359,6 +358,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             checkForMail()
         }
         self.navigationController?.delegate = self
+        if !MainViewController.first {
+            menuNav?.animateIn()
+        }
     }
     
     func addAccount(register: Bool) {

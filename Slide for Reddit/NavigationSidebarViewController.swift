@@ -268,6 +268,55 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         return 1 - percent
     }
     
+    func animateIn() {
+        let y = UIScreen.main.bounds.height - bottomOffset
+        if let parent = self.parentController, parent.menu.superview != nil {
+            parent.menu.deactivateImmediateConstraints()
+            parent.menu.topAnchor == parent.toolbar!.topAnchor
+            parent.menu.widthAnchor == 56
+            parent.menu.heightAnchor == 56
+            parent.menu.leftAnchor == parent.toolbar!.leftAnchor
+            
+            parent.more.deactivateImmediateConstraints()
+            parent.more.topAnchor == parent.toolbar!.topAnchor
+            parent.more.widthAnchor == 56
+            parent.more.heightAnchor == 56
+            parent.more.rightAnchor == parent.toolbar!.rightAnchor
+        }
+        self.view.isHidden = false
+        self.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: self.view.frame.width, height: self.view.frame.height)
+
+        let animateBlock = { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.backgroundView.alpha = 0
+            strongSelf.topView?.alpha = 1
+            strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
+            strongSelf.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
+            strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+            strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
+        }
+        
+        self.view.endEditing(true)
+        
+        let completionBlock: (Bool) -> Void = { [weak self] finished in
+            guard let strongSelf = self else { return }
+            strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
+            strongSelf.callbacks.didCollapse?()
+            strongSelf.backgroundView.isHidden = true
+            strongSelf.expanded = false
+            strongSelf.updateAccessibility()
+        }
+
+        UIView.animate(withDuration: 0.4,
+                       delay: 0,
+                       usingSpringWithDamping: 0.7,
+                       initialSpringVelocity: 0.45,
+                       options: .curveEaseInOut,
+                       animations: animateBlock,
+                       completion: completionBlock)
+    }
+    
     @objc func collapse() {
         doneOnce = false
         searchBar.isUserInteractionEnabled = false
