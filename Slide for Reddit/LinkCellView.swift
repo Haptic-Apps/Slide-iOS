@@ -1948,7 +1948,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
 
     func doLoadVideo() {
-        if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView {
+        if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView || self is FullLinkCellView {
             if videoPreloaded {
                 playVideo()
             } else if isLoadingVideo {

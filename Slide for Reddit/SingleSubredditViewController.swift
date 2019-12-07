@@ -78,7 +78,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     var times = 0
     var startTime = Date()
     
-    var isGallery = true
+    var isGallery = false
 
     var parentController: MainViewController?
     var accentChosen: UIColor?
@@ -174,6 +174,15 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     override func becomeFirstResponder() -> Bool {
         return true
     }
+    
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        // Fixes bug with corrupt nav stack
+        // https://stackoverflow.com/a/39457751/7138792
+        navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
+        if navigationController.viewControllers.count == 1 {
+            self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -251,6 +260,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
+        print(isModal)
+        print(single)
 
         if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) {
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
@@ -334,6 +347,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 navigationController?.setToolbarHidden(true, animated: false)
             }
         }
+        if !links.isEmpty {
+            self.autoplayHandler.autoplayOnce(self.tableView)
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -355,6 +371,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         for index in tableView.indexPathsForVisibleItems {
             if let cell = tableView.cellForItem(at: index) as? LinkCellView {
                 cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != index.row
+                })
             }
         }
 
@@ -1504,8 +1523,10 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                                     strongSelf.flowLayout.invalidateLayout()
                                     UIView.transition(with: strongSelf.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
                                         strongSelf.tableView.reloadData()
+                                    }, completion: { (_) in
                                         strongSelf.autoplayHandler.autoplayOnce(strongSelf.tableView)
-                                    }, completion: nil)
+                                    })
+
                                     var is13Popover = false
                                     
                                     if strongSelf.navigationController != nil {
@@ -2271,11 +2292,17 @@ extension SingleSubredditViewController: UICollectionViewDelegate {
         if let cell = cell as? AutoplayBannerLinkCellView {
             if cell.videoView != nil {
                 cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != indexPath.row
+                })
             }
         }
         if let cell = cell as? GalleryLinkCellView {
             if cell.videoView != nil {
                 cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != indexPath.row
+                })
             }
         }
     }

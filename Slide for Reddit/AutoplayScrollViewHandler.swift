@@ -96,8 +96,7 @@ class AutoplayScrollViewHandler {
         }
     }
     
-    func autoplayOnce(_ scrollView: UIScrollView) {
-        let center = CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY)
+    func autoplayOnce(_ scrollView: UICollectionView) {
         guard let delegate = self.delegate else {
             return
         }
@@ -115,24 +114,10 @@ class AutoplayScrollViewHandler {
             }.sorted { (item1, item2) -> Bool in
                 delegate.isScrollingDown ? item1.index.row > item2.index.row : item1.index.row < item2.index.row
             }
-            
-            for currentIndex in delegate.currentPlayingIndex {
-                if let currentCell = delegate.getTableView().cellForItem(at: currentIndex) as? AutoplayBannerLinkCellView {
-                    let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
-                    //print("Diff for scroll down is \(abs(videoViewCenter.y - center.y)) and \(scrollView.frame.size.height / 4 )")
-                    if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 && currentCell.videoView.player != nil {
-                        currentCell.endVideos()
-                    }
-                }
-            }
-            
+                        
             var chosenPlayItems = [(index: IndexPath, cell: LinkCellView)]()
             for item in mapping {
-                if let currentCell = item.cell as? AutoplayBannerLinkCellView {
-                    let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
-                    if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 {
-                        continue
-                    }
+                if item.cell is AutoplayBannerLinkCellView {
                     chosenPlayItems.append(item)
                 }
             }
