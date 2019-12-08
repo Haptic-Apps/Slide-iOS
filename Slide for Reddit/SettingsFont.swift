@@ -166,8 +166,7 @@ class SettingsFont: BubbleSettingTableViewController {
         commentFont.addTapGestureRecognizer { [weak self] in
             self?.commentFontCellWasTapped()
         }
-        
-        
+
         if let swiper = self.navigationController?.delegate as? SloppySwiper {
             swiper.panRecognizer.delegate = self
         }

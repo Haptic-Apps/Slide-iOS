@@ -327,7 +327,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        print("Did appear?")
         if toolbarEnabled && !MainViewController.isOffline {
             if single {
                 navigationController?.setToolbarHidden(false, animated: false)
@@ -337,7 +337,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             self.isToolbarHidden = false
             if fab == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in
-                    guard let strongSelf = self else {return}
+                    guard let strongSelf = self else { return }
                     if strongSelf.fab == nil {
                         strongSelf.setupFab(strongSelf.view.bounds.size)
                     }

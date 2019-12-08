@@ -302,7 +302,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
-            strongSelf.callbacks.didCollapse?()
             strongSelf.backgroundView.isHidden = true
             strongSelf.expanded = false
             strongSelf.updateAccessibility()

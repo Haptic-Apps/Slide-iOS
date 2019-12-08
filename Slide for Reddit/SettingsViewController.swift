@@ -326,7 +326,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.dataSaving.imageView?.image = UIImage(sfString: SFSymbol.wifiExclamationmark, overrideString: "data")?.toolbarIcon()
         self.dataSaving.imageView?.tintColor = ColorUtil.theme.fontColor
 
-        self.content.textLabel?.text = "Content"
+        self.content.textLabel?.text = "NSFW Content"
         self.content.accessoryType = .disclosureIndicator
         self.content.backgroundColor = ColorUtil.theme.foregroundColor
         self.content.textLabel?.textColor = ColorUtil.theme.fontColor
