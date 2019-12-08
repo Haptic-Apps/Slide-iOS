@@ -11,15 +11,19 @@
 import Anchorage
 import Foundation
 
+protocol TapBehindModalViewControllerDelegate {
+    func shouldDismiss() -> Bool
+}
+
 class TapBehindModalViewController: UINavigationController, UIGestureRecognizerDelegate {
-    private var tapOutsideRecognizer: UITapGestureRecognizer!
-    
+    public var tapOutsideRecognizer: UITapGestureRecognizer!
+    public var del: TapBehindModalViewControllerDelegate?
     public var closeCallback: (() -> Void)?
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if self.tapOutsideRecognizer == nil && (modalPresentationStyle == .pageSheet || modalPresentationStyle == .formSheet || modalPresentationStyle == .popover) {
+        if self.tapOutsideRecognizer == nil && (modalPresentationStyle == .pageSheet || modalPresentationStyle == .popover) {
             self.tapOutsideRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapBehind))
             self.tapOutsideRecognizer.numberOfTapsRequired = 1
             self.tapOutsideRecognizer.cancelsTouchesInView = false
@@ -44,7 +48,7 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
     
     // MARK: - Gesture methods to dismiss this with tap outside
     @objc func handleTapBehind(sender: UITapGestureRecognizer) {
-        if sender.state == UIGestureRecognizer.State.ended {
+        if sender.state == UIGestureRecognizer.State.ended && del?.shouldDismiss() ?? true {
             let location: CGPoint = sender.location(in: self.view)
             
             if !self.view.point(inside: location, with: nil) {

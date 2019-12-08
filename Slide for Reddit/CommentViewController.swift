@@ -17,7 +17,7 @@ import SloppySwiper
 import UIKit
 import YYText
 
-class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, UINavigationControllerDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
+class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
     
     func hide(index: Int) {
         if index >= 0 {
@@ -1204,7 +1204,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
-        
+        self.presentationController?.delegate  = self
 //        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
 //        pan.direction = .horizontal
         if !loaded && (single || forceLoad) {
@@ -1212,7 +1212,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         
         self.tableView.addGestureRecognizer(panGesture)
-        if navigationController != nil {
+        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
     }
@@ -1442,16 +1442,23 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         self.isHiding = false
         didDisappearCompletely = false
-        
-        if !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) {
+        let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
+
+        if !isModal && !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) {
             if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
                 self.navigationController!.delegate = swiper!
             }
-        }
-        
-        if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-            self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
+            if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
+                self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
+            }
+        } else {
+            self.navigationController?.delegate = self
+            if isModal {
+                if self.navigationController is TapBehindModalViewController {
+                    (self.navigationController as! TapBehindModalViewController).del = self
+                }
+            }
         }
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -3035,5 +3042,22 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
 
         self.present(viewControllerToCommit, animated: true, completion: {
         })
+    }
+}
+
+extension CommentViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        // Fixes bug with corrupt nav stack
+        // https://stackoverflow.com/a/39457751/7138792
+        navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
+        if navigationController.viewControllers.count == 1 {
+            self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        }
+    }
+}
+
+extension CommentViewController: TapBehindModalViewControllerDelegate {
+    func shouldDismiss() -> Bool {
+        return false
     }
 }

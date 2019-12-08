@@ -284,7 +284,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             parent.more.rightAnchor == parent.toolbar!.rightAnchor
         }
         self.view.isHidden = false
-        self.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: self.view.frame.width, height: self.view.frame.height)
+        self.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - 20, width: self.view.frame.width, height: self.view.frame.height)
 
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }

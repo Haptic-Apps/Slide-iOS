@@ -175,15 +175,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         return true
     }
     
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        // Fixes bug with corrupt nav stack
-        // https://stackoverflow.com/a/39457751/7138792
-        navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
-        if navigationController.viewControllers.count == 1 {
-            self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
@@ -262,8 +253,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         super.viewWillAppear(animated)
         
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
-        print(isModal)
-        print(single)
 
         if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) {
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
@@ -273,6 +262,13 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     let scrollView = view as! UIScrollView
                     swiper!.panRecognizer.require(toFail: scrollView.panGestureRecognizer)
                     break
+                }
+            }
+        } else {
+            self.navigationController?.delegate = self
+            if isModal {
+                if self.navigationController is TapBehindModalViewController {
+                    (self.navigationController as! TapBehindModalViewController).del = self
                 }
             }
         }
@@ -300,7 +296,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             bar.heightAnchor == 0
         }
 
-        if single {
+        if single && !isModal {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
             if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
                 self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
@@ -327,7 +323,6 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("Did appear?")
         if toolbarEnabled && !MainViewController.isOffline {
             if single {
                 navigationController?.setToolbarHidden(false, animated: false)
@@ -2745,7 +2740,6 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
        // TODO: - make this work on ipad
         self.present(actionSheetController, animated: true, completion: nil)
-
     }
 }
 
@@ -3145,5 +3139,11 @@ public class SubLinkItem {
     init(_ title: String?, link: URL?) {
         self.title = title ?? "LINK"
         self.link = link
+    }
+}
+
+extension SingleSubredditViewController: TapBehindModalViewControllerDelegate {
+    func shouldDismiss() -> Bool {
+        return false
     }
 }
