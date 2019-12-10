@@ -3179,10 +3179,10 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             if ContentType.isImage(uri: url) && !self.bannerImage.isHidden {
                 let imageToShare = [self.bannerImage.image!]
                 let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
-                children.append(UIAction(title: "Save Image", image: UIImage(sfString: SFSymbol.cameraFill, overrideString: "save")!.menuIcon()) { _ in
+                children.append(UIAction(title: "Save Image", image: UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "save")!.menuIcon()) { _ in
                     CustomAlbum.shared.save(image: imageToShare[0], parent: self.parentViewController)
                 })
-                children.append(UIAction(title: "Share Image", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
+                children.append(UIAction(title: "Share Image", image: UIImage(sfString: SFSymbol.cameraFill, overrideString: "share")!.menuIcon()) { _ in
                     self.parentViewController?.present(activityViewController, animated: true, completion: nil)
                 })
             }

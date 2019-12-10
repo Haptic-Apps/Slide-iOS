@@ -635,17 +635,23 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.setProgressViewVisible(false)
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
-        let playerItem = AVPlayerItem(url: SettingValues.shouldAutoPlay() ? URL(string: url)! : URL(fileURLWithPath: getKeyFromURL()))
-        videoView.player = AVPlayer(playerItem: playerItem)
-        videoView.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
-        self.videoView.player?.isMuted = SettingValues.muteVideosInModal
-        
-        scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
-        self.loaded = true
-        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
-        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
-        displayLink?.isPaused = false
-        videoView.player?.play()
+        if let videoUrl = SettingValues.shouldAutoPlay() ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
+            let playerItem = AVPlayerItem(url: videoUrl)
+            videoView.player = AVPlayer(playerItem: playerItem)
+            videoView.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
+            self.videoView.player?.isMuted = SettingValues.muteVideosInModal
+            
+            scrubber.totalDuration = videoView.player!.currentItem!.asset.duration
+            self.loaded = true
+            displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
+            displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
+            displayLink?.isPaused = false
+            videoView.player?.play()
+        } else {
+            self.parent?.dismiss(animated: true, completion: {
+                self.failureCallback?(URL.init(string: url)!)
+            })
+        }
     }
     
     var handlingPlayerItemDidreachEnd = false
