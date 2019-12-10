@@ -9,6 +9,7 @@
 import Anchorage
 import AudioToolbox
 import AVKit
+import Photos
 import MaterialComponents
 import reddift
 import RLBAlertsPickers
@@ -624,6 +625,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
                 self.addGestureRecognizer(comment)
             }
+            
             if #available(iOS 13, *) {
                 let interaction = UIContextMenuInteraction(delegate: self)
                 self.contentView.addInteraction(interaction)
@@ -638,10 +640,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     textView.parentLongPress = longPress!
                 }
                 
-                let long = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.linkMenu(sender:)))
-                long.delegate = self
-                bannerImage.addGestureRecognizer(long)
-                
                 let long2 = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.linkMenu(sender:)))
                 long2.delegate = self
                 thumbImageContainer.addGestureRecognizer(long2)
@@ -654,7 +652,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 long4.delegate = self
                 infoContainer.addGestureRecognizer(long4)
 
-                longPress!.require(toFail: long)
+                if #available(iOS 13, *) {} else {
+                    let long = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.linkMenu(sender:)))
+                    long.delegate = self
+                    bannerImage.addGestureRecognizer(long)
+                    longPress!.require(toFail: long)
+                }
+
                 longPress!.require(toFail: long2)
                 longPress!.require(toFail: long3)
                 longPress!.require(toFail: long4)
@@ -3010,7 +3014,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         
-        if full && self.textView != nil && self.textView.frame.contains(interaction.location(in: self.contentView)) {
+        if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(interaction.location(in: self.contentView)) {
             let location = interaction.location(in: self.textView)
             
             if self.textView.firstTextView.frame.contains(location) {
@@ -3024,6 +3028,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 }
             }
             return UITargetedPreview(view: self.textView, parameters: parameters)
+        } else if bannerImage != nil && !bannerImage.isHidden && bannerImage.frame.contains(interaction.location(in: self.contentView)) {
+            return UITargetedPreview(view: self.bannerImage, parameters: parameters)
         } else if thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.contentView)) {
             return UITargetedPreview(view: self.thumbImageContainer, parameters: parameters)
         } else {
@@ -3067,7 +3073,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         let saveArea = self.contentView.convert(location, to: self.buttons)
-        if full && self.textView != nil && self.textView.frame.contains(location) {
+        if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(location) {
             let innerPoint = self.contentView.convert(location, to: self.textView)
             if self.textView.firstTextView.frame.contains(innerPoint) {
                 return getConfigurationForTextView(self.textView.firstTextView, innerPoint)
@@ -3080,6 +3086,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     }
                 }
             }
+        } else if let url = self.link?.url, bannerImage != nil && bannerImage.isHidden == false && bannerImage.frame.contains(location) {
+            return getConfigurationForImage(url: url)
         } else if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.frame.contains(location) {
             return getConfigurationFor(url: url)
         } else if save.frame.contains(saveArea) {
@@ -3152,7 +3160,52 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
         })
     }
-    
+
+    func getConfigurationForImage(url: URL) -> UIContextMenuConfiguration {
+        self.previewedURL = url
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
+                self.previewedVC = vc
+                if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
+                    return UINavigationController(rootViewController: vc)
+                } else {
+                    return vc
+                }
+            }
+            return nil
+        }, actionProvider: { (_) -> UIMenu? in
+            var children = [UIMenuElement]()
+            
+            if ContentType.isImage(uri: url) && !self.bannerImage.isHidden {
+                let imageToShare = [self.bannerImage.image!]
+                let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
+                children.append(UIAction(title: "Save Image", image: UIImage(sfString: SFSymbol.cameraFill, overrideString: "save")!.menuIcon()) { _ in
+                    CustomAlbum.shared.save(image: imageToShare[0], parent: self.parentViewController)
+                })
+                children.append(UIAction(title: "Share Image", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
+                    self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+                })
+            }
+
+            children.append(UIAction(title: "Share Image URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
+                let shareItems: Array = [url]
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = self.contentView
+                self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+            })
+            children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
+                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+            })
+
+            children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
+                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            })
+            
+            return UIMenu(title: "Image Options", image: nil, identifier: nil, children: children)
+        })
+    }
+
     func makeContextMenu() -> UIMenu {
 
         // Create a UIAction for sharing
@@ -3178,5 +3231,4 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         // Create and return a UIMenu with the share action
         return UIMenu(title: "Save into a Collection", children: buttons)
     }
-
 }
