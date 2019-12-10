@@ -239,7 +239,7 @@ extension ProfileInfoViewController {
                                     if !trophyURL.contains("reddit.com") {
                                         trophyURL = "https://www.reddit.com" + trophyURL
                                     }
-                                    VCPresenter.presentModally(viewController: WebsiteViewController(url: URL(string: trophyURL) ?? trophy.url!, subreddit: ""), self)
+                                    VCPresenter.presentModally(viewController: WebsiteViewController(url: URL(string: trophyURL) ?? trophy.url!, subreddit: ""), self, nil)
                                 }
                             })
                             self.header.trophyArea.addSubview(b)

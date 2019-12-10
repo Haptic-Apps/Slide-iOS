@@ -744,9 +744,11 @@ class DragDownDismissInteraction: UIPercentDrivenInteractiveTransition, UIGestur
             update(progress)
         case .cancelled:
             interactionInProgress = false
+            self.completionSpeed = 0.4
             cancel()
         case .ended:
             interactionInProgress = false
+            self.completionSpeed = 0.4
             shouldCompleteTransition ? finish() : cancel()
         default:
             break

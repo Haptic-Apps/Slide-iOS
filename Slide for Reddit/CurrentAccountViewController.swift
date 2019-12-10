@@ -464,7 +464,7 @@ extension CurrentAccountViewController {
                                 self.dismiss(animated: true, completion: {
                                     self.delegate?.currentAccountViewController(self, goToMultireddit: "/m/" + text)
                                 })
-                            }), self)
+                            }), self, nil)
                         }
                     case .failure:
                         DispatchQueue.main.async {

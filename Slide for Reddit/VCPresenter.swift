@@ -6,6 +6,7 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import Foundation
 import SafariServices
 
@@ -99,34 +100,35 @@ public class VCPresenter {
 
     }
     
-    public static func presentModally(viewController: UIViewController, _ parentViewController: UIViewController) {
-        let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+    public static func presentModally(viewController: UIViewController, _ parentViewController: UIViewController, _ preferredSize: CGSize? = nil) {
+        let newParent = TapBehindModalViewController(rootViewController: viewController)
         newParent.navigationBar.shadowImage = UIImage()
         newParent.navigationBar.isTranslucent = false
-        newParent.view.backgroundColor = ColorUtil.theme.backgroundColor
-        newParent.closeCallback = {
-            if parentViewController is MediaViewController {
-                (parentViewController as! MediaViewController).setAlphaOfBackgroundViews(alpha: 1)
-            } else if parentViewController is MediaTableViewController {
-                (parentViewController as! MediaTableViewController).setAlphaOfBackgroundViews(alpha: 1)
-            }
-        }
+        newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+        newParent.view.backgroundColor = ColorUtil.theme.foregroundColor
         let button = UIButtonWithContext.init(type: .custom)
         button.parentController = newParent
         button.contextController = parentViewController
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
-        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon().getCopy(withSize: CGSize.square(size: 20)), for: UIControl.State.normal)
+        button.frame = CGRect.init(x: -10, y: 0, width: 35, height: 35)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
-        
+        button.layer.cornerRadius = (35 / 2)
+        button.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.2)
         let barButton = UIBarButtonItem.init(customView: button)
         
-        newParent.modalPresentationStyle = .popover
-        newParent.view.backgroundColor = ColorUtil.theme.backgroundColor
+        newParent.modalPresentationStyle = .custom
+        newParent.view.layer.cornerRadius = 25
+        newParent.view.layer.masksToBounds = true
+        (UIApplication.shared.delegate as? AppDelegate)?.transitionDelegateModal = InsetTransitioningDelegate(preferredSize: preferredSize ?? CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: UIScreen.main.bounds.size.height * 0.6), scroll: viewController, presentedViewController: newParent, presenting: parentViewController)
+        if let delegate = (UIApplication.shared.delegate as? AppDelegate)?.transitionDelegateModal {
+            newParent.transitioningDelegate = delegate
+        }
+        newParent.view.backgroundColor = ColorUtil.theme.foregroundColor
         if let popover = newParent.popoverPresentationController {
             popover.sourceView = parentViewController.view
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.theme.backgroundColor
+            popover.backgroundColor = ColorUtil.theme.foregroundColor
             
             popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
             if parentViewController is MediaViewController {
@@ -135,16 +137,16 @@ public class VCPresenter {
                 popover.delegate = (parentViewController as! MediaTableViewController)
             }
         }
+        //TODO deallocate that delegate....
         
         viewController.navigationItem.leftBarButtonItems = [barButton]
-        
         parentViewController.present(newParent, animated: true, completion: nil)
     }
 
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
         if (feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro) {
             let viewController = SettingsPro()
-            presentModally(viewController: viewController, parentViewController)
+            presentModally(viewController: viewController, parentViewController, nil)
             return true
         }
         return false

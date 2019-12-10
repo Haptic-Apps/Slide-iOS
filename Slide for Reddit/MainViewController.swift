@@ -1148,8 +1148,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         
                         if !storedTitle.isEmpty && !storedLink.isEmpty {
                             DispatchQueue.main.async {
-                                print("Showing")
-                                SettingValues.showVersionDialog(storedTitle, storedLink, parentVC: self)
+                                SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
                             }
                         }
                     }

@@ -817,7 +817,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     self.doButtons()
                     self.setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
                 })
-                VCPresenter.presentModally(viewController: search, self)
+                VCPresenter.presentModally(viewController: search, self, nil)
             }
             let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true

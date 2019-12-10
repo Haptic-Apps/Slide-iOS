@@ -43,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var collectionsFile: String?
     var totalBackground = true
     var isPro = false
+    var transitionDelegateModal: InsetTransitioningDelegate?
     
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
 
@@ -275,7 +276,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         #if DEBUG
-        SettingValues.isPro = true
+        SettingValues.isPro = false
         UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
         UserDefaults.standard.synchronize()
         UIApplication.shared.isIdleTimerDisabled = true
@@ -775,7 +776,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
+    
     func refreshSession() {
         // refresh current session token
         do {

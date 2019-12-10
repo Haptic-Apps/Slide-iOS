@@ -6,9 +6,11 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import AVFoundation
 import Foundation
 import reddift
+import YYText
 
 class SettingValues {
 
@@ -626,17 +628,41 @@ class SettingValues {
         return settings.object(forKey: "USEDONCE") != nil
     }
 
-    public static func showVersionDialog(_ title: String, _ permalink: String, parentVC: UIViewController) {
+    public static func showVersionDialog(_ title: String, _ submission: Link, parentVC: UIViewController) {
         let settings = UserDefaults.standard
         settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
         settings.set(title, forKey: "vtitle")
-        settings.set(permalink, forKey: "vlink")
+        settings.set(submission.permalink, forKey: "vlink")
         settings.synchronize()
         let finalTitle = title + "\nTap to view Changelog"
         
-        BannerUtil.makeBanner(text: finalTitle, color: GMColor.green500Color(), seconds: 7, context: parentVC, top: true, callback: {
-            VCPresenter.openRedditLink(permalink, parentVC.navigationController, parentVC)
-        })
+        var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: CGFloat.greatestFiniteMagnitude)
+        let chunk = TextDisplayStackView.createAttributedChunk(baseHTML: submission.selftextHtml, fontSize: 12, submission: true, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+        let layout = YYTextLayout(containerSize: size, text: chunk)!
+        let textSize = layout.textBoundingSize
+
+        size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: textSize.height)
+        let body = YYLabel()
+        body.numberOfLines = 0
+        body.attributedText = chunk
+        let detailViewController = UpdateViewController(view: body, size: size)
+        detailViewController.titleView.font = UIFont.boldSystemFont(ofSize: 20)
+        detailViewController.titleView.textColor = ColorUtil.theme.fontColor
+        detailViewController.titleView.text = submission.title
+        detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: min(size.height, 300))
+        detailViewController.comments.backgroundColor = ColorUtil.baseAccent
+        detailViewController.comments.setTitle("Join the discussion!", for: UIControl.State.normal)
+        detailViewController.comments.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+        detailViewController.comments.contentHorizontalAlignment = .left
+        detailViewController.comments.addTapGestureRecognizer {
+            detailViewController.dismiss(animated: true) {
+                VCPresenter.openRedditLink(submission.permalink, parentVC.navigationController, parentVC)
+            }
+        }
+        detailViewController.comments.addRightImage(image: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.navIcon(true), offset: 10)
+        detailViewController.dismissHandler = {() in
+        }
+        VCPresenter.presentModally(viewController: detailViewController, parentVC, CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: min(size.height + 15 + 15 + 20, UIScreen.main.bounds.size.height * 0.6)))
     }
     
     public enum PostOverflowAction: String {
@@ -1160,5 +1186,65 @@ extension SettingValues {
         set {
             UserDefaults.standard.set(newValue, forKey: "MODAL_VIDEOS_RESPECT_HARDWARE_MUTE_SWITCH")
         }
+    }
+}
+
+class UpdateViewController: UIViewController {
+    var childView = UIView()
+    var titleView = UILabel()
+    var exit = UIImageView()
+    var scrollView = UIScrollView()
+    var estimatedSize: CGSize
+    var comments = UIButton()
+    var dismissHandler: (() -> Void)?
+    init(view: UIView, size: CGSize) {
+        self.estimatedSize = size
+        super.init(nibName: nil, bundle: nil)
+        self.childView = view
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        scrollView = UIScrollView().then {
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isUserInteractionEnabled = true
+        }
+        self.view.addSubviews(scrollView, titleView, comments)
+        titleView.horizontalAnchors == self.view.horizontalAnchors
+        titleView.textAlignment = .center
+        titleView.topAnchor == self.view.topAnchor + 15
+        scrollView.topAnchor == self.titleView.bottomAnchor + 15
+        scrollView.horizontalAnchors == self.view.horizontalAnchors + 10
+        comments.topAnchor == self.scrollView.bottomAnchor + 15
+        comments.bottomAnchor == self.view.bottomAnchor - 15
+        comments.heightAnchor == 40
+        comments.layer.cornerRadius = 10
+        comments.layer.masksToBounds = true
+        comments.horizontalAnchors == self.view.horizontalAnchors + 15
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        scrollView.addSubview(childView)
+        childView.widthAnchor == estimatedSize.width
+        childView.heightAnchor == estimatedSize.height
+        childView.topAnchor == scrollView.topAnchor
+        scrollView.contentSize = estimatedSize
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        dismissHandler?()
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension UIButton {
+    func addRightImage(image: UIImage, offset: CGFloat) {
+        self.setImage(image, for: .normal)
+        self.imageView?.translatesAutoresizingMaskIntoConstraints = false
+        self.imageView?.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0.0).isActive = true
+        self.imageView?.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -offset).isActive = true
     }
 }

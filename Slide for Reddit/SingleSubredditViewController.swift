@@ -949,7 +949,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     func doDisplayMultiSidebar(_ sub: Multireddit) {
         VCPresenter.presentModally(viewController: ManageMultireddit(multi: sub, reloadCallback: {
             self.refresh()
-        }), self)
+        }), self, nil)
     }
 
     @objc func subscribeSingle(_ selector: AnyObject) {

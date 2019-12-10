@@ -272,6 +272,7 @@
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
 		BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2381E35D64F00BF761C /* MessageCellView.swift */; };
+		BEB7BADA23A05F2500E39593 /* InsetTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB7BAD923A05F2500E39593 /* InsetTransitioningDelegate.swift */; };
 		BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A5D214315D1007E326B /* AutoplayBannerLinkCellView.swift */; };
 		BEB81A6021432C6C007E326B /* AnyModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */; };
 		BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */; };
@@ -690,6 +691,7 @@
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		BEB2B2381E35D64F00BF761C /* MessageCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCellView.swift; sourceTree = "<group>"; };
+		BEB7BAD923A05F2500E39593 /* InsetTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsetTransitioningDelegate.swift; sourceTree = "<group>"; };
 		BEB81A5D214315D1007E326B /* AutoplayBannerLinkCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoplayBannerLinkCellView.swift; sourceTree = "<group>"; };
 		BEB81A5F21432C6C007E326B /* AnyModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModalViewController.swift; sourceTree = "<group>"; };
 		BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsContributionLoader.swift; sourceTree = "<group>"; };
@@ -1300,6 +1302,7 @@
 				BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */,
 				BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */,
 				BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */,
+				BEB7BAD923A05F2500E39593 /* InsetTransitioningDelegate.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -2037,6 +2040,7 @@
 				323EFB2821434781005157FA /* ProgressBarView.swift in Sources */,
 				BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */,
 				BE8264E721934221002A540E /* VideoMediaDownloader.swift in Sources */,
+				BEB7BADA23A05F2500E39593 /* InsetTransitioningDelegate.swift in Sources */,
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
