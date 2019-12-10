@@ -1599,7 +1599,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     doLoadVideo()
                 } else {
                     self.videoCompletion = nil
-                    self.preloadVideo()
+                    if let url = (!link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!)) ? URL.init(string: link!.videoPreview) : link!.url {
+                            self.preloadVideo(url)
+                    }
                 }
                 videoOverride = true
             } else if self is FullLinkCellView || self is GalleryLinkCellView {
@@ -1918,23 +1920,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var videoPreloaded = false
     var isLoadingVideo = false
     var videoCompletion: (() -> Void)?
+    var lastVideoTried = ""
     
-    func preloadVideo() {
-        let baseUrl: URL
+    func preloadVideo(_ baseUrl: URL) {
         self.isLoadingVideo = true
+        self.lastVideoTried = baseUrl.absoluteString
+        
         self.videoPreloaded = false
-        if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!) {
-            baseUrl = URL.init(string: link!.videoPreview)!
-        } else {
-            baseUrl = link!.url!
-        }
         let url = VideoMediaViewController.format(sS: baseUrl.absoluteString, true)
         let videoType = VideoMediaViewController.VideoType.fromPath(url)
         self.videoTask = videoType.getSourceObject().load(url: url, completion: { [weak self] (urlString) in
             guard let strongSelf = self else { return }
-            let videoURL =  URL(string: urlString)
+            let videoURL = URL(string: urlString)
             if videoURL == nil {
-                //TODO - Show video failed warning
+                DispatchQueue.main.async {[weak self] in
+                    if let strongSelf = self, let url = URL.init(string: strongSelf.link!.videoPreview ?? "") {
+                        if url.absoluteString != strongSelf.lastVideoTried {
+                            strongSelf.preloadVideo(url)
+                        }
+                    }
+                }
                 return
             }
             strongSelf.videoURL = videoURL!
@@ -1959,7 +1964,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 videoCompletion = {
                     self.playVideo()
                 }
-                preloadVideo()
+                if let url = (!link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!)) ? URL.init(string: link!.videoPreview) : link!.url {
+                        self.preloadVideo(url)
+                }
             }
         }
     }
