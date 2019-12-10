@@ -791,7 +791,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if offline {
                     self.loadOffline()
                 } else {
-                    try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, limit: 100, completion: { (result) -> Void in
+                    try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, limit: SettingValues.commentLimit, completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
                             print(error)

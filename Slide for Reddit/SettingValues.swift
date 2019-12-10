@@ -130,6 +130,8 @@ class SettingValues {
     public static let pref_sideGesture = "SIDE_GESTURE"
     public static let pref_disable13Popup = "DISABLE_13_POPUP"
     public static let pref_thumbTag = "THUMB_TAG"
+    public static let pref_commentLimit = "COMMENT_LIMIT"
+    public static let pref_submissionLimit = "SUBMISSION_LIMIT"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -260,6 +262,9 @@ class SettingValues {
     public static var hideSeen = true
     public static var disable13Popup = true
     public static var thumbTag = true
+    
+    public static var commentLimit = 95
+    public static var submissionLimit = 13
 
     enum PostViewType: String {
         case LIST = "list"
@@ -471,6 +476,9 @@ class SettingValues {
 
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? -2 : settings.integer(forKey: SettingValues.pref_commentFontSize)
+
+        SettingValues.commentLimit = settings.object(forKey: SettingValues.pref_commentLimit) == nil ? 100 : settings.integer(forKey: SettingValues.pref_commentLimit)
+        SettingValues.submissionLimit = settings.object(forKey: SettingValues.pref_submissionLimit) == nil ? 13 : settings.integer(forKey: SettingValues.pref_submissionLimit)
 
         SettingValues.commentDepth = settings.object(forKey: SettingValues.pref_commentDepth) == nil ? 10 : settings.integer(forKey: SettingValues.pref_commentDepth)
         SettingValues.cachedPostsCount = settings.object(forKey: SettingValues.pref_postsToCache) == nil ? 25 : settings.integer(forKey: SettingValues.pref_postsToCache)

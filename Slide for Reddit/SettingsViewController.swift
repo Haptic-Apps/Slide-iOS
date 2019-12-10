@@ -330,7 +330,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.content.accessoryType = .disclosureIndicator
         self.content.backgroundColor = ColorUtil.theme.foregroundColor
         self.content.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.content.imageView?.image = UIImage(sfString: SFSymbol.photoFill, overrideString: "image")?.toolbarIcon()
+        self.content.imageView?.image = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "image")?.toolbarIcon()
         self.content.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.subCell.textLabel?.text = "Visit the Slide subreddit!"

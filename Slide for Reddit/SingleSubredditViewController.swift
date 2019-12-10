@@ -1345,7 +1345,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                     subreddit = Multireddit.init(name: sub.split("/")[3], user: sub.split("/")[1])
                 }
                 
-                try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, limit: 12, completion: { (result) in
+                try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, limit: SettingValues.submissionLimit, completion: { (result) in
                     self.loaded = true
                     self.reset = false
                     switch result {

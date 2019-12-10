@@ -6,6 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
+import SDCAlertView
+import RLBAlertsPickers
 import reddift
 import UIKit
 import UserNotifications
@@ -22,6 +25,8 @@ class SettingsGeneral: BubbleSettingTableViewController {
     var totallyCollapse: InsetCell = InsetCell()
     var fullyHideNavbar: InsetCell = InsetCell()
     var alwaysShowHeader: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "head")
+    var commentLimit: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "cl")
+    var postLimit: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "pl")
 
     var postSorting: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -163,7 +168,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     
     override func loadView() {
         super.loadView()
-        headers = ["Display", "Interaction", "Notifications", "Sorting"]
+        headers = ["Display", "Interaction", "Notifications", "Sorting", "Loading limits"]
 
         // set the title
         self.title = "General"
@@ -193,6 +198,24 @@ class SettingsGeneral: BubbleSettingTableViewController {
         self.searchSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.searchSorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.searchSorting.textLabel?.textColor = ColorUtil.theme.fontColor
+
+        self.commentLimit.textLabel?.text = "Number of comments to load"
+        self.commentLimit.detailTextLabel?.text = "\(SettingValues.commentLimit) comments"
+        self.commentLimit.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.commentLimit.backgroundColor = ColorUtil.theme.foregroundColor
+        self.commentLimit.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.commentLimit.contentView.addTapGestureRecognizer {
+            self.showCountMenu(false)
+        }
+
+        self.postLimit.textLabel?.text = "Number of posts to load"
+        self.postLimit.detailTextLabel?.text = "\(SettingValues.submissionLimit) posts"
+        self.postLimit.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.postLimit.backgroundColor = ColorUtil.theme.foregroundColor
+        self.postLimit.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.postLimit.contentView.addTapGestureRecognizer {
+            self.showCountMenu(true)
+        }
 
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { (settings) in
@@ -240,8 +263,68 @@ class SettingsGeneral: BubbleSettingTableViewController {
         self.tableView.tableFooterView = UIView()
     }
 
+    func showCountMenu(_ submissions: Bool) {
+        var min = 5
+        var max = 100
+        var step = 1
+        if !submissions {
+            min = 20
+            max = 2000
+            step = 20
+        }
+        
+        let alert = AlertController(title: "Select \(submissions ? "submission" : "comment") depth limit", message: nil, preferredStyle: .alert)
+
+        let cancelActionButton = AlertAction(title: "Close", style: .preferred) { _ -> Void in
+        }
+        alert.addAction(cancelActionButton)
+
+        var values: [[String]] = [[]]
+        for i in stride(from: min, to: max, by: step) {
+            values[0].append("\(i)")
+        }
+
+        var initialSelection: [PickerViewViewController.Index] = []
+        initialSelection.append((0, (submissions ? SettingValues.submissionLimit - min : SettingValues.commentLimit - min) / step))
+        alert.setupTheme()
+        
+        alert.attributedTitle = NSAttributedString(string: "Select \(submissions ? "submission" : "comment") limit", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        let pickerView = PickerViewViewControllerColored(values: values, initialSelection: initialSelection, action: { _, _, index, _ in
+            switch index.column {
+            case 0:
+                if submissions {
+                    SettingValues.submissionLimit = (index.row * step) + min
+                    UserDefaults.standard.set(SettingValues.submissionLimit, forKey: SettingValues.pref_submissionLimit)
+                    UserDefaults.standard.synchronize()
+                } else {
+                    SettingValues.commentLimit = (index.row * step) + min
+                    UserDefaults.standard.set(SettingValues.submissionLimit, forKey: SettingValues.pref_submissionLimit)
+                }
+                self.commentLimit.detailTextLabel?.text = "\(SettingValues.commentLimit) comments"
+
+                self.postLimit.detailTextLabel?.text = "\(SettingValues.submissionLimit) posts"
+            default: break
+            }
+        })
+        
+        alert.addChild(pickerView)
+
+        let pv = pickerView.view!
+        alert.contentView.addSubview(pv)
+        
+        pv.edgeAnchors == alert.contentView.edgeAnchors - 14
+        pv.heightAnchor == CGFloat(216)
+        pickerView.didMove(toParent: alert)
+        
+        alert.addCancelButton()
+        alert.addBlurView()
+        
+        self.present(alert, animated: true, completion: nil)
+
+    }
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return 5
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -275,6 +358,12 @@ class SettingsGeneral: BubbleSettingTableViewController {
             case 0: cell = self.postSorting
             case 1: cell = self.commentSorting
             case 2: cell = self.searchSorting
+            default: fatalError("Unknown row in section 2")
+            }
+        case 4:
+            switch indexPath.row {
+            case 0: cell = self.postLimit
+            case 1: cell = self.commentLimit
             default: fatalError("Unknown row in section 2")
             }
         default: fatalError("Unknown section")
@@ -381,6 +470,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         case 1: return 1
         case 2: return 1
         case 3: return 3
+        case 4: return 2
         default: fatalError("Unknown number of sections")
         }
     }
