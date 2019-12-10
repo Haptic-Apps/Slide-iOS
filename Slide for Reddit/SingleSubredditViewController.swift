@@ -265,8 +265,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 }
             }
         } else {
-            self.navigationController?.delegate = self
             if isModal {
+                self.navigationController?.delegate = self
                 if self.navigationController is TapBehindModalViewController {
                     (self.navigationController as! TapBehindModalViewController).del = self
                 }
