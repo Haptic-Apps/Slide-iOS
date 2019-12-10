@@ -218,7 +218,7 @@ class SettingsFont: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 1 && indexPath.row == 2 {
+        if (indexPath.section == 1 && indexPath.row == 2) || (indexPath.section == 0 && indexPath.row == 2) {
             return 90
         }
         return 60
@@ -454,6 +454,9 @@ private extension UITableViewCell {
 extension SettingsFont: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if slider.bounds.contains( touch.location(in: self.commentSize.contentView)) {
+            return false
+        }
+        if sliderSub.bounds.contains( touch.location(in: self.commentSize.contentView)) {
             return false
         }
         return true
