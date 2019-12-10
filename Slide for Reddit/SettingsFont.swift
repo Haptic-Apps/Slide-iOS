@@ -453,10 +453,10 @@ private extension UITableViewCell {
 
 extension SettingsFont: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if slider.bounds.contains( touch.location(in: self.commentSize.contentView)) {
+        if slider.bounds.insetBy(dx: -15, dy: -15).contains( touch.location(in: self.commentSize.contentView)) {
             return false
         }
-        if sliderSub.bounds.contains( touch.location(in: self.commentSize.contentView)) {
+        if sliderSub.bounds.insetBy(dx: -15, dy: -15).contains( touch.location(in: self.submissionSize.contentView)) {
             return false
         }
         return true
