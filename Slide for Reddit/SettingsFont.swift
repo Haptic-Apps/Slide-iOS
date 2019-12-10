@@ -19,6 +19,7 @@ class SettingsFont: BubbleSettingTableViewController {
     var enlarge = UISwitch()
     var type = UISwitch()
     var slider: TGPDiscreteSlider!
+    var sliderSub: TGPDiscreteSlider!
 
     var previewCell: UITableViewCell = InsetCell()
     var preview = UISwitch()
@@ -123,10 +124,30 @@ class SettingsFont: BubbleSettingTableViewController {
 
         submissionPreview.textLabel?.text = "I'm a text preview!"
 
-        submissionSize.textLabel?.text = "Font size"
-        submissionSize.addTapGestureRecognizer { [weak self] in
-            self?.submissionSizeCellWasTapped()
+        sliderSub = TGPDiscreteSlider()
+        sliderSub.incrementValue = 1
+        sliderSub.minimumValue = -8
+        sliderSub.tickCount = 16
+        sliderSub.tickSize = CGSize(width: 3, height: 10)
+        sliderSub.tickStyle = 2 //rounded
+        sliderSub.value = CGFloat(SettingValues.postFontOffset)
+        sliderSub.addTarget(self, action: #selector(valueChanged(_:event:)), for: .valueChanged)
+        sliderSub.minimumTrackTintColor = ColorUtil.baseAccent
+        sliderSub.maximumTrackTintColor = ColorUtil.theme.fontColor
+        
+        submissionSize.contentView.addSubview(sliderSub)
+        if let label = submissionSize.textLabel {
+            label.topAnchor == submissionSize.contentView.topAnchor + 20
+            label.leftAnchor == submissionSize.contentView.leftAnchor + 21
+            label.bottomAnchor == submissionSize.contentView.bottomAnchor - 50
+            label.heightAnchor == 20
         }
+        
+        sliderSub.horizontalAnchors == submissionSize.contentView.horizontalAnchors
+        sliderSub.heightAnchor == 60
+        sliderSub.bottomAnchor == submissionSize.contentView.bottomAnchor
+
+        submissionSize.textLabel?.text = "Font size"
 
         submissionWeight.textLabel?.text = "Font variant"
         submissionWeight.addTapGestureRecognizer { [weak self] in
@@ -157,6 +178,8 @@ class SettingsFont: BubbleSettingTableViewController {
         if let label = commentSize.textLabel {
             label.topAnchor == commentSize.contentView.topAnchor + 20
             label.leftAnchor == commentSize.contentView.leftAnchor + 21
+            label.bottomAnchor == commentSize.contentView.bottomAnchor - 50
+            label.heightAnchor == 20
         }
         
         slider.horizontalAnchors == commentSize.contentView.horizontalAnchors
@@ -178,14 +201,18 @@ class SettingsFont: BubbleSettingTableViewController {
 
         refresh()
         self.tableView.tableFooterView = UIView()
-
     }
     
     @objc func valueChanged(_ sender: TGPDiscreteSlider, event: UIEvent) {
-        SettingValues.commentFontOffset = Int(Double(sender.value))
+        if sender == sliderSub {
+            SettingValues.postFontOffset = Int(Double(sender.value))
+            UserDefaults.standard.set(SettingValues.postFontOffset, forKey: SettingValues.pref_postFontSize)
+        } else {
+            SettingValues.commentFontOffset = Int(Double(sender.value))
+            UserDefaults.standard.set(SettingValues.commentFontOffset, forKey: SettingValues.pref_commentFontSize)
+        }
         let submissionFont = FontGenerator.fontOfSize(size: 16, submission: true)
         let commentFont = FontGenerator.fontOfSize(size: 16, submission: false)
-
         self.submissionPreview.textLabel?.font = submissionFont
         self.commentPreview.textLabel?.font = commentFont
     }
