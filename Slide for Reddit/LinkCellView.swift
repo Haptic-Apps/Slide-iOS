@@ -3256,15 +3256,15 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }, actionProvider: { (_) -> UIMenu? in
             var children = [UIMenuElement]()
             
-            if let baseUrl = self.videoURL ?? self.link?.url { //todo enable this
+            if let baseUrl = self.videoURL ?? self.link?.url, let parent = self.parentViewController { //todo enable this
                 children.append(UIAction(title: "Save Video", image: UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "save")!.menuIcon()) { _ in
                     VideoMediaDownloader(urlToLoad: baseUrl).getVideoWithCompletion(completion: { (fileURL) in
                         if fileURL != nil {
-                            CustomAlbum.shared.saveMovieToLibrary(movieURL: fileURL!, parent: self)
+                            CustomAlbum.shared.saveMovieToLibrary(movieURL: fileURL!, parent: parent)
                         } else {
-                            BannerUtil.makeBanner(text: "Error downloading video", color: GMColor.red500Color(), seconds: 5, context: self, top: false, callback: nil)
+                            BannerUtil.makeBanner(text: "Error downloading video", color: GMColor.red500Color(), seconds: 5, context: parent, top: false, callback: nil)
                         }
-                    }, parent: parentViewController)
+                    }, parent: parent)
                 })
                 children.append(UIAction(title: "Share Video", image: UIImage(sfString: SFSymbol.cameraFill, overrideString: "share")!.menuIcon()) { _ in
                     VideoMediaDownloader.init(urlToLoad: baseUrl).getVideoWithCompletion(completion: { (fileURL) in
@@ -3273,8 +3273,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                                 let shareItems: [Any] = [fileURL!]
                                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                                 if let presenter = activityViewController.popoverPresentationController {
-                                    presenter.sourceView = sender
-                                    presenter.sourceRect = sender.bounds
+                                    presenter.sourceView = self.videoView!
+                                    presenter.sourceRect = self.videoView!.bounds
                                 }
                                 let window = UIApplication.shared.keyWindow!
                                 if let modalVC = window.rootViewController?.presentedViewController {
@@ -3284,7 +3284,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                                 }
                             }
                         }
-                    }, parent: parentViewController)
+                    }, parent: parent)
                 })
             }
 
