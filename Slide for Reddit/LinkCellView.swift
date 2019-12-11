@@ -2735,6 +2735,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     weak var previewedVC: UIViewController?
+    var previewedImage = false
+    var previewedVideo = false
     var previewedURL: URL?
     public var navViewController: UIViewController?
     
@@ -2993,19 +2995,34 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         animator.addCompletion {
             if let vc = self.previewedVC {
-                if vc is WebsiteViewController || vc is SFHideSafariViewController {
-                    self.previewedVC = nil
-                    if let url = self.previewedURL {
-                        self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
-                    }
+                if self.previewedVideo && vc is AnyModalViewController {
+                    //TODO check for memory leaks here
+                    let postContentTransitioningDelegate = PostContentPresentationManager()
+                    postContentTransitioningDelegate.sourceImageView = self.videoView
+                    vc.transitioningDelegate = postContentTransitioningDelegate
+                    vc.modalPresentationStyle = .custom
+                    (vc as! AnyModalViewController).forceStartUnmuted = !self.videoView.player!.isMuted
+                    
+                    self.parentViewController?.present(vc, animated: true, completion: nil)
                 } else {
-                    if self.parentViewController != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {
-                        vc.modalPresentationStyle = .overFullScreen
-                        self.parentViewController?.present(vc, animated: true)
+                    if vc is WebsiteViewController || vc is SFHideSafariViewController {
+                        self.previewedVC = nil
+                        if let url = self.previewedURL {
+                            self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+                        }
                     } else {
-                        VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parentViewController)
+                        if self.parentViewController != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {
+                            vc.modalPresentationStyle = .overFullScreen
+                            self.parentViewController?.present(vc, animated: true)
+                        } else {
+                            VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: nil, parentViewController: self.parentViewController)
+                        }
                     }
                 }
+            } else if self.previewedImage {
+                self.openLink()
+            } else if self.previewedVideo {
+                self.openLinkVideo()
             }
         }
     }
@@ -3028,6 +3045,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 }
             }
             return UITargetedPreview(view: self.textView, parameters: parameters)
+        } else if videoView != nil && !videoView.isHidden && videoView.frame.contains(interaction.location(in: self.contentView)) {
+            return UITargetedPreview(view: self.videoView, parameters: parameters)
         } else if bannerImage != nil && !bannerImage.isHidden && bannerImage.frame.contains(interaction.location(in: self.contentView)) {
             return UITargetedPreview(view: self.bannerImage, parameters: parameters)
         } else if thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.contentView)) {
@@ -3086,7 +3105,11 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     }
                 }
             }
-        } else if let url = self.link?.url, bannerImage != nil && bannerImage.isHidden == false && bannerImage.frame.contains(location) {
+        } else if let url = self.link?.url, videoView != nil && !videoView.isHidden && videoView.frame.contains(location) {
+            self.previewedVideo = true
+            return getConfigurationForVideo(url: url)
+        } else if let url = self.link?.url, bannerImage != nil && bannerImage.isHidden == false && (videoView == nil || videoView.isHidden) && bannerImage.frame.contains(location) {
+            self.previewedImage = true
             return getConfigurationForImage(url: url)
         } else if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.frame.contains(location) {
             return getConfigurationFor(url: url)
@@ -3118,6 +3141,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     
     func contextMenuInteractionDidEnd(_ interaction: UIContextMenuInteraction) {
         self.previewedVC = nil
+        self.previewedImage = false
+        self.previewedVideo = false
     }
     
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
@@ -3164,15 +3189,21 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func getConfigurationForImage(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
-            if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
-                self.previewedVC = vc
-                if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
-                    return UINavigationController(rootViewController: vc)
-                } else {
-                    return vc
-                }
+            let vc = UIViewController()
+            let image = UIImageView()
+            vc.view.addSubview(image)
+            image.image = self.bannerImage.image
+            let ratio = image.image!.size.width / image.image!.size.height
+            if vc.view.frame.width > vc.view.frame.height {
+                let newHeight = vc.view.frame.width / ratio
+                image.frame.size = CGSize(width: vc.view.frame.width, height: newHeight)
+            } else {
+                let newWidth = vc.view.frame.height * ratio
+                image.frame.size = CGSize(width: newWidth, height: vc.view.frame.height)
             }
-            return nil
+            vc.preferredContentSize = image.frame.size
+            image.edgeAnchors == vc.view.edgeAnchors
+            return vc
         }, actionProvider: { (_) -> UIMenu? in
             var children = [UIMenuElement]()
             
@@ -3206,6 +3237,76 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         })
     }
 
+    func getConfigurationForVideo(url: URL) -> UIContextMenuConfiguration {
+        self.previewedURL = url
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            let upvoted = ActionStates.getVoteDirection(s: self.link!) == VoteDirection.up
+            let controller = AnyModalViewController(cellView: self, self.full ? nil : {[weak self] in
+                if let strongSelf = self {
+                    strongSelf.doOpenComment()
+                }
+            }, upvoteCallback: {[weak self] in
+                if let strongSelf = self {
+                    strongSelf.upvote()
+                }
+            }, isUpvoted: upvoted, failure: nil)
+            self.previewedVC = controller
+
+            return controller
+        }, actionProvider: { (_) -> UIMenu? in
+            var children = [UIMenuElement]()
+            
+            if let baseUrl = self.videoURL ?? self.link?.url { //todo enable this
+                children.append(UIAction(title: "Save Video", image: UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "save")!.menuIcon()) { _ in
+                    VideoMediaDownloader(urlToLoad: baseUrl).getVideoWithCompletion(completion: { (fileURL) in
+                        if fileURL != nil {
+                            CustomAlbum.shared.saveMovieToLibrary(movieURL: fileURL!, parent: self)
+                        } else {
+                            BannerUtil.makeBanner(text: "Error downloading video", color: GMColor.red500Color(), seconds: 5, context: self, top: false, callback: nil)
+                        }
+                    }, parent: parentViewController)
+                })
+                children.append(UIAction(title: "Share Video", image: UIImage(sfString: SFSymbol.cameraFill, overrideString: "share")!.menuIcon()) { _ in
+                    VideoMediaDownloader.init(urlToLoad: baseUrl).getVideoWithCompletion(completion: { (fileURL) in
+                        DispatchQueue.main.async {
+                            if fileURL != nil {
+                                let shareItems: [Any] = [fileURL!]
+                                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                                if let presenter = activityViewController.popoverPresentationController {
+                                    presenter.sourceView = sender
+                                    presenter.sourceRect = sender.bounds
+                                }
+                                let window = UIApplication.shared.keyWindow!
+                                if let modalVC = window.rootViewController?.presentedViewController {
+                                    modalVC.present(activityViewController, animated: true, completion: nil)
+                                } else {
+                                    window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                                }
+                            }
+                        }
+                    }, parent: parentViewController)
+                })
+            }
+
+            children.append(UIAction(title: "Share Video URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
+                let shareItems: Array = [url]
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = self.contentView
+                self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+            })
+            children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
+                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+            })
+
+            children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
+                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+            })
+            
+            return UIMenu(title: "Video Options", image: nil, identifier: nil, children: children)
+        })
+    }
+
     func makeContextMenu() -> UIMenu {
 
         // Create a UIAction for sharing
@@ -3232,3 +3333,4 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         return UIMenu(title: "Save into a Collection", children: buttons)
     }
 }
+
