@@ -273,6 +273,8 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
             }
         }
 
+        self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
+
         server?.stop()
         loop?.stop()
 
@@ -1687,7 +1689,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
         } else if big {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER) ? CGFloat(10) : CGFloat(0)))
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER && !isGallery) ? CGFloat(10) : CGFloat(0)))
             if h == 0 {
                 submissionHeight = 200
             } else {
@@ -1771,7 +1773,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         var paddingRight = CGFloat(0)
         var innerPadding = CGFloat(0)
         
-        if SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER {
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !isGallery {
             paddingTop = 5
             paddingBottom = 5
             paddingLeft = 5
@@ -1860,7 +1862,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitle(submission: submission, full: false, false, gallery: isGallery))!
         let textSize = layout.textBoundingSize
 
-        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD ? -5 : 0)
+        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0)
 
         return CGSize(width: itemWidth, height: totalHeight)
     }
@@ -2465,7 +2467,11 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
 
         cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub, np: false)
-
+        if row > self.links.count - 4 {
+            if !loading && !nomore {
+                self.loadMore()
+            }
+        }
         return cell
     }
 
@@ -2848,7 +2854,7 @@ public class NothingHereCell: UICollectionViewCell {
         
         self.contentView.addSubview(text)
         
-        var title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        let title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         text.attributedText = title
         text.topAnchor == self.contentView.topAnchor + 10

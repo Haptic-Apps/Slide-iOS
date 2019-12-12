@@ -950,7 +950,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             var rightmargin = 0
             var radius = 0
             
-            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
+            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
                 topmargin = 5
                 bottommargin = 5
                 leftmargin = 5
@@ -2493,7 +2493,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         var leftmargin = 0
         var rightmargin = 0
         
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView){
             topmargin = 5
             bottommargin = 5
             leftmargin = 5
@@ -2543,7 +2543,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             var paddingLeft = CGFloat(0)
             var paddingRight = CGFloat(0)
             var innerPadding = CGFloat(0)
-            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
+            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
                 paddingTop = 5
                 paddingBottom = 5
                 paddingLeft = 5
@@ -2633,7 +2633,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         var paddingLeft = CGFloat(0)
         var paddingRight = CGFloat(0)
         var innerPadding = CGFloat(0)
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full {
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
             paddingLeft = 5
             paddingRight = 5
         }

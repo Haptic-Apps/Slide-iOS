@@ -74,9 +74,10 @@ class RealmDataWrapper {
             turl = submission.thumbnail.removingPercentEncoding ?? submission.thumbnail
         }
         
+        let type = ContentType.getContentType(baseUrl: submission.url)
         if big { //check for low quality image
             if previews != nil && !(previews?.isEmpty)! {
-                if submission.url != nil && ContentType.isImgurImage(uri: submission.url!) {
+                if submission.url != nil && type == .IMGUR {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
@@ -254,9 +255,10 @@ class RealmDataWrapper {
             turl = submission.thumbnail.removingPercentEncoding ?? submission.thumbnail
         }
         
+        let type = ContentType.getContentType(baseUrl: submission.url)
         if big { //check for low quality image
             if previews != nil && !(previews?.isEmpty)! {
-                if submission.url != nil && ContentType.isImgurImage(uri: submission.url!) {
+                if submission.url != nil && type == .IMGUR {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
