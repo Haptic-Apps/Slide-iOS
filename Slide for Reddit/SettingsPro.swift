@@ -115,7 +115,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.custom.imageView?.image = UIImage(sfString: SFSymbol.eyedropperFull, overrideString: "accent")?.toolbarIcon()
         self.custom.imageView?.tintColor = ColorUtil.theme.fontColor
         
-        self.themes.textLabel?.text = "Custom base themes"
+        self.themes.textLabel?.text = "Custom app themes"
         self.themes.detailTextLabel?.text = "Unlocks powerful theme customization options"
         self.themes.backgroundColor = UIColor(hexString: "#16161C")
         self.themes.detailTextLabel?.numberOfLines = 0
@@ -185,7 +185,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.gallery.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
         self.biometric.textLabel?.text = "Biometric lock"
-        self.biometric.detailTextLabel?.text = "Keep your Reddit content safe"
+        self.biometric.detailTextLabel?.text = "Keep Slide safe from prying eyes"
         self.biometric.detailTextLabel?.numberOfLines = 0
         self.biometric.backgroundColor = ColorUtil.theme.foregroundColor
         self.biometric.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -193,8 +193,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.biometric.imageView?.tintColor = ColorUtil.theme.fontColor
         self.biometric.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
-        self.multicolumn.textLabel?.text = "Multicolumn mode"
-        self.multicolumn.detailTextLabel?.text = "A must-have for iPads! This option allows you to display posts side-by-side in a configurable number of columns"
+        self.multicolumn.textLabel?.text = "Custom column count"
+        self.multicolumn.detailTextLabel?.text = "A must-have for iPads! This option allows you to customize Multi Column and Gallery modes with a configurable number of columns"
         self.multicolumn.detailTextLabel?.numberOfLines = 0
         self.multicolumn.backgroundColor = ColorUtil.theme.foregroundColor
         self.multicolumn.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -203,7 +203,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.multicolumn.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
         self.autocache.textLabel?.text = "Autocache subreddits"
-        self.autocache.detailTextLabel?.text = "Cache your favorite subs for your morning commute"
+        self.autocache.detailTextLabel?.text = "Cache your favorite subreddits and comments for offline viewing"
         self.autocache.detailTextLabel?.numberOfLines = 0
         self.autocache.backgroundColor = ColorUtil.theme.foregroundColor
         self.autocache.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -428,7 +428,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
+        return 80
     }
 
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -446,12 +446,12 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             case 0: return self.multicolumn
             case 1: return self.shadowbox
             case 2: return self.backup
-            case 3: return self.night
-            case 5: return self.biometric
-            case 4: return self.themes
+            //case 3: return self.night
+            case 4: return self.biometric
+            case 3: return self.themes
             //            case 7: return self.gallery
-            case 6: return self.autocache
-            case 7: return self.username
+            case 5: return self.autocache
+            case 6: return self.username
                 
             default: fatalError("Unknown row in section 0")
             }
@@ -462,7 +462,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 0 {
+        if indexPath.row == 0 && indexPath.section == 0 {
             IAPHandler.shared.restorePurchase()
         }
     }
@@ -476,7 +476,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        toReturn.backgroundColor = ColorUtil.theme.foregroundColor
 
         switch section {
         case 0: label.text = "Already a Slide supporter?"
@@ -489,7 +489,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 1
-        case 1: return 8
+        case 1: return 7
         default: fatalError("Unknown number of sections")
         }
     }

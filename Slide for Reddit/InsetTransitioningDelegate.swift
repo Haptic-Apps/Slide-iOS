@@ -24,6 +24,8 @@ class InsetTransitioningDelegate: UIPresentationController, UIViewControllerTran
             self.scrollView = (scroll as! UpdateViewController).scrollView
         } else if scroll is SettingsPro {
             self.scrollView = (scroll as! SettingsPro).tableView
+        } else if scroll is WebsiteViewController {
+            self.scrollView = (scroll as! WebsiteViewController).webView.scrollView
         }
         super.init(presentedViewController: presentedViewController, presenting: presenting)
     }
@@ -177,6 +179,7 @@ public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTra
     
     weak var scrollView: UIScrollView? {
         didSet {
+            self.scrollView?.bounces = false
             self.gestureRecognizer.delegate = self
         }
     }

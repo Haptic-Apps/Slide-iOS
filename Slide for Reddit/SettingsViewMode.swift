@@ -143,7 +143,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             self.splitMode.detailTextLabel!.isEnabled = false
         }
         
-        if SettingValues.appMode != .MULTI_COLUMN {
+        if SettingValues.appMode != .MULTI_COLUMN || !SettingValues.isPro {
             self.multicolumnCount.isUserInteractionEnabled = false
             self.multicolumnCount.textLabel!.isEnabled = false
             self.multicolumnCount.detailTextLabel!.isEnabled = false
@@ -152,7 +152,6 @@ class SettingsViewMode: BubbleSettingTableViewController {
             self.multicolumnCount.textLabel!.isEnabled = true
             self.multicolumnCount.detailTextLabel!.isEnabled = true
         }
-        
         
         var portraitCount = SettingValues.multiColumnCount / 2
         if portraitCount == 0 {

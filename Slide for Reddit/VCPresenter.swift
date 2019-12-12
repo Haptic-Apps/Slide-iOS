@@ -113,8 +113,6 @@ public class VCPresenter {
         button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon().getCopy(withSize: CGSize.square(size: 20)), for: UIControl.State.normal)
         button.frame = CGRect.init(x: -10, y: 0, width: 35, height: 35)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
-        button.layer.cornerRadius = (35 / 2)
-        button.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.2)
         let barButton = UIBarButtonItem.init(customView: button)
         
         newParent.modalPresentationStyle = .custom
