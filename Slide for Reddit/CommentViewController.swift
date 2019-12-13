@@ -409,6 +409,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.updateStringsSingle(queue)
                 self.doArrays()
                 self.isReply = false
+                self.isEditing = false
                 self.tableView.reloadData()
 
             })
@@ -434,6 +435,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.updateStringsSingle(queue)
                 self.doArrays()
                 self.isReply = false
+                self.isEditing = false
                 self.tableView.reloadData()
             })
         }
@@ -474,6 +476,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.content[comment.getIdentifier()] = comment
                 self.updateStringsSingle([comment])
                 self.doArrays()
+                self.isEditing = false
+                self.isReply = false
                 self.tableView.reloadData()
                 self.discard()
             })
