@@ -37,7 +37,7 @@ class InsetTransitioningDelegate: UIPresentationController, UIViewControllerTran
 
 class SlideInTransitionModal: NSObject, UIViewControllerAnimatedTransitioning {
 
-    let duration: TimeInterval = 0.5
+    let duration: TimeInterval = 0.3
     let reverse: Bool
     let interactive: Bool
     var size = CGSize.zero
@@ -163,10 +163,12 @@ extension InsetTransitioningDelegate {
         return CGRect(x: xOrigin, y: yOrigin, width: size.width, height: size.height)
     }
 }
-public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTransition {
+public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTransition, UIScrollViewDelegate {
     struct Callbacks {
         var didBeginPanning: (() -> Void)?
     }
+    private var lastContentOffset: CGFloat = 0
+
     var callbacks = Callbacks()
 
     let gestureRecognizer: UIPanGestureRecognizer
@@ -179,11 +181,25 @@ public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTra
     
     weak var scrollView: UIScrollView? {
         didSet {
-            self.scrollView?.bounces = false
+            //self.scrollView?.bounces = false
+            //self.scrollView?.delegate = self
+            //self.scrollView?.contentOffset = CGPoint.zero
             self.gestureRecognizer.delegate = self
         }
     }
-        
+    
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // The current offset
+        let offset = scrollView.contentOffset.y
+        if offset > 1 {
+            self.scrollView?.bounces = true
+        } else {
+            self.scrollView?.bounces = false
+        }
+        // This needs to be in the last line
+        lastContentOffset = offset
+    }
+
     // MARK: Initialization
     init(view: UIView) {
         gestureRecognizer = UIPanGestureRecognizer()
@@ -203,9 +219,11 @@ public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTra
         switch sender.state {
         case .began:
             callbacks.didBeginPanning?()
+            scrollView?.isScrollEnabled = false
         case .changed:
             update(percentCompleteForTranslation(translation: sender.translation(in: sender.view)))
         case .ended:
+            scrollView?.isScrollEnabled = true
             let velocity = sender.velocity(in: sender.view).y
             if sender.shouldRecognizeForDirection(.down) && (percentComplete > 0.25 || velocity > 350) {
                 finish()
@@ -214,6 +232,7 @@ public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTra
                 cancel()
             }
         case .cancelled:
+            scrollView?.isScrollEnabled = true
             self.completionSpeed = 0.8
             cancel()
         default:
@@ -233,13 +252,12 @@ extension PanGestureInteractionControllerModal: UIGestureRecognizerDelegate {
     }
     
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return otherGestureRecognizer is UIPanGestureRecognizer && (scrollView == nil ? tableView?.contentOffset.y ?? 0 == 0 : scrollView?.contentOffset.y ?? 0 == 0)
+        return otherGestureRecognizer is UIPanGestureRecognizer && scrollView != nil && scrollView!.contentOffset.y == 0 && (scrollView!.frame.contains(otherGestureRecognizer.location(in: scrollView!)))
     }
     
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return (gestureRecognizer is UIPanGestureRecognizer && (gestureRecognizer as! UIPanGestureRecognizer).velocity(in: scrollView ?? tableView!).y < 0) ? false : true
     }
-
 }
 
 // MARK: - UIViewControllerTransitioningDelegate

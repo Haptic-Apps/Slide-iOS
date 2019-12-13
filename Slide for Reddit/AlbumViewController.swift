@@ -181,6 +181,9 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         if s.endsWith("?") {
             s = s.substring(0, length: s.length - 1)
         }
+        if s.endsWith("/") {
+            s = s.substring(0, length: s.length - 1)
+        }
         print(s)
         var next = s.substring(s.lastIndexOf("/")!, length: s.length - s.lastIndexOf("/")!)
         if next.contains(".") {

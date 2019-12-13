@@ -82,12 +82,20 @@ public extension UIAlertController {
 }
 public extension UIActivityViewController {
     func showWindowless() {
-        let win = UIWindow(frame: UIScreen.main.bounds)
-        let vc = UIViewController()
-        vc.view.backgroundColor = .clear
-        win.rootViewController = vc
-        win.windowLevel = UIWindow.Level.alert + 1
-        win.makeKeyAndVisible()
-        vc.present(self, animated: true, completion: nil)
+        if let del = UIApplication.shared.delegate as? AppDelegate {
+            let win = UIWindow(frame: UIScreen.main.bounds)
+            del.tempWindow = win
+            let vc = UIViewController()
+            vc.view.backgroundColor = .clear
+            win.rootViewController = vc
+            win.windowLevel = UIWindow.Level.alert + 1
+            win.makeKeyAndVisible()
+            vc.present(self, animated: true, completion: nil)
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        (UIApplication.shared.delegate as? AppDelegate)?.tempWindow = nil
     }
 }

@@ -44,7 +44,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var totalBackground = true
     var isPro = false
     var transitionDelegateModal: InsetTransitioningDelegate?
-    
+    var tempWindow: UIWindow?
+
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
 
     let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
