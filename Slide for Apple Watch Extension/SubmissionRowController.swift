@@ -111,7 +111,7 @@ public class SubmissionRowController: NSObject {
             }
         case .IMGUR:
             text = ("Imgur")
-        case .VIDEO:
+        case .YOUTUBE:
             text = "YouTube"
         case .STREAMABLE:
             text = "Streamable"
