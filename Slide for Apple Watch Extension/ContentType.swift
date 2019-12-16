@@ -178,7 +178,7 @@ class ContentType {
         }
         
         if isVideo(uri: url!) {
-            return CType.VIDEO
+            return CType.YOUTUBE
         }
         if isGif(uri: url!) {
             return CType.GIF
@@ -252,7 +252,7 @@ class ContentType {
     
     public static func displayVideo(t: CType) -> Bool {
         switch t {
-        case CType.STREAMABLE, CType.VID_ME, CType.VIDEO, CType.GIF:
+        case CType.STREAMABLE, CType.VID_ME, CType.YOUTUBE, CType.GIF:
             return true
         default:
             return false
@@ -266,7 +266,7 @@ class ContentType {
     public static func fullImage(t: CType) -> Bool {
         switch t {
             
-        case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.VIDEO, CType.SELF, CType.VID_ME:
+        case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.YOUTUBE, CType.SELF, CType.VID_ME:
             return true
             
         case CType.EMBEDDED, CType.EXTERNAL, CType.LINK, CType.NONE, CType.REDDIT, CType.SPOILER, CType.TABLE, CType.UNKNOWN:
@@ -305,7 +305,7 @@ class ContentType {
         case REDDIT
         case SELF
         case STREAMABLE
-        case VIDEO
+        case YOUTUBE
         case XKCD
         case TUMBLR
         case VID_ME
