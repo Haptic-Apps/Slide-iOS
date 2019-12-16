@@ -407,6 +407,7 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
         super.viewWillTransition(to: size, with: coordinator)
                 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
+        fab?.removeFromSuperview()
 
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
@@ -414,8 +415,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
                // TODO: - content offset
+            }, completion: { (_) in
                 self.setupFab(size)
-            }, completion: nil
+            }
         )
 
 //        if self.viewIfLoaded?.window != nil {

@@ -1111,7 +1111,7 @@ class SettingValues {
             case .SINGLE:
                 return "Single column display of submissions"
             case .MULTI_COLUMN:
-                return "Multiple column display of submissions"
+                return "Multiple column display of submissions \(UIDevice.current.userInterfaceIdiom == .phone ? " (landscape orientation)" : "")"
             }
         }
     }

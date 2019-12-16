@@ -1179,6 +1179,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if textField.isEditable && !first {
                 first = true
                 textField.becomeFirstResponder()
+                textViewDidChange(textField)
                 UIView.animate(withDuration: 0.25) {
                     textField.insertText("")
                 }

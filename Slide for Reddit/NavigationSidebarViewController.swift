@@ -652,6 +652,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             parentController?.goToSubreddit(subreddit: sub)
         }
         searchBar.text = ""
+        searchBar.endEditing(true)
         filteredContent = []
         isSearching = false
         tableView.reloadData()

@@ -675,11 +675,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 backView = UIView.init(frame: self.window!.frame)
                 backView?.backgroundColor = ColorUtil.theme.backgroundColor
                 if let window = self.window {
-                    window.addSubview(backView!)
+                    window.insertSubview(backView!, at: 0)
                     backView!.edgeAnchors == window.edgeAnchors
+                    backView!.layer.zPosition = 1
                 }
             }
-                self.backView?.isHidden = false
+            self.backView?.isHidden = false
         }
         totalBackground = false
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

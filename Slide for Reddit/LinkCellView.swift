@@ -1074,9 +1074,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         videoPreloaded = false
         isLoadingVideo = false
         videoCompletion = nil
-        if videoView != nil && (AnyModalViewController.linkID.isEmpty && (!full || videoLoaded) || full) {
+        if videoView != nil && (AnyModalViewController.linkID.isEmpty && (!full || videoLoaded) || full) && ContentType.displayVideo(t: type) && type != .VIDEO {
             let wasPlayingAudio = (self.videoView.player?.currentItem?.tracks.count ?? 1) > 1 && !self.videoView.player!.isMuted
-            
             videoView?.player?.pause()
             
             self.videoView!.player?.replaceCurrentItem(with: nil)
@@ -3251,8 +3250,12 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             var children = [UIMenuElement]()
             
             if let baseUrl = self.videoURL ?? self.link?.url, let parent = self.parentViewController { //todo enable this
+                var finalUrl = baseUrl
+                if VideoMediaViewController.VideoType.fromPath(baseUrl.absoluteString) == .REDDIT {
+                    finalUrl = URL(string: self.link!.videoPreview) ?? baseUrl
+                }
                 children.append(UIAction(title: "Save Video", image: UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "save")!.menuIcon()) { _ in
-                    VideoMediaDownloader(urlToLoad: baseUrl).getVideoWithCompletion(completion: { (fileURL) in
+                    VideoMediaDownloader(urlToLoad: finalUrl).getVideoWithCompletion(completion: { (fileURL) in
                         if fileURL != nil {
                             CustomAlbum.shared.saveMovieToLibrary(movieURL: fileURL!, parent: parent)
                         } else {
@@ -3261,7 +3264,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     }, parent: parent)
                 })
                 children.append(UIAction(title: "Share Video", image: UIImage(sfString: SFSymbol.cameraFill, overrideString: "share")!.menuIcon()) { _ in
-                    VideoMediaDownloader.init(urlToLoad: baseUrl).getVideoWithCompletion(completion: { (fileURL) in
+                    VideoMediaDownloader.init(urlToLoad: finalUrl).getVideoWithCompletion(completion: { (fileURL) in
                         DispatchQueue.main.async {
                             if fileURL != nil {
                                 let shareItems: [Any] = [fileURL!]

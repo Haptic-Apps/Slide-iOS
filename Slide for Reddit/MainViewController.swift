@@ -793,6 +793,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         // Clear the menuNav's searchBar to refresh the menuNav
         self.menuNav?.searchBar.text = nil
+        self.menuNav?.searchBar.endEditing(true)
         
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
         if !selected {

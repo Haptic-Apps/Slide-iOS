@@ -19,11 +19,12 @@ class InsetTransitioningDelegate: UIPresentationController, UIViewControllerTran
 
     init(preferredSize: CGSize, scroll: UIViewController, presentedViewController: UIViewController, presenting: UIViewController?) {
         self.size = preferredSize
-        print(scroll)
         if scroll is UpdateViewController {
             self.scrollView = (scroll as! UpdateViewController).scrollView
         } else if scroll is SettingsPro {
             self.scrollView = (scroll as! SettingsPro).tableView
+        } else if scroll is SettingsThemeChooser {
+            self.scrollView = (scroll as! SettingsThemeChooser).tableView
         } else if scroll is WebsiteViewController {
             self.scrollView = (scroll as! WebsiteViewController).webView.scrollView
         }
@@ -256,7 +257,7 @@ extension PanGestureInteractionControllerModal: UIGestureRecognizerDelegate {
     }
     
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return (gestureRecognizer is UIPanGestureRecognizer && (gestureRecognizer as! UIPanGestureRecognizer).velocity(in: scrollView ?? tableView!).y < 0) ? false : true
+        return scrollView == nil || tableView == nil || ((gestureRecognizer is UIPanGestureRecognizer && (gestureRecognizer as! UIPanGestureRecognizer).velocity(in: scrollView ?? tableView!).y < 0) ? false : true)
     }
 }
 
