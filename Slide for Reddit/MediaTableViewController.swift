@@ -254,6 +254,12 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 newUrl = URL(string: "firefox-klar://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
             }
 
+            // If it's a youtube video, always use safari so the app will open
+            let type = ContentType.getContentType(baseUrl: url)
+            if type == ContentType.CType.VIDEO && !SettingValues.internalYouTube {
+                newUrl = oldUrl
+            }
+
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(newUrl, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {

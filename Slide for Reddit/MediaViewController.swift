@@ -262,6 +262,12 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             } else if browser == SettingValues.BROWSER_FOCUS_KLAR {
                 newUrl = URL(string: "firefox-klar://open-url?url=" + oldUrl.absoluteString) ?? oldUrl
             }
+            
+            // If it's a youtube video, always use safari so the app will open
+            let type = ContentType.getContentType(baseUrl: url)
+            if type == ContentType.CType.VIDEO && !SettingValues.internalYouTube {
+                newUrl = oldUrl
+            }
 
             if #available(iOS 10.0, *) {
                 print("Opening externally")
