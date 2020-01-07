@@ -92,18 +92,18 @@ class CachedTitle {
                 let url = award.split("*")[0]
                 let count = Int(award.split(":")[1]) ?? 0
                 attributedTitle.append(spacer)
-                if let urlAsURL = URL(string: url),
-                    let flairData = try? Data(contentsOf: urlAsURL),
-                    let flairImage = UIImage.sd_image(with: flairData) {
+                if let urlAsURL = URL(string: url) {
+                    //This code will cause runtime issues in XCode, but I can't find a better way to do this async. If you find a better way that is not dependent on the main thread please open a PR!
+                    let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                    flairView.sd_setImage(with: urlAsURL, completed: nil)
+                    let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
 
-                    let flairAttrString = NSMutableAttributedString.yy_attachmentString(withContent: flairImage.imageScaled(to: CGSize.square(size: 20)), contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
-                    
-                    attributedTitle.append(flairAttrString)
+                    attributedTitle.append(flairImage)
                 }
-                    if count > 1 {
-                        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                        attributedTitle.append(gilded)
-                    }
+                if count > 1 {
+                    let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+                    attributedTitle.append(gilded)
+                }
             }
             if submission.platinum > 0 {
                 attributedTitle.append(spacer)

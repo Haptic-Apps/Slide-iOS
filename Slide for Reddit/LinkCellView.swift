@@ -1992,6 +1992,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         strongSelf.setOnce = false
         if #available(iOS 10.0, *) {
             strongSelf.videoView?.player?.playImmediately(atRate: 1.0)
+            print(strongSelf.videoView?.player?.reasonForWaitingToPlay)
         } else {
             strongSelf.videoView?.player?.play()
         }
