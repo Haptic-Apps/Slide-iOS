@@ -34,7 +34,6 @@ class RealmDataWrapper {
         let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
         
         var videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["hls_url"] as? String)
-        print("Video preview is \(videoPreview)")
         if videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil {
             videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String)
         }

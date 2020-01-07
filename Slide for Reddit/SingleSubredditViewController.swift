@@ -753,7 +753,9 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
                         }
                         if let styles = data["style"] as? [String: Any] {
                             if let headerUrl = styles["bannerBackgroundImage"] as? String {
-                                self.headerImage = URL(string: headerUrl.unescapeHTML)
+                                if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
+                                    self.headerImage = URL(string: headerUrl.unescapeHTML)
+                                }
                             }
                         }
                     }
@@ -1590,76 +1592,76 @@ class SingleSubredditViewController: MediaViewController, UINavigationController
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
         if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
-        for submission in values {
-            var thumb = submission.thumbnail
-            var big = submission.banner
-            var height = submission.height
-            if submission.url != nil {
-            var type = ContentType.getContentType(baseUrl: submission.url)
-            if submission.isSelf {
-                type = .SELF
-            }
+            for submission in values {
+                var thumb = submission.thumbnail
+                var big = submission.banner
+                var height = submission.height
+                if submission.url != nil {
+                var type = ContentType.getContentType(baseUrl: submission.url)
+                if submission.isSelf {
+                    type = .SELF
+                }
 
-            if thumb && type == .SELF {
-                thumb = false
-            }
+                if thumb && type == .SELF {
+                    thumb = false
+                }
 
-            let fullImage = ContentType.fullImage(t: type)
+                let fullImage = ContentType.fullImage(t: type)
 
-            if !fullImage && height < 75 {
-                big = false
-                thumb = true
-            } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
-                height = 200
-            }
+                if !fullImage && height < 75 {
+                    big = false
+                    thumb = true
+                } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
+                    height = 200
+                }
 
-            if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF {
-                big = false
-                thumb = false
-            }
+                if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF {
+                    big = false
+                    thumb = false
+                }
 
-            if height < 75 {
-                thumb = true
-                big = false
-            }
+                if height < 75 {
+                    thumb = true
+                    big = false
+                }
 
-            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
-            if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                    || SettingValues.noImages && submission.isSelf {
-                big = false
-                thumb = false
-            }
+                let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+                if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+                        || SettingValues.noImages && submission.isSelf {
+                    big = false
+                    thumb = false
+                }
 
-            if big || !submission.thumbnail {
-                thumb = false
-            }
+                if big || !submission.thumbnail {
+                    thumb = false
+                }
 
-            if !big && !thumb && submission.type != .SELF && submission.type != .NONE {
-                thumb = true
-            }
+                if !big && !thumb && submission.type != .SELF && submission.type != .NONE {
+                    thumb = true
+                }
 
-            if thumb && !big {
-                if submission.thumbnailUrl == "nsfw" {
-                } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
-                } else {
-                    if let url = URL.init(string: submission.thumbnailUrl) {
-                        urls.append(url)
+                if thumb && !big {
+                    if submission.thumbnailUrl == "nsfw" {
+                    } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                    } else {
+                        if let url = URL.init(string: submission.thumbnailUrl) {
+                            urls.append(url)
+                        }
                     }
                 }
-            }
 
-            if big {
-                if shouldShowLq {
-                    if let url = URL.init(string: submission.lqUrl) {
-                        urls.append(url)
-                    }
+                if big {
+                    if shouldShowLq {
+                        if let url = URL.init(string: submission.lqUrl) {
+                            urls.append(url)
+                        }
 
-                } else {
-                    if let url = URL.init(string: submission.bannerUrl) {
-                        urls.append(url)
+                    } else {
+                        if let url = URL.init(string: submission.bannerUrl) {
+                            urls.append(url)
+                        }
                     }
                 }
-            }
             }
         }
         SDWebImagePrefetcher.shared.prefetchURLs(urls)
