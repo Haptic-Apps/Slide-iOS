@@ -161,13 +161,13 @@ class VideoMediaDownloader {
         if s.endsWith("/") {
             s = s.substring(0, length: s.length - 1)
         }
-        if s.contains("v.redd.it") && !s.contains("DASH") {
+        if s.contains("v.redd.it") && !s.contains("DASH") && !s.contains("HLSPlaylist.m3u8") {
             if s.endsWith("/") {
                 s = s.substring(0, length: s.length - 2)
             }
             s += "/DASH_9_6_M"
         }
-        if hls {
+        if hls && !s.contains("HLSPlaylist.m3u8") {
             if s.contains("v.redd.it") && s.contains("DASH") {
                 if s.endsWith("/") {
                     s = s.substring(0, length: s.length - 2)
@@ -178,14 +178,16 @@ class VideoMediaDownloader {
                 if s.endsWith("/") {
                     s = s.substring(0, length: s.length - 2)
                 }
-                s += "/HLSPlaylist.m3u8"
+                if !s.contains("HLSPlaylist") {
+                    s += "/HLSPlaylist.m3u8"
+                }
             }
         }
         return s
     }
     
     func formatUrl(sS: String, _ vreddit: Bool = false) -> String {
-        return format(sS: sS, false)
+        return format(sS: sS, vreddit)
     }
     
     func getLastPathSegment(_ path: String) -> String {

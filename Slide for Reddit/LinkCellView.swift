@@ -527,7 +527,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         contentView.layer.masksToBounds = true
         
-        if SettingValues.actionBarMode.isFull() || full {
+        if SettingValues.actionBarMode.isFull() || full || self is GalleryLinkCellView {
             self.box = UIStackView().then {
                 $0.accessibilityIdentifier = "Count Info Stack Horizontal"
                 $0.axis = .horizontal
@@ -670,7 +670,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         sideButtons.isHidden = !SettingValues.actionBarMode.isSide() || full
         buttons.isHidden = !SettingValues.actionBarMode.isFull() && !full
-        buttons.isUserInteractionEnabled = !SettingValues.actionBarMode.isFull() || full
+        buttons.isUserInteractionEnabled = !SettingValues.actionBarMode.isFull() || full || self is GalleryLinkCellView
     }
     
     var progressBar: ProgressBarView!
@@ -966,7 +966,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.contentView.clipsToBounds = false
             }
             
-            if SettingValues.actionBarMode.isFull() || full {
+            if SettingValues.actionBarMode.isFull() || full || self is GalleryLinkCellView {
                 
                 if SettingValues.actionBarMode == .FULL_LEFT {
                     box.rightAnchor == contentView.rightAnchor - ctwelve
@@ -1982,7 +1982,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         let strongSelf = self
-
+        
         strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
 //                Is currently causing issues with not resuming after buffering
@@ -1990,7 +1990,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
         strongSelf.setOnce = false
-        strongSelf.videoView?.player?.play()
+        if #available(iOS 10.0, *) {
+            strongSelf.videoView?.player?.playImmediately(atRate: 1.0)
+        } else {
+            strongSelf.videoView?.player?.play()
+        }
         strongSelf.videoID = strongSelf.link?.getId() ?? ""
         if SettingValues.muteInlineVideos {
             strongSelf.videoView?.player?.isMuted = true
