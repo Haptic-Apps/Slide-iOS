@@ -263,34 +263,33 @@ class SubredditReorderViewController: UITableViewController {
     }
 
     @objc func pin(_ selector: AnyObject) {
-        if let rows = tableView.indexPathsForSelectedRows {
-            var pinned2: [String] = []
-            var pinned3: [String] = []
-            for i in rows {
-                print(i)
-                if i.section > 0 || pinned.isEmpty {
-                    pinned2.append(self.subs[i.row])
-                    print("pin \(self.subs[i.row])")
-                } else {
-                    pinned3.append(self.pinned[i.row])
-                    print("Unpin \(self.pinned[i.row])")
-                }
-            }
-            
-            //Are all pinned, need to unpin
-            self.pinned = self.pinned.filter({ (input) -> Bool in
-                return !pinned3.contains(input)
-            })
-
-            //Need to pin remaining and move to top
-            pinned.append(contentsOf: pinned2)
-            tableView.reloadData()
-            let indexPath = IndexPath.init(row: 0, section: 0)
-            self.tableView.scrollToRow(at: indexPath,
-                    at: UITableView.ScrollPosition.top, animated: true)
-
-            self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
+        guard !selectedRows.isEmpty else {
+            return
         }
+        
+        // Need to use copy and not modify the original
+        // until after we decide what to pin or unpin
+        var newPins = pinned
+        
+        for i in selectedPinnedRows {
+            print("Unpin \(pinned[i.row])")
+            newPins.remove(at: i.row)
+        }
+        
+        for i in selectedSubRows {
+            print("Pin \(subs[i.row])")
+            newPins.append(subs[i.row])
+        }
+        
+        // Prevents duplicate pins, which causes problems elsewhere in the app
+        pinned = newPins.unique()
+    
+        tableView.reloadData()
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        self.tableView.scrollToRow(at: indexPath,
+                at: UITableView.ScrollPosition.top, animated: true)
+
+        self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
     }
 
     @objc func remove(_ selector: AnyObject) {
