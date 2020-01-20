@@ -52,7 +52,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
         }
         
         if SettingValues.appMode == .MULTI_COLUMN {
-            if UIApplication.shared.statusBarOrientation.isPortrait {
+            if UIApplication.shared.statusBarOrientation.isPortrait || (vc.isBeingPresented && (vc.modalPresentationStyle == .pageSheet || vc.modalPresentationStyle == .fullScreen)) {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
                     numberOfColumns = 1
                 } else {

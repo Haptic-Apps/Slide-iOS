@@ -111,9 +111,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let url = self.link!.url ?? URL(string: self.link!.permalink)
         
         let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: self is BannerLinkCellView ? [bannerImage?.image] : [url], applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = self.contentView
-        
-        activityViewController.showWindowless()
+        if let presenter = activityViewController.popoverPresentationController {
+            presenter.sourceView = self.contentView
+            presenter.sourceRect = self.contentView.bounds
+        }
+        self.parentViewController?.present(activityViewController, animated: true, completion: nil)
     }
 
     @objc func downvote(sender: UITapGestureRecognizer? = nil) {
@@ -1344,7 +1346,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 presenter.sourceView = self.contentView
                 presenter.sourceRect = self.contentView.bounds
             }
-            activityViewController.showWindowless()
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         default:
             break
         }
@@ -1384,7 +1386,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 presenter.sourceView = self.contentView
                 presenter.sourceRect = self.contentView.bounds
             }
-            activityViewController.showWindowless()
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         default:
             break
         }
@@ -2449,7 +2451,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         presenter.sourceView = outer
                         presenter.sourceRect = outer.bounds
                     }
-                    activityViewController.showWindowless()
+                    self.parentViewController?.present(activityViewController, animated: true, completion: nil)
                 }
             }
             
@@ -3185,7 +3187,11 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 let shareItems: Array = [url]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 activityViewController.popoverPresentationController?.sourceView = self.contentView
-                activityViewController.showWindowless()
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = self.contentView
+                    presenter.sourceRect = self.contentView.bounds
+                }
+                self.parentViewController?.present(activityViewController, animated: true, completion: nil)
             })
             children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
                 UIPasteboard.general.setValue(url, forPasteboardType: "public.url")

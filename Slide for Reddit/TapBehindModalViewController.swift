@@ -23,7 +23,7 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if self.tapOutsideRecognizer == nil && (modalPresentationStyle == .pageSheet || modalPresentationStyle == .popover) {
+        if self.tapOutsideRecognizer == nil && ((modalPresentationStyle == .pageSheet || modalPresentationStyle == .popover) || UIDevice.current.userInterfaceIdiom == .pad) {
             self.tapOutsideRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapBehind))
             self.tapOutsideRecognizer.numberOfTapsRequired = 1
             self.tapOutsideRecognizer.cancelsTouchesInView = false
