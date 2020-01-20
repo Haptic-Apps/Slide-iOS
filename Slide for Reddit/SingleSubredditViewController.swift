@@ -3154,7 +3154,7 @@ public class SubLinkItem {
 
 extension SingleSubredditViewController: TapBehindModalViewControllerDelegate {
     func shouldDismiss() -> Bool {
-        return false
+        return UIDevice.current.userInterfaceIdiom == .pad
     }
 }
 
