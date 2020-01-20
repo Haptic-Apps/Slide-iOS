@@ -68,11 +68,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
         if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds || UIApplication.shared.isSplitOrSlideOver {
             numberOfColumns = 1
         }
-        
-        if vc.modalPresentationStyle == .pageSheet && vc.presentingViewController != nil {
-            numberOfColumns = 1
-        }
-        
+                
         if vc is ContentListingViewController && numberOfColumns > 2 {
             numberOfColumns = 2
             portraitCount = 1
