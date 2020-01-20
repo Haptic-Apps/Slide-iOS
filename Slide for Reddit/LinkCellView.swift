@@ -173,6 +173,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var videoView: VideoView!
     var topVideoView: UIView!
     var progressDot: UIView!
+    var spinner: UIActivityIndicatorView!
     var sound: UIButton!
     var updater: CADisplayLink?
     var timeView: UILabel!
@@ -489,6 +490,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             self.topVideoView = UIView()
             self.progressDot = UIView()
+            self.spinner = UIActivityIndicatorView(style: .white)
+            
             progressDot.alpha = 0.7
             progressDot.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             sound = UIButton(type: .custom)
@@ -511,7 +514,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             }
             
-            topVideoView.addSubviews(progressDot, sound, timeView)
+            topVideoView.addSubviews(progressDot, spinner, sound, timeView)
             
             contentView.addSubviews(videoView, topVideoView)
             contentView.bringSubviewToFront(videoView)
@@ -870,11 +873,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !buffering {
             progressDot.layer.removeAllAnimations()
             progressDot.layer.addSublayer(circleShape)
+            spinner.isHidden = true
+            spinner.stopAnimating()
         }
         
         if timeView.isHidden {
             timeView.isHidden = false
             progressDot.isHidden = false
+            spinner.isHidden = false
+            spinner.startAnimating()
         }
         timeView.text = "\(total)  "
         
@@ -922,6 +929,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             progressDot.layer.cornerRadius = 10
             progressDot.clipsToBounds = true
             
+            spinner.widthAnchor == 20
+            spinner.heightAnchor == 20
+            spinner.leftAnchor == topVideoView.leftAnchor + 8
+            spinner.bottomAnchor == topVideoView.bottomAnchor - 8
+            spinner.clipsToBounds = true
+
             timeView.leftAnchor == progressDot.rightAnchor + 8
             timeView.bottomAnchor == topVideoView.bottomAnchor - 8
             timeView.heightAnchor == 20
@@ -1977,6 +1990,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
             if self.playView != nil {
                 self.playView.isHidden = false
+                self.playView.alpha = 0
+                UIView.animate(withDuration: 0.1) { [weak self] in
+                    guard let strongSelf = self else { return }
+                    strongSelf.playView.alpha = 1
+                }
             }
             return
         }
@@ -1992,7 +2010,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         strongSelf.setOnce = false
         if #available(iOS 10.0, *) {
             strongSelf.videoView?.player?.playImmediately(atRate: 1.0)
-            print(strongSelf.videoView?.player?.reasonForWaitingToPlay)
         } else {
             strongSelf.videoView?.player?.play()
         }
