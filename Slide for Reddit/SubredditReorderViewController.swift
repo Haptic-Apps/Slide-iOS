@@ -15,6 +15,31 @@ class SubredditReorderViewController: UITableViewController {
     var pinned: [String] = []
     var editItems: [UIBarButtonItem] = []
     var normalItems: [UIBarButtonItem] = []
+    var pinnedItems: [UIBarButtonItem] = []
+    
+    private var selectedRows: [IndexPath] {
+        return tableView.indexPathsForSelectedRows ?? []
+    }
+    
+    private var selectedSubRows: [IndexPath] {
+        return selectedRows.filter { indexPath in
+            if self.pinned.isEmpty {
+                return indexPath.section == 0
+            } else {
+                return indexPath.section == 1
+            }
+        }
+    }
+    
+    private var selectedPinnedRows: [IndexPath] {
+        return selectedRows.filter { indexPath in
+            if self.pinned.isEmpty {
+                return false
+            } else {
+                return indexPath.section == 0
+            }
+        }
+    }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
@@ -69,6 +94,7 @@ class SubredditReorderViewController: UITableViewController {
 
         editItems = [deleteB, pinB]
         normalItems = [addB, syncB]
+        pinnedItems = [pinB]
 
         self.navigationItem.rightBarButtonItems = normalItems
 
@@ -237,73 +263,50 @@ class SubredditReorderViewController: UITableViewController {
     }
 
     @objc func pin(_ selector: AnyObject) {
-        if let rows = tableView.indexPathsForSelectedRows {
-            var pinned2: [String] = []
-            var pinned3: [String] = []
-            for i in rows {
-                print(i)
-                if i.section > 0 || pinned.isEmpty {
-                    pinned2.append(self.subs[i.row])
-                    print("pin \(self.subs[i.row])")
-                } else {
-                    pinned3.append(self.pinned[i.row])
-                    print("Unpin \(self.pinned[i.row])")
-                }
-            }
-            
-            //Are all pinned, need to unpin
-            self.pinned = self.pinned.filter({ (input) -> Bool in
-                return !pinned3.contains(input)
-            })
-
-            //Need to pin remaining and move to top
-            pinned.append(contentsOf: pinned2)
-            tableView.reloadData()
-            let indexPath = IndexPath.init(row: 0, section: 0)
-            self.tableView.scrollToRow(at: indexPath,
-                    at: UITableView.ScrollPosition.top, animated: true)
-
-            self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
+        guard !selectedRows.isEmpty else {
+            return
         }
+        
+        // Need to use copy and not modify the original
+        // until after we decide what to pin or unpin
+        var newPins = pinned
+        
+        for i in selectedPinnedRows {
+            print("Unpin \(pinned[i.row])")
+            newPins.remove(at: i.row)
+        }
+        
+        for i in selectedSubRows {
+            print("Pin \(subs[i.row])")
+            newPins.append(subs[i.row])
+        }
+        
+        // Prevents duplicate pins, which causes problems elsewhere in the app
+        pinned = newPins.unique()
+    
+        tableView.reloadData()
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        self.tableView.scrollToRow(at: indexPath,
+                at: UITableView.ScrollPosition.top, animated: true)
+
+        self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
     }
 
     @objc func remove(_ selector: AnyObject) {
-        if let rows = tableView.indexPathsForSelectedRows {
+        guard !selectedSubRows.isEmpty else {
+            return
+        }
+    
+        let actionSheetController: UIAlertController = UIAlertController(title: "Remove subscriptions", message: "", preferredStyle: .alert)
 
-            let actionSheetController: UIAlertController = UIAlertController(title: "Remove subscriptions", message: "", preferredStyle: .alert)
+        actionSheetController.addCancelButton()
+        var cancelActionButton = UIAlertAction()
 
-            actionSheetController.addCancelButton()
-            var cancelActionButton = UIAlertAction()
-
-            if AccountController.isLoggedIn {
-                cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { _ -> Void in
-                   // TODO: - unsub
-                    var top: [String] = []
-                    for i in rows {
-                        top.append(self.subs[i.row])
-                    }
-                    self.subs = self.subs.filter({ (input) -> Bool in
-                        return !top.contains(input)
-                    })
-                    self.tableView.reloadData()
-                    self.navigationItem.setRightBarButtonItems(self.normalItems, animated: true)
-                    
-                    for sub in top {
-                        do {
-                            try (UIApplication.shared.delegate as! AppDelegate).session?.setSubscribeSubreddit(Subreddit.init(subreddit: sub), subscribe: false, completion: { (_) in
-                                
-                            })
-                        } catch {
-                            
-                        }
-                    }
-                }
-                actionSheetController.addAction(cancelActionButton)
-            }
-
-            cancelActionButton = UIAlertAction(title: "Just remove", style: .default) { _ -> Void in
+        if AccountController.isLoggedIn {
+            cancelActionButton = UIAlertAction(title: "Remove and unsubscribe", style: .default) { _ -> Void in
+               // TODO: - unsub
                 var top: [String] = []
-                for i in rows {
+                for i in self.selectedSubRows {
                     top.append(self.subs[i.row])
                 }
                 self.subs = self.subs.filter({ (input) -> Bool in
@@ -311,12 +314,34 @@ class SubredditReorderViewController: UITableViewController {
                 })
                 self.tableView.reloadData()
                 self.navigationItem.setRightBarButtonItems(self.normalItems, animated: true)
-
+                
+                for sub in top {
+                    do {
+                        try (UIApplication.shared.delegate as! AppDelegate).session?.setSubscribeSubreddit(Subreddit.init(subreddit: sub), subscribe: false, completion: { (_) in
+                            
+                        })
+                    } catch {
+                        
+                    }
+                }
             }
             actionSheetController.addAction(cancelActionButton)
-            self.present(actionSheetController, animated: true, completion: nil)
         }
 
+        cancelActionButton = UIAlertAction(title: "Just remove", style: .default) { _ -> Void in
+            var top: [String] = []
+            for i in self.selectedSubRows {
+                top.append(self.subs[i.row])
+            }
+            self.subs = self.subs.filter({ (input) -> Bool in
+                return !top.contains(input)
+            })
+            self.tableView.reloadData()
+            self.navigationItem.setRightBarButtonItems(self.normalItems, animated: true)
+
+        }
+        actionSheetController.addAction(cancelActionButton)
+        self.present(actionSheetController, animated: true, completion: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -325,21 +350,26 @@ class SubredditReorderViewController: UITableViewController {
         setupBaseBarColors()
         self.title = "Manage subscriptions"
     }
-
-    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if tableView.indexPathsForSelectedRows != nil && !tableView.indexPathsForSelectedRows!.isEmpty {
-            self.navigationItem.setRightBarButtonItems(editItems, animated: true)
-        } else {
+    
+    private func refreshListActionButtons() {
+        guard !selectedRows.isEmpty else {
             self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
+            return
+        }
+        
+        if !selectedPinnedRows.isEmpty && selectedSubRows.isEmpty {
+            self.navigationItem.setRightBarButtonItems(pinnedItems, animated: true)
+        } else {
+            self.navigationItem.setRightBarButtonItems(editItems, animated: true)
         }
     }
 
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        refreshListActionButtons()
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if !tableView.indexPathsForSelectedRows!.isEmpty {
-            self.navigationItem.setRightBarButtonItems(editItems, animated: true)
-        } else {
-            self.navigationItem.setRightBarButtonItems(normalItems, animated: true)
-        }
+        refreshListActionButtons()
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
