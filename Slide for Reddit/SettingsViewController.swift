@@ -797,7 +797,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             }
         default:
             break
-
         }
 
         if let n = ch {

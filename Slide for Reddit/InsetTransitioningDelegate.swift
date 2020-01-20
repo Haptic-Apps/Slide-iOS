@@ -143,7 +143,7 @@ extension InsetTransitioningDelegate {
             self?.presentingViewController.dismiss(animated: true, completion: nil)
         }
     }
-
+    
     override func dismissalTransitionDidEnd(_ completed: Bool) {
         interactive = false
         if completed {
@@ -214,17 +214,14 @@ public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTra
 
     // MARK: User interaction
     @objc func viewPanned(sender: UIPanGestureRecognizer) {
-        
         sender.view?.endEditing(true)
         
         switch sender.state {
         case .began:
             callbacks.didBeginPanning?()
-            scrollView?.isScrollEnabled = false
         case .changed:
             update(percentCompleteForTranslation(translation: sender.translation(in: sender.view)))
         case .ended:
-            scrollView?.isScrollEnabled = true
             let velocity = sender.velocity(in: sender.view).y
             if sender.shouldRecognizeForDirection(.down) && (percentComplete > 0.25 || velocity > 350) {
                 finish()
@@ -233,7 +230,6 @@ public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTra
                 cancel()
             }
         case .cancelled:
-            scrollView?.isScrollEnabled = true
             self.completionSpeed = 0.8
             cancel()
         default:
