@@ -693,19 +693,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
                 if let presenter = activityViewController.popoverPresentationController {
                     presenter.sourceView = self.bannerImage
-                    presenter.sourceRect = self.bannerImage!.bounds
+                    presenter.sourceRect = self.bannerImage.bounds
                 }
                 self.parentViewController?.present(activityViewController, animated: true, completion: nil)
             }
             
             if ContentType.isImage(uri: url) && !bannerImage.isHidden {
-                let imageToShare = [bannerImage.image!]
-                let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
-                activityViewController.popoverPresentationController?.sourceView = self.contentView
                 alertController.addAction(title: "Share image", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "image")!.menuIcon(), action: {
+                    let imageToShare = [self.bannerImage.image!]
+                    let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
                     if let presenter = activityViewController.popoverPresentationController {
-                        presenter.sourceView = self.bannerImage!
-                        presenter.sourceRect = self.bannerImage!.bounds
+                        presenter.sourceView = self.bannerImage
+                        presenter.sourceRect = self.bannerImage.bounds
                     }
                     self.parentViewController?.present(activityViewController, animated: true, completion: nil)
                 })
@@ -3236,15 +3235,22 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     CustomAlbum.shared.save(image: imageToShare[0], parent: self.parentViewController)
                 })
                 children.append(UIAction(title: "Share Image", image: UIImage(sfString: SFSymbol.cameraFill, overrideString: "share")!.menuIcon()) { _ in
-                    activityViewController.showWindowless()
+                    if let presenter = activityViewController.popoverPresentationController {
+                        presenter.sourceView = self.bannerImage
+                        presenter.sourceRect = self.bannerImage.bounds
+                    }
+                    self.parentViewController?.present(activityViewController, animated: true, completion: nil)
                 })
             }
 
             children.append(UIAction(title: "Share Image URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
                 let shareItems: Array = [url]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                activityViewController.popoverPresentationController?.sourceView = self.contentView
-                activityViewController.showWindowless()
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = self.bannerImage
+                    presenter.sourceRect = self.bannerImage.bounds
+                }
+                self.parentViewController?.present(activityViewController, animated: true, completion: nil)
             })
             children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
                 UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
