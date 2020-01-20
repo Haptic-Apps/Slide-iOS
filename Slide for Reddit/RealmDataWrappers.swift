@@ -143,6 +143,20 @@ class RealmDataWrapper {
         } catch {
             rSubmission.videoPreview = videoPreview ?? ""
         }
+        
+        do {
+            try rSubmission.videoMP4 = ((((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String) ?? "").convertHtmlSymbols() ?? ""
+        } catch {
+            rSubmission.videoMP4 = ""
+        }
+        
+        if rSubmission.videoMP4 == "" {
+            do {
+                try rSubmission.videoMP4 = ((((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String) ?? "").convertHtmlSymbols() ?? ""
+            } catch {
+                rSubmission.videoMP4 = ""
+            }
+        }
 
         rSubmission.height = h
         rSubmission.width = w
@@ -352,6 +366,21 @@ class RealmDataWrapper {
         } catch {
             rSubmission.videoPreview = videoPreview ?? ""
         }
+        
+        do {
+            try rSubmission.videoMP4 = ((((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String) ?? "").convertHtmlSymbols() ?? ""
+        } catch {
+            rSubmission.videoMP4 = ""
+        }
+        
+        if rSubmission.videoMP4 == "" {
+            do {
+                try rSubmission.videoMP4 = ((((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String) ?? "").convertHtmlSymbols() ?? ""
+            } catch {
+                rSubmission.videoMP4 = ""
+            }
+        }
+
         rSubmission.cakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
 
         if json?["crosspost_parent_list"] != nil {
@@ -540,6 +569,7 @@ class RSubmission: Object {
     @objc dynamic var urlString = ""
     @objc dynamic var distinguished = ""
     @objc dynamic var videoPreview = ""
+    @objc dynamic var videoMP4 = ""
     @objc dynamic var isCrosspost = false
     @objc dynamic var spoiler = false
     @objc dynamic var oc = false
