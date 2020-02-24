@@ -298,7 +298,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             bar.heightAnchor == 0
         }
 
-        if single && !isModal {
+        if single && !isModal && (self.navigationController?.delegate is SloppySwiper) {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
             if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
                 self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
