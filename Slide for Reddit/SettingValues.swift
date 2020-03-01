@@ -134,6 +134,7 @@ class SettingValues {
     public static let pref_thumbTag = "THUMB_TAG"
     public static let pref_commentLimit = "COMMENT_LIMIT"
     public static let pref_submissionLimit = "SUBMISSION_LIMIT"
+    public static let pref_hideAwards = "HIDE_AWARDS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -264,7 +265,8 @@ class SettingValues {
     public static var hideSeen = true
     public static var disable13Popup = true
     public static var thumbTag = true
-    
+    public static var hideAwards = false
+
     public static var commentLimit = 95
     public static var submissionLimit = 13
 
@@ -560,6 +562,7 @@ class SettingValues {
         SettingValues.showPages = settings.bool(forKey: SettingValues.pref_showPages)
         SettingValues.disableBanner = settings.bool(forKey: SettingValues.pref_disableBanner)
         SettingValues.newIndicator = settings.bool(forKey: SettingValues.pref_newIndicator)
+        SettingValues.hideAwards = settings.bool(forKey: SettingValues.pref_hideAwards)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

@@ -191,7 +191,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         panGesture.direction = .horizontal
         panGesture.delegate = self
         self.tableView.addGestureRecognizer(panGesture)
-        if single && navigationController != nil {
+        
+        isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
+
+        if single && !isModal && navigationController != nil {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
         
