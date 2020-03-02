@@ -16,23 +16,39 @@ public class SubmissionRowController: NSObject {
     var titleText: NSAttributedString?
     var parent: InterfaceController?
     var thumbnail: UIImage?
+    var largeimage: UIImage?
     var id: String?
     var sub: String?
     var scoreText: String!
     var commentText: String!
 
-    @IBOutlet weak var bannerImage: WKInterfaceImage!
     @IBOutlet weak var imageGroup: WKInterfaceGroup!
+    @IBOutlet var bannerImage: WKInterfaceImage!
     @IBOutlet weak var scoreLabel: WKInterfaceLabel!
     @IBOutlet weak var commentsLabel: WKInterfaceLabel!
     @IBOutlet weak var infoLabel: WKInterfaceLabel!
     @IBOutlet weak var titleLabel: WKInterfaceLabel!
+    @IBOutlet var bigImage: WKInterfaceImage!
+    @IBOutlet var thumbGroup: WKInterfaceGroup!
+    
+    @IBOutlet var upvote: WKInterfaceButton!
+    @IBOutlet var downvote: WKInterfaceButton!
+    @IBOutlet var readlater: WKInterfaceButton!
+    @IBAction func didUpvote() {
+    }
+    @IBAction func didDownvote() {
+    }
+    @IBAction func didSaveLater() {
+    }
     
     @IBAction func didSelect() {
         self.parent?.presentController(withName: "DetailView", context: self)
     }
-    
+
     func setData(dictionary: NSDictionary, color: UIColor) {
+        largeimage = nil
+        thumbnail = nil
+        
         let titleFont = UIFont.systemFont(ofSize: 14)
         let subtitleFont = UIFont.boldSystemFont(ofSize: 10)
         let attributedTitle = NSMutableAttributedString(string: dictionary["title"] as! String, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.white])
@@ -89,6 +105,7 @@ public class SubmissionRowController: NSObject {
         titleLabel.setAttributedText(infoString)
 
         let type = ContentType.getContentType(dict: dictionary)
+        var big = false
         var text = ""
         switch type {
         case .ALBUM:
@@ -109,8 +126,9 @@ public class SubmissionRowController: NSObject {
             } else {
                 text = ("GIF")
             }
-        case .IMGUR:
-            text = ("Imgur")
+        case .IMGUR, .IMAGE:
+            big = true && dictionary["bigimage"] != nil
+            text = ("Image")
         case .YOUTUBE:
             text = "YouTube"
         case .STREAMABLE:
@@ -121,6 +139,18 @@ public class SubmissionRowController: NSObject {
             text = ("Reddit content")
         default:
             text = "Link"
+        }
+        
+        upvote.setBackgroundColor((dictionary["upvoted"] ?? false) as! Bool ? UIColor.init(hexString: "#FF5700") : UIColor.gray)
+        downvote.setBackgroundColor((dictionary["downvoted"] ?? false) as! Bool ? UIColor.init(hexString: "#9494FF") : UIColor.gray)
+        readlater.setBackgroundColor(UIColor.gray)
+        
+        if big {
+            bigImage.setHidden(false)
+            thumbGroup.setHidden(true)
+        } else {
+            bigImage.setHidden(true)
+            thumbGroup.setHidden(false)
         }
         
         let domain = dictionary["domain"] as? String ?? ""
@@ -156,7 +186,22 @@ public class SubmissionRowController: NSObject {
         scoreLabel.setText(scoreText)
         commentText = "\(dictionary["num_comments"] as? Int ?? 0)"
         commentsLabel.setText(commentText)
-        if let thumburl = (dictionary["thumbnail"] as? String), !thumburl.isEmpty(), thumburl.startsWith("http") {
+        
+        if big, let imageurl = (dictionary["bigimage"] as? String), !imageurl.isEmpty(), imageurl.startsWith("http") {
+            DispatchQueue.global().async {
+                let imageUrl = URL(string: imageurl)!
+                URLSession.shared.dataTask(with: imageUrl, completionHandler: { (data, _, _) in
+                    if let image = UIImage(data: data!) {
+                        self.largeimage = image
+                        DispatchQueue.main.async {
+                            self.bigImage.setImage(self.largeimage!)
+                        }
+                    } else {
+                        NSLog("could not load data from image URL: \(imageUrl)")
+                    }
+                }).resume()
+            }
+        } else if let thumburl = (dictionary["thumbnail"] as? String), !thumburl.isEmpty(), thumburl.startsWith("http") {
             DispatchQueue.global().async {
                 let imageUrl = URL(string: thumburl)!
                 URLSession.shared.dataTask(with: imageUrl, completionHandler: { (data, _, _) in

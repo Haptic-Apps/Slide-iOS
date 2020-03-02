@@ -20,6 +20,10 @@ class InterfaceController: WKInterfaceController {
         // Configure interface objects here.
     }
 
+    override func contextForSegue(withIdentifier segueIdentifier: String, in table: WKInterfaceTable, rowIndex: Int) -> Any? {
+        return table.rowController(at: rowIndex)
+    }
+    
     var links = [NSDictionary]()
     var subs = [String: String]()
     var subsOrdered = [String]()

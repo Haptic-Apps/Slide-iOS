@@ -35,7 +35,28 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
             }
         } else if message["comments"] != nil {
             DispatchQueue.main.async {
-               VCPresenter.openRedditLink("https://redd.it/\((message["comments"] as! String))", nil, (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController)
+                let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
+                do {
+                    try redditSession.getArticles(message["comments"] as! String, sort: CommentSort.top, comments: message["context"]  == nil ? nil : [message["context"] as! String], depth: 1, context: 0, limit: 50, completion: { (result) in
+                            switch result {
+                                case .failure(let error):
+                                    print(error)
+                                case .success(let tuple):
+                                    let listing = tuple.1
+                                    var objects = [NSDictionary]()
+                                    
+                                    for child in listing.children {
+                                        if let comment = child as? Comment {
+                                            objects.append(["context": comment.id, "body": comment.bodyHtml, "submission": comment.linkId, "author": comment.author, "created": DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc)), numericDates: true), "score": comment.score])
+                                        }
+                                    }
+                                    DispatchQueue.main.async {
+                                        replyHandler(["comments": objects])
+                                    }
+                                }
+                            })
+                } catch {
+                }
             }
         } else if message["upvote"] != nil {
             let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
@@ -89,7 +110,24 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                         }
                                     }
                                 }
-                                print(dict)
+                                dict["upvoted"] = ((link as! Link).likes) == VoteDirection.up
+                                dict["downvoted"] = ((link as! Link).likes) == VoteDirection.down
+                                dict["readLater"] = ReadLater.isReadLater(id: ((link as! Link).id))
+                                dict["bigimage"] = nil
+                                
+                                var json: JSONDictionary?
+                                json = (link as! Link).baseJson
+
+                                let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+                                
+                                if preview != nil && !(preview?.isEmpty())! {
+                                    let burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
+                                    let w = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["width"] as? Int)!
+                                    if w >= 200 {
+                                        dict["bigimage"] = burl
+                                    }
+                                }
+
                                 results.append(dict)
                             }
                             replyHandler(["links": results])
