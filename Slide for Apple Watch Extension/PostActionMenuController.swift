@@ -95,10 +95,12 @@ class PostActionMenuController: WKInterfaceController {
     func beginLoadingTable() {
         commentTable.insertRows(at: IndexSet(integersIn: 0 ..< comments.count), withRowType: "CommentsRowController")
         
-        for index in 0...(comments.count - 1) {
-            let item = comments[index]
-            if let rowController = commentTable.rowController(at: index) as? CommentsRowController {
-                rowController.setData(dictionary: item)
+        if comments.count > 0 {
+            for index in 0...(comments.count - 1) {
+                let item = comments[index]
+                if let rowController = commentTable.rowController(at: index) as? CommentsRowController {
+                    rowController.setData(dictionary: item)
+                }
             }
         }
     }

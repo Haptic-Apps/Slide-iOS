@@ -37,15 +37,16 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
             DispatchQueue.main.async {
                 let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
                 do {
-                    try redditSession.getArticles(message["comments"] as! String, sort: CommentSort.top, comments: message["context"]  == nil ? nil : [message["context"] as! String], depth: 1, context: 0, limit: 50, completion: { (result) in
+                    print(message)
+                    try redditSession.getArticles((message["comments"] as! String).replacingOccurrences(of: "t3_", with: ""), sort: CommentSort.top, comments: message["context"]  == nil ? nil : [(message["context"] as! String).replacingOccurrences(of: "t1_", with: "")], depth: 1, context: 0, limit: 50, completion: { (result) in
                             switch result {
                                 case .failure(let error):
                                     print(error)
                                 case .success(let tuple):
                                     let listing = tuple.1
                                     var objects = [NSDictionary]()
-                                    
-                                    for child in listing.children {
+                                    var children = message["context"]  == nil ? listing.children : (listing.children[0] as! Comment).replies.children
+                                    for child in children {
                                         if let comment = child as? Comment {
                                             objects.append(["context": comment.id, "body": comment.bodyHtml, "submission": comment.linkId, "author": comment.author, "created": DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc)), numericDates: true), "score": comment.score])
                                         }
@@ -92,7 +93,11 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
             DispatchQueue.main.async {
                 let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
                 do {
-                    try redditSession.getList(self.paginator, subreddit: Subreddit.init(subreddit: message["links"] as! String), sort: sort, timeFilterWithin: .day, limit: 10) { (result) in
+                    var sub = message["links"] as! String
+                    if sub == "" {
+                        sub = "all"
+                    }
+                    try redditSession.getList(self.paginator, subreddit: Subreddit.init(subreddit: sub), sort: sort, timeFilterWithin: .day, limit: 10) { (result) in
                         switch result {
                         case .failure(let error):
                             print(error)

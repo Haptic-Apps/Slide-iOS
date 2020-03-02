@@ -12,10 +12,10 @@ import WatchKit
 
 class CommentRepliesController: WKInterfaceController {
     public var modelContext: CommentsRowController?
-    @IBOutlet var commentTable: WKInterfaceTable!
-    @IBOutlet var originalTitle: WKInterfaceLabel!
     @IBOutlet var originalBody: WKInterfaceLabel!
-    
+    @IBOutlet var commentsTable: WKInterfaceTable!
+    @IBOutlet var originalTitle: WKInterfaceLabel!
+
     override init() {
       super.init()
       self.setTitle("Back")
@@ -32,7 +32,7 @@ class CommentRepliesController: WKInterfaceController {
         self.originalTitle.setAttributedText(myModel.attributedTitle)
         self.originalBody.setAttributedText(myModel.attributedBody)
 
-        WCSession.default.sendMessage(["comments": myModel.submissionId!, "context": myModel.id], replyHandler: { (message) in
+        WCSession.default.sendMessage(["comments": myModel.submissionId!, "context": myModel.id!], replyHandler: { (message) in
             self.comments = message["comments"] as? [NSDictionary] ?? []
             self.beginLoadingTable()
         }, errorHandler: { (error) in
@@ -42,12 +42,13 @@ class CommentRepliesController: WKInterfaceController {
         
     var comments = [NSDictionary]()
     func beginLoadingTable() {
-        commentTable.insertRows(at: IndexSet(integersIn: 0 ..< comments.count), withRowType: "CommentsRowController")
-        
-        for index in 0...(comments.count - 1) {
-            let item = comments[index]
-            if let rowController = commentTable.rowController(at: index) as? CommentsRowController {
-                rowController.setData(dictionary: item)
+        commentsTable.insertRows(at: IndexSet(integersIn: 0 ..< comments.count), withRowType: "CommentsRowController")
+        if comments.count > 0 {
+            for index in 0...(comments.count - 1) {
+                let item = comments[index]
+                if let rowController = commentsTable.rowController(at: index) as? CommentsRowController {
+                    rowController.setData(dictionary: item)
+                }
             }
         }
     }

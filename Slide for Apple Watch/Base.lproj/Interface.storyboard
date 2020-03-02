@@ -57,7 +57,7 @@
                                             <label alignment="left" numberOfLines="0" id="0l8-YV-fYR">
                                                 <fontDescription key="font" style="UICTFontTextStyleCaption1"/>
                                             </label>
-                                            <label alignment="left" numberOfLines="0" id="WdD-dF-veC">
+                                            <label alignment="left" textAlignment="left" numberOfLines="0" id="WdD-dF-veC">
                                                 <fontDescription key="font" type="system" pointSize="10"/>
                                             </label>
                                         </items>
@@ -275,31 +275,28 @@
                         </group>
                         <table alignment="left" id="1Uo-9c-mg1">
                             <items>
-                                <tableRow identifier="CommentsRowController" id="qhR-yn-WX0" customClass="CommentsRowController" customModule="Slide_for_Apple_Watch_Extension">
-                                    <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="8vS-W1-RDk">
+                                <tableRow identifier="CommentsRowController" id="W7x-9e-A3e" customClass="CommentsRowController" customModule="Slide_for_Apple_Watch_Extension">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="8jY-pP-NfK">
                                         <items>
-                                            <label alignment="left" numberOfLines="0" id="JSp-VC-mzN">
+                                            <label alignment="left" numberOfLines="0" id="95R-gc-h5C">
                                                 <fontDescription key="font" style="UICTFontTextStyleCaption1"/>
                                             </label>
-                                            <label alignment="left" numberOfLines="0" id="QPh-iO-Jus">
+                                            <label alignment="left" numberOfLines="0" id="jU1-uU-aXd">
                                                 <fontDescription key="font" type="system" pointSize="10"/>
                                             </label>
                                         </items>
                                         <edgeInsets key="margins" left="5" right="5" top="8" bottom="8"/>
-                                        <connections>
-                                            <segue destination="skH-T2-dFM" kind="push" id="ZWC-mf-9C7"/>
-                                        </connections>
                                     </group>
                                     <connections>
-                                        <outlet property="bodyLabel" destination="QPh-iO-Jus" id="dlx-zj-t9I"/>
-                                        <outlet property="titleLabel" destination="JSp-VC-mzN" id="Kmr-w9-Exu"/>
+                                        <outlet property="bodyLabel" destination="jU1-uU-aXd" id="6a4-cd-Tcl"/>
+                                        <outlet property="titleLabel" destination="95R-gc-h5C" id="MC7-V1-i4T"/>
                                     </connections>
                                 </tableRow>
                             </items>
                         </table>
                     </items>
                     <connections>
-                        <outlet property="commentTable" destination="1Uo-9c-mg1" id="yk0-i9-Ty3"/>
+                        <outlet property="commentsTable" destination="1Uo-9c-mg1" id="fSu-Qs-l0O"/>
                         <outlet property="originalBody" destination="yiF-eV-6du" id="SjQ-Kp-C6z"/>
                         <outlet property="originalTitle" destination="JW8-OJ-uaA" id="6mg-8Z-gzn"/>
                     </connections>

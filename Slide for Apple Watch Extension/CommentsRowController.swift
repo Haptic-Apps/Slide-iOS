@@ -64,7 +64,7 @@ public class CommentsRowController: NSObject {
         infoString.append(scoreString)
         self.attributedTitle = infoString
         titleLabel.setAttributedText(infoString)
-        if let html = (dictionary["body"] as! String).replacingOccurrences(of: "\n</div>", with: "</div>").data(using: String.Encoding.unicode) {
+        if let html = (dictionary["body"] as! String).replacingOccurrences(of: "<div class=\"md\">", with: "").replacingOccurrences(of: "</p>\n</div>", with: "").data(using: String.Encoding.unicode) {
             do {
                 var attributedText = try NSMutableAttributedString(data: html, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
                 attributedText.addAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: attributedText.length))
