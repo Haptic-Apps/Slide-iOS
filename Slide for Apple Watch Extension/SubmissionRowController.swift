@@ -14,13 +14,13 @@ import WatchKit
 public class SubmissionRowController: NSObject {
     
     var titleText: NSAttributedString?
-    var parent: InterfaceController?
     var thumbnail: UIImage?
     var largeimage: UIImage?
     var id: String?
     var sub: String?
     var scoreText: String!
     var commentText: String!
+    var dictionary: NSDictionary!
 
     @IBOutlet weak var imageGroup: WKInterfaceGroup!
     @IBOutlet var bannerImage: WKInterfaceImage!
@@ -34,20 +34,25 @@ public class SubmissionRowController: NSObject {
     @IBOutlet var upvote: WKInterfaceButton!
     @IBOutlet var downvote: WKInterfaceButton!
     @IBOutlet var readlater: WKInterfaceButton!
+    
     @IBAction func didUpvote() {
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedUp = upvote
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedDown = downvote
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.doVote(id: id!, upvote: true, downvote: false)
     }
     @IBAction func didDownvote() {
-    }
-    @IBAction func didSaveLater() {
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedUp = upvote
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedDown = downvote
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.doVote(id: id!, upvote: false, downvote: true)
     }
     
-    @IBAction func didSelect() {
-        self.parent?.presentController(withName: "DetailView", context: self)
+    @IBAction func didSaveLater() {
     }
 
     func setData(dictionary: NSDictionary, color: UIColor) {
         largeimage = nil
         thumbnail = nil
+        self.dictionary = dictionary
         
         let titleFont = UIFont.systemFont(ofSize: 14)
         let subtitleFont = UIFont.boldSystemFont(ofSize: 10)
@@ -215,6 +220,9 @@ public class SubmissionRowController: NSObject {
                     }
                 }).resume()
             }
+        } else if type == .SELF || type == .NONE {
+            thumbGroup.setHidden(true)
+            bigImage.setHidden(true)
         } else {
             if dictionary["spoiler"] as? Bool ?? false {
                 self.bannerImage.setImage(UIImage(named: "reports")?.getCopy(withSize: CGSize(width: 25, height: 25)))

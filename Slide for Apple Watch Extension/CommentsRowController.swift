@@ -16,8 +16,10 @@ public class CommentsRowController: NSObject {
     var author: String!
     var time: String!
     var id: String!
+    var fullname: String!
     var body: String!
     var submissionId: String!
+    var dictionary: NSDictionary!
     
     var attributedTitle: NSAttributedString!
     var attributedBody: NSAttributedString!
@@ -25,10 +27,12 @@ public class CommentsRowController: NSObject {
     @IBOutlet var bodyLabel: WKInterfaceLabel!
    
     func setData(dictionary: NSDictionary) {
+        self.dictionary = dictionary
         let titleFont = UIFont.systemFont(ofSize: 14)
         let subtitleFont = UIFont.boldSystemFont(ofSize: 10)
         //let attributedTitle = NSMutableAttributedString(string: dictionary["title"] as! String, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.white])
         id = dictionary["context"] as? String ?? ""
+        fullname = dictionary["id"] as? String ?? ""
         submissionId = dictionary["submission"] as? String ?? ""
 
         let spacer = NSMutableAttributedString.init(string: "  ")
@@ -64,7 +68,7 @@ public class CommentsRowController: NSObject {
         infoString.append(scoreString)
         self.attributedTitle = infoString
         titleLabel.setAttributedText(infoString)
-        if let html = (dictionary["body"] as! String).replacingOccurrences(of: "<div class=\"md\">", with: "").replacingOccurrences(of: "</p>\n</div>", with: "").data(using: String.Encoding.unicode) {
+        if let html = (dictionary["body"] as! String).replacingOccurrences(of: "<div class=\"md\">", with: "").replacingOccurrences(of: "</p>\n</div>", with: "</p>").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: "</br>").data(using: String.Encoding.unicode) {
             do {
                 var attributedText = try NSMutableAttributedString(data: html, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
                 attributedText.addAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: attributedText.length))

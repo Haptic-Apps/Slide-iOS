@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="16092.1" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="16095" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
     <device id="watch38"/>
     <dependencies>
         <deployment identifier="watchOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16082.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16084.1"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="16012"/>
     </dependencies>
     <scenes>
@@ -49,6 +49,25 @@
                                 </label>
                             </items>
                         </group>
+                        <group width="114" alignment="center" spacing="20" id="0H8-4W-QOW">
+                            <items>
+                                <button width="25" height="25" alignment="left" backgroundImage="readLater" id="qt7-eH-tmW">
+                                    <color key="titleColor" red="1" green="0.64263265049999996" blue="0.23978169960000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </button>
+                                <button width="25" height="25" alignment="left" backgroundImage="upvote" id="5aK-kC-jcp">
+                                    <color key="titleColor" red="1" green="0.64263265049999996" blue="0.23978169960000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                    <connections>
+                                        <action selector="didUpvote" destination="lXM-Ia-ysh" id="ADA-fM-SeK"/>
+                                    </connections>
+                                </button>
+                                <button width="25" height="25" alignment="left" backgroundImage="downvote" id="TB9-mU-nTN">
+                                    <color key="titleColor" red="1" green="0.64263265049999996" blue="0.23978169960000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                    <connections>
+                                        <action selector="didDownvote" destination="lXM-Ia-ysh" id="7ur-Sj-5Zr"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
                         <table alignment="left" id="QKI-Ev-ymX">
                             <items>
                                 <tableRow identifier="CommentsRowController" id="g5R-dS-Xzu" customClass="CommentsRowController" customModule="Slide_for_Apple_Watch_Extension">
@@ -78,16 +97,18 @@
                         <outlet property="bannerImage" destination="NpS-dD-jG4" id="EDR-kd-qNu"/>
                         <outlet property="commentLabel" destination="DKi-23-d26" id="Dsp-Vw-sDm"/>
                         <outlet property="commentTable" destination="QKI-Ev-ymX" id="EgM-NR-ifs"/>
+                        <outlet property="downvoteButton" destination="TB9-mU-nTN" id="84v-nV-s1E"/>
                         <outlet property="imageGroup" destination="UZW-Un-KSZ" id="pQL-zA-1E1"/>
                         <outlet property="linkInfo" destination="k9a-cP-5NH" id="F0Y-6Z-bam"/>
                         <outlet property="scoreLabel" destination="TtZ-h5-zAT" id="zQQ-Ug-haI"/>
                         <outlet property="thumbGroup" destination="lCG-GK-WZC" id="Ucv-Pu-mzg"/>
                         <outlet property="thumbImage" destination="VCe-ez-bLZ" id="TDg-wz-TD0"/>
                         <outlet property="titleLabel" destination="e1k-XM-k2I" id="8T2-xw-IEf"/>
+                        <outlet property="upvoteButton" destination="5aK-kC-jcp" id="i3q-6Q-IBT"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="-70" y="74"/>
+            <point key="canvasLocation" x="-70" y="73.5"/>
         </scene>
         <!--Pro-->
         <scene sceneID="zns-tl-fhB">
@@ -270,6 +291,22 @@
                                 <label alignment="left" numberOfLines="0" id="yiF-eV-6du">
                                     <fontDescription key="font" type="system" pointSize="10"/>
                                 </label>
+                                <group width="70" alignment="center" spacing="20" id="gZZ-xo-p7P">
+                                    <items>
+                                        <button width="25" height="25" alignment="left" backgroundImage="upvote" id="JaG-wq-UM8">
+                                            <color key="titleColor" red="1" green="0.64263265049999996" blue="0.23978169960000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                            <connections>
+                                                <action selector="didUpvote" destination="skH-T2-dFM" id="vkX-ww-0CZ"/>
+                                            </connections>
+                                        </button>
+                                        <button width="25" height="25" alignment="left" backgroundImage="downvote" id="Klq-pg-9xt">
+                                            <color key="titleColor" red="1" green="0.64263265049999996" blue="0.23978169960000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                            <connections>
+                                                <action selector="didDownvote" destination="skH-T2-dFM" id="fma-Cn-yTg"/>
+                                            </connections>
+                                        </button>
+                                    </items>
+                                </group>
                             </items>
                             <edgeInsets key="margins" left="5" right="5" top="8" bottom="8"/>
                         </group>
@@ -285,11 +322,12 @@
                                                 <fontDescription key="font" type="system" pointSize="10"/>
                                             </label>
                                         </items>
-                                        <edgeInsets key="margins" left="5" right="5" top="8" bottom="8"/>
+                                        <edgeInsets key="margins" left="5" right="5" top="8" bottom="0.0"/>
                                     </group>
                                     <connections>
                                         <outlet property="bodyLabel" destination="jU1-uU-aXd" id="6a4-cd-Tcl"/>
                                         <outlet property="titleLabel" destination="95R-gc-h5C" id="MC7-V1-i4T"/>
+                                        <segue destination="skH-T2-dFM" kind="push" id="26H-nR-WjE"/>
                                     </connections>
                                 </tableRow>
                             </items>
@@ -297,8 +335,10 @@
                     </items>
                     <connections>
                         <outlet property="commentsTable" destination="1Uo-9c-mg1" id="fSu-Qs-l0O"/>
+                        <outlet property="downvoteButton" destination="Klq-pg-9xt" id="tm6-fr-cjL"/>
                         <outlet property="originalBody" destination="yiF-eV-6du" id="SjQ-Kp-C6z"/>
                         <outlet property="originalTitle" destination="JW8-OJ-uaA" id="6mg-8Z-gzn"/>
+                        <outlet property="upvoteButton" destination="JaG-wq-UM8" id="zAI-KF-Il1"/>
                     </connections>
                 </controller>
             </objects>

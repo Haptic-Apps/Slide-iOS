@@ -192,6 +192,7 @@
 		BE3B7435210135BD00658DE9 /* html in Resources */ = {isa = PBXBuildFile; fileRef = BE3B7434210135BD00658DE9 /* html */; };
 		BE3B74372107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3B74362107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift */; };
 		BE3B74392107AA1200658DE9 /* UIAlertController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3B74382107AA1200658DE9 /* UIAlertController+Extensions.swift */; };
+		BE3D19A82411E3C200049C72 /* Votable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3D19A72411E3C200049C72 /* Votable.swift */; };
 		BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */; };
 		BE3E5C131E16BA2200749C0C /* AlbumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C101E16BA2200749C0C /* AlbumData.swift */; };
 		BE3E5C141E16BA2200749C0C /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C111E16BA2200749C0C /* Images.swift */; };
@@ -605,6 +606,7 @@
 		BE3B7434210135BD00658DE9 /* html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html; sourceTree = "<group>"; };
 		BE3B74362107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncAlertImagePickerViewController.swift; sourceTree = "<group>"; };
 		BE3B74382107AA1200658DE9 /* UIAlertController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Extensions.swift"; sourceTree = "<group>"; };
+		BE3D19A72411E3C200049C72 /* Votable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Votable.swift; sourceTree = "<group>"; };
 		BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorUtil.swift; sourceTree = "<group>"; };
 		BE3E5C101E16BA2200749C0C /* AlbumData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumData.swift; sourceTree = "<group>"; };
 		BE3E5C111E16BA2200749C0C /* Images.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
@@ -972,6 +974,7 @@
 				BE0F4433218F6BBD00D98279 /* ProInterfaceController.swift */,
 				BE02B252240C9F5400C457BC /* CommentsRowController.swift */,
 				BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */,
+				BE3D19A72411E3C200049C72 /* Votable.swift */,
 			);
 			path = "Slide for Apple Watch Extension";
 			sourceTree = "<group>";
@@ -1927,6 +1930,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */,
+				BE3D19A82411E3C200049C72 /* Votable.swift in Sources */,
 				BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */,
 				BE13C2D021655AF7002687F2 /* String+Extensions.swift in Sources */,
 				BE17A24A215FE878002C6CE6 /* MoreRowController.swift in Sources */,

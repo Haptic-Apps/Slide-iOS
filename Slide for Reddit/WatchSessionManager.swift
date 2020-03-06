@@ -38,32 +38,85 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                 let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
                 do {
                     print(message)
-                    try redditSession.getArticles((message["comments"] as! String).replacingOccurrences(of: "t3_", with: ""), sort: CommentSort.top, comments: message["context"]  == nil ? nil : [(message["context"] as! String).replacingOccurrences(of: "t1_", with: "")], depth: 1, context: 0, limit: 50, completion: { (result) in
+                    try redditSession.getArticles((message["comments"] as! String).replacingOccurrences(of: "t3_", with: ""), sort: CommentSort.top, comments: message["context"]  == nil ? nil : [(message["context"] as! String).replacingOccurrences(of: "t1_", with: "")], depth: 2, context: 0, limit: 50, completion: { (result) in
                             switch result {
-                                case .failure(let error):
-                                    print(error)
-                                case .success(let tuple):
-                                    let listing = tuple.1
-                                    var objects = [NSDictionary]()
-                                    var children = message["context"]  == nil ? listing.children : (listing.children[0] as! Comment).replies.children
-                                    for child in children {
-                                        if let comment = child as? Comment {
-                                            objects.append(["context": comment.id, "body": comment.bodyHtml, "submission": comment.linkId, "author": comment.author, "created": DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc)), numericDates: true), "score": comment.score])
+                            case .failure(let error):
+                                print(error)
+                            case .success(let tuple):
+                                let listing = tuple.1
+                                var objects = [NSDictionary]()
+                                let children = message["context"]  == nil ? listing.children : (listing.children[0] as! Comment).replies.children
+                                for child in children {
+                                    if let comment = child as? Comment {
+                                        objects.append(["context": comment.id, "id": comment.getId(), "body": comment.bodyHtml, "submission": comment.linkId, "author": comment.author, "created": DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc)), numericDates: true), "score": comment.score, "upvoted": (comment.likes) == VoteDirection.up, "downvoted": (comment.likes) == VoteDirection.down])
+                                        if comment.likes == VoteDirection.down {
+                                            ActionStates.downVotedFullnames.append(comment.getId())
+                                        } else if comment.likes == VoteDirection.up {
+                                            ActionStates.upVotedFullnames.append(comment.getId())
                                         }
-                                    }
-                                    DispatchQueue.main.async {
-                                        replyHandler(["comments": objects])
+
                                     }
                                 }
-                            })
+                                DispatchQueue.main.async {
+                                    replyHandler(["comments": objects])
+                                }
+                            }
+                        })
                 } catch {
                 }
             }
-        } else if message["upvote"] != nil {
-            let redditSession = (UIApplication.shared.delegate as! AppDelegate).session ?? Session()
+        } else if message["vote"] != nil {
+            let fullname = message["vote"] as? String ?? ""
             do {
-                try redditSession.setVote(.up, name: "t3_" + (message["upvote"] as! String), completion: { (_) in
-                    replyHandler([:])
+                var vote = VoteDirection.none
+                if message["upvote"] as? Bool ?? false == true {
+                    var isUp = false
+                    if ActionStates.upVotedFullnames.contains(fullname) {
+                        isUp = true
+                    }
+                    if !isUp {
+                        vote = .up
+                    }
+                } else if message["downvote"] as? Bool ?? false == true {
+                    var isDown = false
+                    if ActionStates.downVotedFullnames.contains(fullname) {
+                        isDown = true
+                    }
+                    if !isDown {
+                        vote = .down
+                    }
+                }
+                print(vote)
+                try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(vote, name: fullname, completion: { (result) in
+                    switch result {
+                    case .success(_):
+                        var message = ["upvoted": (vote == .up), "downvoted": (vote == .down)]
+                        print(message)
+                        replyHandler(message)
+                        if let index = ActionStates.upVotedFullnames.firstIndex(of: fullname) {
+                            ActionStates.upVotedFullnames.remove(at: index)
+                        }
+                        
+                        if let index = ActionStates.downVotedFullnames.firstIndex(of: fullname) {
+                            ActionStates.downVotedFullnames.remove(at: index)
+                        }
+                        
+                        if let index = ActionStates.unvotedFullnames.firstIndex(of: fullname) {
+                            ActionStates.unvotedFullnames.remove(at: index)
+                        }
+                        
+                        switch vote {
+                        case .up:
+                            ActionStates.upVotedFullnames.append(fullname)
+                        case .down:
+                            ActionStates.downVotedFullnames.append(fullname)
+                        default:
+                            ActionStates.unvotedFullnames.append(fullname)
+                        }
+                    case .failure(let error):
+                        print(error)
+                        replyHandler(["failed": true])
+                    }
                 })
             } catch {
                 replyHandler(["failed": true])
@@ -115,8 +168,16 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                         }
                                     }
                                 }
+                                
+                                dict["id"] = ((link as! Link)).getId()
+                                
                                 dict["upvoted"] = ((link as! Link).likes) == VoteDirection.up
                                 dict["downvoted"] = ((link as! Link).likes) == VoteDirection.down
+                                if ((link as! Link).likes) == VoteDirection.down {
+                                    ActionStates.downVotedFullnames.append((link as! Link).getId())
+                                } else if ((link as! Link).likes) == VoteDirection.up {
+                                    ActionStates.upVotedFullnames.append((link as! Link).getId())
+                                }
                                 dict["readLater"] = ReadLater.isReadLater(id: ((link as! Link).id))
                                 dict["bigimage"] = nil
                                 

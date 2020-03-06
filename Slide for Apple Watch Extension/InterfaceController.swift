@@ -10,7 +10,7 @@ import Foundation
 import WatchConnectivity
 import WatchKit
 
-class InterfaceController: WKInterfaceController {
+class InterfaceController: Votable {
     @IBOutlet weak var table: WKInterfaceTable!
     @IBOutlet weak var loadingImage: WKInterfaceImage!
     
@@ -96,7 +96,6 @@ class InterfaceController: WKInterfaceController {
         for index in last...(links.count - 1) {
             let item = links[index]
             if let rowController = table.rowController(at: index) as? SubmissionRowController {
-                rowController.parent = self
                 rowController.setData(dictionary: item, color: UIColor(hexString: self.subs[item["subreddit"] as? String ?? ""] ?? "#ffffff"))
             }
         }
