@@ -1235,12 +1235,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
 
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-
+        let defaulted = UIImage(sfString: SFSymbol.textBadgeCheckmark, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .green)
+        
+        let defaultSort = SettingValues.getLinkSorting(forSubreddit: self.sub)
+        
         for link in LinkSortType.cases {
             if link == LinkSortType.best && sub.lowercased() != "frontpage"{
                 continue
             }
-            actionSheetController.addAction(title: link.description, icon: sort == link ? selected : nil) {
+            actionSheetController.addAction(title: link.description, icon: sort == link ? selected : (link == defaultSort && defaultSort != SettingValues.defaultSorting ? defaulted : nil)) {
                 self.showTimeMenu(s: link, selector: selector, isDefault: isDefault)
             }
         }

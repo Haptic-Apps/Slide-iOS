@@ -1127,9 +1127,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
 
             let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
-
+            let defaulted = UIImage(sfString: SFSymbol.textBadgeCheckmark, overrideString: "selected")!.menuIcon().getCopy(withColor: .green)
+            let defaultSort = SettingValues.getCommentSorting(forSubreddit: self.sub)
+            
             for c in CommentSort.cases {
-                actionSheetController.addAction(title: c.description, icon: sort == c ? selected : nil) {
+                actionSheetController.addAction(title: c.description, icon: sort == c ? selected : (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : nil)) {
                     self.sort = c
                     self.reset = true
                     self.live = false
