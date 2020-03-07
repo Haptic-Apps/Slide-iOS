@@ -17,14 +17,59 @@ class VideoMediaDownloader {
     var videoType: VideoMediaViewController.VideoType
     var progressBar = UIProgressView()
     var alertView: UIAlertController?
-
+    var ready = false
+    
     init(urlToLoad: URL) {
         self.baseURL = urlToLoad.absoluteString
+        
         self.videoType = VideoMediaViewController.VideoType.fromPath(baseURL)
-        print(baseURL)
+        
+        if urlToLoad.absoluteString.endsWith("HLSPlaylist.m3u8") {
+            let qualityList = ["1080", "720", "480", "360", "240", "96"]
+            getQualityURL(urlToLoad: urlToLoad.absoluteString, qualityList: qualityList)
+        } else {
+            ready = true
+        }
     }
     
+    func getQualityURL(urlToLoad: String, qualityList: [String]) {
+        if qualityList.isEmpty {
+            BannerUtil.makeBanner(text: "Error finding video URL", color: GMColor.red500Color(), seconds: 5, context: self.parent ?? nil, top: false, callback: nil)
+        } else {
+            testQuality(urlToLoad: urlToLoad, quality: qualityList.first ?? "") { (success, url) in
+                if success {
+                    self.ready = true
+                    self.baseURL = url
+                    self.doDownload()
+                } else {
+                    var newList = qualityList
+                    newList.remove(at: 0)
+                    self.getQualityURL(urlToLoad: urlToLoad, qualityList: newList)
+                }
+            }
+        }
+    }
+    
+    func testQuality(urlToLoad: String, quality: String, completion: @escaping(_ success: Bool, _ url: String) -> Void) {
+        Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
+            completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
+        }
+    }
+    
+    var completion: ((_ fileURL: URL?) -> Void)!
+    weak var parent: UIViewController!
     func getVideoWithCompletion(completion: @escaping (_ fileURL: URL?) -> Void, parent: UIViewController) {
+        self.completion = completion
+        self.parent = parent
+        if ready {
+            doDownload()
+        }
+    }
+    func doDownload() {
+        if !ready || completion == nil || parent == nil {
+            return
+        }
+        print(baseURL)
         alertView = UIAlertController(title: "Downloading...", message: "Your video is downloading", preferredStyle: .alert)
         alertView!.addCancelButton()
         
@@ -39,7 +84,7 @@ class VideoMediaDownloader {
         
         if FileManager.default.fileExists(atPath: getKeyFromURL()) {
             alertView?.dismiss(animated: true, completion: {
-                completion(URL(fileURLWithPath: self.getKeyFromURL()))
+                self.completion(URL(fileURLWithPath: self.getKeyFromURL()))
             })
         } else {
             request = Alamofire.download(URL(string: baseURL)!, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
@@ -58,16 +103,15 @@ class VideoMediaDownloader {
                     case .failure(let error):
                         print(error)
                         self.alertView?.dismiss(animated: true, completion: {
-                            BannerUtil.makeBanner(text: "Error downloading video", color: GMColor.red500Color(), seconds: 5, context: parent, top: false, callback: nil)
+                            BannerUtil.makeBanner(text: "Error downloading video", color: GMColor.red500Color(), seconds: 5, context: self.parent ?? nil, top: false, callback: nil)
                         })
                     case .success:
-                        
                         if self.videoType == .REDDIT {
-                            self.downloadRedditAudio(completion: completion, parent: parent)
+                            self.downloadRedditAudio()
                         } else {
                             DispatchQueue.main.async {
                                 self.alertView?.dismiss(animated: true, completion: {
-                                    completion(URL(fileURLWithPath: self.getKeyFromURL()))
+                                    self.completion(URL(fileURLWithPath: self.getKeyFromURL()))
                                 })
                             }
                         }
@@ -75,7 +119,7 @@ class VideoMediaDownloader {
             }
         }
     }
-    
+        
     func getKeyFromURL() -> String {
         let disallowedChars = CharacterSet.urlPathAllowed.inverted
         var key = self.baseURL.components(separatedBy: disallowedChars).joined(separator: "_")
@@ -87,19 +131,19 @@ class VideoMediaDownloader {
         if key.length > 200 {
             key = key.substring(0, length: 200)
         }
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-        return paths[0].appending(key + ".mp4")
+        return SDImageCache.shared.diskCachePath + "/" + key + ".mp4"
     }
     
-    func downloadRedditAudio(completion: @escaping (_ fileURL: URL?) -> Void, parent: UIViewController) {
+    func downloadRedditAudio() {
         let key = getKeyFromURL()
         var toLoadAudio = self.baseURL
-        toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/DASH_") ?? toLoadAudio.length)
+        toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/") ?? toLoadAudio.length)
         toLoadAudio += "/audio"
         let finalUrl = URL.init(fileURLWithPath: key)
         let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
         
+        print(localUrlAudio)
         self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
         }).downloadProgress() { progress in
@@ -121,13 +165,13 @@ class VideoMediaDownloader {
                         try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
                         DispatchQueue.main.async {
                             self.alertView?.dismiss(animated: true, completion: {
-                                completion(URL(fileURLWithPath: self.getKeyFromURL()))
+                                self.completion(URL(fileURLWithPath: self.getKeyFromURL()))
                             })
                         }
                     } catch {
                         DispatchQueue.main.async {
                             self.alertView?.dismiss(animated: true, completion: {
-                                completion(URL(fileURLWithPath: self.getKeyFromURL()))
+                                self.completion(URL(fileURLWithPath: self.getKeyFromURL()))
                             })
                         }
                     }
@@ -135,7 +179,7 @@ class VideoMediaDownloader {
                     self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                         DispatchQueue.main.async {
                             self.alertView?.dismiss(animated: true, completion: {
-                                completion(URL(fileURLWithPath: self.getKeyFromURL()))
+                                self.completion(URL(fileURLWithPath: self.getKeyFromURL()))
                             })
                         }
                     }

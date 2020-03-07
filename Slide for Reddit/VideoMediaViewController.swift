@@ -583,7 +583,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     func downloadRedditAudio() {
         let key = getKeyFromURL()
         var toLoadAudio = self.data.baseURL!.absoluteString
-        toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/DASH_") ?? toLoadAudio.length)
+        toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/") ?? toLoadAudio.length)
         toLoadAudio += "/audio"
         let finalUrl = URL.init(fileURLWithPath: key)
         let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
@@ -925,7 +925,6 @@ extension VideoMediaViewController {
     }
     
     func getKeyFromURL() -> String {
-        print("Generating key")
         let disallowedChars = CharacterSet.urlPathAllowed.inverted
         var key = self.data.baseURL!.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
         key = key.replacingOccurrences(of: ":", with: "")
@@ -936,7 +935,6 @@ extension VideoMediaViewController {
         if key.length > 200 {
             key = key.substring(0, length: 200)
         }
-        print(SDImageCache.shared.diskCachePath + "/" + key + ".mp4")
         return SDImageCache.shared.diskCachePath + "/" + key + ".mp4"
     }
 }
