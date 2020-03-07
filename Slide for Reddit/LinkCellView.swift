@@ -2923,7 +2923,7 @@ public extension UIImageView {
         startPulsingAnimation()
 
         DispatchQueue.global(qos: .userInteractive).async {
-            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, cacheType, _) in
+            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation
                 self.backgroundColor = oldBackgroundColor
 
