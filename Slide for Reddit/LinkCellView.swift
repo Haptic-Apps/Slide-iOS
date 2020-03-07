@@ -1644,6 +1644,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.playView.isHidden = false
                 self.progressDot.isHidden = true
                 self.timeView.isHidden = true
+                self.spinner.isHidden = true
                 videoOverride = true
             }
             
@@ -1999,6 +2000,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
             if self.playView != nil {
                 self.playView.isHidden = false
+                self.spinner.isHidden = true
                 self.playView.alpha = 0
                 UIView.animate(withDuration: 0.1) { [weak self] in
                     guard let strongSelf = self else { return }
@@ -2784,6 +2786,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             shouldLoadVideo = true
             doLoadVideo()
             playView.isHidden = true
+            self.spinner.isHidden = false
             self.progressDot.isHidden = false
         } else if self.videoView.player != nil && self.videoView.player?.currentItem != nil && self.videoView.player!.currentItem!.presentationSize.width != 0 {
             let upvoted = ActionStates.getVoteDirection(s: link!) == VoteDirection.up

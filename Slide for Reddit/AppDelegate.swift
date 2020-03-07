@@ -210,6 +210,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let currentVersionInt = Int(build) ?? 0
         
         if lastVersionInt < currentVersionInt {
+            //Clean up broken videos
+            do {
+                var dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
+                var directoryContents: NSArray = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
+                print(dirPath)
+                for path in directoryContents {
+                    let fullPath = dirPath + "/" + (path as! String)
+                    if fullPath.contains(".mp4") {
+                        print(fullPath)
+                        try FileManager.default.removeItem(atPath: fullPath)
+                    }
+                }
+                dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0].substring(0, length: dirPath.length - 7)
+                directoryContents = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
+                print(dirPath)
+                for path in directoryContents {
+                    let fullPath = dirPath + "/" + (path as! String)
+                    if fullPath.contains(".mp4") {
+                        print(fullPath)
+                        try FileManager.default.removeItem(atPath: fullPath)
+                    }
+                }
+            } catch let e as NSError {
+                print(e)
+            }
+
             //Migration block for build 115
             if currentVersionInt == 115 {
                 if UserDefaults.standard.string(forKey: "theme") == "custom" {

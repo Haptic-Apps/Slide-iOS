@@ -216,17 +216,17 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         view.addSubview(scrubber)
         scrubber.delegate = self
 
-        rewindImageView = UIImageView(image: UIImage(sfString: SFSymbol.backwardEndFill, overrideString: "rewind")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
+        rewindImageView = UIImageView(image: UIImage(sfString: SFSymbol.backwardEndFill, overrideString: "rewind")?.getCopy(withSize: .square(size: 30), withColor: .white)).then {
             $0.alpha = 0
-            $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+            $0.backgroundColor = UIColor.black.withAlphaComponent(0.2)
             $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
         }
         view.addSubview(rewindImageView)
 
-        fastForwardImageView = UIImageView(image: UIImage(sfString: SFSymbol.forwardEndFill, overrideString: "fast_forward")?.getCopy(withSize: .square(size: 40), withColor: .white)).then {
+        fastForwardImageView = UIImageView(image: UIImage(sfString: SFSymbol.forwardEndFill, overrideString: "fast_forward")?.getCopy(withSize: .square(size: 30), withColor: .white)).then {
             $0.alpha = 0
-            $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+            $0.backgroundColor = UIColor.black.withAlphaComponent(0.2)
             $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
         }
@@ -925,6 +925,7 @@ extension VideoMediaViewController {
     }
     
     func getKeyFromURL() -> String {
+        print("Generating key")
         let disallowedChars = CharacterSet.urlPathAllowed.inverted
         var key = self.data.baseURL!.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
         key = key.replacingOccurrences(of: ":", with: "")
@@ -935,8 +936,8 @@ extension VideoMediaViewController {
         if key.length > 200 {
             key = key.substring(0, length: 200)
         }
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-        return paths[0].appending(key + ".mp4")
+        print(SDImageCache.shared.diskCachePath + "/" + key + ".mp4")
+        return SDImageCache.shared.diskCachePath + "/" + key + ".mp4"
     }
 }
 
