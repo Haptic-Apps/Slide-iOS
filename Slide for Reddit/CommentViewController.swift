@@ -2076,7 +2076,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     strongSelf.tableView.beginUpdates()
 
                     var indexPaths: [IndexPath] = []
-                    for row in i...counter {
+                    for row in i..<counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
                     strongSelf.tableView.deleteRows(at: indexPaths, with: .fade)
