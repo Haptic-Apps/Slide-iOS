@@ -190,12 +190,14 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var themeColor: UIColor?
     var full = false
     var hasInput = false
+    var extraView: UIView?
 
-    init(title: String, subtitle: String, icon: String?, themeColor: UIColor? = nil, full: Bool = false) {
+    init(title: String, subtitle: String, icon: String?, extraView: UIView? = nil, themeColor: UIColor? = nil, full: Bool = false) {
         self.descriptor = title
         self.subtitle = subtitle
         self.icon = icon
         self.themeColor = themeColor
+        self.extraView = extraView
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .custom
         transitioningDelegate = self
@@ -257,7 +259,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0)
+        return (subtitle.isEmpty ? (extraView == nil ? 55 : 90) : 80) + (hasInput ? 58 : 0)
     }
     
     func getText() -> String? {
@@ -442,6 +444,19 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             label.leftAnchor == image.rightAnchor + 8
             label.rightAnchor == close.leftAnchor - 8
             label.verticalAnchors == toReturn.verticalAnchors
+        } else if extraView != nil {
+            toReturn.addSubviews(extraView!, label)
+            label.leftAnchor == toReturn.leftAnchor + 16
+            label.rightAnchor == close.leftAnchor - 8
+            label.topAnchor == toReturn.topAnchor + 8
+            label.heightAnchor == 40
+
+            toReturn.isUserInteractionEnabled = true
+            extraView!.leftAnchor == toReturn.leftAnchor + 16
+            extraView!.heightAnchor == 30
+            extraView!.rightAnchor == toReturn.rightAnchor - 16
+            extraView!.topAnchor == label.bottomAnchor + 8
+            extraView!.bottomAnchor == toReturn.bottomAnchor - 8
         } else {
             toReturn.addSubview(label)
             label.leftAnchor == toReturn.leftAnchor + 16

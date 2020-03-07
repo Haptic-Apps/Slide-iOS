@@ -316,6 +316,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     init(submission: RSubmission, single: Bool) {
         self.submission = submission
+        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
         self.single = single
         self.text = [:]
         super.init(nibName: nil, bundle: nil)
@@ -324,6 +325,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     init(submission: RSubmission) {
         self.submission = submission
+        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
         self.text = [:]
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
@@ -338,6 +340,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         hasSubmission = false
         if subreddit != nil {
             self.subreddit = subreddit!
+            self.sort = SettingValues.getCommentSorting(forSubreddit: self.subreddit)
             self.submission!.subreddit = subreddit!
         }
         self.text = [:]
@@ -350,6 +353,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     init(submission: String, comment: String, context: Int, subreddit: String, np: Bool = false) {
         self.submission = RSubmission()
+        self.sort = SettingValues.getCommentSorting(forSubreddit: self.submission!.subreddit)
         self.submission!.name = submission
         self.submission!.subreddit = subreddit
         hasSubmission = false
@@ -1106,7 +1110,21 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     @objc func sort(_ selector: UIButton?) {
         if !offline {
-            let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
+            let isDefault = UISwitch()
+            isDefault.onTintColor = ColorUtil.accentColorForSub(sub: self.sub)
+            let defaultLabel = UILabel()
+            defaultLabel.text = "Default for sub"
+            let group = UIView()
+            group.isUserInteractionEnabled = true
+            group.addSubviews(isDefault, defaultLabel)
+            defaultLabel.textColor = ColorUtil.accentColorForSub(sub: self.sub)
+            defaultLabel.centerYAnchor == group.centerYAnchor
+            isDefault.leftAnchor == group.leftAnchor
+            isDefault.centerYAnchor == group.centerYAnchor
+            defaultLabel.leftAnchor == isDefault.rightAnchor + 10
+            defaultLabel.rightAnchor == group.rightAnchor
+
+            let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
 
             let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
@@ -1115,6 +1133,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     self.sort = c
                     self.reset = true
                     self.live = false
+                    if isDefault.isOn {
+                        SettingValues.setCommentSorting(forSubreddit: self.sub, commentSorting: c)
+                    }
                     self.activityIndicator.removeFromSuperview()
                     let barButton = UIBarButtonItem(customView: self.activityIndicator)
                     self.navigationItem.rightBarButtonItems = [barButton]

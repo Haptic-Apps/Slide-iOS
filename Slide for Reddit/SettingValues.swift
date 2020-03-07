@@ -419,6 +419,17 @@ class SettingValues {
         }
         return defaultSorting
     }
+    
+    public static func getCommentSorting(forSubreddit: String) -> CommentSort {
+        if let sorting = UserDefaults.standard.string(forKey: forSubreddit.lowercased() + "CommentSorting") {
+            for s in CommentSort.cases {
+                if s.path == sorting {
+                    return s
+                }
+            }
+        }
+        return defaultCommentSorting
+    }
 
     public static func getTimePeriod(forSubreddit: String) -> TimeFilterWithin {
         if let time = UserDefaults.standard.string(forKey: forSubreddit.lowercased() + "Time") {
@@ -432,8 +443,13 @@ class SettingValues {
     }
 
     public static func setSubSorting(forSubreddit: String, linkSorting: LinkSortType, timePeriod: TimeFilterWithin) {
-        UserDefaults.standard.set(linkSorting.path, forKey: forSubreddit + "Sorting")
-        UserDefaults.standard.set(timePeriod.param, forKey: forSubreddit + "Time")
+        UserDefaults.standard.set(linkSorting.path, forKey: forSubreddit.lowercased() + "Sorting")
+        UserDefaults.standard.set(timePeriod.param, forKey: forSubreddit.lowercased() + "Time")
+        UserDefaults.standard.synchronize()
+    }
+
+    public static func setCommentSorting(forSubreddit: String, commentSorting: CommentSort) {
+        UserDefaults.standard.set(commentSorting.path, forKey: forSubreddit.lowercased() + "CommentSorting")
         UserDefaults.standard.synchronize()
     }
 

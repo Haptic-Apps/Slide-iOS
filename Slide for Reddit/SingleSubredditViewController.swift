@@ -1218,7 +1218,21 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     @objc func showSortMenu(_ selector: UIView?) {
-        let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
+        let isDefault = UISwitch()
+        isDefault.onTintColor = ColorUtil.accentColorForSub(sub: self.sub)
+        let defaultLabel = UILabel()
+        defaultLabel.text = "Default for sub"
+        let group = UIView()
+        group.isUserInteractionEnabled = true
+        group.addSubviews(isDefault, defaultLabel)
+        defaultLabel.textColor = ColorUtil.accentColorForSub(sub: self.sub)
+        defaultLabel.centerYAnchor == group.centerYAnchor
+        isDefault.leftAnchor == group.leftAnchor
+        isDefault.centerYAnchor == group.centerYAnchor
+        defaultLabel.leftAnchor == isDefault.rightAnchor + 10
+        defaultLabel.rightAnchor == group.rightAnchor
+
+        let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
 
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
@@ -1227,14 +1241,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 continue
             }
             actionSheetController.addAction(title: link.description, icon: sort == link ? selected : nil) {
-                self.showTimeMenu(s: link, selector: selector)
+                self.showTimeMenu(s: link, selector: selector, isDefault: isDefault)
             }
         }
 
         actionSheetController.show(self)
     }
 
-    func showTimeMenu(s: LinkSortType, selector: UIView?) {
+    func showTimeMenu(s: LinkSortType, selector: UIView?, isDefault: UISwitch) {
         if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
             refresh()
@@ -1246,6 +1260,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 actionSheetController.addAction(title: t.param, icon: nil) {
                     self.sort = s
                     self.time = t
+                    if isDefault.isOn {
+                        SettingValues.setSubSorting(forSubreddit: self.sub, linkSorting: s, timePeriod: t)
+                        BannerUtil.makeBanner(text: "Default sorting set", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 2, context: self, top: false, callback: nil)
+                    }
                     self.refresh()
                 }
             }
