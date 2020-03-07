@@ -1131,7 +1131,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let defaultSort = SettingValues.getCommentSorting(forSubreddit: self.sub)
             
             for c in CommentSort.cases {
-                actionSheetController.addAction(title: c.description, icon: sort == c ? (c == defaultSort ? defaulted : selected) : (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : nil)) {
+                actionSheetController.addAction(title: c.description, icon: sort == c ? (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : selected) : (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : nil)) {
                     self.sort = c
                     self.reset = true
                     self.live = false
@@ -2099,7 +2099,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     strongSelf.tableView.beginUpdates()
 
                     var indexPaths: [IndexPath] = []
-                    for row in i..<counter {
+                    for row in i...counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
                     strongSelf.tableView.deleteRows(at: indexPaths, with: .fade)
