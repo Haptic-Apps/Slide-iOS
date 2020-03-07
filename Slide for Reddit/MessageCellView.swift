@@ -18,7 +18,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
         }
     }
 

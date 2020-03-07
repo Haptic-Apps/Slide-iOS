@@ -47,7 +47,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
         }
     }
 
@@ -1588,7 +1588,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.thumbnailUrl), withPlaceHolderImage: LinkCellImageCache.web)
+                print(submission.smallPreview)
+                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web)
             }
         } else {
             thumbImage.image = nil
@@ -2765,7 +2766,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
-            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
+            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: link.width, height: link.height), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
                 }
@@ -3031,7 +3032,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     if vc is WebsiteViewController || vc is SFHideSafariViewController {
                         self.previewedVC = nil
                         if let url = self.previewedURL {
-                            self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+                            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
                         }
                     } else {
                         if self.parentViewController != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {

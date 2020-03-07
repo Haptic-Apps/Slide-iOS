@@ -15,6 +15,8 @@ import UIKit
 class ModalMediaViewController: UIViewController {
 
 //    var loadedURL: URL?
+    weak var previewImage: UIImage?
+    var finalSize: CGSize?
 
     var embeddedVC: EmbeddableMediaViewController!
     var fullscreen = false

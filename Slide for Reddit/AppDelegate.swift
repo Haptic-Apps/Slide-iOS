@@ -128,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         collectionsFile = documentDirectory.appending("/collections.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 23,
+                schemaVersion: 24,
                 migrationBlock: migrationBlock,
                 deleteRealmIfMigrationNeeded: true)
 

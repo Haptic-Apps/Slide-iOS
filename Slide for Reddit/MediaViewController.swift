@@ -67,7 +67,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         return true
     }
 
-    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil ) { //lq is should load lq and did load lq
+    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil ) { //lq is should load lq and did load lq
         if saveHistory {
             History.addSeen(s: lnk, skipDuplicates: true)
         }
@@ -129,17 +129,17 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         } else {
             if ContentType.isGif(uri: url) {
                 if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
-                    doShow(url: URL.init(string: link!.videoPreview)!, heroView: heroView, heroVC: heroVC)
+                    doShow(url: URL.init(string: link!.videoPreview)!, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
                 } else {
-                    doShow(url: url, heroView: heroView, heroVC: heroVC)
+                    doShow(url: url, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
                 }
             } else {
                 if lq && shownURL != nil && !ContentType.isImgurLink(uri: url) {
-                    doShow(url: url, lq: shownURL, heroView: heroView, heroVC: heroVC)
+                    doShow(url: url, lq: shownURL, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
                 } else if shownURL != nil && ContentType.imageType(t: type) && !ContentType.isImgurLink(uri: url) {
-                    doShow(url: shownURL!, heroView: heroView, heroVC: heroVC)
+                    doShow(url: shownURL!, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
                 } else {
-                    doShow(url: url, heroView: heroView, heroVC: heroVC)
+                    doShow(url: url, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
                 }
             }
         }
@@ -220,7 +220,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         controller.parentController!.dismiss(animated: true)
     }
 
-    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, heroVC: UIViewController?) {
+    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?) {
         failureCallback = {[weak self] (url: URL) in
             guard let strongSelf = self else { return }
             let vc: UIViewController
@@ -297,7 +297,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
 //                    slideInTransitioningDelegate.coverageRatio = 0.6
 //                    modalController.transitioningDelegate = slideInTransitioningDelegate
 //                    modalController.modalPresentationStyle = .custom
-
+                    modalController.finalSize = finalSize
+                    modalController.previewImage = (sourceView as? UIImageView)?.image
                     postContentTransitioningDelegate.sourceImageView = sourceView
                     modalController.transitioningDelegate = postContentTransitioningDelegate
                     modalController.modalPresentationStyle = .custom

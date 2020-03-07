@@ -100,6 +100,11 @@ class RealmDataWrapper {
             
         }
         let rSubmission = RSubmission()
+        do {
+            try rSubmission.smallPreview = ((previews?.first as? [String: Any])?["url"] as? String)?.convertHtmlSymbols() ?? ""
+        } catch {
+            
+        }
         rSubmission.id = submission.getId()
         rSubmission.author = submission.author
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
@@ -612,6 +617,7 @@ class RSubmission: Object {
     @objc dynamic var permalink = ""
     @objc dynamic var bannerUrl = ""
     @objc dynamic var thumbnailUrl = ""
+    @objc dynamic var smallPreview = ""
     @objc dynamic var lqUrl = ""
     @objc dynamic var lQ = false
     @objc dynamic var thumbnail = false

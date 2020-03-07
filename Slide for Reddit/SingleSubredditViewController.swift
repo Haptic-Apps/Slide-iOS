@@ -3081,7 +3081,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
                     $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
                     $0.addTapGestureRecognizer(action: {
-                        self.del?.doShow(url: link.link!, heroView: nil, heroVC: nil)
+                        self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil)
                     })
                 }
                 

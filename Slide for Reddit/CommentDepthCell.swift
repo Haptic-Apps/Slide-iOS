@@ -1921,7 +1921,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         if !text.isEmpty {
             self.parent?.showSpoiler(text)
         } else {
-            self.parent?.doShow(url: url, heroView: nil, heroVC: nil)
+            self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
         }
     }
 
@@ -2256,7 +2256,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
                     self.previewedVC = nil
                     if let url = self.previewedURL {
-                        self.parent?.doShow(url: url, heroView: nil, heroVC: nil)
+                        self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
                     }
                 } else {
                     if self.parent != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {

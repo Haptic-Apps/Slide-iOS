@@ -649,7 +649,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
                                 if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.doShow(url: url, heroView: nil, heroVC: nil)
+                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
                                     return
                                 }
                             }
@@ -941,7 +941,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
                                 if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.doShow(url: url, heroView: nil, heroVC: nil)
+                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
                                     return
                                 }
                             }

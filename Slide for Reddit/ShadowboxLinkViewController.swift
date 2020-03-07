@@ -19,7 +19,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         if !text.isEmpty {
             self.showSpoiler(text)
         } else {
-            self.doShow(url: url, heroView: nil, heroVC: nil)
+            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
         }
     }
 
@@ -467,7 +467,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     @objc func content(_ sender: AnyObject) {
-        doShow(url: baseURL!, heroView: thumbImageContainer.isHidden ? embeddedVC.view : thumbImage, heroVC: parentVC)
+        doShow(url: baseURL!, heroView: thumbImageContainer.isHidden ? embeddedVC.view : thumbImage, finalSize: nil, heroVC: parentVC)
     }
 
     override func viewWillAppear(_ animated: Bool) {

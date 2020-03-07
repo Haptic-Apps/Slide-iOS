@@ -20,7 +20,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
     var web = WKWebView()
     
     func attributedLabel(_ label: YYTextView!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+        parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
     }
     
     override func layoutSubviews() {
@@ -89,7 +89,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                     for attr in attrs {
                         if attr.value is YYTextHighlight {
                             if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.parentViewController?.doShow(url: url, heroView: nil, heroVC: nil)
+                                    self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
                                 return
                             }
                         }
@@ -259,7 +259,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
     public var navViewController: UIViewController?
     
     @objc func openContent(sender: UITapGestureRecognizer? = nil) {
-        parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, heroVC: nil)
+        parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, finalSize: nil, heroVC: nil)
     }
 }
 

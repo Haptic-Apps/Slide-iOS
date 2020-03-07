@@ -370,7 +370,7 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
         if !text.isEmpty {
             self.parentController?.showSpoiler(text)
         } else {
-            self.parentController?.doShow(url: url, heroView: nil, heroVC: nil)
+            self.parentController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
         }
     }
     

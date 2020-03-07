@@ -226,6 +226,25 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 completion(image)
             }
         } else {
+            if let image = (parent as? ModalMediaViewController)?.previewImage, let size = (parent as? ModalMediaViewController)?.finalSize {
+                self.imageView.image = image
+                
+                var newSize = UIScreen.main.bounds.size
+                let minWidth = UIScreen.main.bounds.width / size.width
+                let minHeight = UIScreen.main.bounds.height / size.height
+
+                if minHeight < minWidth {
+                    newSize.width = newSize.height / size.height * size.width
+                } else if minWidth < minHeight {
+                    newSize.height = newSize.width / size.width * size.height
+                }
+
+                var newFrame = self.imageView.frame
+                newFrame.size = newSize
+                self.imageView.frame = newFrame
+                self.imageView.setNeedsLayout()
+                self.scrollView.contentSize = newSize
+            }
             SDWebImageDownloader.shared.downloadImage(with: imageURL, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: { (current: NSInteger, total: NSInteger, _) in
 
                 var average: Float = 0

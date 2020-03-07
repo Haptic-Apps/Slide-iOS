@@ -18,7 +18,7 @@ protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
     var link: RSubmission! { get set }
     var commentCallback: (() -> Void)? { get set }
 
-    func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)?)
+    func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)?)
 
     func getControllerForUrl(baseUrl: URL, lq: URL?) -> UIViewController?
     var contentUrl: URL? { get set }
@@ -29,7 +29,7 @@ protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
 
     static func handleCloseNav(controller: UIButtonWithContext)
 
-    func doShow(url: URL, lq: URL?, heroView: UIView?, heroVC: UIViewController?)
+    func doShow(url: URL, lq: URL?, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?)
     var color: UIColor? { get set }
     func setBarColors(color: UIColor)
     func setNavColors()
@@ -40,8 +40,8 @@ extension MediaVCDelegate {
         return getControllerForUrl(baseUrl: baseUrl, lq: nil)
     }
 
-    func doShow(url: URL, heroView: UIView?, heroVC: UIViewController?) {
-        doShow(url: url, lq: nil, heroView: heroView, heroVC: heroVC)
+    func doShow(url: URL, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?) {
+        doShow(url: url, lq: nil, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
     }
 }
 
