@@ -1131,7 +1131,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             let defaultSort = SettingValues.getCommentSorting(forSubreddit: self.sub)
             
             for c in CommentSort.cases {
-                actionSheetController.addAction(title: c.description, icon: sort == c ? selected : (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : nil)) {
+                actionSheetController.addAction(title: c.description, icon: sort == c ? (c == defaultSort ? defaulted : selected) : (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : nil)) {
                     self.sort = c
                     self.reset = true
                     self.live = false

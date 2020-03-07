@@ -1243,7 +1243,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             if link == LinkSortType.best && sub.lowercased() != "frontpage"{
                 continue
             }
-            actionSheetController.addAction(title: link.description, icon: sort == link ? selected : (link == defaultSort && defaultSort != SettingValues.defaultSorting ? defaulted : nil)) {
+            actionSheetController.addAction(title: link.description, icon: sort == link ? (link == defaultSort ? defaulted : selected) : (link == defaultSort && defaultSort != SettingValues.defaultSorting ? defaulted : nil)) {
                 self.showTimeMenu(s: link, selector: selector, isDefault: isDefault)
             }
         }
