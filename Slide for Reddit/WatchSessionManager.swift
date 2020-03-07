@@ -122,14 +122,23 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                 replyHandler(["failed": true])
             }
         } else if message["readlater"] != nil {
-            ReadLater.addReadLater(id: message["readlater"] as! String, subreddit: message["sub"] as! String)
-            replyHandler([:])
+            DispatchQueue.main.async {
+                if ReadLater.isReadLater(id: message["readlater"] as! String) {
+                    ReadLater.removeReadLater(id: message["readlater"] as! String)
+                    replyHandler(["isReadLater": false])
+                } else {
+                    ReadLater.addReadLater(id: message["readlater"] as! String, subreddit: message["sub"] as! String)
+                    replyHandler(["isReadLater": true])
+                }
+            }
         } else if message["sublist"] != nil {
             var colorDict = [String: String]()
             var sublist = Subscriptions.pinned
             sublist.append(contentsOf: Subscriptions.subreddits)
             for sub in Subscriptions.subreddits {
-                colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString()
+                if !sub.contains("m/") {
+                    colorDict[sub] = ColorUtil.getColorForSub(sub: sub).hexString()
+                }
             }
             replyHandler(["subs": colorDict, "orderedsubs": sublist, "pro": SettingValues.isPro])
         } else if message["links"] != nil {

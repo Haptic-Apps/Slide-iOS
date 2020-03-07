@@ -21,10 +21,12 @@ class PostActionMenuController: Votable {
     public var parent: InterfaceController?
     @IBOutlet var thumbImage: WKInterfaceImage!
     @IBOutlet var thumbGroup: WKInterfaceGroup!
+    @IBOutlet var readlater: WKInterfaceButton!
     @IBOutlet var upvoteButton: WKInterfaceButton!
     @IBOutlet var downvoteButton: WKInterfaceButton!
     @IBOutlet var linkInfo: WKInterfaceLabel!
     var id: String?
+    var sub: String?
     @IBAction func didUpvote() {
         (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedUp = upvoteButton
         (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedDown = downvoteButton
@@ -34,6 +36,11 @@ class PostActionMenuController: Votable {
         (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedUp = upvoteButton
         (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedDown = downvoteButton
         (WKExtension.shared().visibleInterfaceController as? Votable)?.doVote(id: id!, upvote: false, downvote: true)
+    }
+
+    @IBAction func didSaveLater() {
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedReadLater = readlater
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.doReadLater(id: id!, sub: sub!)
     }
 
     @IBAction func openComments() {
@@ -89,9 +96,11 @@ class PostActionMenuController: Votable {
         
         upvoteButton.setBackgroundColor((myModel.dictionary["upvoted"] ?? false) as! Bool ? UIColor.init(hexString: "#FF5700") : UIColor.gray)
         downvoteButton.setBackgroundColor((myModel.dictionary["downvoted"] ?? false) as! Bool ? UIColor.init(hexString: "#9494FF") : UIColor.gray)
+        readlater.setBackgroundColor((myModel.dictionary["readLater"] ?? false) as! Bool ? UIColor.init(hexString: "#4CAF50") : UIColor.gray)
 
         scoreLabel.setText(myModel.scoreText)
         id = myModel.id
+        sub = myModel.sub
         commentLabel.setText(myModel.commentText)
         WCSession.default.sendMessage(["comments": myModel.id!], replyHandler: { (message) in
             self.comments = message["comments"] as? [NSDictionary] ?? []

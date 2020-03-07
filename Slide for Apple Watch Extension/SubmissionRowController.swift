@@ -47,6 +47,8 @@ public class SubmissionRowController: NSObject {
     }
     
     @IBAction func didSaveLater() {
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.sharedReadLater = readlater
+        (WKExtension.shared().visibleInterfaceController as? Votable)?.doReadLater(id: id!, sub: sub!)
     }
 
     func setData(dictionary: NSDictionary, color: UIColor) {
@@ -145,7 +147,8 @@ public class SubmissionRowController: NSObject {
         default:
             text = "Link"
         }
-        
+
+        readlater.setBackgroundColor((dictionary["readLater"] ?? false) as! Bool ? UIColor.init(hexString: "#4CAF50") : UIColor.gray)
         upvote.setBackgroundColor((dictionary["upvoted"] ?? false) as! Bool ? UIColor.init(hexString: "#FF5700") : UIColor.gray)
         downvote.setBackgroundColor((dictionary["downvoted"] ?? false) as! Bool ? UIColor.init(hexString: "#9494FF") : UIColor.gray)
         readlater.setBackgroundColor(UIColor.gray)

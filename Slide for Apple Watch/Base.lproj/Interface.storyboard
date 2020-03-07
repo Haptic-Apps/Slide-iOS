@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="16095" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="15505" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
     <device id="watch38"/>
     <dependencies>
         <deployment identifier="watchOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16084.1"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="16012"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="15501"/>
     </dependencies>
     <scenes>
         <!--DetailView-->
@@ -49,10 +49,13 @@
                                 </label>
                             </items>
                         </group>
-                        <group width="114" alignment="center" spacing="20" id="0H8-4W-QOW">
+                        <group alignment="center" spacing="20" id="0H8-4W-QOW">
                             <items>
                                 <button width="25" height="25" alignment="left" backgroundImage="readLater" id="qt7-eH-tmW">
                                     <color key="titleColor" red="1" green="0.64263265049999996" blue="0.23978169960000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                    <connections>
+                                        <action selector="didSaveLater" destination="lXM-Ia-ysh" id="CCa-BF-E9i"/>
+                                    </connections>
                                 </button>
                                 <button width="25" height="25" alignment="left" backgroundImage="upvote" id="5aK-kC-jcp">
                                     <color key="titleColor" red="1" green="0.64263265049999996" blue="0.23978169960000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
@@ -100,6 +103,7 @@
                         <outlet property="downvoteButton" destination="TB9-mU-nTN" id="84v-nV-s1E"/>
                         <outlet property="imageGroup" destination="UZW-Un-KSZ" id="pQL-zA-1E1"/>
                         <outlet property="linkInfo" destination="k9a-cP-5NH" id="F0Y-6Z-bam"/>
+                        <outlet property="readlater" destination="qt7-eH-tmW" id="Dpj-0S-sJi"/>
                         <outlet property="scoreLabel" destination="TtZ-h5-zAT" id="zQQ-Ug-haI"/>
                         <outlet property="thumbGroup" destination="lCG-GK-WZC" id="Ucv-Pu-mzg"/>
                         <outlet property="thumbImage" destination="VCe-ez-bLZ" id="TDg-wz-TD0"/>

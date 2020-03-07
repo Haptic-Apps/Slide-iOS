@@ -116,12 +116,13 @@ class InterfaceController: Votable {
     }
     
     func loadData(_ session: WCSession) {
+        print("Heartbeat")
         if session.isReachable && session.activationState == .activated {
             checkTimer?.invalidate()
             checkTimer = nil
         } else if checkTimer == nil {
             checkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (_) in
-                self.loadData(WCSession.default)
+                self.loadData(session)
             })
             return
         } else {
