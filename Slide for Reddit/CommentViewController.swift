@@ -1064,6 +1064,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         navigationItem.setRightBarButtonItems(nil, animated: true)
         navigationItem.setLeftBarButtonItems(nil, animated: true)
         self.navigationItem.setHidesBackButton(true, animated: false)
+        
+        // Add cancel button (iPad doesn't show standard one)
+        let cancelButtonTitle = NSLocalizedString("Cancel", comment: "")
+        let cancelButton = UIBarButtonItem(title: cancelButtonTitle, style: .plain, target: self, action: #selector(cancelTapped))
+        navigationItem.setRightBarButton(cancelButton, animated: false)
+        
         UIView.animate(withDuration: 0.5, animations: {
             self.searchBar.alpha = 1
         }, completion: { _ in
@@ -1197,10 +1203,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBar.Style.minimal
         searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
-        searchBar.showsCancelButton = true
+        searchBar.showsCancelButton = false
         if !ColorUtil.theme.isLight {
             searchBar.keyboardAppearance = .dark
         }
+        
 
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
 
@@ -1242,6 +1249,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
+    }
+    
+    @objc func cancelTapped() {
+        hideSearchBar()
     }
 
 //    func handlePop(_ panGesture: UIPanGestureRecognizer) {
