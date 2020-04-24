@@ -113,6 +113,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var editButton: UIButton!
     var deleteButton: UIButton!
     var modButton: UIButton!
+    var specialButton: UIImageView!
     var editShown = false
     var archived = false
     var modShown = false
@@ -165,6 +166,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.layer.shadowRadius = 4
         })
         
+        self.specialButton = UIImageView.init().then({
+            $0.isUserInteractionEnabled = true
+            $0.alpha = 0.5
+            $0.isHidden = true
+            $0.image = UIImage(sfString: SFSymbol.circleFill, overrideString: "circle")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15)
+            //$0.addTarget(self, action: #selector(self.specialAction(_:)), for: UIControl.Event.touchUpInside)
+        })
+
         let padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         
         self.sideView = UIView(frame: CGRect(x: 0, y: 0, width: 4, height: CGFloat.greatestFiniteMagnitude))
@@ -179,7 +188,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.clipsToBounds = true
         })
         
-        self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, commentBody, childrenCount)
+        self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, commentBody, childrenCount, specialButton)
         
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         sideViewSpace.backgroundColor = ColorUtil.theme.backgroundColor
@@ -278,6 +287,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
     
+    @objc func specialAction(_ sender: AnyObject) {
+       print("Test")
+    }
+
     @objc func doShortClick() {
         timerS?.invalidate()
         if islink {
@@ -1401,6 +1414,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         sideView.verticalAnchors == contentView.verticalAnchors
         sideViewSpace.verticalAnchors == contentView.verticalAnchors
         
+        specialButton.widthAnchor == 25
+        specialButton.heightAnchor == 25
+        specialButton.bottomAnchor == contentView.bottomAnchor
+        specialButton.rightAnchor == contentView.rightAnchor
         updateDepth()
         menu.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         title.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
@@ -1449,10 +1466,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 tapGestureRecognizer2.require(toFail: dtap!)
             }
             self.commentBody.addGestureRecognizer(tapGestureRecognizer2)
-
+            
             if #available(iOS 13, *) {
                 let previewing = UIContextMenuInteraction(delegate: self)
                 self.commentBody.addInteraction(previewing)
+                let previewing2 = UIContextMenuInteraction(delegate: self)
+                self.specialButton.addInteraction(previewing2)
             }
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
@@ -1473,6 +1492,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if title == nil {
             configureInit()
         }
+        self.specialButton.isHidden = true
         self.depth = depth
         self.comment = nil
         self.isMore = true
@@ -1562,6 +1582,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         if SettingValues.commentActionForceTouch == .NONE {// TODO: - change this
         }
+        self.specialButton.isHidden = false
         self.accessibilityValue = """
         Depth \(comment.depth).
         "\(text.string)"
@@ -2251,12 +2272,31 @@ private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: 
 @available(iOS 13.0, *)
 extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        print("Context Menu 2")
         animator.addCompletion {
             if let vc = self.previewedVC {
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
                     self.previewedVC = nil
                     if let url = self.previewedURL {
                         self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+                    }
+                } else if vc is ParentCommentViewController && self.parent != nil {
+                    let context = (vc as! ParentCommentViewController).parentContext
+                    var index = 0
+                    for c in self.parent!.dataArray {
+                        let comment = self.parent!.content[c]
+                        if comment is RComment && (comment as! RComment).getIdentifier().contains(context) {
+                            self.parent!.menuId = comment!.getIdentifier()
+                            self.parent!.tableView.reloadData()
+                            if !SettingValues.pinToolbar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
+                                self.parent!.hideUI(inHeader: true)
+                            }
+
+                            self.parent!.goToCell(i: index)
+                            break
+                        } else {
+                            index += 1
+                        }
                     }
                 } else {
                     if self.parent != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {
@@ -2271,10 +2311,14 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        print("Context Menu")
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         let location = interaction.location(in: self.commentBody)
-        if self.commentBody.firstTextView.frame.contains(location) {
+        let specialLocation = interaction.location(in: self.contentView)
+        if self.specialButton.frame.contains(specialLocation) {
+            return UITargetedPreview(view: self.specialButton, parameters: parameters)
+        } else if self.commentBody.firstTextView.frame.contains(location) {
             return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(self.commentBody.firstTextView, location, self.previewedURL?.absoluteString) ?? parameters)
         } else if self.commentBody.overflow.frame.contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
@@ -2288,7 +2332,11 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        if self.commentBody.firstTextView.frame.contains(location) {
+        print("Context Menu 3")
+        let specialLocation = interaction.location(in: self.contentView)
+        if self.specialButton.frame.contains(specialLocation) {
+            return getConfigurationParentComment()
+        } else if self.commentBody.firstTextView.frame.contains(location) {
             return getConfigurationForTextView(self.commentBody.firstTextView, location)
         } else if self.commentBody.overflow.frame.contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
@@ -2403,5 +2451,78 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
 
             return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
         })
+    }
+    
+    func getConfigurationParentComment() -> UIContextMenuConfiguration {
+        
+        guard let commentParent = parent else {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
+        }
+        
+        if self.depth == 1 {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
+        }
+        
+        commentParent.setAlphaOfBackgroundViews(alpha: 0.5)
+        guard let indexPath = commentParent.tableView.indexPath(for: self) else {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
+        }
+        var topCell = (indexPath as NSIndexPath).row
+        
+        var contents = commentParent.content[commentParent.dataArray[topCell]]
+        
+        while (contents is RComment ? (contents as! RComment).depth >= self.depth : true) && commentParent.dataArray.count > topCell && topCell - 1 >= 0 {
+            topCell -= 1
+            contents = commentParent.content[commentParent.dataArray[topCell]]
+        }
+
+        let parentCell = CommentDepthCell(style: .default, reuseIdentifier: "test")
+        
+        if let comment = contents as? RComment {
+            parentCell.contentView.layer.cornerRadius = 10
+            parentCell.contentView.clipsToBounds = true
+            parentCell.commentBody.ignoreHeight = false
+            parentCell.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
+            if contents is RComment {
+                var count = 0
+                let hiddenP = commentParent.hiddenPersons.contains(comment.getIdentifier())
+                if hiddenP {
+                    count = commentParent.getChildNumber(n: comment.getIdentifier())
+                }
+                var t = commentParent.text[comment.getIdentifier()]!
+                if commentParent.isSearching {
+                    t = commentParent.highlight(t)
+                }
+                
+                parentCell.setComment(comment: contents as! RComment, depth: 0, parent: commentParent, hiddenCount: count, date: commentParent.lastSeen, author: commentParent.submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentParent.commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
+            } else {
+                parentCell.setMore(more: (contents as! RMore), depth: commentParent.cDepth[comment.getIdentifier()]!, depthColors: commentParent.commentDepthColors, parent: commentParent)
+            }
+            parentCell.content = comment
+            parentCell.contentView.isUserInteractionEnabled = false
+
+            var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: CGFloat.greatestFiniteMagnitude)
+            let layout = YYTextLayout(containerSize: size, text: parentCell.title.attributedText!)!
+            let textSize = layout.textBoundingSize
+
+            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textSize.height)// TODO: - fix height
+            let detailViewController = ParentCommentViewController(view: parentCell.contentView, size: size)
+            detailViewController.preferredContentSize = CGSize(width: size.width, height: min(size.height, 300))
+
+            detailViewController.dismissHandler = {() in
+                commentParent.setAlphaOfBackgroundViews(alpha: 1)
+            }
+            detailViewController.parentContext = comment.id
+            self.previewedVC = detailViewController
+
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+                return detailViewController
+            }, actionProvider: { (_) -> UIMenu? in
+                
+                return UIMenu(title: "Link Options", image: nil, identifier: nil, children: [])
+            })
+
+        }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
     }
 }

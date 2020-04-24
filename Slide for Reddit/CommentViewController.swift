@@ -1771,7 +1771,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func goToCell(i: Int) {
         let indexPath = IndexPath(row: i, section: 0)
         self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
-
     }
     
     var goingToCell = false
@@ -2941,6 +2940,7 @@ class ParentCommentViewController: UIViewController {
     var childView = UIView()
     var scrollView = UIScrollView()
     var estimatedSize: CGSize
+    var parentContext: String = ""
     var dismissHandler: (() -> Void)?
     init(view: UIView, size: CGSize) {
         self.estimatedSize = size
