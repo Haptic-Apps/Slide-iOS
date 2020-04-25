@@ -365,11 +365,21 @@ public class ToolbarTextView: NSObject {
             count += 1
             let parameters = [:] as [String: String] // TODO: - albums
             var name = UUID.init().uuidString
-            PHImageManager.default().requestImageData(for: image, options: nil, resultHandler: { (data, uti, _, info) in
+            PHImageManager.default().requestImageData(for: image, options: nil, resultHandler: { (data_in, uti, _, info) in
+                var data = data_in
                 if let fileName = (info?["PHImageFileURLKey"] as? NSURL)?.lastPathComponent {
                     name = fileName
                 }
                 let mime = UTTypeCopyPreferredTagWithClass(uti! as CFString, kUTTagClassMIMEType)?.takeRetainedValue()
+                
+                if mime as? String ?? "" == "image/heic" || mime as? String ?? "" == "image/heif" {
+                    //Convert heic to jpg
+                    if let dataStrong = data_in, let ciImage = CIImage(data: dataStrong) {
+                        if #available(iOS 10.0, *) {
+                            data = CIContext().jpegRepresentation(of: ciImage, colorSpace: CGColorSpaceCreateDeviceRGB())!
+                        }
+                    }
+                }
 
                 Alamofire.upload(multipartFormData: { (multipartFormData) in
                     multipartFormData.append(data!, withName: "image", fileName: name, mimeType: mime! as String)

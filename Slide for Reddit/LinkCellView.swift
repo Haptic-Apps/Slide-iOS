@@ -3135,7 +3135,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         } else if let url = self.link?.url, videoView != nil && !videoView.isHidden && videoView.frame.contains(location) {
             self.previewedVideo = true
             return getConfigurationForVideo(url: url)
-        } else if let url = self.link?.url, bannerImage != nil && bannerImage.isHidden == false && (videoView == nil || videoView.isHidden) && bannerImage.frame.contains(location) {
+        } else if let url = self.link?.url, bannerImage != nil && bannerImage.isHidden == false && bannerImage.image != nil && (videoView == nil || videoView.isHidden) && bannerImage.frame.contains(location) {
             self.previewedImage = true
             return getConfigurationForImage(url: url)
         } else if let url = self.link?.url, thumbImageContainer != nil && thumbImageContainer.frame.contains(location) {
