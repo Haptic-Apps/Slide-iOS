@@ -3224,13 +3224,15 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             let image = UIImageView()
             vc.view.addSubview(image)
             image.image = self.bannerImage.image
-            let ratio = image.image!.size.width / image.image!.size.height
-            if vc.view.frame.width > vc.view.frame.height {
-                let newHeight = vc.view.frame.width / ratio
-                image.frame.size = CGSize(width: vc.view.frame.width, height: newHeight)
-            } else {
-                let newWidth = vc.view.frame.height * ratio
-                image.frame.size = CGSize(width: newWidth, height: vc.view.frame.height)
+            if image.image != nil {
+                let ratio = image.image!.size.width / image.image!.size.height
+                if vc.view.frame.width > vc.view.frame.height {
+                    let newHeight = vc.view.frame.width / ratio
+                    image.frame.size = CGSize(width: vc.view.frame.width, height: newHeight)
+                } else {
+                    let newWidth = vc.view.frame.height * ratio
+                    image.frame.size = CGSize(width: newWidth, height: vc.view.frame.height)
+                }
             }
             vc.preferredContentSize = image.frame.size
             image.edgeAnchors == vc.view.edgeAnchors

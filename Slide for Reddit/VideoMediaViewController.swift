@@ -543,50 +543,83 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var lastTracks = false
     
+    func getQualityURL(urlToLoad: String, qualityList: [String],  callback: @escaping (_ realURL: String) -> Void) {
+        if qualityList.isEmpty {
+            BannerUtil.makeBanner(text: "Error finding video URL", color: GMColor.red500Color(), seconds: 5, context: self.parent ?? nil, top: false, callback: nil)
+        } else {
+            testQuality(urlToLoad: urlToLoad, quality: qualityList.first ?? "") { (success, url) in
+                if success {
+                    callback(url)
+                } else {
+                    var newList = qualityList
+                    newList.remove(at: 0)
+                    self.getQualityURL(urlToLoad: urlToLoad, qualityList: newList, callback: callback)
+                }
+            }
+        }
+    }
+    
+    func testQuality(urlToLoad: String, quality: String, completion: @escaping(_ success: Bool, _ url: String) -> Void) {
+        Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
+            completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
+        }
+    }
+
     func getVideo(_ toLoad: String) {
         self.hideSpinner()
 
         if FileManager.default.fileExists(atPath: getKeyFromURL()) || SettingValues.shouldAutoPlay() {
             playVideo(toLoad)
         } else {
-            request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-                return (URL(fileURLWithPath: self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()), [.createIntermediateDirectories])
-            }).downloadProgress() { progress in
-                DispatchQueue.main.async {
-                    let countBytes = ByteCountFormatter()
-                    countBytes.allowedUnits = [.useMB]
-                    countBytes.countStyle = .file
-                    let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
-                    self.updateProgress(CGFloat(progress.fractionCompleted), fileSize)
-                    self.size.text = fileSize
+            if toLoad.endsWith("HLSPlaylist.m3u8") {
+                let qualityList = ["1080", "720", "480", "360", "240", "96"]
+                getQualityURL(urlToLoad: toLoad, qualityList: qualityList) { url in
+                    self.data.baseURL = URL(string: url)
+                    self.doDownload(url)
                 }
-                }.responseData { response in
-                    switch response.result {
-                    case .failure(let error):
-                        print(error)
-                        self.parent?.dismiss(animated: true, completion: {
-                            self.failureCallback?(URL.init(string: toLoad)!)
-                        })
-                    case .success:
-                        if self.videoType == .REDDIT {
-                            self.downloadRedditAudio()
-                        } else {
-                            DispatchQueue.main.async {
-                                self.playVideo()
-                            }
-                        }
-                    }
+            } else {
+                doDownload(toLoad)
             }
         }
     }
     
-    func downloadRedditAudio() {
+    func doDownload(_ toLoad: String) {
+        let fileURLPath = self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()
+        request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+            return (URL(fileURLWithPath: fileURLPath), [.createIntermediateDirectories])
+        }).downloadProgress() { progress in
+        DispatchQueue.main.async {
+            let countBytes = ByteCountFormatter()
+            countBytes.allowedUnits = [.useMB]
+            countBytes.countStyle = .file
+            let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
+            self.updateProgress(CGFloat(progress.fractionCompleted), fileSize)
+            self.size.text = fileSize
+        }
+        }.responseData { response in
+            if response.error == nil {
+                if self.videoType == .REDDIT {
+                    self.downloadRedditAudio(fileURLPath)
+                } else {
+                    DispatchQueue.main.async {
+                        self.playVideo()
+                    }
+                }
+            } else {
+                self.parent?.dismiss(animated: true, completion: {
+                    self.failureCallback?(URL.init(string: toLoad)!)
+                })
+            }
+        }
+    }
+    
+    func downloadRedditAudio(_ videoLocation: String) {
         let key = getKeyFromURL()
         var toLoadAudio = self.data.baseURL!.absoluteString
         toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/") ?? toLoadAudio.length)
         toLoadAudio += "/audio"
         let finalUrl = URL.init(fileURLWithPath: key)
-        let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
+        let localUrlV = URL.init(fileURLWithPath: videoLocation)
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
 
         self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
@@ -596,7 +629,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 self.updateProgress(CGFloat(progress.fractionCompleted), "")
             }
             }
-            .responseData { response2 in
+        .responseData { response2 in
                 if (response2.error as NSError?)?.code == NSURLErrorCancelled {
                     return
                 }
@@ -612,6 +645,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                         }
                     }
                 } else { //no errors
+                    print("Loading from " + localUrlV.absoluteString)
+                    print("Audio is " + localUrlAudio.absoluteString)
+
                     self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                         DispatchQueue.main.async {
                             self.playVideo()
@@ -1310,7 +1346,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         var mutableCompositionVideoTrack: [AVMutableCompositionTrack] = []
         var mutableCompositionAudioTrack: [AVMutableCompositionTrack] = []
         let totalVideoCompositionInstruction: AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
-        
+        print("Loading from " + videoUrl.absoluteString)
         //start merge
         let aVideoAsset: AVAsset = AVAsset(url: videoUrl)
         let aAudioAsset: AVAsset = AVAsset(url: audioUrl)
