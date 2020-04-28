@@ -202,6 +202,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         SettingValues.initialize()
         
+        SDImageCache.shared.config.maxDiskAge = 1209600 //2 weeks
+        SDImageCache.shared.config.maxDiskSize = 250 * 1024 * 1024
+
         let dictionary = Bundle.main.infoDictionary!
         let build = dictionary["CFBundleVersion"] as! String
         
@@ -234,6 +237,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             } catch let e as NSError {
                 print(e)
+            }
+            
+            if currentVersionInt == 141 {
+                SDImageCache.shared.clearMemory()
+                SDImageCache.shared.clearDisk()
+                
+                do {
+                    var cache_path = SDImageCache.shared.diskCachePath
+                    cache_path += cache_path.endsWith("/") ? "" : "/"
+                    let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
+                    for file in files {
+                        if file.endsWith(".mp4") {
+                            try FileManager.default.removeItem(atPath: cache_path + file)
+                        }
+                    }
+                } catch {
+                    print(error)
+                }
             }
 
             //Migration block for build 115
@@ -271,9 +292,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         _ = ColorUtil.doInit()
-
-        SDImageCache.shared.config.maxDiskAge = 1209600 //2 weeks
-        SDImageCache.shared.config.maxDiskSize = 250 * 1024 * 1024
 
         UIApplication.shared.applicationIconBadgeNumber = 0
 

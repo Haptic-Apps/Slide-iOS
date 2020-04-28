@@ -571,11 +571,17 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         if FileManager.default.fileExists(atPath: getKeyFromURL()) || SettingValues.shouldAutoPlay() {
             playVideo(toLoad)
         } else {
+            print(toLoad)
             if toLoad.endsWith("HLSPlaylist.m3u8") {
                 let qualityList = ["1080", "720", "480", "360", "240", "96"]
                 getQualityURL(urlToLoad: toLoad, qualityList: qualityList) { url in
                     self.data.baseURL = URL(string: url)
-                    self.doDownload(url)
+                    self.videoType = VideoType.DIRECT
+                    if FileManager.default.fileExists(atPath: self.getKeyFromURL()) {
+                        self.playVideo(url)
+                    } else {
+                        self.doDownload(url)
+                    }
                 }
             } else {
                 doDownload(toLoad)
@@ -584,6 +590,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func doDownload(_ toLoad: String) {
+        
+        print("Downloading " + toLoad)
         let fileURLPath = self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()
         request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
             return (URL(fileURLWithPath: fileURLPath), [.createIntermediateDirectories])
@@ -606,6 +614,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                     }
                 }
             } else {
+                print(response.error)
                 self.parent?.dismiss(animated: true, completion: {
                     self.failureCallback?(URL.init(string: toLoad)!)
                 })
@@ -671,6 +680,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.setProgressViewVisible(false)
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
+        print("Wanting to play " +  getKeyFromURL())
         if let videoUrl = SettingValues.shouldAutoPlay() ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
             let playerItem = AVPlayerItem(url: videoUrl)
             videoView.player = AVPlayer(playerItem: playerItem)
