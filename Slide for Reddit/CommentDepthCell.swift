@@ -1471,7 +1471,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 let previewing = UIContextMenuInteraction(delegate: self)
                 self.commentBody.addInteraction(previewing)
                 let previewing2 = UIContextMenuInteraction(delegate: self)
-                self.specialButton.addInteraction(previewing2)
+                self.sideViewSpace.isUserInteractionEnabled = true
+                self.sideViewSpace.addInteraction(previewing2)
             }
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
@@ -1582,7 +1583,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         if SettingValues.commentActionForceTouch == .NONE {// TODO: - change this
         }
-        self.specialButton.isHidden = false
+        self.specialButton.isHidden = true
         self.accessibilityValue = """
         Depth \(comment.depth).
         "\(text.string)"
@@ -2316,8 +2317,8 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         parameters.backgroundColor = .clear
         let location = interaction.location(in: self.commentBody)
         let specialLocation = interaction.location(in: self.contentView)
-        if self.specialButton.frame.contains(specialLocation) {
-            return UITargetedPreview(view: self.specialButton, parameters: parameters)
+        if self.sideViewSpace.frame.contains(specialLocation) {
+            return UITargetedPreview(view: self.sideViewSpace, parameters: parameters)
         } else if self.commentBody.firstTextView.frame.contains(location) {
             return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(self.commentBody.firstTextView, location, self.previewedURL?.absoluteString) ?? parameters)
         } else if self.commentBody.overflow.frame.contains(location) {
@@ -2334,7 +2335,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         print("Context Menu 3")
         let specialLocation = interaction.location(in: self.contentView)
-        if self.specialButton.frame.contains(specialLocation) {
+        if self.sideViewSpace.frame.contains(specialLocation) {
             return getConfigurationParentComment()
         } else if self.commentBody.firstTextView.frame.contains(location) {
             return getConfigurationForTextView(self.commentBody.firstTextView, location)
