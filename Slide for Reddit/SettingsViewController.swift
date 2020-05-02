@@ -477,6 +477,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 changed.isOn = false
             }
         } else if changed == subIcons {
+            SingleSubredditViewController.cellVersion += 1
+            MainViewController.needsReTheme = true
+
             SettingValues.subredditIcons = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subredditIcons)
         }
