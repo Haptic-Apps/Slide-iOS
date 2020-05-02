@@ -105,6 +105,9 @@ class RealmDataWrapper {
         } catch {
             
         }
+        
+        rSubmission.subreddit_icon = ((json?["sr_detail"] as? [String: Any])?["icon_img"] as? String ?? ((json?["sr_detail"] as? [String: Any])?["community_icon"] as? String ?? ""))
+
         rSubmission.id = submission.getId()
         rSubmission.author = submission.author
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
@@ -314,7 +317,7 @@ class RealmDataWrapper {
                 }
             }
         }
-
+        
         rSubmission.author = submission.author
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
         rSubmission.isEdited = submission.edited > 0
@@ -583,7 +586,8 @@ class RSubmission: Object {
     @objc dynamic var crosspostSubreddit = ""
     @objc dynamic var crosspostPermalink = ""
     @objc dynamic var cakeday = false
-    
+    @objc dynamic var subreddit_icon = ""
+
     var type: ContentType.CType {
         if isSelf {
             return .SELF

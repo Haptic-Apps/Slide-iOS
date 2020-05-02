@@ -135,6 +135,7 @@ class SettingValues {
     public static let pref_commentLimit = "COMMENT_LIMIT"
     public static let pref_submissionLimit = "SUBMISSION_LIMIT"
     public static let pref_hideAwards = "HIDE_AWARDS"
+    public static let pref_subredditIcons = "SUBREDDIT_ICONS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -197,6 +198,7 @@ class SettingValues {
     public static var hideAutomod = false
     public static var submissionGesturesEnabled = false
     public static var infoBelowTitle = false
+    public static var subredditIcons = false
    // public static var matchSilence = true
     public static var showPages = true
     public static var menuButton = true
@@ -541,6 +543,8 @@ class SettingValues {
         
         SettingValues.hideImageSelftext = settings.object(forKey: SettingValues.pref_hideImageSelftext) == nil ? true : settings.bool(forKey: SettingValues.pref_hideImageSelftext)
         SettingValues.disable13Popup = settings.bool(forKey: SettingValues.pref_disable13Popup)
+        
+        SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
 
         SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
         SettingValues.smallerTag = settings.object(forKey: SettingValues.pref_smallTag) == nil ? true : settings.bool(forKey: SettingValues.pref_smallTag)

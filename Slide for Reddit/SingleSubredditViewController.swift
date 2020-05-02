@@ -744,11 +744,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                                 if let children = link["children"] as? JSONArray {
                                                     for subItem in children {
                                                         if let content = subItem as? JSONDictionary {
-                                                            self.subLinks.append(SubLinkItem(content["text"] as? String, link: URL(string: (content["url"] as! String).decodeHTML())))
+                                                            self.subLinks.append(SubLinkItem((content["text"] as? String ?? "").unescapeHTML, link: URL(string: (content["url"] as! String).decodeHTML())))
                                                         }
                                                     }
                                                 } else {
-                                                    self.subLinks.append(SubLinkItem(link["text"] as? String, link: URL(string: (link["url"] as! String).decodeHTML())))
+                                                    self.subLinks.append(SubLinkItem((link["text"] as? String ?? "").unescapeHTML, link: URL(string: (link["url"] as! String).decodeHTML())))
                                                 }
                                             }
                                         }
@@ -758,7 +758,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         }
                         if let styles = data["style"] as? [String: Any] {
                             if let headerUrl = styles["bannerBackgroundImage"] as? String {
-                                if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
+                                if !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi() && SettingValues.dataSavingEnabled) {
                                     self.headerImage = URL(string: headerUrl.unescapeHTML)
                                 }
                             }
@@ -2992,14 +2992,14 @@ public class LinksHeaderCellView: UICollectionViewCell {
     var links = [SubLinkItem]()
     var sub = ""
     var header = UIView()
-    var hasHeader = false
+    var hasHeaderImage = false
     weak var del: SingleSubredditViewController?
     
     func setLinks(links: [SubLinkItem], sub: String, delegate: SingleSubredditViewController) {
         self.links = links
         self.sub = sub
         self.del = delegate
-        self.hasHeader = delegate.headerImage != nil
+        self.hasHeaderImage = delegate.headerImage != nil
         setupViews()
     }
     
@@ -3138,7 +3138,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             scroll.alwaysBounceHorizontal = true
             scroll.showsHorizontalScrollIndicator = false
 
-            if hasHeader && del != nil {
+            if hasHeaderImage && del != nil {
                 self.contentView.addSubview(header)
 
                 let imageView = UIImageView()

@@ -217,18 +217,38 @@ class CachedTitle {
             readString = NSAttributedString()
         }
         
-        if color != ColorUtil.baseColor {
-            let adjustedSize = 12 + CGFloat(SettingValues.postFontOffset)
+        if submission.subreddit_icon != "" && SettingValues.subredditIcons {
+            boldString = NSMutableAttributedString()
+            if let urlAsURL = URL(string: submission.subreddit_icon) {
+                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+                flairView.layer.cornerRadius = 12.5
+                flairView.layer.borderColor = color.cgColor
+                flairView.backgroundColor = color
+                flairView.layer.borderWidth = 2
+                flairView.clipsToBounds = true
+                flairView.sd_setImage(with: urlAsURL, completed: nil)
+                let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
 
-            let preString = NSMutableAttributedString(string: "⬤  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: adjustedSize), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
-            boldString = preString
-            let tapString = NSMutableAttributedString(string: "r/\(submission.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+                boldString.append(flairImage)
+            }
+            let tapString = NSMutableAttributedString(string: "    r/\(submission.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
             tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(submission.subreddit)")!])
             boldString.append(tapString)
+
         } else {
-            let tapString = NSMutableAttributedString(string: "r/\(submission.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
-            tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(submission.subreddit)")!])
-            boldString = tapString
+            if color != ColorUtil.baseColor {
+                let adjustedSize = 12 + CGFloat(SettingValues.postFontOffset)
+
+                let preString = NSMutableAttributedString(string: "⬤  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: adjustedSize), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
+                boldString = preString
+                let tapString = NSMutableAttributedString(string: "r/\(submission.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+                tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(submission.subreddit)")!])
+                boldString.append(tapString)
+            } else {
+                let tapString = NSMutableAttributedString(string: "r/\(submission.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+                tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(submission.subreddit)")!])
+                boldString = tapString
+            }
         }
 
         let infoString = NSMutableAttributedString()

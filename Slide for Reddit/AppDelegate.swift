@@ -86,6 +86,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             })
         }
+        if oldSchemaVersion < 26 {
+            migration.enumerateObjects(ofType: RSubmission.className()) { (old, new) in
+                new?["subreddit_icon"] = ""
+            }
+        }
     }
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
@@ -128,7 +133,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         collectionsFile = documentDirectory.appending("/collections.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 24,
+                schemaVersion: 26,
                 migrationBlock: migrationBlock,
                 deleteRealmIfMigrationNeeded: true)
 

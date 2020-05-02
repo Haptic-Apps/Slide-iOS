@@ -63,7 +63,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         headers = ["Subreddit display mode", "Other settings"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "App Mode"
+        self.title = "App Behavior"
         
         createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
         createCell(thireenPopup, thireenPopupSwitch, isOn: SettingValues.disable13Popup, text: "Disable iOS 13 popup behavior")

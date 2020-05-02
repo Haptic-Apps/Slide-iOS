@@ -788,7 +788,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if let link = self.submission {
             sub = link.subreddit
             
-            self.setupTitleView(link.subreddit)
+            self.setupTitleView(link.subreddit, icon: link.subreddit_icon)
 
             reset = false
             do {
@@ -909,7 +909,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         }
                                     }
                                     
-                                    self.setupTitleView(self.submission!.subreddit)
+                                    self.setupTitleView(self.submission!.subreddit, icon: self.submission!.subreddit_icon)
                                     
                                     self.navigationItem.backBarButtonItem?.title = ""
                                     self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
@@ -1020,7 +1020,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
     
-    func setupTitleView(_ sub: String) {
+    func setupTitleView(_ sub: String, icon: String) {
         let titleView = UILabel()
         titleView.text = sub
         titleView.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
@@ -1037,13 +1037,25 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         })
         
         if SettingValues.reduceColor {
-            var sideView = UIView()
-            sideView = UIView(frame: CGRect(x: -20, y: 15, width: 15, height: 15))
+            var sideView = UIImageView()
+            sideView = UIImageView(frame: CGRect(x: -20, y: 15, width: 15, height: 15))
             sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
             sideView.translatesAutoresizingMaskIntoConstraints = false
             titleView.addSubview(sideView)
             sideView.layer.cornerRadius = 7.5
             sideView.clipsToBounds = true
+            /* Maybe enable this later if icon != "" && SettingValues.subredditIcons {
+                sideView.layer.borderColor = ColorUtil.getColorForSub(sub: sub).cgColor
+                sideView.layer.borderWidth = 2
+                sideView.heightAnchor == 25
+                sideView.widthAnchor == 25
+                sideView.layer.cornerRadius = 12.5
+                sideView.topAnchor == titleView.topAnchor - 5
+                sideView.leftAnchor == titleView.leftAnchor - 30
+                
+                sideView.sd_setImage(with: URL(string: icon), completed: nil)
+                titleView.layoutIfNeeded()
+            }*/
         }
     }
     
@@ -1376,7 +1388,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
             self.commentDepthColors = ColorUtil.getCommentDepthColors()
             
-            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
+            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
             
             self.navigationItem.backBarButtonItem?.title = ""
             
@@ -1452,7 +1464,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         setNeedsStatusBarAppearanceUpdate()
         if navigationController != nil && (didDisappearCompletely || !loaded) {
-            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit)
+            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
             self.updateToolbar()
         }
     }
@@ -2804,7 +2816,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 realPosition += 1
                                             }
 
-                                            if self.comments[realPosition] != nil {
+                                            if self.comments.count > realPosition && self.comments[realPosition] != nil {
                                                 self.comments.remove(at: realPosition)
                                             } else {
                                                 return

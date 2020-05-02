@@ -34,6 +34,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     var filters: UITableViewCell = UITableViewCell()
     var content: UITableViewCell = UITableViewCell()
     var lockCell: UITableViewCell = UITableViewCell()
+    var subIconsCell: UITableViewCell = UITableViewCell()
     var subCell: UITableViewCell = UITableViewCell()
     var licenseCell: UITableViewCell = UITableViewCell()
     var contributorsCell: UITableViewCell = UITableViewCell()
@@ -51,6 +52,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var subIcons = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
@@ -437,6 +441,21 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.lockCell.imageView?.image = UIImage(sfString: SFSymbol.lockFill, overrideString: "lockapp")?.toolbarIcon()
         self.lockCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
+        subIcons = UISwitch().then {
+            $0.onTintColor = ColorUtil.baseAccent
+        }
+        subIcons.isOn = SettingValues.subredditIcons
+        subIcons.isEnabled = BioMetricAuthenticator.canAuthenticate()
+        subIcons.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
+        subIconsCell.textLabel?.text = "Subreddit Icons on posts"
+        subIconsCell.accessoryView = subIcons
+        subIconsCell.backgroundColor = ColorUtil.theme.foregroundColor
+        subIconsCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        subIconsCell.selectionStyle = UITableViewCell.SelectionStyle.none
+        self.subIconsCell.imageView?.image = UIImage(named: "icon")?.getCopy(withSize: CGSize(width: 25, height: 25))
+        self.subIconsCell.imageView?.layer.cornerRadius = 12.5
+        self.subIconsCell.imageView?.clipsToBounds = true
+
         audioSettings.textLabel?.text = "Audio"
         audioSettings.accessoryType = .disclosureIndicator
         audioSettings.backgroundColor = ColorUtil.theme.foregroundColor
@@ -457,6 +476,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             } else {
                 changed.isOn = false
             }
+        } else if changed == subIcons {
+            SettingValues.subredditIcons = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subredditIcons)
         }
 
         UserDefaults.standard.synchronize()
@@ -522,7 +544,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 1: return self.manageSubs
             case 2: return self.viewModeCell
             case 3: return self.lockCell
-            case 4: return self.gestureCell
+            case 4: return self.subIconsCell
+            case 5: return self.gestureCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -533,7 +556,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 2: return self.goPro
             case 3: return self.viewModeCell
             case 4: return self.lockCell
-            case 5: return self.gestureCell
+            case 5: return self.subIconsCell
+            case 6: return self.gestureCell
                 
             default: fatalError("Unknown row in section 0")
             }
@@ -632,11 +656,11 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 if !SettingValues.isPro {
                     ch = SettingsViewMode()
                 }
-            case 4:
+            case 5:
                 if SettingValues.isPro {
                     ch = SettingsGestures()
                 }
-            case 5:
+            case 6:
                 if !SettingValues.isPro {
                     ch = SettingsGestures()
                 }
@@ -822,7 +846,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return (SettingValues.isPro) ? 5 : 6
+        case 0: return (SettingValues.isPro) ? 6 : 7
         case 1: return 9
         case 2: return 9
         case 3: return 5
