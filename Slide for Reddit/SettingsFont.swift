@@ -371,6 +371,10 @@ extension SettingsFont {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         CachedTitle.titles.removeAll()
+        CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
+        CachedTitle.titleFontSmall = FontGenerator.fontOfSize(size: 14, submission: true)
+        SingleSubredditViewController.cellVersion += 1
+        MainViewController.needsReTheme = true
     }
 
     func weightCellWasTapped(submission: Bool) {

@@ -279,141 +279,152 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         IAPHandler.shared.getItemsBlock = {(items) in
             
             if items.isEmpty || items.count != 2 {
-                let alertView = UIAlertController(title: "Slide could not connect to Apple's servers", message: "Something went wrong connecting to Apple, please try again soon! Sorry for any inconvenience this may have caused", preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                })
-                alertView.addAction(action)
-                self.present(alertView, animated: true, completion: nil)
+                DispatchQueue.main.async {
+                    let alertView = UIAlertController(title: "Slide could not connect to Apple's servers", message: "Something went wrong connecting to Apple, please try again soon! Sorry for any inconvenience this may have caused", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                    })
+                    alertView.addAction(action)
+                    self.present(alertView, animated: true, completion: nil)
+                }
 
             } else {
-                let numberFormatter = NumberFormatter()
-                numberFormatter.formatterBehavior = .behavior10_4
-                numberFormatter.numberStyle = .currency
-                numberFormatter.locale = items[0].priceLocale
-                let price1Str = "Go pro for \(numberFormatter.string(from: items[0].price) ?? "$4.99")"
-                let price2Str = "Go pro and donate for \(numberFormatter.string(from: items[1].price) ?? "$7.99")"
-                
-                // TODO: - this
-                /*
-                let priceOldStr = "Go pro for \(price1Str)"
-                let priceOldStr2 = "Go pro and donate for \(price2Str)"
-                if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
-                    //Is a sale
+                DispatchQueue.main.async {
+                    let numberFormatter = NumberFormatter()
+                    numberFormatter.formatterBehavior = .behavior10_4
+                    numberFormatter.numberStyle = .currency
+                    numberFormatter.locale = items[0].priceLocale
+                    let price1Str = "Go pro for \(numberFormatter.string(from: items[0].price) ?? "$4.99")"
+                    let price2Str = "Go pro and donate for \(numberFormatter.string(from: items[1].price) ?? "$7.99")"
                     
-                    let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
-                    let crossedString2 = NSMutableAttributedString.init(string: "\(priceOldStr2)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
-                    
-                    let newString = NSMutableAttributedString.init(string: price1Str!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 18)]))
-                    let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 18)]))
-                    
-                    let finalString = NSMutableAttributedString()
-                    let finalString2 = NSMutableAttributedString()
-                    
-                    finalString.append(crossedString)
-                    finalString.append(newString)
-                    
-                    finalString2.append(crossedString2)
-                    finalString2.append(newString2)
-                    
-                    self.three.attributedText = finalString
-                    self.six.attributedText = finalString2
-                    
-                    self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                    self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                } else {*/
-                    self.three.text = price1Str
-                    self.six.text = price2Str
+                    // TODO: - this
+                    /*
+                    let priceOldStr = "Go pro for \(price1Str)"
+                    let priceOldStr2 = "Go pro and donate for \(price2Str)"
+                    if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
+                        //Is a sale
+                        
+                        let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
+                        let crossedString2 = NSMutableAttributedString.init(string: "\(priceOldStr2)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
+                        
+                        let newString = NSMutableAttributedString.init(string: price1Str!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 18)]))
+                        let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 18)]))
+                        
+                        let finalString = NSMutableAttributedString()
+                        let finalString2 = NSMutableAttributedString()
+                        
+                        finalString.append(crossedString)
+                        finalString.append(newString)
+                        
+                        finalString2.append(crossedString2)
+                        finalString2.append(newString2)
+                        
+                        self.three.attributedText = finalString
+                        self.six.attributedText = finalString2
+                        
+                        self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
+                        self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
+                    } else {*/
+                        self.three.text = price1Str
+                        self.six.text = price2Str
                 //}
+                }
             }
         }
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else { return }
             if type == .purchased {
-                strongSelf.alertController?.dismiss(animated: true, completion: nil)
-                let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                    self?.dismiss(animated: true, completion: nil)
-                })
-                alertView.addAction(action)
-                strongSelf.present(alertView, animated: true, completion: nil)
-                SettingValues.isPro = true
-                UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
-                UserDefaults.standard.synchronize()
-                SettingsPro.changed = true
+                DispatchQueue.main.async {
+                    strongSelf.alertController?.dismiss(animated: true, completion: nil)
+                    let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                        self?.dismiss(animated: true, completion: nil)
+                    })
+                    alertView.addAction(action)
+                    strongSelf.present(alertView, animated: true, completion: nil)
+                    SettingValues.isPro = true
+                    UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
+                    UserDefaults.standard.synchronize()
+                    SettingsPro.changed = true
+                }
             }
         }
         
         IAPHandler.shared.errorBlock = {[weak self] (error) in
             guard let strongSelf = self else { return }
-            strongSelf.alertController?.dismiss(animated: true, completion: nil)
-            if error != nil {
-                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro was not purchased and your account has not been charged.\nError: \(error!)\n\nPlease send me an email if this issue persists!", preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                })
-                alertView.addAction(action)
-                alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
-                    if MFMailComposeViewController.canSendMail() {
-                        let mail = MFMailComposeViewController()
-                        mail.mailComposeDelegate = strongSelf
-                        mail.setToRecipients(["hapticappsdev@gmail.com"])
-                        mail.setSubject("Slide Pro Purchase")
-                        mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
-                        
-                        strongSelf.present(mail, animated: true)
-                    }
-                }))
-                strongSelf.present(alertView, animated: true, completion: nil)
-            } else {
-                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro was not purchased and your account has not been charged! \n\nPlease send me an email if this issue persists!", preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                })
-                alertView.addAction(action)
-                alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
-                    if MFMailComposeViewController.canSendMail() {
-                        let mail = MFMailComposeViewController()
-                        mail.mailComposeDelegate = strongSelf
-                        mail.setToRecipients(["hapticappsdev@gmail.com"])
-                        mail.setSubject("Slide Pro Purchase")
-                        mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
-                        
-                        strongSelf.present(mail, animated: true)
-                    }
-                }))
-                strongSelf.present(alertView, animated: true, completion: nil)
+            DispatchQueue.main.async {
+
+                strongSelf.alertController?.dismiss(animated: true, completion: nil)
+                if error != nil {
+                    let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro was not purchased and your account has not been charged.\nError: \(error!)\n\nPlease send me an email if this issue persists!", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                    })
+                    alertView.addAction(action)
+                    alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
+                        if MFMailComposeViewController.canSendMail() {
+                            let mail = MFMailComposeViewController()
+                            mail.mailComposeDelegate = strongSelf
+                            mail.setToRecipients(["hapticappsdev@gmail.com"])
+                            mail.setSubject("Slide Pro Purchase")
+                            mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                            
+                            strongSelf.present(mail, animated: true)
+                        }
+                    }))
+                    strongSelf.present(alertView, animated: true, completion: nil)
+                } else {
+                    let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro was not purchased and your account has not been charged! \n\nPlease send me an email if this issue persists!", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                    })
+                    alertView.addAction(action)
+                    alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
+                        if MFMailComposeViewController.canSendMail() {
+                            let mail = MFMailComposeViewController()
+                            mail.mailComposeDelegate = strongSelf
+                            mail.setToRecipients(["hapticappsdev@gmail.com"])
+                            mail.setSubject("Slide Pro Purchase")
+                            mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                            
+                            strongSelf.present(mail, animated: true)
+                        }
+                    }))
+                    strongSelf.present(alertView, animated: true, completion: nil)
+                }
             }
         }
         
         IAPHandler.shared.restoreBlock = {[weak self] (restored) in
             guard let strongSelf = self else { return }
-            strongSelf.alertController?.dismiss(animated: true, completion: nil)
-            if restored {
-                SettingValues.isPro = true
-                UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
-                UserDefaults.standard.synchronize()
-                SettingsPro.changed = true
-                let alertView = UIAlertController(title: "", message: "Slide has been successfully restored on your device! Thank you for supporting Slide 🍻", preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                    self?.dismiss(animated: true, completion: nil)
-                })
-                alertView.addAction(action)
-                strongSelf.present(alertView, animated: true, completion: nil)
-            } else {
-                let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro could not be restored! Make sure you purchased Slide on the same Apple ID as you purchased Slide Pro on. Please send me an email if this issue persists!", preferredStyle: .alert)
-                let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
-                })
-                alertView.addAction(action)
-                alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
-                    if MFMailComposeViewController.canSendMail() {
-                        let mail = MFMailComposeViewController()
-                        mail.mailComposeDelegate = strongSelf
-                        mail.setToRecipients(["hapticappsdev@gmail.com"])
-                        mail.setSubject("Slide Pro Restsore")
-                        mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
-                        
-                        strongSelf.present(mail, animated: true)
-                    }
-                }))
-                strongSelf.present(alertView, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                strongSelf.alertController?.dismiss(animated: true, completion: nil)
+                if restored {
+                    SettingValues.isPro = true
+                    UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
+                    UserDefaults.standard.synchronize()
+                    SettingsPro.changed = true
+                    let alertView = UIAlertController(title: "", message: "Slide has been successfully restored on your device! Thank you for supporting Slide 🍻", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                        self?.dismiss(animated: true, completion: nil)
+                    })
+                    alertView.addAction(action)
+                    strongSelf.present(alertView, animated: true, completion: nil)
+                } else {
+                    let alertView = UIAlertController(title: "Something went wrong!", message: "Slide Pro could not be restored! Make sure you purchased Slide on the same Apple ID as you purchased Slide Pro on. Please send me an email if this issue persists!", preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                    })
+                    alertView.addAction(action)
+                    alertView.addAction(UIAlertAction.init(title: "Email me", style: .default, handler: { (_) in
+                        if MFMailComposeViewController.canSendMail() {
+                            let mail = MFMailComposeViewController()
+                            mail.mailComposeDelegate = strongSelf
+                            mail.setToRecipients(["hapticappsdev@gmail.com"])
+                            mail.setSubject("Slide Pro Restsore")
+                            mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                            
+                            strongSelf.present(mail, animated: true)
+                        }
+                    }))
+                    strongSelf.present(alertView, animated: true, completion: nil)
+                }
             }
         }
 

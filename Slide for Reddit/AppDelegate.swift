@@ -244,7 +244,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print(e)
             }
             
-            if currentVersionInt == 141 {
+            if currentVersionInt == 142 {
                 SDImageCache.shared.clearMemory()
                 SDImageCache.shared.clearDisk()
                 
@@ -326,7 +326,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         #if DEBUG
-        SettingValues.isPro = true
+        SettingValues.isPro = false
         UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
         UserDefaults.standard.synchronize()
         UIApplication.shared.isIdleTimerDisabled = true
