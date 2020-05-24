@@ -445,7 +445,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             $0.onTintColor = ColorUtil.baseAccent
         }
         subIcons.isOn = SettingValues.subredditIcons
-        subIcons.isEnabled = BioMetricAuthenticator.canAuthenticate()
         subIcons.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         subIconsCell.textLabel?.text = "Subreddit Icons on posts"
         subIconsCell.accessoryView = subIcons

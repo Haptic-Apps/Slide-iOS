@@ -572,7 +572,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             playVideo(toLoad)
         } else {
             print(toLoad)
-            if toLoad.endsWith("HLSPlaylist.m3u8") {
+            if toLoad.contains("HLSPlaylist.m3u8") {
                 let qualityList = ["1080", "720", "480", "360", "240", "96"]
                 getQualityURL(urlToLoad: toLoad, qualityList: qualityList) { url in
                     self.data.baseURL = URL(string: url)

@@ -1959,7 +1959,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let videoURL = URL(string: urlString)
             if videoURL == nil {
                 DispatchQueue.main.async {[weak self] in
-                    if let strongSelf = self, let url = URL.init(string: strongSelf.link!.videoPreview ?? "") {
+                    if let strongSelf = self, let url = URL.init(string: strongSelf.link?.videoPreview ?? "") {
                         if url.absoluteString != strongSelf.lastVideoTried {
                             strongSelf.preloadVideo(url)
                         }

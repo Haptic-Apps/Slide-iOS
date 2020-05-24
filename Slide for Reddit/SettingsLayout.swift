@@ -318,7 +318,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
             
-            alertController.addAction(title: "Centered large card view", icon: UIImage(named: "centeredimage")!.menuIcon()) {
+            alertController.addAction(title: "Centered Image large card view", icon: UIImage(named: "centeredimage")!.menuIcon()) {
                 UserDefaults.standard.set("center", forKey: SettingValues.pref_postViewMode)
                 SettingValues.postViewMode = .CENTER
                 UserDefaults.standard.synchronize()

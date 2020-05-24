@@ -90,7 +90,7 @@ class ContentType {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
 
-        return hostContains(host: host, bases: ["gfycat.com", "v.redd.it"]) || path.hasSuffix(".gif") || path.hasSuffix(
+        return hostContains(host: host, bases: ["gfycat.com", "redgifs.com", "v.redd.it"]) || path.hasSuffix(".gif") || path.hasSuffix(
             ".gifv") || path.hasSuffix(".webm") || path.hasSuffix(".mp4") || ((hostContains(host: host, bases: ["preview.redd.it", "external-preview.redd.it"]) && uri.absoluteString.contains("format=mp4")))
     }
     
