@@ -24,7 +24,7 @@ class VideoMediaDownloader {
         
         self.videoType = VideoMediaViewController.VideoType.fromPath(baseURL)
         
-        if urlToLoad.absoluteString.endsWith("HLSPlaylist.m3u8") {
+        if urlToLoad.absoluteString.contains("HLSPlaylist.m3u8") {
             let qualityList = ["1080", "720", "480", "360", "240", "96"]
             getQualityURL(urlToLoad: urlToLoad.absoluteString, qualityList: qualityList)
         } else {
