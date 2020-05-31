@@ -2407,10 +2407,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             (navigationController)?.setNavigationBarHidden(true, animated: true)
             
             (self.navigationController)?.setToolbarHidden(true, animated: true)
-            self.createJumpButton()
         }
         self.isToolbarHidden = true
-        isHiding = false
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.createJumpButton()
+            strongSelf.isHiding = false
+        }
     }
 
     func showUI() {

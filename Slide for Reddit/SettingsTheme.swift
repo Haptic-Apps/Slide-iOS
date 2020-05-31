@@ -588,8 +588,16 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                     let textShare = UserDefaults.standard.string(forKey: "Theme+" + inputTheme) ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>").addPercentEncoding) ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>")) ?? ""
 
                     let activityViewController = UIActivityViewController(activityItems: [textShare], applicationActivities: nil)
-                    activityViewController.popoverPresentationController?.sourceView = self.shareButton.customView
-                    self.present(activityViewController, animated: true, completion: nil)
+                    if let presenter = activityViewController.popoverPresentationController {
+                        presenter.sourceView = tableView.cellForRow(at: indexPath)
+                        presenter.sourceRect = tableView.cellForRow(at: indexPath)?.bounds ?? CGRect.zero
+                    }
+                    let window = UIApplication.shared.keyWindow!
+                    if let modalVC = window.rootViewController?.presentedViewController {
+                        modalVC.present(activityViewController, animated: true, completion: nil)
+                    } else {
+                        window.rootViewController!.present(activityViewController, animated: true, completion: nil)
+                    }
                 }))
                 alert.addAction(UIAlertAction(title: "Delete Theme", style: .destructive, handler: { (_) in
                     let title = self.customThemes[indexPath.row - 1].title
