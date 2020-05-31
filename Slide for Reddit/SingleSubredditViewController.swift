@@ -2392,6 +2392,13 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         if row >= self.links.count {
             if nomore {
                 let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nothing", for: indexPath) as! NothingHereCell
+                if links.count < 10 {
+                    var title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                    title.append(NSAttributedString(string: "/n"))
+                    title.append(NSMutableAttributedString(string: "If you are unable to view new posts, check your Filter settings", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
+                    cell.text.attributedText = title
+                }
+                
                 return cell
             }
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
@@ -2881,9 +2888,8 @@ public class NothingHereCell: UICollectionViewCell {
     }
     
     func setupView() {
-        
         self.contentView.addSubview(text)
-        
+
         let title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         text.attributedText = title

@@ -1596,8 +1596,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     @objc func search(_ sender: AnyObject) {
         if !dataArray.isEmpty {
+            expandAll()
             showSearchBar()
         }
+        // Todo future loadAllMore()
     }
 
     public func extendKeepMore(in comment: Thing, current depth: Int) -> ([(Thing, Int)]) {
@@ -2643,6 +2645,101 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func getChildNumber(n: String) -> Int {
         let children = walkTreeFully(n: n)
         return children.count - 1
+    }
+    
+    func loadAllMore() {
+        expandAll()
+        
+        loadMoreWithCallback(0)
+    }
+    
+    func loadMoreWithCallback(_ datasetPosition: Int) {
+        if datasetPosition > dataArray.count {
+            return
+        }
+        if let more = content[dataArray[datasetPosition]] as? RMore, let link = self.submission {
+           if more.children.isEmpty {
+               loadMoreWithCallback(datasetPosition + 1)
+           } else {
+               do {
+                   var strings: [String] = []
+                   for c in more.children {
+                       strings.append(c.value)
+                   }
+                   try session?.getMoreChildren(strings, name: link.id, sort: .top, id: more.id, completion: { (result) -> Void in
+                       switch result {
+                       case .failure(let error):
+                           print(error)
+                       case .success(let list):
+                           DispatchQueue.main.async(execute: { () -> Void in
+                               let startDepth = self.cDepth[more.getIdentifier()] ?? 0
+
+                               var queue: [Object] = []
+                               for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
+                                   let item = i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More)
+                                   queue.append(item)
+                                   self.cDepth[item.getIdentifier()] = i.1
+                                   self.updateStrings([i])
+                               }
+
+                               var realPosition = 0
+                               for comment in self.comments {
+                                   if comment == more.getIdentifier() {
+                                       break
+                                   }
+                                   realPosition += 1
+                               }
+
+                               if self.comments.count > realPosition && self.comments[realPosition] != nil {
+                                   self.comments.remove(at: realPosition)
+                               } else {
+                                   return
+                               }
+                               self.dataArray.remove(at: datasetPosition)
+                               
+                               let currentParent = self.parents[more.getIdentifier()]
+
+                               var ids: [String] = []
+                               for item in queue {
+                                   let id = item.getIdentifier()
+                                   self.parents[id] = currentParent
+                                   ids.append(id)
+                                   self.content[id] = item
+                               }
+
+                               if queue.count != 0 {
+                                   self.tableView.beginUpdates()
+                                   self.tableView.deleteRows(at: [IndexPath.init(row: datasetPosition, section: 0)], with: .fade)
+                                   self.dataArray.insert(contentsOf: ids, at: datasetPosition)
+                                   self.comments.insert(contentsOf: ids, at: realPosition)
+                                   self.doArrays()
+                                   var paths: [IndexPath] = []
+                                   for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1) {
+                                       paths.append(IndexPath.init(row: i, section: 0))
+                                   }
+                                   self.tableView.insertRows(at: paths, with: .left)
+                                   self.tableView.endUpdates()
+                                self.loadMoreWithCallback(datasetPosition + 1)
+
+                               } else {
+                                   self.doArrays()
+                                   self.tableView.reloadData()
+                                self.loadMoreWithCallback(datasetPosition + 1)
+                               }
+                           })
+
+                       }
+
+                   })
+
+               } catch {
+                    loadMoreWithCallback(datasetPosition + 1)
+                   print(error)
+               }
+           }
+        } else {
+            loadMoreWithCallback(datasetPosition + 1)
+        }
     }
 
     func highlight(_ cc: NSAttributedString) -> NSAttributedString {
