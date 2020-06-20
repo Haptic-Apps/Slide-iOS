@@ -171,7 +171,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var sideScore: UILabel!
     
     var infoBox: UIStackView!
-    
+    var force: ForceTouchGestureRecognizer?
+
     var videoView: VideoView!
     var topVideoView: UIView!
     var progressDot: UIView!
@@ -1697,11 +1698,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !registered && !full && SettingValues.submissionActionForceTouch == .NONE {
             parent.registerForPreviewing(with: self, sourceView: self.contentView)
             registered = true
-        } else if SettingValues.submissionActionForceTouch != .NONE {
-            let force = ForceTouchGestureRecognizer()
-            force.addTarget(self, action: #selector(self.do3dTouch(_:)))
-            force.cancelsTouchesInView = false
-            self.contentView.addGestureRecognizer(force)
+        } else if SettingValues.submissionActionForceTouch != .NONE && force == nil {
+            force = ForceTouchGestureRecognizer()
+            force?.addTarget(self, action: #selector(self.do3dTouch(_:)))
+            force?.cancelsTouchesInView = false
+            self.contentView.addGestureRecognizer(force!)
         }
         
         refresh(np: np)

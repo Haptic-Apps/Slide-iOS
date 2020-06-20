@@ -1503,7 +1503,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                 }
                             }
                             
-                            realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
+                            try realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
                             try realm.commitWrite()
                         } catch {
 

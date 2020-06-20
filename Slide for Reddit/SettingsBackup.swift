@@ -87,7 +87,9 @@ extension SettingsBackup {
             icloud.removeObject(forKey: item.key)
         }
         for item in UserDefaults.standard.dictionaryRepresentation() {
-            icloud.set(item.value, forKey: item.key)
+            if item.key.utf8.count < 64 {
+                icloud.set(item.value, forKey: item.key)
+            }
         }
         icloud.synchronize()
         let alert = UIAlertController.init(title: "Your data has been synced!", message: "", preferredStyle: .alert)

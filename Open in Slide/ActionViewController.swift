@@ -52,7 +52,7 @@ class ActionViewController: UIViewController {
                     })
                     break
                 } else if count == length && !urlFound {
-                    self.extensionContext!.cancelRequest(withError: NSError())
+                    self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
                 }
             }
             

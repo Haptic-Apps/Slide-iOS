@@ -2123,7 +2123,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     strongSelf.tableView.beginUpdates()
 
                     var indexPaths: [IndexPath] = []
-                    for row in i...counter {
+                    for row in i..<counter {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
                     strongSelf.tableView.deleteRows(at: indexPaths, with: .fade)
@@ -2871,7 +2871,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                                    at: UITableView.ScrollPosition.none, animated: false)
                                     }*/
                                 }
-                                hideAll(comment: comment.getIdentifier(), i: row! + 1)
+                                if row != nil {
+                                    hideAll(comment: comment.getIdentifier(), i: row! + 1)
+                                }
                                 if !hiddenPersons.contains(id) {
                                     hiddenPersons.insert(id)
                                 }
