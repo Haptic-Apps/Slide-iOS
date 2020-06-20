@@ -162,7 +162,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var readLater: UIButton!
     var commenticon: UIImageView!
     var submissionicon: UIImageView!
-    var del: LinkCellViewDelegate?
+    weak var del: LinkCellViewDelegate?
     var taglabel: UILabel!
     var tagbody: UIView!
     var crosspost: UITableViewCell!
@@ -178,7 +178,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var progressDot: UIView!
     var spinner: UIActivityIndicatorView!
     var sound: UIButton!
-    var updater: CADisplayLink?
+    weak var updater: CADisplayLink?
     var timeView: UILabel!
     var playView: UIImageView!
     
@@ -2760,12 +2760,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         fatalError("init(coder:) has not been implemented")
     }
     
-    public var parentViewController: (UIViewController & MediaVCDelegate)?
+    weak var parentViewController: (UIViewController & MediaVCDelegate)?
     weak var previewedVC: UIViewController?
     var previewedImage = false
     var previewedVideo = false
     var previewedURL: URL?
-    public var navViewController: UIViewController?
+    weak var navViewController: UIViewController?
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
@@ -2922,9 +2922,9 @@ public extension UIImageView {
         self.backgroundColor = ColorUtil.theme.fontColor
 
         startPulsingAnimation()
-
+        let frame = CGSize(width: self.frame.size.width * UIScreen.main.scale, height: self.frame.size.height * UIScreen.main.scale)
         DispatchQueue.global(qos: .userInteractive).async {
-            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages]) { (_, _, cacheType, _) in
+            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates], context: [.imageThumbnailPixelSize: frame], progress: nil) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation
                 self.backgroundColor = oldBackgroundColor
 

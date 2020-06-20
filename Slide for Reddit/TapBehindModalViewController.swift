@@ -11,14 +11,14 @@
 import Anchorage
 import Foundation
 
-protocol TapBehindModalViewControllerDelegate {
+protocol TapBehindModalViewControllerDelegate: class {
     func shouldDismiss() -> Bool
 }
 
 class TapBehindModalViewController: UINavigationController, UIGestureRecognizerDelegate {
     public var tapOutsideRecognizer: UITapGestureRecognizer!
-    public var del: TapBehindModalViewControllerDelegate?
-    public var closeCallback: (() -> Void)?
+    weak var del: TapBehindModalViewControllerDelegate?
+    var closeCallback: (() -> Void)?
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

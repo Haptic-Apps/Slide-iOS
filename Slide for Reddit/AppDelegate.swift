@@ -209,6 +209,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         SDImageCache.shared.config.maxDiskAge = 1209600 //2 weeks
         SDImageCache.shared.config.maxDiskSize = 250 * 1024 * 1024
+        SDImageCache.shared.config.diskCacheReadingOptions = .mappedIfSafe // Use mmap for disk cache query
+       /* SDWebImageManager.shared.optionsProcessor = SDWebImageOptionsProcessor() { url, options, context in
+            // Disable Force Decoding in global, may reduce the frame rate
+            var mutableOptions = options
+            mutableOptions.insert(.avoidDecodeImage)
+            return SDWebImageOptionsResult(options: mutableOptions, context: context)
+        }*/
 
         let dictionary = Bundle.main.infoDictionary!
         let build = dictionary["CFBundleVersion"] as! String

@@ -665,10 +665,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab?.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                 self.fab?.transform = CGAffineTransform.identity
-            }, completion: { (_)  in
-                self.fab?.addTarget(self, action: #selector(self.doFabActions), for: .touchUpInside)
-                self.fab?.addLongTapGestureRecognizer {
-                    self.changeFab()
+            }, completion: { [weak self] (_) in
+                guard let strongSelf = self else { return }
+                strongSelf.fab?.addTarget(strongSelf, action: #selector(strongSelf.doFabActions), for: .touchUpInside)
+                strongSelf.fab?.addLongTapGestureRecognizer {
+                    strongSelf.changeFab()
                 }
             })
         }

@@ -414,11 +414,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                     self.color2 = ColorUtil.theme.backgroundColor
                 }
                 
+                weak var weakPageVc = self
                 self.setViewControllers([firstViewController],
                                         direction: index! > self.currentPage ? .forward : .reverse,
                                         animated: SettingValues.subredditBar ? true : false,
-                                        completion: nil)
-                self.doCurrentPage(index!)
+                                        completion: { (_) in
+                                             guard let pageVc = weakPageVc else {
+                                                 return
+                                             }
+
+                                             DispatchQueue.main.async {
+                                                 pageVc.doCurrentPage(index!)
+                                             }
+                                         })
             } else {
                // TODO: - better sanitation
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
@@ -435,11 +443,20 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func goToSubreddit(index: Int) {
         let firstViewController = SingleSubredditViewController(subName: finalSubs[index], parent: self)
         
+        weak var weakPageVc = self
+
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,
-                           completion: nil)
-        self.doCurrentPage(index)
+                           completion: { (_) in
+                                guard let pageVc = weakPageVc else {
+                                    return
+                                }
+
+                                DispatchQueue.main.async {
+                                    pageVc.doCurrentPage(index)
+                                }
+                            })
     }
     
     var alertController: UIAlertController?
@@ -644,12 +661,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         let firstViewController = SingleSubredditViewController(subName: finalSubs[newIndex], parent: self)
         
+        weak var weakPageVc = self
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: true,
-                           completion: nil)
-        
-        self.doCurrentPage(newIndex)
+                           completion: { (_) in
+                                guard let pageVc = weakPageVc else {
+                                    return
+                                }
+
+                                DispatchQueue.main.async {
+                                    pageVc.doCurrentPage(newIndex)
+                                }
+                            })
         
         self.makeMenuNav()
         
@@ -1383,12 +1407,20 @@ extension MainViewController: MDCTabBarDelegate {
         selected = true
         let firstViewController = SingleSubredditViewController(subName: finalSubs[tabBar.items.firstIndex(of: item)!], parent: self)
 
+        weak var weakPageVc = self
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,
-                           completion: nil)
-        
-        self.doCurrentPage(tabBar.items.firstIndex(of: item)!)
+                           completion: { (_) in
+                                guard let pageVc = weakPageVc else {
+                                    return
+                                }
+
+                                DispatchQueue.main.async {
+                                    pageVc.doCurrentPage(tabBar.items.firstIndex(of: item)!)
+                                }
+                            })
+
     }
 }
 

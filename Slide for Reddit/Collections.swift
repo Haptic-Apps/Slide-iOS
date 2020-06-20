@@ -69,9 +69,7 @@ class Collections {
     }
 
     public static func isSavedCollectionAny(id: String) -> Bool {
-        return Collections.getAllCollectionIDs().contains(where: { (link) -> Bool in
-            return link.getId() == id
-        })
+        return collectionIDs.object(forKey: id) != nil
     }
 
     public static func isSavedCollection(id: String, title: String) -> Bool {

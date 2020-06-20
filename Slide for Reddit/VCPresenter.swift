@@ -224,8 +224,8 @@ public class DefaultGestureDelegate: NSObject, UIGestureRecognizerDelegate {
 }
 
 public class UIButtonWithContext: UIButton {
-    public var parentController: UINavigationController?
-    public var contextController: UIViewController?
+    weak var parentController: UINavigationController?
+    weak var contextController: UIViewController?
 }
 
 extension URL {

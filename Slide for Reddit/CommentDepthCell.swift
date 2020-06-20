@@ -1757,7 +1757,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if !comment.urlFlair.isEmpty {
             infoString.append(spacer)
             let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-            flairView.sd_setImage(with: URL(string: comment.urlFlair), completed: nil)
+            flairView.sd_setImage(with: URL(string: comment.urlFlair), placeholderImage: nil, context: [.imageThumbnailPixelSize: flairView.frame.size])
             let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize.square(size: 20), alignTo: boldFont, alignment: YYTextVerticalAlignment.center)
 
             infoString.append(flairImage)

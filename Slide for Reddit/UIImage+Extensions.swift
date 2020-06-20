@@ -29,13 +29,23 @@ extension UIImage {
             newHeight = imgHeight * bestRatio
 
         let biggerSize = CGSize(width: newWidth, height: newHeight)
+        var newImage: UIImage
 
-        UIGraphicsBeginImageContextWithOptions(biggerSize, !hasAlpha, scale)
-        self.draw(in: CGRect(origin: CGPoint(x: 0, y: 0), size: biggerSize))
-
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return scaledImage!
+        if #available(iOS 10.0, *) {
+            let renderFormat = UIGraphicsImageRendererFormat.default()
+            renderFormat.opaque = false
+            let renderer = UIGraphicsImageRenderer(size: CGSize(width: biggerSize.width, height: biggerSize.height), format: renderFormat)
+            newImage = renderer.image { (context) in
+                self.draw(in: CGRect(x: 0, y: 0, width: biggerSize.width, height: biggerSize.height))
+            }
+        } else {
+            UIGraphicsBeginImageContextWithOptions(CGSize(width: biggerSize.width, height: biggerSize.height), false, 0)
+            self.draw(in: CGRect(x: 0, y: 0, width: biggerSize.width, height: biggerSize.height))
+            newImage = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+        }
+        
+        return newImage
     }
     func cropImageByAlpha() -> UIImage {
         let cgImage = self.cgImage
@@ -120,13 +130,22 @@ extension UIImage {
     }
 
     func getCopy(withColor color: UIColor) -> UIImage {
-        var image = withRenderingMode(.alwaysTemplate)
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        color.set()
-        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-        image = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return image
+        if #available(iOS 10, *) {
+            let renderer = UIGraphicsImageRenderer(size: size)
+            return renderer.image { context in
+                color.setFill()
+                self.draw(at: .zero)
+                context.fill(CGRect(x: 0, y: 0, width: size.width, height: size.height), blendMode: .sourceAtop)
+            }
+        } else {
+            var image = withRenderingMode(.alwaysTemplate)
+            UIGraphicsBeginImageContextWithOptions(size, false, scale)
+            color.set()
+            image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+            image = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+            return image
+        }
     }
 
     func getCopy(withSize size: CGSize, withColor color: UIColor) -> UIImage {
