@@ -209,14 +209,21 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 strongSelf.imageView.image = image
                 strongSelf.imageView.sizeToFit()
                 strongSelf.scrollView.contentSize = image.size
-                strongSelf.view.setNeedsLayout()
-
+                strongSelf.imageView.setNeedsLayout()
                 // Update UI
                 strongSelf.setProgressViewVisible(false)
                 strongSelf.downloadButton.isHidden = false
                 strongSelf.size.isHidden = true
             }
         }
+    }
+    
+    func resize(_ image: UIImage, _ toScaleSize: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(toScaleSize, true, image.scale)
+        image.draw(in: CGRect(x: 0, y: 0, width: toScaleSize.width, height: toScaleSize.height))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage!
     }
 
     func loadImage(imageURL: URL, completion: @escaping ((UIImage) -> Void) ) {
@@ -227,7 +234,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             }
         } else {
             if let image = (parent as? ModalMediaViewController)?.previewImage, let size = (parent as? ModalMediaViewController)?.finalSize {
-                self.imageView.image = image
                 
                 var newSize = UIScreen.main.bounds.size
                 let minWidth = UIScreen.main.bounds.width / size.width
@@ -239,11 +245,11 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                     newSize.height = newSize.width / size.width * size.height
                 }
 
-                var newFrame = self.imageView.frame
-                newFrame.size = newSize
-                self.imageView.frame = newFrame
-                self.imageView.setNeedsLayout()
+                self.imageView.image = resize(image, newSize)
+                self.imageView.sizeToFit()
                 self.scrollView.contentSize = newSize
+                self.imageView.setNeedsLayout()
+
             }
             SDWebImageDownloader.shared.downloadImage(with: imageURL, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: { (current: NSInteger, total: NSInteger, _) in
 

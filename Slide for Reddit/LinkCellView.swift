@@ -178,7 +178,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var progressDot: UIView!
     var spinner: UIActivityIndicatorView!
     var sound: UIButton!
-    weak var updater: CADisplayLink?
+    var updater: CADisplayLink?
     var timeView: UILabel!
     var playView: UIImageView!
     
