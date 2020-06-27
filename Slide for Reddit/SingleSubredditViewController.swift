@@ -1258,6 +1258,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
             refresh()
+            if isDefault.isOn {
+                SettingValues.setSubSorting(forSubreddit: self.sub, linkSorting: s, timePeriod: TimeFilterWithin.hour)
+                BannerUtil.makeBanner(text: "Default sorting set", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 2, context: self, top: false, callback: nil)
+            }
             return
         } else {
             let actionSheetController = DragDownAlertMenu(title: "Select a time period", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
