@@ -108,7 +108,7 @@ class CachedTitle {
                     if let urlAsURL = URL(string: url) {
                         //This code will cause runtime issues in XCode, but I can't find a better way to do this async. If you find a better way that is not dependent on the main thread please open a PR!
                         let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                        flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize : flairView.frame.size])
+                        flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize: CGSize(width: flairView.frame.size.width * UIScreen.main.scale, height: flairView.frame.size.height * UIScreen.main.scale)])
                         let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: titleFont.pointSize * 0.75).size, alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
 
                         attributedTitle.append(flairImage)
@@ -226,7 +226,7 @@ class CachedTitle {
                 flairView.backgroundColor = color
                 flairView.layer.borderWidth = 0.5
                 flairView.clipsToBounds = true
-                flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize : flairView.frame.size])
+                flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize: CGSize(width: flairView.frame.size.width * UIScreen.main.scale, height: flairView.frame.size.height * UIScreen.main.scale)])
                 let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize(width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset), alignTo: titleFont, alignment: YYTextVerticalAlignment.center)
                 boldString.append(flairImage)
             }

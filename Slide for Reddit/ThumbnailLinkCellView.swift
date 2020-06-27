@@ -68,6 +68,11 @@ final class ThumbnailLinkCellView: LinkCellView {
             } else {
                 title.bottomAnchor >= box.topAnchor - ceight
             }
+            
+            subicon.topAnchor == title.topAnchor
+            subicon.leftAnchor == title.leftAnchor
+            subicon.widthAnchor == 24
+            subicon.heightAnchor == 24
         }
     }
 

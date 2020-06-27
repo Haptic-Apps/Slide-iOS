@@ -30,6 +30,11 @@ final class GalleryLinkCellView: LinkCellView {
             bannerImage.bottomAnchor == title.topAnchor - ceight
             bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
             
+            subicon.topAnchor == title.topAnchor
+            subicon.leftAnchor == title.leftAnchor
+            subicon.widthAnchor == 24
+            subicon.heightAnchor == 24
+
             videoView.edgeAnchors == bannerImage.edgeAnchors
             topVideoView.edgeAnchors == videoView.edgeAnchors
             infoContainer.heightAnchor == CGFloat(45)

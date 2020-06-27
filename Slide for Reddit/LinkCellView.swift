@@ -149,6 +149,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var buttons: UIStackView!
     var comments: UILabel!
     var info: UILabel!
+    var subicon: UIImageView!
     var textView: TextDisplayStackView!
     var save: UIButton!
     var menu: UIButton!
@@ -240,6 +241,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if #available(iOS 11.0, *) {
                 $0.accessibilityIgnoresInvertColors = true
             }
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+        }
+        self.subicon = UIImageView().then {
+            $0.accessibilityIdentifier = "Subreddit Community Icon"
+            $0.backgroundColor = UIColor.white
+            $0.layer.cornerRadius = 12
+            if #available(iOS 11.0, *) {
+                $0.accessibilityIgnoresInvertColors = true
+            }
+            $0.isHidden = true //Disable this view, might do it with a view instead of in the AttributedString later
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
         }
@@ -475,9 +487,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if self is FullLinkCellView {
-            contentView.addSubviews(bannerImage, thumbImageContainer, title, textView, infoContainer, tagbody)
+            contentView.addSubviews(bannerImage, thumbImageContainer, title, subicon, textView, infoContainer, tagbody)
         } else {
-            contentView.addSubviews(bannerImage, thumbImageContainer, title, infoContainer, tagbody)
+            contentView.addSubviews(bannerImage, thumbImageContainer, title, subicon, infoContainer, tagbody)
         }
         
         if self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView {
@@ -1231,11 +1243,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
             title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
         }
+        // TODO setting to turn off, check for link being valid
+        subicon.sd_setImage(with: URL(string: link.subreddit_icon), completed: nil)
         title.attributedText = attText
         /*title.removeConstraints(titleAttrs)
         titleAttrs = batch {
             title.heightAnchor == bounds.textBoundingSize.height
         }*/
+        //title.exclusionPaths = [UIBezierPath(rect: CGRect(x: 0, y: 0, width: 32, height: 5))]
         title.textVerticalAlignment = .top
         title.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
@@ -2922,7 +2937,7 @@ public extension UIImageView {
         self.backgroundColor = ColorUtil.theme.fontColor
 
         startPulsingAnimation()
-        let frame = CGSize(width: self.frame.size.width * UIScreen.main.scale, height: self.frame.size.height * UIScreen.main.scale)
+        let frame = CGSize(width: self.frame.width * UIScreen.main.scale, height: self.frame.height * UIScreen.main.scale)
         DispatchQueue.global(qos: .userInteractive).async {
             self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates], context: [.imageThumbnailPixelSize: frame], progress: nil) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation

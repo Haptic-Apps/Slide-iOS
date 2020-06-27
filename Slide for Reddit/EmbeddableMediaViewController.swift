@@ -48,10 +48,11 @@ class EmbeddableMediaViewController: UIViewController {
         // Configure views
         progressView = VerticalAlignedLabel()
         self.view.addSubview(progressView)
-        progressView.widthAnchor == 90
-        progressView.heightAnchor == 80
-        progressView.centerAnchors == self.view.centerAnchors
-        progressView.layer.cornerRadius = 30
+        progressView.widthAnchor == 50
+        progressView.heightAnchor == 40
+        progressView.rightAnchor == self.view.safeRightAnchor - 20
+        progressView.topAnchor == self.view.safeTopAnchor + 20
+        progressView.layer.cornerRadius = 10
         progressView.alpha = 0.5
         progressView.isHidden = true
         updateProgress(0, "")
@@ -65,8 +66,8 @@ class EmbeddableMediaViewController: UIViewController {
     func updateProgress(_ percent: CGFloat, _ total: String) {
         let startAngle = -CGFloat.pi / 2
 
-        let center = CGPoint(x: 90 / 2, y: 60 / 2)
-        let radius = CGFloat(60 / 2)
+        let center = CGPoint(x: 50 / 2, y: 40 / 2)
+        let radius = CGFloat(20 / 2)
         let arc = CGFloat.pi * CGFloat(2) * percent
         
         let cPath = UIBezierPath()
