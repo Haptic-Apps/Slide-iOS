@@ -1183,6 +1183,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
     func refreshLink(_ submission: RSubmission, np: Bool) {
         self.link = submission
+        
+        guard self.link != nil else {
+            return
+        }
 
         if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
             dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
@@ -1208,35 +1212,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
    // var titleAttrs: [NSLayoutConstraint] = []
     var oldBounds = CGSize.zero
+    
     func refreshTitle(np: Bool = false, force: Bool = false) {
         guard let link = self.link else {
             return
         }
 
-        let attText = CachedTitle.getTitle(submission: link, full: full, force, false, gallery: false)
-        /* Bad test code...
-         if !link.awards.isEmpty {
-            let string = NSMutableAttributedString.init(attributedString: attText)
-            string.enumerateAttributes(in: NSRange.init(location: 0, length: string.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
-                for attr in attrs {
-                    if attr.key == NSAttributedString.Key.strokeWidth {
-                        let url = string.attributedSubstring(from: range).string
-                        string.replaceCharacters(in: range, with: NSAttributedString())
-                        
-                        let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                        flairView.sd_setImage(with: URL(string: url), completed: nil)
-                        let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize.square(size: 20), alignTo: FontGenerator.boldFontOfSize(size: 12, submission: true), alignment: YYTextVerticalAlignment.center)
-                        
-                        //if count > 1 {
-                        //    let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(submission.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                          //  flairImage.append(gilded)
-                        //}
-                        string.insert(flairImage, at: range.location)
-                    }
-                }
-            })
-        }*/
-        let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
+        let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
+        
+        let bounds = self.estimateHeightSingle(full, np: np, attText: finalTitle)
         if oldBounds.width != bounds.textBoundingSize.width || oldBounds.height != bounds.textBoundingSize.height {
             oldBounds = bounds.textBoundingSize
             title.textLayout = bounds
@@ -1244,8 +1228,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
         }
         // TODO setting to turn off, check for link being valid
-        subicon.sd_setImage(with: URL(string: link.subreddit_icon), completed: nil)
-        title.attributedText = attText
+        //subicon.sd_setImage(with: URL(string: link.subreddit_icon), completed: nil)
+        title.attributedText = finalTitle
         /*title.removeConstraints(titleAttrs)
         titleAttrs = batch {
             title.heightAnchor == bounds.textBoundingSize.height
@@ -1289,9 +1273,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
             })
         }
-
     }
-    
+        
     @objc func doDTap(_ sender: AnyObject) {
         typeImage = UIImageView().then {
             $0.accessibilityIdentifier = "Action type"

@@ -256,7 +256,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             
             comments.text = "\(link.commentCount)"
             
-            titleLabel.attributedText = CachedTitle.getTitle(submission: link, full: true, false, true, gallery: false)
+            titleLabel.attributedText = CachedTitle.getTitleAttributedString(link, force: false, gallery: true, full: true, white: false)
 
             let size = CGSize(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude)
             let layout = YYTextLayout(containerSize: size, text: titleLabel.attributedText!)!
