@@ -345,13 +345,11 @@ class CachedTitle {
         let awardString = NSMutableAttributedString()
         if link.gilded {
             let boldFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
-            awardString.append(CachedTitle.spacer)
             if SettingValues.hideAwards {
                 var awardCount = link.platinum + link.silver + link.gold
                 for award in link.awards {
                     awardCount += Int(award.split(":")[1]) ?? 0
                 }
-                awardString.append(CachedTitle.spacer)
                 let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
                 awardString.append(gild)
                 if awardCount > 1 {
@@ -362,7 +360,6 @@ class CachedTitle {
                 for award in link.awards {
                     let url = award.split("*")[0]
                     let count = Int(award.split(":")[1]) ?? 0
-                    awardString.append(CachedTitle.spacer)
                     if let urlAsURL = URL(string: url) {
                         if loadImages {
                             let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
@@ -381,34 +378,35 @@ class CachedTitle {
                         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(link.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): titleStrings.color]))
                         awardString.append(gilded)
                     }
+                    awardString.append(CachedTitle.spacer)
                 }
                 if link.platinum > 0 {
-                    awardString.append(CachedTitle.spacer)
                     let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "platinum")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
                     awardString.append(gild)
                     if link.platinum > 1 {
                         let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(link.platinum) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): titleStrings.color]))
                         awardString.append(platinumed)
                     }
+                    awardString.append(CachedTitle.spacer)
                 }
                 
                 if link.gold > 0 {
-                    awardString.append(CachedTitle.spacer)
                     let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
                     awardString.append(gild)
                     if link.gold > 1 {
                         let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(link.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): titleStrings.color]))
                         awardString.append(gilded)
                     }
+                    awardString.append(CachedTitle.spacer)
                 }
                 if link.silver > 0 {
-                    awardString.append(CachedTitle.spacer)
                     let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "silver")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
                     awardString.append(gild)
                     if link.silver > 1 {
                         let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(link.silver) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): titleStrings.color]))
                         awardString.append(silvered)
                     }
+                    awardString.append(CachedTitle.spacer)
                 }
             }
         }
