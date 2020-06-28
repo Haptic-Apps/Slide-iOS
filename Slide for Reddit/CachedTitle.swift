@@ -421,18 +421,16 @@ class CachedTitle {
             if let infoLine = titleStrings.infoLine {
                 finalTitle.append(infoLine)
             }
+            finalTitle.append(NSAttributedString.init(string: "\n"))
+            finalTitle.append(awardString)
+            finalTitle.append(NSAttributedString.init(string: "\n"))
             if let extraLine = titleStrings.extraLine {
                 finalTitle.append(extraLine)
             }
-            finalTitle.append(NSAttributedString.init(string: "\n"))
-            finalTitle.append(awardString)
         } else {
             finalTitle.append(iconString)
             if let infoLine = titleStrings.infoLine {
                 finalTitle.append(infoLine)
-            }
-            if let extraLine = titleStrings.extraLine {
-                finalTitle.append(extraLine)
             }
             finalTitle.append(NSAttributedString.init(string: "\n"))
             if let mainTitle = titleStrings.mainTitle {
@@ -440,6 +438,10 @@ class CachedTitle {
             }
             finalTitle.append(NSAttributedString.init(string: "\n"))
             finalTitle.append(awardString)
+            finalTitle.append(NSAttributedString.init(string: "\n"))
+            if let extraLine = titleStrings.extraLine {
+                finalTitle.append(extraLine)
+            }
         }
         return finalTitle
     }
