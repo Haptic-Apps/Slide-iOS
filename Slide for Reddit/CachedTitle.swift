@@ -159,7 +159,6 @@ class CachedTitle {
             finalTitle = NSMutableAttributedString()
         }
         
-
         let extraLine = NSMutableAttributedString()
         finalTitle.append(attributedTitle)
         infoLine.append(endString)
@@ -236,8 +235,8 @@ class CachedTitle {
         
         if SettingValues.typeInTitle {
             let info = NSMutableAttributedString.init(string: "\u{00A0}\u{00A0}\(submission.type.rawValue)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.theme.fontColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.theme.foregroundColor])
-            extraLine.append(spacer)
-            extraLine.append(info)
+            finalTitle.append(spacer)
+            finalTitle.append(info)
         }
 
         if submission.isCrosspost && !full {
