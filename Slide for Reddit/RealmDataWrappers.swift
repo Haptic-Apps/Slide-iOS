@@ -116,7 +116,6 @@ class RealmDataWrapper {
         rSubmission.silver = ((json?["gildings"] as? [String: Any])?["gid_1"] as? Int) ?? 0
         rSubmission.gold = ((json?["gildings"] as? [String: Any])?["gid_2"] as? Int) ?? 0
         rSubmission.platinum = ((json?["gildings"] as? [String: Any])?["gid_3"] as? Int) ?? 0
-        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum > 0
         rSubmission.htmlBody = bodyHtml
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
@@ -203,6 +202,8 @@ class RealmDataWrapper {
                 }
             }
         }
+        
+        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum + rSubmission.awards.count > 0
 
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
         rSubmission.approved = !rSubmission.approvedBy.isEmpty()
@@ -325,7 +326,7 @@ class RealmDataWrapper {
         rSubmission.silver = ((submission.baseJson["gildings"] as? [String: Any])?["gid_1"] as? Int) ?? 0
         rSubmission.gold = ((submission.baseJson["gildings"] as? [String: Any])?["gid_2"] as? Int) ?? 0
         rSubmission.platinum = ((submission.baseJson["gildings"] as? [String: Any])?["gid_3"] as? Int) ?? 0
-        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum > 0
+        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum + rSubmission.awards.count > 0
         rSubmission.htmlBody = bodyHtml
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
