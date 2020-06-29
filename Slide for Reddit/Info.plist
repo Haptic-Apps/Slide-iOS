@@ -332,7 +332,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>145</string>
+	<string>149</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -359,10 +359,10 @@
 	<string>Slide uses the camera in order to attach images to comments and submissions</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>FaceID is used for biometric unlock</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Slide uses photos in order to attach images to comments and submissions</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Slide uses this permission to save photos and videos to your camera roll</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Slide uses photos in order to attach images to comments and submissions</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>googleicon.ttf</string>
