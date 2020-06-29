@@ -17,8 +17,26 @@ default_platform(:ios)
 
 platform :ios do
   desc "Push a new beta build to TestFlight"
+
+  # Manually install certificates. Developers should run this when using a new machine.
+  lane :install_certificates do
+    match(
+      type: 'development',
+      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundled.watchkitapp", "ccrama.me.redditslide.bundled.watchkitapp.watchkitextension", "ccrama.me.redditslide.bundled.Open-in-Slide"]
+    )
+    match(
+      type: 'appstore',
+      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundled.watchkitapp", "ccrama.me.redditslide.bundled.watchkitapp.watchkitextension", "ccrama.me.redditslide.bundled.Open-in-Slide"]
+    )
+  end
+
   lane :beta do
     increment_build_number(xcodeproj: "Slide for Reddit.xcodeproj")
+    match(
+      readonly: true,
+      type: 'appstore',
+      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundled.watchkitapp", "ccrama.me.redditslide.bundled.watchkitapp.watchkitextension", "ccrama.me.redditslide.bundled.Open-in-Slide"]
+    )
     build_app(workspace: "Slide for Reddit.xcworkspace", scheme: "Slide for Reddit")
     upload_to_testflight
   end

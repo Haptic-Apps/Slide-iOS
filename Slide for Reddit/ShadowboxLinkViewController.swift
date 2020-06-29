@@ -395,7 +395,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                     text = "Link"
                 }
             let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 16, submission: true)]))
-            finalText.append(NSAttributedString.init(string: "\n\(baseURL!.host ?? baseURL!.absoluteString)"))
+            finalText.append(NSAttributedString.init(string: "\n\(baseURL?.host ?? baseURL?.absoluteString ?? "")"))
             info.textAlignment = .center
             info.attributedText = finalText
             if content is RSubmission {
