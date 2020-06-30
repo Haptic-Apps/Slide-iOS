@@ -22,11 +22,11 @@ platform :ios do
   lane :install_certificates do
     match(
       type: 'development',
-      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundled.watchkitapp", "ccrama.me.redditslide.bundled.watchkitapp.watchkitextension", "ccrama.me.redditslide.bundled.Open-in-Slide"]
+      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundledwatchkitapp", "ccrama.me.redditslide.bundledwatchkitapp.watchkitextension", "ccrama.me.redditslide.bundledOpen-in-Slide"]
     )
     match(
       type: 'appstore',
-      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundled.watchkitapp", "ccrama.me.redditslide.bundled.watchkitapp.watchkitextension", "ccrama.me.redditslide.bundled.Open-in-Slide"]
+      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundledwatchkitapp", "ccrama.me.redditslide.bundledwatchkitapp.watchkitextension", "ccrama.me.redditslide.bundledOpen-in-Slide"]
     )
   end
 
@@ -35,7 +35,7 @@ platform :ios do
     match(
       readonly: true,
       type: 'appstore',
-      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundled.watchkitapp", "ccrama.me.redditslide.bundled.watchkitapp.watchkitextension", "ccrama.me.redditslide.bundled.Open-in-Slide"]
+      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundledwatchkitapp", "ccrama.me.redditslide.bundledwatchkitapp.watchkitextension", "ccrama.me.redditslide.bundledOpen-in-Slide"]
     )
     build_app(workspace: "Slide for Reddit.xcworkspace", scheme: "Slide for Reddit")
     upload_to_testflight
