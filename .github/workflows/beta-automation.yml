@@ -21,6 +21,40 @@ jobs:
 
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+    
+    # Install bundles if no cache
+    - name: Move to checked out directory
+      run: |
+        ls -la
+        cd $GITHUB_WORKSPACE
+    
+    # Use cached ruby bundles if available
+    - uses: actions/cache@v1
+      id: cache-bundles
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gem-
+    
+    # Install bundles if no cache
+    - name: Install bundles
+      if: steps.cache-bundles.outputs.cache-hit != 'true'
+      run: bundle install
+    
+    # Use cached pods if available
+    - uses: actions/cache@v2
+      id: cache-pods
+      with:
+        path: Pods
+        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
+    
+    # Install pods if no cache
+    - name: Install pods
+      if: steps.cache-pods.outputs.cache-hit != 'true'
+      run: pod install
 
     # https://github.community/t/ios-code-signing-provisioning/16614/4
     # https://github.com/hashicorp/terraform-github-actions/issues/39
@@ -45,10 +79,8 @@ jobs:
         chmod 600 "$SSH_PATH/id_rsa"
         eval $(ssh-agent)
         ssh-add "$SSH_PATH/id_rsa"
+        
     - name: Fastlane Action
-      uses: maierj/fastlane-action@v1.4.0
-      with:
-        # The lane that should be executed.
-        lane: "beta" 
+      run: bundle exec fastlane beta --verbose
       env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
