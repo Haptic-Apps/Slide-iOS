@@ -255,11 +255,22 @@ public class PanGestureInteractionController: UIPercentDrivenInteractiveTransiti
 
 extension PanGestureInteractionController: UIGestureRecognizerDelegate {
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return scrollView == nil ? tableView?.contentOffset.y ?? 0 == 0 : scrollView?.contentOffset.y ?? 0 == 0
+        if let scrollView = scrollView {
+            return scrollView.contentOffset.y == 0
+        } else {
+            return tableView?.contentOffset.y ?? 0 == 0
+        }
     }
     
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return otherGestureRecognizer is UIPanGestureRecognizer && (scrollView == nil ? tableView?.contentOffset.y ?? 0 == 0 : scrollView?.contentOffset.y ?? 0 == 0)
+        guard otherGestureRecognizer is UIPanGestureRecognizer else {
+            return false
+        }
+        if let scrollView = scrollView {
+            return scrollView.contentOffset.y == 0
+        } else {
+            return tableView?.contentOffset.y ?? 0 == 0
+        }
     }
     
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
