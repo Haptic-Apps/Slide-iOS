@@ -618,6 +618,7 @@
 		BE42B6F220CE01BD00607A54 /* IAPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandler.swift; sourceTree = "<group>"; };
 		BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageMultireddit.swift; sourceTree = "<group>"; };
 		BE51BE6420C7386A00DFFD8B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		BE53812F24B0D67F00F6F1A6 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderViewController.swift; sourceTree = "<group>"; };
 		BE5E53741E1DAEB7004FE226 /* RedditLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedditLink.swift; sourceTree = "<group>"; };
 		BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkBubble.swift; sourceTree = "<group>"; };
@@ -1362,6 +1363,7 @@
 				BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */,
 				BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */,
 				BE99C9F82378AC91007911E2 /* Info.plist */,
+				BE53812F24B0D67F00F6F1A6 /* StoreKit.framework */,
 			);
 			path = "Slide Screenshot Automation";
 			sourceTree = "<group>";
@@ -2285,6 +2287,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
@@ -2316,6 +2319,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.bundledwatchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Release;
@@ -2343,6 +2347,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
@@ -2371,6 +2376,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.bundledwatchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Release;
@@ -2491,6 +2497,7 @@
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
 				USR_DISPLAY_NAME = "Slide Debug";
 				USR_DOMAIN = ccrama.me;
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide-debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -2546,6 +2553,7 @@
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_DISPLAY_NAME = Slide;
 				USR_DOMAIN = ccrama.me;
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.bundledwatchkitapp.watchkitextension";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
