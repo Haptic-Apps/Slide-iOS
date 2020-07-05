@@ -193,9 +193,10 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                     print(error)
                 case .success(let rawdetails):
                     self.getOldThreads()
-                    self.doInfo(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary))
-                    if !(((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] is NSNull) {
-                        self.setupWatcher(websocketUrl: ((rawdetails as! JSONDictionary)["data"] as! JSONDictionary)["websocket_url"] as! String)
+                    let data = (rawdetails as! JSONDictionary)["data"] as! JSONDictionary
+                    self.doInfo(data)
+                    if let websocketURL = data["websocket_url"] {
+                        self.setupWatcher(websocketUrl: websocketURL as! String)
                     }
                 }
             })
@@ -206,8 +207,10 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     
     func doInfo(_ json: JSONDictionary) {
         self.baseData = json
-        self.title = (json["title"] as? String) ?? ""
-        self.startPulse((json["state"] as? String ?? "complete") == "complete")
+        DispatchQueue.main.async {
+            self.title = (json["title"] as? String) ?? ""
+            self.startPulse((json["state"] as? String ?? "complete") == "complete")
+        }
     }
     
     var baseData: JSONDictionary?

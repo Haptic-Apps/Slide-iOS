@@ -1,3 +1,6 @@
+fastlane/report.xml
+ProfilingArtifacts/
+
 # Xcode workspace user data
 # Slide\ for\ Reddit.xcworkspace/
 # .DS_Store

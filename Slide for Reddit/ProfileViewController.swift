@@ -238,7 +238,8 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         if #available(iOS 13, *), self.presentingViewController != nil && (self.navigationController?.modalPresentationStyle == .formSheet || self.modalPresentationStyle == .formSheet || self.navigationController?.modalPresentationStyle == .pageSheet || self.modalPresentationStyle == .pageSheet) {
             isModal13 = true
         }
-        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
+        let topAnchorOffset = (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
+        tabBar.topAnchor == self.view.topAnchor + topAnchorOffset
         tabBar.sizeToFit()
         
         self.dataSource = self

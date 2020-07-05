@@ -257,7 +257,12 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             // If it's a youtube video, always use safari so the app will open
             let type = ContentType.getContentType(baseUrl: url)
             if type == ContentType.CType.VIDEO && !SettingValues.internalYouTube {
-                newUrl = oldUrl
+                let youtubeURL = URL(string: oldUrl.absoluteString.replacingOccurrences(of: "https://", with: "youtube://").replacingOccurrences(of: "http://", with: "youtube://"))!
+                if UIApplication.shared.canOpenURL(youtubeURL) {
+                    newUrl = youtubeURL
+                } else {
+                    newUrl = oldUrl
+                }
             }
 
             if #available(iOS 10.0, *) {

@@ -235,33 +235,33 @@ extension UIImage {
         // start with a CAGradientLayer
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = rect
-        
+
         // add colors as CGCologRef to a new array and calculate the distances
         var colorsRef = [CGColor]()
         var locations = [NSNumber]()
-        
+
         for i in 0 ..< colors.count {
             colorsRef.append(colors[i].cgColor as CGColor)
             locations.append(NSNumber(value: Float(i) / Float(colors.count - 1)))
         }
-        
+
         gradientLayer.colors = colorsRef
 
-        let x: Double! = 135 / 360.0
-        let a = pow(sinf(Float(2.0 * .pi * ((x + 0.75) / 2.0))), 2.0)
-        let b = pow(sinf(Float(2 * .pi * ((x + 0.0) / 2))), 2)
-        let c = pow(sinf(Float(2 * .pi * ((x + 0.25) / 2))), 2)
-        let d = pow(sinf(Float(2 * .pi * ((x + 0.5) / 2))), 2)
-        
-        gradientLayer.endPoint = CGPoint(x: CGFloat(c), y: CGFloat(d))
-        gradientLayer.startPoint = CGPoint(x: CGFloat(a), y: CGFloat(b))
+        let x: CGFloat = 135.0 / 360.0
+        let a: CGFloat = pow(sin(2.0 * CGFloat.pi * ((x + 0.75) / 2.0)), 2.0)
+        let b: CGFloat = pow(sin(2.0 * CGFloat.pi * ((x + 0.00) / 2.0)), 2.0)
+        let c: CGFloat = pow(sin(2.0 * CGFloat.pi * ((x + 0.25) / 2.0)), 2.0)
+        let d: CGFloat = pow(sin(2.0 * CGFloat.pi * ((x + 0.50) / 2.0)), 2.0)
+
+        gradientLayer.endPoint = CGPoint(x: c, y: d)
+        gradientLayer.startPoint = CGPoint(x: a, y: b)
 
         // now build a UIImage from the gradient
         UIGraphicsBeginImageContext(gradientLayer.bounds.size)
         gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
         let gradientImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
+
         // return the gradient image
         return gradientImage!
     }

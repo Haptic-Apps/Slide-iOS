@@ -138,7 +138,7 @@ class ContentType {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
         
-        return hostContains(host: host, bases: ["youtu.be", "youtube.com", "youtube.co.uk"]) && !path.contains("/user/") && !path.contains("/channel/")
+        return hostContains(host: host, bases: ["youtu.be", "youtube.com", "youtube.co.uk"]) && !path.contains("/user/") && !path.contains("/channel/") || uri.absoluteString.contains("youtu")
     }
     
     public static func isImgurLink(uri: URL) -> Bool {

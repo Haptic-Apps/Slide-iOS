@@ -221,8 +221,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let build = dictionary["CFBundleVersion"] as! String
         
         let lastVersion = UserDefaults.standard.string(forKey: "LAST_BUILD") ?? ""
-        let lastVersionInt = Int(lastVersion) ?? 0
-        let currentVersionInt = Int(build) ?? 0
+        let lastVersionInt: Int = Int(lastVersion) ?? 0
+        let currentVersionInt: Int = Int(build) ?? 0
         
         if lastVersionInt < currentVersionInt {
             //Clean up broken videos
