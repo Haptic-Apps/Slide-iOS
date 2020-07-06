@@ -204,12 +204,19 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
         setProgressViewVisible(true)
 
-        loadImage(imageURL: imageURL) { [weak self] (image) in
+        loadImage(imageURL: imageURL) { [weak self] (image, isPreview) in
             if let strongSelf = self {
-                strongSelf.imageView.image = image
-                strongSelf.imageView.sizeToFit()
-                strongSelf.scrollView.contentSize = image.size
-                strongSelf.imageView.setNeedsLayout()
+                if strongSelf.imageView.image != nil, !isPreview {
+                    // If replacing a preview with a full-quality image,
+                    // only replace the image (don't redo layout).
+                    // This lets us invisibly swap in-place.
+                    strongSelf.imageView.image = image
+                } else {
+                    strongSelf.imageView.image = image
+                    strongSelf.imageView.sizeToFit()
+                    strongSelf.scrollView.contentSize = image.size
+                    strongSelf.imageView.setNeedsLayout()
+                }
                 // Update UI
                 strongSelf.setProgressViewVisible(false)
                 strongSelf.downloadButton.isHidden = false
@@ -217,60 +224,62 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             }
         }
     }
-    
-    func resize(_ image: UIImage, _ toScaleSize: CGSize) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(toScaleSize, true, image.scale)
-        image.draw(in: CGRect(x: 0, y: 0, width: toScaleSize.width, height: toScaleSize.height))
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return scaledImage!
-    }
 
-    func loadImage(imageURL: URL, completion: @escaping ((UIImage) -> Void) ) {
+    func loadImage(imageURL: URL, completion: @escaping ((UIImage, Bool) -> Void) ) {
 
+        // If the full-size image is already in the cache, just use that.
         if let image = SDImageCache.shared.imageFromDiskCache(forKey: imageURL.absoluteString) {
             DispatchQueue.main.async {
-                completion(image)
+                completion(image, false)
             }
         } else {
-            if let image = (parent as? ModalMediaViewController)?.previewImage, let size = (parent as? ModalMediaViewController)?.finalSize {
-                let resized = image.getCopy(withSize: size)
-                completion(resized)
+            // If the image isn't cached, call the completion with the preview
+            // image, then load the full-resolution image and call the completion
+            // with it when done.
+            if let parent = parent as? ModalMediaViewController,
+                let previewImage = parent.previewImage {
                 self.setProgressViewVisible(true)
                 self.downloadButton.isHidden = true
                 self.size.isHidden = false
+                completion(previewImage, true)
             }
-            SDWebImageDownloader.shared.downloadImage(with: imageURL, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: { (current: NSInteger, total: NSInteger, _) in
+            SDWebImageDownloader.shared.downloadImage(
+                with: imageURL,
+                options: [.allowInvalidSSLCertificates, .scaleDownLargeImages],
+                progress: { (current: NSInteger, total: NSInteger, _) in
 
-                var average: Float = 0
-                average = (Float(current) / Float(total))
-                let countBytes = ByteCountFormatter()
-                countBytes.allowedUnits = [.useMB]
-                countBytes.countStyle = .file
-                let fileSize = countBytes.string(fromByteCount: Int64(total))
-                if average > 0 {
-                    DispatchQueue.main.async {
-                        self.size.text = fileSize
-                        if total == 0 {
-                            self.parent?.dismiss(animated: true, completion: {
-                                self.failureCallback?(imageURL)
-                            })
+                    var average: Float = 0
+                    average = (Float(current) / Float(total))
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(total))
+                    if average > 0 {
+                        DispatchQueue.main.async {
+                            self.size.text = fileSize
+                            if total == 0 {
+                                self.parent?.dismiss(animated: true, completion: {
+                                    self.failureCallback?(imageURL)
+                                })
+                            }
                         }
                     }
-                }
-                
-                DispatchQueue.main.async {
-                    self.updateProgress(CGFloat(average), "")
-                }
 
-                }, completed: { (image, data, _, _) in
+                    DispatchQueue.main.async {
+                        self.updateProgress(CGFloat(average), "")
+                    }
+
+                },
+                completed: { (image, data, _, _) in
+                    // Cache the full-size image.
                     SDImageCache.shared.store(image, imageData: data, forKey: imageURL.absoluteString, toDisk: true, completion: nil)
                     DispatchQueue.main.async {
                         if let image = image {
-                            completion(image)
+                            completion(image, false)
                         }
                     }
-            })
+                }
+            )
 
         }
 
