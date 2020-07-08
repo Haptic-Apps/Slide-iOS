@@ -74,7 +74,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         self.view.addSubview(scrollView)
 
         imageView = UIImageView().then {
-            $0.contentMode = .scaleAspectFit
+            $0.contentMode = .scaleAspectFill
         }
         scrollView.addSubview(imageView)
         
@@ -204,17 +204,42 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
         setProgressViewVisible(true)
 
-        loadImage(imageURL: imageURL) { [weak self] (image, isPreview) in
+        loadImage(imageURL: imageURL) { [weak self] (image, isPreview, finalSize) in
             if let strongSelf = self {
                 if strongSelf.imageView.image != nil, !isPreview {
                     // If replacing a preview with a full-quality image,
                     // only replace the image (don't redo layout).
                     // This lets us invisibly swap in-place.
                     strongSelf.imageView.image = image
+                    strongSelf.updateMinZoomScaleForSize(image.size)
                 } else {
                     strongSelf.imageView.image = image
-                    strongSelf.imageView.sizeToFit()
-                    strongSelf.scrollView.contentSize = image.size
+                    print(image.size)
+
+                    if let size = finalSize {
+                        let maxFrame = strongSelf.view.frame.size
+                        var newSize = maxFrame
+
+                        let minWidth = maxFrame.width / size.width
+                        let minHeight = maxFrame.height / size.height
+                        
+                        if minHeight < minWidth {
+                            newSize.width = newSize.height / size.height * size.width
+                        } else if minWidth < minHeight {
+                            newSize.height = newSize.width / size.width * size.height
+                        }
+
+                        var newFrame = strongSelf.imageView.frame
+                        newFrame.size = size
+                        strongSelf.imageView.sizeToFit()
+                        strongSelf.scrollView.contentSize = newSize
+                        
+                        strongSelf.updateMinZoomScaleForSize(newSize)
+                    } else {
+                        strongSelf.imageView.sizeToFit()
+                        strongSelf.scrollView.contentSize = image.size
+                    }
+                    
                     strongSelf.imageView.setNeedsLayout()
                 }
                 // Update UI
@@ -225,12 +250,12 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         }
     }
 
-    func loadImage(imageURL: URL, completion: @escaping ((UIImage, Bool) -> Void) ) {
+    func loadImage(imageURL: URL, completion: @escaping ((UIImage, Bool, CGSize?) -> Void) ) {
 
         // If the full-size image is already in the cache, just use that.
         if let image = SDImageCache.shared.imageFromDiskCache(forKey: imageURL.absoluteString) {
             DispatchQueue.main.async {
-                completion(image, false)
+                completion(image, false, nil)
             }
         } else {
             // If the image isn't cached, call the completion with the preview
@@ -241,7 +266,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 self.setProgressViewVisible(true)
                 self.downloadButton.isHidden = true
                 self.size.isHidden = false
-                completion(previewImage, true)
+                completion(previewImage, true, parent.finalSize)
             }
             SDWebImageDownloader.shared.downloadImage(
                 with: imageURL,
@@ -275,14 +300,11 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                     SDImageCache.shared.store(image, imageData: data, forKey: imageURL.absoluteString, toDisk: true, completion: nil)
                     DispatchQueue.main.async {
                         if let image = image {
-                            completion(image, false)
+                            completion(image, false, nil)
                         }
                     }
-                }
-            )
-
+                })
         }
-
     }
 
 }
