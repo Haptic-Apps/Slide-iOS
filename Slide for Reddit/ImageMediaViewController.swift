@@ -23,6 +23,8 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     var viewInHDButton = UIButton()
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()
+    
+    var overrideSize: CGSize?
 
     var forceHD = false
 
@@ -57,7 +59,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         let height = view.bounds.size.height
         let width = view.bounds.size.width
         let size = CGSize(width: width, height: height - bottomButtons.bounds.size.height)
-        updateMinZoomScaleForSize(size)
+        updateMinZoomScaleForSize(size, overrideSize: overrideSize)
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -211,14 +213,14 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                     // only replace the image (don't redo layout).
                     // This lets us invisibly swap in-place.
                     strongSelf.imageView.image = image
-                    strongSelf.updateMinZoomScaleForSize(image.size)
                 } else {
                     strongSelf.imageView.image = image
-                    print(image.size)
+                    print("Image size is \(image.size)")
 
                     if let size = finalSize {
                         let maxFrame = strongSelf.view.frame.size
                         var newSize = maxFrame
+                        print("Final size is \(size)")
 
                         let minWidth = maxFrame.width / size.width
                         let minHeight = maxFrame.height / size.height
@@ -231,16 +233,16 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
                         var newFrame = strongSelf.imageView.frame
                         newFrame.size = size
-                        strongSelf.imageView.sizeToFit()
-                        strongSelf.scrollView.contentSize = newSize
-                        
-                        strongSelf.updateMinZoomScaleForSize(newSize)
+                        strongSelf.imageView.frame = newFrame
+                        strongSelf.scrollView.contentSize = size
+                        strongSelf.overrideSize = size
                     } else {
                         strongSelf.imageView.sizeToFit()
                         strongSelf.scrollView.contentSize = image.size
                     }
                     
                     strongSelf.imageView.setNeedsLayout()
+                    print("Frame size is \(strongSelf.imageView.frame.size)")
                 }
                 // Update UI
                 strongSelf.setProgressViewVisible(false)
@@ -427,9 +429,9 @@ extension ImageMediaViewController: UIScrollViewDelegate {
         return imageView
     }
 
-    func updateMinZoomScaleForSize(_ size: CGSize) {
-        let widthScale = (size.width / (imageView.image?.size.width ?? imageView.bounds.width))
-        let heightScale = (size.height / (imageView.image?.size.height ?? imageView.bounds.height))
+    func updateMinZoomScaleForSize(_ size: CGSize, overrideSize: CGSize?) {
+        let widthScale = (size.width / (overrideSize?.width ?? imageView.image?.size.width ?? imageView.bounds.width))
+        let heightScale = (size.height / (overrideSize?.height ?? imageView.image?.size.height ?? imageView.bounds.height))
         let minScale = min(widthScale, heightScale)
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale
