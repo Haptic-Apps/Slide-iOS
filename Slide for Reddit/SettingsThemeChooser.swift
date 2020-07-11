@@ -39,7 +39,7 @@ class SettingsThemeChooser: UITableViewController {
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(sfString: SFSymbol.arrowLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         

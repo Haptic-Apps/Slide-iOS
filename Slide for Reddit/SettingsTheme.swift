@@ -354,7 +354,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(sfString: SFSymbol.arrowLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
@@ -386,7 +386,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             setupBaseBarColors()
             let button = UIButtonWithContext.init(type: .custom)
             button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControl.State.normal)
+            button.setImage(UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
             

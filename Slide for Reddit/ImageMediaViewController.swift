@@ -162,7 +162,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         if let strongParent = parent as? ModalMediaViewController, strongParent.fullscreen {
             strongParent.unFullscreen(self)
         } else if let strongParent = parent as? ModalMediaViewController {
-            strongParent.fullscreen(self)
+            strongParent.fullscreen(self, true)
         }
     }
 

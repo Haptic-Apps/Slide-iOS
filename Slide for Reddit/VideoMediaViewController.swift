@@ -95,7 +95,12 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         configureLayout()
         connectActions()
 
-        handleHideUI()
+        handleHideUI(hideTitle: false)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.handleHideUI(hideTitle: true)
+        })
         
         volume.barTintColor = .white
         volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
@@ -400,7 +405,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 self.handleShowUI()
                 self.startTimerToHide()
             } else {
-                self.handleHideUI()
+                self.handleHideUI(hideTitle: true)
             }
         }
     }
@@ -430,10 +435,10 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                                      repeats: false)
     }
     
-    @objc func handleHideUI() {
-        if !self.scrubber.isHidden {
+    @objc func handleHideUI(hideTitle: Bool) {
+        if !self.scrubber.isHidden || hideTitle {
             if let parent = parent as? ModalMediaViewController {
-                parent.fullscreen(self)
+                parent.fullscreen(self, hideTitle)
             }
 
             UIView.animate(withDuration: 0.2, animations: {

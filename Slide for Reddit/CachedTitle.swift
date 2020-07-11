@@ -47,6 +47,10 @@ class CachedTitle {
             return title!
         }
     }
+    
+    static func getTitleForMedia(submission: RSubmission) -> Title {
+        return titleForMedia(submission: submission)
+    }
 
     static func titleForSubmission(submission: RSubmission, full: Bool, white: Bool, gallery: Bool) -> Title {
 
@@ -270,7 +274,61 @@ class CachedTitle {
         }
         return Title(mainTitle: finalTitle, infoLine: infoLine, extraLine: extraLine, color: colorF)
     }
-    
+
+    static func titleForMedia(submission: RSubmission) -> Title {
+
+        var colorF = UIColor.white
+
+        let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.foregroundColor: colorF])
+
+        if submission.nsfw {
+            let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.red500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+
+            attributedTitle.append(spacer)
+            attributedTitle.append(nsfw)
+        }
+
+        if submission.oc {
+            let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.blue50Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.black])
+
+            attributedTitle.append(spacer)
+            attributedTitle.append(oc)
+        }
+
+        let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
+
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author + (submission.cakeday ? " 🎂" : ""), small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
+        authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(submission.author)")!, "profile": submission.author])
+
+        let userColor = ColorUtil.getColorForUser(name: submission.author)
+        if submission.distinguished == "admin" {
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#E57373"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+        } else if submission.distinguished == "special" {
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#F44336"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+        } else if submission.distinguished == "moderator" {
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#81C784"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+        } else if AccountController.currentName == submission.author {
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+        } else if userColor != ColorUtil.baseColor {
+            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: userColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+        }
+
+        endString.append(authorString)
+
+        let tag = ColorUtil.getTagForUser(name: submission.author)
+        if tag != nil {
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+
+            endString.append(spacer)
+            endString.append(tagString)
+        }
+        
+                
+        let extraLine = NSMutableAttributedString()
+                        
+        return Title(mainTitle: attributedTitle, infoLine: endString, extraLine: extraLine, color: UIColor.white)
+    }
+
     static func getImageSize(fontSize: CGFloat) -> CGRect {
         var rect = CGRect.zero
         rect.origin.x = 0.75

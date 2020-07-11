@@ -657,7 +657,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if ActionStates.getVoteDirection(s: comment!) == .up {
                 $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.upvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControl.Event.touchUpInside)
         })
@@ -665,28 +665,28 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if ActionStates.getVoteDirection(s: comment!) == .down {
                 $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.downvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControl.Event.touchUpInside)
         })
         replyButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControl.Event.touchUpInside)
         })
         moreButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "ic_more_vert_white")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "ic_more_vert_white")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControl.Event.touchUpInside)
         })
         editButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         })
         deleteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControl.Event.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: .white).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControl.Event.touchUpInside)
         })
         
@@ -747,7 +747,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if animate {
             self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
         }
-        menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
+        menuBack.backgroundColor = UIColor.clear
+        //menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
+        //menuBack.roundCorners([UIRectCorner.bottomLeft, UIRectCorner.bottomRight], radius: 5)
     }
     
     func hideCommentMenu(_ doBody: Bool = true) {

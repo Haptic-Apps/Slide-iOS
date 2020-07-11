@@ -148,7 +148,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             print("Showing album")
             return AlbumViewController.init(urlB: contentUrl!)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback, link: link)
         } else if type == .GIF && SettingValues.internalGifView || type == .STREAMABLE || type == .VID_ME {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
                 if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
@@ -163,7 +163,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 }
                 return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
             }
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback, link: link)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
