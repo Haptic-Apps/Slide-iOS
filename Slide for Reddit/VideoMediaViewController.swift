@@ -243,7 +243,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             $0.alignment = .center
             $0.spacing = 8
         }
-        view.addSubview(bottomButtons)
+        gradientView.addSubview(bottomButtons)
+        view.addSubview(gradientView)
         
         if data.buttons {
             menuButton = UIButton().then {
@@ -384,12 +385,16 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func configureLayout() {
-        bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
-        bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
+        
+        bottomButtons.horizontalAnchors == gradientView.safeHorizontalAnchors + CGFloat(8)
+        bottomButtons.topAnchor == gradientView.topAnchor + 8
+        bottomButtons.bottomAnchor == gradientView.safeBottomAnchor - 8
+        gradientView.horizontalAnchors == view.horizontalAnchors
+        gradientView.bottomAnchor == view.bottomAnchor
 
         scrubber.horizontalAnchors == view.safeHorizontalAnchors + 8
         scrubber.topAnchor == view.safeTopAnchor + 8
-        scrubber.bottomAnchor == bottomButtons.topAnchor - 4
+        scrubber.bottomAnchor == gradientView.topAnchor - 4
         
         scrubber.playButton.centerAnchors == self.videoView.centerAnchors
 

@@ -96,7 +96,8 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             $0.alignment = .center
             $0.spacing = 8
         }
-        view.addSubview(bottomButtons)
+        gradientView.addSubview(bottomButtons)
+        view.addSubview(gradientView)
 
         if data.buttons {
             menuButton = UIButton().then {
@@ -152,10 +153,12 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     }
 
     func configureLayout() {
-        scrollView.edgeAnchors == view.edgeAnchors
-
-        bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
-        bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
+        scrollView.edgeAnchors == view.edgeAnchors + CGFloat(8)
+        bottomButtons.horizontalAnchors == gradientView.safeHorizontalAnchors + CGFloat(8)
+        bottomButtons.topAnchor == gradientView.topAnchor + 8
+        bottomButtons.bottomAnchor == gradientView.safeBottomAnchor - 8
+        gradientView.horizontalAnchors == view.horizontalAnchors
+        gradientView.bottomAnchor == view.bottomAnchor
     }
     
     @objc func fullscreen(_ sender: AnyObject) {

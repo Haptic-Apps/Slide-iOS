@@ -26,6 +26,7 @@ class EmbeddableMediaViewController: UIViewController {
     var progressView: VerticalAlignedLabel = VerticalAlignedLabel()
     var bottomButtons = UIStackView()
     var upvoteButton = UIButton()
+    var gradientView = GradientView(gradientStartColor: UIColor.clear, gradientEndColor: UIColor.black.withAlphaComponent(0.9))
 
     var commentCallback: (() -> Void)?
     var upvoteCallback: (() -> Void)?

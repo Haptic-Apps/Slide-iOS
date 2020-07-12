@@ -44,7 +44,7 @@ class ModalMediaViewController: UIViewController {
     var failureCallback: ((_ url: URL) -> Void)?
     var upvoteCallback: (() -> Void)?
     var isUpvoted = false
-    var gradientView = GradientView(gradientStartColor: UIColor.black, gradientEndColor: UIColor.black.withAlphaComponent(0))
+    var gradientView = GradientView(gradientStartColor: UIColor.black.withAlphaComponent(0.9), gradientEndColor: UIColor.clear)
 
     init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil, link: RSubmission?) {
         super.init(nibName: nil, bundle: nil)
@@ -63,7 +63,6 @@ class ModalMediaViewController: UIViewController {
             
             titleView.attributedText = finalTitle
             titleView.numberOfLines = 0
-            titleView.sizeToFit()
             
             if commentCallback != nil {
                 titleView.addTapGestureRecognizer { [weak self] in
@@ -269,7 +268,6 @@ class ModalMediaViewController: UIViewController {
             background!.backgroundColor = .black
                                     
             self.view.insertSubview(background!, at: 0)
-            self.view.insertSubview(gradientView, belowSubview: titleView)
         }
         
         if embeddedVC != nil {
@@ -286,6 +284,10 @@ class ModalMediaViewController: UIViewController {
         UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         super.viewWillAppear(animated)
         
+        titleView.lineBreakMode = .byWordWrapping
+        titleView.sizeToFit()
+        titleView.layoutIfNeeded()
+
         if parent is AlbumViewController || parent is ShadowboxLinkViewController {
             self.closeButton.isHidden = true
         }
@@ -343,11 +345,13 @@ class ModalMediaViewController: UIViewController {
         self.addChild(embeddedVC)
         embeddedVC.didMove(toParent: self)
         self.view.addSubview(embeddedVC.view)
-        self.view.addSubview(titleView)
 
         closeButton.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: .normal)
         closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
-        self.view.addSubview(closeButton)
+        
+        self.view.addSubview(gradientView)
+        gradientView.addSubview(closeButton)
+        gradientView.addSubview(titleView)
     }
     
     @objc func exit() {
@@ -372,20 +376,25 @@ class ModalMediaViewController: UIViewController {
     func configureLayout() {
         embeddedVC.view.edgeAnchors == self.view.edgeAnchors
 
+        gradientView.horizontalAnchors == self.view.horizontalAnchors
+        gradientView.topAnchor == self.view.topAnchor
+
         closeButton.sizeAnchors == .square(size: 38)
-        closeButton.topAnchor == self.view.safeTopAnchor + 8
-        closeButton.leftAnchor == self.view.safeLeftAnchor + 12
+        closeButton.topAnchor == gradientView.safeTopAnchor + 8
+        closeButton.leftAnchor == gradientView.safeLeftAnchor + 12
         closeButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         closeButton.layer.masksToBounds = true
         closeButton.layer.cornerRadius = 18
         
         titleView.leftAnchor == closeButton.rightAnchor + 8
-        titleView.topAnchor == self.view.safeTopAnchor + 8
-        titleView.rightAnchor == self.view.safeRightAnchor - 8
-        
-        gradientView.horizontalAnchors == self.view.horizontalAnchors
-        gradientView.topAnchor == self.view.topAnchor
-        gradientView.bottomAnchor == titleView.bottomAnchor + 10
+        titleView.topAnchor == gradientView.safeTopAnchor + 8
+        titleView.rightAnchor == gradientView.safeRightAnchor - 8
+        titleView.bottomAnchor == gradientView.bottomAnchor - 8
+            
+        gradientView.layoutIfNeeded()
+        print("Setting width to \(self.titleView.frame.size.width)")
+        titleView.preferredMaxLayoutWidth = self.titleView.frame.size.width
+        titleView.sizeToFit()
     }
 
     func connectGestures() {
@@ -426,26 +435,24 @@ extension ModalMediaViewController {
 
             self.background?.alpha = 1
             if hideTitle {
-                self.closeButton.alpha = 0
-                self.titleView.alpha = 0
+                self.gradientView.alpha = 0
             }
-            self.embeddedVC.bottomButtons.alpha = 0
+            self.embeddedVC.gradientView.alpha = 0
         }, completion: {_ in
-            self.embeddedVC.bottomButtons.isHidden = true
+            self.embeddedVC.gradientView.isHidden = true
         })
     }
 
     @objc func unFullscreen(_ sender: AnyObject) {
         fullscreen = false
-        self.embeddedVC.bottomButtons.isHidden = false
+        self.embeddedVC.gradientView.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.statusBarUIView ?? UIView()
             statusBar.isHidden = false
-            self.closeButton.alpha = 1
-            self.titleView.alpha = 1
+            self.gradientView.alpha = 1
 
             self.background?.alpha = 1
-            self.embeddedVC.bottomButtons.alpha = 1
+            self.embeddedVC.gradientView.alpha = 1
             self.embeddedVC.progressView.alpha = 0.7
 
         }, completion: {_ in
@@ -542,7 +549,7 @@ extension UINavigationController {
 
 class GradientView: UIView {
 
-    private let gradient : CAGradientLayer = CAGradientLayer()
+    private let gradient: CAGradientLayer = CAGradientLayer()
     private let gradientStartColor: UIColor
     private let gradientEndColor: UIColor
 
@@ -561,9 +568,8 @@ class GradientView: UIView {
 
     override public func draw(_ rect: CGRect) {
         gradient.frame = self.bounds
-        gradient.colors = [gradientEndColor.cgColor, gradientStartColor.cgColor]
-        gradient.startPoint = CGPoint(x: 1, y: 0)
-        gradient.endPoint = CGPoint(x: 0.2, y: 1)
+        gradient.colors = [gradientStartColor.cgColor, gradientEndColor.cgColor]
+        gradient.locations = [0, 1]
         if gradient.superlayer == nil {
             layer.insertSublayer(gradient, at: 0)
         }
