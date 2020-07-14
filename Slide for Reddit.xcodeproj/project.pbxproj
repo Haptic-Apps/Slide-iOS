@@ -300,6 +300,7 @@
 		BEC4A1B4232F3F1800EE5114 /* CollectionsContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */; };
 		BEC4A1B6232F3F9A00EE5114 /* CollectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */; };
 		BEC4A1B82331533400EE5114 /* AutoplayScrollViewHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */; };
+		BEC814EC24BD43EE005C8E8C /* SiriShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */; };
 		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
 		BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED7B6B91F2258E700E31A82 /* CachedTitle.swift */; };
@@ -723,6 +724,7 @@
 		BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsContributionLoader.swift; sourceTree = "<group>"; };
 		BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsViewController.swift; sourceTree = "<group>"; };
 		BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoplayScrollViewHandler.swift; sourceTree = "<group>"; };
+		BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiriShortcuts.swift; sourceTree = "<group>"; };
 		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
 		BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmDataWrappers.swift; sourceTree = "<group>"; };
 		BED7B6B91F2258E700E31A82 /* CachedTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedTitle.swift; sourceTree = "<group>"; };
@@ -1313,6 +1315,7 @@
 				BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */,
 				BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */,
 				BEB7BAD923A05F2500E39593 /* InsetTransitioningDelegate.swift */,
+				BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -2109,6 +2112,7 @@
 				BE6EA6DD1E1C211200E9E709 /* GfycatCheck.swift in Sources */,
 				BEE5BF6C1E12C92F00E3C9AE /* DateFormatter+util.swift in Sources */,
 				BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */,
+				BEC814EC24BD43EE005C8E8C /* SiriShortcuts.swift in Sources */,
 				BEC4A1B82331533400EE5114 /* AutoplayScrollViewHandler.swift in Sources */,
 				BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */,
 				BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */,

@@ -22,7 +22,8 @@ import YYText
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDelegate {
     var currentPlayingIndex = [IndexPath]()
-
+    public static let subredditIntent = "me.ccrama.OpenSubreddit"
+    
     var isScrollingDown = true
     var emptyStateView = EmptyStateView()
     
@@ -915,6 +916,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         case .success(let r):
                             self.subInfo = r
                             DispatchQueue.main.async {
+                                //Hook into Shortcuts
+                                if !self.subInfo!.over18 {
+
+                                }
                                 if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
                                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
                                         let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)

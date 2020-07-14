@@ -12,6 +12,8 @@ import reddift
 import UIKit
 
 class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+    public static let inboxIntent = "me.ccrama.OpenInbox"
+    
     var content: [MessageWhere] = []
     var isReload = false
     var session: Session?

@@ -406,6 +406,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
                 let firstViewController = SingleSubredditViewController(subName: self.finalSubs[index!], parent: self)
                 
+                //Siri Shortcuts integration
+                if #available(iOS 12.0, *) {
+                    let activity = SingleSubredditViewController.openSubredditActivity(subreddit: self.finalSubs[index!])
+                    firstViewController.userActivity = activity
+                    activity.becomeCurrent()
+                }
+                
                 if SettingValues.subredditBar && !SettingValues.reduceColor {
                     self.color1 = ColorUtil.baseColor
                     self.color2 = ColorUtil.getColorForSub(sub: (firstViewController ).sub)

@@ -18,6 +18,15 @@ public class VCPresenter {
             parentViewController?.present(viewController, animated: true)
             return
         }
+        
+        if viewController is InboxViewController {
+            //Siri Shortcuts integration
+            if #available(iOS 12.0, *) {
+                let activity = InboxViewController.openInboxActivity()
+                viewController.userActivity = activity
+                activity.becomeCurrent()
+            }
+        }
         var override13 = false
         if #available(iOS 13, *) {
             override13 = true
@@ -212,6 +221,14 @@ public class VCPresenter {
 
     public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {
         let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: link)!)
+        if vc is SingleSubredditViewController {
+            //Siri Shortcuts integration
+            if #available(iOS 12.0, *) {
+                let activity = SingleSubredditViewController.openSubredditActivity(subreddit: (vc as! SingleSubredditViewController).sub)
+                vc.userActivity = activity
+                activity.becomeCurrent()
+            }
+        }
         showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
 
     }
