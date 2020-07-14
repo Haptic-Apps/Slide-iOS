@@ -33,6 +33,8 @@ class AnyModalViewController: UIViewController {
 
     var embeddedPlayer: AVPlayer?
     var videoView: VideoView!
+    var lastTime = Float(0)
+    
     weak var toReturnTo: LinkCellView?
     var fullscreen = false
     var panGestureRecognizer: UIPanGestureRecognizer?
@@ -914,10 +916,11 @@ extension AnyModalViewController {
                 let duration = Float(CMTimeGetSeconds(embeddedPlayer.currentItem!.duration))
                 let time = Float(CMTimeGetSeconds(elapsedTime))
                 
-                if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.97 && lastTime == time)) {
                     handlingPlayerItemDidreachEnd = true
                     self.playerItemDidreachEnd()
                 }
+                lastTime = time
             }
         }
     }

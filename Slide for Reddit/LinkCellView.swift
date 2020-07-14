@@ -2084,6 +2084,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var longPress: UILongPressGestureRecognizer?
     var timer: Timer?
     var cancelled = false
+    var lastTime = Float(0)
     
     private func getTimeString(_ time: Int) -> String {
         let h = time / 3600
@@ -2128,10 +2129,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))",
                     buffering: !currentItem.isPlaybackLikelyToKeepUp)
             }
-            if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.999 {
+            if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.97 && lastTime == time)) {
                 handlingPlayerItemDidreachEnd = true
                 self.playerItemDidreachEnd()
             }
+            lastTime = time
         }
     }
     

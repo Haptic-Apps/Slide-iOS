@@ -56,6 +56,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var size = UILabel()
     var videoType: VideoType!
     
+    var lastTime = Float(0)
+    
     var menuButton = UIButton()
     var muteButton = UIButton()
     var downloadButton = UIButton()
@@ -1054,10 +1056,11 @@ extension VideoMediaViewController {
             if let pDuration = player.currentItem?.duration {
                 let duration = Float(CMTimeGetSeconds(pDuration))
                 let time = Float(CMTimeGetSeconds(player.currentTime()))
-                if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.97 && lastTime == time)) {
                     handlingPlayerItemDidreachEnd = true
                     self.playerItemDidreachEnd()
                 }
+                lastTime = time
             }
         }
     }
