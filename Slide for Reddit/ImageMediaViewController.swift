@@ -153,9 +153,9 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     }
 
     func configureLayout() {
-        scrollView.edgeAnchors == view.edgeAnchors + CGFloat(8)
+        scrollView.edgeAnchors == view.edgeAnchors
         bottomButtons.horizontalAnchors == gradientView.safeHorizontalAnchors + CGFloat(8)
-        bottomButtons.topAnchor == gradientView.topAnchor + 8
+        bottomButtons.topAnchor == gradientView.topAnchor + 20
         bottomButtons.bottomAnchor == gradientView.safeBottomAnchor - 8
         gradientView.horizontalAnchors == view.horizontalAnchors
         gradientView.bottomAnchor == view.bottomAnchor

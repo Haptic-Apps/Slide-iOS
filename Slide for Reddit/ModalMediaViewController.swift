@@ -44,7 +44,7 @@ class ModalMediaViewController: UIViewController {
     var failureCallback: ((_ url: URL) -> Void)?
     var upvoteCallback: (() -> Void)?
     var isUpvoted = false
-    var gradientView = GradientView(gradientStartColor: UIColor.black.withAlphaComponent(0.9), gradientEndColor: UIColor.clear)
+    var gradientView = GradientView(gradientStartColor: UIColor.black, gradientEndColor: UIColor.clear)
 
     init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil, link: RSubmission?) {
         super.init(nibName: nil, bundle: nil)
@@ -258,6 +258,9 @@ class ModalMediaViewController: UIViewController {
             panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
             panGestureRecognizer!.delegate = self
             panGestureRecognizer!.direction = .vertical
+            if #available(iOS 13.4, *) {
+                panGestureRecognizer!.allowedScrollTypesMask = .continuous
+            }
             panGestureRecognizer!.cancelsTouchesInView = false
             
             view.addGestureRecognizer(panGestureRecognizer!)

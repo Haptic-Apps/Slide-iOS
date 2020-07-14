@@ -141,6 +141,9 @@ class AnyModalViewController: UIViewController {
         
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer!.delegate = self
+        if #available(iOS 13.4, *) {
+            panGestureRecognizer!.allowedScrollTypesMask = .continuous
+        }
         panGestureRecognizer!.direction = .vertical
         panGestureRecognizer!.cancelsTouchesInView = false
         

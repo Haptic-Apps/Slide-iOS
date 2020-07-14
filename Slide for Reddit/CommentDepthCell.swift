@@ -219,6 +219,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         sendB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         discardB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         
+        sendB.setTitleColor(ColorUtil.theme.fontColor, for: .normal)
+        discardB.setTitleColor(ColorUtil.theme.fontColor, for: .normal)
+
         self.sendB.setTitle("Send", for: .normal)
         self.discardB.setTitle("Cancel", for: .normal)
         
@@ -969,8 +972,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if body == nil {
             self.body = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 0)).then({
                 $0.isEditable = true
-                $0.textColor = .white
-                $0.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+                $0.textColor = ColorUtil.theme.fontColor
+                $0.backgroundColor = ColorUtil.theme.foregroundColor.withAlphaComponent(0.6)
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.font = UIFont.systemFont(ofSize: 16)
