@@ -36,6 +36,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var oldHeight: CGFloat = -1
     weak var previewedVC: UIViewController?
     var previewedURL: URL?
+    var lastLength = 0
 
     /* probably an issue here */
     @objc func textViewDidChange(_ textView: UITextView) {
@@ -43,14 +44,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if split.first != nil && split.first!.startsWith("* ") && textView.text.endsWith("\n") {
             if split.first == "* " {
                 textView.text = textView.text.substring(0, length: textView.text.length - 3) + "\n"
-            } else {
+            } else if lastLength < textView.text.length {
                 textView.text += "* "
                 textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
             }
         } else if split.first != nil && split.first!.startsWith("- ") && textView.text.endsWith("\n") {
             if split.first == "- " {
                 textView.text = textView.text.substring(0, length: textView.text.length - 3) + "\n"
-            } else {
+            } else if lastLength < textView.text.length {
                 textView.text += "- "
                 textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
             }
@@ -58,7 +59,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             let num = (Int(split.first!.substring(0, length: 1)) ?? 0) + 1
             if split.first?.length ?? 0 < 4 {
                 textView.text = textView.text.substring(0, length: textView.text.length - 4) + "\n"
-            } else {
+            } else if lastLength < textView.text.length {
                 textView.text += "\(num). "
                 textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
             }
@@ -87,6 +88,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
         }
         oldLocation = parent!.tableView.contentOffset
+        lastLength = textView.text.length
     }
     
     var sideView: UIView!
