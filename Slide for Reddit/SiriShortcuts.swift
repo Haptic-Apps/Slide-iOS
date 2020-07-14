@@ -38,7 +38,7 @@ extension InboxViewController {
         activity.isEligibleForPrediction = true
         
         let attributes = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
-        activity.title = "Inbox"
+        activity.title = "Reddit Inbox"
         activity.userInfo = ["TYPE": "INBOX"]
         attributes.contentDescription = "Open Reddit Inbox"
         activity.contentAttributeSet = attributes
