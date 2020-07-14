@@ -22,7 +22,7 @@ import YYText
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDelegate {
     var currentPlayingIndex = [IndexPath]()
-    public static let subredditIntent = "me.ccrama.OpenSubreddit"
+    public static let subredditIntent = "me.ccrama.redditslide.OpenSubreddit"
     
     var isScrollingDown = true
     var emptyStateView = EmptyStateView()
