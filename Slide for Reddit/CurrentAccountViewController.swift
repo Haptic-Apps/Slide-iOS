@@ -23,6 +23,7 @@ protocol CurrentAccountViewControllerDelegate: AnyObject {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestNewAccount: Void)
     func currentAccountViewController(_ controller: CurrentAccountViewController, goToMultireddit multireddit: String)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestCacheNow: Void)
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestHistory: Void)
 }
 
 class CurrentAccountViewController: UIViewController {
@@ -432,10 +433,15 @@ extension CurrentAccountViewController {
         navVC.navigationBar.isTranslucent = false
         present(navVC, animated: true)
     }
-
+    
     @objc func cacheButtonPressed() {
         self.dismiss(animated: true)
         self.delegate?.currentAccountViewController(self, didRequestCacheNow: ())
+    }
+    
+    @objc func historyButtonPressed() {
+        self.dismiss(animated: true)
+        self.delegate?.currentAccountViewController(self, didRequestHistory: ())
     }
 
     @objc func multiButtonPressed() {
@@ -501,6 +507,11 @@ extension CurrentAccountViewController {
 
 // MARK: - AccountHeaderViewDelegate
 extension CurrentAccountViewController: AccountHeaderViewDelegate {
+    
+    func didRequestHistory() {
+        self.historyButtonPressed()
+    }
+    
     func didRequestCollections() {
        // TODO: - collections
         if Collections.collectionIDs.count == 0 {
@@ -619,6 +630,7 @@ extension CurrentAccountViewController {
 protocol AccountHeaderViewDelegate: AnyObject {
     func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int)
     func didRequestCache()
+    func didRequestHistory()
     func didRequestCollections()
     func didRequestNewMulti()
 }
@@ -662,6 +674,10 @@ class AccountHeaderView: UIView {
         $0.configure(text: "Liked Posts", imageName: "upvote", sfSymbolName: .arrowUp, imageColor: GMColor.orange500Color())
     }
     
+    var historyCell = UITableViewCell().then {
+        $0.configure(text: "Post history", imageName: "history", sfSymbolName: .clockFill, imageColor: GMColor.orange500Color())
+    }
+
     var detailsCell = UITableViewCell().then {
         $0.configure(text: "Your profile", imageName: "profile", sfSymbolName: .personCircleFill, imageColor: ColorUtil.theme.fontColor)
     }
@@ -682,7 +698,7 @@ class AccountHeaderView: UIView {
         
         addSubviews(infoStack, cellStack)
         infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell, multiCell, collectionsCell, cacheCell)
+        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell, historyCell, multiCell, collectionsCell, cacheCell)
         
         self.clipsToBounds = true
         
@@ -726,7 +742,8 @@ class AccountHeaderView: UIView {
         multiCell.heightAnchor == 50
         detailsCell.heightAnchor == 50
         likedCell.heightAnchor == 50
-        
+        historyCell.heightAnchor == 50
+
         cellStack.bottomAnchor == bottomAnchor
         
         if #available(iOS 13, *) {
@@ -744,6 +761,10 @@ class AccountHeaderView: UIView {
         likedCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 3)
+        }
+        historyCell.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.didRequestHistory()
         }
         detailsCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }

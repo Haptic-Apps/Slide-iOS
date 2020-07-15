@@ -1350,6 +1350,10 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
             _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
         }
     }
+    
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestHistory: Void) {
+        VCPresenter.showVC(viewController: HistoryViewController(), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+    }
 
     func currentAccountViewController(_ controller: CurrentAccountViewController?, didRequestAccountChangeToName accountName: String) {
 
