@@ -301,6 +301,8 @@
 		BEC4A1B6232F3F9A00EE5114 /* CollectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */; };
 		BEC4A1B82331533400EE5114 /* AutoplayScrollViewHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */; };
 		BEC814EC24BD43EE005C8E8C /* SiriShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */; };
+		BEC814EE24BE8B94005C8E8C /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */; };
+		BEC814F024BE8BBD005C8E8C /* HistoryContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */; };
 		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
 		BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED7B6B91F2258E700E31A82 /* CachedTitle.swift */; };
@@ -725,6 +727,8 @@
 		BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsViewController.swift; sourceTree = "<group>"; };
 		BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoplayScrollViewHandler.swift; sourceTree = "<group>"; };
 		BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiriShortcuts.swift; sourceTree = "<group>"; };
+		BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
+		BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryContributionLoader.swift; sourceTree = "<group>"; };
 		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
 		BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmDataWrappers.swift; sourceTree = "<group>"; };
 		BED7B6B91F2258E700E31A82 /* CachedTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedTitle.swift; sourceTree = "<group>"; };
@@ -1316,6 +1320,8 @@
 				BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */,
 				BEB7BAD923A05F2500E39593 /* InsetTransitioningDelegate.swift */,
 				BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */,
+				BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */,
+				BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1980,6 +1986,7 @@
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
+				BEC814EE24BE8B94005C8E8C /* HistoryViewController.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
 				09D6603221E69211003D632C /* CurrentAccountViewController.swift in Sources */,
 				0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */,
@@ -2066,6 +2073,7 @@
 				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
 				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
+				BEC814F024BE8BBD005C8E8C /* HistoryContributionLoader.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
 				BE1DA5E62208EC59001C7DB4 /* SettingsUserTags.swift in Sources */,
 				0924E527219E088800C31D5E /* UIWindow+RootViewController.swift in Sources */,

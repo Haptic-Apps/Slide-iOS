@@ -1,29 +1,27 @@
 //
-//  ReadLaterContributionLoader.swift
+//  HistoryContributionLoader.swift
 //  Slide for Reddit
 //
-//  Created by Carlos Crane on 9/29/18.
-//  Copyright © 2018 Haptic Apps. All rights reserved.
+//  Created by Carlos Crane on 7/14/20.
+//  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
 import Foundation
 import RealmSwift
 import reddift
 
-class ReadLaterContributionLoader: ContributionLoader {
+class HistoryContributionLoader: ContributionLoader {
     func reset() {
         content = []
     }
     
     var color: UIColor
     var canGetMore = true
-    var sub: String
     
-    init(sub: String) {
-        color = ColorUtil.getColorForSub(sub: sub, true)
+    init() {
+        color = ColorUtil.getColorForSub(sub: "", true)
         paginator = Paginator()
         content = []
-        self.sub = sub
     }
     
     var paginator: Paginator
@@ -37,7 +35,22 @@ class ReadLaterContributionLoader: ContributionLoader {
             do {
                 if reload || ids.isEmpty {
                     paginator = Paginator()
-                    ids = ReadLater.getReadLaterIDs(sub: sub)
+                    let allKeys = History.seenTimes.keysSortedByValue {
+                        if ($0 as? Double ?? 0) < ($1 as? Double ?? 0) {
+                            return .orderedDescending
+                        } else {
+                            return .orderedAscending
+                        }
+                    }
+
+                    ids = allKeys.map({ (link) -> Link in
+                        var id = link as? String ?? ""
+                        if id.contains("_") {
+                            id = id.substring(3, length: id.length - 3)
+                        }
+                        print(id)
+                        return Link(id: id)
+                    })
                 }
                 if reload {
                     self.content = []
