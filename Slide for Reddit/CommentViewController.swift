@@ -83,6 +83,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var liveTimer = Timer()
     var refreshControl: UIRefreshControl!
     var tableView: UITableView!
+    
+    var sortButton = UIButton()
 
     var jump: UIView!
 
@@ -1101,12 +1103,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         isSearch = false
         
         searchBar.tintColor = ColorUtil.theme.fontColor
-        let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
-        sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let sortB = UIBarButtonItem.init(customView: sort)
+        sortButton = UIButton.init(type: .custom)
+        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let sortB = UIBarButtonItem.init(customView: sortButton)
 
+        doSortImage(sortButton)
+        
         let search = UIButton.init(type: .custom)
         search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
@@ -1143,13 +1146,31 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             defaultLabel.rightAnchor == group.rightAnchor
 
             let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
-
-            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
-            let defaulted = UIImage(sfString: SFSymbol.textBadgeCheckmark, overrideString: "selected")!.menuIcon().getCopy(withColor: .green)
-            let defaultSort = SettingValues.getCommentSorting(forSubreddit: self.sub)
             
             for c in CommentSort.cases {
-                actionSheetController.addAction(title: c.description, icon: sort == c ? (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : selected) : (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : nil)) {
+                if c == .suggested {
+                    continue
+                }
+                var sortIcon = UIImage()
+                
+                switch c {
+                case .suggested, .confidence:
+                    sortIcon = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .hot:
+                    sortIcon = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .controversial:
+                    sortIcon = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .new:
+                    sortIcon = UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .old:
+                    sortIcon = UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .top:
+                    sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                default:
+                    sortIcon = UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                }
+                
+                actionSheetController.addAction(title: c.description, icon: sortIcon, primary: sort == c) {
                     self.sort = c
                     self.reset = true
                     self.live = false
@@ -1161,11 +1182,30 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     self.navigationItem.rightBarButtonItems = [barButton]
                     self.activityIndicator.startAnimating()
                     
+                    self.doSortImage(self.sortButton)
+
                     self.refresh(self)
                 }
             }
 
-            actionSheetController.addAction(title: "Live (beta)", icon: live ? selected : nil) {
+            actionSheetController.addAction(title: "Q&A", icon: UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: sort == .qa) {
+                self.sort = .qa
+                self.reset = true
+                self.live = false
+                if isDefault.isOn {
+                    SettingValues.setCommentSorting(forSubreddit: self.sub, commentSorting: .qa)
+                }
+                self.activityIndicator.removeFromSuperview()
+                let barButton = UIBarButtonItem(customView: self.activityIndicator)
+                self.navigationItem.rightBarButtonItems = [barButton]
+                self.activityIndicator.startAnimating()
+                
+                self.doSortImage(self.sortButton)
+
+                self.refresh(self)
+            }
+
+            actionSheetController.addAction(title: "Live (beta)", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
                 self.setLive()
             }
             
@@ -1412,13 +1452,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.isHiding = true
         
         if navigationController != nil {
-            let sort = UIButton.init(type: .custom)
-            sort.accessibilityLabel = "Change sort type"
-            sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
-            sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-            sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            sortB = UIBarButtonItem.init(customView: sort)
+            sortButton = UIButton.init(type: .custom)
+            sortButton.accessibilityLabel = "Change sort type"
+            sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            sortB = UIBarButtonItem.init(customView: sortButton)
             
+            doSortImage(sortButton)
+
             let search = UIButton.init(type: .custom)
             search.accessibilityLabel = "Search"
             search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
@@ -2131,6 +2172,25 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     strongSelf.isCurrentlyChanging = false
                 }
             }
+        }
+    }
+
+    func doSortImage(_ sortButton: UIButton) {
+        switch sort {
+        case .suggested, .confidence:
+            sortButton.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDown, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .hot:
+            sortButton.setImage(UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .controversial:
+            sortButton.setImage(UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .new:
+            sortButton.setImage(UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .old:
+            sortButton.setImage(UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .top:
+            sortButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        default:
+            sortButton.setImage(UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         }
     }
 

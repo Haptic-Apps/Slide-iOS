@@ -128,9 +128,9 @@ class BottomActionCell: UITableViewCell {
             self.title.alpha = 0.5
             self.icon.alpha = 0.5
         } else if !action.primary {
-            self.background.alpha = 0.5
-            self.title.alpha = 0.5
-            self.icon.alpha = 0.5
+            self.background.alpha = 0.7
+            self.title.alpha = 0.7
+            self.icon.alpha = 0.7
         } else {
             self.isUserInteractionEnabled = true
             self.background.alpha = 1
@@ -283,9 +283,9 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if #available(iOS 11.0, *) {
-            return 30 + self.additionalSafeAreaInsets.bottom + 20
+            return 30 + self.additionalSafeAreaInsets.bottom + 20 + (extraView != nil ? 40 : 0)
         } else {
-            return 30 + 20
+            return 30 + 20 + (extraView != nil ? 40 : 0)
         }
     }
     

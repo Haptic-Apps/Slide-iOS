@@ -971,7 +971,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         case .controversial:
             sortButton.setImage(UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .new:
-            sortButton.setImage(UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sortButton.setImage(UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .rising:
             sortButton.setImage(UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .top:
@@ -1280,7 +1280,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             case .controversial:
                 sortIcon = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .new:
-                sortIcon = UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                sortIcon = UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .rising:
                 sortIcon = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .top:
