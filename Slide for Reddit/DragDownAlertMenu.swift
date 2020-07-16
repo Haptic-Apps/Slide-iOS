@@ -128,9 +128,9 @@ class BottomActionCell: UITableViewCell {
             self.title.alpha = 0.5
             self.icon.alpha = 0.5
         } else if !action.primary {
-            self.background.alpha = 0.7
-            self.title.alpha = 0.7
-            self.icon.alpha = 0.7
+            self.background.alpha = 0.6
+            self.title.alpha = 0.6
+            self.icon.alpha = 0.6
         } else {
             self.isUserInteractionEnabled = true
             self.background.alpha = 1
@@ -283,9 +283,9 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if #available(iOS 11.0, *) {
-            return 30 + self.additionalSafeAreaInsets.bottom + 20 + (extraView != nil ? 40 : 0)
+            return 30 + self.additionalSafeAreaInsets.bottom + 20
         } else {
-            return 30 + 20 + (extraView != nil ? 40 : 0)
+            return 30 + 20
         }
     }
     
@@ -315,10 +315,10 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         let maxHeight: CGFloat
         if full {
             maxHeight = UIScreen.main.bounds.height - 80
-            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60))
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60 + (extraView != nil ? 40 : 0)))
         } else {
             maxHeight = UIScreen.main.bounds.height * (2 / 3)
-            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60))
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60 + (extraView != nil ? 40 : 0)))
         }
         if height < maxHeight {
             tableView.isScrollEnabled = false
