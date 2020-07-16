@@ -72,6 +72,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     public static var needsRestart = false
     public static var needsReTheme = false
     public var toolbar: UIView?
+    
+    var sortButton = UIButton()
+    
     var more = UIButton()
     var menu = UIButton()
     var readLaterB = UIBarButtonItem()
@@ -1056,11 +1059,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if menu.superview != nil && !MainViewController.needsReTheme {
             return
         }
-        let sort = ExpandedHitButton(type: .custom)
-        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
-        sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        sortB = UIBarButtonItem.init(customView: sort)
+        sortButton = ExpandedHitButton(type: .custom)
+        getSubredditVC()?.doSortImage(sortButton)
+        sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        sortB = UIBarButtonItem.init(customView: sortButton)
 
         let account = ExpandedHitButton(type: .custom)
         let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()

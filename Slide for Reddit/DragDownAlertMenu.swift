@@ -17,12 +17,14 @@ class AlertMenuAction: NSObject {
     var action: () -> Void
     var enabled = true
     var isInput = false
+    var primary = true
     
-    init(title: String, icon: UIImage?, action: @escaping () -> Void, enabled: Bool = true) {
+    init(title: String, icon: UIImage?, action: @escaping () -> Void, enabled: Bool = true, primary: Bool = true) {
         self.title = title
         self.icon = icon
         self.action = action
         self.enabled = enabled
+        self.primary = primary
     }
 }
 
@@ -122,6 +124,10 @@ class BottomActionCell: UITableViewCell {
         
         if !action.enabled {
             self.isUserInteractionEnabled = false
+            self.background.alpha = 0.5
+            self.title.alpha = 0.5
+            self.icon.alpha = 0.5
+        } else if !action.primary {
             self.background.alpha = 0.5
             self.title.alpha = 0.5
             self.icon.alpha = 0.5
@@ -234,8 +240,8 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.tableView.separatorStyle = .none
     }
     
-    func addAction(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void) {
-        actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled))
+    func addAction(title: String, icon: UIImage?, enabled: Bool = true, primary: Bool = true, action: @escaping () -> Void) {
+        actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled, primary: primary))
     }
     
     func addTextInput(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void, inputPlaceholder: String, inputValue: String? = nil, inputIcon: UIImage, textRequired: Bool, exitOnAction: Bool) {

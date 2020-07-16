@@ -109,6 +109,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var subInfo: Subreddit?
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
 
+    var sortButton = UIButton.init(type: .custom)
+
     static var firstPresented = true
     static var cellVersion = 0 {
         didSet {
@@ -860,12 +862,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let offline = MainViewController.isOffline
 
+        if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !single {
+            doSortImage(mainVC.sortButton)
+        }
+
         if single && !offline {
-            let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
-            sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-            sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let sortB = UIBarButtonItem.init(customView: sort)
+            sortButton = UIButton.init(type: .custom)
+            sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let sortB = UIBarButtonItem.init(customView: sortButton)
+            doSortImage(sortButton)
 
             subb = UIButton.init(type: .custom)
             subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
@@ -953,6 +959,23 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             title = sub
             self.navigationController?.setToolbarHidden(true, animated: false)
             self.load(reset: true)
+        }
+    }
+    
+    func doSortImage(_ sortButton: UIButton) {
+        switch sort {
+        case .best:
+            sortButton.setImage(UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .hot:
+            sortButton.setImage(UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .controversial:
+            sortButton.setImage(UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .new:
+            sortButton.setImage(UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .rising:
+            sortButton.setImage(UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .top:
+            sortButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         }
     }
 
@@ -1241,9 +1264,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         defaultLabel.rightAnchor == group.rightAnchor
 
         let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
-
-        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
-        let defaulted = UIImage(sfString: SFSymbol.textBadgeCheckmark, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .green)
         
         let defaultSort = SettingValues.getLinkSorting(forSubreddit: self.sub)
         
@@ -1251,7 +1271,23 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             if link == LinkSortType.best && sub.lowercased() != "frontpage"{
                 continue
             }
-            actionSheetController.addAction(title: link.description, icon: sort == link ? (link == defaultSort && defaultSort != SettingValues.defaultSorting ? defaulted : selected) : (link == defaultSort && defaultSort != SettingValues.defaultSorting ? defaulted : nil)) {
+            var sortIcon = UIImage()
+            switch link {
+            case .best:
+                sortIcon = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+            case .hot:
+                sortIcon = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+            case .controversial:
+                sortIcon = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+            case .new:
+                sortIcon = UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+            case .rising:
+                sortIcon = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+            case .top:
+                sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+            }
+            
+            actionSheetController.addAction(title: link.description, icon: sortIcon, primary: sort == link) {
                 self.showTimeMenu(s: link, selector: selector, isDefault: isDefault)
             }
         }
@@ -1262,6 +1298,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func showTimeMenu(s: LinkSortType, selector: UIView?, isDefault: UISwitch) {
         if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
+            if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !single {
+                self.doSortImage(mainVC.sortButton)
+            } else {
+                self.doSortImage(sortButton)
+            }
+
             refresh()
             if isDefault.isOn {
                 SettingValues.setSubSorting(forSubreddit: self.sub, linkSorting: s, timePeriod: TimeFilterWithin.hour)
@@ -1274,6 +1316,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: nil) {
                     self.sort = s
+                    if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !self.single {
+                        self.doSortImage(mainVC.sortButton)
+                    } else {
+                        self.doSortImage(self.sortButton)
+                    }
+
                     self.time = t
                     if isDefault.isOn {
                         SettingValues.setSubSorting(forSubreddit: self.sub, linkSorting: s, timePeriod: t)
