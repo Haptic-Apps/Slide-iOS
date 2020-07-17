@@ -308,7 +308,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.applicationIconBadgeNumber = 0
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        resetStack()
+        if #available(iOS 14, *) {
+            resetStackNew()
+        } else {
+            resetStack()
+        }
         window?.makeKeyAndVisible()
         
         let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
@@ -375,6 +379,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.setRootViewController(rootController, animated: false)
     }
 
+    @available(iOS 14.0, *)
+    func resetStackNew() {
+        guard let window = self.window else {
+            fatalError("Window must exist when resetting the stack!")
+        }
+
+        print("NEW STACK")
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let splitViewController = UISplitViewController(style: .tripleColumn)
+            splitViewController.preferredDisplayMode = .automatic
+            splitViewController.presentsWithGesture = true
+            splitViewController.preferredSplitBehavior = .automatic
+
+            splitViewController.setViewController(CurrentAccountViewController(), for: .primary)
+
+            splitViewController.setViewController(UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)), for: .supplementary)
+            splitViewController.setViewController(PlaceholderViewController(), for: .secondary)
+            window.rootViewController = splitViewController
+            self.window = window
+            window.makeKeyAndVisible()
+        } else {
+            let splitViewController = UISplitViewController(style: .doubleColumn)
+            splitViewController.preferredDisplayMode = .primaryOverlay
+            splitViewController.presentsWithGesture = true
+            splitViewController.preferredSplitBehavior = .overlay
+
+            splitViewController.setViewController(CurrentAccountViewController(), for: .primary)
+            splitViewController.setViewController(UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)), for: .secondary)
+            window.rootViewController = splitViewController
+            self.window = window
+            window.makeKeyAndVisible()
+
+        }
+
+    }
+    
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
             VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)

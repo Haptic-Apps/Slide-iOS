@@ -49,7 +49,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
             if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItem = accountB
+                //navigationItem.leftBarButtonItem = accountB
                 navigationItem.rightBarButtonItems = [sortB, readLaterB]
             } else {
                 navigationItem.rightBarButtonItems = [sortB, readLaterB]
@@ -57,7 +57,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         } else {
             if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItems = [accountB]
+                //navigationItem.leftBarButtonItems = [accountB]
                 navigationItem.rightBarButtonItems = [sortB]
             } else {
                 navigationItem.rightBarButtonItems = [sortB]
@@ -102,7 +102,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if MainViewController.needsRestart {
             MainViewController.needsRestart = false
             tabBar.removeFromSuperview()
-            self.navigationItem.leftBarButtonItems = []
+            //self.navigationItem.leftBarButtonItems = []
             self.navigationItem.rightBarButtonItems = []
             if SettingValues.subredditBar {
                 setupTabBar(finalSubs)
@@ -348,11 +348,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         }
     }
-    
-    func splitViewController(_ svc: UISplitViewController, shouldHide vc: UIViewController, in orientation: UIInterfaceOrientation) -> Bool {
-        return false
-    }
-    
+        
     public static var first = true
     
     override func viewDidAppear(_ animated: Bool) {
@@ -604,7 +600,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     @objc func restartVC() {
-        if (splitViewController != nil && SettingValues.appMode != .SPLIT) || (splitViewController == nil && SettingValues.appMode == .SPLIT) {
+        if splitViewController == nil && SettingValues.appMode != .SPLIT {
             (UIApplication.shared.delegate as! AppDelegate).resetStack()
             //return
         }
@@ -690,7 +686,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         doButtons()
         
         tabBar.removeFromSuperview()
-        self.navigationItem.leftBarButtonItems = []
+        //self.navigationItem.leftBarButtonItems = []
         self.navigationItem.rightBarButtonItems = []
         self.delegate = self
         if SettingValues.subredditBar {
@@ -794,7 +790,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let leftItem = UIBarButtonItem(customView: label)
         
         if !SettingValues.subredditBar {
-            self.navigationItem.leftBarButtonItems = SettingValues.subredditBar ? [leftItem] : [accountB, leftItem]
+           //self.navigationItem.leftBarButtonItems = SettingValues.subredditBar ? [leftItem] : [accountB, leftItem]
         }
     }
     
@@ -924,14 +920,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.navToMux = self.navigationController!.navigationBar
         self.color1 = ColorUtil.theme.backgroundColor
         self.color2 = ColorUtil.theme.backgroundColor
-        
-        self.splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.allVisible
-        self.splitViewController?.maximumPrimaryColumnWidth = 10000
-        self.splitViewController?.preferredPrimaryColumnWidthFraction = 0.33
-        
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && self.splitViewController != nil {
-            self.splitViewController?.showDetailViewController(PlaceholderViewController(), sender: nil)
-        }
         
         self.restartVC()
         

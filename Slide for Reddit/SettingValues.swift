@@ -260,7 +260,7 @@ class SettingValues {
     public static var commentFullScreen = true
     public static var linkAlwaysThumbnail = false
     public static var autoKeyboard = true
-    public static var appMode = AppMode.SINGLE
+    public static var appMode = AppMode.SPLIT
     public static var commentJumpButton = CommentJumpMode.RIGHT
     public static var alwaysShowHeader = false
     public static var disablePreviews = false
