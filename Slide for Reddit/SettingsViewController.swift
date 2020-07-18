@@ -765,10 +765,11 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
 
                 autoreleasepool {
-                    let realm = try! Realm()
-                    try! realm.writeCopy(toFile: compactedURL)
-                    try! FileManager.default.removeItem(at: defaultURL)
-                    try! FileManager.default.moveItem(at: compactedURL, to: defaultURL)
+                    if let realm = try? Realm() {
+                        try? realm.writeCopy(toFile: compactedURL)
+                        try? FileManager.default.removeItem(at: defaultURL)
+                        try? FileManager.default.moveItem(at: compactedURL, to: defaultURL)
+                    }
                 }
 
                 let countBytes = ByteCountFormatter()

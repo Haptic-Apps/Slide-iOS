@@ -20,6 +20,8 @@ Pods/
 .DS_Store
 .AppleDouble
 .LSOverride
+*.dSYM.zip
+*.ipa
 
 # Icon must end with two \r
 Icon
