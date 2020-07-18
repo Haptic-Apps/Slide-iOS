@@ -159,6 +159,8 @@
 		BE257A7321F64AA30082A47E /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE257A7121F64AA30082A47E /* MainInterface.storyboard */; };
 		BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE257A6B21F64AA30082A47E /* Open in Slide.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BE257A7D21F8D9710082A47E /* SettingsThemeChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A7C21F8D9710082A47E /* SettingsThemeChooser.swift */; };
+		BE25CAD424C3A28300736CA5 /* SwipeForwardNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */; };
+		BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */; };
 		BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE292568213C5730006B5130 /* LocalKeystore.swift */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
@@ -576,6 +578,8 @@
 		BE257A7221F64AA30082A47E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BE257A7421F64AA30082A47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE257A7C21F8D9710082A47E /* SettingsThemeChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsThemeChooser.swift; sourceTree = "<group>"; };
+		BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeForwardNavigationController.swift; sourceTree = "<group>"; };
+		BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeForwardAnimatedTransitioning.swift; sourceTree = "<group>"; };
 		BE292568213C5730006B5130 /* LocalKeystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalKeystore.swift; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
@@ -1322,6 +1326,8 @@
 				BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */,
 				BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */,
 				BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */,
+				BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */,
+				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1977,6 +1983,7 @@
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
 				BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */,
 				BE9428EA20C46B5600E1A33A /* PostActions.swift in Sources */,
+				BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
 				BEEA03CD20E1B53E007A8928 /* HapticUtility.swift in Sources */,
 				09D6603421E8F189003D632C /* CurrentAccountPresentationManager.swift in Sources */,
@@ -1985,6 +1992,7 @@
 				BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */,
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
+				BE25CAD424C3A28300736CA5 /* SwipeForwardNavigationController.swift in Sources */,
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
 				BEC814EE24BE8B94005C8E8C /* HistoryViewController.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
