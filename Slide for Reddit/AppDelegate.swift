@@ -404,9 +404,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             splitViewController.preferredDisplayMode = .primaryOverlay
             splitViewController.presentsWithGesture = true
             splitViewController.preferredSplitBehavior = .overlay
+            
 
-            splitViewController.setViewController(CurrentAccountViewController(), for: .primary)
-            splitViewController.setViewController(UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)), for: .secondary)
+            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: CurrentAccountViewController()), for: .primary)
+            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)), for: .secondary)
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()

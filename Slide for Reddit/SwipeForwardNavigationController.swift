@@ -9,19 +9,19 @@
 //
 
 import UIKit
-let kSWGestureVelocityThreshold = 800
-
 typealias SWNavigationControllerPushCompletion = () -> Void
 
 class SwipeForwardNavigationController: UINavigationController {
     private var percentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransition?
     private var interactivePushGestureRecognizer: UIScreenEdgePanGestureRecognizer?
-    private var pushableViewControllers: [AnyHashable]?
+    private var pushableViewControllers: [UIViewController] = []
  /* View controllers we can push onto the navigation stack by pulling in from the right screen edge. */    // Extra state used to implement completion blocks on pushViewController:
     private var pushCompletion: SWNavigationControllerPushCompletion?
     private var pushedViewController: UIViewController?
     
-    init(navigationBarClass: AnyClass?, toolbarClass: AnyClass?) {
+    var pushAnimatedTransitioningClass: SwipeForwardAnimatedTransitioning?
+
+    override init(navigationBarClass: AnyClass?, toolbarClass: AnyClass?) {
         super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
 
         setup()
@@ -33,44 +33,44 @@ class SwipeForwardNavigationController: UINavigationController {
         setup()
     }
 
-    init(rootViewController: UIViewController) {
+    override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
 
         setup()
     }
 
-    init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
         setup()
     }
     
     func setup() {
-        pushableViewControllers = [AnyHashable]()
+        pushableViewControllers = [UIViewController]()
 
         delegate = self
-        pushAnimatedTransitioningClass = SWPushAnimatedTransitioning.self
+        pushAnimatedTransitioningClass = SwipeForwardAnimatedTransitioning()
     }
 
-    func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         interactivePushGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleRightSwipe(_:)))
-        interactivePushGestureRecognizer.edges = UIRectEdge.right
-        interactivePushGestureRecognizer.delegate = self
-        view.addGestureRecognizer(interactivePushGestureRecognizer)
+        interactivePushGestureRecognizer?.edges = UIRectEdge.right
+        interactivePushGestureRecognizer?.delegate = self
+        view.addGestureRecognizer(interactivePushGestureRecognizer!)
 
         // To ensure swipe-back is still recognized
         interactivePopGestureRecognizer?.delegate = self
     }
 
-    func didReceiveMemoryWarning() {
+    override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
 
         pushableViewControllers.removeAll()
     }
 
-    func handleRightSwipe(_ swipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?) {
+    @objc func handleRightSwipe(_ swipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?) {
         let progress = abs(-(swipeGestureRecognizer?.translation(in: view).x ?? 0.0) / view.frame.size.width) // 1.0 When the pushable vc has been pulled into place
 
         // Start, update, or finish the interactive push transition
@@ -78,12 +78,12 @@ class SwipeForwardNavigationController: UINavigationController {
             case .began:
                 pushNextViewControllerFromRight()
             case .changed:
-                percentDrivenInteractiveTransition.update(progress)
+                percentDrivenInteractiveTransition?.update(progress)
             case .ended:
                 // Figure out if we should finish the transition or not
-                handleEdgeSwipeEnded(withProgress: progress, velocity: swipeGestureRecognizer?.velocity(in: view).x)
+                handleEdgeSwipeEnded(withProgress: progress, velocity: swipeGestureRecognizer?.velocity(in: view).x ?? 0)
             case .failed:
-                percentDrivenInteractiveTransition.cancelInteractiveTransition()
+                percentDrivenInteractiveTransition?.cancel()
             case .cancelled, .possible:
                 fallthrough
             default:
@@ -93,10 +93,10 @@ class SwipeForwardNavigationController: UINavigationController {
 
     func handleEdgeSwipeEnded(withProgress progress: CGFloat, velocity: CGFloat) {
         // kSWGestureVelocityThreshold threshold indicates how hard the finger has to flick left to finish the push transition
-        if velocity < 0 && (progress > 0.5 || velocity < -kSWGestureVelocityThreshold) {
-            percentDrivenInteractiveTransition.finishInteractiveTransition()
+        if velocity < 0 && (progress > 0.5 || velocity < -800) {
+            percentDrivenInteractiveTransition?.finish()
         } else {
-            percentDrivenInteractiveTransition.cancelInteractiveTransition()
+            percentDrivenInteractiveTransition?.cancel()
         }
     }
 }
@@ -107,7 +107,7 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
         var shouldBegin = false
 
         if gestureRecognizer == interactivePushGestureRecognizer {
-            shouldBegin = pushableViewControllers.count > 0 && !((pushableViewControllers.last as? UIViewController) == topViewController)
+            shouldBegin = pushableViewControllers.count > 0 && !((pushableViewControllers.last) == topViewController)
         } else {
             shouldBegin = viewControllers.count > 1
         }
@@ -136,16 +136,16 @@ extension SwipeForwardNavigationController {
     }
     
     override func popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
-        let poppedViewControllers = popToViewController(viewController, animated: animated)
-        self.pushableViewControllers = poppedViewControllers.reverseObjectEnumerator().allObjects
+        let poppedViewControllers = super.popToViewController(viewController, animated: animated)
+        self.pushableViewControllers = poppedViewControllers?.backwards() ?? []
 
-        return poppedViewControllers
+        return poppedViewControllers ?? []
     }
     
     override func popToRootViewController(animated: Bool) -> [UIViewController]? {
         let poppedViewControllers = super.popToRootViewController(animated: true)
 
-        if let all = ((poppedViewControllers as NSArray?)?.reverseObjectEnumerator()).allObjects {
+        if let all = poppedViewControllers?.backwards() {
             pushableViewControllers = all
         }
 
@@ -155,10 +155,10 @@ extension SwipeForwardNavigationController {
     override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
         super.setViewControllers(viewControllers, animated: animated)
         
-        self.pushableViewControllers?.removeAll()
+        self.pushableViewControllers.removeAll()
     }
 
-    func push(_ viewController: UIViewController?, animated: Bool, completion: SWNavigationControllerPushCompletion) {
+    func push(_ viewController: UIViewController?, animated: Bool, completion: @escaping SWNavigationControllerPushCompletion) {
         pushedViewController = viewController
         pushCompletion = completion
         if let viewController = viewController {
@@ -167,9 +167,9 @@ extension SwipeForwardNavigationController {
     }
 
     func pushNextViewControllerFromRight() {
-        let pushedViewController = pushableViewControllers.last as? UIViewController
+        let pushedViewController = pushableViewControllers.last
 
-        if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == nil && visibleViewController?.isBeingDismissed == nil {
+        if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
             push(pushedViewController, animated: true) {
                 self.pushableViewControllers.removeLast()
             }
@@ -180,21 +180,17 @@ extension SwipeForwardNavigationController {
 extension SwipeForwardNavigationController: UINavigationControllerDelegate {
 
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        // If we are either pulling in a new VC onto the stack or we have a custom pushAnimatedTransitioningClass that we want to use to transition
-        if operation == .push && (((navigationController as? SWNavigationController)?.interactivePushGestureRecognizer()).state() == .began || (pushAnimatedTransitioningClass != SWPushAnimatedTransitioning.self)) {
-            return pushAnimatedTransitioningClass.init()
-        } else if operation == .pop && popAnimatedTransitioningClass {
-            return popAnimatedTransitioningClass.init()
+        if operation == .push {
+            return self.pushAnimatedTransitioningClass
         }
-
         return nil
     }
 
     func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        let navController = navigationController as? SWNavigationController
-        if navController?.interactivePushGestureRecognizer.state == .began {
+        let navController = navigationController as? SwipeForwardNavigationController
+        if navController?.interactivePushGestureRecognizer?.state == .began {
             navController?.percentDrivenInteractiveTransition = UIPercentDrivenInteractiveTransition()
-            navController?.percentDrivenInteractiveTransition.completionCurve = .easeOut
+            navController?.percentDrivenInteractiveTransition?.completionCurve = .easeOut
         } else {
             navController?.percentDrivenInteractiveTransition = nil
         }
@@ -210,8 +206,8 @@ extension SwipeForwardNavigationController: UINavigationControllerDelegate {
     }
 
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        if pushCompletion && pushedViewController == viewController {
-            pushCompletion()
+        if (pushCompletion != nil) && pushedViewController == viewController {
+            pushCompletion?()
         }
 
         pushCompletion = nil

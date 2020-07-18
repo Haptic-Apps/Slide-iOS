@@ -49,7 +49,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
             if SettingValues.subredditBar {
-                //navigationItem.leftBarButtonItem = accountB
+                navigationItem.leftBarButtonItem = accountB
                 navigationItem.rightBarButtonItems = [sortB, readLaterB]
             } else {
                 navigationItem.rightBarButtonItems = [sortB, readLaterB]
@@ -57,7 +57,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         } else {
             if SettingValues.subredditBar {
-                //navigationItem.leftBarButtonItems = [accountB]
+                navigationItem.leftBarButtonItems = [accountB]
                 navigationItem.rightBarButtonItems = [sortB]
             } else {
                 navigationItem.rightBarButtonItems = [sortB]
@@ -102,7 +102,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if MainViewController.needsRestart {
             MainViewController.needsRestart = false
             tabBar.removeFromSuperview()
-            //self.navigationItem.leftBarButtonItems = []
+            self.navigationItem.leftBarButtonItems = []
             self.navigationItem.rightBarButtonItems = []
             if SettingValues.subredditBar {
                 setupTabBar(finalSubs)
@@ -600,10 +600,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     @objc func restartVC() {
-        if splitViewController == nil && SettingValues.appMode != .SPLIT {
+        /* TODO: What does this do?
+         if splitViewController == nil && SettingValues.appMode != .SPLIT {
             (UIApplication.shared.delegate as! AppDelegate).resetStack()
             //return
-        }
+        }*/
         
         let saved = getSubredditVC()
         let savedPage = saved?.sub ?? ""
@@ -686,7 +687,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         doButtons()
         
         tabBar.removeFromSuperview()
-        //self.navigationItem.leftBarButtonItems = []
+        self.navigationItem.leftBarButtonItems = []
         self.navigationItem.rightBarButtonItems = []
         self.delegate = self
         if SettingValues.subredditBar {
@@ -790,7 +791,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let leftItem = UIBarButtonItem(customView: label)
         
         if !SettingValues.subredditBar {
-           //self.navigationItem.leftBarButtonItems = SettingValues.subredditBar ? [leftItem] : [accountB, leftItem]
+           self.navigationItem.leftBarButtonItems = SettingValues.subredditBar ? [leftItem] : [accountB, leftItem]
         }
     }
     
@@ -981,7 +982,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         //        drawerButton.heightAnchor == 40
         //        drawerButton.widthAnchor == 40
         
-        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
+        //TODO reenable this
+        /*let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
         edgePan.edges = .right
         for view in view.subviews {
             for rec in view.gestureRecognizers ?? [] {
@@ -992,7 +994,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             rec.require(toFail: edgePan)
         }
 
-        self.view.addGestureRecognizer(edgePan)
+        self.view.addGestureRecognizer(edgePan)*/
     }
     
     @objc func screenEdgeSwiped() {
