@@ -75,19 +75,19 @@ class SwipeForwardNavigationController: UINavigationController {
 
         // Start, update, or finish the interactive push transition
         switch swipeGestureRecognizer?.state {
-            case .began:
-                pushNextViewControllerFromRight()
-            case .changed:
-                percentDrivenInteractiveTransition?.update(progress)
-            case .ended:
-                // Figure out if we should finish the transition or not
-                handleEdgeSwipeEnded(withProgress: progress, velocity: swipeGestureRecognizer?.velocity(in: view).x ?? 0)
-            case .failed:
-                percentDrivenInteractiveTransition?.cancel()
-            case .cancelled, .possible:
-                fallthrough
-            default:
-                break
+        case .began:
+            pushNextViewControllerFromRight()
+        case .changed:
+            percentDrivenInteractiveTransition?.update(progress)
+        case .ended:
+            // Figure out if we should finish the transition or not
+            handleEdgeSwipeEnded(withProgress: progress, velocity: swipeGestureRecognizer?.velocity(in: view).x ?? 0)
+        case .failed:
+            percentDrivenInteractiveTransition?.cancel()
+        case .cancelled, .possible:
+            fallthrough
+        default:
+            break
         }
     }
 
@@ -180,7 +180,7 @@ extension SwipeForwardNavigationController {
 extension SwipeForwardNavigationController: UINavigationControllerDelegate {
 
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        if operation == .push {
+        if operation == .push && (((navigationController as? SwipeForwardNavigationController)?.interactivePushGestureRecognizer)?.state == .began) {
             return self.pushAnimatedTransitioningClass
         }
         return nil

@@ -47,7 +47,7 @@ class SubredditCellView: UITableViewCell {
 
         self.sideView = UIView().then {
             $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
-            $0.layer.cornerRadius = 8
+            $0.layer.cornerRadius = 12
             $0.clipsToBounds = true
         }
 
@@ -58,7 +58,9 @@ class SubredditCellView: UITableViewCell {
         }
         
         self.icon = UIImageView().then {
-            $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
+            $0.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
+            $0.layer.cornerRadius = 12
+            $0.clipsToBounds = true
             $0.isHidden = true
         }
 
@@ -69,7 +71,7 @@ class SubredditCellView: UITableViewCell {
     func configureLayout() {
         batch {
             sideView.leftAnchor == contentView.leftAnchor + 16
-            sideView.sizeAnchors == CGSize.square(size: 16)
+            sideView.sizeAnchors == CGSize.square(size: 24)
             sideView.centerYAnchor == contentView.centerYAnchor
 
             pin.leftAnchor == sideView.rightAnchor + 6
@@ -77,7 +79,7 @@ class SubredditCellView: UITableViewCell {
             pin.centerYAnchor == contentView.centerYAnchor
 
             icon.leftAnchor == contentView.leftAnchor + 16
-            icon.sizeAnchors == CGSize.square(size: 16)
+            icon.sizeAnchors == CGSize.square(size: 24)
             icon.centerYAnchor == contentView.centerYAnchor
 
             title.leftAnchor == pin.rightAnchor + 2

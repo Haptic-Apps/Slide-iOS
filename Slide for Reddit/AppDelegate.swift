@@ -405,15 +405,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             splitViewController.presentsWithGesture = true
             splitViewController.preferredSplitBehavior = .overlay
             
-
-            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: CurrentAccountViewController()), for: .primary)
-            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)), for: .secondary)
+            let main = MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
+            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: main), for: .secondary)
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
-
         }
-
     }
     
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {

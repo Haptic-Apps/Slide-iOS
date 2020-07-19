@@ -47,11 +47,12 @@ class SwipeForwardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTrans
                 snapshotToView!.layer.add(anim, forKey: "shadowOpacity")
                 snapshotToView!.layer.shadowOpacity = Float(kSWToLayerShadowOpacity)
 
-                UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveLinear, animations: {
+                UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveEaseInOut) {
                     // Move views to final frames
                     snapshotToView!.frame = fromView.frame
                     fromView.frame = fromViewFinalFrame
-                }) { finished in
+
+                } completion: { (finished) in
                     snapshotToView!.layer.shadowOpacity = 0
 
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
@@ -65,8 +66,7 @@ class SwipeForwardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTrans
             }
         }
     }
-    
-    
+
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return TimeInterval(kSWPushTransitionDuration)
     }

@@ -161,6 +161,8 @@
 		BE257A7D21F8D9710082A47E /* SettingsThemeChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A7C21F8D9710082A47E /* SettingsThemeChooser.swift */; };
 		BE25CAD424C3A28300736CA5 /* SwipeForwardNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */; };
 		BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */; };
+		BE25CAD824C49D5D00736CA5 /* CurrentAccountHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */; };
+		BE25CADA24C4B02700736CA5 /* NavigationHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */; };
 		BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE292568213C5730006B5130 /* LocalKeystore.swift */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
@@ -580,6 +582,8 @@
 		BE257A7C21F8D9710082A47E /* SettingsThemeChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsThemeChooser.swift; sourceTree = "<group>"; };
 		BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeForwardNavigationController.swift; sourceTree = "<group>"; };
 		BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeForwardAnimatedTransitioning.swift; sourceTree = "<group>"; };
+		BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountHeaderView.swift; sourceTree = "<group>"; };
+		BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHomeViewController.swift; sourceTree = "<group>"; };
 		BE292568213C5730006B5130 /* LocalKeystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalKeystore.swift; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
@@ -1328,6 +1332,8 @@
 				BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */,
 				BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */,
 				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
+				BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */,
+				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1978,6 +1984,7 @@
 			files = (
 				BE6EA6E41E1DA24700E9E709 /* ContentListingViewController.swift in Sources */,
 				09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */,
+				BE25CAD824C49D5D00736CA5 /* CurrentAccountHeaderView.swift in Sources */,
 				BEBE0C71222330010044FF55 /* SettingsPostMenu.swift in Sources */,
 				BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
@@ -1990,6 +1997,7 @@
 				BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */,
 				BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */,
 				BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */,
+				BE25CADA24C4B02700736CA5 /* NavigationHomeViewController.swift in Sources */,
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BE25CAD424C3A28300736CA5 /* SwipeForwardNavigationController.swift in Sources */,
