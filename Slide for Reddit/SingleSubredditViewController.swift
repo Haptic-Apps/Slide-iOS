@@ -109,8 +109,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var subInfo: Subreddit?
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
 
-    var sortButton = UIButton.init(type: .custom)
-
     static var firstPresented = true
     static var cellVersion = 0 {
         didSet {
@@ -866,7 +864,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let offline = MainViewController.isOffline
 
-        if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !single {
+        if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
             doSortImage(mainVC.sortButton)
         }
 
@@ -1305,7 +1303,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func showTimeMenu(s: LinkSortType, selector: UIView?, isDefault: UISwitch) {
         if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
-            if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !single {
+            if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
                 self.doSortImage(mainVC.sortButton)
             } else {
                 self.doSortImage(sortButton)
@@ -1323,7 +1321,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: nil) {
                     self.sort = s
-                    if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !self.single {
+                    if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
                         self.doSortImage(mainVC.sortButton)
                     } else {
                         self.doSortImage(self.sortButton)
