@@ -23,7 +23,6 @@ class SplitMainViewController: MainViewController {
     }
 
     override func handleToolbars() {
-        self.parent?.navigationController?.setToolbarHidden(true, animated: false)
     }
     
     override func redoSubs() {
@@ -99,42 +98,12 @@ class SplitMainViewController: MainViewController {
         for view in toolbar?.subviews ?? [UIView]() {
             view.removeFromSuperview()
         }
-        if !MainViewController.isOffline {
-            more = UIButton(type: .custom).then {
-                $0.setImage(UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-                $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-
-                $0.accessibilityIdentifier = "Subreddit options button"
-                $0.accessibilityLabel = "Options"
-                $0.accessibilityHint = "Open subreddit options menu"
-            }
-            toolbar?.insertSubview(more, at: 0)
-            more.sizeAnchors == .square(size: 56)
-            
-            menu = UIButton(type: .custom).then {
-                $0.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
-                $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
-                $0.accessibilityIdentifier = "Nav drawer button"
-                $0.accessibilityLabel = "Navigate"
-                $0.accessibilityHint = "Open navigation drawer"
-            }
-            toolbar?.insertSubview(menu, at: 0)
-            menu.sizeAnchors == .square(size: 56)
-
-            if let tool = toolbar {
-                menu.leftAnchor == tool.leftAnchor
-                menu.topAnchor == tool.topAnchor
-                more.rightAnchor == tool.rightAnchor
-                more.topAnchor == tool.topAnchor
-            }
-            
-        } else {
+        if MainViewController.isOffline {
             toolbarItems = [settingsB, accountB, flexButton, offlineB]
         }
         didUpdate()
     }
 
-    
     override func viewDidLoad() {
         self.navToMux = self.navigationController!.navigationBar
         self.color1 = ColorUtil.theme.foregroundColor

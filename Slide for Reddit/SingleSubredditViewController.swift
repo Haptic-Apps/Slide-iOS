@@ -901,8 +901,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
             
-
-            toolbarItems = [infoB, flexButton, moreB]
+            if parent is SplitMainViewController {
+                parent!.toolbarItems = [infoB, flexButton, moreB]
+            } else {
+                toolbarItems = [infoB, flexButton, moreB]
+            }
+            
             title = sub
 
             if !loaded {

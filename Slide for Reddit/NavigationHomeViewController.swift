@@ -112,7 +112,7 @@ class NavigationHomeViewController: UIViewController {
                                                name: UIResponder.keyboardWillHideNotification, object: nil)
 
         updateAccessibility()
-        searchBar.isUserInteractionEnabled = false
+        searchBar.isUserInteractionEnabled = true
     }
     
     struct Callbacks {
@@ -194,6 +194,8 @@ class NavigationHomeViewController: UIViewController {
         
         searchBar.sizeToFit()
         searchBar.delegate = self
+        
+        headerView.isUserInteractionEnabled = true
         headerView.addSubviews(accountHeader!, searchBar)
 
         headerView.addSubview(accessibilityCloseButton)
@@ -225,7 +227,7 @@ class NavigationHomeViewController: UIViewController {
         accountHeader!.horizontalAnchors == headerView.horizontalAnchors
         accountHeader!.heightAnchor == accountHeader!.estimateHeight()
         searchBar.topAnchor == accountHeader!.bottomAnchor + 4
-        searchBar.horizontalAnchors == headerView.horizontalAnchors
+        searchBar.horizontalAnchors == headerView.horizontalAnchors + 8
         searchBar.heightAnchor == 50
         searchBar.bottomAnchor == headerView.bottomAnchor
 

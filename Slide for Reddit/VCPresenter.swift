@@ -34,7 +34,7 @@ public class VCPresenter {
         var parentIs13 = false
         if parentNavigationController != nil {
             if #available(iOS 13.0, *) {
-                if parentNavigationController!.modalPresentationStyle == .pageSheet && parentNavigationController!.viewControllers.count == 1 && !(parentNavigationController!.viewControllers[0] is MainViewController) {
+                if parentNavigationController!.modalPresentationStyle == .pageSheet && parentNavigationController!.viewControllers.count == 1 && !(parentNavigationController!.viewControllers[0] is MainViewController || parentNavigationController!.viewControllers[0] is NavigationHomeViewController) {
                     parentIs13 = true
                 }
             }
@@ -42,10 +42,10 @@ public class VCPresenter {
         if (UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
             override13 = false
         }
-        if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(UINavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if (parentViewController?.splitViewController != nil) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
+        } else if (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
             
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true
@@ -103,8 +103,10 @@ public class VCPresenter {
 
             viewController.navigationItem.leftBarButtonItem = barButton
 
-            viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
-            viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+            if !(parentViewController is SplitMainViewController) {
+                viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
+                viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+            }
         }
 
     }
