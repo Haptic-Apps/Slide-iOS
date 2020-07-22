@@ -104,8 +104,6 @@ class NavigationHomeViewController: UIViewController {
         configureViews()
         configureLayout()
         
-        (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
-
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
                                                name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
