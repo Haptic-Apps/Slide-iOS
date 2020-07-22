@@ -205,7 +205,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         }
         
-        print("PARENT IS \(parent)")
         if single && !(parent is SplitMainViewController) {
             self.edgesForExtendedLayout = UIRectEdge.all
         } else {
@@ -303,9 +302,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
-        splitViewController?.navigationController?.navigationBar.isTranslucent = false
         
-        splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
+        if !single {
+            splitViewController?.navigationController?.navigationBar.isTranslucent = false
+            splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
+        }
         if let bar = splitViewController?.navigationController?.navigationBar {
             bar.heightAnchor == 0
         }
@@ -840,9 +841,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header")
         lastVersion = SingleSubredditViewController.cellVersion
 
-        var top = 68
+        var top = 64
         if #available(iOS 11.0, *) {
-            top += 20
+            top += 28
         }
                 
         if self.navigationController != nil {
@@ -1646,7 +1647,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                         }
                                     }
                                     let navoffset = (-1 * ( (strongSelf.navigationController?.navigationBar.frame.size.height ?? 64)))
-                                    strongSelf.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top + headerHeight)
+                                    strongSelf.tableView.contentOffset = CGPoint.init(x: 0, y: -22 + navoffset - top + headerHeight)
                                 } else {
                                     strongSelf.flowLayout.invalidateLayout()
                                     strongSelf.tableView.insertItems(at: paths)

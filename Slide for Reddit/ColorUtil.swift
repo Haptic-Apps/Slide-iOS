@@ -113,7 +113,7 @@ public class ColorUtil {
 
     public static func getColorForSub(sub: String, _ header: Bool = false) -> UIColor {
         if header && SettingValues.reduceColor {
-            return ColorUtil.theme.backgroundColor
+            return ColorUtil.theme.foregroundColor
         }
         if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
             return color

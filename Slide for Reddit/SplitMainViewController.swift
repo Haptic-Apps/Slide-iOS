@@ -333,8 +333,6 @@ class SplitMainViewController: MainViewController {
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.handleToolbars()
-        
-        print("Starting")
 
         ReadLater.delegate = self
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
