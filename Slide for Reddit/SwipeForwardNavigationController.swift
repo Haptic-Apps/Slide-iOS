@@ -13,7 +13,7 @@ typealias SWNavigationControllerPushCompletion = () -> Void
 
 class SwipeForwardNavigationController: UINavigationController {
     private var percentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransition?
-    private var interactivePushGestureRecognizer: UIScreenEdgePanGestureRecognizer?
+    public var interactivePushGestureRecognizer: UIScreenEdgePanGestureRecognizer?
     private var pushableViewControllers: [UIViewController] = []
  /* View controllers we can push onto the navigation stack by pulling in from the right screen edge. */    // Extra state used to implement completion blocks on pushViewController:
     private var pushCompletion: SWNavigationControllerPushCompletion?
@@ -71,6 +71,7 @@ class SwipeForwardNavigationController: UINavigationController {
     }
 
     @objc func handleRightSwipe(_ swipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?) {
+        let view = swipeGestureRecognizer?.view ?? self.view!
         let progress = abs(-(swipeGestureRecognizer?.translation(in: view).x ?? 0.0) / view.frame.size.width) // 1.0 When the pushable vc has been pulled into place
 
         // Start, update, or finish the interactive push transition
@@ -106,7 +107,7 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         var shouldBegin = false
 
-        if gestureRecognizer == interactivePushGestureRecognizer {
+        if gestureRecognizer == interactivePushGestureRecognizer || gestureRecognizer.view?.tag ?? 0 == 42 {
             shouldBegin = pushableViewControllers.count > 0 && !((pushableViewControllers.last) == topViewController)
         } else {
             shouldBegin = viewControllers.count > 1

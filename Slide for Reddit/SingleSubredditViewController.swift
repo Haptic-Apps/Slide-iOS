@@ -152,6 +152,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     init(subName: String, parent: MainViewController) {
         sub = subName
         self.parentController = parent
+        
+        single = parent is SplitMainViewController
 
         super.init(nibName: nil, bundle: nil)
         self.autoplayHandler = AutoplayScrollViewHandler(delegate: self)
@@ -262,7 +264,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) {
+        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) && !(parent is SplitMainViewController) {
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
             for view in view.subviews {
@@ -301,12 +303,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
         splitViewController?.navigationController?.navigationBar.isTranslucent = false
+        
         splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
         if let bar = splitViewController?.navigationController?.navigationBar {
             bar.heightAnchor == 0
         }
 
-        if single && !isModal && (self.navigationController?.delegate is SloppySwiper) {
+        if single && !isModal && (self.navigationController?.delegate is SloppySwiper) && !(parent is SplitMainViewController) {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
             if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
                 self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
@@ -318,7 +321,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.splitViewController?.navigationController?.navigationBar.shadowImage = UIImage()
 
-        if single {
+        if single && !(parent is SplitMainViewController) {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
         
@@ -622,6 +625,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 }
             }
         }
+        
         if !MainViewController.isOffline && !SettingValues.hiddenFAB {
             self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
             self.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
@@ -867,17 +871,22 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         if single && !offline {
-            sortButton = UIButton.init(type: .custom)
-            sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let sortB = UIBarButtonItem.init(customView: sortButton)
-            doSortImage(sortButton)
+            if !(parent is SplitMainViewController) {
+                sortButton = UIButton.init(type: .custom)
+                sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
+                sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let sortB = UIBarButtonItem.init(customView: sortButton)
+                doSortImage(sortButton)
 
-            subb = UIButton.init(type: .custom)
-            subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
-            subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
-            subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-
+                subb = UIButton.init(type: .custom)
+                subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
+                subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
+                subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                navigationItem.rightBarButtonItems = [sortB]
+            }
+            
+            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+            
             let info = UIButton.init(type: .custom)
             info.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.toolbarIcon(), for: UIControl.State.normal)
             info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControl.Event.touchUpInside)
@@ -890,9 +899,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
             
-            navigationItem.rightBarButtonItems = [sortB]
-            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-            
+
             toolbarItems = [infoB, flexButton, moreB]
             title = sub
 
@@ -1123,7 +1130,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func resetColors() {
-        if single {
+        if single && !(parent is SplitMainViewController) {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
         setupFab(UIScreen.main.bounds.size)

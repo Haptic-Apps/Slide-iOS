@@ -163,6 +163,8 @@
 		BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */; };
 		BE25CAD824C49D5D00736CA5 /* CurrentAccountHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */; };
 		BE25CADA24C4B02700736CA5 /* NavigationHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */; };
+		BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */; };
+		BE25CADE24C4E3FB00736CA5 /* SplitMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */; };
 		BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE292568213C5730006B5130 /* LocalKeystore.swift */; };
 		BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F21E2450D70053D493 /* ColorPicker.swift */; };
 		BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B89F41E246CA60053D493 /* GMColor.swift */; };
@@ -316,7 +318,7 @@
 		BEE206F61F1CF7D3008BB5F1 /* SettingsLinkHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE206F51F1CF7D3008BB5F1 /* SettingsLinkHandling.swift */; };
 		BEE206F81F1CFC96008BB5F1 /* SettingsHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE206F71F1CFC96008BB5F1 /* SettingsHistory.swift */; };
 		BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE206F91F1DE286008BB5F1 /* WrappingFlowLayout.swift */; };
-		BEE5BF621E119A9000E3C9AE /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF611E119A9000E3C9AE /* MainViewController.swift */; };
+		BEE5BF621E119A9000E3C9AE /* LegacyMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF611E119A9000E3C9AE /* LegacyMainViewController.swift */; };
 		BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */; };
 		BEE5BF6C1E12C92F00E3C9AE /* DateFormatter+util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */; };
 		BEE5BF841E14836E00E3C9AE /* MediaVCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE5BF831E14836E00E3C9AE /* MediaVCDelegate.swift */; };
@@ -584,6 +586,8 @@
 		BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeForwardAnimatedTransitioning.swift; sourceTree = "<group>"; };
 		BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountHeaderView.swift; sourceTree = "<group>"; };
 		BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHomeViewController.swift; sourceTree = "<group>"; };
+		BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitMainViewController.swift; sourceTree = "<group>"; };
 		BE292568213C5730006B5130 /* LocalKeystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalKeystore.swift; sourceTree = "<group>"; };
 		BE2B89F21E2450D70053D493 /* ColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		BE2B89F41E246CA60053D493 /* GMColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
@@ -746,7 +750,7 @@
 		BEE206F51F1CF7D3008BB5F1 /* SettingsLinkHandling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsLinkHandling.swift; sourceTree = "<group>"; };
 		BEE206F71F1CFC96008BB5F1 /* SettingsHistory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsHistory.swift; sourceTree = "<group>"; };
 		BEE206F91F1DE286008BB5F1 /* WrappingFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrappingFlowLayout.swift; sourceTree = "<group>"; };
-		BEE5BF611E119A9000E3C9AE /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		BEE5BF611E119A9000E3C9AE /* LegacyMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyMainViewController.swift; sourceTree = "<group>"; };
 		BEE5BF631E11A15500E3C9AE /* LinkCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkCellView.swift; sourceTree = "<group>"; };
 		BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateFormatter+util.swift"; sourceTree = "<group>"; };
 		BEE5BF831E14836E00E3C9AE /* MediaVCDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaVCDelegate.swift; sourceTree = "<group>"; };
@@ -1267,7 +1271,7 @@
 				BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */,
 				BE9456011F3375460097EEF0 /* LeftTransition.swift */,
 				BE97422A1F00112F00BF48E0 /* LinkCellViews */,
-				BEE5BF611E119A9000E3C9AE /* MainViewController.swift */,
+				BEE5BF611E119A9000E3C9AE /* LegacyMainViewController.swift */,
 				BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */,
 				BEB2B2381E35D64F00BF761C /* MessageCellView.swift */,
 				B776BECBFCB8F58AC234156A /* ModerationViewController.swift */,
@@ -1318,8 +1322,8 @@
 				BE8AE94221F9225000E1C0D1 /* Main.storyboard */,
 				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
 				BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */,
-				BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */,
 				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
+				BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */,
 				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
 				BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */,
 				BEC4A1B1232F3B4F00EE5114 /* collections.plist */,
@@ -1334,6 +1338,8 @@
 				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
 				BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */,
 				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
+				BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */,
+				BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -2035,7 +2041,7 @@
 				BE3521801E3D3BDD00C30B8D /* LinkParser.swift in Sources */,
 				BE5466271FB93F46007ADD22 /* PlaceholderViewController.swift in Sources */,
 				0991D2A5211CDF8100E86B4C /* UIColor+Extensions.swift in Sources */,
-				BEE5BF621E119A9000E3C9AE /* MainViewController.swift in Sources */,
+				BEE5BF621E119A9000E3C9AE /* LegacyMainViewController.swift in Sources */,
 				BE6EA6D61E1C1FC700E9E709 /* Formats.swift in Sources */,
 				BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */,
 				BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */,
@@ -2110,6 +2116,7 @@
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
+				BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
@@ -2135,6 +2142,7 @@
 				BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */,
 				BE6EA6DD1E1C211200E9E709 /* GfycatCheck.swift in Sources */,
 				BEE5BF6C1E12C92F00E3C9AE /* DateFormatter+util.swift in Sources */,
+				BE25CADE24C4E3FB00736CA5 /* SplitMainViewController.swift in Sources */,
 				BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */,
 				BEC814EC24BD43EE005C8E8C /* SiriShortcuts.swift in Sources */,
 				BEC4A1B82331533400EE5114 /* AutoplayScrollViewHandler.swift in Sources */,

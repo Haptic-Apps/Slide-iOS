@@ -2021,11 +2021,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         if parent != nil && parent is PagingCommentViewController {
             parent?.toolbarItems = items
-            parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
+            parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
             parent?.navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
         } else {
             toolbarItems = items
-            navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
+            navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
             navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
         }
     }

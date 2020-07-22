@@ -102,7 +102,7 @@ class NavigationHomeViewController: UIViewController {
 
         configureViews()
         configureLayout()
-
+        
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
@@ -148,15 +148,26 @@ class NavigationHomeViewController: UIViewController {
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = ColorUtil.theme.foregroundColor
-        tableView.separatorColor = ColorUtil.theme.backgroundColor
+        tableView.separatorColor = ColorUtil.theme.foregroundColor
         
-        //navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+        self.splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if SettingValues.autoKeyboard {
             searchBar.becomeFirstResponder()
+        }
+        if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) {
+            let interactivePushGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
+            interactivePushGestureRecognizer.edges = UIRectEdge.right
+            interactivePushGestureRecognizer.delegate = nav
+            sectionIndex.addGestureRecognizer(interactivePushGestureRecognizer)
+            sectionIndex.tag = 42
         }
     }
 
@@ -180,7 +191,7 @@ class NavigationHomeViewController: UIViewController {
         headerView.addSubview(accessibilityCloseButton)
         accessibilityCloseButton.addTarget(self, action: #selector(accessibilityCloseButtonActivated), for: .touchUpInside)
 
-        tableView.bounces = false
+        tableView.bounces = true
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
@@ -232,7 +243,7 @@ class NavigationHomeViewController: UIViewController {
             self.searchBar.tintColor = ColorUtil.theme.fontColor
             self.searchBar.textColor = ColorUtil.theme.fontColor
             self.searchBar.backgroundColor = .clear
-            self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+            self.tableView.backgroundColor = ColorUtil.theme.foregroundColor
             self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         }
     }
@@ -578,14 +589,6 @@ extension NavigationHomeViewController: UIScrollViewDelegate {
             self.tableView.endEditing(true)
             searchBar.resignFirstResponder()
         }
-        let currentBottomY = scrollView.frame.size.height + currentY
-        if currentY > lastY {
-            tableView.bounces = true
-        } else {
-            if currentBottomY < scrollView.contentSize.height + scrollView.contentInset.bottom {
-                tableView.bounces = false
-            }
-        }
         lastY = scrollView.contentOffset.y
     }
 }
@@ -661,6 +664,7 @@ class CurrentAccountHeaderView: UIView {
     weak var parent: UIViewController?
     
     var reportText: String?
+    var defaultActions: [AccountShortcutAction] = []
     
     /// Overall height of the content view, including its out-of-bounds elements.
     var contentViewHeight: CGFloat {
@@ -674,7 +678,7 @@ class CurrentAccountHeaderView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return 12 + 54 + 40 + shortcutsView.estimateHeight() //TODO estimate account label height
+        return 12 + 70 + shortcutsView.estimateHeight() //TODO estimate account label height
     }
     
     var spinner = UIActivityIndicatorView().then {
@@ -689,7 +693,7 @@ class CurrentAccountHeaderView: UIView {
     
     var settingsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(sfString: .gear, overrideString: "settings")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.theme.fontColor), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "App Settings"
     }
     
@@ -701,17 +705,17 @@ class CurrentAccountHeaderView: UIView {
     }
     var modButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Mod Queue"
     }
     var mailButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(sfString: SFSymbol.trayFill, overrideString: "messages")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 8, right: 8)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Inbox"
     }
     var switchAccountsButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(sfString: SFSymbol.personAndPersonFill, overrideString: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 16, left: 8, bottom: 8, right: 8)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Switch Accounts"
     }
     
@@ -764,7 +768,7 @@ class CurrentAccountHeaderView: UIView {
         }
     }
     
-    var shortcutsView = AccountShortcutsView()
+    var shortcutsView: AccountShortcutsView!
     
     var emptyStateLabel = UILabel().then {
         $0.numberOfLines = 0
@@ -780,10 +784,29 @@ class CurrentAccountHeaderView: UIView {
     
     func initCurrentAccount(_ parent: UIViewController) {
         self.parent = parent
+        
+        defaultActions.append(AccountShortcutAction(icon: "sub", title: "Home", sfIcon: SFSymbol.houseFill, imageColor: ColorUtil.theme.fontColor, callback: {
+            
+        }))
+        defaultActions.append(AccountShortcutAction(icon: "sub", title: "Random", sfIcon: SFSymbol.shuffle, imageColor: ColorUtil.theme.fontColor, callback: {
+            
+        }))
+        defaultActions.append(AccountShortcutAction(icon: "sub", title: "Liked posts", sfIcon: SFSymbol.arrowUp, imageColor: ColorUtil.theme.fontColor, callback: {
+            
+        }))
+
+        shortcutsView = AccountShortcutsView(frame: CGRect.zero, actions: defaultActions)
+        
         setupViews()
         setupConstraints()
         setupActions()
-        
+
+        let leftItem = UIBarButtonItem(customView: upperButtonStack)
+        let rightItem = UIBarButtonItem(customView: settingsButton)
+
+        parent.navigationItem.leftBarButtonItem = leftItem
+        parent.navigationItem.rightBarButtonItem = rightItem
+
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountMailCountChanged), name: .onAccountMailCountChanged, object: nil)
@@ -800,8 +823,7 @@ class CurrentAccountHeaderView: UIView {
 extension CurrentAccountHeaderView {
     func setupViews() {
         
-        contentView.addSubview(upperButtonStack)
-        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton, UIView(), settingsButton)
+        upperButtonStack.addArrangedSubviews(mailButton, modButton, switchAccountsButton)
         
         mailButton.addSubview(mailBadge)
         modButton.addSubview(modBadge)
@@ -821,32 +843,24 @@ extension CurrentAccountHeaderView {
     }
     
     func setupConstraints() {
-                
-        if #available(iOS 11, *) {
-            settingsButton.rightAnchor == self.safeRightAnchor
-        } else {
-            settingsButton.rightAnchor == self.safeRightAnchor
-        }
-        
-        upperButtonStack.leftAnchor == accountImageView.rightAnchor
-        upperButtonStack.topAnchor == contentView.topAnchor
-        upperButtonStack.heightAnchor == 54
+                        
+        upperButtonStack.heightAnchor == 44
         
         contentView.horizontalAnchors == self.horizontalAnchors
         contentView.verticalAnchors == self.verticalAnchors
         
         accountImageView.leftAnchor == contentView.safeLeftAnchor + 10
         accountImageView.topAnchor == contentView.topAnchor
-        accountImageView.sizeAnchors == CGSize.square(size: 80)
+        accountImageView.sizeAnchors == CGSize.square(size: 70)
         
-        accountNameLabel.topAnchor == upperButtonStack.bottomAnchor
+        accountNameLabel.topAnchor == contentView.safeTopAnchor
         accountNameLabel.leftAnchor == accountImageView.rightAnchor + 10
         accountNameLabel.rightAnchor == contentView.rightAnchor - 10
         
         accountAgeLabel.leftAnchor == accountNameLabel.leftAnchor
         accountAgeLabel.topAnchor == accountNameLabel.bottomAnchor
         
-        shortcutsView.topAnchor == accountAgeLabel.bottomAnchor + 8
+        shortcutsView.topAnchor == accountImageView.bottomAnchor + 8
         shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
         
         spinner.centerAnchors == shortcutsView.centerAnchors
@@ -924,7 +938,6 @@ extension CurrentAccountHeaderView {
             } else {
                 accountAgeLabel.text = "Created \(creationDateString)"
             }
-            shortcutsView.setAccount(account)
             setLoadingState(false)
         } else {
             print("No account to show!")
@@ -1085,41 +1098,10 @@ extension CurrentAccountHeaderView {
 
 // MARK: - AccountHeaderViewDelegate
 extension CurrentAccountHeaderView: AccountShortcutsViewDelegate {
-    
-    func didRequestHistory() {
-        self.historyButtonPressed()
+    func didRequestAction(_ action: AccountShortcutAction) {
+        //TODO do something
     }
-    
-    func didRequestCollections() {
-       // TODO: - collections
-        if Collections.collectionIDs.count == 0 {
-            let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
-            
-            alert.setupTheme()
-            alert.attributedTitle = NSAttributedString(string: "You haven't created a collection yet!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-            
-            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
-            
-            alert.addCloseButton()
-            alert.addBlurView()
-            parent?.present(alert, animated: true, completion: nil)
 
-        } else {
-            let vc = CollectionsViewController()
-            let navVC = UINavigationController(rootViewController: vc)
-            navVC.navigationBar.isTranslucent = false
-            parent?.present(navVC, animated: true)
-        }
-    }
-    
-    func didRequestCache() {
-        self.cacheButtonPressed()
-    }
-    
-    func didRequestNewMulti() {
-        self.multiButtonPressed()
-    }
-    
     func accountHeaderView(_ view: AccountShortcutsView, didRequestProfilePageAtIndex index: Int) {
         let vc = ProfileViewController(name: AccountController.currentName)
         vc.openTo = index
@@ -1207,63 +1189,52 @@ extension CurrentAccountHeaderView {
 
 protocol AccountShortcutsViewDelegate: AnyObject {
     func accountHeaderView(_ view: AccountShortcutsView, didRequestProfilePageAtIndex index: Int)
-    func didRequestCache()
-    func didRequestHistory()
-    func didRequestCollections()
-    func didRequestNewMulti()
+    func didRequestAction(_ action: AccountShortcutAction)
+}
+
+class AccountShortcutAction: NSObject {
+    var icon: String
+    var title: String
+    var callback: () -> Void
+    var sfIcon: SFSymbol
+    var imageColor: UIColor
+    
+    init(icon: String, title: String, sfIcon: SFSymbol, imageColor: UIColor, callback: @escaping () -> Void) {
+        self.icon = icon
+        self.title = title
+        self.callback = callback
+        self.sfIcon = sfIcon
+        self.imageColor = imageColor
+    }
 }
 
 class AccountShortcutsView: UIView {
     
     weak var delegate: AccountShortcutsViewDelegate?
+        
+    var actions: [AccountShortcutAction]
     
-    var commentKarmaLabel: UILabel = UILabel().then {
-        $0.numberOfLines = 0
-        $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
-        $0.textAlignment = .center
-        $0.textColor = ColorUtil.theme.fontColor
-        $0.accessibilityTraits = UIAccessibilityTraits.button
-    }
-    var postKarmaLabel: UILabel = UILabel().then {
-        $0.numberOfLines = 0
-        $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
-        $0.textAlignment = .center
-        $0.textColor = ColorUtil.theme.fontColor
-        $0.accessibilityTraits = UIAccessibilityTraits.button
-    }
-    
-    var savedCell = UITableViewCell().then {
-        $0.configure(text: "Saved Posts", imageName: "save", sfSymbolName: .starFill, imageColor: GMColor.yellow500Color())
-    }
-
-    var cacheCell = UITableViewCell().then {
-        $0.configure(text: "Start Auto Cache now", imageName: "save-1", sfSymbolName: .arrow2Circlepath, imageColor: GMColor.yellow500Color())
-    }
-
-    var multiCell = UITableViewCell().then {
-        $0.configure(text: "Create a Multireddit", imageName: "add", sfSymbolName: .folderBadgePlusFill, imageColor: GMColor.yellow500Color())
-    }
-    
-    var collectionsCell = UITableViewCell().then {
-        $0.configure(text: "View your Collections", imageName: "add", sfSymbolName: .squareStack3dUpFill, imageColor: GMColor.yellow500Color())
-    }
-
-    var likedCell = UITableViewCell().then {
-        $0.configure(text: "Liked Posts", imageName: "upvote", sfSymbolName: .arrowUp, imageColor: GMColor.orange500Color())
-    }
-    
-    var historyCell = UITableViewCell().then {
-        $0.configure(text: "Post history", imageName: "history", sfSymbolName: .clockFill, imageColor: GMColor.orange500Color())
-    }
-
-    var detailsCell = UITableViewCell().then {
-        $0.configure(text: "Your profile", imageName: "profile", sfSymbolName: .personCircleFill, imageColor: ColorUtil.theme.fontColor)
-    }
-    
-    var infoStack = UIStackView().then {
-        $0.spacing = 8
-        $0.axis = .horizontal
-        $0.distribution = .equalSpacing
+    init(frame: CGRect, actions: [AccountShortcutAction]) {
+        self.actions = actions
+        super.init(frame: frame)
+        
+        addSubviews(cellStack)
+        //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
+        for action in actions {
+            print(action)
+            cellStack.addArrangedSubview(UITableViewCell().then {
+                $0.configure(text: action.title, imageName: action.icon, sfSymbolName: action.sfIcon, imageColor: action.imageColor)
+                $0.addTapGestureRecognizer {
+                    self.delegate?.didRequestAction(action)
+                }
+                $0.heightAnchor >= 50
+                $0.accessoryType = .disclosureIndicator
+            })
+        }
+        
+        self.clipsToBounds = true
+        
+        setupAnchors()
     }
     
     var cellStack = UIStackView().then {
@@ -1272,46 +1243,13 @@ class AccountShortcutsView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return (7 * 50) + 10
+        return CGFloat(actions.count * 50) + 10 + CGFloat(actions.count * 2)
     }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
         
-        addSubviews(cellStack)
-        //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell, historyCell, multiCell, collectionsCell, cacheCell)
-        
-        self.clipsToBounds = true
-        
-        setupAnchors()
-        setupActions()
-        
-        setAccount(nil)
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func setAccount(_ account: Account?) {
-        commentKarmaLabel.attributedText = {
-            let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
-            let attributedString = NSMutableAttributedString(string: "\(account?.commentKarma.delimiter ?? "0")", attributes: attrs)
-            let subt = NSMutableAttributedString(string: "\nCOMMENT KARMA")
-            attributedString.append(subt)
-            return attributedString
-        }()
         
-        postKarmaLabel.attributedText = {
-            let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
-            let attributedString = NSMutableAttributedString(string: "\(account?.linkKarma.delimiter ?? "0")", attributes: attrs)
-            let subt = NSMutableAttributedString(string: "\nPOST KARMA")
-            attributedString.append(subt)
-            return attributedString
-        }()
-    }
-    
     func setupAnchors() {
         //infoStack.topAnchor == topAnchor
         //infoStack.horizontalAnchors == horizontalAnchors
@@ -1319,58 +1257,17 @@ class AccountShortcutsView: UIView {
         cellStack.topAnchor == topAnchor + 10
         cellStack.horizontalAnchors == horizontalAnchors
         
-        savedCell.heightAnchor >= 50
-        cacheCell.heightAnchor >= 50
-        multiCell.heightAnchor >= 50
-        detailsCell.heightAnchor >= 50
-        likedCell.heightAnchor >= 50
-        historyCell.heightAnchor >= 50
-
         cellStack.bottomAnchor == bottomAnchor
-        
-        if #available(iOS 13, *) {
-            collectionsCell.heightAnchor >= 50
-        } else {
-            collectionsCell.isHidden = true
-        }
     }
-    
-    func setupActions() {
-        savedCell.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 4)
+}
+
+public extension UITableView {
+    var sectionIndexView: UIView? {
+        for view in self.subviews {
+            if String(describing: view).contains("UITableViewIndex") {
+                return view
+            }
         }
-        likedCell.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 3)
-        }
-        historyCell.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.didRequestHistory()
-        }
-        detailsCell.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 0)
-        }
-        multiCell.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.didRequestNewMulti()
-        }
-        collectionsCell.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.didRequestCollections()
-        }
-        cacheCell.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.didRequestCache()
-        }
-        commentKarmaLabel.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 2)
-        }
-        postKarmaLabel.addTapGestureRecognizer { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 1)
-        }
+        return nil
     }
 }

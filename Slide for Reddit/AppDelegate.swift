@@ -371,9 +371,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
             rootController = splitVC
             splitVC.preferredDisplayMode = .allVisible
-            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
+            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: LegacyMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
         } else {
-            rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
+            rootController = UINavigationController(rootViewController: LegacyMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
         }
 
         window.setRootViewController(rootController, animated: false)
@@ -392,9 +392,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             splitViewController.presentsWithGesture = true
             splitViewController.preferredSplitBehavior = .automatic
 
-            splitViewController.setViewController(CurrentAccountViewController(), for: .primary)
+            let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
 
-            splitViewController.setViewController(UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)), for: .supplementary)
+            splitViewController.setViewController(main, for: .supplementary)
             splitViewController.setViewController(PlaceholderViewController(), for: .secondary)
             window.rootViewController = splitViewController
             self.window = window
@@ -405,9 +406,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             splitViewController.presentsWithGesture = true
             splitViewController.preferredSplitBehavior = .overlay
             
-            let main = MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
             splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
-            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: main), for: .secondary)
+            splitViewController.setViewController(main, for: .secondary)
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
