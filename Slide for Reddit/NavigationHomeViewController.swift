@@ -25,6 +25,7 @@ class NavigationHomeViewController: UIViewController {
     var muxColor = ColorUtil.theme.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
+    static var edgeGesture: UIScreenEdgePanGestureRecognizer?
 
     var subsSource = SubscribedSubredditsSectionProvider()
 
@@ -163,16 +164,20 @@ class NavigationHomeViewController: UIViewController {
             searchBar.becomeFirstResponder()
         }
         if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) {
-            let interactivePushGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
-            interactivePushGestureRecognizer.edges = UIRectEdge.right
-            interactivePushGestureRecognizer.delegate = nav
-            sectionIndex.addGestureRecognizer(interactivePushGestureRecognizer)
-            sectionIndex.tag = 42
+            NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
+            NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
+            NavigationHomeViewController.edgeGesture!.delegate = nav
+            sectionIndex.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
         }
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NavigationHomeViewController.edgeGesture = nil
     }
 
     func configureViews() {

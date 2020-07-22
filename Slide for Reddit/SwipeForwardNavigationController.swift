@@ -71,7 +71,7 @@ class SwipeForwardNavigationController: UINavigationController {
     }
 
     @objc func handleRightSwipe(_ swipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?) {
-        let view = swipeGestureRecognizer?.view ?? self.view!
+        let view = self.view!
         let progress = abs(-(swipeGestureRecognizer?.translation(in: view).x ?? 0.0) / view.frame.size.width) // 1.0 When the pushable vc has been pulled into place
 
         // Start, update, or finish the interactive push transition
@@ -107,7 +107,7 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         var shouldBegin = false
 
-        if gestureRecognizer == interactivePushGestureRecognizer || gestureRecognizer.view?.tag ?? 0 == 42 {
+        if gestureRecognizer == interactivePushGestureRecognizer || gestureRecognizer == NavigationHomeViewController.edgeGesture {
             shouldBegin = pushableViewControllers.count > 0 && !((pushableViewControllers.last) == topViewController)
         } else {
             shouldBegin = viewControllers.count > 1
@@ -181,7 +181,7 @@ extension SwipeForwardNavigationController {
 extension SwipeForwardNavigationController: UINavigationControllerDelegate {
 
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        if operation == .push && (((navigationController as? SwipeForwardNavigationController)?.interactivePushGestureRecognizer)?.state == .began) {
+        if operation == .push && (((navigationController as? SwipeForwardNavigationController)?.interactivePushGestureRecognizer)?.state == .began || NavigationHomeViewController.edgeGesture?.state == .began) {
             return self.pushAnimatedTransitioningClass
         }
         return nil
@@ -189,7 +189,7 @@ extension SwipeForwardNavigationController: UINavigationControllerDelegate {
 
     func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         let navController = navigationController as? SwipeForwardNavigationController
-        if navController?.interactivePushGestureRecognizer?.state == .began {
+        if navController?.interactivePushGestureRecognizer?.state == .began || NavigationHomeViewController.edgeGesture?.state == .began {
             navController?.percentDrivenInteractiveTransition = UIPercentDrivenInteractiveTransition()
             navController?.percentDrivenInteractiveTransition?.completionCurve = .easeOut
         } else {
