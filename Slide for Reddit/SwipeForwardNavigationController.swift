@@ -94,7 +94,7 @@ class SwipeForwardNavigationController: UINavigationController {
 
     func handleEdgeSwipeEnded(withProgress progress: CGFloat, velocity: CGFloat) {
         // kSWGestureVelocityThreshold threshold indicates how hard the finger has to flick left to finish the push transition
-        if velocity < 0 && (progress > 0.5 || velocity < -800) {
+        if velocity < 0 && (progress > 0.5 || velocity < -500) {
             percentDrivenInteractiveTransition?.finish()
         } else {
             percentDrivenInteractiveTransition?.cancel()

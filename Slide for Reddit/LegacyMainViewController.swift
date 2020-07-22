@@ -337,11 +337,11 @@ class LegacyMainViewController: MainViewController {
         menuNav?.setColors(finalSubs[currentPage])
     }
 
-
     override func doButtons() {
         if menu.superview != nil && !MainViewController.needsReTheme {
             return
         }
+        
         sortButton = ExpandedHitButton(type: .custom)
         sortButton.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)

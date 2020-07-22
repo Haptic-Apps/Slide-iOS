@@ -151,6 +151,9 @@ class NavigationHomeViewController: UIViewController {
         tableView.backgroundColor = ColorUtil.theme.foregroundColor
         tableView.separatorColor = ColorUtil.theme.foregroundColor
         
+        self.edgesForExtendedLayout = UIRectEdge.all
+        self.extendedLayoutIncludesOpaqueBars = true
+
         navigationController?.setNavigationBarHidden(false, animated: false)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = false

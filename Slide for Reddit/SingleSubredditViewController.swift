@@ -109,6 +109,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var subInfo: Subreddit?
     var flowLayout: WrappingFlowLayout = WrappingFlowLayout.init()
 
+    var sortButton = UIButton.init(type: .custom)
+
     static var firstPresented = true
     static var cellVersion = 0 {
         didSet {
@@ -203,7 +205,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         }
         
-        if single {
+        print("PARENT IS \(parent)")
+        if single && !(parent is SplitMainViewController) {
             self.edgesForExtendedLayout = UIRectEdge.all
         } else {
             self.edgesForExtendedLayout = []

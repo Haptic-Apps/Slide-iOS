@@ -22,7 +22,7 @@ class SwipeForwardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTrans
             
             let containerViewWidth = containerView.frame.size.width
             var snapshotToView = toView.snapshotView(afterScreenUpdates: true)
-            
+
             if snapshotToView != nil {
                 containerView.addSubview(snapshotToView!)
                 
@@ -51,7 +51,6 @@ class SwipeForwardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTrans
                     // Move views to final frames
                     snapshotToView!.frame = fromView.frame
                     fromView.frame = fromViewFinalFrame
-
                 } completion: { (finished) in
                     snapshotToView!.layer.shadowOpacity = 0
 
