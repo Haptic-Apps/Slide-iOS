@@ -18,7 +18,8 @@ class SwipeForwardNavigationController: UINavigationController {
  /* View controllers we can push onto the navigation stack by pulling in from the right screen edge. */    // Extra state used to implement completion blocks on pushViewController:
     private var pushCompletion: SWNavigationControllerPushCompletion?
     private var pushedViewController: UIViewController?
-    
+    private var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+
     var pushAnimatedTransitioningClass: SwipeForwardAnimatedTransitioning?
 
     override init(navigationBarClass: AnyClass?, toolbarClass: AnyClass?) {
@@ -59,9 +60,22 @@ class SwipeForwardNavigationController: UINavigationController {
         interactivePushGestureRecognizer?.edges = UIRectEdge.right
         interactivePushGestureRecognizer?.delegate = self
         view.addGestureRecognizer(interactivePushGestureRecognizer!)
-
+        
         // To ensure swipe-back is still recognized
         interactivePopGestureRecognizer?.delegate = self
+        
+        guard
+            let interactivePopGestureRecognizer = interactivePopGestureRecognizer,
+            let targets = interactivePopGestureRecognizer.value(forKey: "targets")
+        else {
+            return
+        }
+
+        fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+        fullWidthBackGestureRecognizer.delegate = self
+        fullWidthBackGestureRecognizer.require(toFail: interactivePushGestureRecognizer!)
+        view.addGestureRecognizer(fullWidthBackGestureRecognizer)
+
     }
 
     override func didReceiveMemoryWarning() {

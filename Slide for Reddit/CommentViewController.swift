@@ -1534,7 +1534,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         didDisappearCompletely = false
         let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if !isModal && !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) {
+        if !isModal && !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) && !(self.navigationController is SwipeForwardNavigationController) {
             if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
                 swiper = SloppySwiper.init(navigationController: self.navigationController!)
                 self.navigationController!.delegate = swiper!
