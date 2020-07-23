@@ -363,7 +363,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /**
      Rebuilds the nav stack for the currently selected App Mode (split, multi column, etc.)
      */
-    func resetStack() {
+    func resetStackOld() {
         guard let window = self.window else {
             fatalError("Window must exist when resetting the stack!")
         }
@@ -377,6 +377,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         window.setRootViewController(rootController, animated: false)
+    }
+    
+    func resetStack() {
+        guard let window = self.window else {
+            fatalError("Window must exist when resetting the stack!")
+        }
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let splitViewController = UISplitViewController()
+            splitViewController.preferredDisplayMode = .automatic
+            splitViewController.presentsWithGesture = true
+            
+            splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+            splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
+            
+            let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
+
+            window.rootViewController = splitViewController
+            self.window = window
+            window.makeKeyAndVisible()
+        } else {
+            let splitViewController = UISplitViewController()
+            splitViewController.preferredDisplayMode = .primaryOverlay
+            splitViewController.presentsWithGesture = true
+            
+            let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
+            
+            window.rootViewController = splitViewController
+            self.window = window
+            window.makeKeyAndVisible()
+        }
     }
 
     @available(iOS 14.0, *)
