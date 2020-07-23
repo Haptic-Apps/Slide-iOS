@@ -212,7 +212,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         
         self.extendedLayoutIncludesOpaqueBars = true
-
+        self.navigationController?.toolbar.isTranslucent = true
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
@@ -2631,10 +2631,10 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
         } else {
             let c = colorPickerView.colors[indexPath.row]
             primaryChosen = c
-            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : c
+            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
             sideView.backgroundColor = c
             sideView.backgroundColor = c
-            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : c
+            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
             if SettingValues.fullyHideNavbar {
                 inHeadView?.backgroundColor = .clear
             }

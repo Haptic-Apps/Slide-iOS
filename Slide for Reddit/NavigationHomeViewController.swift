@@ -162,7 +162,7 @@ class NavigationHomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if SettingValues.autoKeyboard {
-            searchBar.becomeFirstResponder()
+            //TODO enable this? searchBar.becomeFirstResponder()
         }
         if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) {
             NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
@@ -258,7 +258,7 @@ class NavigationHomeViewController: UIViewController {
     
     func setSubreddit(subreddit: String) {
         setColors(subreddit)
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
     func reloadData() {

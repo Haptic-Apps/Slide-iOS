@@ -391,7 +391,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             splitViewController.preferredDisplayMode = .automatic
             splitViewController.presentsWithGesture = true
             splitViewController.preferredSplitBehavior = .automatic
-
+            
+            splitViewController.preferredSupplementaryColumnWidthFraction = 0.4
+            splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width / 3
+            
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
             splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
 

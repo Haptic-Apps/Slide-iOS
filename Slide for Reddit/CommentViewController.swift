@@ -1237,7 +1237,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         //self.tableView.layer.speed = 1.5
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
-        self.navigationController?.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
         refreshControl = UIRefreshControl()
         refreshControl?.tintColor = ColorUtil.theme.fontColor
         refreshControl?.attributedTitle = NSAttributedString(string: "")
@@ -1259,7 +1259,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if !ColorUtil.theme.isLight {
             searchBar.keyboardAppearance = .dark
         }
-        
 
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
 
@@ -2021,11 +2020,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         if parent != nil && parent is PagingCommentViewController {
             parent?.toolbarItems = items
-            parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
+            parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
             parent?.navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
         } else {
             toolbarItems = items
-            navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
+            navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
             navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
         }
     }
