@@ -79,7 +79,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         
-        if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) && !(self.navigationController is SwipeForwardNavigationController) {
+        if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) && !(self.parent?.navigationController is SwipeForwardNavigationController) {
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
         }

@@ -238,7 +238,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.automaticallyAdjustsScrollViewInsets = false
         
         self.view.addSubview(emptyStateView)
-        emptyStateView.setText(title: "Nothing to see her6e!", message: "No content was found on this subreddit")
+        emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit")
         
         emptyStateView.isHidden = true
         emptyStateView.isUserInteractionEnabled = false
@@ -264,7 +264,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) && !(parent is SplitMainViewController) && !(self.navigationController is SwipeForwardNavigationController) {
+        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) && !(parent is SplitMainViewController) {
             swiper = SloppySwiper.init(navigationController: self.navigationController!)
             self.navigationController!.delegate = swiper!
             for view in view.subviews {

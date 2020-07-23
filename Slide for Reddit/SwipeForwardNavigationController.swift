@@ -64,18 +64,12 @@ class SwipeForwardNavigationController: UINavigationController {
         // To ensure swipe-back is still recognized
         interactivePopGestureRecognizer?.delegate = self
         
-        guard
-            let interactivePopGestureRecognizer = interactivePopGestureRecognizer,
-            let targets = interactivePopGestureRecognizer.value(forKey: "targets")
-        else {
-            return
+        if let interactivePopGestureRecognizer = interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
+            fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+            fullWidthBackGestureRecognizer.delegate = self
+            fullWidthBackGestureRecognizer.require(toFail: interactivePushGestureRecognizer!)
+            view.addGestureRecognizer(fullWidthBackGestureRecognizer)
         }
-
-        fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
-        fullWidthBackGestureRecognizer.delegate = self
-        fullWidthBackGestureRecognizer.require(toFail: interactivePushGestureRecognizer!)
-        view.addGestureRecognizer(fullWidthBackGestureRecognizer)
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -105,7 +99,7 @@ class SwipeForwardNavigationController: UINavigationController {
             break
         }
     }
-
+    
     func handleEdgeSwipeEnded(withProgress progress: CGFloat, velocity: CGFloat) {
         // kSWGestureVelocityThreshold threshold indicates how hard the finger has to flick left to finish the push transition
         if velocity < 0 && (progress > 0.5 || velocity < -500) {
@@ -121,6 +115,7 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         var shouldBegin = false
 
+        print(viewControllers)
         if gestureRecognizer == interactivePushGestureRecognizer || gestureRecognizer == NavigationHomeViewController.edgeGesture {
             shouldBegin = pushableViewControllers.count > 0 && !((pushableViewControllers.last) == topViewController)
         } else {
@@ -132,7 +127,7 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
 }
     
 extension SwipeForwardNavigationController {
-    //  Converted to Swift 5.1 by Swiftify v5.1.31847 - https://swiftify.com/
+
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         pushableViewControllers.removeAll()
 
