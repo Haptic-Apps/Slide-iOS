@@ -130,7 +130,7 @@ class LegacyMainViewController: MainViewController {
     }
 
     
-    override func hardReset() {
+    override func hardReset(soft: Bool = false) {
         PagingCommentViewController.savedComment = nil
         navigationController?.popViewController(animated: false)
         navigationController?.setViewControllers([MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)], animated: false)

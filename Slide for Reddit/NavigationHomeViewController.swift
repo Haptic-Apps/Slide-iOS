@@ -19,7 +19,7 @@ class NavigationHomeViewController: UIViewController {
     var tableView = UITableView(frame: CGRect.zero, style: .grouped)
     var filteredContent: [String] = []
     var suggestions = [String]()
-    var parentController: MainViewController?
+    var parentController: SplitMainViewController?
     var topView: UIView?
     var bottomOffset: CGFloat = 64
     var muxColor = ColorUtil.theme.foregroundColor
@@ -72,7 +72,7 @@ class NavigationHomeViewController: UIViewController {
 
     //let horizontalSubGroup = HorizontalSubredditGroup()
     
-    init(controller: MainViewController) {
+    init(controller: SplitMainViewController) {
         self.parentController = controller
         super.init(nibName: nil, bundle: nil)
         
@@ -188,6 +188,7 @@ class NavigationHomeViewController: UIViewController {
         //view.addSubview(horizontalSubGroup)
 
         accountHeader = CurrentAccountHeaderView()
+        accountHeader?.delegate = parentController
         accountHeader!.initCurrentAccount(self)
         
         searchBar.sizeToFit()
@@ -239,7 +240,7 @@ class NavigationHomeViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func setViewController(controller: MainViewController) {
+    func setViewController(controller: SplitMainViewController) {
         parentController = controller
     }
 

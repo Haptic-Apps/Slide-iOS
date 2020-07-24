@@ -580,11 +580,16 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     @objc func showCurrentAccountMenu(_ sender: UIButton?) {
-        let vc = CurrentAccountViewController()
-        vc.delegate = self
-        vc.modalPresentationStyle = .custom
-        vc.transitioningDelegate = currentAccountTransitioningDelegate
-        present(vc, animated: true)
+        if self is SplitMainViewController {
+            //TODO check for view controller count
+            self.parent?.navigationController?.popViewController(animated: true)
+        } else {
+            let vc = CurrentAccountViewController()
+            vc.delegate = self as! LegacyMainViewController
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = currentAccountTransitioningDelegate
+            present(vc, animated: true)
+        }
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {
@@ -614,7 +619,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     
-    func hardReset() {
+    func hardReset(soft: Bool = false) {
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -736,7 +741,7 @@ extension MainViewController: UIPageViewControllerDelegate {
 }
 
 //TODO break this out
-extension MainViewController: CurrentAccountViewControllerDelegate {
+extension LegacyMainViewController: CurrentAccountViewControllerDelegate {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void) {
         let settings = SettingsViewController()
         VCPresenter.showVC(viewController: settings, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
@@ -772,7 +777,6 @@ extension MainViewController: CurrentAccountViewControllerDelegate {
     }
 
     func currentAccountViewController(_ controller: CurrentAccountViewController?, didRequestAccountChangeToName accountName: String) {
-
         AccountController.switchAccount(name: accountName)
         if !UserDefaults.standard.bool(forKey: "done" + accountName) {
             do {
@@ -891,7 +895,9 @@ extension MainViewController: UIContextMenuInteractionDelegate {
                 }))
             } else {
                 buttons.append(UIAction(title: accountName, image: nil, handler: { (_) in
-                    self.currentAccountViewController(nil, didRequestAccountChangeToName: accountName)
+                    if self is SplitMainViewController {
+                        (self as! SplitMainViewController).currentAccountViewController(nil, didRequestAccountChangeToName: accountName)
+                    }
                 }))
             }
         }

@@ -847,7 +847,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let offline = MainViewController.isOffline
 
-        if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
+        if let mainVC = self.navigationController?.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
             doSortImage(mainVC.sortButton)
         }
 

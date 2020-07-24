@@ -131,7 +131,9 @@ class SplitMainViewController: MainViewController {
                 let scrollView = view as! UIScrollView
                 scrollView.delegate = self
                 
-                scrollView.panGestureRecognizer.require(toFail: self.parent!.navigationController!.interactivePopGestureRecognizer!)
+                if let pop = self.parent?.navigationController?.interactivePopGestureRecognizer {
+                    scrollView.panGestureRecognizer.require(toFail: pop)
+                }
             }
         }
 
@@ -299,11 +301,15 @@ class SplitMainViewController: MainViewController {
         didUpdate()
     }
 
-    //TODO This
-    override func hardReset() {
-        PagingCommentViewController.savedComment = nil
-        navigationController?.popViewController(animated: false)
-        navigationController?.setViewControllers([MainViewController.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)], animated: false)
+    override func hardReset(soft: Bool = false) {
+        if soft && false { //in case we need to not destroy the stack, disable for now
+        } else {
+            if #available(iOS 14.0, *) {
+                _ = (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+            } else {
+                _ = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+            }
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -478,6 +484,83 @@ class SplitMainViewController: MainViewController {
             self.navigationItem.titleView = nil
             self.dataSource = nil
         }
+    }
+
+}
+
+extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestSettingsMenu: Void) {
+        let settings = SettingsViewController()
+        VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: view.parent?.navigationController, parentViewController: view.parent ?? self)
+    }
+    
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, goToMultireddit multireddit: String) {
+        finalSubs = []
+        finalSubs.append(contentsOf: Subscriptions.pinned)
+        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+        redoSubs()
+        goToSubreddit(subreddit: multireddit)
+    }
+    
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestCacheNow: Void) {
+        if Subscriptions.offline.isEmpty {
+            let alert = AlertController.init(title: "Caption", message: "", preferredStyle: .alert)
+            
+            alert.setupTheme()
+            alert.attributedTitle = NSAttributedString(string: "You have no subs set to Auto Cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "You can set this up in Settings > Offline Caching", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            
+            alert.addCloseButton()
+            alert.addBlurView()
+            present(alert, animated: true, completion: nil)
+        } else {
+            _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+        }
+    }
+    
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestHistory: Void) {
+        VCPresenter.showVC(viewController: HistoryViewController(), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+    }
+
+    func currentAccountViewController(_ view: CurrentAccountHeaderView?, didRequestAccountChangeToName accountName: String) {
+        AccountController.switchAccount(name: accountName)
+        if !UserDefaults.standard.bool(forKey: "done" + accountName) {
+            do {
+                try addAccount(token: OAuth2TokenRepository.token(of: accountName), register: false)
+            } catch {
+                addAccount(register: false)
+            }
+        } else {
+            Subscriptions.sync(name: accountName, completion: { [weak self] in
+                self?.hardReset(soft: true)
+            })
+        }
+    }
+
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestGuestAccount: Void) {
+        AccountController.switchAccount(name: "GUEST")
+        Subscriptions.sync(name: "GUEST", completion: { [weak self] in
+            self?.hardReset(soft: true)
+        })
+    }
+
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestLogOut: Void) {
+        let name: String
+        if AccountController.current != nil {
+            name = AccountController.current!.name
+        } else {
+            name = AccountController.currentName
+        }
+        AccountController.delete(name: name)
+        AccountController.switchAccount(name: "GUEST")
+        Subscriptions.sync(name: "GUEST", completion: { [weak self] in
+            self?.hardReset(soft: true)
+        })
+    }
+
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestNewAccount: Void) {
+        self.doAddAccount(register: false)
     }
 
 }

@@ -42,10 +42,10 @@ public class VCPresenter {
         if (UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
             override13 = false
         }
-        if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .MULTI_COLUMN) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
+        } else if (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad && popupIfPossible) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
             
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true

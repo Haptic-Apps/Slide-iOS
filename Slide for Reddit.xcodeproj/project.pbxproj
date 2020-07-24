@@ -161,7 +161,6 @@
 		BE257A7D21F8D9710082A47E /* SettingsThemeChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A7C21F8D9710082A47E /* SettingsThemeChooser.swift */; };
 		BE25CAD424C3A28300736CA5 /* SwipeForwardNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */; };
 		BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */; };
-		BE25CAD824C49D5D00736CA5 /* CurrentAccountHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */; };
 		BE25CADA24C4B02700736CA5 /* NavigationHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */; };
 		BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */; };
 		BE25CADE24C4E3FB00736CA5 /* SplitMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */; };
@@ -584,7 +583,6 @@
 		BE257A7C21F8D9710082A47E /* SettingsThemeChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsThemeChooser.swift; sourceTree = "<group>"; };
 		BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeForwardNavigationController.swift; sourceTree = "<group>"; };
 		BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeForwardAnimatedTransitioning.swift; sourceTree = "<group>"; };
-		BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountHeaderView.swift; sourceTree = "<group>"; };
 		BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHomeViewController.swift; sourceTree = "<group>"; };
 		BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitMainViewController.swift; sourceTree = "<group>"; };
@@ -1336,7 +1334,6 @@
 				BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */,
 				BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */,
 				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
-				BE25CAD724C49D5D00736CA5 /* CurrentAccountHeaderView.swift */,
 				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
 				BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */,
 				BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */,
@@ -1990,7 +1987,6 @@
 			files = (
 				BE6EA6E41E1DA24700E9E709 /* ContentListingViewController.swift in Sources */,
 				09B51D032114D23F00BCB745 /* SlideInPresentationAnimator.swift in Sources */,
-				BE25CAD824C49D5D00736CA5 /* CurrentAccountHeaderView.swift in Sources */,
 				BEBE0C71222330010044FF55 /* SettingsPostMenu.swift in Sources */,
 				BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
@@ -2628,6 +2624,7 @@
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
+				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Debug;
 		};
@@ -2664,6 +2661,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
+				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Release;
 		};

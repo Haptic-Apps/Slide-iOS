@@ -102,6 +102,7 @@ extension SettingsBackup {
     func restoreSync() {
         let icloud = NSUbiquitousKeyValueStore.default
         for item in icloud.dictionaryRepresentation {
+            print(item)
             UserDefaults.standard.set(item.value, forKey: item.key)
         }
         UserDefaults.standard.synchronize()
