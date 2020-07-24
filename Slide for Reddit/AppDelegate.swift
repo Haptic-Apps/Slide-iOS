@@ -379,7 +379,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.setRootViewController(rootController, animated: false)
     }
     
-    func resetStack() {
+    func resetStack() -> MainViewController {
         guard let window = self.window else {
             fatalError("Window must exist when resetting the stack!")
         }
@@ -398,6 +398,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
+            return main
         } else {
             let splitViewController = UISplitViewController()
             splitViewController.preferredDisplayMode = .primaryOverlay
@@ -409,11 +410,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
+            return main
         }
     }
 
     @available(iOS 14.0, *)
-    func resetStackNew() {
+    func resetStackNew() -> MainViewController {
         guard let window = self.window else {
             fatalError("Window must exist when resetting the stack!")
         }
@@ -436,6 +438,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
+            return main
         } else {
             let splitViewController = UISplitViewController(style: .doubleColumn)
             splitViewController.preferredDisplayMode = .primaryOverlay
@@ -448,6 +451,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
+            return main
         }
     }
     

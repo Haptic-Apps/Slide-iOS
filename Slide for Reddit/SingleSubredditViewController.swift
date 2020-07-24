@@ -15,7 +15,6 @@ import reddift
 import RLBAlertsPickers
 import SDCAlertView
 import SDWebImage
-import SloppySwiper
 import UIKit
 import YYText
 
@@ -117,7 +116,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             PagingCommentViewController.savedComment = nil
         }
     }
-    var swiper: SloppySwiper?
 
     var more = UIButton()
 
@@ -264,22 +262,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) && !(parent is SplitMainViewController) {
-            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
-            for view in view.subviews {
-                if view is UIScrollView {
-                    let scrollView = view as! UIScrollView
-                    swiper!.panRecognizer.require(toFail: scrollView.panGestureRecognizer)
-                    break
-                }
-            }
-        } else {
-            if isModal {
-                self.navigationController?.delegate = self
-                if self.navigationController is TapBehindModalViewController {
-                    (self.navigationController as! TapBehindModalViewController).del = self
-                }
+        if isModal {
+            self.navigationController?.delegate = self
+            if self.navigationController is TapBehindModalViewController {
+                (self.navigationController as! TapBehindModalViewController).del = self
             }
         }
 
@@ -311,13 +297,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             bar.heightAnchor == 0
         }
 
-        if single && !isModal && (self.navigationController?.delegate is SloppySwiper) && !(parent is SplitMainViewController) {
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
-            if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-                self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
-            }
-        }
-        
         navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
         
         self.navigationController?.navigationBar.shadowImage = UIImage()

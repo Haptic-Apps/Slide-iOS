@@ -8,7 +8,6 @@
 
 import Anchorage
 import TGPControls
-import SloppySwiper
 import reddift
 import UIKit
 
@@ -188,10 +187,6 @@ class SettingsFont: BubbleSettingTableViewController {
         commentFont.textLabel?.text = "Font"
         commentFont.addTapGestureRecognizer { [weak self] in
             self?.commentFontCellWasTapped()
-        }
-
-        if let swiper = self.navigationController?.delegate as? SloppySwiper {
-            swiper.panRecognizer.delegate = self
         }
 
         commentWeight.textLabel?.text = "Font variant"

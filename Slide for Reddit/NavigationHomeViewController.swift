@@ -1026,7 +1026,7 @@ extension CurrentAccountHeaderView {
     
     @objc func mailButtonPressed(_ sender: UIButton) {
         let vc = InboxViewController()
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         parent?.present(navVC, animated: true)
     }
@@ -1090,7 +1090,7 @@ extension CurrentAccountHeaderView {
 
     @objc func modButtonPressed(_ sender: UIButton) {
         let vc = ModerationViewController()
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         parent?.present(navVC, animated: true)
     }
@@ -1113,7 +1113,7 @@ extension CurrentAccountHeaderView: AccountShortcutsViewDelegate {
     func accountHeaderView(_ view: AccountShortcutsView, didRequestProfilePageAtIndex index: Int) {
         let vc = ProfileViewController(name: AccountController.currentName)
         vc.openTo = index
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         parent?.present(navVC, animated: true)
     }

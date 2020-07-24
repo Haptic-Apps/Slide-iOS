@@ -43,7 +43,7 @@ public class VCPresenter {
             override13 = false
         }
         if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
-            (parentViewController!.splitViewController)?.showDetailViewController(UINavigationController(rootViewController: viewController), sender: nil)
+            (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
         } else if (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
             

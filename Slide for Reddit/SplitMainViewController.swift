@@ -322,22 +322,15 @@ class SplitMainViewController: MainViewController {
             fatalError("Window must exist when resetting the stack!")
         }
 
-        let main = MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        let rootController: UIViewController
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
-            let split = UISplitViewController()
-            rootController = split
-            split.preferredDisplayMode = .allVisible
-            
-            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: main)]
+        if #available(iOS 14.0, *) {
+            let main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+            (UIApplication.shared.delegate as! AppDelegate).login = main
+            AccountController.addAccount(context: main, register: register)
         } else {
-            rootController = UINavigationController(rootViewController: main)
+            let main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+            (UIApplication.shared.delegate as! AppDelegate).login = main
+            AccountController.addAccount(context: main, register: register)
         }
-        
-        window.setRootViewController(rootController, animated: false)
-
-        (UIApplication.shared.delegate as! AppDelegate).login = main
-        AccountController.addAccount(context: main, register: register)
     }
 
     override func addAccount(token: OAuth2Token, register: Bool) {

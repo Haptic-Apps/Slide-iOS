@@ -13,7 +13,6 @@ import RealmSwift
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
-import SloppySwiper
 import UIKit
 import YYText
 
@@ -373,7 +372,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var offline = false
     var np = false
     var modLink = ""
-    var swiper: SloppySwiper?
 
     var authorColor: UIColor = ColorUtil.theme.fontColor
 
@@ -1534,20 +1532,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         didDisappearCompletely = false
         let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if !isModal && !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) && !(self.navigationController is SwipeForwardNavigationController) {
-            if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
-                swiper = SloppySwiper.init(navigationController: self.navigationController!)
-                self.navigationController!.delegate = swiper!
-            }
-            if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-                self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
-            }
-        } else {
-            if isModal {
-                self.navigationController?.delegate = self
-                if self.navigationController is TapBehindModalViewController {
-                    (self.navigationController as! TapBehindModalViewController).del = self
-                }
+        if isModal {
+            self.navigationController?.delegate = self
+            if self.navigationController is TapBehindModalViewController {
+                (self.navigationController as! TapBehindModalViewController).del = self
             }
         }
         

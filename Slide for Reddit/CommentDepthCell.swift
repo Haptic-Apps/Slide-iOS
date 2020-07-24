@@ -2432,7 +2432,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             if let vc = self.parent?.getControllerForUrl(baseUrl: url) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
-                    return UINavigationController(rootViewController: vc)
+                    return SwipeForwardNavigationController(rootViewController: vc)
                 } else {
                     return vc
                 }
