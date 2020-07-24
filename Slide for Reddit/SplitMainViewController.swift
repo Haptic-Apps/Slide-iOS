@@ -124,6 +124,17 @@ class SplitMainViewController: MainViewController {
             self.view.addSubview(inHeadView)
         }
         
+        self.parent?.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
+        for view in view.subviews {
+            if view is UIScrollView {
+                let scrollView = view as! UIScrollView
+                scrollView.delegate = self
+                
+                scrollView.panGestureRecognizer.require(toFail: self.parent!.navigationController!.interactivePopGestureRecognizer!)
+            }
+        }
+
         checkForUpdate()
         
         let formatter = DateFormatter()
@@ -138,50 +149,10 @@ class SplitMainViewController: MainViewController {
         }
         requestReviewIfAppropriate()
         
-        //        drawerButton = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        //        drawerButton.backgroundColor = ColorUtil.theme.foregroundColor
-        //        drawerButton.clipsToBounds = true
-        //        drawerButton.contentMode = .center
-        //        drawerButton.layer.cornerRadius = 20
-        //        drawerButton.image = UIImage(named: "menu")?.getCopy(withSize: CGSize.square(size: 25), withColor: ColorUtil.theme.fontColor)
-        //        self.view.addSubview(drawerButton)
-        //        drawerButton.translatesAutoresizingMaskIntoConstraints = false
-        //        drawerButton.addTapGestureRecognizer {
-        //            self.showDrawer(self.drawerButton)
-        //        }
-        
-        toolbar?.addTapGestureRecognizer(action: {
-            self.showDrawer(self.drawerButton)
-        })
-
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountRefreshRequested), name: .accountRefreshRequested, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
 
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDrawer(_:)))
-        swipe.direction = .up
-        
-        //        drawerButton.addGestureRecognizer(swipe)
-        //        drawerButton.isHidden = true
-        //
-        //        drawerButton.bottomAnchor == self.view.safeBottomAnchor - 8
-        //        drawerButton.leadingAnchor == self.view.safeLeadingAnchor + 8
-        //        drawerButton.heightAnchor == 40
-        //        drawerButton.widthAnchor == 40
-        
-        //TODO reenable this
-        /*let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
-        edgePan.edges = .right
-        for view in view.subviews {
-            for rec in view.gestureRecognizers ?? [] {
-                rec.require(toFail: edgePan)
-            }
-        }
-        for rec in self.view.gestureRecognizers ?? [] {
-            rec.require(toFail: edgePan)
-        }
-
-        self.view.addGestureRecognizer(edgePan)*/
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

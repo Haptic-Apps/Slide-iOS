@@ -18,7 +18,7 @@ class SwipeForwardNavigationController: UINavigationController {
  /* View controllers we can push onto the navigation stack by pulling in from the right screen edge. */    // Extra state used to implement completion blocks on pushViewController:
     private var pushCompletion: SWNavigationControllerPushCompletion?
     private var pushedViewController: UIViewController?
-    private var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+    public var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
 
     var pushAnimatedTransitioningClass: SwipeForwardAnimatedTransitioning?
 
@@ -115,7 +115,6 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         var shouldBegin = false
 
-        print(viewControllers)
         if gestureRecognizer == interactivePushGestureRecognizer || gestureRecognizer == NavigationHomeViewController.edgeGesture {
             shouldBegin = pushableViewControllers.count > 0 && !((pushableViewControllers.last) == topViewController)
         } else {

@@ -393,7 +393,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
             
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
 
             window.rootViewController = splitViewController
             self.window = window

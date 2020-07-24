@@ -33,7 +33,11 @@ class WrappingFlowLayout: UICollectionViewLayout {
     private var contentHeight: CGFloat = 0.0
     private var contentWidth: CGFloat {
         let insets = collectionView!.contentInset
-        return collectionView!.bounds.width - (insets.left + insets.right)
+        var cvWidth = collectionView!.bounds.width
+        if cvWidth <= 0 {
+            cvWidth = UIScreen.main.bounds.size.width
+        }
+        return cvWidth - (insets.left + insets.right)
     }
     override var collectionViewContentSize: CGSize {
         return CGSize(width: contentWidth, height: contentHeight)
