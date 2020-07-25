@@ -648,7 +648,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func addAccount(token: OAuth2Token, register: Bool) {
     }
     
-    override func goToSubreddit(subreddit: String, override: Bool = false) {
+    func goToSubreddit(subreddit: String, override: Bool = false) {
     }
     
     func goToUser(profile: String) {
