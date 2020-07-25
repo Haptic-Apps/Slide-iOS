@@ -180,9 +180,9 @@ class LegacyMainViewController: MainViewController {
         doLogin(token: token, register: register)
     }
     
-    override func goToSubreddit(subreddit: String) {
+    override func goToSubreddit(subreddit: String, override: Bool = false) {
         menuNav?.dismiss(animated: true) {
-            if self.finalSubs.contains(subreddit) {
+            if self.finalSubs.contains(subreddit) && !override {
                 let index = self.finalSubs.firstIndex(of: subreddit)
                 if index == nil {
                     return

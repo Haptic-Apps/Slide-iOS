@@ -6,9 +6,11 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import Alamofire
 import Anchorage
 import AudioToolbox
 import BadgeSwift
+import SwiftyJSON
 import MaterialComponents.MaterialTabs
 import RealmSwift
 import reddift
@@ -343,8 +345,8 @@ class SplitMainViewController: MainViewController {
         doLogin(token: token, register: register)
     }
     
-    override func goToSubreddit(subreddit: String) {
-        if self.finalSubs.contains(subreddit) {
+    override func goToSubreddit(subreddit: String, override: Bool = false) {
+        if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
                 return
@@ -489,6 +491,54 @@ class SplitMainViewController: MainViewController {
 }
 
 extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestAction: SettingValues.NavigationHeaderActions) {
+        switch didRequestAction {
+        case .HOME:
+            goToSubreddit(subreddit: "frontpage")
+        case .POPULAR:
+            goToSubreddit(subreddit: "popular")
+        case .RANDOM:
+            random()
+            //TODO new random functionality
+        case .SAVED:
+            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 5)
+        case .UPVOTED:
+            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 4)
+        case .HISTORY:
+            currentAccountViewController(view, didRequestHistory: ())
+        case .AUTO_CACHE:
+            currentAccountViewController(view, didRequestCacheNow: ())
+        case .YOUR_PROFILE:
+            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 1)
+        case .COLLECTIONS:
+            currentAccountViewController(view, didRequestCollections: ())
+        case .CREATE_MULTI:
+            view.multiButtonPressed()
+        case .TRENDING:
+            ()
+            //TODO trending page
+        }
+    }
+    
+    func random() {
+        Alamofire.request("https://www.reddit.com/r/random/about.json", method: .get).responseString { response in
+            do {
+                guard let data = response.data else {
+                    BannerUtil.makeBanner(text: "Random subreddit not found", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)
+                    return
+                }
+                let json = try JSON(data: data)
+                if let sub = json["data"]["display_name"].string {
+                    self.goToSubreddit(subreddit: sub, override: true)
+                } else {
+                    BannerUtil.makeBanner(text: "Random subreddit not found", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)
+                }
+            } catch {
+                BannerUtil.makeBanner(text: "Random subreddit not found", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)
+            }
+        }
+    }
+    
     func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestSettingsMenu: Void) {
         let settings = SettingsViewController()
         VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: view.parent?.navigationController, parentViewController: view.parent ?? self)
@@ -521,6 +571,27 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
     
     func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestHistory: Void) {
         VCPresenter.showVC(viewController: HistoryViewController(), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+    }
+
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestCollections: Void) {
+        if Collections.collectionIDs.count == 0 {
+            let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
+            
+            alert.setupTheme()
+            alert.attributedTitle = NSAttributedString(string: "You haven't created a collection yet!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            
+            alert.addCloseButton()
+            alert.addBlurView()
+            present(alert, animated: true, completion: nil)
+
+        } else {
+            let vc = CollectionsViewController()
+            let navVC = SwipeForwardNavigationController(rootViewController: vc)
+            navVC.navigationBar.isTranslucent = false
+            present(navVC, animated: true)
+        }
     }
 
     func currentAccountViewController(_ view: CurrentAccountHeaderView?, didRequestAccountChangeToName accountName: String) {

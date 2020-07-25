@@ -411,12 +411,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         let splitButton = UIButton.init(type: .custom)
         splitButton.setImage(UIImage(sfString: SFSymbol.sidebarLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
-        splitButton.addTarget(self, action: #selector(self.popToPrimary(_:)), for: UIControl.Event.touchUpInside)
         let splitB = UIBarButtonItem(customView: splitButton)
         
-        if self is SplitMainViewController && UIDevice.current.userInterfaceIdiom == .pad {
-            items.append(splitB)
-        }
+        self.splitViewController?.navigationItem.backBarButtonItem = splitB
         
         items.append(accountB)
         
@@ -426,7 +423,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         self.navigationItem.setHidesBackButton(true, animated: false)
         self.splitViewController?.navigationItem.setHidesBackButton(true, animated: false)
-        (self.splitViewController?.viewControllers[1] as? UINavigationController)?.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationItem.setLeftBarButtonItems(items, animated: false)
     }
     
@@ -652,7 +648,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func addAccount(token: OAuth2Token, register: Bool) {
     }
     
-    func goToSubreddit(subreddit: String) {
+    override func goToSubreddit(subreddit: String, override: Bool = false) {
     }
     
     func goToUser(profile: String) {

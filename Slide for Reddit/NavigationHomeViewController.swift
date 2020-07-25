@@ -180,6 +180,7 @@ class NavigationHomeViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        searchBar.endEditing(true)
         NavigationHomeViewController.edgeGesture = nil
     }
 
@@ -602,8 +603,9 @@ extension NavigationHomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
         if self.searchBar.text?.isEmpty() ?? false {
-            self.tableView.endEditing(true)
-            searchBar.resignFirstResponder()
+            //TODO this?
+            //self.tableView.endEditing(true)
+            //searchBar.resignFirstResponder()
         }
         lastY = scrollView.contentOffset.y
     }
@@ -672,6 +674,7 @@ protocol CurrentAccountHeaderViewDelegate: AnyObject {
     func currentAccountViewController(_ view: CurrentAccountHeaderView, goToMultireddit multireddit: String)
     func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestCacheNow: Void)
     func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestHistory: Void)
+    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestAction: SettingValues.NavigationHeaderActions)
 }
 
 class CurrentAccountHeaderView: UIView {
@@ -680,7 +683,7 @@ class CurrentAccountHeaderView: UIView {
     weak var parent: UIViewController?
     
     var reportText: String?
-    var defaultActions: [AccountShortcutAction] = []
+    var defaultActions: [SettingValues.NavigationHeaderActions] = []
     
     /// Overall height of the content view, including its out-of-bounds elements.
     var contentViewHeight: CGFloat {
@@ -801,15 +804,7 @@ class CurrentAccountHeaderView: UIView {
     func initCurrentAccount(_ parent: UIViewController) {
         self.parent = parent
         
-        defaultActions.append(AccountShortcutAction(icon: "sub", title: "Home", sfIcon: SFSymbol.houseFill, imageColor: ColorUtil.theme.fontColor, callback: {
-            
-        }))
-        defaultActions.append(AccountShortcutAction(icon: "sub", title: "Random", sfIcon: SFSymbol.shuffle, imageColor: ColorUtil.theme.fontColor, callback: {
-            
-        }))
-        defaultActions.append(AccountShortcutAction(icon: "sub", title: "Liked posts", sfIcon: SFSymbol.arrowUp, imageColor: ColorUtil.theme.fontColor, callback: {
-            
-        }))
+        defaultActions = SettingValues.NavigationHeaderActions.getMenuNone()
 
         shortcutsView = AccountShortcutsView(frame: CGRect.zero, actions: defaultActions)
         
@@ -1114,8 +1109,8 @@ extension CurrentAccountHeaderView {
 
 // MARK: - AccountHeaderViewDelegate
 extension CurrentAccountHeaderView: AccountShortcutsViewDelegate {
-    func didRequestAction(_ action: AccountShortcutAction) {
-        //TODO do something
+    func didRequestAction(_ action: SettingValues.NavigationHeaderActions) {
+        delegate?.currentAccountViewController(self, didRequestAction: action)
     }
 
     func accountHeaderView(_ view: AccountShortcutsView, didRequestProfilePageAtIndex index: Int) {
@@ -1205,32 +1200,16 @@ extension CurrentAccountHeaderView {
 
 protocol AccountShortcutsViewDelegate: AnyObject {
     func accountHeaderView(_ view: AccountShortcutsView, didRequestProfilePageAtIndex index: Int)
-    func didRequestAction(_ action: AccountShortcutAction)
-}
-
-class AccountShortcutAction: NSObject {
-    var icon: String
-    var title: String
-    var callback: () -> Void
-    var sfIcon: SFSymbol
-    var imageColor: UIColor
-    
-    init(icon: String, title: String, sfIcon: SFSymbol, imageColor: UIColor, callback: @escaping () -> Void) {
-        self.icon = icon
-        self.title = title
-        self.callback = callback
-        self.sfIcon = sfIcon
-        self.imageColor = imageColor
-    }
+    func didRequestAction(_ action: SettingValues.NavigationHeaderActions)
 }
 
 class AccountShortcutsView: UIView {
     
     weak var delegate: AccountShortcutsViewDelegate?
         
-    var actions: [AccountShortcutAction]
+    var actions: [SettingValues.NavigationHeaderActions]
     
-    init(frame: CGRect, actions: [AccountShortcutAction]) {
+    init(frame: CGRect, actions: [SettingValues.NavigationHeaderActions]) {
         self.actions = actions
         super.init(frame: frame)
         
@@ -1239,7 +1218,7 @@ class AccountShortcutsView: UIView {
         for action in actions {
             print(action)
             cellStack.addArrangedSubview(UITableViewCell().then {
-                $0.configure(text: action.title, imageName: action.icon, sfSymbolName: action.sfIcon, imageColor: action.imageColor)
+                $0.configure(text: action.getTitle(), image: action.getImage())
                 $0.addTapGestureRecognizer {
                     self.delegate?.didRequestAction(action)
                 }

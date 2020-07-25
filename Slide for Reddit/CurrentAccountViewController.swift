@@ -513,7 +513,6 @@ extension CurrentAccountViewController: AccountHeaderViewDelegate {
     }
     
     func didRequestCollections() {
-       // TODO: - collections
         if Collections.collectionIDs.count == 0 {
             let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
             
@@ -804,6 +803,16 @@ public extension UITableViewCell {
         textLabel?.text = text
         imageView?.image = UIImage(sfString: sfSymbolName, overrideString: imageName)?.menuIcon()
         imageView?.tintColor = imageColor
+        
+        accessoryType = .none
+        backgroundColor = ColorUtil.theme.foregroundColor
+        textLabel?.textColor = ColorUtil.theme.fontColor
+        layer.cornerRadius = 5
+        clipsToBounds = true
+    }
+    func configure(text: String, image: UIImage) {
+        textLabel?.text = text
+        imageView?.image = image
         
         accessoryType = .none
         backgroundColor = ColorUtil.theme.foregroundColor
