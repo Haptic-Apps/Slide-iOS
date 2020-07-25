@@ -123,21 +123,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
-            if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItem = accountB
-                navigationItem.rightBarButtonItems = [sortB, readLaterB]
-            } else {
-                navigationItem.rightBarButtonItems = [sortB, readLaterB]
-                doLeftItem()
-            }
+            navigationItem.rightBarButtonItems = [sortB, readLaterB]
+            doLeftItem()
+
         } else {
-            if SettingValues.subredditBar {
-                navigationItem.leftBarButtonItems = [accountB]
-                navigationItem.rightBarButtonItems = [sortB]
-            } else {
-                navigationItem.rightBarButtonItems = [sortB]
-                doLeftItem()
-            }
+            navigationItem.rightBarButtonItems = [sortB]
+            doLeftItem()
         }
     }
     
@@ -416,9 +407,36 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         label.sizeToFit()
         let leftItem = UIBarButtonItem(customView: label)
+        var items: [UIBarButtonItem] = []
+        
+        let splitButton = UIButton.init(type: .custom)
+        splitButton.setImage(UIImage(sfString: SFSymbol.sidebarLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
+        splitButton.addTarget(self, action: #selector(self.popToPrimary(_:)), for: UIControl.Event.touchUpInside)
+        let splitB = UIBarButtonItem(customView: splitButton)
+        
+        if self is SplitMainViewController && UIDevice.current.userInterfaceIdiom == .pad {
+            items.append(splitB)
+        }
+        
+        items.append(accountB)
         
         if !SettingValues.subredditBar {
-           self.navigationItem.leftBarButtonItems = SettingValues.subredditBar ? [leftItem] : [accountB, leftItem]
+            items.append(leftItem)
+        }
+        
+        self.navigationItem.setHidesBackButton(true, animated: false)
+        self.splitViewController?.navigationItem.setHidesBackButton(true, animated: false)
+        (self.splitViewController?.viewControllers[1] as? UINavigationController)?.navigationItem.setHidesBackButton(true, animated: false)
+        self.navigationItem.setLeftBarButtonItems(items, animated: false)
+    }
+    
+    @objc func popToPrimary(_ sender: AnyObject) {
+        if let split = splitViewController, split.isCollapsed {
+            if #available(iOS 14, *) {
+                split.show(UISplitViewController.Column.primary)
+            } else if let nav = split.viewControllers[0] as? UINavigationController {
+                nav.popToRootViewController(animated: true)
+            }
         }
     }
     

@@ -157,6 +157,8 @@ class NavigationHomeViewController: UIViewController {
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
         self.splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        
+        self.tableView.setContentOffset(CGPoint.zero, animated: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -230,7 +232,8 @@ class NavigationHomeViewController: UIViewController {
         searchBar.heightAnchor == 50
         searchBar.bottomAnchor == headerView.bottomAnchor
 
-        tableView.topAnchor == view.safeTopAnchor + 8
+        tableView.topAnchor == view.safeTopAnchor
+        tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         tableView.horizontalAnchors == view.horizontalAnchors
         tableView.bottomAnchor == view.bottomAnchor
     }
@@ -494,6 +497,10 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
 }
 
 extension NavigationHomeViewController: UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        tableView.setContentOffset(searchBar.frame.origin, animated: true)
+    }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
         timer?.invalidate()
