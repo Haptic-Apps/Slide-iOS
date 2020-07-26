@@ -420,20 +420,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func doHard(_ window: UIWindow) -> MainViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            let splitViewController = UISplitViewController()
-            splitViewController.preferredDisplayMode = .automatic
-            splitViewController.presentsWithGesture = true
-            
-            splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-            splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
-            
-            let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
+            if SettingValues.appMode == .MULTI_COLUMN {
+                let splitViewController = UISplitViewController()
+                splitViewController.preferredDisplayMode = .primaryOverlay
+                splitViewController.presentsWithGesture = true
+                
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+                splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
+                
+                let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
 
-            window.rootViewController = splitViewController
-            self.window = window
-            window.makeKeyAndVisible()
-            return main
+                window.rootViewController = splitViewController
+                self.window = window
+                window.makeKeyAndVisible()
+                return main
+            } else {
+                let splitViewController = UISplitViewController()
+                splitViewController.preferredDisplayMode = .automatic
+                splitViewController.presentsWithGesture = true
+                
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+                splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
+                
+                let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
+                swipeNav.pushViewController(main, animated: false)
+                splitViewController.viewControllers = [swipeNav, PlaceholderViewController()]
+
+                window.rootViewController = splitViewController
+                self.window = window
+                window.makeKeyAndVisible()
+                return main
+            }
         } else {
             let splitViewController = UISplitViewController()
             splitViewController.preferredDisplayMode = .primaryOverlay

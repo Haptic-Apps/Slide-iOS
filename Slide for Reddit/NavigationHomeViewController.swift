@@ -6,10 +6,12 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import Alamofire
 import Anchorage
 import AudioToolbox
-import SDCAlertView
 import BadgeSwift
+import SDCAlertView
+import SwiftyJSON
 import reddift
 import SDWebImage
 import Then
@@ -19,6 +21,7 @@ class NavigationHomeViewController: UIViewController {
     var tableView = UITableView(frame: CGRect.zero, style: .grouped)
     var filteredContent: [String] = []
     var suggestions = [String]()
+    var users = [String]()
     var parentController: SplitMainViewController?
     var topView: UIView?
     var bottomOffset: CGFloat = 64
@@ -35,7 +38,7 @@ class NavigationHomeViewController: UIViewController {
 
     var isSearching = false
 
-    var task: URLSessionDataTask?
+    var task: DataRequest?
 
     var accessibilityCloseButton = UIButton().then {
         $0.accessibilityIdentifier = "Close button"
@@ -299,7 +302,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return !isSearching ? subsSource.sections.count : (suggestions.count > 0 ? 2 : 1)
+        return !isSearching ? subsSource.sections.count : (suggestions.count + users.count > 0 ? 2 : 1)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -321,7 +324,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
             if section == 0 {
                 return filteredContent.count + (filteredContent.contains(searchBar.text!) ? 0 : 1) + 3
             } else {
-                return suggestions.count
+                return suggestions.count + users.count
             }
         }
     }
@@ -415,7 +418,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         if isSearching {
             switch section {
             case 0: label.text  = ""
-            default: label.text  = "SUBREDDIT SUGGESTIONS"
+            default: label.text  = "REDDIT SUGGESTIONS"
             }
         } else {
             let sectionTitle = subsSource.sortedSectionTitles[section]
@@ -449,8 +452,9 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
                     c.setSubreddit(subreddit: thing, nav: self, exists: false)
                     cell = c
                 } else if indexPath.row == filteredContent.count + 1 {
+                    // "Search Reddit for <text>" cell
                     let thing = searchBar.text!
-                    let c = tableView.dequeueReusableCell(withIdentifier: "profile", for: indexPath) as! SubredditCellView
+                    let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                     c.setProfile(profile: thing, nav: self)
                     cell = c
                 } else if indexPath.row == filteredContent.count + 2 {
@@ -482,13 +486,26 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         } else {
             let thing: String
             if isSearching {
-                thing = suggestions[indexPath.row]
+                print(users)
+                print(suggestions)
+                print(indexPath.row)
+                if (indexPath.row > suggestions.count - 1 || suggestions.count == 0) && users.count > 0 {
+                    thing = users[indexPath.row - suggestions.count]
+                    let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
+                    c.setProfile(profile: thing, nav: self)
+                    cell = c
+                } else {
+                    thing = suggestions[indexPath.row]
+                    let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
+                    c.setSubreddit(subreddit: thing, nav: self, exists: true)
+                    cell = c
+                }
             } else {
                 thing = subsSource.subredditsInSection(indexPath.section)![indexPath.row]
+                let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
+                c.setSubreddit(subreddit: thing, nav: self, exists: true)
+                cell = c
             }
-            let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-            c.setSubreddit(subreddit: thing, nav: self, exists: true)
-            cell = c
         }
 
         cell.backgroundColor = ColorUtil.theme.foregroundColor
@@ -507,6 +524,7 @@ extension NavigationHomeViewController: UISearchBarDelegate {
         timer?.invalidate()
         filteredContent = []
         suggestions = []
+        users = []
         if textSearched.length != 0 {
             isSearching = true
             searchTableList()
@@ -533,24 +551,29 @@ extension NavigationHomeViewController: UISearchBarDelegate {
             task?.cancel()
         }
         do {
-            task = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchBar.text ?? "", paginator: Paginator(), completion: { (result) in
-                switch result {
-                case .success(let subs):
-                    for sub in subs.children {
-                        let s = sub as! Subreddit
-                        // Ignore nsfw subreddits if nsfw is disabled
-                        if s.over18 && !SettingValues.nsfwEnabled {
-                            continue
+            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=" + (searchBar.text?.addPercentEncoding ?? "") + "&include_over_18=" + (AccountController.isLoggedIn && SettingValues.nsfwEnabled ? "true" : "false")
+            print("Requesting \(requestString)")
+            task = Alamofire.request(requestString, method: .get).responseString { response in
+                do {
+                    guard let data = response.data else {
+                        return
+                    }
+                    let json = try JSON(data: data)
+                    if let subs = json["data"]["children"].array {
+                        for sub in subs {
+                            if sub["kind"].string == "t5", let subName = sub["data"]["display_name"].string {
+                                self.suggestions.append(subName)
+                            } else if sub["kind"].string == "t2", let userName = sub["data"]["name"].string {
+                                self.users.append(userName)
+                            }
                         }
-                        self.suggestions.append(s.displayName)
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
                     }
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
-                case .failure(let error):
-                    print(error)
+                } catch {
                 }
-            })
+            }
         }
     }
 

@@ -383,7 +383,6 @@ class SplitMainViewController: MainViewController {
                                          }
                                      })
         } else {
-           // TODO: - better sanitation
             VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         }
     }
@@ -498,18 +497,17 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
         case .POPULAR:
             goToSubreddit(subreddit: "popular")
         case .RANDOM:
-            random()
-            //TODO new random functionality
+            random(view)
         case .SAVED:
-            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 5)
-        case .UPVOTED:
             view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 4)
+        case .UPVOTED:
+            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 3)
         case .HISTORY:
             currentAccountViewController(view, didRequestHistory: ())
         case .AUTO_CACHE:
             currentAccountViewController(view, didRequestCacheNow: ())
         case .YOUR_PROFILE:
-            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 1)
+            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 0)
         case .COLLECTIONS:
             currentAccountViewController(view, didRequestCollections: ())
         case .CREATE_MULTI:
@@ -520,7 +518,7 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
         }
     }
     
-    func random() {
+    func random(_ view: CurrentAccountHeaderView) {
         Alamofire.request("https://www.reddit.com/r/random/about.json", method: .get).responseString { response in
             do {
                 guard let data = response.data else {
@@ -529,7 +527,7 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
                 }
                 let json = try JSON(data: data)
                 if let sub = json["data"]["display_name"].string {
-                    self.goToSubreddit(subreddit: sub, override: true)
+                    VCPresenter.openRedditLink("/r/\(sub)", view.parent?.navigationController, view.parent)
                 } else {
                     BannerUtil.makeBanner(text: "Random subreddit not found", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)
                 }
