@@ -97,12 +97,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return menuId
     }
     
-    func createJumpButton() {
+    func createJumpButton(_ forced: Bool = false) {
         if SettingValues.commentJumpButton == .DISABLED {
             return
         }
         if self.navigationController?.view != nil {
             let view = self.navigationController!.view!
+            if jump != nil && forced {
+                jump.removeFromSuperview()
+                jump = nil
+            }
             if jump == nil {
                 jump = UIView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
                     $0.clipsToBounds = true
@@ -1098,8 +1102,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var modB = UIBarButtonItem()
 
     func hideSearchBar() {
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        tableView.tableHeaderView = savedHeaderView!
+        if let header = savedHeaderView {
+            navigationController?.setNavigationBarHidden(false, animated: true)
+            tableView.tableHeaderView = header
+        }
         isSearch = false
         
         searchBar.tintColor = ColorUtil.theme.fontColor
@@ -1289,6 +1295,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
+        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+            navGesture.require(toFail: panGesture)
+        }
         self.presentationController?.delegate = self
 //        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
 //        pan.direction = .horizontal
@@ -1304,6 +1313,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     @objc func onThemeChanged() {
+        version += 1
+        
         self.headerCell = FullLinkCellView()
         self.headerCell?.del = self
         self.headerCell?.parentViewController = self
@@ -1334,11 +1345,33 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.navigationItem.backBarButtonItem?.title = ""
         self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
         
-        self.hideSearchBar()
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
-        
+        updateStringsTheme(self.content.map { (k, v) in v} )
+
         self.tableView.reloadData()
+        
+        sortButton = UIButton.init(type: .custom)
+        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let sortB = UIBarButtonItem.init(customView: sortButton)
+
+        doSortImage(sortButton)
+        
+        let search = UIButton.init(type: .custom)
+        search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
+        search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
+        search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let searchB = UIBarButtonItem.init(customView: search)
+
+        navigationItem.rightBarButtonItems = [sortB, searchB]
+        doHeadView(self.view.frame.size)
+        
+        self.createJumpButton(true)
+        if let submission = self.submission {
+            self.setupTitleView(submission.subreddit, icon: submission.subreddit_icon)
+        }
+        self.updateToolbar()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -1761,6 +1794,23 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            }
+        }
+    }
+    
+    func updateStringsTheme(_ comments: [AnyObject]) {
+        var color = UIColor.black
+        var first = true
+        for thing in comments {
+            if let comment = thing as? RComment, first {
+                color = ColorUtil.accentColorForSub(sub: comment.subreddit)
+                first = false
+            }
+            if let comment = thing as? RComment {
+                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.htmlText, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            } else if let more = thing as? RMore {
+                let attr = NSMutableAttributedString(string: "more")
+                self.text[more.getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
             }
         }
     }
