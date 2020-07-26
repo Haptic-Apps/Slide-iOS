@@ -280,18 +280,15 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         let cell = tableView.cellForRow(at: indexPath) as! SubredditCellView
         if !cell.profile.isEmpty() {
             let user = cell.profile
-            parentController?.goToUser(profile: user)
-            if let nav = navigationController as? SwipeForwardNavigationController {
-                nav.pushNextViewControllerFromRight()
-            }
+            VCPresenter.openRedditLink("/u/" + user.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         } else if !cell.search.isEmpty() {
             VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
         } else {
             let sub = cell.subreddit
-            parentController?.goToSubreddit(subreddit: sub)
             if let nav = navigationController as? SwipeForwardNavigationController {
                 nav.pushNextViewControllerFromRight()
             }
+            parentController?.goToSubreddit(subreddit: sub)
         }
         searchBar.text = ""
         searchBar.endEditing(true)
@@ -1132,6 +1129,10 @@ extension CurrentAccountHeaderView {
 
 // MARK: - AccountHeaderViewDelegate
 extension CurrentAccountHeaderView: AccountShortcutsViewDelegate {
+    func displayMenu(_ menu: DragDownAlertMenu) {
+        parent?.present(menu, animated: true, completion: nil)
+    }
+    
     func didRequestAction(_ action: SettingValues.NavigationHeaderActions) {
         delegate?.currentAccountViewController(self, didRequestAction: action)
     }
@@ -1224,6 +1225,7 @@ extension CurrentAccountHeaderView {
 protocol AccountShortcutsViewDelegate: AnyObject {
     func accountHeaderView(_ view: AccountShortcutsView, didRequestProfilePageAtIndex index: Int)
     func didRequestAction(_ action: SettingValues.NavigationHeaderActions)
+    func displayMenu(_ menu: DragDownAlertMenu)
 }
 
 class AccountShortcutsView: UIView {
@@ -1250,6 +1252,21 @@ class AccountShortcutsView: UIView {
             })
         }
         
+        cellStack.addArrangedSubview(UITableViewCell().then {
+            $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
+            $0.addTapGestureRecognizer {
+                let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
+                for action in SettingValues.NavigationHeaderActions.cases {
+                    optionMenu.addAction(title: action.getTitle(), icon: action.getImage()) {
+                        self.delegate?.didRequestAction(action)
+                    }
+                }
+                self.delegate?.displayMenu(optionMenu)
+            }
+            $0.heightAnchor >= 50
+            $0.accessoryType = .disclosureIndicator
+        })
+
         self.clipsToBounds = true
         
         setupAnchors()
@@ -1261,7 +1278,7 @@ class AccountShortcutsView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return CGFloat(actions.count * 50) + 10 + CGFloat(actions.count * 2)
+        return CGFloat((actions.count + 1) * 50) + 10 + CGFloat((actions.count + 1) * 2)
     }
         
     required init?(coder aDecoder: NSCoder) {

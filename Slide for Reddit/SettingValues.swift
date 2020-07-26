@@ -1047,7 +1047,7 @@ class SettingValues {
         case TRENDING = "trending"
         
         public static func getMenuNone() -> [NavigationHeaderActions] {
-            let menu = UserDefaults.standard.stringArray(forKey: "headermenu") ?? ["home", "random", "saved", "collections", "create_multi"]
+            let menu = UserDefaults.standard.stringArray(forKey: "headerMenu") ?? ["home", "random", "saved", "collections", "create_multi"]
             var toReturn = [NavigationHeaderActions]()
             for item in menu {
                 toReturn.append(NavigationHeaderActions(rawValue: item)!)
