@@ -247,4 +247,5 @@ extension Notification.Name {
     static let onAccountChanged = Notification.Name("on-account-changed")
     static let onAccountMailCountChanged = Notification.Name("on-account-mail-count-changed")
     static let accountRefreshRequested = Notification.Name("account-refresh-requested")
+    static let onThemeChanged = Notification.Name("theme-change-requested")
 }

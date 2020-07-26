@@ -18,6 +18,8 @@ import YYText
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
     
+    var version = 0
+    
     func hide(index: Int) {
         if index >= 0 {
             self.navigationController?.popViewController(animated: true)
@@ -1263,8 +1265,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         tableView.estimatedRowHeight = 200
         tableView.rowHeight = UITableView.automaticDimension
 
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell")
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
 
         tableView.separatorStyle = .none
         NotificationCenter.default.addObserver(
@@ -1287,7 +1289,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
-        self.presentationController?.delegate  = self
+        self.presentationController?.delegate = self
 //        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
 //        pan.direction = .horizontal
         if !loaded && (single || forceLoad) {
@@ -1298,8 +1300,58 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
     }
-    
+
+    @objc func onThemeChanged() {
+        self.headerCell = FullLinkCellView()
+        self.headerCell?.del = self
+        self.headerCell?.parentViewController = self
+        self.hasDone = true
+        self.headerCell?.aspectWidth = self.tableView.bounds.size.width
+        self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width, np: self.np)
+        if self.submission!.isSelf {
+            self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+        }
+        self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
+        if let tableHeaderView = self.headerCell {
+            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
+            // Add safe area insets to left and right if available
+            if #available(iOS 11.0, *) {
+                frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
+            }
+            if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
+                tableHeaderView.frame = frame
+                tableHeaderView.layoutIfNeeded()
+                let view = UIView(frame: tableHeaderView.frame)
+                view.addSubview(tableHeaderView)
+                self.tableView.tableHeaderView = view
+            }
+        }
+        
+        self.setupTitleView(self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+        
+        self.navigationItem.backBarButtonItem?.title = ""
+        self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
+        
+        self.hideSearchBar()
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
+        
+        self.tableView.reloadData()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if #available(iOS 13.0, *) {
+            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                if themeChanged {
+                    ColorUtil.matchTraitCollection()
+                }
+            }
+        }
+    }
+
     @objc func cancelTapped() {
         hideSearchBar()
     }
@@ -2499,7 +2551,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         let datasetPosition = (indexPath as NSIndexPath).row
 
-        cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
+        cell = tableView.dequeueReusableCell(withIdentifier: "Cell\(version)", for: indexPath) as UITableViewCell
         if content.isEmpty || text.isEmpty || cDepth.isEmpty || dataArray.isEmpty {
             self.refresh(self)
             return cell

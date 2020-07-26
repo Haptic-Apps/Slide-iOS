@@ -97,6 +97,39 @@ class NavigationHomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        doViews()
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
+                                               name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        updateAccessibility()
+        searchBar.isUserInteractionEnabled = true
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+    }
+
+    @objc func onThemeChanged() {
+        doViews()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if #available(iOS 13.0, *) {
+            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                if themeChanged {
+                    ColorUtil.matchTraitCollection()
+                }
+            }
+        }
+    }
+
+    func doViews() {
+        tableView.backgroundColor = ColorUtil.theme.foregroundColor
+        tableView.separatorColor = ColorUtil.theme.foregroundColor
+        
+        self.navigationController?.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+        self.splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
 
         tableView.sectionIndexColor = ColorUtil.baseAccent
 
@@ -107,13 +140,7 @@ class NavigationHomeViewController: UIViewController {
         configureViews()
         configureLayout()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
-                                               name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
-                                               name: UIResponder.keyboardWillHideNotification, object: nil)
-
-        updateAccessibility()
-        searchBar.isUserInteractionEnabled = true
+        self.tableView.reloadData()
     }
     
     struct Callbacks {

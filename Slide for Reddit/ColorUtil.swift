@@ -95,6 +95,7 @@ public class ColorUtil {
         if accent != nil {
             baseAccent = accent!
         }
+        NotificationCenter.default.post(name: .onThemeChanged, object: nil)
         return toReturn
     }
     
@@ -119,6 +120,14 @@ public class ColorUtil {
             return color
         } else {
             return baseColor
+        }
+    }
+    
+    public static func matchTraitCollection() {
+        if shouldBeNight() && theme.displayName != SettingValues.nightTheme {
+            doInit()
+        } else if !shouldBeNight() && theme.displayName == SettingValues.nightTheme {
+            doInit()
         }
     }
 

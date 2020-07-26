@@ -156,7 +156,17 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountRefreshRequested), name: .accountRefreshRequested, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
-
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+    }
+    
+    @objc func onThemeChanged() {
+        SingleSubredditViewController.cellVersion += 1
+        MainViewController.needsReTheme = true
+        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
+        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+        self.parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
+        self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
+        doRetheme()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -230,36 +240,25 @@ class SplitMainViewController: MainViewController {
         self.setNeedsStatusBarAppearanceUpdate()
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
-        let shouldBeNight = ColorUtil.shouldBeNight()
-        if SubredditReorderViewController.changed || (shouldBeNight && ColorUtil.theme.title != SettingValues.nightTheme) || (!shouldBeNight && ColorUtil.theme.title != UserDefaults.standard.string(forKey: "theme") ?? "light") {
-            var subChanged = false
-            if finalSubs.count != Subscriptions.subreddits.count {
-                subChanged = true
-            } else {
-                for i in 0 ..< Subscriptions.pinned.count {
-                    if finalSubs[i] != Subscriptions.pinned[i] {
-                        subChanged = true
-                        break
-                    }
+        var subChanged = false
+        if finalSubs.count != Subscriptions.subreddits.count {
+            subChanged = true
+        } else {
+            for i in 0 ..< Subscriptions.pinned.count {
+                if finalSubs[i] != Subscriptions.pinned[i] {
+                    subChanged = true
+                    break
                 }
-            }
-            
-            if ColorUtil.doInit() {
-                SingleSubredditViewController.cellVersion += 1
-                MainViewController.needsReTheme = true
-                if override {
-                    doRetheme()
-                }
-            }
-            
-            if subChanged || SubredditReorderViewController.changed {
-                finalSubs = []
-                finalSubs.append(contentsOf: Subscriptions.pinned)
-                finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
-                redoSubs()
             }
         }
-        
+                    
+        if subChanged || SubredditReorderViewController.changed {
+            finalSubs = []
+            finalSubs.append(contentsOf: Subscriptions.pinned)
+            finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+            redoSubs()
+        }
+    
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
         self.parent?.navigationController?.navigationBar.isTranslucent = false
         self.parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
