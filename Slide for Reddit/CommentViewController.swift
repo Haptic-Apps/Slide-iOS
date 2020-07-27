@@ -1027,42 +1027,57 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func setupTitleView(_ sub: String, icon: String) {
-        let titleView = UILabel()
-        titleView.text = sub
-        titleView.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
-        titleView.font = UIFont.boldSystemFont(ofSize: 17)
-        let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
-        titleView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: 500))
-        titleView.accessibilityTraits = UIAccessibilityTraits(rawValue: UIAccessibilityTraits.header.rawValue | UIAccessibilityTraits.link.rawValue)
-        titleView.accessibilityHint = "Opens the sub red it r \(sub)"
-        titleView.accessibilityLabel = "Sub red it: r \(sub)"
-        self.navigationItem.titleView = titleView
-        
-        titleView.addTapGestureRecognizer(action: {
-            VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
-        })
+        let label = UILabel()
+        label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
+        label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         
         if SettingValues.reduceColor {
-            var sideView = UIImageView()
-            sideView = UIImageView(frame: CGRect(x: -20, y: 15, width: 15, height: 15))
-            sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-            sideView.translatesAutoresizingMaskIntoConstraints = false
-            titleView.addSubview(sideView)
-            sideView.layer.cornerRadius = 7.5
+            let sideView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+            let subreddit = sub
+            sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+            
+            if let icon = Subscriptions.icon(for: subreddit) {
+                sideView.contentMode = .scaleAspectFill
+                sideView.image = UIImage()
+                sideView.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+            } else {
+                sideView.contentMode = .center
+                if subreddit.contains("m/") {
+                    sideView.image = SubredditCellView.defaultIconMulti
+                } else if subreddit.lowercased() == "all" {
+                    sideView.image = SubredditCellView.allIcon
+                    sideView.backgroundColor = GMColor.blue500Color()
+                } else if subreddit.lowercased() == "frontpage" {
+                    sideView.image = SubredditCellView.frontpageIcon
+                    sideView.backgroundColor = GMColor.green500Color()
+                } else if subreddit.lowercased() == "popular" {
+                    sideView.image = SubredditCellView.popularIcon
+                    sideView.backgroundColor = GMColor.purple500Color()
+                } else {
+                    sideView.image = SubredditCellView.defaultIcon
+                }
+            }
+            
+            label.addSubview(sideView)
+            sideView.sizeAnchors == CGSize.square(size: 30)
+            sideView.centerYAnchor == label.centerYAnchor
+            sideView.leftAnchor == label.leftAnchor
+
+            sideView.layer.cornerRadius = 15
             sideView.clipsToBounds = true
-            /* Maybe enable this later if icon != "" && SettingValues.subredditIcons {
-                sideView.layer.borderColor = ColorUtil.getColorForSub(sub: sub).cgColor
-                sideView.layer.borderWidth = 2
-                sideView.heightAnchor == 25
-                sideView.widthAnchor == 25
-                sideView.layer.cornerRadius = 12.5
-                sideView.topAnchor == titleView.topAnchor - 5
-                sideView.leftAnchor == titleView.leftAnchor - 30
-                
-                sideView.sd_setImage(with: URL(string: icon), completed: nil)
-                titleView.layoutIfNeeded()
-            }*/
         }
+        
+        label.sizeToFit()
+        self.navigationItem.titleView = label
+
+        label.accessibilityHint = "Opens the sub red it r \(sub)"
+        label.accessibilityLabel = "Sub red it: r \(sub)"
+
+        label.addTapGestureRecognizer(action: {
+            VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
+        })
     }
     
     var savedBack: UIBarButtonItem?

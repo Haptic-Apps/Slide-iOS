@@ -864,6 +864,51 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
                 subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 navigationItem.rightBarButtonItems = [sortB]
+                
+                let label = UILabel()
+                label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
+                label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+                label.adjustsFontSizeToFitWidth = true
+                label.font = UIFont.boldSystemFont(ofSize: 20)
+                
+                if SettingValues.reduceColor {
+                    let sideView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+                    let subreddit = sub
+                    sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+                    
+                    if let icon = Subscriptions.icon(for: subreddit) {
+                        sideView.contentMode = .scaleAspectFill
+                        sideView.image = UIImage()
+                        sideView.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+                    } else {
+                        sideView.contentMode = .center
+                        if subreddit.contains("m/") {
+                            sideView.image = SubredditCellView.defaultIconMulti
+                        } else if subreddit.lowercased() == "all" {
+                            sideView.image = SubredditCellView.allIcon
+                            sideView.backgroundColor = GMColor.blue500Color()
+                        } else if subreddit.lowercased() == "frontpage" {
+                            sideView.image = SubredditCellView.frontpageIcon
+                            sideView.backgroundColor = GMColor.green500Color()
+                        } else if subreddit.lowercased() == "popular" {
+                            sideView.image = SubredditCellView.popularIcon
+                            sideView.backgroundColor = GMColor.purple500Color()
+                        } else {
+                            sideView.image = SubredditCellView.defaultIcon
+                        }
+                    }
+                    
+                    label.addSubview(sideView)
+                    sideView.sizeAnchors == CGSize.square(size: 30)
+                    sideView.centerYAnchor == label.centerYAnchor
+                    sideView.leftAnchor == label.leftAnchor
+
+                    sideView.layer.cornerRadius = 15
+                    sideView.clipsToBounds = true
+                }
+                
+                label.sizeToFit()
+                self.navigationItem.titleView = label
             }
             
             let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
@@ -886,8 +931,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 toolbarItems = [infoB, flexButton, moreB]
             }
             
-            title = sub
-
             if !loaded {
                 do {
                     try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
