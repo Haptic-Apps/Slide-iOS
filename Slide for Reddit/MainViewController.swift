@@ -169,9 +169,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             Subscriptions.getSubscriptionsFully(session: session, completion: { (newSubs, newMultis) in
                 if AccountController.isLoggedIn {
                     var allSubs = [String]()
-                    allSubs.append(contentsOf: newSubs.map{ $0.displayName })
-                    allSubs.append(contentsOf: newMultis.map{ "/m/" + $0.displayName })
-                    var currentSubs = Subscriptions.subreddits
+                    allSubs.append(contentsOf: newSubs.map { $0.displayName })
+                    allSubs.append(contentsOf: newMultis.map { "/m/" + $0.displayName })
+                    let currentSubs = Subscriptions.subreddits
                     var finalSubs = [String]()
                     finalSubs.append(contentsOf: allSubs)
                     for sub in currentSubs {
@@ -412,23 +412,52 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
     func doLeftItem() {
         let label = UILabel()
-        label.text = "   \(SettingValues.reduceColor ? "    " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
+        label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
         label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
         
         if SettingValues.reduceColor {
-            var sideView = UIView()
-            sideView = UIView(frame: CGRect(x: 5, y: 5, width: 15, height: 15))
-            sideView.backgroundColor = ColorUtil.getColorForSub(sub: self.currentTitle)
-            sideView.translatesAutoresizingMaskIntoConstraints = false
+            let sideView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+            let subreddit = self.currentTitle
+            sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+            
+            if let icon = Subscriptions.icon(for: subreddit) {
+                sideView.contentMode = .scaleAspectFill
+                sideView.image = UIImage()
+                sideView.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+            } else {
+                sideView.contentMode = .center
+                if subreddit.contains("m/") {
+                    sideView.image = SubredditCellView.defaultIconMulti
+                } else if subreddit.lowercased() == "all" {
+                    sideView.image = SubredditCellView.allIcon
+                    sideView.backgroundColor = GMColor.blue500Color()
+                } else if subreddit.lowercased() == "frontpage" {
+                    sideView.image = SubredditCellView.frontpageIcon
+                    sideView.backgroundColor = GMColor.green500Color()
+                } else if subreddit.lowercased() == "popular" {
+                    sideView.image = SubredditCellView.popularIcon
+                    sideView.backgroundColor = GMColor.purple500Color()
+                } else {
+                    sideView.image = SubredditCellView.defaultIcon
+                }
+            }
+            
             label.addSubview(sideView)
-            sideView.layer.cornerRadius = 7.5
+            sideView.sizeAnchors == CGSize.square(size: 30)
+            sideView.centerYAnchor == label.centerYAnchor
+            sideView.leftAnchor == label.leftAnchor
+
+            sideView.layer.cornerRadius = 15
             sideView.clipsToBounds = true
         }
         
         label.sizeToFit()
-        let leftItem = UIBarButtonItem(customView: label)
+        if !SettingValues.subredditBar {
+            self.navigationItem.titleView = label
+        }
+
         var items: [UIBarButtonItem] = []
         
         let splitButton = UIButton.init(type: .custom)
@@ -438,10 +467,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         self.splitViewController?.navigationItem.backBarButtonItem = splitB
         
         items.append(accountB)
-        
-        if !SettingValues.subredditBar {
-            items.append(leftItem)
-        }
         
         self.navigationItem.setHidesBackButton(true, animated: false)
         self.splitViewController?.navigationItem.setHidesBackButton(true, animated: false)
