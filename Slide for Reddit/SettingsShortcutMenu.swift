@@ -1,28 +1,28 @@
 //
-//  SettingsPostMenu.swift
+//  SettingsShortcutMenu.swift
 //  Slide for Reddit
 //
-//  Created by Carlos Crane on 2/24/19.
-//  Copyright © 2019 Haptic Apps. All rights reserved.
+//  Created by Carlos Crane on 7/26/20.
+//  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
 import reddift
 import UIKit
 
-class SettingsPostMenu: BubbleSettingTableViewController {
+class SettingsShortcutMenu: BubbleSettingTableViewController {
     
-    var all: [SettingValues.PostOverflowAction] = []
-    var enabled: [SettingValues.PostOverflowAction] = []
+    var all: [SettingValues.NavigationHeaderActions] = []
+    var enabled: [SettingValues.NavigationHeaderActions] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        headers = ["Active actions", "Disabled actions"]
+        headers = ["Active shortcuts", "Disabled shortcuts"]
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         
-        enabled.append(contentsOf: SettingValues.PostOverflowAction.getMenuNone())
-        all.append(contentsOf: SettingValues.PostOverflowAction.cases.filter({ !enabled.contains($0) }))
+        enabled.append(contentsOf: SettingValues.NavigationHeaderActions.getMenuNone())
+        all.append(contentsOf: SettingValues.NavigationHeaderActions.cases.filter({ !enabled.contains($0) }))
         
         tableView.reloadData()
         
@@ -39,11 +39,12 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         for item in enabled {
             saveArray.append(item.rawValue)
         }
-        UserDefaults.standard.set(saveArray, forKey: "postMenu")
+        UserDefaults.standard.set(saveArray, forKey: "headerMenu")
         UserDefaults.standard.synchronize()
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = true
         }
+
     }
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
@@ -77,7 +78,7 @@ class SettingsPostMenu: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let itemToMove: SettingValues.PostOverflowAction = sourceIndexPath.section == 0 ? enabled[sourceIndexPath.row] : all[sourceIndexPath.row]
+        let itemToMove: SettingValues.NavigationHeaderActions = sourceIndexPath.section == 0 ? enabled[sourceIndexPath.row] : all[sourceIndexPath.row]
         
         if sourceIndexPath.section == 0 && destinationIndexPath.section == 0 {
             enabled.remove(at: sourceIndexPath.row)
@@ -105,8 +106,7 @@ class SettingsPostMenu: BubbleSettingTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
-        self.title = "Arrange post menu"
-        
+        self.title = "Arrange Shortcuts menu"
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = false
         }

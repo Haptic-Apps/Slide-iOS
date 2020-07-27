@@ -117,6 +117,9 @@ class SubredditReorderViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         save(nil)
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = true
+        }
     }
 
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -349,6 +352,9 @@ class SubredditReorderViewController: UITableViewController {
         self.tableView.separatorStyle = .none
         setupBaseBarColors()
         self.title = "Manage subscriptions"
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        }
     }
     
     private func refreshListActionButtons() {

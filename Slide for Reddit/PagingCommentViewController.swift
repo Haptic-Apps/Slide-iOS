@@ -7,13 +7,11 @@
 //
 
 import Foundation
-import SloppySwiper
 
 class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
     static weak var savedComment: CommentViewController?
     var vCs: [RSubmission] = []
-    var swiper: SloppySwiper?
 
     override var prefersStatusBarHidden: Bool {
         return SettingValues.fullyHideNavbar
@@ -76,13 +74,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.navigationController?.view.backgroundColor = .clear
         
         setNeedsStatusBarAppearanceUpdate()
-        
-        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        
-        if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
-            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
-        }
     }
     
     var first = true

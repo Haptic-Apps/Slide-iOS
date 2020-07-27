@@ -15,7 +15,6 @@ import reddift
 import RLBAlertsPickers
 import SDCAlertView
 import SDWebImage
-import SloppySwiper
 import UIKit
 import YYText
 
@@ -117,7 +116,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             PagingCommentViewController.savedComment = nil
         }
     }
-    var swiper: SloppySwiper?
 
     var more = UIButton()
 
@@ -152,6 +150,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     init(subName: String, parent: MainViewController) {
         sub = subName
         self.parentController = parent
+        
+        single = parent is SplitMainViewController
 
         super.init(nibName: nil, bundle: nil)
         self.autoplayHandler = AutoplayScrollViewHandler(delegate: self)
@@ -203,14 +203,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         }
         
-        if single {
+        if single && !(parent is SplitMainViewController) {
             self.edgesForExtendedLayout = UIRectEdge.all
         } else {
             self.edgesForExtendedLayout = []
         }
         
         self.extendedLayoutIncludesOpaqueBars = true
-
+        self.navigationController?.toolbar.isTranslucent = true
         self.tableView.delegate = self
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
@@ -262,22 +262,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if single && !isModal && !(self.navigationController?.delegate is SloppySwiper) {
-            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
-            for view in view.subviews {
-                if view is UIScrollView {
-                    let scrollView = view as! UIScrollView
-                    swiper!.panRecognizer.require(toFail: scrollView.panGestureRecognizer)
-                    break
-                }
-            }
-        } else {
-            if isModal {
-                self.navigationController?.delegate = self
-                if self.navigationController is TapBehindModalViewController {
-                    (self.navigationController as! TapBehindModalViewController).del = self
-                }
+        if isModal {
+            self.navigationController?.delegate = self
+            if self.navigationController is TapBehindModalViewController {
+                (self.navigationController as! TapBehindModalViewController).del = self
             }
         }
 
@@ -300,25 +288,21 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = false
-        splitViewController?.navigationController?.navigationBar.isTranslucent = false
-        splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
+        
+        if !single {
+            splitViewController?.navigationController?.navigationBar.isTranslucent = false
+            splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
+        }
         if let bar = splitViewController?.navigationController?.navigationBar {
             bar.heightAnchor == 0
         }
 
-        if single && !isModal && (self.navigationController?.delegate is SloppySwiper) {
-            navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
-            if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-                self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
-            }
-        }
-        
         navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.splitViewController?.navigationController?.navigationBar.shadowImage = UIImage()
 
-        if single {
+        if single && !(parent is SplitMainViewController) {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
         
@@ -622,6 +606,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 }
             }
         }
+        
         if !MainViewController.isOffline && !SettingValues.hiddenFAB {
             self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
             self.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
@@ -835,9 +820,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header")
         lastVersion = SingleSubredditViewController.cellVersion
 
-        var top = 68
+        var top = 64
         if #available(iOS 11.0, *) {
-            top += 20
+            top += 28
         }
                 
         if self.navigationController != nil {
@@ -862,22 +847,72 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let offline = MainViewController.isOffline
 
-        if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !single {
+        if let mainVC = self.navigationController?.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
             doSortImage(mainVC.sortButton)
         }
 
         if single && !offline {
-            sortButton = UIButton.init(type: .custom)
-            sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let sortB = UIBarButtonItem.init(customView: sortButton)
-            doSortImage(sortButton)
+            if !(parent is SplitMainViewController) {
+                sortButton = UIButton.init(type: .custom)
+                sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
+                sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                let sortB = UIBarButtonItem.init(customView: sortButton)
+                doSortImage(sortButton)
 
-            subb = UIButton.init(type: .custom)
-            subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
-            subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
-            subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                subb = UIButton.init(type: .custom)
+                subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
+                subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
+                subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                navigationItem.rightBarButtonItems = [sortB]
+                
+                let label = UILabel()
+                label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
+                label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+                label.adjustsFontSizeToFitWidth = true
+                label.font = UIFont.boldSystemFont(ofSize: 20)
+                
+                if SettingValues.reduceColor {
+                    let sideView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+                    let subreddit = sub
+                    sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+                    
+                    if let icon = Subscriptions.icon(for: subreddit) {
+                        sideView.contentMode = .scaleAspectFill
+                        sideView.image = UIImage()
+                        sideView.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+                    } else {
+                        sideView.contentMode = .center
+                        if subreddit.contains("m/") {
+                            sideView.image = SubredditCellView.defaultIconMulti
+                        } else if subreddit.lowercased() == "all" {
+                            sideView.image = SubredditCellView.allIcon
+                            sideView.backgroundColor = GMColor.blue500Color()
+                        } else if subreddit.lowercased() == "frontpage" {
+                            sideView.image = SubredditCellView.frontpageIcon
+                            sideView.backgroundColor = GMColor.green500Color()
+                        } else if subreddit.lowercased() == "popular" {
+                            sideView.image = SubredditCellView.popularIcon
+                            sideView.backgroundColor = GMColor.purple500Color()
+                        } else {
+                            sideView.image = SubredditCellView.defaultIcon
+                        }
+                    }
+                    
+                    label.addSubview(sideView)
+                    sideView.sizeAnchors == CGSize.square(size: 30)
+                    sideView.centerYAnchor == label.centerYAnchor
+                    sideView.leftAnchor == label.leftAnchor
 
+                    sideView.layer.cornerRadius = 15
+                    sideView.clipsToBounds = true
+                }
+                
+                label.sizeToFit()
+                self.navigationItem.titleView = label
+            }
+            
+            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+            
             let info = UIButton.init(type: .custom)
             info.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.toolbarIcon(), for: UIControl.State.normal)
             info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControl.Event.touchUpInside)
@@ -890,12 +925,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             let moreB = UIBarButtonItem.init(customView: more)
             
-            navigationItem.rightBarButtonItems = [sortB]
-            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+            if parent is SplitMainViewController {
+                parent!.toolbarItems = [infoB, flexButton, moreB]
+            } else {
+                toolbarItems = [infoB, flexButton, moreB]
+            }
             
-            toolbarItems = [infoB, flexButton, moreB]
-            title = sub
-
             if !loaded {
                 do {
                     try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
@@ -1123,7 +1158,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func resetColors() {
-        if single {
+        if single && !(parent is SplitMainViewController) {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
         setupFab(UIScreen.main.bounds.size)
@@ -1298,7 +1333,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func showTimeMenu(s: LinkSortType, selector: UIView?, isDefault: UISwitch) {
         if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
-            if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !single {
+            if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
                 self.doSortImage(mainVC.sortButton)
             } else {
                 self.doSortImage(sortButton)
@@ -1316,7 +1351,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: nil) {
                     self.sort = s
-                    if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, !self.single {
+                    if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
                         self.doSortImage(mainVC.sortButton)
                     } else {
                         self.doSortImage(self.sortButton)
@@ -1638,7 +1673,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                         }
                                     }
                                     let navoffset = (-1 * ( (strongSelf.navigationController?.navigationBar.frame.size.height ?? 64)))
-                                    strongSelf.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top + headerHeight)
+                                    strongSelf.tableView.contentOffset = CGPoint.init(x: 0, y: -22 + navoffset - top + headerHeight)
                                 } else {
                                     strongSelf.flowLayout.invalidateLayout()
                                     strongSelf.tableView.insertItems(at: paths)
@@ -1652,6 +1687,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                 if MainViewController.first {
                                     MainViewController.first = false
                                     strongSelf.parentController?.checkForMail()
+                                    strongSelf.parentController?.checkSubs()
                                 }
                                 
                             }
@@ -2618,10 +2654,10 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
         } else {
             let c = colorPickerView.colors[indexPath.row]
             primaryChosen = c
-            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : c
+            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
             sideView.backgroundColor = c
             sideView.backgroundColor = c
-            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : c
+            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
             if SettingValues.fullyHideNavbar {
                 inHeadView?.backgroundColor = .clear
             }

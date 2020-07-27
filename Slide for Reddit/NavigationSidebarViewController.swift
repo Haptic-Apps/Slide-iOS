@@ -645,11 +645,17 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
         if !cell.profile.isEmpty() {
             let user = cell.profile
             parentController?.goToUser(profile: user)
+            if let nav = navigationController as? SwipeForwardNavigationController {
+                nav.pushNextViewControllerFromRight()
+            }
         } else if !cell.search.isEmpty() {
             VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
         } else {
             let sub = cell.subreddit
             parentController?.goToSubreddit(subreddit: sub)
+            if let nav = navigationController as? SwipeForwardNavigationController {
+                nav.pushNextViewControllerFromRight()
+            }
         }
         searchBar.text = ""
         searchBar.endEditing(true)

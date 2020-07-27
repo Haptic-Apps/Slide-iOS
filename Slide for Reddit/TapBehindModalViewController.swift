@@ -15,7 +15,7 @@ protocol TapBehindModalViewControllerDelegate: class {
     func shouldDismiss() -> Bool
 }
 
-class TapBehindModalViewController: UINavigationController, UIGestureRecognizerDelegate {
+class TapBehindModalViewController: SwipeForwardNavigationController {
     public var tapOutsideRecognizer: UITapGestureRecognizer!
     weak var del: TapBehindModalViewControllerDelegate?
     var closeCallback: (() -> Void)?
@@ -56,9 +56,5 @@ class TapBehindModalViewController: UINavigationController, UIGestureRecognizerD
                 self.close(sender: sender)
             }
         }
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
     }
 }

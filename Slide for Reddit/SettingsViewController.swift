@@ -13,11 +13,9 @@ import MessageUI
 import RealmSwift
 import RLBAlertsPickers
 import SDWebImage
-import SloppySwiper
 import UIKit
 
 class SettingsViewController: MediaTableViewController, MFMailComposeViewControllerDelegate {
-    var swiper: SloppySwiper?
     var goPro: UITableViewCell = UITableViewCell()
 
     var general: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "general")
@@ -48,6 +46,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     var tagsCell: UITableViewCell = UITableViewCell()
     var audioSettings = UITableViewCell()
     var postActionCell: UITableViewCell = UITableViewCell()
+    var shortcutCell: UITableViewCell = UITableViewCell()
     var coffeeCell: UITableViewCell = UITableViewCell()
 
     var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
@@ -88,17 +87,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
-        
-        if self.navigationController != nil {
-            if !(self.navigationController?.delegate is SloppySwiper) {
-                swiper = SloppySwiper.init(navigationController: self.navigationController!)
-                self.navigationController!.delegate = swiper!
-            }
-        }
-        
-        if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-            self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
-        }
     }
     
     @objc public func handleBackButton() {
@@ -227,6 +215,13 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.postActionCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.postActionCell.imageView?.image = UIImage(sfString: SFSymbol.arrowUpArrowDownCircleFill, overrideString: "compact")?.toolbarIcon()
         self.postActionCell.imageView?.tintColor = ColorUtil.theme.fontColor
+
+        self.shortcutCell.textLabel?.text = "Reorder homepage shortcuts"
+        self.shortcutCell.accessoryType = .disclosureIndicator
+        self.shortcutCell.backgroundColor = ColorUtil.theme.foregroundColor
+        self.shortcutCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.shortcutCell.imageView?.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "compact")?.toolbarIcon()
+        self.shortcutCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.mainTheme.textLabel?.text = "App theme"
         self.mainTheme.accessoryType = .disclosureIndicator
@@ -575,6 +570,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 6: return self.font
             case 7: return self.comments
             case 8: return self.postActionCell
+            case 9: return self.shortcutCell
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -707,6 +703,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SettingsComments()
             case 8:
                 ch = SettingsPostMenu()
+            case 9:
+                ch = SettingsShortcutMenu()
             default:
                 break
             }
@@ -849,7 +847,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return (SettingValues.isPro) ? 6 : 7
-        case 1: return 9
+        case 1: return 10
         case 2: return 9
         case 3: return 5
         default: fatalError("Unknown number of sections")

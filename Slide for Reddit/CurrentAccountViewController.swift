@@ -429,7 +429,7 @@ extension CurrentAccountViewController {
     
     @objc func mailButtonPressed(_ sender: UIButton) {
         let vc = InboxViewController()
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         present(navVC, animated: true)
     }
@@ -491,7 +491,7 @@ extension CurrentAccountViewController {
 
     @objc func modButtonPressed(_ sender: UIButton) {
         let vc = ModerationViewController()
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         present(navVC, animated: true)
     }
@@ -513,7 +513,6 @@ extension CurrentAccountViewController: AccountHeaderViewDelegate {
     }
     
     func didRequestCollections() {
-       // TODO: - collections
         if Collections.collectionIDs.count == 0 {
             let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
             
@@ -528,7 +527,7 @@ extension CurrentAccountViewController: AccountHeaderViewDelegate {
 
         } else {
             let vc = CollectionsViewController()
-            let navVC = UINavigationController(rootViewController: vc)
+            let navVC = SwipeForwardNavigationController(rootViewController: vc)
             navVC.navigationBar.isTranslucent = false
             present(navVC, animated: true)
         }
@@ -545,7 +544,7 @@ extension CurrentAccountViewController: AccountHeaderViewDelegate {
     func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int) {
         let vc = ProfileViewController(name: AccountController.currentName)
         vc.openTo = index
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         present(navVC, animated: true)
     }
@@ -804,6 +803,16 @@ public extension UITableViewCell {
         textLabel?.text = text
         imageView?.image = UIImage(sfString: sfSymbolName, overrideString: imageName)?.menuIcon()
         imageView?.tintColor = imageColor
+        
+        accessoryType = .none
+        backgroundColor = ColorUtil.theme.foregroundColor
+        textLabel?.textColor = ColorUtil.theme.fontColor
+        layer.cornerRadius = 5
+        clipsToBounds = true
+    }
+    func configure(text: String, image: UIImage) {
+        textLabel?.text = text
+        imageView?.image = image
         
         accessoryType = .none
         backgroundColor = ColorUtil.theme.foregroundColor

@@ -13,11 +13,12 @@ import RealmSwift
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
-import SloppySwiper
 import UIKit
 import YYText
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
+    
+    var version = 0
     
     func hide(index: Int) {
         if index >= 0 {
@@ -96,12 +97,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return menuId
     }
     
-    func createJumpButton() {
+    func createJumpButton(_ forced: Bool = false) {
         if SettingValues.commentJumpButton == .DISABLED {
             return
         }
         if self.navigationController?.view != nil {
             let view = self.navigationController!.view!
+            if jump != nil && forced {
+                jump.removeFromSuperview()
+                jump = nil
+            }
             if jump == nil {
                 jump = UIView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
                     $0.clipsToBounds = true
@@ -373,7 +378,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var offline = false
     var np = false
     var modLink = ""
-    var swiper: SloppySwiper?
 
     var authorColor: UIColor = ColorUtil.theme.fontColor
 
@@ -1023,42 +1027,57 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func setupTitleView(_ sub: String, icon: String) {
-        let titleView = UILabel()
-        titleView.text = sub
-        titleView.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
-        titleView.font = UIFont.boldSystemFont(ofSize: 17)
-        let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
-        titleView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: 500))
-        titleView.accessibilityTraits = UIAccessibilityTraits(rawValue: UIAccessibilityTraits.header.rawValue | UIAccessibilityTraits.link.rawValue)
-        titleView.accessibilityHint = "Opens the sub red it r \(sub)"
-        titleView.accessibilityLabel = "Sub red it: r \(sub)"
-        self.navigationItem.titleView = titleView
-        
-        titleView.addTapGestureRecognizer(action: {
-            VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
-        })
+        let label = UILabel()
+        label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
+        label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         
         if SettingValues.reduceColor {
-            var sideView = UIImageView()
-            sideView = UIImageView(frame: CGRect(x: -20, y: 15, width: 15, height: 15))
-            sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-            sideView.translatesAutoresizingMaskIntoConstraints = false
-            titleView.addSubview(sideView)
-            sideView.layer.cornerRadius = 7.5
+            let sideView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+            let subreddit = sub
+            sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+            
+            if let icon = Subscriptions.icon(for: subreddit) {
+                sideView.contentMode = .scaleAspectFill
+                sideView.image = UIImage()
+                sideView.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+            } else {
+                sideView.contentMode = .center
+                if subreddit.contains("m/") {
+                    sideView.image = SubredditCellView.defaultIconMulti
+                } else if subreddit.lowercased() == "all" {
+                    sideView.image = SubredditCellView.allIcon
+                    sideView.backgroundColor = GMColor.blue500Color()
+                } else if subreddit.lowercased() == "frontpage" {
+                    sideView.image = SubredditCellView.frontpageIcon
+                    sideView.backgroundColor = GMColor.green500Color()
+                } else if subreddit.lowercased() == "popular" {
+                    sideView.image = SubredditCellView.popularIcon
+                    sideView.backgroundColor = GMColor.purple500Color()
+                } else {
+                    sideView.image = SubredditCellView.defaultIcon
+                }
+            }
+            
+            label.addSubview(sideView)
+            sideView.sizeAnchors == CGSize.square(size: 30)
+            sideView.centerYAnchor == label.centerYAnchor
+            sideView.leftAnchor == label.leftAnchor
+
+            sideView.layer.cornerRadius = 15
             sideView.clipsToBounds = true
-            /* Maybe enable this later if icon != "" && SettingValues.subredditIcons {
-                sideView.layer.borderColor = ColorUtil.getColorForSub(sub: sub).cgColor
-                sideView.layer.borderWidth = 2
-                sideView.heightAnchor == 25
-                sideView.widthAnchor == 25
-                sideView.layer.cornerRadius = 12.5
-                sideView.topAnchor == titleView.topAnchor - 5
-                sideView.leftAnchor == titleView.leftAnchor - 30
-                
-                sideView.sd_setImage(with: URL(string: icon), completed: nil)
-                titleView.layoutIfNeeded()
-            }*/
         }
+        
+        label.sizeToFit()
+        self.navigationItem.titleView = label
+
+        label.accessibilityHint = "Opens the sub red it r \(sub)"
+        label.accessibilityLabel = "Sub red it: r \(sub)"
+
+        label.addTapGestureRecognizer(action: {
+            VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
+        })
     }
     
     var savedBack: UIBarButtonItem?
@@ -1098,8 +1117,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var modB = UIBarButtonItem()
 
     func hideSearchBar() {
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        tableView.tableHeaderView = savedHeaderView!
+        if let header = savedHeaderView {
+            navigationController?.setNavigationBarHidden(false, animated: true)
+            tableView.tableHeaderView = header
+        }
         isSearch = false
         
         searchBar.tintColor = ColorUtil.theme.fontColor
@@ -1237,7 +1258,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         //self.tableView.layer.speed = 1.5
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
-        self.navigationController?.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
         refreshControl = UIRefreshControl()
         refreshControl?.tintColor = ColorUtil.theme.fontColor
         refreshControl?.attributedTitle = NSAttributedString(string: "")
@@ -1259,15 +1280,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if !ColorUtil.theme.isLight {
             searchBar.keyboardAppearance = .dark
         }
-        
 
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
 
         tableView.estimatedRowHeight = 200
         tableView.rowHeight = UITableView.automaticDimension
 
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell")
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
 
         tableView.separatorStyle = .none
         NotificationCenter.default.addObserver(
@@ -1290,7 +1310,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
-        self.presentationController?.delegate  = self
+        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+           //navGesture.require(toFail: panGesture)
+        }
+        self.presentationController?.delegate = self
 //        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
 //        pan.direction = .horizontal
         if !loaded && (single || forceLoad) {
@@ -1301,8 +1324,85 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
     }
-    
+
+    @objc func onThemeChanged() {
+        version += 1
+        
+        self.headerCell = FullLinkCellView()
+        self.headerCell?.del = self
+        self.headerCell?.parentViewController = self
+        self.hasDone = true
+        self.headerCell?.aspectWidth = self.tableView.bounds.size.width
+        self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width, np: self.np)
+        if self.submission!.isSelf {
+            self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+        }
+        self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
+        if let tableHeaderView = self.headerCell {
+            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
+            // Add safe area insets to left and right if available
+            if #available(iOS 11.0, *) {
+                frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
+            }
+            if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
+                tableHeaderView.frame = frame
+                tableHeaderView.layoutIfNeeded()
+                let view = UIView(frame: tableHeaderView.frame)
+                view.addSubview(tableHeaderView)
+                self.tableView.tableHeaderView = view
+            }
+        }
+        
+        self.setupTitleView(self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+        
+        self.navigationItem.backBarButtonItem?.title = ""
+        self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
+        
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
+        updateStringsTheme(self.content.map { (k, v) in v} )
+
+        self.tableView.reloadData()
+        
+        sortButton = UIButton.init(type: .custom)
+        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let sortB = UIBarButtonItem.init(customView: sortButton)
+
+        doSortImage(sortButton)
+        
+        let search = UIButton.init(type: .custom)
+        search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
+        search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
+        search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let searchB = UIBarButtonItem.init(customView: search)
+
+        navigationItem.rightBarButtonItems = [sortB, searchB]
+        doHeadView(self.view.frame.size)
+        
+        self.createJumpButton(true)
+        if let submission = self.submission {
+            self.setupTitleView(submission.subreddit, icon: submission.subreddit_icon)
+        }
+        self.updateToolbar()
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if #available(iOS 13.0, *) {
+            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                if themeChanged {
+                    ColorUtil.matchTraitCollection()
+                }
+            }
+        }
+    }
+
     @objc func cancelTapped() {
         hideSearchBar()
     }
@@ -1535,21 +1635,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         didDisappearCompletely = false
         let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if !isModal && !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) {
-            if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
-                swiper = SloppySwiper.init(navigationController: self.navigationController!)
-                self.navigationController!.delegate = swiper!
-            }
-            if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-                self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
-            }
-        } else {
-            if isModal {
-                self.navigationController?.delegate = self
-                if self.navigationController is TapBehindModalViewController {
-                    (self.navigationController as! TapBehindModalViewController).del = self
-                }
-            }
+        if isModal && self.navigationController is TapBehindModalViewController{
+            self.navigationController?.delegate = self
+            (self.navigationController as! TapBehindModalViewController).del = self
         }
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -1722,6 +1810,23 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            }
+        }
+    }
+    
+    func updateStringsTheme(_ comments: [AnyObject]) {
+        var color = UIColor.black
+        var first = true
+        for thing in comments {
+            if let comment = thing as? RComment, first {
+                color = ColorUtil.accentColorForSub(sub: comment.subreddit)
+                first = false
+            }
+            if let comment = thing as? RComment {
+                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.htmlText, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            } else if let more = thing as? RMore {
+                let attr = NSMutableAttributedString(string: "more")
+                self.text[more.getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
             }
         }
     }
@@ -2512,7 +2617,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         let datasetPosition = (indexPath as NSIndexPath).row
 
-        cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
+        cell = tableView.dequeueReusableCell(withIdentifier: "Cell\(version)", for: indexPath) as UITableViewCell
         if content.isEmpty || text.isEmpty || cDepth.isEmpty || dataArray.isEmpty {
             self.refresh(self)
             return cell
@@ -3052,8 +3157,10 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer.numberOfTouches == 2 {
-            return true
+        if SettingValues.commentGesturesMode == .GESTURES {
+            if gestureRecognizer.numberOfTouches == 2 {
+                return true
+            }
         }
         return false
     }

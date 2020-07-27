@@ -218,6 +218,11 @@ class AccountController {
                     if paginator.hasMore() {
                         getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
                     } else {
+                        for sub in toReturn {
+                            Subscriptions.subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                            Subscriptions.subColors[sub.displayName.lowercased()] = sub.keyColor
+                        }
+
                         completion(toReturn)
                     }
                 }
@@ -247,4 +252,5 @@ extension Notification.Name {
     static let onAccountChanged = Notification.Name("on-account-changed")
     static let onAccountMailCountChanged = Notification.Name("on-account-mail-count-changed")
     static let accountRefreshRequested = Notification.Name("account-refresh-requested")
+    static let onThemeChanged = Notification.Name("theme-change-requested")
 }
