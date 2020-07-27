@@ -641,7 +641,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func showCurrentAccountMenu(_ sender: UIButton?) {
         if self is SplitMainViewController {
             //TODO check for view controller count
-            self.parent?.navigationController?.popViewController(animated: true)
+            if let parent = self.parent {
+                parent.navigationController?.popViewController(animated: true)
+            } else {
+                self.navigationController?.popViewController(animated: true)
+            }
         } else {
             let vc = CurrentAccountViewController()
             vc.delegate = self as! LegacyMainViewController
