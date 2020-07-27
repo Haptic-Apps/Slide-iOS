@@ -220,6 +220,7 @@ class AccountController {
                     } else {
                         for sub in toReturn {
                             Subscriptions.subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                            Subscriptions.subColors[sub.displayName.lowercased()] = sub.keyColor
                         }
 
                         completion(toReturn)

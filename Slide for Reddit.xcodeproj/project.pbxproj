@@ -268,6 +268,7 @@
 		BE8FCA1D1E0C46090063B8EF /* Slide_for_RedditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA1C1E0C46090063B8EF /* Slide_for_RedditTests.swift */; };
 		BE8FCA281E0C46090063B8EF /* Slide_for_RedditUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA271E0C46090063B8EF /* Slide_for_RedditUITests.swift */; };
 		BE93DECF24CE4D8300464B64 /* icons.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE93DECE24CE4D8300464B64 /* icons.plist */; };
+		BE93DED124CE550800464B64 /* subcolors.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE93DED024CE550800464B64 /* subcolors.plist */; };
 		BE9428EA20C46B5600E1A33A /* PostActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9428E920C46B5600E1A33A /* PostActions.swift */; };
 		BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */; };
 		BE9456021F3375460097EEF0 /* LeftTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9456011F3375460097EEF0 /* LeftTransition.swift */; };
@@ -699,6 +700,7 @@
 		BE8FCA271E0C46090063B8EF /* Slide_for_RedditUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slide_for_RedditUITests.swift; sourceTree = "<group>"; };
 		BE8FCA291E0C46090063B8EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE93DECE24CE4D8300464B64 /* icons.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = icons.plist; sourceTree = "<group>"; };
+		BE93DED024CE550800464B64 /* subcolors.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = subcolors.plist; sourceTree = "<group>"; };
 		BE9428E920C46B5600E1A33A /* PostActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostActions.swift; sourceTree = "<group>"; };
 		BE9455FF1F32DD310097EEF0 /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
 		BE9456011F3375460097EEF0 /* LeftTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftTransition.swift; sourceTree = "<group>"; };
@@ -1343,6 +1345,7 @@
 				BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */,
 				BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */,
 				BE93DECE24CE4D8300464B64 /* icons.plist */,
+				BE93DED024CE550800464B64 /* subcolors.plist */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1669,6 +1672,7 @@
 				BE0C4F9621BCBE83006C54FF /* ic_black@3x.png in Resources */,
 				BE35217A1E3D2E3B00C30B8D /* Roboto-MediumItalic.ttf in Resources */,
 				BE35217C1E3D2E4000C30B8D /* RobotoCondensed-Italic.ttf in Resources */,
+				BE93DED124CE550800464B64 /* subcolors.plist in Resources */,
 				BE1DA5DA2208AC80001C7DB4 /* ic_pink@2x~ipad.png in Resources */,
 				BE93DECF24CE4D8300464B64 /* icons.plist in Resources */,
 				BE1DA5D72208AC80001C7DB4 /* ic_retroapple@2x~ipad.png in Resources */,

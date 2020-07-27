@@ -586,8 +586,9 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                     if let subs = json["data"]["children"].array {
                         for sub in subs {
                             if sub["kind"].string == "t5", let subName = sub["data"]["display_name"].string {
-                                if let icon = sub["data"]["icon_img"].string, let communityIcon = sub["data"]["community_icon"].string {
+                                if let icon = sub["data"]["icon_img"].string, let communityIcon = sub["data"]["community_icon"].string, let keyColor = sub["data"]["key_color"].string {
                                     Subscriptions.subIcons[subName.lowercased()] = icon == "" ? communityIcon : icon
+                                    Subscriptions.subColors[subName.lowercased()] = keyColor
                                 }
                                 self.suggestions.append(subName)
                             } else if sub["kind"].string == "t2", let userName = sub["data"]["name"].string {

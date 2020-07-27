@@ -38,6 +38,15 @@ class Subscriptions {
         return nil
     }
     
+    public static var subColors: NSMutableDictionary = NSMutableDictionary()
+    
+    public static func color(for sub: String) -> UIColor? {
+        if let color = subColors.object(forKey: sub.lowercased()) as? String, color != "" {
+            return UIColor(hex: color)
+        }
+        return nil
+    }
+
     public static var pinned: [String] {
         if let accounts = UserDefaults.standard.array(forKey: "subsP" + AccountController.currentName) {
             return accounts as! [String]
@@ -199,12 +208,14 @@ class Subscriptions {
                         print(result.error!)
                         for sub in toReturn {
                             subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                            subColors[sub.displayName.lowercased()] = sub.keyColor
                         }
                         completion(toReturn, toReturnMultis)
                     case .success(let multireddits):
                         toReturnMultis.append(contentsOf: multireddits)
                         for sub in toReturn {
                             subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                            subColors[sub.displayName.lowercased()] = sub.keyColor
                         }
                         completion(toReturn, toReturnMultis)
                     }

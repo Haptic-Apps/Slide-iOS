@@ -42,6 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var readLaterFile: String?
     var collectionsFile: String?
     var iconsFile: String?
+    var colorsFile: String?
     var totalBackground = true
     var isPro = false
     var transitionDelegateModal: InsetTransitioningDelegate?
@@ -133,6 +134,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         readLaterFile = documentDirectory.appending("/readlater.plist")
         collectionsFile = documentDirectory.appending("/collections.plist")
         iconsFile = documentDirectory.appending("/icons.plist")
+        colorsFile = documentDirectory.appending("/subcolors.plist")
 
         let config = Realm.Configuration(
                 schemaVersion: 26,
@@ -201,6 +203,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("file myData.plist already exits at path.")
         }
 
+        if !fileManager.fileExists(atPath: colorsFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "subcolors", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: colorsFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
+
         if !fileManager.fileExists(atPath: commentsFile!) {
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist") {
                 _ = NSMutableDictionary(contentsOfFile: bundlePath)
@@ -222,6 +239,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
         Collections.collectionIDs = NSMutableDictionary.init(contentsOfFile: collectionsFile!)!
         Subscriptions.subIcons = NSMutableDictionary.init(contentsOfFile: iconsFile!)!
+        Subscriptions.subColors = NSMutableDictionary.init(contentsOfFile: colorsFile!)!
 
         SettingValues.initialize()
         
@@ -788,14 +806,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         self.paginator = listing.paginator
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
+                            Subscriptions.subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                            Subscriptions.subColors[sub.displayName.lowercased()] = sub.keyColor
+
+                            /* Not needed, we pull from the key color now
                             if sub.keyColor.hexString() != "#FFFFFF" {
                                 let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
-                            }
+                            }*/
                         }
-
                     }
                     if subredditController != nil {
                         DispatchQueue.main.async(execute: { () -> Void in
@@ -816,17 +837,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                         for sub in subs {
                             toReturn.append(sub.displayName)
-                            if sub.keyColor.hexString() != "#FFFFFF" {
+                            /*if sub.keyColor.hexString() != "#FFFFFF" {
                                 let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
-                            }
+                            }*/
                         }
                         for m in multis {
                             toReturn.append("/m/" + m.displayName)
                             if !m.keyColor.isEmpty {
-                                
                                 let color = (UIColor.init(hexString: m.keyColor))
                                 if defaults.object(forKey: "color" + m.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + m.displayName)
@@ -1052,6 +1072,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
         Subscriptions.subIcons.write(toFile: iconsFile!, atomically: true)
+        Subscriptions.subColors.write(toFile: colorsFile!, atomically: true)
 
         saveToiCloud(Collections.collectionIDs, "collections", self.collectionRecord)
         saveToiCloud(ReadLater.readLaterIDs, "readlater", self.readLaterRecord)
@@ -1070,6 +1091,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
         Subscriptions.subIcons.write(toFile: iconsFile!, atomically: true)
+        Subscriptions.subColors.write(toFile: colorsFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     

@@ -24,6 +24,8 @@ class SubredditCellView: UITableViewCell {
     var icon = UIImageView()
     var title: UILabel = UILabel()
     var navController: UIViewController?
+    static var defaultIcon = UIImage(sfString: SFSymbol.rCircle, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
+    static var defaultIconMulti = UIImage(sfString: SFSymbol.mCircle, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -127,7 +129,7 @@ class SubredditCellView: UITableViewCell {
         self.navController = nav
         self.subreddit = subreddit
         self.sideView.isHidden = false
-        self.icon.isHidden = true
+        self.icon.isHidden = false
         if !exists {
             title.text = "Go to r/\(subreddit)"
         } else {
@@ -140,9 +142,16 @@ class SubredditCellView: UITableViewCell {
         selectedBackgroundView = selectedView
         
         if let icon = Subscriptions.icon(for: subreddit) {
-            self.icon.isHidden = false
+            self.icon.contentMode = .scaleAspectFill
             self.icon.image = UIImage()
-            self.icon.sd_setImage(with: URL(string: icon), completed: nil)
+            self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+        } else {
+            self.icon.contentMode = .center
+            if subreddit.contains("m/") {
+                self.icon.image = SubredditCellView.defaultIconMulti
+            } else {
+                self.icon.image = SubredditCellView.defaultIcon
+            }
         }
     }
     
