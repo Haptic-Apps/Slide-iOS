@@ -48,7 +48,6 @@ class SwipeForwardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTrans
                 snapshotToView!.layer.shadowOpacity = Float(kSWToLayerShadowOpacity)
 
                 UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveLinear) {
-                    // Move views to final frames
                     snapshotToView!.frame = fromView.frame
                     fromView.frame = fromViewFinalFrame
                 } completion: { (finished) in
