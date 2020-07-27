@@ -209,11 +209,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
             default:
                 break
             }
-            if #available(iOS 14.0, *) {
-                (UIApplication.shared.delegate as? AppDelegate)?.resetStackNew(true)
-            } else {
-                (UIApplication.shared.delegate as? AppDelegate)?.resetStack(true)
-            }
+               
+            (UIApplication.shared.delegate as? AppDelegate)?.resetStack(true)
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()
         } else if indexPath.section == 1 && indexPath.row == 1 {

@@ -305,11 +305,7 @@ class SplitMainViewController: MainViewController {
     override func hardReset(soft: Bool = false) {
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
-            if #available(iOS 14.0, *) {
-                _ = (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
-            } else {
-                _ = (UIApplication.shared.delegate as! AppDelegate).resetStack()
-            }
+            _ = (UIApplication.shared.delegate as! AppDelegate).resetStack()
         }
     }
 
@@ -329,15 +325,9 @@ class SplitMainViewController: MainViewController {
             fatalError("Window must exist when resetting the stack!")
         }
 
-        if #available(iOS 14.0, *) {
-            let main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
-            (UIApplication.shared.delegate as! AppDelegate).login = main
-            AccountController.addAccount(context: main, register: register)
-        } else {
-            let main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
-            (UIApplication.shared.delegate as! AppDelegate).login = main
-            AccountController.addAccount(context: main, register: register)
-        }
+        let main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+        (UIApplication.shared.delegate as! AppDelegate).login = main
+        AccountController.addAccount(context: main, register: register)
     }
 
     override func addAccount(token: OAuth2Token, register: Bool) {
