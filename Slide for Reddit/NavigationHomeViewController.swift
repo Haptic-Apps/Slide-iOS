@@ -575,7 +575,7 @@ extension NavigationHomeViewController: UISearchBarDelegate {
             task?.cancel()
         }
         do {
-            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=" + (searchBar.text?.addPercentEncoding ?? "") + "&include_over_18=" + (AccountController.isLoggedIn && SettingValues.nsfwEnabled ? "true" : "false")
+            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=\(searchBar.text?.addPercentEncoding ?? "")&include_over_18=\((AccountController.isLoggedIn && SettingValues.nsfwEnabled) ? "true" : "false")"
             print("Requesting \(requestString)")
             task = Alamofire.request(requestString, method: .get).responseString { response in
                 do {
