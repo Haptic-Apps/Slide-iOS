@@ -1296,7 +1296,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         panGesture.direction = .horizontal
         panGesture.delegate = self
         if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-            navGesture.require(toFail: panGesture)
+           navGesture.require(toFail: panGesture)
         }
         self.presentationController?.delegate = self
 //        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
@@ -1372,6 +1372,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.setupTitleView(submission.subreddit, icon: submission.subreddit_icon)
         }
         self.updateToolbar()
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -1617,11 +1620,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         didDisappearCompletely = false
         let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if isModal {
+        if isModal && self.navigationController is TapBehindModalViewController{
             self.navigationController?.delegate = self
-            if self.navigationController is TapBehindModalViewController {
-                (self.navigationController as! TapBehindModalViewController).del = self
-            }
+            (self.navigationController as! TapBehindModalViewController).del = self
         }
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -3141,8 +3142,10 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer.numberOfTouches == 2 {
-            return true
+        if SettingValues.commentGesturesMode == .GESTURES {
+            if gestureRecognizer.numberOfTouches == 2 {
+                return true
+            }
         }
         return false
     }

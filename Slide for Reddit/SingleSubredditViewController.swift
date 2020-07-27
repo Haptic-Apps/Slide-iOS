@@ -1644,6 +1644,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                 if MainViewController.first {
                                     MainViewController.first = false
                                     strongSelf.parentController?.checkForMail()
+                                    strongSelf.parentController?.checkSubs()
                                 }
                                 
                             }

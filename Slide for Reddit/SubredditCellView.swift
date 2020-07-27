@@ -47,7 +47,7 @@ class SubredditCellView: UITableViewCell {
 
         self.sideView = UIView().then {
             $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
-            $0.layer.cornerRadius = 12
+            $0.layer.cornerRadius = 15
             $0.clipsToBounds = true
         }
 
@@ -59,7 +59,7 @@ class SubredditCellView: UITableViewCell {
         
         self.icon = UIImageView().then {
             $0.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
-            $0.layer.cornerRadius = 12
+            $0.layer.cornerRadius = 15
             $0.clipsToBounds = true
             $0.isHidden = true
         }
@@ -71,16 +71,14 @@ class SubredditCellView: UITableViewCell {
     func configureLayout() {
         batch {
             sideView.leftAnchor == contentView.leftAnchor + 16
-            sideView.sizeAnchors == CGSize.square(size: 24)
+            sideView.sizeAnchors == CGSize.square(size: 30)
             sideView.centerYAnchor == contentView.centerYAnchor
 
             pin.leftAnchor == sideView.rightAnchor + 6
             pin.sizeAnchors == CGSize.square(size: 10)
             pin.centerYAnchor == contentView.centerYAnchor
 
-            icon.leftAnchor == contentView.leftAnchor + 16
-            icon.sizeAnchors == CGSize.square(size: 24)
-            icon.centerYAnchor == contentView.centerYAnchor
+            icon.edgeAnchors == sideView.edgeAnchors
 
             title.leftAnchor == pin.rightAnchor + 2
             title.centerYAnchor == contentView.centerYAnchor
@@ -140,6 +138,12 @@ class SubredditCellView: UITableViewCell {
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.theme.backgroundColor
         selectedBackgroundView = selectedView
+        
+        if let icon = Subscriptions.icon(for: subreddit) {
+            self.icon.isHidden = false
+            self.icon.image = UIImage()
+            self.icon.sd_setImage(with: URL(string: icon), completed: nil)
+        }
     }
     
     func setProfile(profile: String, nav: UIViewController?) {

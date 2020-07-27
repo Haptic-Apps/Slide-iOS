@@ -41,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var commentsFile: String?
     var readLaterFile: String?
     var collectionsFile: String?
+    var iconsFile: String?
     var totalBackground = true
     var isPro = false
     var transitionDelegateModal: InsetTransitioningDelegate?
@@ -131,6 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         commentsFile = documentDirectory.appending("/comments.plist")
         readLaterFile = documentDirectory.appending("/readlater.plist")
         collectionsFile = documentDirectory.appending("/collections.plist")
+        iconsFile = documentDirectory.appending("/icons.plist")
 
         let config = Realm.Configuration(
                 schemaVersion: 26,
@@ -183,6 +185,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             print("file myData.plist already exits at path.")
         }
+        
+        if !fileManager.fileExists(atPath: iconsFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "icons", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: iconsFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
 
         if !fileManager.fileExists(atPath: commentsFile!) {
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist") {
@@ -204,6 +221,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
         Collections.collectionIDs = NSMutableDictionary.init(contentsOfFile: collectionsFile!)!
+        Subscriptions.subIcons = NSMutableDictionary.init(contentsOfFile: iconsFile!)!
 
         SettingValues.initialize()
         
@@ -1033,7 +1051,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
-        
+        Subscriptions.subIcons.write(toFile: iconsFile!, atomically: true)
+
         saveToiCloud(Collections.collectionIDs, "collections", self.collectionRecord)
         saveToiCloud(ReadLater.readLaterIDs, "readlater", self.readLaterRecord)
         saveToiCloud(AppDelegate.removeDict, "removed", self.deletedRecord)
@@ -1050,6 +1069,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
+        Subscriptions.subIcons.write(toFile: iconsFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     

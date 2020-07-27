@@ -164,6 +164,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
     }
     
+    func checkSubs() {
+        if let session = (UIApplication.shared.delegate as! AppDelegate).session {
+            Subscriptions.getSubscriptionsFully(session: session, completion: { (newSubs, newMultis) in
+            })
+        }
+    }
+    
     func checkForMail() {
         DispatchQueue.main.async {
             //TODO reenable this
@@ -673,7 +680,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     //MARK: - Other stuff
-    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {

@@ -218,6 +218,10 @@ class AccountController {
                     if paginator.hasMore() {
                         getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, completion: completion)
                     } else {
+                        for sub in toReturn {
+                            Subscriptions.subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                        }
+
                         completion(toReturn)
                     }
                 }

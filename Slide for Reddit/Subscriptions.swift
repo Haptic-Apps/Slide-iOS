@@ -29,6 +29,15 @@ class Subscriptions {
         return accountSubs
     }
 
+    public static var subIcons: NSMutableDictionary = NSMutableDictionary()
+    
+    public static func icon(for sub: String) -> String? {
+        if let icon = subIcons.object(forKey: sub.lowercased()) as? String, icon != "" {
+            return icon
+        }
+        return nil
+    }
+    
     public static var pinned: [String] {
         if let accounts = UserDefaults.standard.array(forKey: "subsP" + AccountController.currentName) {
             return accounts as! [String]
@@ -188,9 +197,15 @@ class Subscriptions {
                     switch result {
                     case .failure:
                         print(result.error!)
+                        for sub in toReturn {
+                            subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                        }
                         completion(toReturn, toReturnMultis)
                     case .success(let multireddits):
                         toReturnMultis.append(contentsOf: multireddits)
+                        for sub in toReturn {
+                            subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                        }
                         completion(toReturn, toReturnMultis)
                     }
                 })
