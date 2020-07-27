@@ -335,6 +335,9 @@ class SplitMainViewController: MainViewController {
     }
     
     override func goToSubreddit(subreddit: String, override: Bool = false) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.splitViewController?.preferredDisplayMode = .primaryHidden
+        }, completion: nil)
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
