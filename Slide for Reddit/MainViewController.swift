@@ -167,6 +167,21 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func checkSubs() {
         if let session = (UIApplication.shared.delegate as! AppDelegate).session {
             Subscriptions.getSubscriptionsFully(session: session, completion: { (newSubs, newMultis) in
+                if AccountController.isLoggedIn {
+                    var allSubs = [String]()
+                    allSubs.append(contentsOf: newSubs.map{ $0.displayName })
+                    allSubs.append(contentsOf: newMultis.map{ "/m/" + $0.displayName })
+                    var currentSubs = Subscriptions.subreddits
+                    var finalSubs = [String]()
+                    finalSubs.append(contentsOf: allSubs)
+                    for sub in currentSubs {
+                        if !finalSubs.containsIgnoringCase(sub) {
+                            finalSubs.append(sub)
+                        }
+                    }
+                    Subscriptions.set(name: AccountController.currentName, subs: finalSubs, completion: {
+                    })
+                }
             })
         }
     }
@@ -925,4 +940,10 @@ extension MainViewController: UIContextMenuInteractionDelegate {
         return UIMenu(title: "Switch Accounts", children: buttons)
     }
 
+}
+
+extension Array where Element == String {
+    func containsIgnoringCase(_ element: Element) -> Bool {
+        contains { $0.caseInsensitiveCompare(element) == .orderedSame }
+    }
 }

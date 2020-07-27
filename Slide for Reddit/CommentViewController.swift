@@ -1296,7 +1296,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         panGesture.direction = .horizontal
         panGesture.delegate = self
         if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-           navGesture.require(toFail: panGesture)
+           //navGesture.require(toFail: panGesture)
         }
         self.presentationController?.delegate = self
 //        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
