@@ -26,6 +26,9 @@ class SubredditCellView: UITableViewCell {
     var navController: UIViewController?
     static var defaultIcon = UIImage(sfString: SFSymbol.rCircle, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
     static var defaultIconMulti = UIImage(sfString: SFSymbol.mCircle, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
+    static var allIcon = UIImage(sfString: SFSymbol.globe, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
+    static var frontpageIcon = UIImage(sfString: SFSymbol.houseFill, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
+    static var popularIcon = UIImage(sfString: SFSymbol.flameFill, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -149,6 +152,15 @@ class SubredditCellView: UITableViewCell {
             self.icon.contentMode = .center
             if subreddit.contains("m/") {
                 self.icon.image = SubredditCellView.defaultIconMulti
+            } else if subreddit.lowercased() == "all" {
+                self.icon.image = SubredditCellView.allIcon
+                self.sideView.backgroundColor = GMColor.blue500Color()
+            } else if subreddit.lowercased() == "frontpage" {
+                self.icon.image = SubredditCellView.frontpageIcon
+                self.sideView.backgroundColor = GMColor.green500Color()
+            } else if subreddit.lowercased() == "popular" {
+                self.icon.image = SubredditCellView.popularIcon
+                self.sideView.backgroundColor = GMColor.purple500Color()
             } else {
                 self.icon.image = SubredditCellView.defaultIcon
             }
