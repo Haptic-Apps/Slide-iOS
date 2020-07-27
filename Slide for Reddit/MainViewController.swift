@@ -475,11 +475,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     @objc func popToPrimary(_ sender: AnyObject) {
         if let split = splitViewController, split.isCollapsed {
-            if #available(iOS 14, *) {
-                split.show(UISplitViewController.Column.primary)
-            } else if let nav = split.viewControllers[0] as? UINavigationController {
-                nav.popToRootViewController(animated: true)
-            }
+            nav.popToRootViewController(animated: true)
         }
     }
     
