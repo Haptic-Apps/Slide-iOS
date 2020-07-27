@@ -33,7 +33,7 @@ target 'Slide for Reddit' do
   pod 'Anchorage', '~>4.3'
   pod 'Then'
   pod 'SwiftLint'
-  pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
+  pod "youtube-ios-player-helper"
   pod 'TGPControls'
 
   target 'Slide for RedditTests' do

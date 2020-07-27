@@ -103,7 +103,7 @@ PODS:
   - SwiftyJSON (5.0.0)
   - TGPControls (5.1.0)
   - Then (2.7.0)
-  - YoutubePlayer-in-WKWebView (0.3.4)
+  - youtube-ios-player-helper (0.1.6)
   - YYText (1.0.7)
 
 DEPENDENCIES:
@@ -134,7 +134,7 @@ DEPENDENCIES:
   - SwiftyJSON
   - TGPControls
   - Then
-  - YoutubePlayer-in-WKWebView (~> 0.3.0)
+  - youtube-ios-player-helper
   - YYText
 
 SPEC REPOS:
@@ -167,7 +167,7 @@ SPEC REPOS:
     - SwiftyJSON
     - TGPControls
     - Then
-    - YoutubePlayer-in-WKWebView
+    - youtube-ios-player-helper
     - YYText
 
 EXTERNAL SOURCES:
@@ -239,9 +239,9 @@ SPEC CHECKSUMS:
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
   Then: acfe0be7e98221c6204e12f8161459606d5d822d
-  YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
+  youtube-ios-player-helper: 21ab92db027c7ff86cb17a3843a3f6eafc8158d2
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 7f81c6a334dcf12406d9940d705aaeed4eed9b96
+PODFILE CHECKSUM: 199ec791e93b1e3ddba5e6c274216056cea5edbd
 
 COCOAPODS: 1.8.4
