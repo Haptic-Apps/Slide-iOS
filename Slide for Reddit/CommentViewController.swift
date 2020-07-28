@@ -16,13 +16,15 @@ import SDCAlertView
 import UIKit
 import YYText
 
-class CommentViewController: MediaViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
+class CommentViewController: MediaViewController, TTTAttributedCellDelegate, LinkCellViewDelegate, SubmissionMoreDelegate {
     // MARK: - Properties / References
     // Table View Datasource
     public var commentTableViewDataSource: CommentTableViewDataSource!
     public var commentTableViewDelegate: CommentTableViewDelegate!
     // Search Bar Delegate
     public var commentSearchBarDelegate: CommentSearchBarDelegate!
+    // Reply Delegate
+    public var commentReplyDelegate: CommentReplyDelegate!
     
     var version = 0
     //
@@ -447,128 +449,8 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
     }
 
-    func replySent(comment: Comment?, cell: CommentDepthCell?) {
-        if comment != nil && cell != nil {
-            DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = (self.cDepth[cell!.comment!.getIdentifier()] ?? 0) + 1
-
-                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
-                self.cDepth[comment!.getId()] = startDepth
-
-                var realPosition = 0
-                for c in self.comments {
-                    let id = c
-                    if id == cell!.comment!.getIdentifier() {
-                        break
-                    }
-                    realPosition += 1
-                }
-
-                var insertIndex = 0
-                for c in self.dataArray {
-                    let id = c
-                    if id == cell!.comment!.getIdentifier() {
-                        break
-                    }
-                    insertIndex += 1
-                }
-
-                var ids: [String] = []
-                for item in queue {
-                    let id = item.getIdentifier()
-                    ids.append(id)
-                    self.content[id] = item
-                }
-
-                self.dataArray.insert(contentsOf: ids, at: insertIndex + 1)
-                self.comments.insert(contentsOf: ids, at: realPosition + 1)
-                self.updateStringsSingle(queue)
-                self.doArrays()
-                self.isReply = false
-                self.isEditing = false
-                self.tableView.reloadData()
-
-            })
-        } else if comment != nil && cell == nil {
-            DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = 1
-
-                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
-                self.cDepth[comment!.getId()] = startDepth
-
-                let realPosition = 0
-                self.menuId = nil
-
-                var ids: [String] = []
-                for item in queue {
-                    let id = item.getIdentifier()
-                    ids.append(id)
-                    self.content[id] = item
-                }
-
-                self.dataArray.insert(contentsOf: ids, at: 0)
-                self.comments.insert(contentsOf: ids, at: realPosition == 0 ? 0 : realPosition + 1)
-                self.updateStringsSingle(queue)
-                self.doArrays()
-                self.isReply = false
-                self.isEditing = false
-                self.tableView.reloadData()
-            })
-        }
-    }
-
     func openComments(id: String, subreddit: String?) {
         //don't do anything
-    }
-
-    func editSent(cr: Comment?, cell: CommentDepthCell) {
-        if cr != nil {
-            DispatchQueue.main.async(execute: { () -> Void in
-                var realPosition = 0
-
-                var comment = cell.comment!
-                for c in self.comments {
-                    let id = c
-                    if id == comment.getIdentifier() {
-                        break
-                    }
-                    realPosition += 1
-                }
-
-                var insertIndex = 0
-                for c in self.dataArray {
-                    let id = c
-                    if id == comment.getIdentifier() {
-                        break
-                    }
-                    insertIndex += 1
-                }
-
-                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: self.cDepth[comment.getIdentifier()] ?? 1)
-                self.dataArray.remove(at: insertIndex)
-                self.dataArray.insert(comment.getIdentifier(), at: insertIndex)
-                self.comments.remove(at: realPosition)
-                self.comments.insert(comment.getIdentifier(), at: realPosition)
-                self.content[comment.getIdentifier()] = comment
-                self.updateStringsSingle([comment])
-                self.doArrays()
-                self.isEditing = false
-                self.isReply = false
-                self.tableView.reloadData()
-                self.discard()
-            })
-        }
-    }
-
-    func discard() {
-
-    }
-
-    func updateHeight(textView: UITextView) {
-        UIView.setAnimationsEnabled(false)
-        self.tableView.beginUpdates()
-        self.tableView.endUpdates()
-        UIView.setAnimationsEnabled(true)
     }
     
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
@@ -660,7 +542,8 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
 
     @objc func reply(_ cell: LinkCellView) {
         if !offline {
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, delegate: self)), parentVC: self)
+            commentReplyDelegate = CommentReplyDelegate(parentController: self)
+            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, delegate: commentReplyDelegate)), parentVC: self)
         }
     }
 
@@ -697,17 +580,6 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
 
             }
         }
-    }
-    
-    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
-        if scrollView.contentOffset.y > oldPosition.y {
-            oldPosition = scrollView.contentOffset
-            return true
-        } else {
-            tableView.setContentOffset(oldPosition, animated: true)
-            oldPosition = CGPoint.zero
-        }
-        return false
     }
     
     func downvote(_ cell: LinkCellView) {
@@ -1961,16 +1833,6 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
         self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        self.goingToCell = false
-        self.isGoingDown = false
-    }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        self.goingToCell = false
-        self.isGoingDown = false
-    }
-    
     @objc func goUp(_ sender: AnyObject) {
         if !loaded || content.isEmpty {
             return
@@ -2531,22 +2393,6 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
     var oldY = CGFloat(0)
     
     var isSearch = false
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOffset.y
-
-        if !SettingValues.pinToolbar && !isReply && !isSearch {
-            if currentY > lastYUsed && currentY > 60 {
-                if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
-                    hideUI(inHeader: true)
-                }
-            } else if (currentY < lastYUsed - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
-                showUI()
-            }
-        }
-        lastYUsed = currentY
-        lastY = currentY
-    }
 
     func hideUI(inHeader: Bool) {
         isHiding = true
