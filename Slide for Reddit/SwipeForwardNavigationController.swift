@@ -69,6 +69,9 @@ class SwipeForwardNavigationController: UINavigationController {
             fullWidthBackGestureRecognizer.delegate = self
             fullWidthBackGestureRecognizer.require(toFail: interactivePushGestureRecognizer!)
             view.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            if #available(iOS 13.4, *) {
+                fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+            }
         }
     }
 
@@ -85,7 +88,7 @@ class SwipeForwardNavigationController: UINavigationController {
         // Start, update, or finish the interactive push transition
         switch swipeGestureRecognizer?.state {
         case .began:
-            pushNextViewControllerFromRight()
+            pushNextViewControllerFromRight(nil)
         case .changed:
             percentDrivenInteractiveTransition?.update(progress)
         case .ended:
@@ -175,12 +178,13 @@ extension SwipeForwardNavigationController {
         }
     }
 
-    func pushNextViewControllerFromRight() {
+    func pushNextViewControllerFromRight(_ callback: (() -> Void)?) {
         let pushedViewController = pushableViewControllers.last
 
         if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
             push(pushedViewController, animated: true) {
                 self.pushableViewControllers.removeLast()
+                callback?()
             }
         }
     }

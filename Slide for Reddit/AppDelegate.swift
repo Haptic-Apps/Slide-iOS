@@ -426,9 +426,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     splitViewController.presentsWithGesture = true
                     
                     splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                    splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
                     
-                    let main = (splitViewController.viewControllers[0] as? SplitMainViewController) ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                    let main = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[1] as? SplitMainViewController ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                     let menu = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[0] ?? NavigationHomeViewController(controller: main)
                     
                     splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: menu), SwipeForwardNavigationController(rootViewController: main)]
@@ -450,7 +449,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     splitViewController.presentsWithGesture = true
                     
                     splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                    splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
                     
                     let main = splitViewController.viewControllers[1] as? SplitMainViewController ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                     let menu = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[0] ?? NavigationHomeViewController(controller: main)
@@ -497,7 +495,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
                 
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                 splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
@@ -508,15 +505,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             } else {
                 let splitViewController = UISplitViewController()
-                splitViewController.preferredDisplayMode = .automatic
-                splitViewController.presentsWithGesture = true
+                splitViewController.preferredDisplayMode = .allVisible
+                splitViewController.presentsWithGesture = false
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
                 
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-                let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
-                swipeNav.pushViewController(main, animated: false)
+                let swipeNav = SwipeForwardNavigationController()
+                swipeNav.viewControllers = [NavigationHomeViewController(controller: main), main]
+
                 splitViewController.viewControllers = [swipeNav, PlaceholderViewController()]
 
                 window.rootViewController = splitViewController
@@ -539,7 +536,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
     }
-
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
