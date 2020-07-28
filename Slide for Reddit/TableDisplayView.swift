@@ -146,21 +146,20 @@ class TableDisplayView: UIScrollView {
         for row in baseData {
             for (x, text) in row.enumerated() {
                 let framesetter = CTFramesetterCreateWithAttributedString(text)
-                let singleLineTextWidth = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat(40)), nil).width
-                let width = min(singleLineTextWidth, maxCellWidth)
+                let singleLineTextWidth = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), nil).width
+                let width = min(singleLineTextWidth, maxCellWidth) + (horizontalPadding * 2)
                 columnWidths[x] = max(columnWidths[x], width)
             }
         }
         globalWidth = columnWidths.reduce(0, +)
-        globalWidth += ((horizontalPadding * 2) * CGFloat(columnWidths.count))
 
         // Determine heights of rows now that we know column widths
         var rowHeights = [CGFloat](repeating: 0, count: baseData.count)
         for (y, row) in baseData.enumerated() {
             for (x, text) in row.enumerated() {
                 let framesetter = CTFramesetterCreateWithAttributedString(text)
-                let height = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: columnWidths[x], height: CGFloat.greatestFiniteMagnitude), nil).height
-                rowHeights[y] = max(rowHeights[y] + (verticalPadding * 2), height + (verticalPadding * 2))
+                let height = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: columnWidths[x], height: CGFloat.greatestFiniteMagnitude), nil).height + (verticalPadding * 2)
+                rowHeights[y] = max(rowHeights[y], height)
             }
         }
         globalHeight = rowHeights.reduce(0, +)
@@ -180,11 +179,12 @@ class TableDisplayView: UIScrollView {
                 label.highlightLongPressAction = longAction
                 label.highlightTapAction = action
                 label.attributedText = text
-                label.textContainerInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: verticalPadding, right: horizontalPadding)
+                label.textContainerInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: -verticalPadding, right: -horizontalPadding)
+                label.lineBreakMode = .byTruncatingTail
                 if y % 2 != 0 {
                     label.backgroundColor = ColorUtil.theme.foregroundColor
                 }
-                label.widthAnchor == columnWidths[x]
+                label.widthAnchor == columnWidths[x]// + 100
                 label.heightAnchor == rowHeights[y]
                 rowStack.addArrangedSubview(label)
             }
