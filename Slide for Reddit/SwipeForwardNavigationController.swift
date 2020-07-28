@@ -14,7 +14,7 @@ typealias SWNavigationControllerPushCompletion = () -> Void
 class SwipeForwardNavigationController: UINavigationController {
     private var percentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransition?
     public var interactivePushGestureRecognizer: UIScreenEdgePanGestureRecognizer?
-    private var pushableViewControllers: [UIViewController] = []
+    public var pushableViewControllers: [UIViewController] = []
  /* View controllers we can push onto the navigation stack by pulling in from the right screen edge. */    // Extra state used to implement completion blocks on pushViewController:
     private var pushCompletion: SWNavigationControllerPushCompletion?
     private var pushedViewController: UIViewController?
