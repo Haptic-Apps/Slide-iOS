@@ -21,6 +21,8 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
     // Table View Datasource
     public var commentTableViewDataSource: CommentTableViewDataSource!
     public var commentTableViewDelegate: CommentTableViewDelegate!
+    // Search Bar Delegate
+    public var commentSearchBarDelegate: CommentSearchBarDelegate!
     
     var version = 0
     //
@@ -1165,10 +1167,6 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
         tableView.reloadData()
     }
 
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        hideSearchBar()
-    }
-
     @objc func sort(_ selector: UIButton?) {
         if !offline {
             let isDefault = UISwitch()
@@ -1291,8 +1289,9 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
         tableView.addSubview(refreshControl!)
 
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
-
-        searchBar.delegate = self
+        
+        commentSearchBarDelegate = CommentSearchBarDelegate(parentController: self)
+        searchBar.delegate = commentSearchBarDelegate
         searchBar.searchBarStyle = UISearchBar.Style.minimal
         searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
         searchBar.showsCancelButton = false
@@ -2798,17 +2797,6 @@ class CommentViewController: MediaViewController, TTTAttributedCellDelegate, Lin
     }
 
     var isSearching = false
-
-    func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
-        filteredData = []
-        if textSearched.length != 0 {
-            isSearching = true
-            searchTableList()
-        } else {
-            isSearching = false
-        }
-        tableView.reloadData()
-    }
 
     func searchTableList() {
         let searchString = searchBar.text
