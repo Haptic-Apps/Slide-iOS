@@ -197,7 +197,7 @@ class NavigationHomeViewController: UIViewController {
         if SettingValues.autoKeyboard {
             //TODO enable this? searchBar.becomeFirstResponder()
         }
-        if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController), false {
+        if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) {
             NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
             NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
             NavigationHomeViewController.edgeGesture!.delegate = nav

@@ -427,7 +427,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     
                     splitViewController.preferredPrimaryColumnWidthFraction = 0.4
                     
-                    let main = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[1] as? SplitMainViewController ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                    let main = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.pushableViewControllers[0] as? SplitMainViewController ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                     let menu = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[0] ?? NavigationHomeViewController(controller: main)
                     
                     splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: menu), SwipeForwardNavigationController(rootViewController: main)]
