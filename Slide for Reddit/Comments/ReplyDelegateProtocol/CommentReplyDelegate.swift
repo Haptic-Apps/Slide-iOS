@@ -18,7 +18,6 @@ class CommentReplyDelegate: NSObject, ReplyDelegate {
     init(parentController: CommentViewController) {
         self.commentController = parentController
     }
-    
     // MARK: - Methods
     /// Sends the users comment adding it to other comments in list.
     func replySent(comment: Comment?, cell: CommentDepthCell?) {
