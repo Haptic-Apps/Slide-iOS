@@ -542,7 +542,7 @@ class SettingValues {
         }
         
         SettingValues.hideImageSelftext = settings.object(forKey: SettingValues.pref_hideImageSelftext) == nil ? true : settings.bool(forKey: SettingValues.pref_hideImageSelftext)
-        SettingValues.disable13Popup = settings.bool(forKey: SettingValues.pref_disable13Popup)
+        SettingValues.disable13Popup = false //REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
         
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
 

@@ -345,7 +345,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
         if #available(iOS 14, *) {
-            resetStackNew()
+            resetStack()
         } else {
             resetStack()
         }
@@ -495,7 +495,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             splitViewController.presentsWithGesture = true
             
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
             
             window.rootViewController = splitViewController
             self.window = window
@@ -621,7 +621,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
             splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
-            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: main), for: .secondary)
+            splitViewController.setViewController(main, for: .secondary)
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
