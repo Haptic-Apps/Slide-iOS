@@ -19,6 +19,8 @@ class CommentTableViewDelegate: NSObject, UITableViewDelegate {
     }
     
     // MARK: - Methods
+    // TODO: - Complete Comment Table View Protocols
+    
     //    @available(iOS 11.0, *)
     //    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
     //        let cell = tableView.cellForRow(at: indexPath)

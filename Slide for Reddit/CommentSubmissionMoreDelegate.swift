@@ -18,6 +18,7 @@ class CommentSubmissionMoreDelegate: NSObject, SubmissionMoreDelegate {
     }
     
     // MARK: - Methods
+    /// Saves comments from selected cell.
     func save(_ cell: LinkCellView) {
         do {
             let state = !ActionStates.isSaved(s: cell.link!)
@@ -40,26 +41,31 @@ class CommentSubmissionMoreDelegate: NSObject, SubmissionMoreDelegate {
         }
     }
     
+    /// Undefined
     func hide(_ cell: LinkCellView) {
 
     }
     
+    /// Undefined
     func showFilterMenu(_ cell: LinkCellView) {
-        //Not implemented
+        // Not implemented
     }
     
+    /// Applies a filter to comments.
     func applyFilters() {
         if PostFilter.filter([commentController.submission!], previous: nil, baseSubreddit: "all").isEmpty {
             self.commentController.navigationController?.popViewController(animated: true)
         }
     }
     
+    /// Hides selected comments.
     func hide(index: Int) {
         if index >= 0 {
             self.commentController.navigationController?.popViewController(animated: true)
         }
     }
     
+    /// Follows / Subscribes to Reddit Lists.
     func subscribe(link: RSubmission) {
         let sub = link.subreddit
         let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
@@ -84,4 +90,5 @@ class CommentSubmissionMoreDelegate: NSObject, SubmissionMoreDelegate {
         alrController.modalPresentationStyle = .fullScreen
         self.commentController.present(alrController, animated: true, completion: {})
     }
+    
 }

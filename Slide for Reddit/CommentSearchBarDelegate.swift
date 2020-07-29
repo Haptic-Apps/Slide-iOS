@@ -18,10 +18,12 @@ class CommentSearchBarDelegate: NSObject, UISearchBarDelegate {
     }
     
     // MARK: - Methods
+    /// Hides the search bar when cancel button clicked.
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         commentController.hideSearchBar()
     }
     
+    /// Resets table view data with user entered text and refreshes it to what the user entered.
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
         commentController.filteredData = []
         if textSearched.length != 0 {

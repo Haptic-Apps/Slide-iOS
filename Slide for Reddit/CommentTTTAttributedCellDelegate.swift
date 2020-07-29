@@ -20,6 +20,7 @@ class CommentTTTAttributedCellDelegate: NSObject, TTTAttributedCellDelegate {
     }
 
     // MARK: - Methods
+    /// Scrolls to Comment upon tapping.
     func pushedSingleTap(_ cell: CommentDepthCell) {
         if !commentController.isReply {
             if commentController.isSearching {
@@ -55,12 +56,15 @@ class CommentTTTAttributedCellDelegate: NSObject, TTTAttributedCellDelegate {
                                 commentController.hiddenPersons.remove(at: commentController.hiddenPersons.firstIndex(of: id)!)
                             }
                             if let oldHeight = commentController.oldHeights[id] {
-                                commentController.UIView.animate(withDuration: 0.25, delay: 0, options: commentController.UIView.AnimationOptions.curveEaseInOut, animations: {
-                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
-                                }, completion: { (_) in
+                                // TODO: Add either a parameter or delegates of some sort to make this happen inside a UIViewController
+                                
+//                                commentController.UIView.animate(withDuration: 0.25, delay: 0, options: commentController.UIView.AnimationOptions.curveEaseInOut, animations: {
+//                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
+//                                }, completion: { (_) in
                                     cell.expandSingle()
                                     self.commentController.oldHeights.removeValue(forKey: id)
-                                })
+//                                })
+                                
                                 commentController.tableView.beginUpdates()
                                 commentController.tableView.endUpdates()
                             } else {
@@ -87,19 +91,22 @@ class CommentTTTAttributedCellDelegate: NSObject, TTTAttributedCellDelegate {
                         if commentController.hiddenPersons.contains((id)) && childNumber > 0 {
                             commentController.hiddenPersons.remove(at: commentController.hiddenPersons.firstIndex(of: id)!)
                             if let oldHeight = commentController.oldHeights[id] {
-                                commentController.UIView.animate(withDuration: 0.25, delay: 0, options: commentController.UIView.AnimationOptions.curveEaseInOut, animations: {
-                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
-                                }, completion: { (_) in
+                                // TODO: Add either a parameter or delegates of some sort to make this happen inside a UIViewController
+                                
+//                                commentController.UIView.animate(withDuration: 0.25, delay: 0, options: commentController.UIView.AnimationOptions.curveEaseInOut, animations: {
+//                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
+//                                }, completion: { (_) in
                                     cell.expand()
                                     self.commentController.oldHeights.removeValue(forKey: id)
-                                })
+//                                })
+                                
                             } else {
                                 cell.expand()
                                 commentController.tableView.beginUpdates()
                                 commentController.tableView.endUpdates()
                             }
                             commentController.unhideAll(comment: comment.getId(), i: row!)
-                           // TODO: - hide child number
+                           // TODO: hide child number
                         } else {
                             if childNumber > 0 {
                                 if childNumber > 0 {
@@ -125,9 +132,9 @@ class CommentTTTAttributedCellDelegate: NSObject, TTTAttributedCellDelegate {
                     if datasetPosition == -1 {
                         return
                     }
-                    if let more = commentController.content[dataArray[datasetPosition]] as? RMore, let link = self.commentController.submission {
+                    if let more = commentController.content[commentController.dataArray[datasetPosition]] as? RMore, let link = self.commentController.submission {
                         if more.children.isEmpty {
-                            VCPresenter.openRedditLink("https://www.reddit.com" + submission!.permalink + more.parentId.substring(3, length: more.parentId.length - 3), self.commentController.navigationController, commentController)
+                            VCPresenter.openRedditLink("https://www.reddit.com" + commentController.submission!.permalink + more.parentId.substring(3, length: more.parentId.length - 3), self.commentController.navigationController, commentController)
                         } else {
                             do {
                                 var strings: [String] = []
@@ -144,54 +151,54 @@ class CommentTTTAttributedCellDelegate: NSObject, TTTAttributedCellDelegate {
                                             let startDepth = self.commentController.cDepth[more.getIdentifier()] ?? 0
 
                                             var queue: [Object] = []
-                                            for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
+                                            for i in self.commentController.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
                                                 let item = i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More)
                                                 queue.append(item)
-                                                self.cDepth[item.getIdentifier()] = i.1
-                                                self.updateStrings([i])
+                                                self.commentController.cDepth[item.getIdentifier()] = i.1
+                                                self.commentController.updateStrings([i])
                                             }
 
                                             var realPosition = 0
-                                            for comment in self.comments {
+                                            for comment in self.commentController.comments {
                                                 if comment == more.getIdentifier() {
                                                     break
                                                 }
                                                 realPosition += 1
                                             }
 
-                                            if self.comments.count > realPosition && self.comments[realPosition] != nil {
-                                                self.comments.remove(at: realPosition)
+                                            if self.commentController.comments.count > realPosition && self.commentController.comments[realPosition] != nil {
+                                                self.commentController.comments.remove(at: realPosition)
                                             } else {
                                                 return
                                             }
-                                            self.dataArray.remove(at: datasetPosition)
+                                            self.commentController.dataArray.remove(at: datasetPosition)
                                             
-                                            let currentParent = self.parents[more.getIdentifier()]
+                                            let currentParent = self.commentController.parents[more.getIdentifier()]
 
                                             var ids: [String] = []
                                             for item in queue {
                                                 let id = item.getIdentifier()
-                                                self.parents[id] = currentParent
+                                                self.commentController.parents[id] = currentParent
                                                 ids.append(id)
-                                                self.content[id] = item
+                                                self.commentController.content[id] = item
                                             }
 
                                             if queue.count != 0 {
-                                                self.tableView.beginUpdates()
-                                                self.tableView.deleteRows(at: [IndexPath.init(row: datasetPosition, section: 0)], with: .fade)
-                                                self.dataArray.insert(contentsOf: ids, at: datasetPosition)
-                                                self.comments.insert(contentsOf: ids, at: realPosition)
-                                                self.doArrays()
+                                                self.commentController.tableView.beginUpdates()
+                                                self.commentController.tableView.deleteRows(at: [IndexPath.init(row: datasetPosition, section: 0)], with: .fade)
+                                                self.commentController.dataArray.insert(contentsOf: ids, at: datasetPosition)
+                                                self.commentController.comments.insert(contentsOf: ids, at: realPosition)
+                                                self.commentController.doArrays()
                                                 var paths: [IndexPath] = []
                                                 for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1) {
                                                     paths.append(IndexPath.init(row: i, section: 0))
                                                 }
-                                                self.tableView.insertRows(at: paths, with: .left)
-                                                self.tableView.endUpdates()
+                                                self.commentController.tableView.insertRows(at: paths, with: .left)
+                                                self.commentController.tableView.endUpdates()
 
                                             } else {
-                                                self.doArrays()
-                                                self.tableView.reloadData()
+                                                self.commentController.doArrays()
+                                                self.commentController.tableView.reloadData()
                                             }
                                         })
 
@@ -207,14 +214,16 @@ class CommentTTTAttributedCellDelegate: NSObject, TTTAttributedCellDelegate {
                 }
             }
         }
-        dddddd
+
     }
     
+    /// Returns a bool based upon if Menu is shown.
     func isMenuShown() -> Bool {
-        return menuCell != nil
+        return commentController.menuCell != nil
     }
     
+    /// Returns the comment from selected cell.
     func getMenuShown() -> String? {
-        return menuId
+        return commentController.menuId
     }
 }

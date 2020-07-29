@@ -34,12 +34,12 @@ class CommentViewController: MediaViewController {
     public var tttAttributedCellDelegate: CommentTTTAttributedCellDelegate!
     /// Decides theme of Comment Cell
     var version = 0
-    // var menuCell: CommentDepthCell?
-    // var menuId: String?
-    // public var inHeadView = UIView()
+    var menuCell: CommentDepthCell?
+    var menuId: String?
+    public var inHeadView = UIView()
     /// Sets comment colors
     var commentDepthColors = [UIColor]()
-    // var pan: UIPanGestureRecognizer!
+    var pan: UIPanGestureRecognizer!
     /// Comment table view pan gesture
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: CommentDepthCell?
@@ -52,30 +52,6 @@ class CommentViewController: MediaViewController {
     var sortButton = UIButton()
 
     var jump: UIView!
-    //
-    
-    
-    
-    
-    override var prefersStatusBarHidden: Bool {
-        return SettingValues.fullyHideNavbar
-    }
-
-    override var keyCommands: [UIKeyCommand]? {
-        if isReply {
-            return []
-        } else {
-            return [
-                UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
-                UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
-                UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
-                UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(linkCellViewDelegate.upvote(_:)), discoverabilityTitle: "Like post"),
-                UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(linkCellViewDelegate.reply(_:)), discoverabilityTitle: "Reply to post"),
-                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(linkCellViewDelegate.save(_:)), discoverabilityTitle: "Save post"),
-            ]
-        }
-    }
-    //
     //
     var progressDot = UIView()
     //
@@ -125,14 +101,6 @@ class CommentViewController: MediaViewController {
     var modB = UIBarButtonItem()
     //
     var indicator: MDCActivityIndicator = MDCActivityIndicator()
-
-    override var navigationItem: UINavigationItem {
-        if parent != nil && parent! is PagingCommentViewController {
-            return parent!.navigationItem
-        } else {
-            return super.navigationItem
-        }
-    }
     //
     var savedBack: UIBarButtonItem?
     //
@@ -145,8 +113,34 @@ class CommentViewController: MediaViewController {
     var configuredOnce = false
     //
     var subreddit = ""
-    // Table View
     
+    override var prefersStatusBarHidden: Bool {
+        return SettingValues.fullyHideNavbar
+    }
+
+    override var keyCommands: [UIKeyCommand]? {
+        if isReply {
+            return []
+        } else {
+            return [
+                UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
+                UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
+                UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
+                UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(linkCellViewDelegate.upvote(_:)), discoverabilityTitle: "Like post"),
+                UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(linkCellViewDelegate.reply(_:)), discoverabilityTitle: "Reply to post"),
+                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(linkCellViewDelegate.save(_:)), discoverabilityTitle: "Save post"),
+            ]
+        }
+    }
+
+    override var navigationItem: UINavigationItem {
+        if parent != nil && parent! is PagingCommentViewController {
+            return parent!.navigationItem
+        } else {
+            return super.navigationItem
+        }
+    }
+    // Table view
     func createJumpButton(_ forced: Bool = false) {
         if SettingValues.commentJumpButton == .DISABLED {
             return

@@ -17,6 +17,7 @@ class CommentScrollViewDelegate: NSObject, UIScrollViewDelegate {
         self.commentController = parentController
     }
     // MARK: - Methods
+    /// Sets position of scroll view when scrolling to top.
     func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
         if scrollView.contentOffset.y > commentController.oldPosition.y {
             commentController.oldPosition = scrollView.contentOffset
@@ -28,16 +29,19 @@ class CommentScrollViewDelegate: NSObject, UIScrollViewDelegate {
         return false
     }
     
+    /// When the user has stopped scrolling.
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.commentController.goingToCell = false
         self.commentController.isGoingDown = false
     }
     
+    /// When the user has stopped scrolling and the animation has stopped.
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         self.commentController.goingToCell = false
         self.commentController.isGoingDown = false
     }
     
+    /// Upon the user scrolling through comments.
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
 

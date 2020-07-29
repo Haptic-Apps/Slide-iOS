@@ -20,6 +20,7 @@ class CommentReplyDelegate: NSObject, ReplyDelegate {
     }
     
     // MARK: - Methods
+    /// Sends the users comment adding it to other comments in list.
     func replySent(comment: Comment?, cell: CommentDepthCell?) {
         if comment != nil && cell != nil {
             DispatchQueue.main.async(execute: { () -> Void in
@@ -90,6 +91,7 @@ class CommentReplyDelegate: NSObject, ReplyDelegate {
         }
     }
     
+    /// Applies dynamic size to text being typed.
     func updateHeight(textView: UITextView) {
         UIView.setAnimationsEnabled(false)
         self.commentController.tableView.beginUpdates()
@@ -97,10 +99,12 @@ class CommentReplyDelegate: NSObject, ReplyDelegate {
         UIView.setAnimationsEnabled(true)
     }
     
+    // Undefined
     func discard() {
 
     }
     
+    /// Takes a the users modified comment and adds it back to comment section.
     func editSent(cr: Comment?, cell: CommentDepthCell) {
         if cr != nil {
             DispatchQueue.main.async(execute: { () -> Void in

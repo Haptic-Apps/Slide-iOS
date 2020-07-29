@@ -18,6 +18,7 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
     }
     
     // MARK: - Methods
+    /// Sets an upvote from the user.
     @objc func upvote(_ cell: LinkCellView) {
         do {
             try commentController.session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in
@@ -35,6 +36,7 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
         }
     }
     
+    /// Sets a downvote from the user.
     func downvote(_ cell: LinkCellView) {
         do {
             try commentController.session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.id)!, completion: { (_) in
@@ -51,6 +53,7 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
         }
     }
     
+    /// Saves a selected comment.
     @objc func save(_ cell: LinkCellView) {
         do {
             let state = !ActionStates.isSaved(s: cell.link!)
@@ -73,6 +76,7 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
         }
     }
     
+    /// Displays more info and presents alert.
     func more(_ cell: LinkCellView) {
         if !commentController.offline {
             commentController.submissionMoreDelegate = CommentSubmissionMoreDelegate(parentController: commentController)
@@ -80,6 +84,7 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
         }
     }
     
+    /// Sets a reply from user.
     @objc func reply(_ cell: LinkCellView) {
         if !commentController.offline {
             commentController.commentReplyDelegate = CommentReplyDelegate(parentController: commentController)
@@ -87,14 +92,17 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
         }
     }
 
+    /// Undefined
     func hide(_ cell: LinkCellView) {
 
     }
     
+    /// Undefined
     func openComments(id: String, subreddit: String?) {
         //don't do anything
     }
     
+    /// Deletes a selected comment/
     func deleteSelf(_ cell: LinkCellView) {
         if !commentController.offline {
             do {
@@ -113,10 +121,12 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
         }
     }
     
+    /// Displays users moderation menu.
     func mod(_ cell: LinkCellView) {
         PostActions.showModMenu(cell, parent: commentController)
     }
     
+    /// Saves link to save later.
     func readLater(_ cell: LinkCellView) {
         guard let link = cell.link else {
             return
