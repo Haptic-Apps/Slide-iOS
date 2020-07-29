@@ -24,6 +24,11 @@ class SubredditCellView: UITableViewCell {
     var icon = UIImageView()
     var title: UILabel = UILabel()
     var navController: UIViewController?
+    static var defaultIcon = UIImage(sfString: SFSymbol.rCircle, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
+    static var defaultIconMulti = UIImage(sfString: SFSymbol.mCircle, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
+    static var allIcon = UIImage(sfString: SFSymbol.globe, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
+    static var frontpageIcon = UIImage(sfString: SFSymbol.houseFill, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
+    static var popularIcon = UIImage(sfString: SFSymbol.flameFill, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -47,7 +52,7 @@ class SubredditCellView: UITableViewCell {
 
         self.sideView = UIView().then {
             $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
-            $0.layer.cornerRadius = 8
+            $0.layer.cornerRadius = 15
             $0.clipsToBounds = true
         }
 
@@ -58,7 +63,9 @@ class SubredditCellView: UITableViewCell {
         }
         
         self.icon = UIImageView().then {
-            $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
+            $0.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
+            $0.layer.cornerRadius = 15
+            $0.clipsToBounds = true
             $0.isHidden = true
         }
 
@@ -69,16 +76,14 @@ class SubredditCellView: UITableViewCell {
     func configureLayout() {
         batch {
             sideView.leftAnchor == contentView.leftAnchor + 16
-            sideView.sizeAnchors == CGSize.square(size: 16)
+            sideView.sizeAnchors == CGSize.square(size: 30)
             sideView.centerYAnchor == contentView.centerYAnchor
 
             pin.leftAnchor == sideView.rightAnchor + 6
             pin.sizeAnchors == CGSize.square(size: 10)
             pin.centerYAnchor == contentView.centerYAnchor
 
-            icon.leftAnchor == contentView.leftAnchor + 16
-            icon.sizeAnchors == CGSize.square(size: 16)
-            icon.centerYAnchor == contentView.centerYAnchor
+            icon.edgeAnchors == sideView.edgeAnchors
 
             title.leftAnchor == pin.rightAnchor + 2
             title.centerYAnchor == contentView.centerYAnchor
@@ -127,7 +132,7 @@ class SubredditCellView: UITableViewCell {
         self.navController = nav
         self.subreddit = subreddit
         self.sideView.isHidden = false
-        self.icon.isHidden = true
+        self.icon.isHidden = false
         if !exists {
             title.text = "Go to r/\(subreddit)"
         } else {
@@ -138,6 +143,28 @@ class SubredditCellView: UITableViewCell {
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.theme.backgroundColor
         selectedBackgroundView = selectedView
+        
+        if let icon = Subscriptions.icon(for: subreddit) {
+            self.icon.contentMode = .scaleAspectFill
+            self.icon.image = UIImage()
+            self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+        } else {
+            self.icon.contentMode = .center
+            if subreddit.contains("m/") {
+                self.icon.image = SubredditCellView.defaultIconMulti
+            } else if subreddit.lowercased() == "all" {
+                self.icon.image = SubredditCellView.allIcon
+                self.sideView.backgroundColor = GMColor.blue500Color()
+            } else if subreddit.lowercased() == "frontpage" {
+                self.icon.image = SubredditCellView.frontpageIcon
+                self.sideView.backgroundColor = GMColor.green500Color()
+            } else if subreddit.lowercased() == "popular" {
+                self.icon.image = SubredditCellView.popularIcon
+                self.sideView.backgroundColor = GMColor.purple500Color()
+            } else {
+                self.icon.image = SubredditCellView.defaultIcon
+            }
+        }
     }
     
     func setProfile(profile: String, nav: UIViewController?) {

@@ -41,6 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var commentsFile: String?
     var readLaterFile: String?
     var collectionsFile: String?
+    var iconsFile: String?
+    var colorsFile: String?
     var totalBackground = true
     var isPro = false
     var transitionDelegateModal: InsetTransitioningDelegate?
@@ -131,6 +133,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         commentsFile = documentDirectory.appending("/comments.plist")
         readLaterFile = documentDirectory.appending("/readlater.plist")
         collectionsFile = documentDirectory.appending("/collections.plist")
+        iconsFile = documentDirectory.appending("/icons.plist")
+        colorsFile = documentDirectory.appending("/subcolors.plist")
 
         let config = Realm.Configuration(
                 schemaVersion: 26,
@@ -183,6 +187,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             print("file myData.plist already exits at path.")
         }
+        
+        if !fileManager.fileExists(atPath: iconsFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "icons", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: iconsFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
+
+        if !fileManager.fileExists(atPath: colorsFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "subcolors", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: colorsFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
 
         if !fileManager.fileExists(atPath: commentsFile!) {
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist") {
@@ -204,6 +238,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
         Collections.collectionIDs = NSMutableDictionary.init(contentsOfFile: collectionsFile!)!
+        Subscriptions.subIcons = NSMutableDictionary.init(contentsOfFile: iconsFile!)!
+        Subscriptions.subColors = NSMutableDictionary.init(contentsOfFile: colorsFile!)!
 
         SettingValues.initialize()
         
@@ -308,6 +344,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.applicationIconBadgeNumber = 0
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
+           
         resetStack()
         window?.makeKeyAndVisible()
         
@@ -359,7 +396,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /**
      Rebuilds the nav stack for the currently selected App Mode (split, multi column, etc.)
      */
-    func resetStack() {
+    func resetStackOld() {
         guard let window = self.window else {
             fatalError("Window must exist when resetting the stack!")
         }
@@ -367,13 +404,142 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
             rootController = splitVC
             splitVC.preferredDisplayMode = .allVisible
-            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
+            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: LegacyMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
         } else {
-            rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
+            rootController = UINavigationController(rootViewController: LegacyMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
         }
 
         window.setRootViewController(rootController, animated: false)
     }
+    
+    func resetStack(_ soft: Bool = false) -> MainViewController {
+        guard let window = self.window else {
+            fatalError("Window must exist when resetting the stack!")
+        }
+        
+        if !soft {
+            return doHard(window)
+        } else if let splitViewController = window.rootViewController as? UISplitViewController {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                if SettingValues.appMode == .MULTI_COLUMN {
+                    splitViewController.preferredDisplayMode = .primaryHidden
+                    splitViewController.presentsWithGesture = true
+                    
+                    splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+                    splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
+                    
+                    let main = (splitViewController.viewControllers[0] as? SplitMainViewController) ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                    let menu = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[0] ?? NavigationHomeViewController(controller: main)
+                    
+                    splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: menu), SwipeForwardNavigationController(rootViewController: main)]
+
+                    let snapshotImageView = UIImageView(image: window.snapshotImage())
+                    window.addSubview(snapshotImageView)
+                    window.rootViewController = splitViewController
+                    window.bringSubviewToFront(snapshotImageView)
+                    
+                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
+                        snapshotImageView.alpha = 0
+                    }, completion: { (_) -> Void in
+                        snapshotImageView.removeFromSuperview()
+                    })
+
+                    return main
+                } else {
+                    splitViewController.preferredDisplayMode = .automatic
+                    splitViewController.presentsWithGesture = true
+                    
+                    splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+                    splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
+                    
+                    let main = splitViewController.viewControllers[1] as? SplitMainViewController ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                    let menu = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[0] ?? NavigationHomeViewController(controller: main)
+
+                    let swipeNav = SwipeForwardNavigationController(rootViewController: menu)
+                    swipeNav.pushViewController(main, animated: false)
+                    splitViewController.viewControllers = [swipeNav, PlaceholderViewController()]
+
+                    let snapshotImageView = UIImageView(image: window.snapshotImage())
+                    window.addSubview(snapshotImageView)
+                    window.rootViewController = splitViewController
+                    window.bringSubviewToFront(snapshotImageView)
+                    
+                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
+                        snapshotImageView.alpha = 0
+                    }, completion: { (_) -> Void in
+                        snapshotImageView.removeFromSuperview()
+                    })
+
+                    return main
+                }
+            } else {
+                splitViewController.preferredDisplayMode = .primaryOverlay
+                splitViewController.presentsWithGesture = true
+                
+                let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
+                
+                window.rootViewController = splitViewController
+                self.window = window
+                window.makeKeyAndVisible()
+                return main
+            }
+        } else {
+            return doHard(window)
+        }
+    }
+    
+    func doHard(_ window: UIWindow) -> MainViewController {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if SettingValues.appMode == .MULTI_COLUMN {
+                let splitViewController = UISplitViewController()
+                splitViewController.preferredDisplayMode = .primaryHidden
+                splitViewController.presentsWithGesture = true
+                
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+                splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
+                
+                let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
+
+                window.rootViewController = splitViewController
+                self.window = window
+                window.makeKeyAndVisible()
+                return main
+            } else {
+                let splitViewController = UISplitViewController()
+                splitViewController.preferredDisplayMode = .automatic
+                splitViewController.presentsWithGesture = true
+                
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+                splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width / 3
+                
+                let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
+                swipeNav.pushViewController(main, animated: false)
+                splitViewController.viewControllers = [swipeNav, PlaceholderViewController()]
+
+                window.rootViewController = splitViewController
+                self.window = window
+                window.makeKeyAndVisible()
+                return main
+            }
+        } else {
+            let splitViewController = UISplitViewController()
+            splitViewController.preferredDisplayMode = .primaryOverlay
+            splitViewController.presentsWithGesture = true
+            
+            let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
+            
+            window.rootViewController = splitViewController
+            self.window = window
+            window.makeKeyAndVisible()
+            return main
+        }
+
+    }
+
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
@@ -552,14 +718,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         self.paginator = listing.paginator
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
+                            Subscriptions.subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                            Subscriptions.subColors[sub.displayName.lowercased()] = sub.keyColor
+
+                            /* Not needed, we pull from the key color now
                             if sub.keyColor.hexString() != "#FFFFFF" {
                                 let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
-                            }
+                            }*/
                         }
-
                     }
                     if subredditController != nil {
                         DispatchQueue.main.async(execute: { () -> Void in
@@ -580,17 +749,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                         for sub in subs {
                             toReturn.append(sub.displayName)
-                            if sub.keyColor.hexString() != "#FFFFFF" {
+                            /*if sub.keyColor.hexString() != "#FFFFFF" {
                                 let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
-                            }
+                            }*/
                         }
                         for m in multis {
                             toReturn.append("/m/" + m.displayName)
                             if !m.keyColor.isEmpty {
-                                
                                 let color = (UIColor.init(hexString: m.keyColor))
                                 if defaults.object(forKey: "color" + m.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + m.displayName)
@@ -815,7 +983,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
-        
+        Subscriptions.subIcons.write(toFile: iconsFile!, atomically: true)
+        Subscriptions.subColors.write(toFile: colorsFile!, atomically: true)
+
         saveToiCloud(Collections.collectionIDs, "collections", self.collectionRecord)
         saveToiCloud(ReadLater.readLaterIDs, "readlater", self.readLaterRecord)
         saveToiCloud(AppDelegate.removeDict, "removed", self.deletedRecord)
@@ -832,6 +1002,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
+        Subscriptions.subIcons.write(toFile: iconsFile!, atomically: true)
+        Subscriptions.subColors.write(toFile: colorsFile!, atomically: true)
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     

@@ -209,6 +209,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
             default:
                 break
             }
+               
+            (UIApplication.shared.delegate as? AppDelegate)?.resetStack(true)
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()
         } else if indexPath.section == 1 && indexPath.row == 1 {

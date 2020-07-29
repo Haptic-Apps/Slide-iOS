@@ -41,6 +41,9 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         }
         UserDefaults.standard.set(saveArray, forKey: "postMenu")
         UserDefaults.standard.synchronize()
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = true
+        }
     }
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
@@ -103,5 +106,9 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         self.title = "Arrange post menu"
+        
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        }
     }
 }

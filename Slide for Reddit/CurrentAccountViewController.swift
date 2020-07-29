@@ -23,6 +23,7 @@ protocol CurrentAccountViewControllerDelegate: AnyObject {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestNewAccount: Void)
     func currentAccountViewController(_ controller: CurrentAccountViewController, goToMultireddit multireddit: String)
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestCacheNow: Void)
+    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestHistory: Void)
 }
 
 class CurrentAccountViewController: UIViewController {
@@ -428,14 +429,19 @@ extension CurrentAccountViewController {
     
     @objc func mailButtonPressed(_ sender: UIButton) {
         let vc = InboxViewController()
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         present(navVC, animated: true)
     }
-
+    
     @objc func cacheButtonPressed() {
         self.dismiss(animated: true)
         self.delegate?.currentAccountViewController(self, didRequestCacheNow: ())
+    }
+    
+    @objc func historyButtonPressed() {
+        self.dismiss(animated: true)
+        self.delegate?.currentAccountViewController(self, didRequestHistory: ())
     }
 
     @objc func multiButtonPressed() {
@@ -485,7 +491,7 @@ extension CurrentAccountViewController {
 
     @objc func modButtonPressed(_ sender: UIButton) {
         let vc = ModerationViewController()
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         present(navVC, animated: true)
     }
@@ -501,8 +507,12 @@ extension CurrentAccountViewController {
 
 // MARK: - AccountHeaderViewDelegate
 extension CurrentAccountViewController: AccountHeaderViewDelegate {
+    
+    func didRequestHistory() {
+        self.historyButtonPressed()
+    }
+    
     func didRequestCollections() {
-       // TODO: - collections
         if Collections.collectionIDs.count == 0 {
             let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
             
@@ -517,7 +527,7 @@ extension CurrentAccountViewController: AccountHeaderViewDelegate {
 
         } else {
             let vc = CollectionsViewController()
-            let navVC = UINavigationController(rootViewController: vc)
+            let navVC = SwipeForwardNavigationController(rootViewController: vc)
             navVC.navigationBar.isTranslucent = false
             present(navVC, animated: true)
         }
@@ -534,7 +544,7 @@ extension CurrentAccountViewController: AccountHeaderViewDelegate {
     func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int) {
         let vc = ProfileViewController(name: AccountController.currentName)
         vc.openTo = index
-        let navVC = UINavigationController(rootViewController: vc)
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         present(navVC, animated: true)
     }
@@ -619,6 +629,7 @@ extension CurrentAccountViewController {
 protocol AccountHeaderViewDelegate: AnyObject {
     func accountHeaderView(_ view: AccountHeaderView, didRequestProfilePageAtIndex index: Int)
     func didRequestCache()
+    func didRequestHistory()
     func didRequestCollections()
     func didRequestNewMulti()
 }
@@ -662,6 +673,10 @@ class AccountHeaderView: UIView {
         $0.configure(text: "Liked Posts", imageName: "upvote", sfSymbolName: .arrowUp, imageColor: GMColor.orange500Color())
     }
     
+    var historyCell = UITableViewCell().then {
+        $0.configure(text: "Post history", imageName: "history", sfSymbolName: .clockFill, imageColor: GMColor.orange500Color())
+    }
+
     var detailsCell = UITableViewCell().then {
         $0.configure(text: "Your profile", imageName: "profile", sfSymbolName: .personCircleFill, imageColor: ColorUtil.theme.fontColor)
     }
@@ -682,7 +697,7 @@ class AccountHeaderView: UIView {
         
         addSubviews(infoStack, cellStack)
         infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell, multiCell, collectionsCell, cacheCell)
+        cellStack.addArrangedSubviews(savedCell, likedCell, detailsCell, historyCell, multiCell, collectionsCell, cacheCell)
         
         self.clipsToBounds = true
         
@@ -726,7 +741,8 @@ class AccountHeaderView: UIView {
         multiCell.heightAnchor == 50
         detailsCell.heightAnchor == 50
         likedCell.heightAnchor == 50
-        
+        historyCell.heightAnchor == 50
+
         cellStack.bottomAnchor == bottomAnchor
         
         if #available(iOS 13, *) {
@@ -744,6 +760,10 @@ class AccountHeaderView: UIView {
         likedCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.accountHeaderView(strongSelf, didRequestProfilePageAtIndex: 3)
+        }
+        historyCell.addTapGestureRecognizer { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.delegate?.didRequestHistory()
         }
         detailsCell.addTapGestureRecognizer { [weak self] in
             guard let strongSelf = self else { return }
@@ -783,6 +803,16 @@ public extension UITableViewCell {
         textLabel?.text = text
         imageView?.image = UIImage(sfString: sfSymbolName, overrideString: imageName)?.menuIcon()
         imageView?.tintColor = imageColor
+        
+        accessoryType = .none
+        backgroundColor = ColorUtil.theme.foregroundColor
+        textLabel?.textColor = ColorUtil.theme.fontColor
+        layer.cornerRadius = 5
+        clipsToBounds = true
+    }
+    func configure(text: String, image: UIImage) {
+        textLabel?.text = text
+        imageView?.image = image
         
         accessoryType = .none
         backgroundColor = ColorUtil.theme.foregroundColor

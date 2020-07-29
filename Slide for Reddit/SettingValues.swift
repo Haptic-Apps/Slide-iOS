@@ -260,7 +260,7 @@ class SettingValues {
     public static var commentFullScreen = true
     public static var linkAlwaysThumbnail = false
     public static var autoKeyboard = true
-    public static var appMode = AppMode.SINGLE
+    public static var appMode = AppMode.SPLIT
     public static var commentJumpButton = CommentJumpMode.RIGHT
     public static var alwaysShowHeader = false
     public static var disablePreviews = false
@@ -1031,6 +1031,86 @@ class SettingValues {
         }
     }
 
+    public enum NavigationHeaderActions: String {
+        public static let cases: [NavigationHeaderActions] = [.HOME, .POPULAR, .RANDOM, .SAVED, .UPVOTED, .HISTORY, .AUTO_CACHE, .YOUR_PROFILE, .COLLECTIONS, .CREATE_MULTI, .TRENDING]
+
+        case HOME = "home"
+        case POPULAR = "popular"
+        case RANDOM = "random"
+        case SAVED = "saved"
+        case UPVOTED = "upvoted"
+        case HISTORY = "history"
+        case AUTO_CACHE = "auto_cache"
+        case YOUR_PROFILE = "profile"
+        case COLLECTIONS = "collections"
+        case CREATE_MULTI = "create_multi"
+        case TRENDING = "trending"
+        
+        public static func getMenuNone() -> [NavigationHeaderActions] {
+            let menu = UserDefaults.standard.stringArray(forKey: "headerMenu") ?? ["home", "random", "saved", "collections", "create_multi"]
+            var toReturn = [NavigationHeaderActions]()
+            for item in menu {
+                toReturn.append(NavigationHeaderActions(rawValue: item)!)
+            }
+            return toReturn
+        }
+
+        public func getTitle() -> String {
+            switch self {
+            case .HOME:
+                return "Home"
+            case .POPULAR:
+                return "Popular"
+            case .RANDOM:
+                return "Random"
+            case .SAVED:
+                return "Saved posts"
+            case .UPVOTED:
+                return "Upvoted posts"
+            case .HISTORY:
+                return "Post history"
+            case .AUTO_CACHE:
+                return "Start AutoCache now"
+            case .YOUR_PROFILE:
+                return "Your profile"
+            case .COLLECTIONS:
+                return "Your Collections"
+            case .CREATE_MULTI:
+                return "Create a Multireddit"
+            case .TRENDING:
+                return "Trending on Reddit"
+            }
+        }
+        
+        //TODO pre ios 13 icons
+        public func getImage(_ link: RSubmission? = nil) -> UIImage {
+            switch self {
+            case .HOME:
+                return UIImage(sfString: SFSymbol.houseFill, overrideString: "world")!.menuIcon()
+            case .POPULAR:
+                return UIImage(sfString: SFSymbol.flameFill, overrideString: "upvote")!.menuIcon()
+            case .RANDOM:
+                return UIImage(sfString: SFSymbol.shuffle, overrideString: "sync")!.menuIcon()
+            case .SAVED:
+                return UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()
+            case .UPVOTED:
+                return UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.menuIcon()
+            case .HISTORY:
+                return UIImage(sfString: SFSymbol.clockFill, overrideString: "history")!.menuIcon()
+            case .AUTO_CACHE:
+                return UIImage(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")!.menuIcon()
+            case .YOUR_PROFILE:
+                return UIImage(sfString: SFSymbol.personFill, overrideString: "user")!.menuIcon()
+            case .COLLECTIONS:
+                return UIImage(sfString: SFSymbol.squareStackFill, overrideString: "multis")!.menuIcon()
+            case .CREATE_MULTI:
+                return UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "multis")!.menuIcon()
+            case .TRENDING:
+                return UIImage(named: "trending")!.menuIcon()
+            }
+        }
+    }
+    
     public enum FabType: String {
 
         public static let cases: [FabType] = [.HIDE_READ, .HIDE_PERMANENTLY, .SHADOWBOX, .GALLERY, .NEW_POST, .SIDEBAR, .RELOAD, .SEARCH]

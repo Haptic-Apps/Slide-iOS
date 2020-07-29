@@ -2645,6 +2645,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //buttons horizontal margins
             }
             
+            //Temporary fix to iOS 14 crash
+            //TODO fix
+            if estimatedUsableWidth < 0 {
+                estimatedUsableWidth = 100
+            }
+            
             let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
             let layout = YYTextLayout(containerSize: size, text: title.attributedText!)!
             title.textLayout = layout
@@ -2727,6 +2733,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
             }
+        }
+        
+        //Temporary fix to iOS 14 crash
+        //TODO fix
+        if estimatedUsableWidth < 0 {
+            estimatedUsableWidth = 100
         }
         
         let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
@@ -3183,7 +3195,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
-                    return UINavigationController(rootViewController: vc)
+                    return SwipeForwardNavigationController(rootViewController: vc)
                 } else {
                     return vc
                 }

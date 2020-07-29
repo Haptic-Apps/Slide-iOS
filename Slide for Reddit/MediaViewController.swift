@@ -106,7 +106,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     vc = safariVC
                 } else {
@@ -163,7 +163,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                     let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                     if #available(iOS 10.0, *) {
-                        safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                        safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                         safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     } else {
                         // Fallback on earlier versions
@@ -177,7 +177,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                 } else {
                     // Fallback on earlier versions
@@ -192,7 +192,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
             let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
             if #available(iOS 10.0, *) {
-                safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                 safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
             } else {
                 // Fallback on earlier versions
@@ -227,7 +227,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     vc = safariVC
                 } else {
@@ -328,7 +328,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
     func setBarColors(color: UIColor) {
         self.color = color
         if SettingValues.reduceColor {
-            self.color = ColorUtil.theme.backgroundColor
+            self.color = ColorUtil.theme.foregroundColor
         }
         setNavColors()
     }
