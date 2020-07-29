@@ -346,6 +346,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
            
         resetStack()
+        /* TODO enable new ios 14 layout if #available(iOS 14, *) {
+            resetStack()
+        } else {
+            resetStack()
+        }*/
+        
         window?.makeKeyAndVisible()
         
         let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
@@ -412,6 +418,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.setRootViewController(rootController, animated: false)
     }
     
+    /**
+     Rebuilds the nav stack for the currently selected App Mode (split, multi column, etc.)
+     */
+    func resetStackOld() {
+        guard let window = self.window else {
+            fatalError("Window must exist when resetting the stack!")
+        }
+        let rootController: UIViewController!
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
+            rootController = splitVC
+            splitVC.preferredDisplayMode = .allVisible
+            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: LegacyMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
+        } else {
+            rootController = UINavigationController(rootViewController: LegacyMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
+        }
+
+        window.setRootViewController(rootController, animated: false)
+    }
+    
     func resetStack(_ soft: Bool = false) -> MainViewController {
         guard let window = self.window else {
             fatalError("Window must exist when resetting the stack!")
@@ -421,55 +446,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return doHard(window)
         } else if let splitViewController = window.rootViewController as? UISplitViewController {
             if UIDevice.current.userInterfaceIdiom == .pad {
-                if SettingValues.appMode == .MULTI_COLUMN {
-                    splitViewController.preferredDisplayMode = .primaryHidden
-                    splitViewController.presentsWithGesture = true
-                    
-                    splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                    
-                    let main = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.pushableViewControllers[0] as? SplitMainViewController ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-                    let menu = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[0] ?? NavigationHomeViewController(controller: main)
-                    
-                    splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: menu), SwipeForwardNavigationController(rootViewController: main)]
+                splitViewController.preferredDisplayMode = .automatic
+                splitViewController.presentsWithGesture = true
+                
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+                
+                let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), SwipeForwardNavigationController(rootViewController: main)]
 
-                    let snapshotImageView = UIImageView(image: window.snapshotImage())
-                    window.addSubview(snapshotImageView)
-                    window.rootViewController = splitViewController
-                    window.bringSubviewToFront(snapshotImageView)
-                    
-                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
-                        snapshotImageView.alpha = 0
-                    }, completion: { (_) -> Void in
-                        snapshotImageView.removeFromSuperview()
-                    })
-
-                    return main
-                } else {
-                    splitViewController.preferredDisplayMode = .automatic
-                    splitViewController.presentsWithGesture = true
-                    
-                    splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                    
-                    let main = splitViewController.viewControllers[1] as? SplitMainViewController ?? SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-                    let menu = (splitViewController.viewControllers[0] as? SwipeForwardNavigationController)?.viewControllers[0] ?? NavigationHomeViewController(controller: main)
-
-                    let swipeNav = SwipeForwardNavigationController(rootViewController: menu)
-                    swipeNav.pushViewController(main, animated: false)
-                    splitViewController.viewControllers = [swipeNav, PlaceholderViewController()]
-
-                    let snapshotImageView = UIImageView(image: window.snapshotImage())
-                    window.addSubview(snapshotImageView)
-                    window.rootViewController = splitViewController
-                    window.bringSubviewToFront(snapshotImageView)
-                    
-                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
-                        snapshotImageView.alpha = 0
-                    }, completion: { (_) -> Void in
-                        snapshotImageView.removeFromSuperview()
-                    })
-
-                    return main
-                }
+                window.rootViewController = splitViewController
+                self.window = window
+                window.makeKeyAndVisible()
+                return main
             } else {
                 splitViewController.preferredDisplayMode = .primaryOverlay
                 splitViewController.presentsWithGesture = true
@@ -491,7 +479,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if SettingValues.appMode == .MULTI_COLUMN {
                 let splitViewController = UISplitViewController()
-                splitViewController.preferredDisplayMode = .primaryHidden
+                splitViewController.preferredDisplayMode = .primaryOverlay
                 splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
@@ -505,15 +493,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             } else {
                 let splitViewController = UISplitViewController()
-                splitViewController.preferredDisplayMode = .allVisible
-                splitViewController.presentsWithGesture = false
+                splitViewController.preferredDisplayMode = .automatic
+                splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
                 
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-                let swipeNav = SwipeForwardNavigationController()
-                swipeNav.viewControllers = [NavigationHomeViewController(controller: main), main]
-
+                let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
+                swipeNav.pushViewController(main, animated: false)
                 splitViewController.viewControllers = [swipeNav, PlaceholderViewController()]
 
                 window.rootViewController = splitViewController
@@ -537,6 +524,130 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
+    @available(iOS 14.0, *)
+    func resetStackNew(_ soft: Bool = false) -> MainViewController {
+        guard let window = self.window else {
+            fatalError("Window must exist when resetting the stack!")
+        }
+
+        if !soft {
+            return doHard14(window)
+        } else if let oldSplit = window.rootViewController as? UISplitViewController {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                if SettingValues.appMode == .MULTI_COLUMN {
+                    let splitViewController = UISplitViewController(style: .doubleColumn)
+                    splitViewController.preferredDisplayMode = .secondaryOnly
+                    splitViewController.presentsWithGesture = true
+                    splitViewController.preferredSplitBehavior = .overlay
+                                 
+                    let main = (oldSplit.viewController(for: .supplementary) as! SplitMainViewController)
+                    let oldSidebar = (oldSplit.viewController(for: .primary) as! SwipeForwardNavigationController).viewControllers[0]
+
+                    splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: oldSidebar), for: .primary)
+
+                    splitViewController.setViewController(main, for: .secondary)
+                    
+                    let snapshotImageView = UIImageView(image: window.snapshotImage())
+                    window.addSubview(snapshotImageView)
+                    window.rootViewController = splitViewController
+                    window.bringSubviewToFront(snapshotImageView)
+                    
+                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
+                        snapshotImageView.alpha = 0
+                    }, completion: { (success) -> Void in
+                        snapshotImageView.removeFromSuperview()
+                    })
+
+                    return main
+                } else {
+                    let splitViewController = UISplitViewController(style: .tripleColumn)
+                    splitViewController.preferredDisplayMode = .automatic
+                    splitViewController.presentsWithGesture = true
+                    splitViewController.preferredSplitBehavior = .automatic
+                    
+                    splitViewController.preferredSupplementaryColumnWidthFraction = 0.4
+                    splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width / 3
+                    
+                    let main = (oldSplit.viewController(for: .secondary) as! SplitMainViewController)
+                    let oldSidebar = (oldSplit.viewController(for: .primary) as! SwipeForwardNavigationController).viewControllers[0]
+                    
+                    splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: oldSidebar), for: .primary)
+
+                    splitViewController.setViewController(main, for: .supplementary)
+                    splitViewController.setViewController(PlaceholderViewController(), for: .secondary)
+
+                    let snapshotImageView = UIImageView(image: window.snapshotImage())
+                    window.addSubview(snapshotImageView)
+                    window.rootViewController = splitViewController
+                    window.bringSubviewToFront(snapshotImageView)
+                    
+                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
+                        snapshotImageView.alpha = 0
+                    }, completion: { (success) -> Void in
+                        snapshotImageView.removeFromSuperview()
+                    })
+                    return main
+                }
+            } else {
+                return doHard14(window)
+            }
+        } else {
+            return doHard14(window)
+        }
+    }
+    
+    @available(iOS 14.0, *)
+    func doHard14(_ window: UIWindow) -> MainViewController {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if SettingValues.appMode == .MULTI_COLUMN {
+                let splitViewController = UISplitViewController(style: .doubleColumn)
+                splitViewController.preferredDisplayMode = .secondaryOnly
+                splitViewController.presentsWithGesture = true
+                splitViewController.preferredSplitBehavior = .overlay
+                                
+                let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
+
+                splitViewController.setViewController(main, for: .secondary)
+                window.rootViewController = splitViewController
+                self.window = window
+                window.makeKeyAndVisible()
+                return main
+            } else {
+                let splitViewController = UISplitViewController(style: .tripleColumn)
+                splitViewController.preferredDisplayMode = .automatic
+                splitViewController.presentsWithGesture = true
+                splitViewController.preferredSplitBehavior = .automatic
+                
+                splitViewController.preferredSupplementaryColumnWidthFraction = 0.4
+                splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width / 3
+                
+                let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
+
+                splitViewController.setViewController(main, for: .supplementary)
+                splitViewController.setViewController(PlaceholderViewController(), for: .secondary)
+                window.rootViewController = splitViewController
+                self.window = window
+                window.makeKeyAndVisible()
+                return main
+            }
+        } else {
+            let splitViewController = UISplitViewController(style: .doubleColumn)
+            splitViewController.preferredDisplayMode = .primaryOverlay
+            splitViewController.presentsWithGesture = true
+            splitViewController.preferredSplitBehavior = .overlay
+            
+            let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
+            splitViewController.setViewController(main, for: .secondary)
+            window.rootViewController = splitViewController
+            self.window = window
+            window.makeKeyAndVisible()
+            return main
+        }
+    }
+    
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
             VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)
