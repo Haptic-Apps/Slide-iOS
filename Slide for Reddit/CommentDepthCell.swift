@@ -1014,7 +1014,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         body!.text = ""
         body!.delegate = self
-        self.replyDelegate = parent!
+        self.replyDelegate = parent?.commentReplyDelegate!
 
         if edit {
             body!.text = comment!.body.decodeHTML()
