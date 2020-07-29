@@ -16,6 +16,7 @@ class CommentScrollViewDelegate: NSObject, UIScrollViewDelegate {
     init(parentController: CommentViewController) {
         self.commentController = parentController
     }
+    
     // MARK: - Methods
     /// Sets position of scroll view when scrolling to top.
     func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {

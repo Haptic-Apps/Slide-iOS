@@ -34,4 +34,5 @@ class CommentSearchBarDelegate: NSObject, UISearchBarDelegate {
         }
         commentController.tableView.reloadData()
     }
+    
 }
