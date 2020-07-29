@@ -126,6 +126,10 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
 
         return shouldBegin
     }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return gestureRecognizer == interactivePopGestureRecognizer && viewControllers.count > 1
+    }
 }
     
 extension SwipeForwardNavigationController {

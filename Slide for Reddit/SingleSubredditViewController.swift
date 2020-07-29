@@ -373,12 +373,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         }
         if fab != nil {
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-            }, completion: { _ in
-                self.fab?.removeFromSuperview()
-                self.fab = nil
-            })
+            self.fab?.removeFromSuperview()
+            self.fab = nil
         }
         
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
