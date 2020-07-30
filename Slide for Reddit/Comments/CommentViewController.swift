@@ -86,24 +86,48 @@ class CommentViewController: MediaViewController {
     var configuredOnce = false
     
     var subreddit = ""
-    // Table View Properties
+
     var forceLoad = false
     var startedOnce = false
     
-    override var keyCommands: [UIKeyCommand]? {
-        if isReply {
-            return []
-        } else {
-            return [
-                UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
-                UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
-                UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
-                UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(linkCellViewDelegate.upvote(_:)), discoverabilityTitle: "Like post"),
-                UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(linkCellViewDelegate.reply(_:)), discoverabilityTitle: "Reply to post"),
-                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(linkCellViewDelegate.save(_:)), discoverabilityTitle: "Save post"),
-            ]
-        }
-    }
+    var duringAnimation = false
+    var finishedPush = false
+    
+    var sub: String = ""
+    var allCollapsed = false
+
+    var subInfo: Subreddit?
+    // Background View
+    private var blurView: UIVisualEffectView?
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+    private var blackView = UIView()
+    
+    var text: [String: NSAttributedString]
+    
+    var currentSort: CommentNavType = .PARENTS
+    
+    var goingToCell = false
+    
+    var lastMoved = -1
+    var isGoingDown = false
+    
+    var tagText: String?
+    
+    var isCurrentlyChanging = false
+    
+    var lastYUsed = CGFloat(0)
+    var isToolbarHidden = false
+    var isHiding = false
+    var lastY = CGFloat(0)
+    var oldY = CGFloat(0)
+    
+    var isSearch = false
+    
+    var oldHeights = [String: CGFloat]()
+    
+    var isSearching = false
+    
+    var isReply = false
     // MARK: - UI Properties
     public var inHeadView = UIView()
     var commentDepthColors = [UIColor]()
@@ -145,6 +169,21 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    override var keyCommands: [UIKeyCommand]? {
+        if isReply {
+            return []
+        } else {
+            return [
+                UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
+                UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
+                UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
+                UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(linkCellViewDelegate.upvote(_:)), discoverabilityTitle: "Like post"),
+                UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(linkCellViewDelegate.reply(_:)), discoverabilityTitle: "Reply to post"),
+                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(linkCellViewDelegate.save(_:)), discoverabilityTitle: "Save post"),
+            ]
+        }
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
@@ -156,6 +195,10 @@ class CommentViewController: MediaViewController {
         } else {
             return .lightContent
         }
+    }
+    
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
     }
     
     // MARK: - Initializations
@@ -357,7 +400,7 @@ class CommentViewController: MediaViewController {
             }
         }
         
-        doStartupItems()
+        initialSetup()
 
         if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
             headerCell.videoView?.player?.play()
@@ -426,7 +469,7 @@ class CommentViewController: MediaViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
         if self.shouldAnimateLoad {
-            self.reloadTableViewAnimated()
+            self.tableViewReloadingAnimation()
             self.shouldAnimateLoad = false
         }
         self.finishedPush = true
@@ -504,10 +547,10 @@ class CommentViewController: MediaViewController {
                 jump.addSubview(image)
                 image.edgeAnchors == jump.edgeAnchors
                 jump.addTapGestureRecognizer {
-                    self.goDown(self.jump)
+                    self.scrollDown(self.jump)
                 }
                 jump.addLongTapGestureRecognizer {
-                    self.goUp(self.jump)
+                    self.scrollUp(self.jump)
                 }
             }
             
@@ -1390,7 +1433,7 @@ class CommentViewController: MediaViewController {
 //        }
 //    }
 
-    
+    /// Modifies height of table view to accommodate keyboard showing.
     @objc func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
@@ -1406,6 +1449,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Modifies height of table view to accommodate keyboard disappearing.
     @objc func keyboardWillHide(_ notification: Notification) {
         var top = CGFloat(64)
         let bottom = CGFloat(45)
@@ -1415,8 +1459,8 @@ class CommentViewController: MediaViewController {
         tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
     }
 
-    // MARK: - Table view data source
-    func doStartupItems() {
+    /// Comment view initial setup.
+    func initialSetup() {
         if !startedOnce {
             startedOnce = true
             (navigationController)?.setNavigationBarHidden(false, animated: false)
@@ -1439,11 +1483,9 @@ class CommentViewController: MediaViewController {
             self.isToolbarHidden = false
         }
     }
- 
-    var duringAnimation = false
-    var finishedPush = false
     
-    func reloadTableViewAnimated() {
+    /// Animation for table view reloading.
+    func tableViewReloadingAnimation() {
         self.tableView.reloadData()
 
         let cells = self.tableView.visibleCells
@@ -1458,18 +1500,21 @@ class CommentViewController: MediaViewController {
             row += 1
         }
     }
-
-    @objc func close(_ sender: AnyObject) {
+    
+    /// Dismissing top view controller.
+    @objc func dismissTopController(_ sender: AnyObject) {
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc func showMod(_ sender: AnyObject) {
+    /// Shows link if there is one.
+    @objc func showRedditLink(_ sender: AnyObject) {
         if !modLink.isEmpty() {
             VCPresenter.openRedditLink(self.modLink, self.navigationController, self)
         }
     }
     
-    @objc func showMenu(_ sender: AnyObject) {
+    
+    @objc func showOptionsMenu(_ sender: AnyObject) {
         if !offline {
             let link = submission!
 
@@ -1509,19 +1554,16 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    var sub: String = ""
-    var allCollapsed = false
-
-    var subInfo: Subreddit?
-
+    /// Displays search capabilities
     @objc func search(_ sender: AnyObject) {
         if !dataArray.isEmpty {
             expandAll()
             showSearchBar()
         }
-        // Todo future loadAllMore()
+        // TODO: loadAllMore()
     }
 
+    /// TODO: What does this do?
     public func extendKeepMore(in comment: Thing, current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
 
@@ -1536,6 +1578,7 @@ class CommentViewController: MediaViewController {
         return buf
     }
 
+    /// TODO: What does this do?
     public func extendForMore(parentId: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
 
@@ -1568,10 +1611,7 @@ class CommentViewController: MediaViewController {
         return buf
     }
     
-    private var blurView: UIVisualEffectView?
-    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-    private var blackView = UIView()
-    
+    /// Enables dark blur view when menu or sorting buttons are tapped.
     func setBackgroundView() {
         blackView.backgroundColor = .black
         blackView.alpha = 0
@@ -1588,6 +1628,7 @@ class CommentViewController: MediaViewController {
         })
     }
     
+    // TODO: What does this do?
     func updateStrings(_ newComments: [(Thing, Int)]) {
         var color = UIColor.black
         var first = true
@@ -1605,6 +1646,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    // TODO: What does this do?
     func updateStringsTheme(_ comments: [AnyObject]) {
         var color = UIColor.black
         var first = true
@@ -1622,8 +1664,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    var text: [String: NSAttributedString]
-
+    // TODO: What does this do?
     func updateStringsSingle(_ newComments: [Object]) {
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0] as! RComment).subreddit))
         for thing in newComments {
@@ -1638,6 +1679,8 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Gives the vote from the user.
+    // Not Implemented
     func vote(_ direction: VoteDirection) {
         if let link = self.submission {
             do {
@@ -1655,27 +1698,32 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    /// Down voting comment
+    // Not Implemented
     @objc func downVote(_ sender: AnyObject?) {
         vote(.down)
     }
 
+    /// Down voting comment
+    // Not Implemented
     @objc func upVote(_ sender: AnyObject?) {
         vote(.up)
     }
 
+    /// Down voting comment
+    // Not Implemented
     @objc func cancelVote(_ sender: AnyObject?) {
         vote(.none)
     }
 
-    @objc func loadAll(_ sender: AnyObject) {
+    /// Refreshes the comments and UI.
+    @objc func refreshAll(_ sender: AnyObject) {
         context = ""
         reset = true
         refreshControl?.beginRefreshing()
         refreshComments(sender)
         updateToolbar()
     }
-    
-    var currentSort: CommentNavType = .PARENTS
 
     // TODO: This can be moved somewhere else
     enum CommentNavType {
@@ -1686,7 +1734,8 @@ class CommentViewController: MediaViewController {
         case YOU
     }
 
-    func getCount(sort: CommentNavType) -> Int {
+    /// Retrieves contents count.
+    func getContentsCount(for sort: CommentNavType) -> Int {
         var count = 0
         for comment in dataArray {
             let contents = content[comment]
@@ -1696,22 +1745,19 @@ class CommentViewController: MediaViewController {
         }
         return count
     }
-    
-    override var prefersHomeIndicatorAutoHidden: Bool {
-        return true
-    }
 
-    @objc func showNavTypes(_ sender: UIView) {
+    
+    @objc func showCommentNavigationTypes(_ sender: UIView) {
         if !loaded {
             return
         }
         let alertController = DragDownAlertMenu(title: "Comment navigation", subtitle: "Select a navigation type", icon: nil)
 
-        let link = getCount(sort: .LINK)
-        let parents = getCount(sort: .PARENTS)
-        let op = getCount(sort: .OP)
-        let gilded = getCount(sort: .GILDED)
-        let you = getCount(sort: .YOU)
+        let link = getContentsCount(for: .LINK)
+        let parents = getContentsCount(for: .PARENTS)
+        let op = getContentsCount(for: .OP)
+        let gilded = getContentsCount(for: .GILDED)
+        let you = getContentsCount(for: .YOU)
 
         alertController.addAction(title: "Top-level comments (\(parents))", icon: UIImage()) {
             self.currentSort = .PARENTS
@@ -1731,13 +1777,13 @@ class CommentViewController: MediaViewController {
         alertController.show(self)
     }
 
+    /// Scrolls to inputed cell.
     func goToCell(i: Int) {
         let indexPath = IndexPath(row: i, section: 0)
         self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
     
-    var goingToCell = false
-    
+    /// Scrolls to inputed cell top.
     func goToCellTop(i: Int) {
         isGoingDown = true
         let indexPath = IndexPath(row: i, section: 0)
@@ -1745,7 +1791,8 @@ class CommentViewController: MediaViewController {
         self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
     
-    @objc func goUp(_ sender: AnyObject) {
+    /// Scrolls up through comment section.
+    @objc func scrollUp(_ sender: AnyObject) {
         if !loaded || content.isEmpty {
             return
         }
@@ -1767,11 +1814,9 @@ class CommentViewController: MediaViewController {
         goToCellTop(i: topCell)
         lastMoved = topCell
     }
-
-    var lastMoved = -1
-    var isGoingDown = false
     
-    @objc func goDown(_ sender: AnyObject) {
+    /// Scrolls down through comment section
+    @objc func scrollDown(_ sender: AnyObject) {
         if !loaded || content.isEmpty {
             return
         }
@@ -1806,8 +1851,9 @@ class CommentViewController: MediaViewController {
             }
         }
     }
-
-    func matches(comment: RComment, sort: CommentNavType) -> Bool {
+    
+    /// Checks if the selected comment type matches.
+    func doesCommentTypeMatch(for comment: RComment, with sort: CommentNavType) -> Bool {
         switch sort {
         case .PARENTS:
             if cDepth[comment.getIdentifier()]! == 1 {
@@ -1843,6 +1889,7 @@ class CommentViewController: MediaViewController {
 
     }
 
+    // TODO: What does this do?
     func updateToolbar() {
         navigationController?.setToolbarHidden(false, animated: false)
         self.isToolbarHidden = false
@@ -1850,7 +1897,7 @@ class CommentViewController: MediaViewController {
         var items: [UIBarButtonItem] = []
         if !context.isEmpty() {
             items.append(space)
-            let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:)))
+            let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.refreshAll(_:)))
             loadFullThreadButton.accessibilityLabel = "Load full thread"
             items.append(loadFullThreadButton)
             items.append(space)
@@ -1858,35 +1905,35 @@ class CommentViewController: MediaViewController {
             let up = UIButton(type: .custom)
             up.accessibilityLabel = "Navigate up one comment thread"
             up.setImage(UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up")?.toolbarIcon(), for: UIControl.State.normal)
-            up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
+            up.addTarget(self, action: #selector(CommentViewController.scrollUp(_:)), for: UIControl.Event.touchUpInside)
             up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let upB = UIBarButtonItem(customView: up)
 
             let nav = UIButton(type: .custom)
             nav.accessibilityLabel = "Change criteria for comment thread navigation"
             nav.setImage(UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")?.toolbarIcon(), for: UIControl.State.normal)
-            nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
+            nav.addTarget(self, action: #selector(CommentViewController.showCommentNavigationTypes(_:)), for: UIControl.Event.touchUpInside)
             nav.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let navB = UIBarButtonItem(customView: nav)
 
             let down = UIButton(type: .custom)
             down.accessibilityLabel = "Navigate down one comment thread"
             down.setImage(UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down")?.toolbarIcon(), for: UIControl.State.normal)
-            down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
+            down.addTarget(self, action: #selector(CommentViewController.scrollDown(_:)), for: UIControl.Event.touchUpInside)
             down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let downB = UIBarButtonItem(customView: down)
 
             let more = UIButton(type: .custom)
             more.accessibilityLabel = "Post options"
             more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+            more.addTarget(self, action: #selector(self.showOptionsMenu(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)
             mod.accessibilityLabel = "Moderator options"
             mod.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.toolbarIcon(), for: UIControl.State.normal)
-            mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
+            mod.addTarget(self, action: #selector(self.showRedditLink(_:)), for: UIControl.Event.touchUpInside)
             mod.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             modB = UIBarButtonItem(customView: mod)
             if modLink.isEmpty() && modB.customView != nil {
@@ -1917,8 +1964,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    var tagText: String?
-
+    // Not Implemented
     func tagUser(name: String) {
         let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
@@ -1937,6 +1983,7 @@ class CommentViewController: MediaViewController {
         alert.show(self)
     }
 
+    /// Blocks the user with prompt given.
     func blockUser(name: String) {
         let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
         let confirmAction = AlertAction(title: "Block", style: .preferred, handler: {(_) in
@@ -1965,8 +2012,8 @@ class CommentViewController: MediaViewController {
         self.present(alert, animated: true, completion: nil)
     }
 
-    var isCurrentlyChanging = false
-
+    /// Collapses comments.
+    // Not sure what it does.
     func collapseAll() {
         self.allCollapsed = true
         if dataArray.count > 0 {
@@ -1985,6 +2032,8 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    /// Expands comments.
+    // Not sure what it does.
     func expandAll() {
         self.allCollapsed = false
         if dataArray.count > 0 {
@@ -2003,6 +2052,8 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Hides all comments.
+    // Not sure what it does.
     func hideAll(comment: String, i: Int) {
         if !isCurrentlyChanging {
             isCurrentlyChanging = true
@@ -2025,6 +2076,8 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Comment sorting images.
+    // Rename?
     func doSortImage(_ sortButton: UIButton) {
         switch sort {
         case .suggested, .confidence:
@@ -2044,6 +2097,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func unhideAll(comment: String, i: Int) {
         if !isCurrentlyChanging {
             isCurrentlyChanging = true
@@ -2067,6 +2121,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func parentHidden(comment: Object) -> Bool {
         var n: String = ""
         if comment is RComment {
@@ -2077,6 +2132,7 @@ class CommentViewController: MediaViewController {
         return hiddenPersons.contains(n) || hidden.contains(n)
     }
 
+    // TODO: What does this do?
     func walkTree(n: String) -> [String] {
         var toReturn: [String] = []
         if content[n] is RComment {
@@ -2093,6 +2149,7 @@ class CommentViewController: MediaViewController {
         return toReturn
     }
 
+    // TODO: What does this do?
     func walkTreeFlat(n: String) -> [String] {
         var toReturn: [String] = []
         if content[n] is RComment {
@@ -2110,6 +2167,7 @@ class CommentViewController: MediaViewController {
         return toReturn
     }
 
+    // TODO: What does this do?
     func walkTreeFully(n: String) -> [String] {
         var toReturn: [String] = []
         toReturn.append(n)
@@ -2130,6 +2188,7 @@ class CommentViewController: MediaViewController {
         return toReturn
     }
 
+    /// Sets voting direction.
     func vote(comment: RComment, dir: VoteDirection) {
 
         var direction = dir
@@ -2160,14 +2219,17 @@ class CommentViewController: MediaViewController {
         ActionStates.setVoteDirection(s: comment, direction: direction)
     }
 
+    /// Enables checking of comment info menu
     func moreComment(_ cell: CommentDepthCell) {
         cell.more(self)
     }
 
+    /// Moderator menu.
     func modMenu(_ cell: CommentDepthCell) {
         cell.mod(self)
     }
 
+    /// Gives user the option to delete their comment.
     func deleteComment(cell: CommentDepthCell) {
         let alert = UIAlertController.init(title: "Really, delete this comment?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
@@ -2199,6 +2261,7 @@ class CommentViewController: MediaViewController {
         return true
     }
 
+    // TODO: What does this do?
     @objc func spacePressed() {
         if !isReply {
             UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
@@ -2207,6 +2270,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    // TODO: What does this do?
     @objc func spacePressedUp() {
         if !isReply {
             UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
@@ -2215,6 +2279,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func unhideNumber(n: String, iB: Int) -> Int {
         var i = iB
         let children = walkTreeFlat(n: n)
@@ -2237,6 +2302,7 @@ class CommentViewController: MediaViewController {
         return i
     }
 
+    // TODO: What does this do?
     func hideNumber(n: String, iB: Int) -> Int {
         var i = iB
 
@@ -2251,17 +2317,9 @@ class CommentViewController: MediaViewController {
         }
         return i
     }
-    
-    var lastYUsed = CGFloat(0)
-    var isToolbarHidden = false
-    var isHiding = false
-    var lastY = CGFloat(0)
-    var oldY = CGFloat(0)
-    
-    var isSearch = false
 
     /// Hides navigation bar and contents to show jump through comments button.
-    func hideUI(inHeader: Bool) {
+    func hideNavigationBars(inHeader: Bool) {
         isHiding = true
         //self.tableView.endEditing(true)
         if inHeadView.superview == nil {
@@ -2282,7 +2340,8 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    func showUI() {
+    /// Shows navigation top and bottom bar when scrolling up
+    func showNavigationBars() {
         (navigationController)?.setNavigationBarHidden(false, animated: true)
         (navigationController)?.setToolbarHidden(false, animated: true)
         if live {
@@ -2310,6 +2369,7 @@ class CommentViewController: MediaViewController {
         self.removeJumpButton()
     }
 
+    // TODO: What does this do?
     func doAction(cell: CommentDepthCell, action: SettingValues.CommentAction, indexPath: IndexPath) {
         switch action {
         case .UPVOTE:
@@ -2325,7 +2385,7 @@ class CommentViewController: MediaViewController {
         case .REPLY:
             cell.reply(cell)
         case .EXIT:
-            self.close(cell)
+            self.dismissTopController(cell)
         case .NEXT:
             if parent is PagingCommentViewController {
                 (parent as! PagingCommentViewController).next()
@@ -2337,6 +2397,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func collapseParent(_ indexPath: IndexPath, baseCell: CommentDepthCell) {
         var topCell = indexPath.row
         var contents = content[dataArray[topCell]]
@@ -2397,20 +2458,22 @@ class CommentViewController: MediaViewController {
             }
         }
     }
-    
-    var oldHeights = [String: CGFloat]()
 
+    // TODO: What does this do?
     func getChildNumber(n: String) -> Int {
         let children = walkTreeFully(n: n)
         return children.count - 1
     }
     
+    // TODO: What does this do?
     func loadAllMore() {
         expandAll()
         
         loadMoreWithCallback(0)
     }
     
+    /// Loads more comments from comment.
+    // TODO: What does this do?
     func loadMoreWithCallback(_ datasetPosition: Int) {
         if datasetPosition > dataArray.count {
             return
@@ -2500,6 +2563,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func highlight(_ cc: NSAttributedString) -> NSAttributedString {
         let base = NSMutableAttributedString.init(attributedString: cc)
         let r = base.mutableString.range(of: "\(searchBar.text!)", options: .caseInsensitive, range: NSRange(location: 0, length: base.string.length))
@@ -2509,9 +2573,8 @@ class CommentViewController: MediaViewController {
         return base.attributedSubstring(from: NSRange.init(location: 0, length: base.length))
     }
 
-    var isSearching = false
-
-    func searchTableList() {
+    /// Searches comments based on inputed text
+    func searchCommentsList() {
         let searchString = searchBar.text
         var count = 0
         for p in dataArray {
@@ -2524,10 +2587,8 @@ class CommentViewController: MediaViewController {
             count += 1
         }
     }
-
-    var isReply = false
     
-}
+} // Class End
 
 extension Thing {
     func getId() -> String {

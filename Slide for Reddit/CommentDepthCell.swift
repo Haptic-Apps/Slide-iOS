@@ -1041,7 +1041,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func doMenu() {
-        more(parent!)
+        commentInfoMenu(parent!)
     }
 
     @objc func menu(_ s: AnyObject) {
@@ -1228,7 +1228,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
 
-    func more(_ par: CommentViewController) {
+    func commentInfoMenu(_ par: CommentViewController) {
         if comment == nil {
             return
         }
