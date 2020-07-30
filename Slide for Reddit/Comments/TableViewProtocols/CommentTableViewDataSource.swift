@@ -49,7 +49,7 @@ class CommentTableViewDataSource: NSObject, UITableViewDataSource {
 
         cell = tableView.dequeueReusableCell(withIdentifier: "Cell\(commentController.version)", for: indexPath) as UITableViewCell
         if commentController.content.isEmpty || commentController.text.isEmpty || commentController.cDepth.isEmpty || commentController.dataArray.isEmpty {
-            self.commentController.refresh(self)
+            self.commentController.refreshComments(self)
             return cell
         }
         let thing = commentController.isSearching ? commentController.filteredData[datasetPosition] : commentController.dataArray[datasetPosition]

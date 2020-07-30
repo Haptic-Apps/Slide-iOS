@@ -42,7 +42,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                                    direction: .forward,
                                    animated: true,
                                    completion: nil)
-            vc.refresh(vc)
+            vc.refreshComments(vc)
         }
     }
     
@@ -142,7 +142,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         if !(self.viewControllers!.first! is ClearVC) {
             PagingCommentViewController.savedComment = self.viewControllers!.first as? CommentViewController
             if !PagingCommentViewController.savedComment!.loaded {
-                PagingCommentViewController.savedComment!.refresh(pageViewController)
+                PagingCommentViewController.savedComment!.refreshComments(pageViewController)
             }
 
         }
@@ -200,7 +200,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
 
         if !(viewController as! CommentViewController).loaded {
-            (viewController as! CommentViewController).refresh(viewController)
+            (viewController as! CommentViewController).refreshComments(viewController)
         }
         
         let nextIndex = viewControllerIndex + 1
