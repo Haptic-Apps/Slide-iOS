@@ -32,44 +32,26 @@ class CommentViewController: MediaViewController {
     public var linkCellViewDelegate: CommentLinkCellViewDelegate!
     // TTTAttributed Cell Delegate
     public var tttAttributedCellDelegate: CommentTTTAttributedCellDelegate!
-    /// Decides theme of Comment Cell
+    
     var version = 0
     var menuCell: CommentDepthCell?
     var menuId: String?
-    public var inHeadView = UIView()
-    /// Sets comment colors
-    var commentDepthColors = [UIColor]()
-    var pan: UIPanGestureRecognizer!
-    /// Comment table view pan gesture
-    var panGesture: UIPanGestureRecognizer!
+    
     var translatingCell: CommentDepthCell?
     var didDisappearCompletely = false
     var live = false
-    var liveTimer = Timer()
-    var refreshControl: UIRefreshControl!
-    var tableView: UITableView!
     
-    var sortButton = UIButton()
-
-    var jump: UIView!
-    //
-    var progressDot = UIView()
-    //
     var parents: [String: String] = [:]
     var approved: [String] = []
     var removed: [String] = []
     var offline = false
     var np = false
     var modLink = ""
-
-    var authorColor: UIColor = ColorUtil.theme.fontColor
-    //
+    
     var oldPosition: CGPoint = CGPoint.zero
-    //
-    var searchBar = UISearchBar()
-    //
+    
     var shouldAnimateLoad = false
-    //
+    
     var submission: RSubmission?
     var session: Session?
     var cDepth: Dictionary = [String: Int]()
@@ -85,48 +67,29 @@ class CommentViewController: MediaViewController {
     var dataArray: [String] = []
     var filteredData: [String] = []
     var content: Dictionary = [String: Object]()
-    //
+    
     var sort: CommentSort = SettingValues.defaultCommentSorting
-    //
+    
     var reset = false
     var indicatorSet = false
-    //
+    
     var loaded = false
 
     var lastSeen: Double = NSDate().timeIntervalSince1970
-    var savedTitleView: UIView?
-    var savedHeaderView: UIView?
-    //
-    var moreB = UIBarButtonItem()
-    var modB = UIBarButtonItem()
-    //
+    
     var indicator: MDCActivityIndicator = MDCActivityIndicator()
-    //
-    var savedBack: UIBarButtonItem?
-    //
-    var normalInsets = UIEdgeInsets(top: 0, left: 0, bottom: 45, right: 0)
-    //
+    
     var keyboardHeight = CGFloat(0)
-    //
+    
     var single = true
     var hasDone = false
     var configuredOnce = false
-    //
+    
     var subreddit = ""
-    // Table View
+    // Table View Properties
     var forceLoad = false
     var startedOnce = false
     
-    var sortB: UIBarButtonItem!
-    var searchB: UIBarButtonItem!
-    var liveB: UIBarButtonItem!
-    
-    var activityIndicator = UIActivityIndicatorView()
-    
-    override var prefersStatusBarHidden: Bool {
-        return SettingValues.fullyHideNavbar
-    }
-
     override var keyCommands: [UIKeyCommand]? {
         if isReply {
             return []
@@ -140,6 +103,38 @@ class CommentViewController: MediaViewController {
                 UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(linkCellViewDelegate.save(_:)), discoverabilityTitle: "Save post"),
             ]
         }
+    }
+    // MARK: - UI Properties
+    public var inHeadView = UIView()
+    var commentDepthColors = [UIColor]()
+    var pan: UIPanGestureRecognizer!
+    var panGesture: UIPanGestureRecognizer!
+    var liveTimer = Timer()
+    var refreshControl: UIRefreshControl!
+    var tableView: UITableView!
+    var sortButton = UIButton()
+
+    var jump: UIView!
+
+    var progressDot = UIView()
+    var authorColor: UIColor = ColorUtil.theme.fontColor
+    var searchBar = UISearchBar()
+    var savedTitleView: UIView?
+    var savedHeaderView: UIView?
+    
+    var moreB = UIBarButtonItem()
+    var modB = UIBarButtonItem()
+    var savedBack: UIBarButtonItem?
+    
+    var normalInsets = UIEdgeInsets(top: 0, left: 0, bottom: 45, right: 0)
+    var sortB: UIBarButtonItem!
+    var searchB: UIBarButtonItem!
+    var liveB: UIBarButtonItem!
+    
+    var activityIndicator = UIActivityIndicatorView()
+    
+    override var prefersStatusBarHidden: Bool {
+        return SettingValues.fullyHideNavbar
     }
 
     override var navigationItem: UINavigationItem {
@@ -163,7 +158,328 @@ class CommentViewController: MediaViewController {
         }
     }
     
-    // Table view
+    // MARK: - Initializations
+    init(submission: RSubmission, single: Bool) {
+        self.submission = submission
+        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
+        self.single = single
+        self.text = [:]
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
+    }
+
+    init(submission: RSubmission) {
+        self.submission = submission
+        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
+        self.text = [:]
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
+    }
+
+    init(submission: String, subreddit: String?, np: Bool = false) {
+        self.submission = RSubmission()
+        self.np = np
+        self.submission!.name = submission
+        self.submission!.id = submission.startsWith("t3") ? submission : ("t3_" + submission)
+
+        hasSubmission = false
+        if subreddit != nil {
+            self.subreddit = subreddit!
+            self.sort = SettingValues.getCommentSorting(forSubreddit: self.subreddit)
+            self.submission!.subreddit = subreddit!
+        }
+        self.text = [:]
+        super.init(nibName: nil, bundle: nil)
+        if subreddit != nil {
+            self.title = subreddit!
+            setBarColors(color: ColorUtil.getColorForSub(sub: subreddit!))
+        }
+    }
+
+    init(submission: String, comment: String, context: Int, subreddit: String, np: Bool = false) {
+        self.submission = RSubmission()
+        self.sort = SettingValues.getCommentSorting(forSubreddit: self.submission!.subreddit)
+        self.submission!.name = submission
+        self.submission!.subreddit = subreddit
+        hasSubmission = false
+        self.context = comment
+        self.np = np
+        self.text = [:]
+        self.contextNumber = context
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // De-Initialization of View
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.tableView = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
+        commentTableViewDelegate = CommentTableViewDelegate(parentController: self)
+        self.tableView.delegate = commentTableViewDelegate
+        commentTableViewDataSource = CommentTableViewDataSource(parentController: self)
+        self.tableView.dataSource = commentTableViewDataSource
+        self.view = UIView.init(frame: CGRect.zero)
+        self.view.addSubview(tableView)
+
+        tableView.verticalAnchors == view.verticalAnchors
+        tableView.horizontalAnchors == view.safeHorizontalAnchors
+
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.registerForPreviewing(with: self, sourceView: self.tableView)
+
+        self.tableView.allowsSelection = false
+        //self.tableView.layer.speed = 1.5
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        refreshControl = UIRefreshControl()
+        refreshControl?.tintColor = ColorUtil.theme.fontColor
+        refreshControl?.attributedTitle = NSAttributedString(string: "")
+        refreshControl?.addTarget(self, action: #selector(CommentViewController.refreshComments(_:)), for: UIControl.Event.valueChanged)
+        var top = CGFloat(64)
+        let bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            top = 0
+        }
+        tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
+        tableView.addSubview(refreshControl!)
+
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
+        
+        commentSearchBarDelegate = CommentSearchBarDelegate(parentController: self)
+        searchBar.delegate = commentSearchBarDelegate
+        searchBar.searchBarStyle = UISearchBar.Style.minimal
+        searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
+        searchBar.showsCancelButton = false
+        if !ColorUtil.theme.isLight {
+            searchBar.keyboardAppearance = .dark
+        }
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
+
+        tableView.estimatedRowHeight = 200
+        tableView.rowHeight = UITableView.automaticDimension
+
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
+
+        tableView.separatorStyle = .none
+        NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWillShow(_:)),
+                name: UIResponder.keyboardWillShowNotification,
+                object: nil
+        )
+        NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWillHide(_:)),
+                name: UIResponder.keyboardWillHideNotification,
+                object: nil)
+
+        headerCell = FullLinkCellView()
+        linkCellViewDelegate = CommentLinkCellViewDelegate(parentController: self)
+        headerCell!.del = linkCellViewDelegate
+        headerCell!.parentViewController = self
+        headerCell!.aspectWidth = self.tableView.bounds.size.width
+
+        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
+        panGesture.direction = .horizontal
+        panGesture.delegate = self
+        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+           //navGesture.require(toFail: panGesture)
+        }
+        self.presentationController?.delegate = self
+//        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
+//        pan.direction = .horizontal
+        if !loaded && (single || forceLoad) {
+            refreshComments(self)
+        }
+        
+        self.tableView.addGestureRecognizer(panGesture)
+        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
+            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+        }
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        // Link Cell View Delegate
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.isHiding = true
+        
+        if navigationController != nil {
+            sortButton = UIButton.init(type: .custom)
+            sortButton.accessibilityLabel = "Change sort type"
+            sortButton.addTarget(self, action: #selector(self.sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            sortB = UIBarButtonItem.init(customView: sortButton)
+            
+            doSortImage(sortButton)
+
+            let search = UIButton.init(type: .custom)
+            search.accessibilityLabel = "Search"
+            search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
+            search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
+            search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            searchB = UIBarButtonItem.init(customView: search)
+            
+            navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
+            if !loaded {
+                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
+                if self.navigationController == nil {
+                    self.view.addSubview(activityIndicator)
+                    activityIndicator.centerAnchors == self.view.centerAnchors
+                } else {
+                    let barButton = UIBarButtonItem(customView: activityIndicator)
+                    navigationItem.rightBarButtonItems = [barButton]
+                }
+                activityIndicator.startAnimating()
+            } else {
+                navigationItem.rightBarButtonItems = [sortB, searchB]
+            }
+        } else {
+            if !loaded {
+                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                activityIndicator.color = ColorUtil.theme.navIconColor
+                self.view.addSubview(activityIndicator)
+                activityIndicator.centerAnchors == self.view.centerAnchors
+                activityIndicator.startAnimating()
+            }
+        }
+        
+        doStartupItems()
+
+        if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
+            headerCell.videoView?.player?.play()
+        }
+        
+        if isSearching {
+            isSearching = false
+            tableView.reloadData()
+        }
+        
+        setNeedsStatusBarAppearanceUpdate()
+        if navigationController != nil && (didDisappearCompletely || !loaded) {
+            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
+            self.updateToolbar()
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if hasSubmission && self.view.frame.size.width != 0 {
+
+            guard let headerCell = headerCell else {
+                return
+            }
+            if !configuredOnce {
+                headerCell.aspectWidth = self.view.frame.size.width
+                headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
+                if submission!.isSelf {
+                    headerCell.showBody(width: self.view.frame.size.width - 24)
+                }
+                configuredOnce = true
+            }
+
+            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
+            // Add safe area insets to left and right if available
+            if #available(iOS 11.0, *) {
+                frame = frame.insetBy(dx: max(view.safeAreaInsets.left, view.safeAreaInsets.right), dy: 0)
+            }
+
+            if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
+                headerCell.contentView.frame = frame
+                headerCell.contentView.layoutIfNeeded()
+                let view = UIView(frame: headerCell.contentView.frame)
+                view.addSubview(headerCell.contentView)
+                self.tableView.tableHeaderView = view
+            }
+
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
+            self.navigationController!.view.backgroundColor = .clear
+        }
+        self.isHiding = false
+        didDisappearCompletely = false
+        let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
+
+        if isModal && self.navigationController is TapBehindModalViewController{
+            self.navigationController?.delegate = self
+            (self.navigationController as! TapBehindModalViewController).del = self
+        }
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        
+        if self.shouldAnimateLoad {
+            self.reloadTableViewAnimated()
+            self.shouldAnimateLoad = false
+        }
+        self.finishedPush = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.isHiding = true
+        self.liveTimer.invalidate()
+        self.removeJumpButton()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        inHeadView.removeFromSuperview()
+        headerCell.endVideos()
+        self.didDisappearCompletely = true
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate(
+            alongsideTransition: { [unowned self] _ in
+                if let header = self.tableView.tableHeaderView {
+                    var frame = header.frame
+                    var leftInset: CGFloat = 0
+                    var rightInset: CGFloat = 0
+
+                    if #available(iOS 11.0, *) {
+                        leftInset = self.tableView.safeAreaInsets.left
+                        rightInset = self.tableView.safeAreaInsets.right
+                        frame.origin.x = leftInset
+                    } else {
+                        // Fallback on earlier versions
+                    }
+
+                    self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
+
+                    frame.size.width = size.width - (leftInset + rightInset)
+                    frame.size.height = self.headerCell!.estimateHeight(true, true, np: self.np)
+
+                    self.headerCell!.contentView.frame = frame
+                    self.tableView.tableHeaderView!.frame = frame
+                    //self.tableView.reloadData(with: .none)
+                    self.doHeadView(size)
+                    self.view.setNeedsLayout()
+                }
+            }, completion: nil)
+    }
+    
+    // MARK: - Public Functions
+    /// Adds button to move down through comment section.
     func createJumpButton(_ forced: Bool = false) {
         if SettingValues.commentJumpButton == .DISABLED {
             return
@@ -213,6 +529,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    /// Removes the button that jumps through comment section.
     func removeJumpButton() {
         if SettingValues.commentJumpButton == .DISABLED {
             return
@@ -236,7 +553,9 @@ class CommentViewController: MediaViewController {
         return true
     }
     
-    func setLive() {
+    // MARK: - Live Mode
+    /// When called it enables the barButtonItem activityIndicator while loading incoming comments.
+    func startLiveActivityIndicatorAnimation() {
         self.sort = .new
         self.live = true
         self.reset = true
@@ -245,10 +564,11 @@ class CommentViewController: MediaViewController {
         self.navigationItem.rightBarButtonItems = [barButton]
         self.activityIndicator.startAnimating()
         
-        self.refresh(self)
+        self.refreshComments(self)
     }
     
-    func startPulse() {
+    /// Animation given to barButtonItem while live comments come in.
+    func startPulseAnimation() {
         self.progressDot = UIView()
         progressDot.alpha = 0.7
         progressDot.backgroundColor = .clear
@@ -302,7 +622,8 @@ class CommentViewController: MediaViewController {
         progressDot.layer.add(fadeAnimation, forKey: "fade")
     }
     
-    @objc func loadNewComments() {
+    /// Loads and inserts incoming live comments.
+    @objc func loadLiveComments() {
         var name = submission!.name
         if name.contains("t3_") {
             name = name.replacingOccurrences(of: "t3_", with: "")
@@ -375,62 +696,13 @@ class CommentViewController: MediaViewController {
             
         }
     }
-
-    init(submission: RSubmission, single: Bool) {
-        self.submission = submission
-        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
-        self.single = single
-        self.text = [:]
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
-    }
-
-    init(submission: RSubmission) {
-        self.submission = submission
-        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
-        self.text = [:]
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
-    }
-
-    init(submission: String, subreddit: String?, np: Bool = false) {
-        self.submission = RSubmission()
-        self.np = np
-        self.submission!.name = submission
-        self.submission!.id = submission.startsWith("t3") ? submission : ("t3_" + submission)
-
-        hasSubmission = false
-        if subreddit != nil {
-            self.subreddit = subreddit!
-            self.sort = SettingValues.getCommentSorting(forSubreddit: self.subreddit)
-            self.submission!.subreddit = subreddit!
-        }
-        self.text = [:]
-        super.init(nibName: nil, bundle: nil)
-        if subreddit != nil {
-            self.title = subreddit!
-            setBarColors(color: ColorUtil.getColorForSub(sub: subreddit!))
-        }
-    }
-
-    init(submission: String, comment: String, context: Int, subreddit: String, np: Bool = false) {
-        self.submission = RSubmission()
-        self.sort = SettingValues.getCommentSorting(forSubreddit: self.submission!.subreddit)
-        self.submission!.name = submission
-        self.submission!.subreddit = subreddit
-        hasSubmission = false
-        self.context = comment
-        self.np = np
-        self.text = [:]
-        self.contextNumber = context
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
-    }
     
+    /// Undefined
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
 
     }
-
+    // TODO: What does this do?
+    /// To be determined
     func doHeadView(_ size: CGSize) {
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
@@ -443,7 +715,8 @@ class CommentViewController: MediaViewController {
             self.navigationController?.view.addSubview(inHeadView)
         }
     }
-
+    
+    /// Not Implemented: Saves a comment.
     func saveComment(_ comment: RComment) {
         do {
             let state = !ActionStates.isSaved(s: comment)
@@ -457,7 +730,8 @@ class CommentViewController: MediaViewController {
 
         }
     }
-
+    
+    /// Not Implemented: Fixes table view heights.
     func reloadHeights() {
         //UIView.performWithoutAnimation {
             tableView.beginUpdates()
@@ -465,6 +739,7 @@ class CommentViewController: MediaViewController {
        // }
     }
     
+    /// Not Implemented
     func reloadHeightsNone() {
         UIView.performWithoutAnimation {
             tableView.beginUpdates()
@@ -472,6 +747,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Not Implemented
     func prepareReply() {
         tableView.beginUpdates()
         tableView.endUpdates()
@@ -488,22 +764,23 @@ class CommentViewController: MediaViewController {
         }*/
     }
 
+    /// Filters comments not hidden.
     func doArrays() {
         dataArray = comments.filter({ (s) -> Bool in
             !hidden.contains(s)
         })
     }
 
+    /// Returns self.
     func getSelf() -> CommentViewController {
         return self
     }
     
+    /// Loads cached data for offline use.
     func loadOffline() {
         self.loaded = true
-        DispatchQueue.main.async {
-            self.offline = true
+        self.offline = true
             do {
-                
                 let realm = try Realm()
                 if let listing = realm.objects(RSubmission.self).filter({ (item) -> Bool in
                     return item.id == self.submission!.id
@@ -556,12 +833,11 @@ class CommentViewController: MediaViewController {
                 }
             } catch {
                 BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
-            }
         }
-
     }
     
-    @objc func refresh(_ sender: AnyObject) {
+    /// Refreshes comments
+    @objc func refreshComments(_ sender: AnyObject) {
         self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
@@ -643,7 +919,7 @@ class CommentViewController: MediaViewController {
                             if !self.comments.isEmpty {
                                 do {
                                     let realm = try Realm()
-                                   // TODO: - insert
+                                   // TODO: insert
                                     realm.beginWrite()
                                     for comment in self.comments {
                                         if let content = self.content[comment] {
@@ -726,8 +1002,8 @@ class CommentViewController: MediaViewController {
                                 self.refreshControl?.endRefreshing()
                                 self.activityIndicator.stopAnimating()
                                 if self.live {
-                                    self.liveTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.loadNewComments), userInfo: nil, repeats: true)
-                                    self.startPulse()
+                                    self.liveTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.loadLiveComments), userInfo: nil, repeats: true)
+                                    self.startPulseAnimation()
                                 } else {
                                     if self.sortB != nil && self.searchB != nil {
                                         self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
@@ -797,6 +1073,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    /// Sets up the navigationTitleView to be of the inserted parameters values.
     func setupTitleView(_ sub: String, icon: String) {
         let label = UILabel()
         label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
@@ -851,6 +1128,7 @@ class CommentViewController: MediaViewController {
         })
     }
 
+    /// Enables searching of comments.
     func showSearchBar() {
         searchBar.alpha = 0
         
@@ -882,6 +1160,7 @@ class CommentViewController: MediaViewController {
         })
     }
 
+    /// Hides search bar and adds barButtonItems.
     func hideSearchBar() {
         if let header = savedHeaderView {
             navigationController?.setNavigationBarHidden(false, animated: true)
@@ -891,7 +1170,7 @@ class CommentViewController: MediaViewController {
         
         searchBar.tintColor = ColorUtil.theme.fontColor
         sortButton = UIButton.init(type: .custom)
-        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.addTarget(self, action: #selector(self.sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
         sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sortButton)
 
@@ -911,8 +1190,9 @@ class CommentViewController: MediaViewController {
         isSearching = false
         tableView.reloadData()
     }
-
-    @objc func sort(_ selector: UIButton?) {
+    
+    /// Action to display sorting comments view.
+    @objc func sortCommentsAction(_ selector: UIButton?) {
         if !offline {
             let isDefault = UISwitch()
             isDefault.onTintColor = ColorUtil.accentColorForSub(sub: self.sub)
@@ -967,7 +1247,7 @@ class CommentViewController: MediaViewController {
                     
                     self.doSortImage(self.sortButton)
 
-                    self.refresh(self)
+                    self.refreshComments(self)
                 }
             }
 
@@ -985,113 +1265,18 @@ class CommentViewController: MediaViewController {
                 
                 self.doSortImage(self.sortButton)
 
-                self.refresh(self)
+                self.refreshComments(self)
             }
 
             actionSheetController.addAction(title: "Live (beta)", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
-                self.setLive()
+                self.startLiveActivityIndicatorAnimation()
             }
             
             actionSheetController.show(self)
         }
     }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.tableView = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
-        commentTableViewDelegate = CommentTableViewDelegate(parentController: self)
-        self.tableView.delegate = commentTableViewDelegate
-        commentTableViewDataSource = CommentTableViewDataSource(parentController: self)
-        self.tableView.dataSource = commentTableViewDataSource
-        self.view = UIView.init(frame: CGRect.zero)
-        self.view.addSubview(tableView)
-
-        tableView.verticalAnchors == view.verticalAnchors
-        tableView.horizontalAnchors == view.safeHorizontalAnchors
-
-        self.automaticallyAdjustsScrollViewInsets = false
-        self.registerForPreviewing(with: self, sourceView: self.tableView)
-
-        self.tableView.allowsSelection = false
-        //self.tableView.layer.speed = 1.5
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
-        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
-        refreshControl = UIRefreshControl()
-        refreshControl?.tintColor = ColorUtil.theme.fontColor
-        refreshControl?.attributedTitle = NSAttributedString(string: "")
-        refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControl.Event.valueChanged)
-        var top = CGFloat(64)
-        let bottom = CGFloat(45)
-        if #available(iOS 11.0, *) {
-            top = 0
-        }
-        tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        tableView.addSubview(refreshControl!)
-
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
-        
-        commentSearchBarDelegate = CommentSearchBarDelegate(parentController: self)
-        searchBar.delegate = commentSearchBarDelegate
-        searchBar.searchBarStyle = UISearchBar.Style.minimal
-        searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
-        searchBar.showsCancelButton = false
-        if !ColorUtil.theme.isLight {
-            searchBar.keyboardAppearance = .dark
-        }
-
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
-
-        tableView.estimatedRowHeight = 200
-        tableView.rowHeight = UITableView.automaticDimension
-
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
-
-        tableView.separatorStyle = .none
-        NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(keyboardWillShow(_:)),
-                name: UIResponder.keyboardWillShowNotification,
-                object: nil
-        )
-        NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(keyboardWillHide(_:)),
-                name: UIResponder.keyboardWillHideNotification,
-                object: nil)
-
-        headerCell = FullLinkCellView()
-        linkCellViewDelegate = CommentLinkCellViewDelegate(parentController: self)
-        headerCell!.del = linkCellViewDelegate
-        headerCell!.parentViewController = self
-        headerCell!.aspectWidth = self.tableView.bounds.size.width
-
-        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
-        panGesture.direction = .horizontal
-        panGesture.delegate = self
-        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-           //navGesture.require(toFail: panGesture)
-        }
-        self.presentationController?.delegate = self
-//        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
-//        pan.direction = .horizontal
-        if !loaded && (single || forceLoad) {
-            refresh(self)
-        }
-        
-        self.tableView.addGestureRecognizer(panGesture)
-        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
-            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-        }
-        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
-        // Link Cell View Delegate
-    }
-
+    
+    // TODO: What does this do?
     @objc func onThemeChanged() {
         version += 1
         
@@ -1133,7 +1318,7 @@ class CommentViewController: MediaViewController {
         self.tableView.reloadData()
         
         sortButton = UIButton.init(type: .custom)
-        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.addTarget(self, action: #selector(self.sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
         sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sortButton)
 
@@ -1168,7 +1353,8 @@ class CommentViewController: MediaViewController {
             }
         }
     }
-
+    
+    /// Not implemented.
     @objc func cancelTapped() {
         hideSearchBar()
     }
@@ -1204,6 +1390,7 @@ class CommentViewController: MediaViewController {
 //        }
 //    }
 
+    
     @objc func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
@@ -1226,48 +1413,6 @@ class CommentViewController: MediaViewController {
             top = 0
         }
         tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        if hasSubmission && self.view.frame.size.width != 0 {
-
-            guard let headerCell = headerCell else {
-                return
-            }
-            if !configuredOnce {
-                headerCell.aspectWidth = self.view.frame.size.width
-                headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
-                if submission!.isSelf {
-                    headerCell.showBody(width: self.view.frame.size.width - 24)
-                }
-                configuredOnce = true
-            }
-
-            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
-            // Add safe area insets to left and right if available
-            if #available(iOS 11.0, *) {
-                frame = frame.insetBy(dx: max(view.safeAreaInsets.left, view.safeAreaInsets.right), dy: 0)
-            }
-
-            if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
-                headerCell.contentView.frame = frame
-                headerCell.contentView.layoutIfNeeded()
-                let view = UIView(frame: headerCell.contentView.frame)
-                view.addSubview(headerCell.contentView)
-                self.tableView.tableHeaderView = view
-            }
-
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
@@ -1293,93 +1438,6 @@ class CommentViewController: MediaViewController {
             navigationController?.setToolbarHidden(false, animated: true)
             self.isToolbarHidden = false
         }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.isHiding = true
-        
-        if navigationController != nil {
-            sortButton = UIButton.init(type: .custom)
-            sortButton.accessibilityLabel = "Change sort type"
-            sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            sortB = UIBarButtonItem.init(customView: sortButton)
-            
-            doSortImage(sortButton)
-
-            let search = UIButton.init(type: .custom)
-            search.accessibilityLabel = "Search"
-            search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
-            search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
-            search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            searchB = UIBarButtonItem.init(customView: search)
-            
-            navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
-            if !loaded {
-                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
-                if self.navigationController == nil {
-                    self.view.addSubview(activityIndicator)
-                    activityIndicator.centerAnchors == self.view.centerAnchors
-                } else {
-                    let barButton = UIBarButtonItem(customView: activityIndicator)
-                    navigationItem.rightBarButtonItems = [barButton]
-                }
-                activityIndicator.startAnimating()
-            } else {
-                navigationItem.rightBarButtonItems = [sortB, searchB]
-            }
-        } else {
-            if !loaded {
-                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                activityIndicator.color = ColorUtil.theme.navIconColor
-                self.view.addSubview(activityIndicator)
-                activityIndicator.centerAnchors == self.view.centerAnchors
-                activityIndicator.startAnimating()
-            }
-        }
-        
-        doStartupItems()
-
-        if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
-            headerCell.videoView?.player?.play()
-        }
-        
-        if isSearching {
-            isSearching = false
-            tableView.reloadData()
-        }
-        
-        setNeedsStatusBarAppearanceUpdate()
-        if navigationController != nil && (didDisappearCompletely || !loaded) {
-            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
-            self.updateToolbar()
-        }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
-            self.navigationController!.view.backgroundColor = .clear
-        }
-        self.isHiding = false
-        didDisappearCompletely = false
-        let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
-
-        if isModal && self.navigationController is TapBehindModalViewController{
-            self.navigationController?.delegate = self
-            (self.navigationController as! TapBehindModalViewController).del = self
-        }
-        
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
-        
-        if self.shouldAnimateLoad {
-            self.reloadTableViewAnimated()
-            self.shouldAnimateLoad = false
-        }
-        self.finishedPush = true
     }
  
     var duringAnimation = false
@@ -1419,7 +1477,7 @@ class CommentViewController: MediaViewController {
 
             alertController.addAction(title: "Refresh comments", icon: UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "sync")!.menuIcon()) {
                 self.reset = true
-                self.refresh(self)
+                self.refreshComments(self)
             }
 
             alertController.addAction(title: "Reply to submission", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
@@ -1613,12 +1671,13 @@ class CommentViewController: MediaViewController {
         context = ""
         reset = true
         refreshControl?.beginRefreshing()
-        refresh(sender)
+        refreshComments(sender)
         updateToolbar()
     }
     
     var currentSort: CommentNavType = .PARENTS
 
+    // TODO: This can be moved somewhere else
     enum CommentNavType {
         case PARENTS
         case GILDED
@@ -1907,20 +1966,6 @@ class CommentViewController: MediaViewController {
     }
 
     var isCurrentlyChanging = false
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        inHeadView.removeFromSuperview()
-        headerCell.endVideos()
-        self.didDisappearCompletely = true
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.isHiding = true
-        self.liveTimer.invalidate()
-        self.removeJumpButton()
-    }
 
     func collapseAll() {
         self.allCollapsed = true
@@ -2124,7 +2169,7 @@ class CommentViewController: MediaViewController {
     }
 
     func deleteComment(cell: CommentDepthCell) {
-        let alert = UIAlertController.init(title: "Really delete this comment?", message: "", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: "Really, delete this comment?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
             do {
                 try self.session?.deleteCommentOrLink(cell.comment!.getIdentifier(), completion: { (_) in
@@ -2206,38 +2251,6 @@ class CommentViewController: MediaViewController {
         }
         return i
     }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(
-            alongsideTransition: { [unowned self] _ in
-                if let header = self.tableView.tableHeaderView {
-                    var frame = header.frame
-                    var leftInset: CGFloat = 0
-                    var rightInset: CGFloat = 0
-
-                    if #available(iOS 11.0, *) {
-                        leftInset = self.tableView.safeAreaInsets.left
-                        rightInset = self.tableView.safeAreaInsets.right
-                        frame.origin.x = leftInset
-                    } else {
-                        // Fallback on earlier versions
-                    }
-
-                    self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
-
-                    frame.size.width = size.width - (leftInset + rightInset)
-                    frame.size.height = self.headerCell!.estimateHeight(true, true, np: self.np)
-
-                    self.headerCell!.contentView.frame = frame
-                    self.tableView.tableHeaderView!.frame = frame
-                    //self.tableView.reloadData(with: .none)
-                    self.doHeadView(size)
-                    self.view.setNeedsLayout()
-                }
-            }, completion: nil)
-    }
     
     var lastYUsed = CGFloat(0)
     var isToolbarHidden = false
@@ -2247,6 +2260,7 @@ class CommentViewController: MediaViewController {
     
     var isSearch = false
 
+    /// Hides navigation bar and contents to show jump through comments button.
     func hideUI(inHeader: Bool) {
         isHiding = true
         //self.tableView.endEditing(true)

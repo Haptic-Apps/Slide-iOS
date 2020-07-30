@@ -29,21 +29,23 @@ class ParentCommentViewController: UIViewController {
             $0.isUserInteractionEnabled = true
         }
         self.view.addSubview(scrollView)
-        scrollView.edgeAnchors == self.view.edgeAnchors
+//        scrollView.edgeAnchors == self.view.edgeAnchors
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         scrollView.addSubview(childView)
-        childView.widthAnchor == estimatedSize.width
-        childView.heightAnchor == estimatedSize.height
+//        childView.widthAnchor == estimatedSize.width
+//        childView.heightAnchor == estimatedSize.height
         childView.topAnchor == scrollView.topAnchor
         scrollView.contentSize = estimatedSize
     }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         dismissHandler?()
     }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
