@@ -49,10 +49,10 @@ class CommentScrollViewDelegate: NSObject, UIScrollViewDelegate {
         if !SettingValues.pinToolbar && !commentController.isReply && !commentController.isSearch {
             if currentY > commentController.lastYUsed && currentY > 60 {
                 if commentController.navigationController != nil && !commentController.isHiding && !commentController.isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
-                    commentController.hideUI(inHeader: true)
+                    commentController.hideNavigationBars(inHeader: true)
                 }
             } else if (currentY < commentController.lastYUsed - 15 || currentY < 100) && !commentController.isHiding && commentController.navigationController != nil && (commentController.isToolbarHidden) {
-                commentController.showUI()
+                commentController.showNavigationBars()
             }
         }
         commentController.lastYUsed = currentY

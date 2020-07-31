@@ -35,6 +35,7 @@ class ParentCommentViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         scrollView.addSubview(childView)
+        // TODO: Fix: Not able to do this.
 //        childView.widthAnchor == estimatedSize.width
 //        childView.heightAnchor == estimatedSize.height
         childView.topAnchor == scrollView.topAnchor
