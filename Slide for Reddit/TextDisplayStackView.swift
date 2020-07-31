@@ -7,7 +7,6 @@
 //
 
 import Anchorage
-import DTCoreText
 import Then
 import UIKit
 import YYText
@@ -566,9 +565,24 @@ public class TextDisplayStackView: UIStackView {
     public static func
         createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>").replacingOccurrences(of: "<code>", with: "<font color=\"blue\">").replacingOccurrences(of: "</code>", with: "</font>")
-        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontSize: font.pointSize], documentAttributes: nil).generatedAttributedString()!
-        let html = NSMutableAttributedString(attributedString: baseHtml)
+        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML)
+            .replacingOccurrences(of: "<del>", with: "<font color=\"green\">")
+            .replacingOccurrences(of: "</del>", with: "</font>")
+            .replacingOccurrences(of: "<code>", with: "<font color=\"blue\">")
+            .replacingOccurrences(of: "</code>", with: "</font>")
+//        let htmlBase = "<p>WOW <em>wh<sup>o<sup>a<sup>a<sup>a<sup>a</sup></sup></sup></sup></sup></em> yeah</p>"
+//        let htmlBase = "<p>Test<em>wh<sup>o<sup>o<sup>o</sup></sup></sup></em></p>"
+//        let htmlBase = "<p>WOW <em>wh<sup>a<sup>b<sup>c<sup>d<sup>e</sup></sup></sup></sup></sup></em> yeah</p>"
+//        let htmlBase = "<p>WOW <em>wh<sup>a<sup>b<sup>c</sup></sup></sup></em> yeah</p>"
+
+//        let htmlBase = "<span style=\"font-family: \(font.fontName); font-size: \(font.pointSize); color:\(fontColor.hexString());\">\(baseHTML)</span>"
+
+        let htmlString = try! NSAttributedString(
+            data: "<span style=\"font-family: \(font.fontName); font-size: \(font.pointSize); color:\(fontColor.hexString());\">\(htmlBase)</span>".data(using: .unicode, allowLossyConversion: false)!,
+            options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.unicode.rawValue],
+            documentAttributes: nil)
+        let html = NSMutableAttributedString(attributedString: htmlString)
+
         while html.mutableString.contains("\t•\t") {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
@@ -581,8 +595,11 @@ public class TextDisplayStackView: UIStackView {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t▪\t")
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
         }
-        
-        return LinkParser.parse(html, accentColor, font: font, fontColor: fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
+
+        // Repair superscript styling
+        let fixed = html.fixCoreTextIssues(with: font)
+
+        return LinkParser.parse(fixed, accentColor, font: font, fontColor: fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
     }
     
 //    public func link(at: CGPoint, withTouch: UITouch) -> TTTAttributedLabelLink? {
@@ -839,4 +856,43 @@ private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+private extension NSAttributedString {
+    /**
+     Fixes the following:
+     - Nested superscript is rendered incorrectly
+     */
+    func fixCoreTextIssues(with font: UIFont) -> NSAttributedString {
+        let mutable = NSMutableAttributedString(attributedString: self)
+
+        var superscriptLevel: Int = 0
+
+        mutable.enumerateAttributes(in: NSRange(location: 0, length: mutable.length), options: .longestEffectiveRangeNotRequired) { (value, range, stop) in
+            let value = value as [NSAttributedString.Key: Any]
+            if value[NSAttributedString.Key(rawValue: "NSSuperScript")] != nil || value[NSAttributedString.Key(rawValue: "CTSuperScript")] != nil { // kCTSuperscriptAttributeName
+                // Extract font from attributed string; this includes bold/italic information
+                let fontForChunk = value[NSAttributedString.Key.font] as! UIFont
+                superscriptLevel += 1
+                let newFontSize = max(CGFloat(font.pointSize / 2), 10)
+                let newFont = UIFont(name: fontForChunk.fontName, size: newFontSize) ?? fontForChunk
+                let newBaseline = (font.pointSize * 0.25) + (CGFloat(superscriptLevel) * (font.pointSize / 4.0))
+
+                mutable.setAttributes(nil, range: range)
+
+                mutable.addAttributes([
+                    .font: newFont,
+                    .baselineOffset: newBaseline
+                ], range: range)
+
+//                mutable.removeAttribute(NSAttributedString.Key(rawValue: "NSSuperScript"), range: range) // Not really necessary.
+//                mutable.removeAttribute(NSAttributedString.Key(rawValue: "CTSuperScript"), range: range) // Not really necessary.
+            } else {
+                // Reset superscript level if we hit a chunk with no superscript attribute
+                superscriptLevel = 0
+            }
+        }
+
+        return mutable
+    }
 }
