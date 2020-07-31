@@ -18,9 +18,12 @@ your_usr_id="anything.you.want" # Anything you want. Sets USR_DOMAIN in the proj
 # Don't change anything below
 # -------------------------------------------------
 
-# These should change if the values are changed in the project.
+# These should be changed in the repo if the corresponding values change in the pbxproj file.
 project_developer_id="FTT89576VQ"
 project_usr_id="ccrama.me"
+
+# Apply the contents of the smudge command right away
+sed -i.bak -e "s/$project_developer_id/$your_developer_id/" -e "s/$project_usr_id/$your_usr_id/" 'Slide for Reddit.xcodeproj/project.pbxproj'
 
 # Converts credentials from project's to yours when pulling
 git config filter.filter-credentials.smudge "sed -e 's/$project_developer_id/$your_developer_id/' -e 's/$project_usr_id/$your_usr_id/'"
