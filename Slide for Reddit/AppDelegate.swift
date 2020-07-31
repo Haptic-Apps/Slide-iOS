@@ -50,6 +50,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
 
+    /**
+     Corresponds to USR_DOMAIN in info.plist, which derives its value
+     from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+     */
+    lazy var USR_DOMAIN: String = {
+        return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }()
+
     let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
         if oldSchemaVersion < 13 {
             /*
@@ -928,7 +936,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             print("Saving to iCloud \(key)")
-            CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase.save(collectionsRecord) { (_, error) in
+            CKContainer(identifier: "iCloud.\(USR_DOMAIN).redditslide").privateCloudDatabase.save(collectionsRecord) { (_, error) in
                 if error != nil {
                     print("iCloud error")
                     print(error.debugDescription)
@@ -940,7 +948,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func fetchFromiCloud(_ key: String, dictionaryToAppend: NSMutableDictionary, completion: ((_ record: CKRecord) -> Void)? = nil) {
-        let privateDatabase = CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase
+        let privateDatabase = CKContainer(identifier: "iCloud.\(USR_DOMAIN).redditslide").privateCloudDatabase
         
         let query = CKQuery(recordType: CKRecord.RecordType(stringLiteral: key), predicate: NSPredicate(value: true))
         print("Reading from iCloud")
