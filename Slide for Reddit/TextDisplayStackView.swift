@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import DTCoreText
 import Then
 import UIKit
 import YYText
@@ -570,17 +571,9 @@ public class TextDisplayStackView: UIStackView {
             .replacingOccurrences(of: "</del>", with: "</font>")
             .replacingOccurrences(of: "<code>", with: "<font color=\"blue\">")
             .replacingOccurrences(of: "</code>", with: "</font>")
-//        let htmlBase = "<p>WOW <em>wh<sup>o<sup>a<sup>a<sup>a<sup>a</sup></sup></sup></sup></sup></em> yeah</p>"
-//        let htmlBase = "<p>Test<em>wh<sup>o<sup>o<sup>o</sup></sup></sup></em></p>"
-//        let htmlBase = "<p>WOW <em>wh<sup>a<sup>b<sup>c<sup>d<sup>e</sup></sup></sup></sup></sup></em> yeah</p>"
-//        let htmlBase = "<p>WOW <em>wh<sup>a<sup>b<sup>c</sup></sup></sup></em> yeah</p>"
 
-//        let htmlBase = "<span style=\"font-family: \(font.fontName); font-size: \(font.pointSize); color:\(fontColor.hexString());\">\(baseHTML)</span>"
+        let htmlString = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontSize: font.pointSize], documentAttributes: nil).generatedAttributedString()!
 
-        let htmlString = try! NSAttributedString(
-            data: "<span style=\"font-family: \(font.fontName); font-size: \(font.pointSize); color:\(fontColor.hexString());\">\(htmlBase)</span>".data(using: .unicode, allowLossyConversion: false)!,
-            options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.unicode.rawValue],
-            documentAttributes: nil)
         let html = NSMutableAttributedString(attributedString: htmlString)
 
         while html.mutableString.contains("\t•\t") {
@@ -870,7 +863,7 @@ private extension NSAttributedString {
 
         mutable.enumerateAttributes(in: NSRange(location: 0, length: mutable.length), options: .longestEffectiveRangeNotRequired) { (value, range, stop) in
             let value = value as [NSAttributedString.Key: Any]
-            if value[NSAttributedString.Key(rawValue: "NSSuperScript")] != nil || value[NSAttributedString.Key(rawValue: "CTSuperScript")] != nil { // kCTSuperscriptAttributeName
+            if value[NSAttributedString.Key(rawValue: "NSSuperScript")] != nil || value[NSAttributedString.Key(rawValue: "CTSuperscript")] != nil { // kCTSuperscriptAttributeName
                 // Extract font from attributed string; this includes bold/italic information
                 let fontForChunk = value[NSAttributedString.Key.font] as! UIFont
                 superscriptLevel += 1
@@ -884,9 +877,6 @@ private extension NSAttributedString {
                     .font: newFont,
                     .baselineOffset: newBaseline
                 ], range: range)
-
-//                mutable.removeAttribute(NSAttributedString.Key(rawValue: "NSSuperScript"), range: range) // Not really necessary.
-//                mutable.removeAttribute(NSAttributedString.Key(rawValue: "CTSuperScript"), range: range) // Not really necessary.
             } else {
                 // Reset superscript level if we hit a chunk with no superscript attribute
                 superscriptLevel = 0
