@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SubredditToolbarSearchViewController.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 1/6/17.
@@ -12,11 +12,12 @@ import reddift
 import SDWebImage
 import UIKit
 
-class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDelegate {
+class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognizerDelegate {
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var filteredContent: [String] = []
     var suggestions = [String]()
-    var parentController: MainViewController?
+    var results = [RSubmission]()
+    var parentController: SingleSubredditViewController?
     var backgroundView = UIView()
     var topView: UIView?
     var bottomOffset: CGFloat = 64
@@ -24,12 +25,16 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     var lastY: CGFloat = 0.0
     var timer: Timer?
 
-    var subsSource = SubscribedSubredditsSectionProvider()
-
     var headerView = UIView()
     var dragHandleView = UIView()
     
-    var expanded = false
+    var expanded = false {
+        didSet {
+            if #available(iOS 13.0, *) {
+                parentController?.isModalInPresentation = expanded
+            }
+        }
+    }
 
     var isSearching = false
 
@@ -74,7 +79,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
     //let horizontalSubGroup = HorizontalSubredditGroup()
     
-    init(controller: MainViewController) {
+    init(controller: SingleSubredditViewController) {
         self.parentController = controller
         super.init(nibName: nil, bundle: nil)
         
@@ -135,7 +140,6 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         super.viewDidLoad()
 
         tableView.sectionIndexColor = ColorUtil.baseAccent
-        subsSource.reload()
 
         self.view = UITouchCapturingView()
 
@@ -182,7 +186,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
             backgroundView.isHidden = false
             lastPercentY = CGFloat(0)
             callbacks.didBeginPanning?()
-            if let navVC = parentController!.navigationController {
+            if let navVC = parentController?.parent?.navigationController {
+                navVC.view.addSubviews(backgroundView, self.view)
+                navVC.view.bringSubviewToFront(backgroundView)
+                backgroundView.edgeAnchors == navVC.view.edgeAnchors
+                navVC.view.bringSubviewToFront(self.view)
+            } else if let navVC = parentController?.navigationController {
                 navVC.view.addSubviews(backgroundView, self.view)
                 navVC.view.bringSubviewToFront(backgroundView)
                 backgroundView.edgeAnchors == navVC.view.edgeAnchors
@@ -229,13 +238,13 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
                 VCPresenter.showVC(viewController: SearchViewController(subreddit: MainViewController.current, searchFor: text), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
             } else {
                 //go to sub
-                parentController?.goToSubreddit(subreddit: text)
+                //TODO this parentController?.goToSubreddit(subreddit: text)
             }
         }
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return otherGestureRecognizer is UIPanGestureRecognizer && (tableView.contentOffset.y == 0) && !self.view.isHidden
+        return otherGestureRecognizer is UIPanGestureRecognizer && (otherGestureRecognizer != (parentController?.parent?.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer ?? nil) && (tableView.contentOffset.y == 0) && !self.view.isHidden
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -418,7 +427,12 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
 
         backgroundView.isHidden = false
 
-        if let navVC = parentController!.navigationController {
+        if let navVC = parentController?.parent?.navigationController {
+            navVC.view.addSubviews(backgroundView, self.view)
+            navVC.view.bringSubviewToFront(backgroundView)
+            backgroundView.edgeAnchors == navVC.view.edgeAnchors
+            navVC.view.bringSubviewToFront(self.view)
+        } else  if let navVC = parentController?.navigationController {
             navVC.view.addSubviews(backgroundView, self.view)
             navVC.view.bringSubviewToFront(backgroundView)
             backgroundView.edgeAnchors == navVC.view.edgeAnchors
@@ -610,7 +624,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
         // Dispose of any resources that can be recreated.
     }
     
-    func setViewController(controller: MainViewController) {
+    func setViewController(controller: SingleSubredditViewController) {
         parentController = controller
     }
 
@@ -638,7 +652,7 @@ class NavigationSidebarViewController: UIViewController, UIGestureRecognizerDele
     }    
 }
 
-extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataSource {
+extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! SubredditCellView
@@ -646,10 +660,10 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             let user = cell.profile
             if let nav = self.navigationController as? SwipeForwardNavigationController, nav.topViewController == self {
                 nav.pushNextViewControllerFromRight() {
-                    self.parentController?.goToUser(profile: user)
+                    //TODO this self.parentController?.goToUser(profile: user)
                 }
             } else {
-                parentController?.goToUser(profile: user)
+                //TODO This parentController?.goToUser(profile: user)
             }
         } else if !cell.search.isEmpty() {
             VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
@@ -657,10 +671,10 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
             let sub = cell.subreddit
             if let nav = self.navigationController as? SwipeForwardNavigationController, nav.topViewController == self {
                 nav.pushNextViewControllerFromRight() {
-                    self.parentController?.goToSubreddit(subreddit: sub)
+                    //TODO this self.parentController?.goToSubreddit(subreddit: sub)
                 }
             } else {
-                parentController?.goToSubreddit(subreddit: sub)
+                //TODO this parentController?.goToSubreddit(subreddit: sub)
             }
         }
         searchBar.text = ""
@@ -672,7 +686,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return !isSearching ? subsSource.sections.count : (suggestions.count > 0 ? 2 : 1)
+        return !isSearching ? 0 : 1 + (results.count > 0 ? 1 : 0) + (suggestions.count > 0 ? 1 : 0)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -684,18 +698,23 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return !isSearching ? subsSource.sortedSectionTitles : nil
+        var titles: [String]? = nil
+        
+        if isSearching {
+            titles = []
+            titles!.append("Posts")
+            if suggestions.count > 0 {
+                titles!.append("Subreddits")
+            }
+        }
+        return titles
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if !isSearching {
-            return subsSource.numberOfRowsInSection(section)
+        if section == 0 {
+            return 2 + results.count > 0 ? 1 : 0
         } else {
-            if section == 0 {
-                return filteredContent.count + (filteredContent.contains(searchBar.text!) ? 0 : 1) + 3
-            } else {
-                return suggestions.count
-            }
+            return suggestions.count
         }
     }
 
@@ -709,98 +728,14 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return !isSearching
     }
-
-    func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
-        tableView.contentOffset = CGPoint(x: 0, y: tableView.contentOffset.y + 1)
-        let sub = subsSource.subredditsInSection(editActionsForRowAt.section)![editActionsForRowAt.row]
-        let wasEmpty = Subscriptions.pinned.isEmpty
-        let isPinned = editActionsForRowAt.section == 0 && !wasEmpty
-        if isPinned {
-            let pin = UITableViewRowAction(style: .normal, title: "Un-Pin") { _, _ in
-                Subscriptions.setPinned(name: AccountController.currentName, subs: Subscriptions.pinned.filter({ $0 != sub })) {
-                    self.tableView.beginUpdates()
-
-                    let oldSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
-                    let oldSubSectionName = self.subsSource.sortedSectionTitles[oldSubIndex.section]
-                    self.subsSource.reload()
-                    self.tableView.deleteRows(at: [oldSubIndex], with: .automatic)
-                    
-                    // Remove old section if it's gone
-                    if self.subsSource.sections[oldSubSectionName] == nil {
-                        self.tableView.deleteSections([oldSubIndex.section], with: .automatic)
-                    }
-                    self.tableView.endUpdates()
-                    self.tableView.reloadData()
-                }
-            }
-            pin.backgroundColor = GMColor.red500Color()
-            return [pin]
-        } else {
-            let pin = UITableViewRowAction(style: .normal, title: "Pin") { _, _ in
-                if Subscriptions.pinned.filter({ $0.lowercased() == sub.lowercased() }).count > 0 {
-                    return
-                }
-                var newPinned = Subscriptions.pinned
-                newPinned.append(sub)
-                Subscriptions.setPinned(name: AccountController.currentName, subs: newPinned) {
-                    self.tableView.beginUpdates()
-                    
-                    let oldSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
-                    let oldSubSectionName = self.subsSource.sortedSectionTitles[oldSubIndex.section]
-                    self.subsSource.reload()
-                    let newSubIndex = self.subsSource.getIndexPath(forSubreddit: sub)!
-                    let newSubSectionName = self.subsSource.sortedSectionTitles[newSubIndex.section]
-
-                    // Add new section if it doesn't exist
-                    if let newSection = self.subsSource.sections[newSubSectionName],
-                        newSection.count == 1,
-                        newSection[0] == sub {
-                        self.tableView.insertSections([newSubIndex.section], with: .automatic)
-                    }
-
-                    self.tableView.insertRows(at: [newSubIndex], with: .automatic)
-
-                    // Remove old section if it's gone
-                    if self.subsSource.sections[oldSubSectionName] == nil {
-                        self.tableView.deleteSections([oldSubIndex.section], with: .automatic)
-                    }
-
-                    self.tableView.endUpdates()
-                    self.tableView.reloadData()
-                }
-            }
-            pin.backgroundColor = GMColor.yellow500Color()
-            return [pin]
-        }
-    }
-
+    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
 
-        if isSearching {
-            switch section {
-            case 0: label.text  = ""
-            default: label.text  = "SUBREDDIT SUGGESTIONS"
-            }
-        } else {
-            let sectionTitle = subsSource.sortedSectionTitles[section]
-            if sectionTitle == SubscribedSubredditsSectionProvider.Keys.pinned.rawValue {
-                label.text = SubscribedSubredditsSectionProvider.Keys.pinned.rawValue
-                label.accessibilityLabel = SubscribedSubredditsSectionProvider.Keys.pinned.accessibleName
-            } else if sectionTitle == SubscribedSubredditsSectionProvider.Keys.multi.rawValue {
-                label.text = "MULTIREDDITS"
-                label.accessibilityLabel = SubscribedSubredditsSectionProvider.Keys.multi.accessibleName
-            } else if sectionTitle == SubscribedSubredditsSectionProvider.Keys.numeric.rawValue {
-                label.text = SubscribedSubredditsSectionProvider.Keys.numeric.rawValue
-                label.accessibilityLabel = SubscribedSubredditsSectionProvider.Keys.numeric.accessibleName
-            } else {
-                label.text = sectionTitle
-                label.accessibilityLabel = sectionTitle.lowercased()
-            }
-        }
-
+        label.text = sectionIndexTitles(for: tableView)?[section] ?? ""
+        
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.theme.foregroundColor
         return toReturn
@@ -809,50 +744,25 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: SubredditCellView
         if indexPath.section == 0 {
-            if isSearching {
-                if indexPath.row == filteredContent.count {
-                    let thing = searchBar.text!
-                    let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-                    c.setSubreddit(subreddit: thing, nav: self, exists: false)
-                    cell = c
-                } else if indexPath.row == filteredContent.count + 1 {
-                    let thing = searchBar.text!
-                    let c = tableView.dequeueReusableCell(withIdentifier: "profile", for: indexPath) as! SubredditCellView
-                    c.setProfile(profile: thing, nav: self)
-                    cell = c
-                } else if indexPath.row == filteredContent.count + 2 {
-                    // "Search Reddit for <text>" cell
-                    let thing = searchBar.text!
-                    let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
-                    c.setSearch(string: thing, sub: nil, nav: self)
-                    cell = c
-                } else if indexPath.row == filteredContent.count + 3 {
-                    // "Search r/subreddit for <text>" cell
-                    let thing = searchBar.text!
-                    let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
-                    c.setSearch(string: thing, sub: MainViewController.current, nav: self)
-                    cell = c
-                } else {
-                    var thing = ""
-                    thing = filteredContent[indexPath.row]
-                    let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-                    c.setSubreddit(subreddit: thing, nav: self, exists: true)
-                    cell = c
-                }
-            } else {
-                var thing = ""
-                thing = subsSource.subredditsInSection(indexPath.section)![indexPath.row]
-                let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
-                c.setSubreddit(subreddit: thing, nav: self, exists: true)
+            if indexPath.row == 0 {
+                // "Search Reddit for <text>" cell
+                let thing = searchBar.text!
+                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                c.setSearch(string: thing, sub: nil, nav: self)
                 cell = c
+            } else if indexPath.row == 1 {
+                // "Search r/subreddit for <text>" cell
+                let thing = searchBar.text!
+                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                c.setSearch(string: thing, sub: MainViewController.current, nav: self)
+                cell = c
+            } else {
+                //TODO search results
+                cell =  SubredditCellView()
             }
         } else {
-            let thing: String
-            if isSearching {
-                thing = suggestions[indexPath.row]
-            } else {
-                thing = subsSource.subredditsInSection(indexPath.section)![indexPath.row]
-            }
+            let thing = suggestions[indexPath.row]
+
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
             c.setSubreddit(subreddit: thing, nav: self, exists: true)
             cell = c
@@ -864,7 +774,7 @@ extension NavigationSidebarViewController: UITableViewDelegate, UITableViewDataS
     }
 }
 
-extension NavigationSidebarViewController: UISearchBarDelegate {
+extension SubredditToolbarSearchViewController: UISearchBarDelegate {
 
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
         timer?.invalidate()
@@ -884,10 +794,6 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
                                          selector: #selector(self.getSuggestions),
                                          userInfo: nil,
                                          repeats: false)
-        }
-
-        if textSearched == "uuddlrlrba" {
-            UIColor.💀()
         }
     }
 
@@ -962,7 +868,7 @@ extension NavigationSidebarViewController: UISearchBarDelegate {
 
 }
 
-extension NavigationSidebarViewController: UIScrollViewDelegate {
+extension SubredditToolbarSearchViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentY = scrollView.contentOffset.y
         if self.searchBar.text?.isEmpty() ?? false {
@@ -981,13 +887,13 @@ extension NavigationSidebarViewController: UIScrollViewDelegate {
     }
 }
 
-extension NavigationSidebarViewController: HorizontalSubredditGroupDelegate {
+extension SubredditToolbarSearchViewController: HorizontalSubredditGroupDelegate {
     func horizontalSubredditGroup(_ horizontalSubredditGroup: HorizontalSubredditGroup, didRequestSubredditWithName name: String) {
-        parentController?.goToSubreddit(subreddit: name)
+        //TODO this parentController?.goToSubreddit(subreddit: name)
     }
 }
 
-extension NavigationSidebarViewController {
+extension SubredditToolbarSearchViewController {
     @objc func keyboardWillBeShown(notification: NSNotification) {
         //get the end position keyboard frame
         let keyInfo: Dictionary = notification.userInfo!
@@ -1021,7 +927,7 @@ extension NavigationSidebarViewController {
 }
 
 // MARK: - Accessibility
-extension NavigationSidebarViewController {
+extension SubredditToolbarSearchViewController {
     func updateAccessibility() {
         tableView.accessibilityElementsHidden = !expanded
         searchBar.accessibilityElementsHidden = !expanded

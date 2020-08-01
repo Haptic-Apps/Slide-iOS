@@ -32,7 +32,6 @@ class LegacyMainViewController: MainViewController {
     }
     
     override func redoSubs() {
-        menuNav?.subsSource.reload()
         setupTabBar(finalSubs)
     }
     
@@ -240,7 +239,7 @@ class LegacyMainViewController: MainViewController {
             menuNav?.removeFromParent()
             menuNav = nil
         }
-        menuNav = NavigationSidebarViewController(controller: self)
+        //menuNav = NavigationSidebarViewController(controller: self)
 
         toolbar = UITouchCapturingView()
         toolbar!.layer.cornerRadius = 15

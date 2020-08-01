@@ -92,7 +92,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var alertController: UIAlertController?
     var tempToken: OAuth2Token?
 
-    var menuNav: NavigationSidebarViewController?
+    var menuNav: SubredditToolbarSearchViewController?
 
     var currentTitle = "Slide"
 

@@ -232,7 +232,7 @@
 		BE6EA6E81E1DA86100E9E709 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6EA6E71E1DA86100E9E709 /* ProfileViewController.swift */; };
 		BE7360A11FB9089B00CA32AD /* TapBehindModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7360A01FB9089B00CA32AD /* TapBehindModalViewController.swift */; };
 		BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439E81E201AEE008BB63B /* Subscriptions.swift */; };
-		BE7439EB1E201BB0008BB63B /* NavigationSidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EA1E201BB0008BB63B /* NavigationSidebarViewController.swift */; };
+		BE7439EB1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EA1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift */; };
 		BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EC1E201C22008BB63B /* SubredditCellView.swift */; };
 		BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F21E20C9BD008BB63B /* CommentCellView.swift */; };
 		BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F41E2162A8008BB63B /* AccountController.swift */; };
@@ -658,7 +658,7 @@
 		BE6EA6E71E1DA86100E9E709 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		BE7360A01FB9089B00CA32AD /* TapBehindModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapBehindModalViewController.swift; sourceTree = "<group>"; };
 		BE7439E81E201AEE008BB63B /* Subscriptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscriptions.swift; sourceTree = "<group>"; };
-		BE7439EA1E201BB0008BB63B /* NavigationSidebarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationSidebarViewController.swift; sourceTree = "<group>"; };
+		BE7439EA1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditToolbarSearchViewController.swift; sourceTree = "<group>"; };
 		BE7439EC1E201C22008BB63B /* SubredditCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditCellView.swift; sourceTree = "<group>"; };
 		BE7439F21E20C9BD008BB63B /* CommentCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellView.swift; sourceTree = "<group>"; };
 		BE7439F41E2162A8008BB63B /* AccountController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
@@ -1282,7 +1282,7 @@
 				B776BECBFCB8F58AC234156A /* ModerationViewController.swift */,
 				B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */,
 				B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */,
-				BE7439EA1E201BB0008BB63B /* NavigationSidebarViewController.swift */,
+				BE7439EA1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift */,
 				BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */,
 				BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */,
 				BE6EA6E51E1DA5CE00E9E709 /* ProfileContributionLoader.swift */,
@@ -2059,7 +2059,7 @@
 				BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */,
 				BE1DA5C6220803BB001C7DB4 /* UIAlert+Extensions.swift in Sources */,
 				BE8AE94721F922F400E1C0D1 /* ColorPickerViewController.swift in Sources */,
-				BE7439EB1E201BB0008BB63B /* NavigationSidebarViewController.swift in Sources */,
+				BE7439EB1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift in Sources */,
 				BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */,
 				0965260B20E2987800EA53BE /* UISearchBar+Extensions.swift in Sources */,
 				BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */,
