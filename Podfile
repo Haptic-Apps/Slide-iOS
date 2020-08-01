@@ -31,7 +31,6 @@ target 'Slide for Reddit' do
   pod 'RealmSwift'
   pod 'Anchorage', '~>4.3'
   pod 'Then'
-  pod 'SwiftLint'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
   pod 'TGPControls'
 
@@ -61,3 +60,5 @@ target 'Slide for Reddit' do
   end
 
 end
+
+pod 'SwiftLint'
