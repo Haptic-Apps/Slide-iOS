@@ -28,7 +28,7 @@ class NavigationHomeViewController: UIViewController {
     var muxColor = ColorUtil.theme.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
-    static var edgeGesture: UIScreenEdgePanGestureRecognizer?
+    static var edgeGesture: UIPanGestureRecognizer?
 
     var subsSource = SubscribedSubredditsSectionProvider()
 
@@ -107,6 +107,23 @@ class NavigationHomeViewController: UIViewController {
         updateAccessibility()
         searchBar.isUserInteractionEnabled = true
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            NavigationHomeViewController.edgeGesture = UIPanGestureRecognizer()
+            NavigationHomeViewController.edgeGesture!.addTarget(nav, action: #selector(nav.handleRightSwipeFull(_:)))
+            NavigationHomeViewController.edgeGesture!.delegate = nav
+            view.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
+            if #available(iOS 13.4, *) {
+                NavigationHomeViewController.edgeGesture!.allowedScrollTypesMask = .continuous
+            }
+            
+        }
+        /*if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) { //DISABLE for now
+            NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
+            NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
+            NavigationHomeViewController.edgeGesture!.delegate = nav
+            sectionIndex.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
+        }*/
     }
 
     @objc func onThemeChanged() {
@@ -197,12 +214,6 @@ class NavigationHomeViewController: UIViewController {
         if SettingValues.autoKeyboard {
             //TODO enable this? searchBar.becomeFirstResponder()
         }
-        if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) {
-            NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
-            NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
-            NavigationHomeViewController.edgeGesture!.delegate = nav
-            sectionIndex.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
-        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -212,7 +223,6 @@ class NavigationHomeViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         searchBar.endEditing(true)
-        NavigationHomeViewController.edgeGesture = nil
     }
 
     func configureViews() {

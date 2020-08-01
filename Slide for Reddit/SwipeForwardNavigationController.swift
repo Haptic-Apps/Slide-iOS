@@ -103,6 +103,28 @@ class SwipeForwardNavigationController: UINavigationController {
         }
     }
     
+    @objc func handleRightSwipeFull(_ swipeGestureRecognizer: UIPanGestureRecognizer?) {
+        let view = self.view!
+        let progress = abs(-(swipeGestureRecognizer?.translation(in: view).x ?? 0.0) / view.frame.size.width) // 1.0 When the pushable vc has been pulled into place
+
+        // Start, update, or finish the interactive push transition
+        switch swipeGestureRecognizer?.state {
+        case .began:
+            pushNextViewControllerFromRight(nil)
+        case .changed:
+            percentDrivenInteractiveTransition?.update(progress)
+        case .ended:
+            // Figure out if we should finish the transition or not
+            handleEdgeSwipeEnded(withProgress: progress, velocity: swipeGestureRecognizer?.velocity(in: view).x ?? 0)
+        case .failed:
+            percentDrivenInteractiveTransition?.cancel()
+        case .cancelled, .possible:
+            fallthrough
+        default:
+            break
+        }
+    }
+
     func handleEdgeSwipeEnded(withProgress progress: CGFloat, velocity: CGFloat) {
         // kSWGestureVelocityThreshold threshold indicates how hard the finger has to flick left to finish the push transition
         if velocity < 0 && (progress > 0.5 || velocity < -500) {
@@ -125,10 +147,6 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
         }
 
         return shouldBegin
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return gestureRecognizer == interactivePopGestureRecognizer && viewControllers.count > 1
     }
 }
     
