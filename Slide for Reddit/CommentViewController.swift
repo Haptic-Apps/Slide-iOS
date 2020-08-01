@@ -32,44 +32,26 @@ class CommentViewController: MediaViewController {
     public var linkCellViewDelegate: CommentLinkCellViewDelegate!
     // TTTAttributed Cell Delegate
     public var tttAttributedCellDelegate: CommentTTTAttributedCellDelegate!
-    /// Decides theme of Comment Cell
+    
     var version = 0
     var menuCell: CommentDepthCell?
     var menuId: String?
-    public var inHeadView = UIView()
-    /// Sets comment colors
-    var commentDepthColors = [UIColor]()
-    var pan: UIPanGestureRecognizer!
-    /// Comment table view pan gesture
-    var panGesture: UIPanGestureRecognizer!
+    
     var translatingCell: CommentDepthCell?
     var didDisappearCompletely = false
     var live = false
-    var liveTimer = Timer()
-    var refreshControl: UIRefreshControl!
-    var tableView: UITableView!
     
-    var sortButton = UIButton()
-
-    var jump: UIView!
-    //
-    var progressDot = UIView()
-    //
     var parents: [String: String] = [:]
     var approved: [String] = []
     var removed: [String] = []
     var offline = false
     var np = false
     var modLink = ""
-
-    var authorColor: UIColor = ColorUtil.theme.fontColor
-    //
+    
     var oldPosition: CGPoint = CGPoint.zero
-    //
-    var searchBar = UISearchBar()
-    //
+    
     var shouldAnimateLoad = false
-    //
+    
     var submission: RSubmission?
     var session: Session?
     var cDepth: Dictionary = [String: Int]()
@@ -85,39 +67,108 @@ class CommentViewController: MediaViewController {
     var dataArray: [String] = []
     var filteredData: [String] = []
     var content: Dictionary = [String: Object]()
-    //
+    
     var sort: CommentSort = SettingValues.defaultCommentSorting
-    //
+    
     var reset = false
     var indicatorSet = false
-    //
+    
     var loaded = false
 
     var lastSeen: Double = NSDate().timeIntervalSince1970
-    var savedTitleView: UIView?
-    var savedHeaderView: UIView?
-    //
-    var moreB = UIBarButtonItem()
-    var modB = UIBarButtonItem()
-    //
+    
     var indicator: MDCActivityIndicator = MDCActivityIndicator()
-    //
-    var savedBack: UIBarButtonItem?
-    //
-    var normalInsets = UIEdgeInsets(top: 0, left: 0, bottom: 45, right: 0)
-    //
+    
     var keyboardHeight = CGFloat(0)
-    //
+    
     var single = true
     var hasDone = false
     var configuredOnce = false
-    //
+    
     var subreddit = ""
+
+    var forceLoad = false
+    var startedOnce = false
+    
+    var duringAnimation = false
+    var finishedPush = false
+    
+    var sub: String = ""
+    var allCollapsed = false
+
+    var subInfo: Subreddit?
+    // Background View
+    private var blurView: UIVisualEffectView?
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+    private var blackView = UIView()
+    
+    var text: [String: NSAttributedString]
+    
+    var currentSort: CommentNavType = .PARENTS
+    
+    var goingToCell = false
+    
+    var lastMoved = -1
+    var isGoingDown = false
+    
+    var tagText: String?
+    
+    var isCurrentlyChanging = false
+    
+    var lastYUsed = CGFloat(0)
+    var isToolbarHidden = false
+    var isHiding = false
+    var lastY = CGFloat(0)
+    var oldY = CGFloat(0)
+    
+    var isSearch = false
+    
+    var oldHeights = [String: CGFloat]()
+    
+    var isSearching = false
+    
+    var isReply = false
+    // MARK: - UI Properties
+    public var inHeadView = UIView()
+    var commentDepthColors = [UIColor]()
+    var pan: UIPanGestureRecognizer!
+    var panGesture: UIPanGestureRecognizer!
+    var liveTimer = Timer()
+    var refreshControl: UIRefreshControl!
+    var tableView: UITableView!
+    var sortButton = UIButton()
+
+    var jump: UIView!
+
+    var progressDot = UIView()
+    var authorColor: UIColor = ColorUtil.theme.fontColor
+    var searchBar = UISearchBar()
+    var savedTitleView: UIView?
+    var savedHeaderView: UIView?
+    
+    var moreB = UIBarButtonItem()
+    var modB = UIBarButtonItem()
+    var savedBack: UIBarButtonItem?
+    
+    var normalInsets = UIEdgeInsets(top: 0, left: 0, bottom: 45, right: 0)
+    var sortB: UIBarButtonItem!
+    var searchB: UIBarButtonItem!
+    var liveB: UIBarButtonItem!
+    
+    var activityIndicator = UIActivityIndicatorView()
     
     override var prefersStatusBarHidden: Bool {
         return SettingValues.fullyHideNavbar
     }
 
+    override var navigationItem: UINavigationItem {
+        if parent != nil && parent! is PagingCommentViewController {
+            return parent!.navigationItem
+        } else {
+            return super.navigationItem
+        }
+    }
+    
     override var keyCommands: [UIKeyCommand]? {
         if isReply {
             return []
@@ -132,15 +183,346 @@ class CommentViewController: MediaViewController {
             ]
         }
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+                        if #available(iOS 13, *) {
+                return .darkContent
+            } else {
+                return .default
+            }
 
-    override var navigationItem: UINavigationItem {
-        if parent != nil && parent! is PagingCommentViewController {
-            return parent!.navigationItem
         } else {
-            return super.navigationItem
+            return .lightContent
         }
     }
-    // Table view
+    
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    // MARK: - Initializations
+    init(submission: RSubmission, single: Bool) {
+        self.submission = submission
+        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
+        self.single = single
+        self.text = [:]
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
+    }
+
+    init(submission: RSubmission) {
+        self.submission = submission
+        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
+        self.text = [:]
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
+    }
+
+    init(submission: String, subreddit: String?, np: Bool = false) {
+        self.submission = RSubmission()
+        self.np = np
+        self.submission!.name = submission
+        self.submission!.id = submission.startsWith("t3") ? submission : ("t3_" + submission)
+
+        hasSubmission = false
+        if subreddit != nil {
+            self.subreddit = subreddit!
+            self.sort = SettingValues.getCommentSorting(forSubreddit: self.subreddit)
+            self.submission!.subreddit = subreddit!
+        }
+        self.text = [:]
+        super.init(nibName: nil, bundle: nil)
+        if subreddit != nil {
+            self.title = subreddit!
+            setBarColors(color: ColorUtil.getColorForSub(sub: subreddit!))
+        }
+    }
+
+    init(submission: String, comment: String, context: Int, subreddit: String, np: Bool = false) {
+        self.submission = RSubmission()
+        self.sort = SettingValues.getCommentSorting(forSubreddit: self.submission!.subreddit)
+        self.submission!.name = submission
+        self.submission!.subreddit = subreddit
+        hasSubmission = false
+        self.context = comment
+        self.np = np
+        self.text = [:]
+        self.contextNumber = context
+        super.init(nibName: nil, bundle: nil)
+        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // De-Initialization of View
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.tableView = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
+        commentTableViewDelegate = CommentTableViewDelegate(parentController: self)
+        self.tableView.delegate = commentTableViewDelegate
+        commentTableViewDataSource = CommentTableViewDataSource(parentController: self)
+        self.tableView.dataSource = commentTableViewDataSource
+        self.view = UIView.init(frame: CGRect.zero)
+        self.view.addSubview(tableView)
+
+        tableView.verticalAnchors == view.verticalAnchors
+        tableView.horizontalAnchors == view.safeHorizontalAnchors
+
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.registerForPreviewing(with: self, sourceView: self.tableView)
+
+        self.tableView.allowsSelection = false
+        //self.tableView.layer.speed = 1.5
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        refreshControl = UIRefreshControl()
+        refreshControl?.tintColor = ColorUtil.theme.fontColor
+        refreshControl?.attributedTitle = NSAttributedString(string: "")
+        refreshControl?.addTarget(self, action: #selector(CommentViewController.refreshComments(_:)), for: UIControl.Event.valueChanged)
+        var top = CGFloat(64)
+        let bottom = CGFloat(45)
+        if #available(iOS 11.0, *) {
+            top = 0
+        }
+        tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
+        tableView.addSubview(refreshControl!)
+
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
+        
+        commentSearchBarDelegate = CommentSearchBarDelegate(parentController: self)
+        searchBar.delegate = commentSearchBarDelegate
+        searchBar.searchBarStyle = UISearchBar.Style.minimal
+        searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
+        searchBar.showsCancelButton = false
+        if !ColorUtil.theme.isLight {
+            searchBar.keyboardAppearance = .dark
+        }
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
+
+        tableView.estimatedRowHeight = 200
+        tableView.rowHeight = UITableView.automaticDimension
+
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
+
+        tableView.separatorStyle = .none
+        NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWillShow(_:)),
+                name: UIResponder.keyboardWillShowNotification,
+                object: nil
+        )
+        NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWillHide(_:)),
+                name: UIResponder.keyboardWillHideNotification,
+                object: nil)
+
+        headerCell = FullLinkCellView()
+        linkCellViewDelegate = CommentLinkCellViewDelegate(parentController: self)
+        headerCell!.del = linkCellViewDelegate
+        headerCell!.parentViewController = self
+        headerCell!.aspectWidth = self.tableView.bounds.size.width
+
+        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
+        panGesture.direction = .horizontal
+        panGesture.delegate = self
+        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+           //navGesture.require(toFail: panGesture)
+        }
+        self.presentationController?.delegate = self
+//        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
+//        pan.direction = .horizontal
+        if !loaded && (single || forceLoad) {
+            refreshComments(self)
+        }
+        
+        self.tableView.addGestureRecognizer(panGesture)
+        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
+            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+        }
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        // Link Cell View Delegate
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.isHiding = true
+        
+        if navigationController != nil {
+            sortButton = UIButton.init(type: .custom)
+            sortButton.accessibilityLabel = "Change sort type"
+            sortButton.addTarget(self, action: #selector(self.sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            sortB = UIBarButtonItem.init(customView: sortButton)
+            
+            doSortImage(sortButton)
+
+            let search = UIButton.init(type: .custom)
+            search.accessibilityLabel = "Search"
+            search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
+            search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
+            search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            searchB = UIBarButtonItem.init(customView: search)
+            
+            navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
+            if !loaded {
+                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
+                if self.navigationController == nil {
+                    self.view.addSubview(activityIndicator)
+                    activityIndicator.centerAnchors == self.view.centerAnchors
+                } else {
+                    let barButton = UIBarButtonItem(customView: activityIndicator)
+                    navigationItem.rightBarButtonItems = [barButton]
+                }
+                activityIndicator.startAnimating()
+            } else {
+                navigationItem.rightBarButtonItems = [sortB, searchB]
+            }
+        } else {
+            if !loaded {
+                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                activityIndicator.color = ColorUtil.theme.navIconColor
+                self.view.addSubview(activityIndicator)
+                activityIndicator.centerAnchors == self.view.centerAnchors
+                activityIndicator.startAnimating()
+            }
+        }
+        
+        initialSetup()
+
+        if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
+            headerCell.videoView?.player?.play()
+        }
+        
+        if isSearching {
+            isSearching = false
+            tableView.reloadData()
+        }
+        
+        setNeedsStatusBarAppearanceUpdate()
+        if navigationController != nil && (didDisappearCompletely || !loaded) {
+            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
+            self.updateToolbar()
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if hasSubmission && self.view.frame.size.width != 0 {
+
+            guard let headerCell = headerCell else {
+                return
+            }
+            if !configuredOnce {
+                headerCell.aspectWidth = self.view.frame.size.width
+                headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
+                if submission!.isSelf {
+                    headerCell.showBody(width: self.view.frame.size.width - 24)
+                }
+                configuredOnce = true
+            }
+
+            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
+            // Add safe area insets to left and right if available
+            if #available(iOS 11.0, *) {
+                frame = frame.insetBy(dx: max(view.safeAreaInsets.left, view.safeAreaInsets.right), dy: 0)
+            }
+
+            if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
+                headerCell.contentView.frame = frame
+                headerCell.contentView.layoutIfNeeded()
+                let view = UIView(frame: headerCell.contentView.frame)
+                view.addSubview(headerCell.contentView)
+                self.tableView.tableHeaderView = view
+            }
+
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
+            self.navigationController!.view.backgroundColor = .clear
+        }
+        self.isHiding = false
+        didDisappearCompletely = false
+        let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
+
+        if isModal && self.navigationController is TapBehindModalViewController{
+            self.navigationController?.delegate = self
+            (self.navigationController as! TapBehindModalViewController).del = self
+        }
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        
+        if self.shouldAnimateLoad {
+            self.tableViewReloadingAnimation()
+            self.shouldAnimateLoad = false
+        }
+        self.finishedPush = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.isHiding = true
+        self.liveTimer.invalidate()
+        self.removeJumpButton()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        inHeadView.removeFromSuperview()
+        headerCell.endVideos()
+        self.didDisappearCompletely = true
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate(
+            alongsideTransition: { [unowned self] _ in
+                if let header = self.tableView.tableHeaderView {
+                    var frame = header.frame
+                    var leftInset: CGFloat = 0
+                    var rightInset: CGFloat = 0
+
+                    if #available(iOS 11.0, *) {
+                        leftInset = self.tableView.safeAreaInsets.left
+                        rightInset = self.tableView.safeAreaInsets.right
+                        frame.origin.x = leftInset
+                    } else {
+                        // Fallback on earlier versions
+                    }
+
+                    self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
+
+                    frame.size.width = size.width - (leftInset + rightInset)
+                    frame.size.height = self.headerCell!.estimateHeight(true, true, np: self.np)
+
+                    self.headerCell!.contentView.frame = frame
+                    self.tableView.tableHeaderView!.frame = frame
+                    //self.tableView.reloadData(with: .none)
+                    self.doHeadView(size)
+                    self.view.setNeedsLayout()
+                }
+            }, completion: nil)
+    }
+    
+    // MARK: - Public Functions
+    /// Adds button to move down through comment section.
     func createJumpButton(_ forced: Bool = false) {
         if SettingValues.commentJumpButton == .DISABLED {
             return
@@ -165,10 +547,10 @@ class CommentViewController: MediaViewController {
                 jump.addSubview(image)
                 image.edgeAnchors == jump.edgeAnchors
                 jump.addTapGestureRecognizer {
-                    self.goDown(self.jump)
+                    self.scrollDown(self.jump)
                 }
                 jump.addLongTapGestureRecognizer {
-                    self.goUp(self.jump)
+                    self.scrollUp(self.jump)
                 }
             }
             
@@ -190,6 +572,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    /// Removes the button that jumps through comment section.
     func removeJumpButton() {
         if SettingValues.commentJumpButton == .DISABLED {
             return
@@ -213,7 +596,9 @@ class CommentViewController: MediaViewController {
         return true
     }
     
-    func setLive() {
+    // MARK: - Live Mode
+    /// When called it enables the barButtonItem activityIndicator while loading incoming comments.
+    func startLiveActivityIndicatorAnimation() {
         self.sort = .new
         self.live = true
         self.reset = true
@@ -222,10 +607,11 @@ class CommentViewController: MediaViewController {
         self.navigationItem.rightBarButtonItems = [barButton]
         self.activityIndicator.startAnimating()
         
-        self.refresh(self)
+        self.refreshComments(self)
     }
     
-    func startPulse() {
+    /// Animation given to barButtonItem while live comments come in.
+    func startPulseAnimation() {
         self.progressDot = UIView()
         progressDot.alpha = 0.7
         progressDot.backgroundColor = .clear
@@ -279,7 +665,8 @@ class CommentViewController: MediaViewController {
         progressDot.layer.add(fadeAnimation, forKey: "fade")
     }
     
-    @objc func loadNewComments() {
+    /// Loads and inserts incoming live comments.
+    @objc func loadLiveComments() {
         var name = submission!.name
         if name.contains("t3_") {
             name = name.replacingOccurrences(of: "t3_", with: "")
@@ -352,62 +739,13 @@ class CommentViewController: MediaViewController {
             
         }
     }
-
-    init(submission: RSubmission, single: Bool) {
-        self.submission = submission
-        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
-        self.single = single
-        self.text = [:]
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
-    }
-
-    init(submission: RSubmission) {
-        self.submission = submission
-        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
-        self.text = [:]
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
-    }
-
-    init(submission: String, subreddit: String?, np: Bool = false) {
-        self.submission = RSubmission()
-        self.np = np
-        self.submission!.name = submission
-        self.submission!.id = submission.startsWith("t3") ? submission : ("t3_" + submission)
-
-        hasSubmission = false
-        if subreddit != nil {
-            self.subreddit = subreddit!
-            self.sort = SettingValues.getCommentSorting(forSubreddit: self.subreddit)
-            self.submission!.subreddit = subreddit!
-        }
-        self.text = [:]
-        super.init(nibName: nil, bundle: nil)
-        if subreddit != nil {
-            self.title = subreddit!
-            setBarColors(color: ColorUtil.getColorForSub(sub: subreddit!))
-        }
-    }
-
-    init(submission: String, comment: String, context: Int, subreddit: String, np: Bool = false) {
-        self.submission = RSubmission()
-        self.sort = SettingValues.getCommentSorting(forSubreddit: self.submission!.subreddit)
-        self.submission!.name = submission
-        self.submission!.subreddit = subreddit
-        hasSubmission = false
-        self.context = comment
-        self.np = np
-        self.text = [:]
-        self.contextNumber = context
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
-    }
     
+    /// Undefined
     internal func pushedMoreButton(_ cell: CommentDepthCell) {
 
     }
-
+    // TODO: What does this do?
+    /// To be determined
     func doHeadView(_ size: CGSize) {
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
@@ -420,7 +758,8 @@ class CommentViewController: MediaViewController {
             self.navigationController?.view.addSubview(inHeadView)
         }
     }
-
+    
+    /// Not Implemented: Saves a comment.
     func saveComment(_ comment: RComment) {
         do {
             let state = !ActionStates.isSaved(s: comment)
@@ -434,7 +773,8 @@ class CommentViewController: MediaViewController {
 
         }
     }
-
+    
+    /// Not Implemented: Fixes table view heights.
     func reloadHeights() {
         //UIView.performWithoutAnimation {
             tableView.beginUpdates()
@@ -442,6 +782,7 @@ class CommentViewController: MediaViewController {
        // }
     }
     
+    /// Not Implemented
     func reloadHeightsNone() {
         UIView.performWithoutAnimation {
             tableView.beginUpdates()
@@ -449,6 +790,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Not Implemented
     func prepareReply() {
         tableView.beginUpdates()
         tableView.endUpdates()
@@ -465,22 +807,23 @@ class CommentViewController: MediaViewController {
         }*/
     }
 
+    /// Filters comments not hidden.
     func doArrays() {
         dataArray = comments.filter({ (s) -> Bool in
             !hidden.contains(s)
         })
     }
 
+    /// Returns self.
     func getSelf() -> CommentViewController {
         return self
     }
     
+    /// Loads cached data for offline use.
     func loadOffline() {
         self.loaded = true
-        DispatchQueue.main.async {
-            self.offline = true
+        self.offline = true
             do {
-                
                 let realm = try Realm()
                 if let listing = realm.objects(RSubmission.self).filter({ (item) -> Bool in
                     return item.id == self.submission!.id
@@ -533,12 +876,11 @@ class CommentViewController: MediaViewController {
                 }
             } catch {
                 BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
-            }
         }
-
     }
     
-    @objc func refresh(_ sender: AnyObject) {
+    /// Refreshes comments
+    @objc func refreshComments(_ sender: AnyObject) {
         self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
@@ -620,7 +962,7 @@ class CommentViewController: MediaViewController {
                             if !self.comments.isEmpty {
                                 do {
                                     let realm = try Realm()
-                                   // TODO: - insert
+                                   // TODO: insert
                                     realm.beginWrite()
                                     for comment in self.comments {
                                         if let content = self.content[comment] {
@@ -703,8 +1045,8 @@ class CommentViewController: MediaViewController {
                                 self.refreshControl?.endRefreshing()
                                 self.activityIndicator.stopAnimating()
                                 if self.live {
-                                    self.liveTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.loadNewComments), userInfo: nil, repeats: true)
-                                    self.startPulse()
+                                    self.liveTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.loadLiveComments), userInfo: nil, repeats: true)
+                                    self.startPulseAnimation()
                                 } else {
                                     if self.sortB != nil && self.searchB != nil {
                                         self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
@@ -757,7 +1099,7 @@ class CommentViewController: MediaViewController {
                                     self.collapseAll()
                                 } else {
                                     if self.finishedPush {
-                                        self.reloadTableViewAnimated()
+                                        self.tableViewReloadingAnimation()
                                     } else {
                                         self.shouldAnimateLoad = true
                                     }
@@ -774,6 +1116,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    /// Sets up the navigationTitleView to be of the inserted parameters values.
     func setupTitleView(_ sub: String, icon: String) {
         let label = UILabel()
         label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
@@ -828,6 +1171,7 @@ class CommentViewController: MediaViewController {
         })
     }
 
+    /// Enables searching of comments.
     func showSearchBar() {
         searchBar.alpha = 0
         
@@ -859,6 +1203,7 @@ class CommentViewController: MediaViewController {
         })
     }
 
+    /// Hides search bar and adds barButtonItems.
     func hideSearchBar() {
         if let header = savedHeaderView {
             navigationController?.setNavigationBarHidden(false, animated: true)
@@ -868,7 +1213,7 @@ class CommentViewController: MediaViewController {
         
         searchBar.tintColor = ColorUtil.theme.fontColor
         sortButton = UIButton.init(type: .custom)
-        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.addTarget(self, action: #selector(self.sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
         sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sortButton)
 
@@ -888,8 +1233,9 @@ class CommentViewController: MediaViewController {
         isSearching = false
         tableView.reloadData()
     }
-
-    @objc func sort(_ selector: UIButton?) {
+    
+    /// Action to display sorting comments view.
+    @objc func sortCommentsAction(_ selector: UIButton?) {
         if !offline {
             let isDefault = UISwitch()
             isDefault.onTintColor = ColorUtil.accentColorForSub(sub: self.sub)
@@ -944,7 +1290,7 @@ class CommentViewController: MediaViewController {
                     
                     self.doSortImage(self.sortButton)
 
-                    self.refresh(self)
+                    self.refreshComments(self)
                 }
             }
 
@@ -962,113 +1308,18 @@ class CommentViewController: MediaViewController {
                 
                 self.doSortImage(self.sortButton)
 
-                self.refresh(self)
+                self.refreshComments(self)
             }
 
             actionSheetController.addAction(title: "Live (beta)", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
-                self.setLive()
+                self.startLiveActivityIndicatorAnimation()
             }
             
             actionSheetController.show(self)
         }
     }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.tableView = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
-        commentTableViewDelegate = CommentTableViewDelegate(parentController: self)
-        self.tableView.delegate = commentTableViewDelegate
-        commentTableViewDataSource = CommentTableViewDataSource(parentController: self)
-        self.tableView.dataSource = commentTableViewDataSource
-        self.view = UIView.init(frame: CGRect.zero)
-        self.view.addSubview(tableView)
-
-        tableView.verticalAnchors == view.verticalAnchors
-        tableView.horizontalAnchors == view.safeHorizontalAnchors
-
-        self.automaticallyAdjustsScrollViewInsets = false
-        self.registerForPreviewing(with: self, sourceView: self.tableView)
-
-        self.tableView.allowsSelection = false
-        //self.tableView.layer.speed = 1.5
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
-        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
-        refreshControl = UIRefreshControl()
-        refreshControl?.tintColor = ColorUtil.theme.fontColor
-        refreshControl?.attributedTitle = NSAttributedString(string: "")
-        refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControl.Event.valueChanged)
-        var top = CGFloat(64)
-        let bottom = CGFloat(45)
-        if #available(iOS 11.0, *) {
-            top = 0
-        }
-        tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        tableView.addSubview(refreshControl!)
-
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
-        
-        commentSearchBarDelegate = CommentSearchBarDelegate(parentController: self)
-        searchBar.delegate = commentSearchBarDelegate
-        searchBar.searchBarStyle = UISearchBar.Style.minimal
-        searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
-        searchBar.showsCancelButton = false
-        if !ColorUtil.theme.isLight {
-            searchBar.keyboardAppearance = .dark
-        }
-
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
-
-        tableView.estimatedRowHeight = 200
-        tableView.rowHeight = UITableView.automaticDimension
-
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
-
-        tableView.separatorStyle = .none
-        NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(keyboardWillShow(_:)),
-                name: UIResponder.keyboardWillShowNotification,
-                object: nil
-        )
-        NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(keyboardWillHide(_:)),
-                name: UIResponder.keyboardWillHideNotification,
-                object: nil)
-
-        headerCell = FullLinkCellView()
-        linkCellViewDelegate = CommentLinkCellViewDelegate(parentController: self)
-        headerCell!.del = linkCellViewDelegate
-        headerCell!.parentViewController = self
-        headerCell!.aspectWidth = self.tableView.bounds.size.width
-
-        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
-        panGesture.direction = .horizontal
-        panGesture.delegate = self
-        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-           //navGesture.require(toFail: panGesture)
-        }
-        self.presentationController?.delegate = self
-//        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
-//        pan.direction = .horizontal
-        if !loaded && (single || forceLoad) {
-            refresh(self)
-        }
-        
-        self.tableView.addGestureRecognizer(panGesture)
-        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
-            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-        }
-        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
-        // Link Cell View Delegate
-    }
-
+    
+    // TODO: What does this do?
     @objc func onThemeChanged() {
         version += 1
         
@@ -1110,7 +1361,7 @@ class CommentViewController: MediaViewController {
         self.tableView.reloadData()
         
         sortButton = UIButton.init(type: .custom)
-        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.addTarget(self, action: #selector(self.sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
         sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sortButton)
 
@@ -1145,7 +1396,8 @@ class CommentViewController: MediaViewController {
             }
         }
     }
-
+    
+    /// Not implemented.
     @objc func cancelTapped() {
         hideSearchBar()
     }
@@ -1175,12 +1427,12 @@ class CommentViewController: MediaViewController {
 //
 //        case .cancelled, .failed:
 //            UIPercentDrivenInteractiveTransition.cancelInteractiveTransition()
-//            
+//
 //        default:
 //            break
 //        }
 //    }
-
+    /// Modifies height of table view to accommodate keyboard showing.
     @objc func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
@@ -1196,6 +1448,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Modifies height of table view to accommodate keyboard disappearing.
     @objc func keyboardWillHide(_ notification: Notification) {
         var top = CGFloat(64)
         let bottom = CGFloat(45)
@@ -1205,54 +1458,8 @@ class CommentViewController: MediaViewController {
         tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        if hasSubmission && self.view.frame.size.width != 0 {
-
-            guard let headerCell = headerCell else {
-                return
-            }
-            if !configuredOnce {
-                headerCell.aspectWidth = self.view.frame.size.width
-                headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
-                if submission!.isSelf {
-                    headerCell.showBody(width: self.view.frame.size.width - 24)
-                }
-                configuredOnce = true
-            }
-
-            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
-            // Add safe area insets to left and right if available
-            if #available(iOS 11.0, *) {
-                frame = frame.insetBy(dx: max(view.safeAreaInsets.left, view.safeAreaInsets.right), dy: 0)
-            }
-
-            if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
-                headerCell.contentView.frame = frame
-                headerCell.contentView.layoutIfNeeded()
-                let view = UIView(frame: headerCell.contentView.frame)
-                view.addSubview(headerCell.contentView)
-                self.tableView.tableHeaderView = view
-            }
-
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    // MARK: - Table view data source
-
-    var forceLoad = false
-    var startedOnce = false
-    
-    func doStartupItems() {
+    /// Comment view initial setup.
+    func initialSetup() {
         if !startedOnce {
             startedOnce = true
             (navigationController)?.setNavigationBarHidden(false, animated: false)
@@ -1276,116 +1483,8 @@ class CommentViewController: MediaViewController {
         }
     }
     
-    var sortB: UIBarButtonItem!
-    var searchB: UIBarButtonItem!
-    var liveB: UIBarButtonItem!
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.isHiding = true
-        
-        if navigationController != nil {
-            sortButton = UIButton.init(type: .custom)
-            sortButton.accessibilityLabel = "Change sort type"
-            sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            sortB = UIBarButtonItem.init(customView: sortButton)
-            
-            doSortImage(sortButton)
-
-            let search = UIButton.init(type: .custom)
-            search.accessibilityLabel = "Search"
-            search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
-            search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
-            search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            searchB = UIBarButtonItem.init(customView: search)
-            
-            navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
-            if !loaded {
-                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
-                if self.navigationController == nil {
-                    self.view.addSubview(activityIndicator)
-                    activityIndicator.centerAnchors == self.view.centerAnchors
-                } else {
-                    let barButton = UIBarButtonItem(customView: activityIndicator)
-                    navigationItem.rightBarButtonItems = [barButton]
-                }
-                activityIndicator.startAnimating()
-            } else {
-                navigationItem.rightBarButtonItems = [sortB, searchB]
-            }
-        } else {
-            if !loaded {
-                activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                activityIndicator.color = ColorUtil.theme.navIconColor
-                self.view.addSubview(activityIndicator)
-                activityIndicator.centerAnchors == self.view.centerAnchors
-                activityIndicator.startAnimating()
-            }
-        }
-        
-        doStartupItems()
-
-        if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
-            headerCell.videoView?.player?.play()
-        }
-        
-        if isSearching {
-            isSearching = false
-            tableView.reloadData()
-        }
-        
-        setNeedsStatusBarAppearanceUpdate()
-        if navigationController != nil && (didDisappearCompletely || !loaded) {
-            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
-            self.updateToolbar()
-        }
-    }
-    
-    var activityIndicator = UIActivityIndicatorView()
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
-                        if #available(iOS 13, *) {
-                return .darkContent
-            } else {
-                return .default
-            }
-
-        } else {
-            return .lightContent
-        }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
-            self.navigationController!.view.backgroundColor = .clear
-        }
-        self.isHiding = false
-        didDisappearCompletely = false
-        let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
-
-        if isModal && self.navigationController is TapBehindModalViewController{
-            self.navigationController?.delegate = self
-            (self.navigationController as! TapBehindModalViewController).del = self
-        }
-        
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
-        
-        if self.shouldAnimateLoad {
-            self.reloadTableViewAnimated()
-            self.shouldAnimateLoad = false
-        }
-        self.finishedPush = true
-    }
- 
-    var duringAnimation = false
-    var finishedPush = false
-    
-    func reloadTableViewAnimated() {
+    /// Animation for table view reloading.
+    func tableViewReloadingAnimation() {
         self.tableView.reloadData()
 
         let cells = self.tableView.visibleCells
@@ -1400,18 +1499,21 @@ class CommentViewController: MediaViewController {
             row += 1
         }
     }
-
-    @objc func close(_ sender: AnyObject) {
+    
+    /// Dismissing top view controller.
+    @objc func dismissTopController(_ sender: AnyObject) {
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc func showMod(_ sender: AnyObject) {
+    /// Shows link if there is one.
+    @objc func showRedditLink(_ sender: AnyObject) {
         if !modLink.isEmpty() {
             VCPresenter.openRedditLink(self.modLink, self.navigationController, self)
         }
     }
     
-    @objc func showMenu(_ sender: AnyObject) {
+    
+    @objc func showOptionsMenu(_ sender: AnyObject) {
         if !offline {
             let link = submission!
 
@@ -1419,7 +1521,7 @@ class CommentViewController: MediaViewController {
 
             alertController.addAction(title: "Refresh comments", icon: UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "sync")!.menuIcon()) {
                 self.reset = true
-                self.refresh(self)
+                self.refreshComments(self)
             }
 
             alertController.addAction(title: "Reply to submission", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
@@ -1451,19 +1553,16 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    var sub: String = ""
-    var allCollapsed = false
-
-    var subInfo: Subreddit?
-
+    /// Displays search capabilities
     @objc func search(_ sender: AnyObject) {
         if !dataArray.isEmpty {
             expandAll()
             showSearchBar()
         }
-        // Todo future loadAllMore()
+        // TODO: loadAllMore()
     }
 
+    /// TODO: What does this do?
     public func extendKeepMore(in comment: Thing, current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
 
@@ -1478,6 +1577,7 @@ class CommentViewController: MediaViewController {
         return buf
     }
 
+    /// TODO: What does this do?
     public func extendForMore(parentId: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
 
@@ -1510,10 +1610,7 @@ class CommentViewController: MediaViewController {
         return buf
     }
     
-    private var blurView: UIVisualEffectView?
-    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-    private var blackView = UIView()
-    
+    /// Enables dark blur view when menu or sorting buttons are tapped.
     func setBackgroundView() {
         blackView.backgroundColor = .black
         blackView.alpha = 0
@@ -1530,6 +1627,7 @@ class CommentViewController: MediaViewController {
         })
     }
     
+    // TODO: What does this do?
     func updateStrings(_ newComments: [(Thing, Int)]) {
         var color = UIColor.black
         var first = true
@@ -1547,6 +1645,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    // TODO: What does this do?
     func updateStringsTheme(_ comments: [AnyObject]) {
         var color = UIColor.black
         var first = true
@@ -1564,8 +1663,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    var text: [String: NSAttributedString]
-
+    // TODO: What does this do?
     func updateStringsSingle(_ newComments: [Object]) {
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0] as! RComment).subreddit))
         for thing in newComments {
@@ -1580,6 +1678,8 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Gives the vote from the user.
+    // Not Implemented
     func vote(_ direction: VoteDirection) {
         if let link = self.submission {
             do {
@@ -1597,28 +1697,34 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    /// Down voting comment
+    // Not Implemented
     @objc func downVote(_ sender: AnyObject?) {
         vote(.down)
     }
 
+    /// Down voting comment
+    // Not Implemented
     @objc func upVote(_ sender: AnyObject?) {
         vote(.up)
     }
 
+    /// Down voting comment
+    // Not Implemented
     @objc func cancelVote(_ sender: AnyObject?) {
         vote(.none)
     }
 
-    @objc func loadAll(_ sender: AnyObject) {
+    /// Refreshes the comments and UI.
+    @objc func refreshAll(_ sender: AnyObject) {
         context = ""
         reset = true
         refreshControl?.beginRefreshing()
-        refresh(sender)
+        refreshComments(sender)
         updateToolbar()
     }
-    
-    var currentSort: CommentNavType = .PARENTS
 
+    // TODO: This can be moved somewhere else
     enum CommentNavType {
         case PARENTS
         case GILDED
@@ -1627,32 +1733,30 @@ class CommentViewController: MediaViewController {
         case YOU
     }
 
-    func getCount(sort: CommentNavType) -> Int {
+    /// Retrieves contents count.
+    func getContentsCount(for sort: CommentNavType) -> Int {
         var count = 0
         for comment in dataArray {
             let contents = content[comment]
-            if contents is RComment && matches(comment: contents as! RComment, sort: sort) {
+            if contents is RComment && doesCommentTypeMatch(for: contents as! RComment, with: sort) {
                 count += 1
             }
         }
         return count
     }
-    
-    override var prefersHomeIndicatorAutoHidden: Bool {
-        return true
-    }
 
-    @objc func showNavTypes(_ sender: UIView) {
+    
+    @objc func showCommentNavigationTypes(_ sender: UIView) {
         if !loaded {
             return
         }
         let alertController = DragDownAlertMenu(title: "Comment navigation", subtitle: "Select a navigation type", icon: nil)
 
-        let link = getCount(sort: .LINK)
-        let parents = getCount(sort: .PARENTS)
-        let op = getCount(sort: .OP)
-        let gilded = getCount(sort: .GILDED)
-        let you = getCount(sort: .YOU)
+        let link = getContentsCount(for: .LINK)
+        let parents = getContentsCount(for: .PARENTS)
+        let op = getContentsCount(for: .OP)
+        let gilded = getContentsCount(for: .GILDED)
+        let you = getContentsCount(for: .YOU)
 
         alertController.addAction(title: "Top-level comments (\(parents))", icon: UIImage()) {
             self.currentSort = .PARENTS
@@ -1672,13 +1776,13 @@ class CommentViewController: MediaViewController {
         alertController.show(self)
     }
 
+    /// Scrolls to inputed cell.
     func goToCell(i: Int) {
         let indexPath = IndexPath(row: i, section: 0)
         self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
     
-    var goingToCell = false
-    
+    /// Scrolls to inputed cell top.
     func goToCellTop(i: Int) {
         isGoingDown = true
         let indexPath = IndexPath(row: i, section: 0)
@@ -1686,7 +1790,8 @@ class CommentViewController: MediaViewController {
         self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
     
-    @objc func goUp(_ sender: AnyObject) {
+    /// Scrolls up through comment section.
+    @objc func scrollUp(_ sender: AnyObject) {
         if !loaded || content.isEmpty {
             return
         }
@@ -1701,18 +1806,16 @@ class CommentViewController: MediaViewController {
         }
         var contents = content[dataArray[topCell]]
 
-        while (contents is RComment ?  !matches(comment: contents as! RComment, sort: currentSort) : true ) && dataArray.count > topCell && topCell - 1 >= 0 {
+        while (contents is RComment ?  !doesCommentTypeMatch(for: contents as! RComment, with: currentSort) : true ) && dataArray.count > topCell && topCell - 1 >= 0 {
             topCell -= 1
             contents = content[dataArray[topCell]]
         }
         goToCellTop(i: topCell)
         lastMoved = topCell
     }
-
-    var lastMoved = -1
-    var isGoingDown = false
     
-    @objc func goDown(_ sender: AnyObject) {
+    /// Scrolls down through comment section
+    @objc func scrollDown(_ sender: AnyObject) {
         if !loaded || content.isEmpty {
             return
         }
@@ -1739,7 +1842,7 @@ class CommentViewController: MediaViewController {
             }
             for i in (topCell + 1)..<(dataArray.count - 1) {
                 contents = content[dataArray[i]]
-                if contents is RComment && matches(comment: contents as! RComment, sort: currentSort) && i > lastMoved {
+                if contents is RComment && doesCommentTypeMatch(for: contents as! RComment, with: currentSort) && i > lastMoved {
                     goToCellTop(i: i)
                     lastMoved = i
                     break
@@ -1747,8 +1850,9 @@ class CommentViewController: MediaViewController {
             }
         }
     }
-
-    func matches(comment: RComment, sort: CommentNavType) -> Bool {
+    
+    /// Checks if the selected comment type matches.
+    func doesCommentTypeMatch(for comment: RComment, with sort: CommentNavType) -> Bool {
         switch sort {
         case .PARENTS:
             if cDepth[comment.getIdentifier()]! == 1 {
@@ -1784,6 +1888,7 @@ class CommentViewController: MediaViewController {
 
     }
 
+    // TODO: What does this do?
     func updateToolbar() {
         navigationController?.setToolbarHidden(false, animated: false)
         self.isToolbarHidden = false
@@ -1791,7 +1896,7 @@ class CommentViewController: MediaViewController {
         var items: [UIBarButtonItem] = []
         if !context.isEmpty() {
             items.append(space)
-            let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:)))
+            let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.refreshAll(_:)))
             loadFullThreadButton.accessibilityLabel = "Load full thread"
             items.append(loadFullThreadButton)
             items.append(space)
@@ -1799,35 +1904,35 @@ class CommentViewController: MediaViewController {
             let up = UIButton(type: .custom)
             up.accessibilityLabel = "Navigate up one comment thread"
             up.setImage(UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up")?.toolbarIcon(), for: UIControl.State.normal)
-            up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
+            up.addTarget(self, action: #selector(CommentViewController.scrollUp(_:)), for: UIControl.Event.touchUpInside)
             up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let upB = UIBarButtonItem(customView: up)
 
             let nav = UIButton(type: .custom)
             nav.accessibilityLabel = "Change criteria for comment thread navigation"
             nav.setImage(UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")?.toolbarIcon(), for: UIControl.State.normal)
-            nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
+            nav.addTarget(self, action: #selector(CommentViewController.showCommentNavigationTypes(_:)), for: UIControl.Event.touchUpInside)
             nav.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let navB = UIBarButtonItem(customView: nav)
 
             let down = UIButton(type: .custom)
             down.accessibilityLabel = "Navigate down one comment thread"
             down.setImage(UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down")?.toolbarIcon(), for: UIControl.State.normal)
-            down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
+            down.addTarget(self, action: #selector(CommentViewController.scrollDown(_:)), for: UIControl.Event.touchUpInside)
             down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let downB = UIBarButtonItem(customView: down)
 
             let more = UIButton(type: .custom)
             more.accessibilityLabel = "Post options"
             more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+            more.addTarget(self, action: #selector(self.showOptionsMenu(_:)), for: UIControl.Event.touchUpInside)
             more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)
             mod.accessibilityLabel = "Moderator options"
             mod.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.toolbarIcon(), for: UIControl.State.normal)
-            mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
+            mod.addTarget(self, action: #selector(self.showRedditLink(_:)), for: UIControl.Event.touchUpInside)
             mod.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             modB = UIBarButtonItem(customView: mod)
             if modLink.isEmpty() && modB.customView != nil {
@@ -1858,8 +1963,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    var tagText: String?
-
+    // Not Implemented
     func tagUser(name: String) {
         let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
@@ -1878,6 +1982,7 @@ class CommentViewController: MediaViewController {
         alert.show(self)
     }
 
+    /// Blocks the user with prompt given.
     func blockUser(name: String) {
         let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
         let confirmAction = AlertAction(title: "Block", style: .preferred, handler: {(_) in
@@ -1906,27 +2011,13 @@ class CommentViewController: MediaViewController {
         self.present(alert, animated: true, completion: nil)
     }
 
-    var isCurrentlyChanging = false
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        inHeadView.removeFromSuperview()
-        headerCell.endVideos()
-        self.didDisappearCompletely = true
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.isHiding = true
-        self.liveTimer.invalidate()
-        self.removeJumpButton()
-    }
-
+    /// Collapses comments.
+    // Not sure what it does.
     func collapseAll() {
         self.allCollapsed = true
         if dataArray.count > 0 {
             for i in 0...dataArray.count - 1 {
-                if content[dataArray[i]] is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS) {
+                if content[dataArray[i]] is RComment && doesCommentTypeMatch(for: content[dataArray[i]] as! RComment, with: .PARENTS) {
                     _ = hideNumber(n: dataArray[i], iB: i)
                     let t = content[dataArray[i]]
                     let id = (t is RComment) ? (t as! RComment).getIdentifier() : (t as! RMore).getIdentifier()
@@ -1940,11 +2031,13 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    /// Expands comments.
+    // Not sure what it does.
     func expandAll() {
         self.allCollapsed = false
         if dataArray.count > 0 {
             for i in 0...dataArray.count - 1 {
-                if content[dataArray[i]] is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS) {
+                if content[dataArray[i]] is RComment && doesCommentTypeMatch(for: content[dataArray[i]] as! RComment, with: .PARENTS) {
                     _ = unhideNumber(n: dataArray[i], iB: i)
                     let t = content[dataArray[i]]
                     let id = (t is RComment) ? (t as! RComment).getIdentifier() : (t as! RMore).getIdentifier()
@@ -1958,6 +2051,8 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Hides all comments.
+    // Not sure what it does.
     func hideAll(comment: String, i: Int) {
         if !isCurrentlyChanging {
             isCurrentlyChanging = true
@@ -1980,6 +2075,8 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    /// Comment sorting images.
+    // Rename?
     func doSortImage(_ sortButton: UIButton) {
         switch sort {
         case .suggested, .confidence:
@@ -1999,6 +2096,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func unhideAll(comment: String, i: Int) {
         if !isCurrentlyChanging {
             isCurrentlyChanging = true
@@ -2022,6 +2120,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func parentHidden(comment: Object) -> Bool {
         var n: String = ""
         if comment is RComment {
@@ -2032,6 +2131,7 @@ class CommentViewController: MediaViewController {
         return hiddenPersons.contains(n) || hidden.contains(n)
     }
 
+    // TODO: What does this do?
     func walkTree(n: String) -> [String] {
         var toReturn: [String] = []
         if content[n] is RComment {
@@ -2048,6 +2148,7 @@ class CommentViewController: MediaViewController {
         return toReturn
     }
 
+    // TODO: What does this do?
     func walkTreeFlat(n: String) -> [String] {
         var toReturn: [String] = []
         if content[n] is RComment {
@@ -2065,6 +2166,7 @@ class CommentViewController: MediaViewController {
         return toReturn
     }
 
+    // TODO: What does this do?
     func walkTreeFully(n: String) -> [String] {
         var toReturn: [String] = []
         toReturn.append(n)
@@ -2085,6 +2187,7 @@ class CommentViewController: MediaViewController {
         return toReturn
     }
 
+    /// Sets voting direction.
     func vote(comment: RComment, dir: VoteDirection) {
 
         var direction = dir
@@ -2115,16 +2218,19 @@ class CommentViewController: MediaViewController {
         ActionStates.setVoteDirection(s: comment, direction: direction)
     }
 
+    /// Enables checking of comment info menu
     func moreComment(_ cell: CommentDepthCell) {
-        cell.more(self)
+        cell.commentInfoMenu(self)
     }
 
+    /// Moderator menu.
     func modMenu(_ cell: CommentDepthCell) {
         cell.mod(self)
     }
 
+    /// Gives user the option to delete their comment.
     func deleteComment(cell: CommentDepthCell) {
-        let alert = UIAlertController.init(title: "Really delete this comment?", message: "", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: "Really, delete this comment?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
             do {
                 try self.session?.deleteCommentOrLink(cell.comment!.getIdentifier(), completion: { (_) in
@@ -2154,6 +2260,7 @@ class CommentViewController: MediaViewController {
         return true
     }
 
+    // TODO: What does this do?
     @objc func spacePressed() {
         if !isReply {
             UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
@@ -2162,6 +2269,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    // TODO: What does this do?
     @objc func spacePressedUp() {
         if !isReply {
             UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
@@ -2170,6 +2278,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func unhideNumber(n: String, iB: Int) -> Int {
         var i = iB
         let children = walkTreeFlat(n: n)
@@ -2192,6 +2301,7 @@ class CommentViewController: MediaViewController {
         return i
     }
 
+    // TODO: What does this do?
     func hideNumber(n: String, iB: Int) -> Int {
         var i = iB
 
@@ -2207,47 +2317,8 @@ class CommentViewController: MediaViewController {
         return i
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(
-            alongsideTransition: { [unowned self] _ in
-                if let header = self.tableView.tableHeaderView {
-                    var frame = header.frame
-                    var leftInset: CGFloat = 0
-                    var rightInset: CGFloat = 0
-
-                    if #available(iOS 11.0, *) {
-                        leftInset = self.tableView.safeAreaInsets.left
-                        rightInset = self.tableView.safeAreaInsets.right
-                        frame.origin.x = leftInset
-                    } else {
-                        // Fallback on earlier versions
-                    }
-
-                    self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
-
-                    frame.size.width = size.width - (leftInset + rightInset)
-                    frame.size.height = self.headerCell!.estimateHeight(true, true, np: self.np)
-
-                    self.headerCell!.contentView.frame = frame
-                    self.tableView.tableHeaderView!.frame = frame
-                    //self.tableView.reloadData(with: .none)
-                    self.doHeadView(size)
-                    self.view.setNeedsLayout()
-                }
-            }, completion: nil)
-    }
-    
-    var lastYUsed = CGFloat(0)
-    var isToolbarHidden = false
-    var isHiding = false
-    var lastY = CGFloat(0)
-    var oldY = CGFloat(0)
-    
-    var isSearch = false
-
-    func hideUI(inHeader: Bool) {
+    /// Hides navigation bar and contents to show jump through comments button.
+    func hideNavigationBars(inHeader: Bool) {
         isHiding = true
         //self.tableView.endEditing(true)
         if inHeadView.superview == nil {
@@ -2268,7 +2339,8 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    func showUI() {
+    /// Shows navigation top and bottom bar when scrolling up
+    func showNavigationBars() {
         (navigationController)?.setNavigationBarHidden(false, animated: true)
         (navigationController)?.setToolbarHidden(false, animated: true)
         if live {
@@ -2296,6 +2368,7 @@ class CommentViewController: MediaViewController {
         self.removeJumpButton()
     }
 
+    // TODO: What does this do?
     func doAction(cell: CommentDepthCell, action: SettingValues.CommentAction, indexPath: IndexPath) {
         switch action {
         case .UPVOTE:
@@ -2311,7 +2384,7 @@ class CommentViewController: MediaViewController {
         case .REPLY:
             cell.reply(cell)
         case .EXIT:
-            self.close(cell)
+            self.dismissTopController(cell)
         case .NEXT:
             if parent is PagingCommentViewController {
                 (parent as! PagingCommentViewController).next()
@@ -2323,6 +2396,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func collapseParent(_ indexPath: IndexPath, baseCell: CommentDepthCell) {
         var topCell = indexPath.row
         var contents = content[dataArray[topCell]]
@@ -2383,20 +2457,22 @@ class CommentViewController: MediaViewController {
             }
         }
     }
-    
-    var oldHeights = [String: CGFloat]()
 
+    // TODO: What does this do?
     func getChildNumber(n: String) -> Int {
         let children = walkTreeFully(n: n)
         return children.count - 1
     }
     
+    // TODO: What does this do?
     func loadAllMore() {
         expandAll()
         
         loadMoreWithCallback(0)
     }
     
+    /// Loads more comments from comment.
+    // TODO: What does this do?
     func loadMoreWithCallback(_ datasetPosition: Int) {
         if datasetPosition > dataArray.count {
             return
@@ -2486,6 +2562,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
+    // TODO: What does this do?
     func highlight(_ cc: NSAttributedString) -> NSAttributedString {
         let base = NSMutableAttributedString.init(attributedString: cc)
         let r = base.mutableString.range(of: "\(searchBar.text!)", options: .caseInsensitive, range: NSRange(location: 0, length: base.string.length))
@@ -2495,9 +2572,8 @@ class CommentViewController: MediaViewController {
         return base.attributedSubstring(from: NSRange.init(location: 0, length: base.length))
     }
 
-    var isSearching = false
-
-    func searchTableList() {
+    /// Searches comments based on inputed text
+    func searchCommentsList() {
         let searchString = searchBar.text
         var count = 0
         for p in dataArray {
@@ -2510,250 +2586,17 @@ class CommentViewController: MediaViewController {
             count += 1
         }
     }
-
-    var isReply = false
     
-}
+} // Class End
 
-extension Thing {
-    func getId() -> String {
-        return Self.kind + "_" + id
-    }
-}
-
-extension CommentViewController: UIGestureRecognizerDelegate {
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if gestureRecognizer == panGesture {
-            if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
-                return false
-            }
-        }
-        return true
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if SettingValues.commentGesturesMode == .GESTURES {
-            if gestureRecognizer.numberOfTouches == 2 {
-                return true
-            }
-        }
-        return false
-    }
-    
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        // Limit angle of pan gesture recognizer to avoid interfering with scrolling
-        if gestureRecognizer == panGesture {
-            if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
-                return false
-            }
-        }
-        
-        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
-            return recognizer.shouldRecognizeForAxis(.horizontal, withAngleToleranceInDegrees: 45)
-        }
-        
-        return true
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && translatingCell == nil
-    }
-    
-    @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
-        
-        if recognizer.view != nil {
-            let velocity = recognizer.velocity(in: recognizer.view!).x
-            if (velocity < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity > 0 && (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE) && translatingCell == nil) {
-                return
-            }
-        }
-
-        if recognizer.state == .began || translatingCell == nil {
-            let point = recognizer.location(in: self.tableView)
-            let indexpath = self.tableView.indexPathForRow(at: point)
-            if indexpath == nil {
-                return
-            }
-
-            guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
-            for view in cell.commentBody.subviews {
-                let cellPoint = recognizer.location(in: view)
-                if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
-                    recognizer.cancel()
-                    return
-                }
-            }
-            translatingCell = cell
-        }
-        
-        translatingCell?.handlePan(recognizer)
-        if recognizer.state == .ended {
-            translatingCell = nil
-        }
-    }
-}
-
+// TODO: Remove these from here and add to a Helper Function file
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-class ParentCommentViewController: UIViewController {
-    var childView = UIView()
-    var scrollView = UIScrollView()
-    var estimatedSize: CGSize
-    var parentContext: String = ""
-    var dismissHandler: (() -> Void)?
-    init(view: UIView, size: CGSize) {
-        self.estimatedSize = size
-        super.init(nibName: nil, bundle: nil)
-        self.childView = view
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        scrollView = UIScrollView().then {
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
-            $0.isUserInteractionEnabled = true
-        }
-        self.view.addSubview(scrollView)
-        scrollView.edgeAnchors == self.view.edgeAnchors
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        scrollView.addSubview(childView)
-        childView.widthAnchor == estimatedSize.width
-        childView.heightAnchor == estimatedSize.height
-        childView.topAnchor == scrollView.topAnchor
-        scrollView.contentSize = estimatedSize
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        dismissHandler?()
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-extension CommentViewController: UIViewControllerPreviewingDelegate {
-        
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        guard let indexPath = self.tableView.indexPathForRow(at: location) else {
-            return nil
-        }
-        
-        guard let cell = self.tableView.cellForRow(at: indexPath) as? CommentDepthCell else {
-            return nil
-        }
-        
-        if SettingValues.commentActionForceTouch != .PARENT_PREVIEW {
-           // TODO: - maybe
-            /*let textView =
-            let locationInTextView = textView.convert(location, to: textView)
-            
-            if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
-                previewingContext.sourceRect = textView.convert(rect, from: textView)
-                if let controller = parentViewController?.getControllerForUrl(baseUrl: url) {
-                    return controller
-                }
-            }*/
-            return nil
-        }
-        
-        if cell.depth == 1 {
-            return nil
-        }
-        self.setAlphaOfBackgroundViews(alpha: 0.5)
-
-        var topCell = (indexPath as NSIndexPath).row
-        
-        var contents = content[dataArray[topCell]]
-        
-        while (contents is RComment ? (contents as! RComment).depth >= cell.depth : true) && dataArray.count > topCell && topCell - 1 >= 0 {
-            topCell -= 1
-            contents = content[dataArray[topCell]]
-        }
-
-        let parentCell = CommentDepthCell(style: .default, reuseIdentifier: "test")
-        if let comment = contents as? RComment {
-            parentCell.contentView.layer.cornerRadius = 10
-            parentCell.contentView.clipsToBounds = true
-            parentCell.commentBody.ignoreHeight = false
-            parentCell.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
-            if contents is RComment {
-                var count = 0
-                let hiddenP = hiddenPersons.contains(comment.getIdentifier())
-                if hiddenP {
-                    count = getChildNumber(n: comment.getIdentifier())
-                }
-                var t = text[comment.getIdentifier()]!
-                if isSearching {
-                    t = highlight(t)
-                }
-                
-                parentCell.setComment(comment: contents as! RComment, depth: 0, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
-            } else {
-                parentCell.setMore(more: (contents as! RMore), depth: cDepth[comment.getIdentifier()]!, depthColors: commentDepthColors, parent: self)
-            }
-            parentCell.content = comment
-            parentCell.contentView.isUserInteractionEnabled = false
-
-            var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: parentCell.title.attributedText!)!
-            let textSize = layout.textBoundingSize
-
-            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textSize.height)// TODO: - fix height
-            let detailViewController = ParentCommentViewController(view: parentCell.contentView, size: size)
-            detailViewController.preferredContentSize = CGSize(width: size.width, height: min(size.height, 300))
-
-            previewingContext.sourceRect = cell.frame
-            detailViewController.dismissHandler = {() in
-                self.setAlphaOfBackgroundViews(alpha: 1)
-            }
-            return detailViewController
-        }
-        return nil
-    }
-        
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        viewControllerToCommit.modalPresentationStyle = .popover
-        if let popover = viewControllerToCommit.popoverPresentationController {
-            popover.sourceView = self.tableView
-            popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.theme.foregroundColor
-            popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-            //detailViewController.frame = CGRect(x: (self.view.frame.bounds.width / 2 - (UIScreen.main.bounds.size.width * 0.85)), y: (self.view.frame.bounds.height / 2 - (cell2.title.estimatedHeight + 12)), width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 12)
-            popover.delegate = self
-            viewControllerToCommit.preferredContentSize = (viewControllerToCommit as! ParentCommentViewController).estimatedSize
-        }
-
-        self.present(viewControllerToCommit, animated: true, completion: {
-        })
-    }
-}
-
-extension CommentViewController: UINavigationControllerDelegate {
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        // Fixes bug with corrupt nav stack
-        // https://stackoverflow.com/a/39457751/7138792
-        navigationController.interactivePopGestureRecognizer?.isEnabled = navigationController.viewControllers.count > 1
-        if navigationController.viewControllers.count == 1 {
-            self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
-        }
-    }
-}
-
-extension CommentViewController: TapBehindModalViewControllerDelegate {
-    func shouldDismiss() -> Bool {
-        return false
-    }
+    return input.rawValue
 }

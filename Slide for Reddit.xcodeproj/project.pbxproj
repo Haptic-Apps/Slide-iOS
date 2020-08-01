@@ -77,6 +77,8 @@
 		BD8E322224D0976700AE1D80 /* CommentReplyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E322124D0976700AE1D80 /* CommentReplyDelegate.swift */; };
 		BD99461224D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD99461124D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift */; };
 		BD99461524D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */; };
+		BDCDC5E324D4F4A10066CA8D /* ParentCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */; };
+		BDCDC5E624D4FFD00066CA8D /* CommentViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCDC5E524D4FFD00066CA8D /* CommentViewControllerExtensions.swift */; };
 		BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B252240C9F5400C457BC /* CommentsRowController.swift */; };
 		BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */; };
 		BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0958DE218A08620076966C /* SettingsViewMode.swift */; };
@@ -506,6 +508,8 @@
 		BD8E322124D0976700AE1D80 /* CommentReplyDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentReplyDelegate.swift; sourceTree = "<group>"; };
 		BD99461124D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentSubmissionMoreDelegate.swift; sourceTree = "<group>"; };
 		BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkCellViewDelegate.swift; sourceTree = "<group>"; };
+		BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentCommentViewController.swift; sourceTree = "<group>"; };
+		BDCDC5E524D4FFD00066CA8D /* CommentViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewControllerExtensions.swift; sourceTree = "<group>"; };
 		BE02B252240C9F5400C457BC /* CommentsRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsRowController.swift; sourceTree = "<group>"; };
 		BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepliesController.swift; sourceTree = "<group>"; };
 		BE0958DE218A08620076966C /* SettingsViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewMode.swift; sourceTree = "<group>"; };
@@ -968,6 +972,7 @@
 			isa = PBXGroup;
 			children = (
 				BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */,
+				BDCDC5E424D4FFB50066CA8D /* CommentExtensions */,
 				BD7F6C7824D0CD980061969B /* TTTAttributedCellDelegateProtocol */,
 				BD99461324D0A8A400B5C7EC /* LinkCellViewDelegateProtocols */,
 				BD99461024D0A54100B5C7EC /* SubmissionMoreDelegateProtocols */,
@@ -1026,6 +1031,14 @@
 				BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */,
 			);
 			name = LinkCellViewDelegateProtocols;
+			sourceTree = "<group>";
+		};
+		BDCDC5E424D4FFB50066CA8D /* CommentExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				BDCDC5E524D4FFD00066CA8D /* CommentViewControllerExtensions.swift */,
+			);
+			name = CommentExtensions;
 			sourceTree = "<group>";
 		};
 		BE13C2CA21655A31002687F2 /* Extensions */ = {
@@ -1323,59 +1336,89 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
-				BEC2FE18235BA2B100374013 /* adaway.json */,
-				BE4AB49C21BC4DAE001092C4 /* App Icons */,
-				BE3B7434210135BD00658DE9 /* html */,
-				090D6B7A20F3D8610052F3F6 /* Media */,
-				0965260320E1688400EA53BE /* Extensions */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
+				BEC2FE18235BA2B100374013 /* adaway.json */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
 				BEF6F5351E19B4A2002B03B6 /* adsources.txt */,
-				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
 				BE3E5C0F1E16BA1300749C0C /* Album */,
+				BE4AB49C21BC4DAE001092C4 /* App Icons */,
 				BE8FCA071E0C46090063B8EF /* AppDelegate.swift */,
 				BE8FCA0E1E0C46090063B8EF /* Assets.xcassets */,
+				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
+				BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */,
+				BEEA03CE20E2A411007A8928 /* BannerUtil.swift */,
+				BEC4A1B1232F3B4F00EE5114 /* collections.plist */,
+				BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */,
+				BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */,
 				B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */,
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
+				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
 				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
 				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
-				BEBF45DC1E23384500764BB8 /* comments.plist */,
-				BE17A24D215FFE76002C6CE6 /* readlater.plist */,
 				BD8E321424CFDAB400AE1D80 /* Comments */,
+				BEBF45DC1E23384500764BB8 /* comments.plist */,
 				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
 				BEF3ACE11E15C101005848B6 /* ContentType.swift */,
 				BE780B671E35276600DAA1EB /* ContentUtilities */,
 				BE1DA3991E26D52500EC0A04 /* ContentViewControllers */,
 				BE6EA6E11E1DA1A300E9E709 /* ContributionLoader.swift */,
+				09D6603121E69211003D632C /* CurrentAccountViewController.swift */,
 				B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */,
 				B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */,
 				BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */,
+				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
+				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
+				0965260320E1688400EA53BE /* Extensions */,
 				BE3521641E3D22B000C30B8D /* Fonts */,
+				BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */,
+				BEB81A6721445FE4007E326B /* FriendCellView.swift */,
+				BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */,
 				BEC494291E307DDA006618F3 /* GalleryCellView.swift */,
 				BE6EA6C01E1C1DC200E9E709 /* Gfycat */,
 				BE6EA6DB1E1C210200E9E709 /* GfycatCheck */,
 				BE6EA6DE1E1C227400E9E709 /* GfycatTranscoded */,
 				BE2B89F41E246CA60053D493 /* GMColor.swift */,
 				BE2B89F51E246CA60053D493 /* GMPalette.swift */,
+				BEEA03CC20E1B53E007A8928 /* HapticUtility.swift */,
+				BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */,
+				BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */,
+				BE3B7434210135BD00658DE9 /* html */,
+				BE93DECE24CE4D8300464B64 /* icons.plist */,
 				BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */,
 				BEB2B2361E35D48000BF761C /* InboxViewController.swift */,
 				BE8FCA131E0C46090063B8EF /* Info.plist */,
+				BEB7BAD923A05F2500E39593 /* InsetTransitioningDelegate.swift */,
 				BE8FCA101E0C46090063B8EF /* LaunchScreen.storyboard */,
 				BE9456011F3375460097EEF0 /* LeftTransition.swift */,
-				BE97422A1F00112F00BF48E0 /* LinkCellViews */,
 				BEE5BF611E119A9000E3C9AE /* LegacyMainViewController.swift */,
+				BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */,
+				BE97422A1F00112F00BF48E0 /* LinkCellViews */,
+				BE292568213C5730006B5130 /* LocalKeystore.swift */,
+				BE8AE94221F9225000E1C0D1 /* Main.storyboard */,
+				BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */,
+				BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */,
 				BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */,
+				090D6B7A20F3D8610052F3F6 /* Media */,
 				BEB2B2381E35D64F00BF761C /* MessageCellView.swift */,
 				B776BECBFCB8F58AC234156A /* ModerationViewController.swift */,
 				B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */,
 				B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */,
+				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
 				BE7439EA1E201BB0008BB63B /* NavigationSidebarViewController.swift */,
+				BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */,
 				BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */,
+				BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */,
 				BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */,
+				0984BE552114D1CD0091C2E1 /* Presentation */,
 				BE6EA6E51E1DA5CE00E9E709 /* ProfileContributionLoader.swift */,
+				BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */,
 				BE6EA6E71E1DA86100E9E709 /* ProfileViewController.swift */,
+				323EFB2721434781005157FA /* ProgressBarView.swift */,
 				BE2F3F571EF886D9003C1B28 /* Reachability.swift */,
+				BE17A24D215FFE76002C6CE6 /* readlater.plist */,
+				BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */,
+				BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */,
 				BE8592C11E0EE72800836C1D /* reddift_config.json */,
 				BE780B5F1E32CA8F00DAA1EB /* RelatedContributionLoader.swift */,
 				BE780B611E32CB9600DAA1EB /* RelatedViewController.swift */,
@@ -1387,53 +1430,24 @@
 				B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */,
 				BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */,
 				BE8FCA091E0C46090063B8EF /* SingleSubredditViewController.swift */,
+				BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */,
 				BEE9385320CF31C80021BE80 /* Slide for Reddit.entitlements */,
+				BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */,
 				BE3E5C161E16BC1A00749C0C /* String+util.swift */,
 				BE3E5C181E16BC3900749C0C /* StringHTML+util.swift */,
+				BE93DED024CE550800464B64 /* subcolors.plist */,
 				BE7439EC1E201C22008BB63B /* SubredditCellView.swift */,
+				BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */,
 				BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */,
 				BE2DEAB11E26916700FBF0B5 /* SubSidebarViewController.swift */,
+				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
+				BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */,
 				BE7360A01FB9089B00CA32AD /* TapBehindModalViewController.swift */,
 				B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */,
+				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
 				BECF52432012AF7A00A310F9 /* VCPresenter.swift */,
 				BE6EA6CE1E1C1FAD00E9E709 /* VidMe */,
-				BEEA03CC20E1B53E007A8928 /* HapticUtility.swift */,
-				BEEA03CE20E2A411007A8928 /* BannerUtil.swift */,
-				0984BE552114D1CD0091C2E1 /* Presentation */,
-				BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */,
-				09D6603121E69211003D632C /* CurrentAccountViewController.swift */,
-				BE292568213C5730006B5130 /* LocalKeystore.swift */,
-				BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */,
-				BEB81A6721445FE4007E326B /* FriendCellView.swift */,
-				323EFB2721434781005157FA /* ProgressBarView.swift */,
 				BE11351B2159390700502C5B /* WatchSessionManager.swift */,
-				BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */,
-				BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */,
-				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
-				BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */,
-				BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */,
-				BE8AE94221F9225000E1C0D1 /* Main.storyboard */,
-				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
-				BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */,
-				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
-				BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */,
-				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
-				BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */,
-				BEC4A1B1232F3B4F00EE5114 /* collections.plist */,
-				BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */,
-				BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */,
-				BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */,
-				BEB7BAD923A05F2500E39593 /* InsetTransitioningDelegate.swift */,
-				BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */,
-				BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */,
-				BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */,
-				BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */,
-				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
-				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
-				BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */,
-				BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */,
-				BE93DECE24CE4D8300464B64 /* icons.plist */,
-				BE93DED024CE550800464B64 /* subcolors.plist */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1640,24 +1654,24 @@
 				TargetAttributes = {
 					BE20851021588F3900D8F33C = {
 						CreatedOnToolsVersion = 10.0;
-						DevelopmentTeam = 55T4UN5QF4;
+						DevelopmentTeam = FTT89576VQ;
 						ProvisioningStyle = Automatic;
 					};
 					BE20851C21588F3A00D8F33C = {
 						CreatedOnToolsVersion = 10.0;
-						DevelopmentTeam = 55T4UN5QF4;
+						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					BE257A6A21F64AA30082A47E = {
 						CreatedOnToolsVersion = 10.1;
-						DevelopmentTeam = 55T4UN5QF4;
+						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					BE8FCA031E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = 55T4UN5QF4;
+						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -1677,21 +1691,21 @@
 					};
 					BE8FCA171E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = 55T4UN5QF4;
+						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
 					BE8FCA221E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = 55T4UN5QF4;
+						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
 					BE99C9F32378AC91007911E2 = {
 						CreatedOnToolsVersion = 11.2.1;
-						DevelopmentTeam = 55T4UN5QF4;
+						DevelopmentTeam = FTT89576VQ;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
@@ -1868,7 +1882,7 @@
 		};
 		0991C18B2108CDC600B6BA16 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
@@ -1876,9 +1890,9 @@
 			name = "Run SwiftLint";
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "${PODS_ROOT}/SwiftLint/swiftlint";
+			shellScript = "${PODS_ROOT}/SwiftLint/swiftlint\n";
 		};
 		6F3CE23C5F7990C228FD24D5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2104,6 +2118,7 @@
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BE25CAD424C3A28300736CA5 /* SwipeForwardNavigationController.swift in Sources */,
 				BD99461224D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift in Sources */,
+				BDCDC5E324D4F4A10066CA8D /* ParentCommentViewController.swift in Sources */,
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
 				BEC814EE24BE8B94005C8E8C /* HistoryViewController.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
@@ -2189,6 +2204,7 @@
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
+				BDCDC5E624D4FFD00066CA8D /* CommentViewControllerExtensions.swift in Sources */,
 				BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */,
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
 				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
@@ -2413,7 +2429,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
@@ -2442,19 +2458,19 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.JosiahAgosto.redditslide.bundledwatchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwatchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.JosiahAgosto.redditslide.bundledwatchkitapp";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -2474,7 +2490,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -2500,18 +2516,18 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.JosiahAgosto.redditslide.bundledwatchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwatchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.JosiahAgosto.redditslide.bundledwatchkitapp.watchkitextension";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2533,7 +2549,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -2557,20 +2573,20 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.JosiahAgosto.redditslide.bundledOpen-in-Slide";
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.bundledOpen-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.JosiahAgosto.redditslide.bundledOpen-in-Slide";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2611,7 +2627,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2628,7 +2644,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -2637,7 +2653,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
 				USR_DISPLAY_NAME = "Slide Debug";
-				USR_DOMAIN = com.JosiahAgosto;
+				USR_DOMAIN = ccrama.me;
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide-debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
@@ -2676,7 +2692,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2687,14 +2703,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_DISPLAY_NAME = Slide;
-				USR_DOMAIN = com.JosiahAgosto;
+				USR_DOMAIN = ccrama.me;
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.bundledwatchkitapp.watchkitextension";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -2712,7 +2728,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -2726,7 +2742,7 @@
 					"\"reddift\"",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
-				PRODUCT_BUNDLE_IDENTIFIER = com.JosiahAgosto.Slide;
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -2734,7 +2750,6 @@
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
-				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Debug;
 		};
@@ -2746,11 +2761,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Slide for Reddit/Slide for Reddit.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
@@ -2767,11 +2782,10 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.JosiahAgosto.redditslide";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
-				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Release;
 		};
@@ -2781,7 +2795,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
@@ -2798,7 +2812,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
@@ -2814,7 +2828,7 @@
 			baseConfigurationReference = D395EF5D302CF84FB4950C1C /* Pods-Slide for RedditUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
@@ -2830,7 +2844,7 @@
 			baseConfigurationReference = 3A8827A415FF9E81FEE6ABA8 /* Pods-Slide for RedditUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
@@ -2849,14 +2863,14 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.JosiahAgosto.Slide-Screenshot-Automation";
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-Screenshot-Automation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;
@@ -2873,13 +2887,13 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 55T4UN5QF4;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.JosiahAgosto.Slide-Screenshot-Automation";
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-Screenshot-Automation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;

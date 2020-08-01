@@ -5,7 +5,6 @@
 //  Created by Josiah Agosto on 7/28/20.
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
-
 import Foundation
 import UIKit
 
@@ -90,4 +89,5 @@ class CommentTableViewDelegate: NSObject, UITableViewDelegate {
     //            return UISwipeActionsConfiguration.init()
     //        }
     //    }
+    
 }

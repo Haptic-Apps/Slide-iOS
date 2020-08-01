@@ -16,7 +16,6 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
     init(parentController: CommentViewController) {
         self.commentController = parentController
     }
-    
     // MARK: - Methods
     /// Sets an upvote from the user.
     @objc func upvote(_ cell: LinkCellView) {
@@ -138,4 +137,5 @@ class CommentLinkCellViewDelegate: NSObject, LinkCellViewDelegate {
         }
         cell.refresh()
     }
+    
 }

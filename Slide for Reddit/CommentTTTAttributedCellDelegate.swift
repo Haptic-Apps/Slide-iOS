@@ -18,7 +18,6 @@ class CommentTTTAttributedCellDelegate: NSObject, TTTAttributedCellDelegate {
     init(parentController: CommentViewController) {
         self.commentController = parentController
     }
-
     // MARK: - Methods
     /// Scrolls to Comment upon tapping.
     func pushedSingleTap(_ cell: CommentDepthCell) {
@@ -226,4 +225,5 @@ class CommentTTTAttributedCellDelegate: NSObject, TTTAttributedCellDelegate {
     func getMenuShown() -> String? {
         return commentController.menuId
     }
+    
 }

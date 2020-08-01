@@ -16,7 +16,6 @@ class CommentSubmissionMoreDelegate: NSObject, SubmissionMoreDelegate {
     init(parentController: CommentViewController) {
         self.commentController = parentController
     }
-    
     // MARK: - Methods
     /// Saves comments from selected cell.
     func save(_ cell: LinkCellView) {

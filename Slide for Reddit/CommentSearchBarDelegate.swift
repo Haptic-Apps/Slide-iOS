@@ -28,10 +28,11 @@ class CommentSearchBarDelegate: NSObject, UISearchBarDelegate {
         commentController.filteredData = []
         if textSearched.length != 0 {
             commentController.isSearching = true
-            commentController.searchTableList()
+            commentController.searchCommentsList()
         } else {
             commentController.isSearching = false
         }
         commentController.tableView.reloadData()
     }
+    
 }
