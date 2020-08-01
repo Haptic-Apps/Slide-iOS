@@ -24,6 +24,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     var muxColor = ColorUtil.theme.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
+    var isSearchComplete = false
 
     var headerView = UIView()
     var dragHandleView = UIView()
@@ -39,6 +40,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     var isSearching = false
 
     var task: URLSessionDataTask?
+    var taskSearch: URLSessionDataTask?
 
     var accessibilityCloseButton = UIButton().then {
         $0.accessibilityIdentifier = "Close button"
@@ -235,7 +237,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             }
             if text.contains(" ") {
                 //do search
-                VCPresenter.showVC(viewController: SearchViewController(subreddit: MainViewController.current, searchFor: text), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+                VCPresenter.showVC(viewController: SearchViewController(subreddit: self.subreddit, searchFor: text), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
             } else {
                 //go to sub
                 //TODO this parentController?.goToSubreddit(subreddit: text)
@@ -329,6 +331,9 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         doneOnce = false
         searchBar.isUserInteractionEnabled = false
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
+ 
+        //Break out of the navigation view controller
+        parentController?.view.addSubview(self.view)
 
         let y = UIScreen.main.bounds.height - bottomOffset
         if let parent = self.parentController, parent.menu.superview != nil {
@@ -359,7 +364,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         
         let completionBlock: (Bool) -> Void = { [weak self] finished in
             guard let strongSelf = self else { return }
-            strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
+            strongSelf.topView?.layer.cornerRadius = 0
             strongSelf.callbacks.didCollapse?()
             strongSelf.backgroundView.isHidden = true
             strongSelf.expanded = false
@@ -458,9 +463,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.backgroundView.alpha = 1
-            if SettingValues.autoKeyboard && !strongSelf.doneOnce {
-                strongSelf.searchBar.becomeFirstResponder()
-            }
+            strongSelf.searchBar.becomeFirstResponder()
             strongSelf.topView?.alpha = 0
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = strongSelf.headerView.backgroundColor
@@ -576,7 +579,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
         view.addSubview(tableView)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        setColors(MainViewController.current)
+        setColors(self.subreddit)
     }
 
     func configureLayout() {
@@ -626,6 +629,23 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     
     func setViewController(controller: SingleSubredditViewController) {
         parentController = controller
+        
+        if parent?.navigationController is SwipeForwardNavigationController {
+            (parent?.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer.require(toFail: gestureRecognizer)
+        }
+        if controller.parent is ColorMuxPagingViewController {
+            for view in (controller.parent as! ColorMuxPagingViewController).view.subviews {
+                if !(view is UICollectionView) {
+                    if let scrollView = view as? UIScrollView {
+                        scrollView.delegate = self
+                        for gesture in scrollView.gestureRecognizers ?? [] {
+                            gesture.require(toFail: gestureRecognizer)
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
     func setColors(_ sub: String) {
@@ -642,7 +662,10 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         }
     }
     
+    var subreddit = ""
+    
     func setSubreddit(subreddit: String) {
+        self.subreddit = subreddit
         setColors(subreddit)
         tableView.backgroundColor = ColorUtil.theme.backgroundColor
     }
@@ -686,33 +709,20 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return !isSearching ? 0 : 1 + (results.count > 0 ? 1 : 0) + (suggestions.count > 0 ? 1 : 0)
+        return !isSearching ? 0 : 1 + (suggestions.count > 0 ? 1 : 0)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return indexPath.section == 0 && indexPath.row == 1 ? 158 : 60
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        var titles: [String]? = nil
-        
-        if isSearching {
-            titles = []
-            titles!.append("Posts")
-            if suggestions.count > 0 {
-                titles!.append("Subreddits")
-            }
-        }
-        return titles
-    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 2 + results.count > 0 ? 1 : 0
+            return 3
         } else {
             return suggestions.count
         }
@@ -726,15 +736,24 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return !isSearching
+        return false
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let label = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        var titles: [String]? = nil
+        
+        if isSearching {
+            titles = []
+            titles!.append("Post search")
+            if suggestions.count > 0 {
+                titles!.append("Subreddit results")
+            }
+        }
 
-        label.text = sectionIndexTitles(for: tableView)?[section] ?? ""
+        label.text = titles?[section] ?? ""
         
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
         toReturn.backgroundColor = ColorUtil.theme.foregroundColor
@@ -750,15 +769,26 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
                 let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
                 c.setSearch(string: thing, sub: nil, nav: self)
                 cell = c
-            } else if indexPath.row == 1 {
+                cell.accessoryType = .disclosureIndicator
+                cell.tintColor = ColorUtil.theme.fontColor
+            } else if indexPath.row == 2 {
                 // "Search r/subreddit for <text>" cell
                 let thing = searchBar.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
-                c.setSearch(string: thing, sub: MainViewController.current, nav: self)
+                c.setSearch(string: thing, sub: self.subreddit, nav: self)
+                c.title.text = "More results..."
                 cell = c
+                cell.accessoryType = .disclosureIndicator
+                cell.tintColor = ColorUtil.theme.fontColor
             } else {
                 //TODO search results
-                cell =  SubredditCellView()
+                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                c.setResults(subreddit: self.subreddit, nav: self, results: results, complete: isSearchComplete)
+                cell = c
+                if isSearchComplete && results.count > 0 {
+                    cell.loader?.removeFromSuperview()
+                    cell.loader = nil
+                }
             }
         } else {
             let thing = suggestions[indexPath.row]
@@ -775,11 +805,12 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
 }
 
 extension SubredditToolbarSearchViewController: UISearchBarDelegate {
-
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
         timer?.invalidate()
         filteredContent = []
         suggestions = []
+        isSearchComplete = false
+        results = []
         if textSearched.length != 0 {
             isSearching = true
             searchTableList()
@@ -801,6 +832,10 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
         if task != nil {
             task?.cancel()
         }
+        if taskSearch != nil {
+            taskSearch?.cancel()
+        }
+        isSearchComplete = false
         do {
             task = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchBar.text ?? "", paginator: Paginator(), completion: { (result) in
                 switch result {
@@ -818,6 +853,29 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                     }
                 case .failure(let error):
                     print(error)
+                }
+            })
+            
+            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.subreddit), query: searchBar.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+                switch result {
+                case .failure:
+                    print(result.error!)
+                    DispatchQueue.main.async {
+                        self.isSearchComplete = true
+                        self.tableView.reloadData()
+                    }
+                case .success(let listing):
+                    self.results = []
+                    for item in listing.children.compactMap({ $0 }) {
+                        if item is Comment {
+                        } else if self.results.count < 5 {
+                            self.results.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.isSearchComplete = true
+                        self.tableView.reloadData()
+                    }
                 }
             })
         }
