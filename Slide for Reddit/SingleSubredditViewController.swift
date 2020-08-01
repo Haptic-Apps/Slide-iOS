@@ -182,6 +182,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
+            splitViewController?.showDetailViewController(PlaceholderViewController(), sender: self)
+        }
+        
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
