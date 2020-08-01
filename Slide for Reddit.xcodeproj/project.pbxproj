@@ -1640,24 +1640,24 @@
 				TargetAttributes = {
 					BE20851021588F3900D8F33C = {
 						CreatedOnToolsVersion = 10.0;
-						DevelopmentTeam = FTT89576VQ;
+						DevelopmentTeam = 55T4UN5QF4;
 						ProvisioningStyle = Automatic;
 					};
 					BE20851C21588F3A00D8F33C = {
 						CreatedOnToolsVersion = 10.0;
-						DevelopmentTeam = FTT89576VQ;
+						DevelopmentTeam = 55T4UN5QF4;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					BE257A6A21F64AA30082A47E = {
 						CreatedOnToolsVersion = 10.1;
-						DevelopmentTeam = FTT89576VQ;
+						DevelopmentTeam = 55T4UN5QF4;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					BE8FCA031E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = FTT89576VQ;
+						DevelopmentTeam = 55T4UN5QF4;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -1677,21 +1677,21 @@
 					};
 					BE8FCA171E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = FTT89576VQ;
+						DevelopmentTeam = 55T4UN5QF4;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
 					BE8FCA221E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = FTT89576VQ;
+						DevelopmentTeam = 55T4UN5QF4;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
 					BE99C9F32378AC91007911E2 = {
 						CreatedOnToolsVersion = 11.2.1;
-						DevelopmentTeam = FTT89576VQ;
+						DevelopmentTeam = 55T4UN5QF4;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
@@ -2413,7 +2413,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
@@ -2446,15 +2446,15 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwatchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JosiahAgosto.redditslide.bundledwatchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwatchkitapp";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.JosiahAgosto.redditslide.bundledwatchkitapp";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -2474,7 +2474,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -2503,15 +2503,15 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwatchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JosiahAgosto.redditslide.bundledwatchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwatchkitapp.watchkitextension";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.JosiahAgosto.redditslide.bundledwatchkitapp.watchkitextension";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2533,7 +2533,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -2561,16 +2561,16 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.bundledOpen-in-Slide";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.JosiahAgosto.redditslide.bundledOpen-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledOpen-in-Slide";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.JosiahAgosto.redditslide.bundledOpen-in-Slide";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2611,7 +2611,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2637,7 +2637,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
 				USR_DISPLAY_NAME = "Slide Debug";
-				USR_DOMAIN = ccrama.me;
+				USR_DOMAIN = com.JosiahAgosto;
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide-debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
@@ -2676,7 +2676,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2694,7 +2694,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_DISPLAY_NAME = Slide;
-				USR_DOMAIN = ccrama.me;
+				USR_DOMAIN = com.JosiahAgosto;
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.bundledwatchkitapp.watchkitextension";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -2712,7 +2712,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -2726,7 +2726,7 @@
 					"\"reddift\"",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.Slide;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JosiahAgosto.Slide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -2750,7 +2750,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 162;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
@@ -2767,7 +2767,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.JosiahAgosto.redditslide";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
@@ -2781,7 +2781,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
@@ -2798,7 +2798,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
@@ -2814,7 +2814,7 @@
 			baseConfigurationReference = D395EF5D302CF84FB4950C1C /* Pods-Slide for RedditUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
@@ -2830,7 +2830,7 @@
 			baseConfigurationReference = 3A8827A415FF9E81FEE6ABA8 /* Pods-Slide for RedditUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
@@ -2849,14 +2849,14 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-Screenshot-Automation";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.JosiahAgosto.Slide-Screenshot-Automation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;
@@ -2873,13 +2873,13 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				DEVELOPMENT_TEAM = 55T4UN5QF4;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.Slide-Screenshot-Automation";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.JosiahAgosto.Slide-Screenshot-Automation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;
