@@ -813,7 +813,6 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
         results = []
         if textSearched.length != 0 {
             isSearching = true
-            searchTableList()
         } else {
             isSearching = false
         }
@@ -836,6 +835,7 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
             taskSearch?.cancel()
         }
         isSearchComplete = false
+        self.suggestions = searchTableList()
         do {
             task = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchBar.text ?? "", paginator: Paginator(), completion: { (result) in
                 switch result {
@@ -881,7 +881,7 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
         }
     }
 
-    func searchTableList() {
+    func searchTableList() -> [String] {
         var searchItems = [String]()
         let searchString = searchBar.text
         for s in Subscriptions.subreddits {
@@ -898,18 +898,19 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
             }
         }
 
+        var toReturn = [String]()
         for item in searchItems {
             if item.startsWith(searchString!) {
-                filteredContent.append(item)
+                toReturn.append(item)
             }
         }
         for item in searchItems {
             if !item.startsWith(searchString!) {
-                filteredContent.append(item)
+                toReturn.append(item)
             }
         }
         
-        filteredContent = filteredContent.sorted(by: { (a, b) -> Bool in
+        toReturn = toReturn.sorted(by: { (a, b) -> Bool in
             let aPrefix = a.lowercased().hasPrefix(searchString!.lowercased())
             let bPrefix = b.lowercased().hasPrefix(searchString!.lowercased())
             if aPrefix && bPrefix {
@@ -922,6 +923,8 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                 return a.lowercased() < b.lowercased()
             }
         })
+        
+        return toReturn
     }
 
 }
