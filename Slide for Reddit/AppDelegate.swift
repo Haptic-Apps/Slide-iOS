@@ -1205,7 +1205,7 @@ extension Session {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
-	return input.rawValue
+    return input.rawValue
 }
 
 class CustomSplitController: UISplitViewController {
