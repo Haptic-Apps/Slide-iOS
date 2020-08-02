@@ -239,7 +239,7 @@ class SubredditCellView: UITableViewCell {
             $0.spacing = 8
         }
         
-        if !complete && (results == nil || results!.count == 0) {
+        if !complete && results?.count ?? 0 == 0 {
             failedLabel?.removeFromSuperview()
             if loader == nil {
                 loader = UIActivityIndicatorView()
@@ -247,8 +247,8 @@ class SubredditCellView: UITableViewCell {
                 loader!.tintColor = ColorUtil.theme.fontColor
                 loader!.sizeAnchors == CGSize.square(size: 30)
                 loader!.centerAnchors == self.contentView.centerAnchors
-                loader!.startAnimating()
             }
+            loader!.startAnimating()
         } else if complete && (results == nil || results!.count == 0) {
             loader?.removeFromSuperview()
             loader = nil
@@ -289,7 +289,6 @@ class SubredditCellView: UITableViewCell {
                 }
                 subName.text = "r/\(submission.subreddit)"
                 thumbView.contentMode = .scaleAspectFill
-                let type = ContentType.getContentType(submission: submission)
                 
                 if submission.banner {
 

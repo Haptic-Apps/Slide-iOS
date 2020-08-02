@@ -586,6 +586,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         tableView.separatorInset = .zero
 
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
+        tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "loading")
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "search")
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "profile")
 
@@ -810,7 +811,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.section == 0 && indexPath.row == 0 ? 158 : 60
+        return indexPath.section == 0 && indexPath.row == 0 && isSearchComplete ? 158 : 60
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -878,13 +879,18 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
                 cell.accessoryType = .disclosureIndicator
                 cell.tintColor = ColorUtil.theme.fontColor
             } else {
-                //TODO search results
-                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
-                c.setResults(subreddit: self.subreddit, nav: self, results: results, complete: isSearchComplete)
-                cell = c
-                if isSearchComplete && results.count > 0 {
-                    cell.loader?.removeFromSuperview()
-                    cell.loader = nil
+                if isSearchComplete {
+                    let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                    c.setResults(subreddit: self.subreddit, nav: self, results: results, complete: isSearchComplete)
+                    cell = c
+                    if isSearchComplete && results.count > 0 {
+                        cell.loader?.removeFromSuperview()
+                        cell.loader = nil
+                    }
+                } else {
+                    let c = tableView.dequeueReusableCell(withIdentifier: "loading", for: indexPath) as! SubredditCellView
+                    c.setResults(subreddit: self.subreddit, nav: self, results: nil, complete: false)
+                    cell = c
                 }
             }
         } else {
@@ -905,7 +911,7 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
         timer?.invalidate()
         filteredContent = []
-        suggestions = []
+        suggestions = searchTableList()
         isSearchComplete = false
         results = []
         if textSearched.length != 0 {
@@ -914,7 +920,10 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
             isSearching = false
         }
         
-        tableView.reloadData()
+        UIView.transition(with: self.tableView, duration: 0.35, options: .transitionCrossDissolve, animations: {
+            self.tableView.reloadData()
+        }, completion: nil)
+        
         if searchBar.text!.count >= 2 {
             timer = Timer.scheduledTimer(timeInterval: 0.35,
                                          target: self,
@@ -946,7 +955,11 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                         self.suggestions.append(s.displayName)
                     }
                     DispatchQueue.main.async {
-                        self.tableView.reloadData()
+                        if self.tableView.numberOfSections == 1 {
+                            self.tableView.insertSections(IndexSet(integer: 1), with: .none)
+                        } else {
+                            self.tableView.reloadSections(IndexSet(integer: 1), with: .none)
+                        }
                     }
                 case .failure(let error):
                     print(error)
@@ -965,13 +978,15 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                     self.results = []
                     for item in listing.children.compactMap({ $0 }) {
                         if item is Comment {
-                        } else if self.results.count < 5 {
+                        } else if self.results.count < 10 {
                             self.results.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
                         }
                     }
                     DispatchQueue.main.async {
                         self.isSearchComplete = true
-                        self.tableView.reloadData()
+                        UIView.transition(with: self.tableView, duration: 0.35, options: .transitionCrossDissolve, animations: {
+                            self.tableView.reloadData()
+                        }, completion: nil)
                     }
                 }
             })

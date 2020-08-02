@@ -447,10 +447,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if single {
             UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         }
-        if fab != nil {
-            self.fab?.removeFromSuperview()
-            self.fab = nil
-        }
         
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
             if AccountController.isLoggedIn && AccountController.isGold && !History.currentSeen.isEmpty {
@@ -989,7 +985,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                     self.load(reset: true)
                                     self.loadBubbles()
                                 } else {
-                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
                                         let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
                                         alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
                                             self.navigationController?.popViewController(animated: true)
@@ -1004,8 +1000,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         case .success(let r):
                             self.subInfo = r
                             DispatchQueue.main.async {
-                                self.menuNav?.setSubredditObject(subreddit: r)
-
                                 //TODO: Hook into Shortcuts
                                 if !self.subInfo!.over18 {
 
@@ -1021,6 +1015,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                     }
                                 } else {
                                     if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
+                                        self.menuNav?.setSubredditObject(subreddit: r)
+
                                         if SettingValues.saveHistory {
                                             if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
                                                 Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
