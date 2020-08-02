@@ -703,7 +703,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
         }
     }
 
-    func navigation(_ homeViewController: NavigationHomeViewController, didRequestAccountChangeToName accountName: String) {
+    func navigation(_ homeViewController: NavigationHomeViewController?, didRequestAccountChangeToName accountName: String) {
         AccountController.switchAccount(name: accountName)
         if !UserDefaults.standard.bool(forKey: "done" + accountName) {
             do {

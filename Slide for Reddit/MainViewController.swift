@@ -50,8 +50,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var accountB = UIBarButtonItem()
     public static var first = true
 
-    lazy var currentAccountTransitioningDelegate = CurrentAccountPresentationManager()
-
     override var prefersStatusBarHidden: Bool {
         return SettingValues.fullyHideNavbar
     }
@@ -573,8 +571,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
         accountB.accessibilityHint = "Open account page"
-        if #available(iOS 13, *) {
-            let interaction = UIContextMenuInteraction(delegate: self)
+        if #available(iOS 13, *), self is SplitMainViewController {
+            let interaction = UIContextMenuInteraction(delegate: self as! SplitMainViewController)
             self.accountB.customView?.addInteraction(interaction)
         }
         didUpdate()
@@ -794,84 +792,6 @@ extension MainViewController: UIPageViewControllerDelegate {
     }
 }
 
-//TODO break this out
-extension MainViewController: CurrentAccountViewControllerDelegate {
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void) {
-        let settings = SettingsViewController()
-        VCPresenter.showVC(viewController: settings, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
-    }
-    
-    func currentAccountViewController(_ controller: CurrentAccountViewController, goToMultireddit multireddit: String) {
-        finalSubs = []
-        finalSubs.append(contentsOf: Subscriptions.pinned)
-        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
-        redoSubs()
-        goToSubreddit(subreddit: multireddit)
-    }
-    
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestCacheNow: Void) {
-        if Subscriptions.offline.isEmpty {
-            let alert = AlertController.init(title: "Caption", message: "", preferredStyle: .alert)
-            
-            alert.setupTheme()
-            alert.attributedTitle = NSAttributedString(string: "You have no subs set to Auto Cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-            
-            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "You can set this up in Settings > Offline Caching", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
-            
-            alert.addCloseButton()
-            alert.addBlurView()
-            present(alert, animated: true, completion: nil)
-        } else {
-            _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
-        }
-    }
-    
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestHistory: Void) {
-        VCPresenter.showVC(viewController: HistoryViewController(), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
-    }
-
-    func currentAccountViewController(_ controller: CurrentAccountViewController?, didRequestAccountChangeToName accountName: String) {
-        AccountController.switchAccount(name: accountName)
-        if !UserDefaults.standard.bool(forKey: "done" + accountName) {
-            do {
-                try addAccount(token: OAuth2TokenRepository.token(of: accountName), register: false)
-            } catch {
-                addAccount(register: false)
-            }
-        } else {
-            Subscriptions.sync(name: accountName, completion: { [weak self] in
-                self?.hardReset()
-            })
-        }
-    }
-
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestGuestAccount: Void) {
-        AccountController.switchAccount(name: "GUEST")
-        Subscriptions.sync(name: "GUEST", completion: { [weak self] in
-            self?.hardReset()
-        })
-    }
-
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestLogOut: Void) {
-        let name: String
-        if AccountController.current != nil {
-            name = AccountController.current!.name
-        } else {
-            name = AccountController.currentName
-        }
-        AccountController.delete(name: name)
-        AccountController.switchAccount(name: "GUEST")
-        Subscriptions.sync(name: "GUEST", completion: { [weak self] in
-            self?.hardReset()
-        })
-    }
-
-    func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestNewAccount: Void) {
-        self.doAddAccount(register: false)
-    }
-
-}
-
 class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
     func indicatorAttributes(
         for context: MDCTabBarIndicatorContext
@@ -931,7 +851,7 @@ class ExpandedHitButton: UIButton {
 }
 
 @available(iOS 13.0, *)
-extension MainViewController: UIContextMenuInteractionDelegate {
+extension SplitMainViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
                 return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
 
@@ -949,7 +869,7 @@ extension MainViewController: UIContextMenuInteractionDelegate {
                 }))
             } else {
                 buttons.append(UIAction(title: accountName, image: nil, handler: { (_) in
-                    self.currentAccountViewController(nil, didRequestAccountChangeToName: accountName)
+                    self.navigation(nil, didRequestAccountChangeToName: accountName)
                 }))
             }
         }

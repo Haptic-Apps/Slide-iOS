@@ -726,7 +726,7 @@ extension NavigationHomeViewController {
 // MARK: - Header view
 protocol NavigationHomeDelegate: AnyObject {
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSettingsMenu: Void)
-    func navigation(_ homeViewController: NavigationHomeViewController, didRequestAccountChangeToName accountName: String)
+    func navigation(_ homeViewController: NavigationHomeViewController?, didRequestAccountChangeToName accountName: String)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestGuestAccount: Void)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestLogOut: Void)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewAccount: Void)

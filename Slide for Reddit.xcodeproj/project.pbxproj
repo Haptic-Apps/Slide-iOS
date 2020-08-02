@@ -39,11 +39,6 @@
 		09B51D072114E80000BCB745 /* PostContentPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */; };
 		09BBDBF621F977F900FC8BF9 /* FontSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */; };
 		09C5A40D212B09A8000339FD /* BottomMenuPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5A40C212B09A8000339FD /* BottomMenuPresentationController.swift */; };
-		09D6603221E69211003D632C /* CurrentAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6603121E69211003D632C /* CurrentAccountViewController.swift */; };
-		09D6603421E8F189003D632C /* CurrentAccountPresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6603321E8F189003D632C /* CurrentAccountPresentationManager.swift */; };
-		09D6603621E8F199003D632C /* CurrentAccountPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6603521E8F199003D632C /* CurrentAccountPresentationController.swift */; };
-		09D6603821E8F1A8003D632C /* CurrentAccountPresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6603721E8F1A8003D632C /* CurrentAccountPresentationAnimator.swift */; };
-		09D6603B21E90829003D632C /* CurrentAccountDismissInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6603A21E90829003D632C /* CurrentAccountDismissInteraction.swift */; };
 		09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */; };
 		09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */; };
 		09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */; };
@@ -447,11 +442,6 @@
 		09B51D062114E80000BCB745 /* PostContentPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentPresentationAnimator.swift; sourceTree = "<group>"; };
 		09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSelectionTableViewController.swift; sourceTree = "<group>"; };
 		09C5A40C212B09A8000339FD /* BottomMenuPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomMenuPresentationController.swift; sourceTree = "<group>"; };
-		09D6603121E69211003D632C /* CurrentAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountViewController.swift; sourceTree = "<group>"; };
-		09D6603321E8F189003D632C /* CurrentAccountPresentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountPresentationManager.swift; sourceTree = "<group>"; };
-		09D6603521E8F199003D632C /* CurrentAccountPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountPresentationController.swift; sourceTree = "<group>"; };
-		09D6603721E8F1A8003D632C /* CurrentAccountPresentationAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountPresentationAnimator.swift; sourceTree = "<group>"; };
-		09D6603A21E90829003D632C /* CurrentAccountDismissInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountDismissInteraction.swift; sourceTree = "<group>"; };
 		09F411CC20F3EEA600D23A42 /* ModalMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalMediaViewController.swift; sourceTree = "<group>"; };
 		09F411CE20F3EEB900D23A42 /* ImageMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMediaViewController.swift; sourceTree = "<group>"; };
 		09F411D020F3EEC600D23A42 /* VideoMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaViewController.swift; sourceTree = "<group>"; };
@@ -869,10 +859,6 @@
 				0984BE522114CEA50091C2E1 /* SlideInPresentationController.swift */,
 				09B51D022114D23F00BCB745 /* SlideInPresentationAnimator.swift */,
 				09C5A40C212B09A8000339FD /* BottomMenuPresentationController.swift */,
-				09D6603321E8F189003D632C /* CurrentAccountPresentationManager.swift */,
-				09D6603521E8F199003D632C /* CurrentAccountPresentationController.swift */,
-				09D6603721E8F1A8003D632C /* CurrentAccountPresentationAnimator.swift */,
-				09D6603A21E90829003D632C /* CurrentAccountDismissInteraction.swift */,
 				BEC4A1A7232EA30B00EE5114 /* ProfileInfoPresentationManager.swift */,
 				BEC4A1A5232EA2BC00EE5114 /* ProfileInfoPresentationController.swift */,
 				BEC4A1A9232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift */,
@@ -1235,7 +1221,6 @@
 				BE780B671E35276600DAA1EB /* ContentUtilities */,
 				BE1DA3991E26D52500EC0A04 /* ContentViewControllers */,
 				BE6EA6E11E1DA1A300E9E709 /* ContributionLoader.swift */,
-				09D6603121E69211003D632C /* CurrentAccountViewController.swift */,
 				B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */,
 				B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */,
 				BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */,
@@ -1975,7 +1960,6 @@
 				BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
 				BEEA03CD20E1B53E007A8928 /* HapticUtility.swift in Sources */,
-				09D6603421E8F189003D632C /* CurrentAccountPresentationManager.swift in Sources */,
 				BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */,
 				BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */,
 				BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */,
@@ -1986,7 +1970,6 @@
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
 				BEC814EE24BE8B94005C8E8C /* HistoryViewController.swift in Sources */,
 				BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */,
-				09D6603221E69211003D632C /* CurrentAccountViewController.swift in Sources */,
 				0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */,
 				BE25402621CCC03E003BD547 /* ForceTouchGestureRecognizer.swift in Sources */,
 				BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */,
@@ -2073,11 +2056,9 @@
 				0924E525219C8EA700C31D5E /* NSDate+Extensions.swift in Sources */,
 				BE780B5E1E32B41300DAA1EB /* SubredditThemeViewController.swift in Sources */,
 				BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */,
-				09D6603B21E90829003D632C /* CurrentAccountDismissInteraction.swift in Sources */,
 				BE3E5C151E16BA2200749C0C /* AlbumJSONBase.swift in Sources */,
 				BEEA03D120E2C8DC007A8928 /* LinkCellImageCache.swift in Sources */,
 				BEE5BF841E14836E00E3C9AE /* MediaVCDelegate.swift in Sources */,
-				09D6603821E8F1A8003D632C /* CurrentAccountPresentationAnimator.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BED3B31924CE278B00B9A664 /* SettingsShortcutMenu.swift in Sources */,
 				BEC4A1B4232F3F1800EE5114 /* CollectionsContributionLoader.swift in Sources */,
@@ -2138,7 +2119,6 @@
 				BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */,
 				BEC4A1A6232EA2BC00EE5114 /* ProfileInfoPresentationController.swift in Sources */,
 				B776B919A0E908BFAB060DE7 /* ToolbarTextView.swift in Sources */,
-				09D6603621E8F199003D632C /* CurrentAccountPresentationController.swift in Sources */,
 				BEC4A1A22322F74D00EE5114 /* SFSymbolsEnum.swift in Sources */,
 				B776BAD2D3F58C29030A4230 /* SFHideSafariViewController.swift in Sources */,
 				09BBDBF621F977F900FC8BF9 /* FontSelectionTableViewController.swift in Sources */,
