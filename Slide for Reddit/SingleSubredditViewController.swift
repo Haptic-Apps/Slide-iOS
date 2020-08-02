@@ -1004,7 +1004,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         case .success(let r):
                             self.subInfo = r
                             DispatchQueue.main.async {
-                                //Hook into Shortcuts
+                                self.menuNav?.setSubredditObject(subreddit: r)
+
+                                //TODO: Hook into Shortcuts
                                 if !self.subInfo!.over18 {
 
                                 }

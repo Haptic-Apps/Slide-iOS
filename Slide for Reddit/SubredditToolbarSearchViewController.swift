@@ -25,6 +25,12 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     var lastY: CGFloat = 0.0
     var timer: Timer?
     var isSearchComplete = false
+    
+    var subredditInfoView = UIView()
+    var subTitleView = UILabel()
+    var subIconView = UIImageView()
+    var subInfoLabel: TextDisplayStackView!
+    var subLayoutBatch = [NSLayoutConstraint]()
 
     var headerView = UIView()
     var dragHandleView = UIView()
@@ -551,6 +557,8 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         //horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
         //horizontalSubGroup.delegate = self
         //view.addSubview(horizontalSubGroup)
+        subInfoLabel = TextDisplayStackView(fontSize: 14, submission: false, color: .blue, width: (parentController?.view ?? self.view).frame.size.width - 16, baseFontColor: ColorUtil.theme.fontColor, delegate: self)
+        subInfoLabel.isUserInteractionEnabled = true
 
         view.addSubview(headerView)
 
@@ -558,6 +566,10 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
         searchBar.sizeToFit()
         searchBar.delegate = self
+        headerView.addSubview(subredditInfoView)
+        
+        subredditInfoView.addSubviews(subTitleView, subIconView, subInfoLabel)
+        
         headerView.addSubview(searchBar)
 
         headerView.addSubview(accessibilityCloseButton)
@@ -604,7 +616,10 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         editButton.topAnchor == backgroundView.topAnchor
         editButton.sizeAnchors == .square(size: 20)
         
-        searchBar.topAnchor == dragHandleView.bottomAnchor + 4
+        subredditInfoView.topAnchor == dragHandleView.bottomAnchor + 4
+        subredditInfoView.horizontalAnchors == headerView.horizontalAnchors + 4
+        
+        searchBar.topAnchor == subredditInfoView.bottomAnchor + 4
         searchBar.horizontalAnchors == headerView.horizontalAnchors
         searchBar.heightAnchor == 50
         searchBar.bottomAnchor == headerView.bottomAnchor
@@ -612,6 +627,20 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         tableView.topAnchor == headerView.bottomAnchor - 2
         tableView.horizontalAnchors == view.horizontalAnchors
         tableView.bottomAnchor == view.bottomAnchor
+        
+        subIconView.sizeAnchors == CGSize.square(size: 50)
+        subIconView.leftAnchor == subredditInfoView.leftAnchor + 4
+        subTitleView.centerYAnchor == subIconView.centerYAnchor
+        subTitleView.leftAnchor == subIconView.rightAnchor + 8
+        
+        subIconView.topAnchor == subredditInfoView.topAnchor
+        subInfoLabel.topAnchor == subIconView.bottomAnchor + 8
+        subInfoLabel.horizontalAnchors == subredditInfoView.horizontalAnchors + 8
+        subInfoLabel.bottomAnchor == subredditInfoView.bottomAnchor + 4
+        
+        subLayoutBatch = batch {
+            subInfoLabel.heightAnchor == 0
+        }
     }
 
     func configureGestures() {
@@ -668,11 +697,78 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         self.subreddit = subreddit
         setColors(subreddit)
         tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        setupHeader(subreddit)
     }
     
+    func setSubredditObject(subreddit: Subreddit) {
+        self.subreddit = subreddit.displayName
+        setColors(subreddit.displayName)
+        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        
+        setupHeader(subreddit.displayName)
+        setDescriptionLabel(subreddit)
+    }
+    
+    func setupHeader(_ subreddit: String) {
+        let titleString = NSMutableAttributedString(string: "r/\(subreddit)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
+        
+        subTitleView.attributedText = titleString
+        subTitleView.numberOfLines = 0
+        subTitleView.textColor = ColorUtil.theme.fontColor
+        subIconView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+        subIconView.layer.cornerRadius = 25
+        subIconView.clipsToBounds = true
+        
+        if let image = Subscriptions.icon(for: subreddit) {
+            subIconView.sd_setImage(with: URL(string: image.unescapeHTML), completed: nil)
+        } else {
+            subIconView.contentMode = .center
+            if subreddit.contains("m/") {
+                subIconView.image = SubredditCellView.defaultIconMulti
+            } else if subreddit.lowercased() == "all" {
+                subIconView.image = SubredditCellView.allIcon
+                subIconView.backgroundColor = GMColor.blue500Color()
+            } else if subreddit.lowercased() == "frontpage" {
+                subIconView.image = SubredditCellView.frontpageIcon
+                subIconView.backgroundColor = GMColor.green500Color()
+            } else if subreddit.lowercased() == "popular" {
+                subIconView.image = SubredditCellView.popularIcon
+                subIconView.backgroundColor = GMColor.purple500Color()
+            } else {
+                subIconView.image = SubredditCellView.defaultIcon
+            }
+        }
+
+    }
+    
+    func setDescriptionLabel(_ subreddit: Subreddit) {
+        let titleString = NSMutableAttributedString(string: "r/\(subreddit.displayName)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
+        titleString.appendString("\n")
+        titleString.append(NSMutableAttributedString(string: "\(subreddit.accountsActive) SUBSCRIBERS • \(subreddit.subscribers) HERE", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)]))
+        
+        subTitleView.attributedText = titleString
+
+        subInfoLabel.removeConstraints(subLayoutBatch)
+        subInfoLabel.tColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
+        
+        subInfoLabel.setTextWithTitleHTML(NSAttributedString(), htmlString: subreddit.publicDescriptionHtml)
+        subInfoLabel.heightAnchor == subInfoLabel.estimatedHeight
+    }
+
     func reloadData() {
         tableView.reloadData()
     }    
+}
+
+//This should be handled by the parent view controller, unused
+extension SubredditToolbarSearchViewController: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        
+    }
+    
+    func linkLongTapped(url: URL) {
+        
+    }
 }
 
 extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableViewDataSource {

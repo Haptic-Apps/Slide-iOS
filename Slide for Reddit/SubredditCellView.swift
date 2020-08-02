@@ -141,6 +141,11 @@ class SubredditCellView: UITableViewCell {
         } else {
             title.text = subreddit
         }
+        
+        failedLabel?.removeFromSuperview()
+        scroll?.removeFromSuperview()
+        loader?.removeFromSuperview()
+        
         self.profile = ""
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
@@ -190,6 +195,11 @@ class SubredditCellView: UITableViewCell {
     func setSearch(string: String, sub: String?, nav: UIViewController?) {
         title.textColor = ColorUtil.theme.fontColor
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        
+        failedLabel?.removeFromSuperview()
+        scroll?.removeFromSuperview()
+        loader?.removeFromSuperview()
+
         self.search = string
         self.subreddit = sub ?? "all"
         self.profile = ""
