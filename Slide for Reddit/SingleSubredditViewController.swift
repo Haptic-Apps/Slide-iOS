@@ -258,6 +258,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         flowLayout.reset(modal: presentingViewController != nil, vc: self, isGallery: isGallery)
         CachedTitle.titles.removeAll()
         LinkCellImageCache.initialize()
+        self.showMenuNav(true)
         self.tableView.reloadData()
     }
 
@@ -343,7 +344,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     }
     
-    func showMenuNav() {
+    func showMenuNav(_ force: Bool = false) {
+        if force && menuNav != nil{
+            more.removeFromSuperview()
+            menu.removeFromSuperview()
+            menuNav?.view.removeFromSuperview()
+            menuNav?.backgroundView.removeFromSuperview()
+            menuNav?.removeFromParent()
+            menuNav = nil
+        }
         if menuNav == nil {
             menuNav = SubredditToolbarSearchViewController(controller: self)
 

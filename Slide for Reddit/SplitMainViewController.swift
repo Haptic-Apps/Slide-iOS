@@ -224,7 +224,11 @@ class SplitMainViewController: MainViewController {
     }
 
     override func doRetheme() {
-        (viewControllers?[0] as? SingleSubredditViewController)?.reTheme()
+        for controller in viewControllers {
+            if let sub = controller as? SingleSubredditViewController {
+                sub.reTheme()
+            }
+        }
         tabBar.removeFromSuperview()
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)

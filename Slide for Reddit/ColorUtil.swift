@@ -126,6 +126,7 @@ public class ColorUtil {
     }
     
     public static func matchTraitCollection() {
+        print("Switching match trait")
         if shouldBeNight() && theme.displayName != SettingValues.nightTheme {
             _ = doInit()
         } else if !shouldBeNight() && theme.displayName != UserDefaults.standard.string(forKey: "theme") ?? "light" {
