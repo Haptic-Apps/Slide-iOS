@@ -28,7 +28,7 @@ class NavigationHomeViewController: UIViewController {
     var muxColor = ColorUtil.theme.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
-    static var edgeGesture: UIScreenEdgePanGestureRecognizer?
+    static var edgeGesture: UIPanGestureRecognizer?
 
     var subsSource = SubscribedSubredditsSectionProvider()
 
@@ -107,6 +107,23 @@ class NavigationHomeViewController: UIViewController {
         updateAccessibility()
         searchBar.isUserInteractionEnabled = true
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            NavigationHomeViewController.edgeGesture = UIPanGestureRecognizer()
+            NavigationHomeViewController.edgeGesture!.addTarget(nav, action: #selector(nav.handleRightSwipeFull(_:)))
+            NavigationHomeViewController.edgeGesture!.delegate = nav
+            view.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
+            if #available(iOS 13.4, *) {
+                NavigationHomeViewController.edgeGesture!.allowedScrollTypesMask = .continuous
+            }
+            
+        }
+        /*if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) { //DISABLE for now
+            NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
+            NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
+            NavigationHomeViewController.edgeGesture!.delegate = nav
+            sectionIndex.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
+        }*/
     }
 
     @objc func onThemeChanged() {
@@ -183,6 +200,7 @@ class NavigationHomeViewController: UIViewController {
         self.extendedLayoutIncludesOpaqueBars = true
 
         navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.setToolbarHidden(true, animated: false)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
@@ -196,12 +214,6 @@ class NavigationHomeViewController: UIViewController {
         if SettingValues.autoKeyboard {
             //TODO enable this? searchBar.becomeFirstResponder()
         }
-        if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) {
-            NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
-            NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
-            NavigationHomeViewController.edgeGesture!.delegate = nav
-            sectionIndex.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
-        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -211,7 +223,6 @@ class NavigationHomeViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         searchBar.endEditing(true)
-        NavigationHomeViewController.edgeGesture = nil
     }
 
     func configureViews() {
@@ -312,10 +323,13 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
             VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
         } else {
             let sub = cell.subreddit
-            if let nav = navigationController as? SwipeForwardNavigationController {
-                nav.pushNextViewControllerFromRight()
+            if let nav = self.navigationController as? SwipeForwardNavigationController, nav.topViewController == self {
+                nav.pushNextViewControllerFromRight() {
+                    self.parentController?.goToSubreddit(subreddit: sub)
+                }
+            } else {
+                parentController?.goToSubreddit(subreddit: sub)
             }
-            parentController?.goToSubreddit(subreddit: sub)
         }
         searchBar.text = ""
         searchBar.endEditing(true)
@@ -364,7 +378,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return !isSearching
+        return false && !isSearching //Disable pinning for now
     }
 
     func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
@@ -575,7 +589,7 @@ extension NavigationHomeViewController: UISearchBarDelegate {
             task?.cancel()
         }
         do {
-            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=" + (searchBar.text?.addPercentEncoding ?? "") + "&include_over_18=" + (AccountController.isLoggedIn && SettingValues.nsfwEnabled ? "true" : "false")
+            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=\(searchBar.text?.addPercentEncoding ?? "")&include_over_18=\((AccountController.isLoggedIn && SettingValues.nsfwEnabled) ? "true" : "false")"
             print("Requesting \(requestString)")
             task = Alamofire.request(requestString, method: .get).responseString { response in
                 do {
@@ -767,6 +781,12 @@ class CurrentAccountHeaderView: UIView {
         $0.accessibilityLabel = "App Settings"
     }
     
+    var forwardButton = UIButton(type: .custom).then {
+        $0.setImage(UIImage(sfString: .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: ColorUtil.theme.fontColor), for: UIControl.State.normal)
+        $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
+        $0.accessibilityLabel = "Go home"
+    }
+
     // Outer button stack
     
     var upperButtonStack = UIStackView().then {
@@ -865,9 +885,10 @@ class CurrentAccountHeaderView: UIView {
 
         let leftItem = UIBarButtonItem(customView: upperButtonStack)
         let rightItem = UIBarButtonItem(customView: settingsButton)
+        let forwardItem = UIBarButtonItem(customView: forwardButton)
 
         parent.navigationItem.leftBarButtonItem = leftItem
-        parent.navigationItem.rightBarButtonItem = rightItem
+        parent.navigationItem.rightBarButtonItems = [forwardItem, rightItem]
 
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
@@ -938,7 +959,8 @@ extension CurrentAccountHeaderView {
     
     func setupActions() {
         settingsButton.addTarget(self, action: #selector(settingsButtonPressed), for: .touchUpInside)
-        
+        forwardButton.addTarget(self, action: #selector(goForward), for: .touchUpInside)
+
         mailButton.addTarget(self, action: #selector(mailButtonPressed), for: .touchUpInside)
         modButton.addTarget(self, action: #selector(modButtonPressed), for: .touchUpInside)
         switchAccountsButton.addTarget(self, action: #selector(switchAccountsButtonPressed), for: .touchUpInside)
@@ -1076,6 +1098,12 @@ extension CurrentAccountHeaderView {
 
     @objc func settingsButtonPressed(_ sender: UIButton) {
         self.delegate?.currentAccountViewController(self, didRequestSettingsMenu: ())
+    }
+    
+    @objc func goForward(_ sender: UIButton) {
+        if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
+            nav.pushNextViewControllerFromRight(nil)
+        }
     }
     
     @objc func mailButtonPressed(_ sender: UIButton) {

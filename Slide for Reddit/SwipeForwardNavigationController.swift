@@ -14,7 +14,7 @@ typealias SWNavigationControllerPushCompletion = () -> Void
 class SwipeForwardNavigationController: UINavigationController {
     private var percentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransition?
     public var interactivePushGestureRecognizer: UIScreenEdgePanGestureRecognizer?
-    private var pushableViewControllers: [UIViewController] = []
+    public var pushableViewControllers: [UIViewController] = []
  /* View controllers we can push onto the navigation stack by pulling in from the right screen edge. */    // Extra state used to implement completion blocks on pushViewController:
     private var pushCompletion: SWNavigationControllerPushCompletion?
     private var pushedViewController: UIViewController?
@@ -69,6 +69,9 @@ class SwipeForwardNavigationController: UINavigationController {
             fullWidthBackGestureRecognizer.delegate = self
             fullWidthBackGestureRecognizer.require(toFail: interactivePushGestureRecognizer!)
             view.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            if #available(iOS 13.4, *) {
+                fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+            }
         }
     }
 
@@ -85,7 +88,7 @@ class SwipeForwardNavigationController: UINavigationController {
         // Start, update, or finish the interactive push transition
         switch swipeGestureRecognizer?.state {
         case .began:
-            pushNextViewControllerFromRight()
+            pushNextViewControllerFromRight(nil)
         case .changed:
             percentDrivenInteractiveTransition?.update(progress)
         case .ended:
@@ -100,6 +103,28 @@ class SwipeForwardNavigationController: UINavigationController {
         }
     }
     
+    @objc func handleRightSwipeFull(_ swipeGestureRecognizer: UIPanGestureRecognizer?) {
+        let view = self.view!
+        let progress = abs(-(swipeGestureRecognizer?.translation(in: view).x ?? 0.0) / view.frame.size.width) // 1.0 When the pushable vc has been pulled into place
+
+        // Start, update, or finish the interactive push transition
+        switch swipeGestureRecognizer?.state {
+        case .began:
+            pushNextViewControllerFromRight(nil)
+        case .changed:
+            percentDrivenInteractiveTransition?.update(progress)
+        case .ended:
+            // Figure out if we should finish the transition or not
+            handleEdgeSwipeEnded(withProgress: progress, velocity: swipeGestureRecognizer?.velocity(in: view).x ?? 0)
+        case .failed:
+            percentDrivenInteractiveTransition?.cancel()
+        case .cancelled, .possible:
+            fallthrough
+        default:
+            break
+        }
+    }
+
     func handleEdgeSwipeEnded(withProgress progress: CGFloat, velocity: CGFloat) {
         // kSWGestureVelocityThreshold threshold indicates how hard the finger has to flick left to finish the push transition
         if velocity < 0 && (progress > 0.5 || velocity < -500) {
@@ -175,12 +200,13 @@ extension SwipeForwardNavigationController {
         }
     }
 
-    func pushNextViewControllerFromRight() {
+    func pushNextViewControllerFromRight(_ callback: (() -> Void)?) {
         let pushedViewController = pushableViewControllers.last
 
         if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
             push(pushedViewController, animated: true) {
                 self.pushableViewControllers.removeLast()
+                callback?()
             }
         }
     }

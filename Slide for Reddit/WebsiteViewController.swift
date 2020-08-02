@@ -116,6 +116,9 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         super.viewDidDisappear(animated)
         if setObserver {
             webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+            
+            //In case of swipe back
+            setObserver = false
         }
         let myURLRequest: URLRequest = URLRequest(url: URL(string: "about://blank")!)
         webView.load(myURLRequest)

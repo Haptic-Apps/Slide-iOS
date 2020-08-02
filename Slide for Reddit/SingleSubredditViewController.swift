@@ -182,6 +182,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
+            splitViewController?.showDetailViewController(PlaceholderViewController(), sender: self)
+        }
+        
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
@@ -373,12 +377,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         }
         if fab != nil {
-            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-            }, completion: { _ in
-                self.fab?.removeFromSuperview()
-                self.fab = nil
-            })
+            self.fab?.removeFromSuperview()
+            self.fab = nil
         }
         
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
@@ -866,7 +866,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 navigationItem.rightBarButtonItems = [sortB]
                 
                 let label = UILabel()
-                label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
+                label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
                 label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
                 label.adjustsFontSizeToFitWidth = true
                 label.font = UIFont.boldSystemFont(ofSize: 20)

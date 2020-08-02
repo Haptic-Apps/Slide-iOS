@@ -1117,7 +1117,7 @@ class CommentViewController: MediaViewController {
     /// Sets up the navigationTitleView to be of the inserted parameters values.
     func setupTitleView(_ sub: String, icon: String) {
         let label = UILabel()
-        label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
+        label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
         label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)

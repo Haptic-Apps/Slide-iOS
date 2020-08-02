@@ -335,8 +335,11 @@ class SplitMainViewController: MainViewController {
     }
     
     override func goToSubreddit(subreddit: String, override: Bool = false) {
+        //Temporary fix for 13
         UIView.animate(withDuration: 0.3, animations: {
-            self.splitViewController?.preferredDisplayMode = .primaryHidden
+            if SettingValues.appMode == .MULTI_COLUMN {
+                self.splitViewController?.preferredDisplayMode = .primaryHidden
+            }
         }, completion: nil)
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
@@ -483,11 +486,25 @@ class SplitMainViewController: MainViewController {
 
 extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
     func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestAction: SettingValues.NavigationHeaderActions) {
+        
+        //TODO break these out into the NavigationHomeVC and don't rely on pushing to the SplitMainVC
         switch didRequestAction {
         case .HOME:
-            goToSubreddit(subreddit: "frontpage")
+            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+                nav.pushNextViewControllerFromRight() {
+                    self.goToSubreddit(subreddit: "frontpage")
+                }
+            } else {
+                self.goToSubreddit(subreddit: "frontpage")
+            }
         case .POPULAR:
-            goToSubreddit(subreddit: "popular")
+            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+                nav.pushNextViewControllerFromRight() {
+                    self.goToSubreddit(subreddit: "popular")
+                }
+            } else {
+                self.goToSubreddit(subreddit: "popular")
+            }
         case .RANDOM:
             random(view)
         case .SAVED:
@@ -495,13 +512,34 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
         case .UPVOTED:
             view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 3)
         case .HISTORY:
-            currentAccountViewController(view, didRequestHistory: ())
+            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+                nav.pushNextViewControllerFromRight() {
+                    self.currentAccountViewController(view, didRequestHistory: ())
+                }
+            } else {
+                currentAccountViewController(view, didRequestHistory: ())
+            }
+
         case .AUTO_CACHE:
-            currentAccountViewController(view, didRequestCacheNow: ())
+            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+                nav.pushNextViewControllerFromRight() {
+                    self.currentAccountViewController(view, didRequestCacheNow: ())
+                }
+            } else {
+                currentAccountViewController(view, didRequestCacheNow: ())
+            }
+
         case .YOUR_PROFILE:
             view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 0)
         case .COLLECTIONS:
-            currentAccountViewController(view, didRequestCollections: ())
+            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+                nav.pushNextViewControllerFromRight() {
+                    self.currentAccountViewController(view, didRequestCollections: ())
+                }
+            } else {
+                currentAccountViewController(view, didRequestCollections: ())
+            }
+
         case .CREATE_MULTI:
             view.multiButtonPressed()
         case .TRENDING:

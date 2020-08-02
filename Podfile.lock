@@ -99,7 +99,6 @@ PODS:
     - QuickLayout (= 3.0.0)
   - SwiftLinkPreview (3.0.1)
   - SwiftLint (0.39.2)
-  - SwiftSpreadsheet (1.2.1)
   - SwiftyJSON (5.0.0)
   - TGPControls (5.1.0)
   - Then (2.7.0)
@@ -130,7 +129,6 @@ DEPENDENCIES:
   - SwiftEntryKit (from `https://github.com/ccrama/SwiftEntryKit`)
   - SwiftLinkPreview (~> 3.0.1)
   - SwiftLint
-  - SwiftSpreadsheet
   - SwiftyJSON
   - TGPControls
   - Then
@@ -163,7 +161,6 @@ SPEC REPOS:
     - SubtleVolume
     - SwiftLinkPreview
     - SwiftLint
-    - SwiftSpreadsheet
     - SwiftyJSON
     - TGPControls
     - Then
@@ -235,13 +232,12 @@ SPEC CHECKSUMS:
   SwiftEntryKit: 1661b766dd22b07679e6ebb326ccfbd81ceb0a20
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
   SwiftLint: 22ccbbe3b8008684be5955693bab135e0ed6a447
-  SwiftSpreadsheet: b3dc6d89bd5fd18f38fe88c29898fbc481660a04
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
   Then: acfe0be7e98221c6204e12f8161459606d5d822d
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 7f81c6a334dcf12406d9940d705aaeed4eed9b96
+PODFILE CHECKSUM: 7b985f3d6e4dc04cd7d9d158952612788f1c16f3
 
 COCOAPODS: 1.9.3
