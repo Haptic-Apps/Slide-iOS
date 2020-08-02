@@ -1028,7 +1028,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func setupTitleView(_ sub: String, icon: String) {
         let label = UILabel()
-        label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : sub)"
+        label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
         label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
@@ -1313,9 +1313,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
            //navGesture.require(toFail: panGesture)
         }
+        
         self.presentationController?.delegate = self
-//        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
-//        pan.direction = .horizontal
+
         if !loaded && (single || forceLoad) {
             refresh(self)
         }

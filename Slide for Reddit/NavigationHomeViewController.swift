@@ -28,7 +28,7 @@ class NavigationHomeViewController: UIViewController {
     var muxColor = ColorUtil.theme.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
-    static var edgeGesture: UIScreenEdgePanGestureRecognizer?
+    static var edgeGesture: UIPanGestureRecognizer?
 
     var subsSource = SubscribedSubredditsSectionProvider()
 
@@ -107,6 +107,13 @@ class NavigationHomeViewController: UIViewController {
         updateAccessibility()
         searchBar.isUserInteractionEnabled = true
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        
+        /*if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) { //DISABLE for now
+            NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
+            NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
+            NavigationHomeViewController.edgeGesture!.delegate = nav
+            sectionIndex.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
+        }*/
     }
 
     @objc func onThemeChanged() {
@@ -141,6 +148,16 @@ class NavigationHomeViewController: UIViewController {
         configureLayout()
         
         self.tableView.reloadData()
+        
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            NavigationHomeViewController.edgeGesture = UIPanGestureRecognizer()
+            NavigationHomeViewController.edgeGesture!.addTarget(nav, action: #selector(nav.handleRightSwipeFull(_:)))
+            NavigationHomeViewController.edgeGesture!.delegate = nav
+            view.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
+            if #available(iOS 13.4, *) {
+                NavigationHomeViewController.edgeGesture!.allowedScrollTypesMask = .continuous
+            }
+        }
     }
     
     struct Callbacks {
@@ -197,12 +214,6 @@ class NavigationHomeViewController: UIViewController {
         if SettingValues.autoKeyboard {
             //TODO enable this? searchBar.becomeFirstResponder()
         }
-        if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) {
-            NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
-            NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
-            NavigationHomeViewController.edgeGesture!.delegate = nav
-            sectionIndex.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
-        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -212,7 +223,6 @@ class NavigationHomeViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         searchBar.endEditing(true)
-        NavigationHomeViewController.edgeGesture = nil
     }
 
     func configureViews() {
@@ -308,18 +318,12 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         let cell = tableView.cellForRow(at: indexPath) as! SubredditCellView
         if !cell.profile.isEmpty() {
             let user = cell.profile
-            VCPresenter.openRedditLink("/u/" + user.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
+            self.accountHeader?.delegate?.navigation(self, didRequestUser: user)
         } else if !cell.search.isEmpty() {
-            VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+            self.accountHeader?.delegate?.navigation(self, didRequestSearch: cell.search)
         } else {
             let sub = cell.subreddit
-            if let nav = self.navigationController as? SwipeForwardNavigationController, nav.topViewController == self {
-                nav.pushNextViewControllerFromRight() {
-                    self.parentController?.goToSubreddit(subreddit: sub)
-                }
-            } else {
-                parentController?.goToSubreddit(subreddit: sub)
-            }
+            self.accountHeader?.delegate?.navigation(self, didRequestSubreddit: sub)
         }
         searchBar.text = ""
         searchBar.endEditing(true)
@@ -720,22 +724,32 @@ extension NavigationHomeViewController {
 }
 
 // MARK: - Header view
-protocol CurrentAccountHeaderViewDelegate: AnyObject {
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestSettingsMenu: Void)
-    func currentAccountViewController(_ view: CurrentAccountHeaderView?, didRequestAccountChangeToName accountName: String)
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestGuestAccount: Void)
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestLogOut: Void)
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestNewAccount: Void)
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, goToMultireddit multireddit: String)
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestCacheNow: Void)
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestHistory: Void)
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestAction: SettingValues.NavigationHeaderActions)
+protocol NavigationHomeDelegate: AnyObject {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSettingsMenu: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController?, didRequestAccountChangeToName accountName: String)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestGuestAccount: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestLogOut: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewAccount: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, goToMultireddit multireddit: String)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestCacheNow: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestHistory: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestUser: String)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSearch: String)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestAction: SettingValues.NavigationHeaderActions)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestInbox: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestModMenu: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSwitchAccountMenu: Void)
+
+    func accountHeaderView(_ homeViewController: NavigationHomeViewController, didRequestProfilePageAtIndex index: Int)
+    func displayMenu(_ homeViewController: NavigationHomeViewController, _ menu: DragDownAlertMenu)
 }
 
 class CurrentAccountHeaderView: UIView {
     
-    weak var delegate: CurrentAccountHeaderViewDelegate?
-    weak var parent: UIViewController?
+    weak var delegate: NavigationHomeDelegate?
+    weak var parent: NavigationHomeViewController?
     
     var reportText: String?
     var defaultActions: [SettingValues.NavigationHeaderActions] = []
@@ -862,12 +876,12 @@ class CurrentAccountHeaderView: UIView {
         }()
     }
     
-    func initCurrentAccount(_ parent: UIViewController) {
+    func initCurrentAccount(_ parent: NavigationHomeViewController) {
         self.parent = parent
         
         defaultActions = SettingValues.NavigationHeaderActions.getMenuNone()
 
-        shortcutsView = AccountShortcutsView(frame: CGRect.zero, actions: defaultActions)
+        shortcutsView = AccountShortcutsView(frame: CGRect.zero, actions: defaultActions, parent: parent)
         
         setupViews()
         setupConstraints()
@@ -907,7 +921,7 @@ extension CurrentAccountHeaderView {
         contentView.addSubview(accountAgeLabel)
         
         contentView.addSubview(shortcutsView)
-        shortcutsView.delegate = self
+        shortcutsView.delegate = self.delegate
         
         contentView.addSubview(emptyStateLabel)
         
@@ -993,7 +1007,7 @@ extension CurrentAccountHeaderView {
         accountNameLabel.addTapGestureRecognizer {
             [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.accountHeaderView(strongSelf.shortcutsView, didRequestProfilePageAtIndex: 0)
+            strongSelf.delegate?.accountHeaderView(strongSelf.parent!, didRequestProfilePageAtIndex: 0)
         }
         
         modButton.isHidden = !(AccountController.current?.isMod ?? false)
@@ -1087,7 +1101,7 @@ extension CurrentAccountHeaderView {
 extension CurrentAccountHeaderView {
 
     @objc func settingsButtonPressed(_ sender: UIButton) {
-        self.delegate?.currentAccountViewController(self, didRequestSettingsMenu: ())
+        self.delegate?.navigation(self.parent!, didRequestSettingsMenu: ())
     }
     
     @objc func goForward(_ sender: UIButton) {
@@ -1095,141 +1109,29 @@ extension CurrentAccountHeaderView {
             nav.pushNextViewControllerFromRight(nil)
         }
     }
-    
+        
     @objc func mailButtonPressed(_ sender: UIButton) {
-        let vc = InboxViewController()
-        let navVC = SwipeForwardNavigationController(rootViewController: vc)
-        navVC.navigationBar.isTranslucent = false
-        parent?.present(navVC, animated: true)
+        self.delegate?.navigation(self.parent!, didRequestInbox: ())
     }
     
     @objc func cacheButtonPressed() {
-        self.delegate?.currentAccountViewController(self, didRequestCacheNow: ())
+        self.delegate?.navigation(self.parent!, didRequestCacheNow: ())
     }
     
     @objc func historyButtonPressed() {
-        self.delegate?.currentAccountViewController(self, didRequestHistory: ())
-    }
-
-    @objc func multiButtonPressed() {
-        let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)
-        
-        alert.addTextInput(title: "Create", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon(), enabled: true, action: {
-            var text = alert.getText() ?? ""
-            text = text.replacingOccurrences(of: " ", with: "_")
-            if text == "" {
-                let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
-                alert.setupTheme()
-                alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                alert.addAction(AlertAction(title: "Ok", style: .normal, handler: { (_) in
-                    self.multiButtonPressed()
-                }))
-                return
-            }
-            do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.createMultireddit(text, descriptionMd: "", completion: { (result) in
-                    switch result {
-                    case .success(let multireddit):
-                        if let parent = self.parent {
-                            DispatchQueue.main.async {
-                                VCPresenter.presentModally(viewController: ManageMultireddit(multi: multireddit, reloadCallback: {
-                                }, dismissCallback: {
-                                    Subscriptions.subscribe("/m/" + text, false, session: nil)
-                                    self.delegate?.currentAccountViewController(self, goToMultireddit: "/m/" + text)
-                                }), parent, nil)
-                            }
-                        }
-                    case .failure:
-                        if let parent = self.parent {
-                            DispatchQueue.main.async {
-                                BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
-                            }
-                        }
-                    }
-                })
-            } catch {
-                DispatchQueue.main.async {
-                    BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: self.parent)
-                }
-            }
-
-        }, inputPlaceholder: "Name...", inputValue: nil, inputIcon: UIImage(named: "wiki")!.menuIcon(), textRequired: true, exitOnAction: false)
-        
-        if let parent = parent {
-            alert.show(parent)
-        }
+        self.delegate?.navigation(self.parent!, didRequestHistory: ())
     }
 
     @objc func modButtonPressed(_ sender: UIButton) {
-        let vc = ModerationViewController()
-        let navVC = SwipeForwardNavigationController(rootViewController: vc)
-        navVC.navigationBar.isTranslucent = false
-        parent?.present(navVC, animated: true)
+        self.delegate?.navigation(self.parent!, didRequestModMenu: ())
     }
     
     @objc func switchAccountsButtonPressed(_ sender: UIButton) {
-        showSwitchAccountsMenu()
+        self.delegate?.navigation(self.parent!, didRequestSwitchAccountMenu: ())
     }
     
     @objc func emptyStateLabelTapped() {
-        showSwitchAccountsMenu()
-    }
-}
-
-// MARK: - AccountHeaderViewDelegate
-extension CurrentAccountHeaderView: AccountShortcutsViewDelegate {
-    func displayMenu(_ menu: DragDownAlertMenu) {
-        parent?.present(menu, animated: true, completion: nil)
-    }
-    
-    func didRequestAction(_ action: SettingValues.NavigationHeaderActions) {
-        delegate?.currentAccountViewController(self, didRequestAction: action)
-    }
-
-    func accountHeaderView(_ view: AccountShortcutsView, didRequestProfilePageAtIndex index: Int) {
-        let vc = ProfileViewController(name: AccountController.currentName)
-        vc.openTo = index
-        let navVC = SwipeForwardNavigationController(rootViewController: vc)
-        navVC.navigationBar.isTranslucent = false
-        parent?.present(navVC, animated: true)
-    }
-}
-
-// MARK: - Account Switching
-extension CurrentAccountHeaderView {
-    func showSwitchAccountsMenu() {
-        let optionMenu = DragDownAlertMenu(title: "Accounts", subtitle: "Currently signed in as \(AccountController.isLoggedIn ? AccountController.currentName : "Guest")", icon: nil)
-
-        for accountName in AccountController.names.unique().sorted() {
-            if accountName != AccountController.currentName {
-                optionMenu.addAction(title: accountName, icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
-                    self.setLoadingState(true)
-                    self.delegate?.currentAccountViewController(self, didRequestAccountChangeToName: accountName)
-                }
-            } else {
-               // TODO: - enabled
-                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
-                }
-            }
-        }
-        
-        if AccountController.isLoggedIn {
-            optionMenu.addAction(title: "Browse as Guest", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
-                self.setEmptyState(true, animate: false)
-                self.delegate?.currentAccountViewController(self, didRequestGuestAccount: ())
-            }
-
-            optionMenu.addAction(title: "Log out of u/\(AccountController.currentName)", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
-                self.setEmptyState(true, animate: false)
-                self.delegate?.currentAccountViewController(self, didRequestLogOut: ())
-            }
-        }
-        
-        optionMenu.addAction(title: "Add a new account", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)) {
-            self.delegate?.currentAccountViewController(self, didRequestNewAccount: ())
-        }
-        
-        parent?.present(optionMenu, animated: true, completion: nil)
+        self.delegate?.navigation(self.parent!, didRequestSwitchAccountMenu: ())
     }
 }
 
@@ -1271,30 +1173,27 @@ extension CurrentAccountHeaderView {
     }
 }
 
-protocol AccountShortcutsViewDelegate: AnyObject {
-    func accountHeaderView(_ view: AccountShortcutsView, didRequestProfilePageAtIndex index: Int)
-    func didRequestAction(_ action: SettingValues.NavigationHeaderActions)
-    func displayMenu(_ menu: DragDownAlertMenu)
-}
-
 class AccountShortcutsView: UIView {
     
-    weak var delegate: AccountShortcutsViewDelegate?
+    weak var delegate: NavigationHomeDelegate?
+    weak var parent: NavigationHomeViewController?
         
     var actions: [SettingValues.NavigationHeaderActions]
     
-    init(frame: CGRect, actions: [SettingValues.NavigationHeaderActions]) {
+    init(frame: CGRect, actions: [SettingValues.NavigationHeaderActions], parent: NavigationHomeViewController) {
+        self.parent = parent
         self.actions = actions
         super.init(frame: frame)
         
         addSubviews(cellStack)
         //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
         for action in actions {
-            print(action)
             cellStack.addArrangedSubview(UITableViewCell().then {
                 $0.configure(text: action.getTitle(), image: action.getImage())
                 $0.addTapGestureRecognizer {
-                    self.delegate?.didRequestAction(action)
+                    if let delegate = self.delegate, let parent = self.parent {
+                        delegate.navigation(parent, didRequestAction: action)
+                    }
                 }
                 $0.heightAnchor >= 50
                 $0.accessoryType = .disclosureIndicator
@@ -1307,10 +1206,12 @@ class AccountShortcutsView: UIView {
                 let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
                 for action in SettingValues.NavigationHeaderActions.cases {
                     optionMenu.addAction(title: action.getTitle(), icon: action.getImage()) {
-                        self.delegate?.didRequestAction(action)
+                        if let delegate = self.delegate, let parent = self.parent {
+                            delegate.navigation(parent, didRequestAction: action)
+                        }
                     }
                 }
-                self.delegate?.displayMenu(optionMenu)
+                self.delegate?.displayMenu(self.parent!, optionMenu)
             }
             $0.heightAnchor >= 50
             $0.accessoryType = .disclosureIndicator

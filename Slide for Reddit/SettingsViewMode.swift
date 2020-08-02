@@ -290,9 +290,9 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var thirteenOffset = 0
-        if #available(iOS 13, *) {
+        /* Disable this settingif #available(iOS 13, *) {
             thirteenOffset = 1
-        }
+        }*/
         switch section {
         case 0: return 3
         case 1: return 3 + thirteenOffset
