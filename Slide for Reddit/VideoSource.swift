@@ -118,32 +118,3 @@ class StreamableVideoSource: VideoSource {
         return dataTask
     }
 }
-
-class VidMeVideoSource: VideoSource {
-    func load(url: String, completion: @escaping (String) -> Void, failure: (() -> Void)? = nil) -> URLSessionDataTask? {
-        let finalURL = URL(string: "https://api.vid.me/videoByUrl?url=" + url)!
-        let dataTask = URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
-            if error != nil {
-                print(error ?? "Error loading gif...")
-                failure?()
-            } else {
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
-                        return
-                    }
-
-                    let gif = VidMeJSONBase.init(dictionary: json)
-
-                    DispatchQueue.main.async {
-                        completion((gif?.video?.complete_url)!)
-                    }
-                } catch let error as NSError {
-                    print(error)
-                }
-            }
-
-        }
-        dataTask.resume()
-        return dataTask
-    }
-}

@@ -396,25 +396,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var statusBar = UIView()
     var splitVC = CustomSplitController()
-
-    /**
-     Rebuilds the nav stack for the currently selected App Mode (split, multi column, etc.)
-     */
-    func resetStackOld() {
-        guard let window = self.window else {
-            fatalError("Window must exist when resetting the stack!")
-        }
-        let rootController: UIViewController!
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
-            rootController = splitVC
-            splitVC.preferredDisplayMode = .allVisible
-            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: LegacyMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
-        } else {
-            rootController = UINavigationController(rootViewController: LegacyMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
-        }
-
-        window.setRootViewController(rootController, animated: false)
-    }
     
     func resetStack(_ soft: Bool = false) -> MainViewController {
         guard let window = self.window else {
@@ -458,7 +439,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if SettingValues.appMode == .MULTI_COLUMN {
                 let splitViewController = UISplitViewController()
-                splitViewController.preferredDisplayMode = .primaryOverlay
+                splitViewController.preferredDisplayMode = .secondaryOnly
                 splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4

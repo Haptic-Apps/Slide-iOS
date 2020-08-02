@@ -192,7 +192,7 @@ CHECKOUT OPTIONS:
     :commit: f67cd8eeae2ff7a2b51b4157e8f6f77da30fc857
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
-    :commit: 8a5ecb09650a68bc20f29ba321dad4725482fb56
+    :commit: a22003f93a803c2e14b193f636669c21358fb1d7
     :git: https://github.com/ccrama/Alerts-Pickers
   SDCAlertView:
     :commit: 644380f73489b1eded3c332335e589e026254486
