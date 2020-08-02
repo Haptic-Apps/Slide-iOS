@@ -1109,7 +1109,7 @@ extension CurrentAccountHeaderView {
             nav.pushNextViewControllerFromRight(nil)
         }
     }
-    
+        
     @objc func mailButtonPressed(_ sender: UIButton) {
         self.delegate?.navigation(self.parent!, didRequestInbox: ())
     }
