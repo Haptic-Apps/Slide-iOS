@@ -744,15 +744,16 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     func setDescriptionLabel(_ subreddit: Subreddit) {
         let titleString = NSMutableAttributedString(string: "r/\(subreddit.displayName)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
         titleString.appendString("\n")
-        titleString.append(NSMutableAttributedString(string: "\(subreddit.accountsActive) SUBSCRIBERS • \(subreddit.subscribers) HERE", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)]))
+        titleString.append(NSMutableAttributedString(string: "\(subreddit.accountsActive) HERE • \(subreddit.subscribers) SUBSCRIBERS", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)]))
         
         subTitleView.attributedText = titleString
 
+        /* Enable this possibly? Would make it more like a sidebar
         subInfoLabel.removeConstraints(subLayoutBatch)
         subInfoLabel.tColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
         
         subInfoLabel.setTextWithTitleHTML(NSAttributedString(), htmlString: subreddit.publicDescriptionHtml)
-        subInfoLabel.heightAnchor == subInfoLabel.estimatedHeight
+        subInfoLabel.heightAnchor == subInfoLabel.estimatedHeight*/
     }
 
     func reloadData() {
@@ -809,7 +810,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.section == 0 && indexPath.row == 1 ? 158 : 60
+        return indexPath.section == 0 && indexPath.row == 0 ? 158 : 60
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -818,7 +819,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 3
+            return 2
         } else {
             return suggestions.count
         }
@@ -859,7 +860,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: SubredditCellView
         if indexPath.section == 0 {
-            if indexPath.row == 0 {
+            if indexPath.row == 3 {
                 // "Search Reddit for <text>" cell
                 let thing = searchBar.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
@@ -867,7 +868,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
                 cell = c
                 cell.accessoryType = .disclosureIndicator
                 cell.tintColor = ColorUtil.theme.fontColor
-            } else if indexPath.row == 2 {
+            } else if indexPath.row == 1 {
                 // "Search r/subreddit for <text>" cell
                 let thing = searchBar.text!
                 let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView

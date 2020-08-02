@@ -278,7 +278,7 @@ class SubredditCellView: UITableViewCell {
                 subName.textColor = ColorUtil.theme.fontColor
                 
                 subDot.sizeAnchors == CGSize.square(size: 25)
-                subDot.layer.cornerRadius = (25/2)
+                subDot.layer.cornerRadius = (25 / 2)
                 subDot.clipsToBounds = true
                 textView.textColor = ColorUtil.theme.fontColor
 
