@@ -333,7 +333,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                        completion: completionBlock)
     }
     
-    @objc func collapse() {
+    @objc func collapse(_ completion: (() -> Void)? = nil) {
         doneOnce = false
         searchBar.isUserInteractionEnabled = false
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
@@ -375,6 +375,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.backgroundView.isHidden = true
             strongSelf.expanded = false
             strongSelf.updateAccessibility()
+            completion?()
         }
 
         UIView.animate(withDuration: 0.4,
@@ -779,23 +780,17 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
         let cell = tableView.cellForRow(at: indexPath) as! SubredditCellView
         if !cell.profile.isEmpty() {
             let user = cell.profile
-            if let nav = self.navigationController as? SwipeForwardNavigationController, nav.topViewController == self {
-                nav.pushNextViewControllerFromRight() {
-                    //TODO this self.parentController?.goToUser(profile: user)
-                }
-            } else {
-                //TODO This parentController?.goToUser(profile: user)
-            }
+            VCPresenter.openRedditLink("/u/\(user)", self.navigationController, self)
         } else if !cell.search.isEmpty() {
-            VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
+            VCPresenter.showVC(viewController: SearchViewController(subreddit: cell.subreddit, searchFor: cell.search), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
         } else {
             let sub = cell.subreddit
-            if let nav = self.navigationController as? SwipeForwardNavigationController, nav.topViewController == self {
-                nav.pushNextViewControllerFromRight() {
-                    //TODO this self.parentController?.goToSubreddit(subreddit: sub)
+            if let parent = parentController?.parent as? SplitMainViewController {
+                self.collapse() {
+                    parent.goToSubreddit(subreddit: sub)
                 }
             } else {
-                //TODO this parentController?.goToSubreddit(subreddit: sub)
+                VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
             }
         }
         searchBar.text = ""
