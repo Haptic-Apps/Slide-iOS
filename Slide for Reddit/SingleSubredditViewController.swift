@@ -260,6 +260,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         LinkCellImageCache.initialize()
         self.showMenuNav(true)
         self.tableView.reloadData()
+        self.setupFab(self.view.bounds.size)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -345,7 +346,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
     
     func showMenuNav(_ force: Bool = false) {
-        if force && menuNav != nil{
+        if force && menuNav != nil {
             more.removeFromSuperview()
             menu.removeFromSuperview()
             menuNav?.view.removeFromSuperview()
@@ -376,7 +377,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             // 3- Adjust bottomSheet frame and initial position.
             let height = view.frame.height
             let width = view.frame.width
-            var nextOffset = CGFloat(0)
+            let nextOffset = CGFloat(0)
             
             menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: min(height - menuNav!.minTopOffset, height * 0.9))
             
