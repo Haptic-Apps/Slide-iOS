@@ -311,7 +311,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         
-        if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.tttAttributedCellDelegate.isMenuShown() && self.parent!.tttAttributedCellDelegate.getMenuShown() == (content as! RComment).getId())) {
+        if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! RComment).getId())) {
             self.showMenu(nil)
         } else {
             self.pushedSingleTap(nil)
@@ -585,7 +585,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func doShowMenu() {
         if let del = self.parent {
-            if del.tttAttributedCellDelegate.isMenuShown() && del.tttAttributedCellDelegate.getMenuShown() == (content as! RComment).getId() {
+            if del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId() {
                 hideMenuAnimated()
             } else {
                 showMenuAnimated()
@@ -1668,7 +1668,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             parent.registerForPreviewing(with: self, sourceView: title)
             registered = true
         }
-        if parent.tttAttributedCellDelegate.getMenuShown() ?? "" == comment.getIdentifier() {
+        if parent.getMenuShown() ?? "" == comment.getIdentifier() {
             showCommentMenu()
         } else {
             hideCommentMenu()
@@ -1934,7 +1934,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         checkReply { (completed) in
             self.contentView.endEditing(true)
             if completed {
-                self.parent?.tttAttributedCellDelegate.pushedSingleTap(self)
+                self.parent?.pushedSingleTap(self)
             }
         }
     }

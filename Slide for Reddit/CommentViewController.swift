@@ -30,8 +30,6 @@ class CommentViewController: MediaViewController {
     public var submissionMoreDelegate: CommentSubmissionMoreDelegate!
     // Link Cell View Delegate
     public var linkCellViewDelegate: CommentLinkCellViewDelegate!
-    // TTTAttributed Cell Delegate
-    public var tttAttributedCellDelegate: CommentTTTAttributedCellDelegate!
     
     var version = 0
     var menuCell: CommentDepthCell?

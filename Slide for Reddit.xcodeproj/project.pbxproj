@@ -70,6 +70,11 @@
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
 		BD169FDA24D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD169FD924D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift */; };
+		BD61BF9724D676A400067126 /* CommentViewControllerPreviewingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BF9624D676A400067126 /* CommentViewControllerPreviewingDelegate.swift */; };
+		BD61BF9D24D6777900067126 /* CommentNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BF9C24D6777900067126 /* CommentNavigationControllerDelegate.swift */; };
+		BD61BF9F24D677B200067126 /* CommentTapBehindModalDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BF9E24D677B200067126 /* CommentTapBehindModalDelegate.swift */; };
+		BD61BFA124D677D800067126 /* CommentGestureRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BFA024D677D800067126 /* CommentGestureRecognizerDelegate.swift */; };
+		BD61BFA324D6785D00067126 /* CommentThingExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BFA224D6785D00067126 /* CommentThingExtension.swift */; };
 		BD8E321724D078FD00AE1D80 /* CommentTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E321624D078FD00AE1D80 /* CommentTableViewDelegate.swift */; };
 		BD8E321924D0790800AE1D80 /* CommentTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E321824D0790800AE1D80 /* CommentTableViewDataSource.swift */; };
 		BD8E321C24D08E6400AE1D80 /* CommentSearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E321B24D08E6400AE1D80 /* CommentSearchBarDelegate.swift */; };
@@ -78,7 +83,6 @@
 		BD99461224D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD99461124D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift */; };
 		BD99461524D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */; };
 		BDCDC5E324D4F4A10066CA8D /* ParentCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */; };
-		BDCDC5E624D4FFD00066CA8D /* CommentViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCDC5E524D4FFD00066CA8D /* CommentViewControllerExtensions.swift */; };
 		BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B252240C9F5400C457BC /* CommentsRowController.swift */; };
 		BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */; };
 		BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0958DE218A08620076966C /* SettingsViewMode.swift */; };
@@ -288,7 +292,6 @@
 		BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9742371F0409BA00BF48E0 /* SettingsComments.swift */; };
 		BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE981D341E31855500BD3846 /* OpenInChrome.swift */; };
 		BE99C9F72378AC91007911E2 /* Slide_Screenshot_Automation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */; };
-		BE99C9FF2378ACF6007911E2 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */; };
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
 		BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2381E35D64F00BF761C /* MessageCellView.swift */; };
@@ -501,6 +504,11 @@
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
 		BD169FD924D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTTTAttributedCellDelegate.swift; sourceTree = "<group>"; };
+		BD61BF9624D676A400067126 /* CommentViewControllerPreviewingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewControllerPreviewingDelegate.swift; sourceTree = "<group>"; };
+		BD61BF9C24D6777900067126 /* CommentNavigationControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentNavigationControllerDelegate.swift; sourceTree = "<group>"; };
+		BD61BF9E24D677B200067126 /* CommentTapBehindModalDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTapBehindModalDelegate.swift; sourceTree = "<group>"; };
+		BD61BFA024D677D800067126 /* CommentGestureRecognizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentGestureRecognizerDelegate.swift; sourceTree = "<group>"; };
+		BD61BFA224D6785D00067126 /* CommentThingExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentThingExtension.swift; sourceTree = "<group>"; };
 		BD8E321624D078FD00AE1D80 /* CommentTableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewDelegate.swift; sourceTree = "<group>"; };
 		BD8E321824D0790800AE1D80 /* CommentTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewDataSource.swift; sourceTree = "<group>"; };
 		BD8E321B24D08E6400AE1D80 /* CommentSearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentSearchBarDelegate.swift; sourceTree = "<group>"; };
@@ -509,7 +517,6 @@
 		BD99461124D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentSubmissionMoreDelegate.swift; sourceTree = "<group>"; };
 		BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkCellViewDelegate.swift; sourceTree = "<group>"; };
 		BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentCommentViewController.swift; sourceTree = "<group>"; };
-		BDCDC5E524D4FFD00066CA8D /* CommentViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewControllerExtensions.swift; sourceTree = "<group>"; };
 		BE02B252240C9F5400C457BC /* CommentsRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsRowController.swift; sourceTree = "<group>"; };
 		BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepliesController.swift; sourceTree = "<group>"; };
 		BE0958DE218A08620076966C /* SettingsViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewMode.swift; sourceTree = "<group>"; };
@@ -732,7 +739,6 @@
 		BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Slide Screenshot Automation.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slide_Screenshot_Automation.swift; sourceTree = "<group>"; };
 		BE99C9F82378AC91007911E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		BEB2B2381E35D64F00BF761C /* MessageCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCellView.swift; sourceTree = "<group>"; };
@@ -960,6 +966,46 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		BD61BF9524D6767C00067126 /* ViewControllerPreviewingDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				BD61BF9624D676A400067126 /* CommentViewControllerPreviewingDelegate.swift */,
+			);
+			name = ViewControllerPreviewingDelegate;
+			sourceTree = "<group>";
+		};
+		BD61BF9824D6770000067126 /* NavigationControllerDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				BD61BF9C24D6777900067126 /* CommentNavigationControllerDelegate.swift */,
+			);
+			name = NavigationControllerDelegate;
+			sourceTree = "<group>";
+		};
+		BD61BF9924D6771500067126 /* TapBehindModalViewControllerDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				BD61BF9E24D677B200067126 /* CommentTapBehindModalDelegate.swift */,
+			);
+			name = TapBehindModalViewControllerDelegate;
+			sourceTree = "<group>";
+		};
+		BD61BF9A24D6772D00067126 /* GestureRecognizerDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				BD61BFA024D677D800067126 /* CommentGestureRecognizerDelegate.swift */,
+			);
+			name = GestureRecognizerDelegate;
+			sourceTree = "<group>";
+		};
+		BD61BF9B24D6773F00067126 /* ThingExtension */ = {
+			isa = PBXGroup;
+			children = (
+				BD61BFA224D6785D00067126 /* CommentThingExtension.swift */,
+			);
+			name = ThingExtension;
+			sourceTree = "<group>";
+		};
 		BD7F6C7824D0CD980061969B /* TTTAttributedCellDelegateProtocol */ = {
 			isa = PBXGroup;
 			children = (
@@ -972,7 +1018,11 @@
 			isa = PBXGroup;
 			children = (
 				BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */,
-				BDCDC5E424D4FFB50066CA8D /* CommentExtensions */,
+				BD61BF9B24D6773F00067126 /* ThingExtension */,
+				BD61BF9A24D6772D00067126 /* GestureRecognizerDelegate */,
+				BD61BF9924D6771500067126 /* TapBehindModalViewControllerDelegate */,
+				BD61BF9824D6770000067126 /* NavigationControllerDelegate */,
+				BD61BF9524D6767C00067126 /* ViewControllerPreviewingDelegate */,
 				BD7F6C7824D0CD980061969B /* TTTAttributedCellDelegateProtocol */,
 				BD99461324D0A8A400B5C7EC /* LinkCellViewDelegateProtocols */,
 				BD99461024D0A54100B5C7EC /* SubmissionMoreDelegateProtocols */,
@@ -1031,14 +1081,6 @@
 				BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */,
 			);
 			name = LinkCellViewDelegateProtocols;
-			sourceTree = "<group>";
-		};
-		BDCDC5E424D4FFB50066CA8D /* CommentExtensions */ = {
-			isa = PBXGroup;
-			children = (
-				BDCDC5E524D4FFD00066CA8D /* CommentViewControllerExtensions.swift */,
-			);
-			name = CommentExtensions;
 			sourceTree = "<group>";
 		};
 		BE13C2CA21655A31002687F2 /* Extensions */ = {
@@ -1495,7 +1537,6 @@
 		BE99C9F52378AC91007911E2 /* Slide Screenshot Automation */ = {
 			isa = PBXGroup;
 			children = (
-				BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */,
 				BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */,
 				BE99C9F82378AC91007911E2 /* Info.plist */,
 				BE53812F24B0D67F00F6F1A6 /* StoreKit.framework */,
@@ -2204,7 +2245,6 @@
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
-				BDCDC5E624D4FFD00066CA8D /* CommentViewControllerExtensions.swift in Sources */,
 				BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */,
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
 				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
@@ -2212,6 +2252,7 @@
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
 				BEC814F024BE8BBD005C8E8C /* HistoryContributionLoader.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
+				BD61BF9F24D677B200067126 /* CommentTapBehindModalDelegate.swift in Sources */,
 				BE1DA5E62208EC59001C7DB4 /* SettingsUserTags.swift in Sources */,
 				0924E527219E088800C31D5E /* UIWindow+RootViewController.swift in Sources */,
 				0924E525219C8EA700C31D5E /* NSDate+Extensions.swift in Sources */,
@@ -2228,10 +2269,12 @@
 				BEC4A1B4232F3F1800EE5114 /* CollectionsContributionLoader.swift in Sources */,
 				096A7D172215EC920067106C /* SettingsAudio.swift in Sources */,
 				BE6EA6D71E1C1FC700E9E709 /* VidMeJSONBase.swift in Sources */,
+				BD61BF9D24D6777900067126 /* CommentNavigationControllerDelegate.swift in Sources */,
 				09526EFA214C39F0005A3F6B /* CGPoint+Extensions.swift in Sources */,
 				BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */,
+				BD61BF9724D676A400067126 /* CommentViewControllerPreviewingDelegate.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
@@ -2255,6 +2298,7 @@
 				BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */,
 				BE47AF71225C574700A61FB0 /* ManageMultireddit.swift in Sources */,
 				BE8FCA081E0C46090063B8EF /* AppDelegate.swift in Sources */,
+				BD61BFA124D677D800067126 /* CommentGestureRecognizerDelegate.swift in Sources */,
 				BE6EA6D81E1C1FC700E9E709 /* Progress.swift in Sources */,
 				BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */,
 				BE6EA6DD1E1C211200E9E709 /* GfycatCheck.swift in Sources */,
@@ -2295,6 +2339,7 @@
 				BE762C9522A2FF7200B29757 /* DraftFindReturnViewController.swift in Sources */,
 				09B2AF6420F7A2ED00580F15 /* VideoSource.swift in Sources */,
 				BE8AE94121F919FF00E1C0D1 /* SettingsCustomTheme.swift in Sources */,
+				BD61BFA324D6785D00067126 /* CommentThingExtension.swift in Sources */,
 				BD169FDA24D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift in Sources */,
 				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
@@ -2348,7 +2393,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE99C9F72378AC91007911E2 /* Slide_Screenshot_Automation.swift in Sources */,
-				BE99C9FF2378ACF6007911E2 /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2436,14 +2480,15 @@
 				MARKETING_VERSION = 5.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.debug.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.debug.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
@@ -2497,13 +2542,14 @@
 				MARKETING_VERSION = 5.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.debug.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.debug.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
@@ -2557,11 +2603,13 @@
 				MARKETING_VERSION = 5.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Open-in-Slide";
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.debug.Open-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -2651,7 +2699,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide.debug";
 				USR_DISPLAY_NAME = "Slide Debug";
 				USR_DOMAIN = ccrama.me;
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide-debug.watchkitapp.watchkitextension";
@@ -2750,6 +2798,8 @@
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -2803,6 +2853,8 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide for Reddit.app/Slide for Reddit";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -2836,6 +2888,8 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Slide for Reddit";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -2876,6 +2930,8 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Slide for Reddit";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
