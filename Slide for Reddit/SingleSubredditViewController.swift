@@ -319,11 +319,82 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         autoplayHandler.autoplayOnce(self.tableView)
     }
     
+    var menuNav: SubredditToolbarSearchViewController?
+    public var toolbar: UIView?
+    var menu = UIButton()
+
+    func hideMenuNav() {
+        
+    }
+    func showMenuNav() {
+        if menuNav != nil {
+            more.removeFromSuperview()
+            menu.removeFromSuperview()
+            menuNav?.view.removeFromSuperview()
+            menuNav?.backgroundView.removeFromSuperview()
+            menuNav?.removeFromParent()
+            menuNav = nil
+        }
+        menuNav = SubredditToolbarSearchViewController(controller: self)
+
+        toolbar = UITouchCapturingView()
+
+        menuNav?.topView = toolbar
+        menuNav?.view.addSubview(toolbar!)
+        menuNav?.muxColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+
+        toolbar!.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
+        toolbar!.topAnchor == menuNav!.view.topAnchor
+        toolbar!.heightAnchor == 90
+
+        self.menuNav?.setSubreddit(subreddit: sub)
+        
+        self.addChild(menuNav!)
+        self.view.addSubview(menuNav!.view)
+        menuNav!.didMove(toParent: self)
+        
+        // 3- Adjust bottomSheet frame and initial position.
+        let height = view.frame.height
+        let width = view.frame.width
+        var nextOffset = CGFloat(0)
+        
+        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: min(height - menuNav!.minTopOffset, height * 0.9))
+        
+        more = UIButton(type: .custom).then {
+            $0.setImage(UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
+            //TODO $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+
+            $0.accessibilityIdentifier = "Subreddit options button"
+            $0.accessibilityLabel = "Options"
+            $0.accessibilityHint = "Open subreddit options menu"
+        }
+        toolbar?.insertSubview(more, at: 0)
+        more.sizeAnchors == .square(size: 56)
+        
+        menu = UIButton(type: .custom).then {
+            $0.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
+            //TODO $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
+            $0.accessibilityIdentifier = "Nav drawer button"
+            $0.accessibilityLabel = "Navigate"
+            $0.accessibilityHint = "Open navigation drawer"
+        }
+        toolbar?.insertSubview(menu, at: 0)
+        menu.sizeAnchors == .square(size: 56)
+
+        if let tool = toolbar {
+            menu.leftAnchor == tool.leftAnchor
+            menu.topAnchor == tool.topAnchor
+            more.rightAnchor == tool.rightAnchor
+            more.topAnchor == tool.topAnchor
+        }
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if toolbarEnabled && !MainViewController.isOffline {
             if single {
-                navigationController?.setToolbarHidden(false, animated: false)
+                showMenuNav()
             } else {
                 parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (parentController?.menuNav?.bottomOffset ?? 64), width: parentController?.menuNav?.view.frame.width ?? 0, height: parentController?.menuNav?.view.frame.height ?? 0)
             }
@@ -375,10 +446,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         if single {
             UIApplication.shared.statusBarUIView?.backgroundColor = .clear
-        }
-        if fab != nil {
-            self.fab?.removeFromSuperview()
-            self.fab = nil
         }
         
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
@@ -482,7 +549,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         })
         
         if single {
-            navigationController?.setToolbarHidden(true, animated: true)
+            hideMenuNav()
         } else {
             if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView {
                 parent.menu.deactivateImmediateConstraints()
@@ -524,7 +591,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         if single && !MainViewController.isOffline {
-            navigationController?.setToolbarHidden(false, animated: true)
+            showMenuNav()
         } else if !disableBottom {
             UIView.animate(withDuration: 0.25) {
                 if let parent = self.parentController {
@@ -558,7 +625,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     if single {
                         self.navigationController?.toolbar.addSubview(fab!)
                     } else {
-                        parentController?.toolbar?.addSubview(fab!)
+                        toolbar?.addSubview(fab!)
                     }
                 }
                 self.fab!.isHidden = false
@@ -600,7 +667,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     view.removeFromSuperview()
                 }
             }
-            for view in self.parentController?.toolbar?.subviews ?? [UIView]() {
+            for view in self.toolbar?.subviews ?? [UIView]() {
                 if view.tag == 1337 {
                     view.removeFromSuperview()
                 }
@@ -625,29 +692,25 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab!.frame = CGRect.init(x: (size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
             
             self.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
-            if single {
-                self.navigationController?.toolbar.addSubview(self.fab!)
-            } else {
-                self.parentController?.toolbar?.addSubview(self.fab!)
-                self.parentController?.menuNav?.callbacks.didBeginPanning = {
-                    if !(self.fab?.isHidden ?? true) && !self.isHiding {
-                        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                            self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-                        }, completion: { _ in
-                            self.fab?.isHidden = true
-                            self.isHiding = false
-                        })
-                    }
-                }
-                self.parentController?.menuNav?.callbacks.didCollapse = {
-                    self.fab?.isHidden = false
-                    self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-                    
-                    UIView.animate(withDuration: 0.25, delay: 0.25, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-                        self.fab?.transform = CGAffineTransform.identity
+            self.toolbar?.addSubview(self.fab!)
+            self.menuNav?.callbacks.didBeginPanning = {
+                if !(self.fab?.isHidden ?? true) && !self.isHiding {
+                    UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                        self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                     }, completion: { _ in
+                        self.fab?.isHidden = true
+                        self.isHiding = false
                     })
                 }
+            }
+            self.menuNav?.callbacks.didCollapse = {
+                self.fab?.isHidden = false
+                self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+                
+                UIView.animate(withDuration: 0.25, delay: 0.25, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                    self.fab?.transform = CGAffineTransform.identity
+                }, completion: { _ in
+                })
             }
 
             self.fab?.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
@@ -911,26 +974,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 self.navigationItem.titleView = label
             }
             
-            let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-            
-            let info = UIButton.init(type: .custom)
-            info.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.toolbarIcon(), for: UIControl.State.normal)
-            info.addTarget(self, action: #selector(self.doDisplaySidebar), for: UIControl.Event.touchUpInside)
-            info.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let infoB = UIBarButtonItem.init(customView: info)
-
-            more = UIButton.init(type: .custom)
-            more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
-            more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            let moreB = UIBarButtonItem.init(customView: more)
-            
-            if parent is SplitMainViewController {
-                parent!.toolbarItems = [infoB, flexButton, moreB]
-            } else {
-                toolbarItems = [infoB, flexButton, moreB]
-            }
-            
             if !loaded {
                 do {
                     try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
@@ -942,7 +985,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                     self.load(reset: true)
                                     self.loadBubbles()
                                 } else {
-                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
                                         let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
                                         alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
                                             self.navigationController?.popViewController(animated: true)
@@ -957,7 +1000,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         case .success(let r):
                             self.subInfo = r
                             DispatchQueue.main.async {
-                                //Hook into Shortcuts
+                                //TODO: Hook into Shortcuts
                                 if !self.subInfo!.over18 {
 
                                 }
@@ -972,6 +1015,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                     }
                                 } else {
                                     if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
+                                        self.menuNav?.setSubredditObject(subreddit: r)
+
                                         if SettingValues.saveHistory {
                                             if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
                                                 Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
@@ -992,7 +1037,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         } else if offline && single && !loaded {
             title = sub
-            self.navigationController?.setToolbarHidden(true, animated: false)
+            hideMenuNav()
             self.load(reset: true)
         }
     }

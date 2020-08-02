@@ -80,11 +80,11 @@ PODS:
   - MTColorDistance (0.0.3)
   - OpalImagePicker (2.1.2)
   - QuickLayout (3.0.0)
-  - Realm (5.3.2):
-    - Realm/Headers (= 5.3.2)
-  - Realm/Headers (5.3.2)
-  - RealmSwift (5.3.2):
-    - Realm (= 5.3.2)
+  - Realm (5.3.3):
+    - Realm/Headers (= 5.3.3)
+  - Realm/Headers (5.3.3)
+  - RealmSwift (5.3.3):
+    - Realm (= 5.3.3)
   - reddift (2.0.3):
     - HTMLSpecialCharacters
     - MiniKeychain
@@ -183,7 +183,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   DTCoreText:
-    :commit: 76ed04c7675cc029ec09fb1d0ee9caa379c831cc
+    :commit: 27ab92f3e42f31a27e3f68db004a5583f502e101
     :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
@@ -192,7 +192,7 @@ CHECKOUT OPTIONS:
     :commit: f67cd8eeae2ff7a2b51b4157e8f6f77da30fc857
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
-    :commit: 8a5ecb09650a68bc20f29ba321dad4725482fb56
+    :commit: a22003f93a803c2e14b193f636669c21358fb1d7
     :git: https://github.com/ccrama/Alerts-Pickers
   SDCAlertView:
     :commit: 644380f73489b1eded3c332335e589e026254486
@@ -221,8 +221,8 @@ SPEC CHECKSUMS:
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   OpalImagePicker: 51cbf714f337a93c2631219f1a90389ba936077f
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
-  Realm: c6794276ca8884808ba168a22f9d71362b170b85
-  RealmSwift: 42ec6cec3170aeeda407f797f07268a7d055ebc7
+  Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
+  RealmSwift: 0a709536ecea30eea1d3c514f6ade2ed078dee3c
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: c93e83c13526a5840b67eb52f702d3f83eeaac6a
   SDCAlertView: 5fbc48cae6d7bf9781097e3f27883924ef3b922c

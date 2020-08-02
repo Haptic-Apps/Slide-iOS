@@ -775,7 +775,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     public enum VideoType {
         case DIRECT
         case IMGUR
-        case VID_ME
         case STREAMABLE
         case GFYCAT
         case REDDIT
@@ -794,9 +793,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             if url.contains("imgur.com") {
                 return VideoType.IMGUR
             }
-            if url.contains("vid.me") {
-                return VideoType.VID_ME
-            }
             if url.contains("streamable.com") {
                 return VideoType.STREAMABLE
             }
@@ -813,8 +809,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 return DirectVideoSource()
             case .STREAMABLE:
                 return StreamableVideoSource()
-            case .VID_ME:
-                return VidMeVideoSource()
             case .OTHER:
                 return DirectVideoSource()
             }
