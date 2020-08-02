@@ -364,18 +364,14 @@ class SplitMainViewController: MainViewController {
                 self.color2 = ColorUtil.theme.foregroundColor
             }
             
-            weak var weakPageVc = self
+            DispatchQueue.main.async {
+                self.doCurrentPage(index!)
+            }
+
             self.setViewControllers([firstViewController],
                                     direction: index! > self.currentPage ? .forward : .reverse,
                                     animated: SettingValues.subredditBar ? true : false,
                                     completion: { (_) in
-                                         guard let pageVc = weakPageVc else {
-                                             return
-                                         }
-
-                                         DispatchQueue.main.async {
-                                             pageVc.doCurrentPage(index!)
-                                         }
                                      })
         } else {
             VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
@@ -516,7 +512,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
         goToSubreddit(subreddit: didRequestSubreddit)
         
-        if let nav = self.navigationController as? SwipeForwardNavigationController, nav.topViewController == homeViewController {
+        if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
             nav.pushNextViewControllerFromRight() {
             }
         }
@@ -608,8 +604,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
             self.navigation(homeViewController, didRequestNewAccount: ())
         }
         
-        present(optionMenu, animated: true, completion: nil)
-
+        homeViewController.present(optionMenu, animated: true, completion: nil)
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestModMenu: Void) {
