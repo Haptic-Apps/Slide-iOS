@@ -324,69 +324,98 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var menu = UIButton()
 
     func hideMenuNav() {
+        menu.deactivateImmediateConstraints()
+        menu.topAnchor == toolbar!.topAnchor - 10
+        menu.widthAnchor == 56
+        menu.heightAnchor == 56
+        menu.leftAnchor == toolbar!.leftAnchor
         
+        menu.deactivateImmediateConstraints()
+        menu.topAnchor == toolbar!.topAnchor - 10
+        menu.widthAnchor == 56
+        menu.heightAnchor == 56
+        menu.rightAnchor == toolbar!.rightAnchor
+        UIView.animate(withDuration: 0.25) {
+            self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
+            self.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+            self.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+        }
+
     }
+    
     func showMenuNav() {
-        if menuNav != nil {
-            more.removeFromSuperview()
-            menu.removeFromSuperview()
-            menuNav?.view.removeFromSuperview()
-            menuNav?.backgroundView.removeFromSuperview()
-            menuNav?.removeFromParent()
-            menuNav = nil
+        if menuNav == nil {
+            menuNav = SubredditToolbarSearchViewController(controller: self)
+
+            toolbar = UITouchCapturingView()
+
+            menuNav?.topView = toolbar
+            menuNav?.view.addSubview(toolbar!)
+            menuNav?.muxColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+
+            toolbar!.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
+            toolbar!.topAnchor == menuNav!.view.topAnchor
+            toolbar!.heightAnchor == 90
+
+            self.menuNav?.setSubreddit(subreddit: sub)
+            
+            self.addChild(menuNav!)
+            self.view.addSubview(menuNav!.view)
+            menuNav!.didMove(toParent: self)
+            
+            // 3- Adjust bottomSheet frame and initial position.
+            let height = view.frame.height
+            let width = view.frame.width
+            var nextOffset = CGFloat(0)
+            
+            menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: min(height - menuNav!.minTopOffset, height * 0.9))
+            
+            more = UIButton(type: .custom).then {
+                $0.setImage(UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
+                //TODO $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+
+                $0.accessibilityIdentifier = "Subreddit options button"
+                $0.accessibilityLabel = "Options"
+                $0.accessibilityHint = "Open subreddit options menu"
+            }
+            toolbar?.insertSubview(more, at: 0)
+            more.sizeAnchors == .square(size: 56)
+            
+            menu = UIButton(type: .custom).then {
+                $0.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
+                //TODO $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
+                $0.accessibilityIdentifier = "Nav drawer button"
+                $0.accessibilityLabel = "Navigate"
+                $0.accessibilityHint = "Open navigation drawer"
+            }
+            toolbar?.insertSubview(menu, at: 0)
+            menu.sizeAnchors == .square(size: 56)
+
+            if let tool = toolbar {
+                menu.leftAnchor == tool.leftAnchor
+                menu.topAnchor == tool.topAnchor
+                more.rightAnchor == tool.rightAnchor
+                more.topAnchor == tool.topAnchor
+            }
         }
-        menuNav = SubredditToolbarSearchViewController(controller: self)
-
-        toolbar = UITouchCapturingView()
-
-        menuNav?.topView = toolbar
-        menuNav?.view.addSubview(toolbar!)
-        menuNav?.muxColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
-
-        toolbar!.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
-        toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
-        toolbar!.topAnchor == menuNav!.view.topAnchor
-        toolbar!.heightAnchor == 90
-
-        self.menuNav?.setSubreddit(subreddit: sub)
         
-        self.addChild(menuNav!)
-        self.view.addSubview(menuNav!.view)
-        menuNav!.didMove(toParent: self)
-        
-        // 3- Adjust bottomSheet frame and initial position.
-        let height = view.frame.height
-        let width = view.frame.width
-        var nextOffset = CGFloat(0)
-        
-        menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: min(height - menuNav!.minTopOffset, height * 0.9))
-        
-        more = UIButton(type: .custom).then {
-            $0.setImage(UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-            //TODO $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+        UIView.animate(withDuration: 0.25) {
+            self.menu.deactivateImmediateConstraints()
+            self.menu.topAnchor == self.toolbar!.topAnchor
+            self.menu.widthAnchor == 56
+            self.menu.heightAnchor == 56
+            self.menu.leftAnchor == self.toolbar!.leftAnchor
 
-            $0.accessibilityIdentifier = "Subreddit options button"
-            $0.accessibilityLabel = "Options"
-            $0.accessibilityHint = "Open subreddit options menu"
-        }
-        toolbar?.insertSubview(more, at: 0)
-        more.sizeAnchors == .square(size: 56)
-        
-        menu = UIButton(type: .custom).then {
-            $0.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
-            //TODO $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
-            $0.accessibilityIdentifier = "Nav drawer button"
-            $0.accessibilityLabel = "Navigate"
-            $0.accessibilityHint = "Open navigation drawer"
-        }
-        toolbar?.insertSubview(menu, at: 0)
-        menu.sizeAnchors == .square(size: 56)
+            self.more.deactivateImmediateConstraints()
+            self.more.topAnchor == self.toolbar!.topAnchor
+            self.more.widthAnchor == 56
+            self.more.heightAnchor == 56
+            self.more.rightAnchor == self.toolbar!.rightAnchor
 
-        if let tool = toolbar {
-            menu.leftAnchor == tool.leftAnchor
-            menu.topAnchor == tool.topAnchor
-            more.rightAnchor == tool.rightAnchor
-            more.topAnchor == tool.topAnchor
+            self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
+            self.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+            self.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
     }
     

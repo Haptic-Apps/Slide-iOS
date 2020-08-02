@@ -25,7 +25,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
             }
         }
     }
-
+    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let point = scrollView.contentOffset
 
@@ -39,6 +39,25 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                     viewToMux?.backgroundColor = lerpedColor
                     navToMux?.barTintColor = lerpedColor
                 }
+            }
+        }
+        
+        if let currentIndex = (self as? MainViewController)?.currentIndex, let totalCount = (self as? MainViewController)?.finalSubs.count {
+            if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
+                scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+            } else if currentIndex == totalCount - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
+                scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+            }
+        }
+    }
+        
+    //From https://stackoverflow.com/a/25167681/3697225
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if let currentIndex = (self as? MainViewController)?.currentIndex, let totalCount = (self as? MainViewController)?.finalSubs.count {
+            if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
+                targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
+            } else if currentIndex == totalCount - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
+                targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
             }
         }
     }

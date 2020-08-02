@@ -159,7 +159,7 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
     }
-    
+        
     @objc func onThemeChanged() {
         SingleSubredditViewController.cellVersion += 1
         MainViewController.needsReTheme = true
@@ -183,6 +183,7 @@ class SplitMainViewController: MainViewController {
 
     override func doCurrentPage(_ page: Int) {
         guard page < finalSubs.count else { return }
+        currentIndex = page
         let vc = self.viewControllers![0] as! SingleSubredditViewController
         MainViewController.current = vc.sub
         UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
@@ -750,5 +751,4 @@ extension SplitMainViewController: NavigationHomeDelegate {
         navVC.navigationBar.isTranslucent = false
         homeViewController.present(navVC, animated: true)
     }
-
 }

@@ -108,16 +108,6 @@ class NavigationHomeViewController: UIViewController {
         searchBar.isUserInteractionEnabled = true
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
         
-        if let nav = self.navigationController as? SwipeForwardNavigationController {
-            NavigationHomeViewController.edgeGesture = UIPanGestureRecognizer()
-            NavigationHomeViewController.edgeGesture!.addTarget(nav, action: #selector(nav.handleRightSwipeFull(_:)))
-            NavigationHomeViewController.edgeGesture!.delegate = nav
-            view.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
-            if #available(iOS 13.4, *) {
-                NavigationHomeViewController.edgeGesture!.allowedScrollTypesMask = .continuous
-            }
-            
-        }
         /*if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) { //DISABLE for now
             NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
             NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
@@ -158,6 +148,16 @@ class NavigationHomeViewController: UIViewController {
         configureLayout()
         
         self.tableView.reloadData()
+        
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            NavigationHomeViewController.edgeGesture = UIPanGestureRecognizer()
+            NavigationHomeViewController.edgeGesture!.addTarget(nav, action: #selector(nav.handleRightSwipeFull(_:)))
+            NavigationHomeViewController.edgeGesture!.delegate = nav
+            view.addGestureRecognizer(NavigationHomeViewController.edgeGesture!)
+            if #available(iOS 13.4, *) {
+                NavigationHomeViewController.edgeGesture!.allowedScrollTypesMask = .continuous
+            }
+        }
     }
     
     struct Callbacks {
