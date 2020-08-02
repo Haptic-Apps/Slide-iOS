@@ -224,7 +224,7 @@ class SplitMainViewController: MainViewController {
     }
 
     override func doRetheme() {
-        for controller in viewControllers {
+        for controller in viewControllers ?? [] {
             if let sub = controller as? SingleSubredditViewController {
                 sub.reTheme()
             }
@@ -327,7 +327,7 @@ class SplitMainViewController: MainViewController {
     }
     
     override func doAddAccount(register: Bool) {
-        guard let window = UIApplication.shared.keyWindow else {
+        guard UIApplication.shared.keyWindow != nil else {
             fatalError("Window must exist when resetting the stack!")
         }
 
