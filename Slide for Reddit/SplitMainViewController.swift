@@ -484,71 +484,153 @@ class SplitMainViewController: MainViewController {
 
 }
 
-extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestAction: SettingValues.NavigationHeaderActions) {
-        
-        //TODO break these out into the NavigationHomeVC and don't rely on pushing to the SplitMainVC
+extension SplitMainViewController: NavigationHomeDelegate {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestAction: SettingValues.NavigationHeaderActions) {
         switch didRequestAction {
         case .HOME:
-            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
-                nav.pushNextViewControllerFromRight() {
-                    self.goToSubreddit(subreddit: "frontpage")
-                }
-            } else {
-                self.goToSubreddit(subreddit: "frontpage")
-            }
+            navigation(homeViewController, didRequestSubreddit: "frontpage")
         case .POPULAR:
-            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
-                nav.pushNextViewControllerFromRight() {
-                    self.goToSubreddit(subreddit: "popular")
-                }
-            } else {
-                self.goToSubreddit(subreddit: "popular")
-            }
+            navigation(homeViewController, didRequestSubreddit: "popular")
         case .RANDOM:
-            random(view)
+            random(homeViewController)
         case .SAVED:
-            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 4)
+            accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 4)
         case .UPVOTED:
-            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 3)
+            accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 3)
         case .HISTORY:
-            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
-                nav.pushNextViewControllerFromRight() {
-                    self.currentAccountViewController(view, didRequestHistory: ())
-                }
-            } else {
-                currentAccountViewController(view, didRequestHistory: ())
-            }
-
+            navigation(homeViewController, didRequestHistory: ())
         case .AUTO_CACHE:
-            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
-                nav.pushNextViewControllerFromRight() {
-                    self.currentAccountViewController(view, didRequestCacheNow: ())
-                }
-            } else {
-                currentAccountViewController(view, didRequestCacheNow: ())
-            }
-
+            navigation(homeViewController, didRequestCacheNow: ())
         case .YOUR_PROFILE:
-            view.accountHeaderView(view.shortcutsView, didRequestProfilePageAtIndex: 0)
+            accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 0)
         case .COLLECTIONS:
-            if let nav = view.parent?.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
-                nav.pushNextViewControllerFromRight() {
-                    self.currentAccountViewController(view, didRequestCollections: ())
-                }
-            } else {
-                currentAccountViewController(view, didRequestCollections: ())
-            }
-
+            navigation(homeViewController, didRequestCollections: ())
         case .CREATE_MULTI:
-            view.multiButtonPressed()
+            navigation(homeViewController, didRequestNewMulti: ())
         case .TRENDING:
             ()
             //TODO trending page
         }
     }
     
-    func random(_ view: CurrentAccountHeaderView) {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
+        goToSubreddit(subreddit: didRequestSubreddit)
+        
+        if let nav = self.navigationController as? SwipeForwardNavigationController, nav.topViewController == homeViewController {
+            nav.pushNextViewControllerFromRight() {
+            }
+        }
+    }
+    
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
+        let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)
+        
+        alert.addTextInput(title: "Create", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon(), enabled: true, action: {
+            var text = alert.getText() ?? ""
+            text = text.replacingOccurrences(of: " ", with: "_")
+            if text == "" {
+                let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
+                alert.setupTheme()
+                alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.addAction(AlertAction(title: "Ok", style: .normal, handler: { (_) in
+                    self.navigation(homeViewController, didRequestNewMulti: ())
+                }))
+                return
+            }
+            do {
+                try (UIApplication.shared.delegate as! AppDelegate).session?.createMultireddit(text, descriptionMd: "", completion: { (result) in
+                    switch result {
+                    case .success(let multireddit):
+                        if let parent = self.parent {
+                            DispatchQueue.main.async {
+                                VCPresenter.presentModally(viewController: ManageMultireddit(multi: multireddit, reloadCallback: {
+                                }, dismissCallback: {
+                                    Subscriptions.subscribe("/m/" + text, false, session: nil)
+                                    self.navigation(homeViewController, goToMultireddit: "/m/" + text)
+                                }), parent, nil)
+                            }
+                        }
+                    case .failure:
+                        if let parent = self.parent {
+                            DispatchQueue.main.async {
+                                BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
+                            }
+                        }
+                    }
+                })
+            } catch {
+                DispatchQueue.main.async {
+                    BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: self.parent)
+                }
+            }
+
+        }, inputPlaceholder: "Name...", inputValue: nil, inputIcon: UIImage(named: "wiki")!.menuIcon(), textRequired: true, exitOnAction: false)
+        
+        if let parent = parent {
+            alert.show(parent)
+        }
+
+    }
+    
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSearch: String) {
+        VCPresenter.showVC(viewController: SearchViewController(subreddit: self.currentTitle, searchFor: didRequestSearch), popupIfPossible: false, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+    }
+    
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSwitchAccountMenu: Void) {
+        let optionMenu = DragDownAlertMenu(title: "Accounts", subtitle: "Currently signed in as \(AccountController.isLoggedIn ? AccountController.currentName : "Guest")", icon: nil)
+
+        for accountName in AccountController.names.unique().sorted() {
+            if accountName != AccountController.currentName {
+                optionMenu.addAction(title: accountName, icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
+                    homeViewController.accountHeader?.setLoadingState(true)
+                    self.navigation(homeViewController, didRequestAccountChangeToName: accountName)
+                }
+            } else {
+               // TODO: - enabled
+                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
+                }
+            }
+        }
+        
+        if AccountController.isLoggedIn {
+            optionMenu.addAction(title: "Browse as Guest", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
+                homeViewController.accountHeader?.setEmptyState(true, animate: false)
+                self.navigation(homeViewController, didRequestGuestAccount: ())
+            }
+
+            optionMenu.addAction(title: "Log out of u/\(AccountController.currentName)", icon: UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")!.menuIcon().getCopy(withColor: GMColor.red500Color())) {
+                homeViewController.accountHeader?.setEmptyState(true, animate: false)
+                self.navigation(homeViewController, didRequestLogOut: ())
+            }
+        }
+        
+        optionMenu.addAction(title: "Add a new account", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)) {
+            self.navigation(homeViewController, didRequestNewAccount: ())
+        }
+        
+        present(optionMenu, animated: true, completion: nil)
+
+    }
+    
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestModMenu: Void) {
+        let vc = ModerationViewController()
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
+        navVC.navigationBar.isTranslucent = false
+        homeViewController.present(navVC, animated: true)
+    }
+
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestInbox: Void) {
+        let vc = InboxViewController()
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
+        navVC.navigationBar.isTranslucent = false
+        homeViewController.present(navVC, animated: true)
+    }
+    
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestUser: String) {
+        VCPresenter.openRedditLink("/u/" + didRequestUser.replacingOccurrences(of: " ", with: ""), homeViewController.navigationController, homeViewController)
+    }
+
+    func random(_ vc: NavigationHomeViewController) {
         Alamofire.request("https://www.reddit.com/r/random/about.json", method: .get).responseString { response in
             do {
                 guard let data = response.data else {
@@ -557,7 +639,7 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
                 }
                 let json = try JSON(data: data)
                 if let sub = json["data"]["display_name"].string {
-                    VCPresenter.openRedditLink("/r/\(sub)", view.parent?.navigationController, view.parent)
+                    VCPresenter.openRedditLink("/r/\(sub)", vc.navigationController, vc)
                 } else {
                     BannerUtil.makeBanner(text: "Random subreddit not found", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)
                 }
@@ -567,12 +649,12 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
         }
     }
     
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestSettingsMenu: Void) {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSettingsMenu: Void) {
         let settings = SettingsViewController()
-        VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: view.parent?.navigationController, parentViewController: view.parent ?? self)
+        VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
     }
     
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, goToMultireddit multireddit: String) {
+    func navigation(_ homeViewController: NavigationHomeViewController, goToMultireddit multireddit: String) {
         finalSubs = []
         finalSubs.append(contentsOf: Subscriptions.pinned)
         finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
@@ -580,7 +662,7 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
         goToSubreddit(subreddit: multireddit)
     }
     
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestCacheNow: Void) {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestCacheNow: Void) {
         if Subscriptions.offline.isEmpty {
             let alert = AlertController.init(title: "Caption", message: "", preferredStyle: .alert)
             
@@ -597,11 +679,11 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
         }
     }
     
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestHistory: Void) {
-        VCPresenter.showVC(viewController: HistoryViewController(), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestHistory: Void) {
+        VCPresenter.showVC(viewController: HistoryViewController(), popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
     }
 
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestCollections: Void) {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestCollections: Void) {
         if Collections.collectionIDs.count == 0 {
             let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
             
@@ -612,17 +694,16 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
             
             alert.addCloseButton()
             alert.addBlurView()
-            present(alert, animated: true, completion: nil)
-
+            homeViewController.present(alert, animated: true, completion: nil)
         } else {
             let vc = CollectionsViewController()
             let navVC = SwipeForwardNavigationController(rootViewController: vc)
             navVC.navigationBar.isTranslucent = false
-            present(navVC, animated: true)
+            homeViewController.present(navVC, animated: true)
         }
     }
 
-    func currentAccountViewController(_ view: CurrentAccountHeaderView?, didRequestAccountChangeToName accountName: String) {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestAccountChangeToName accountName: String) {
         AccountController.switchAccount(name: accountName)
         if !UserDefaults.standard.bool(forKey: "done" + accountName) {
             do {
@@ -637,14 +718,14 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
         }
     }
 
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestGuestAccount: Void) {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestGuestAccount: Void) {
         AccountController.switchAccount(name: "GUEST")
         Subscriptions.sync(name: "GUEST", completion: { [weak self] in
             self?.hardReset(soft: true)
         })
     }
 
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestLogOut: Void) {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestLogOut: Void) {
         let name: String
         if AccountController.current != nil {
             name = AccountController.current!.name
@@ -658,8 +739,20 @@ extension SplitMainViewController: CurrentAccountHeaderViewDelegate {
         })
     }
 
-    func currentAccountViewController(_ view: CurrentAccountHeaderView, didRequestNewAccount: Void) {
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewAccount: Void) {
         self.doAddAccount(register: false)
+    }
+
+    func displayMenu(_ homeViewController: NavigationHomeViewController, _ menu: DragDownAlertMenu) {
+        homeViewController.present(menu, animated: true, completion: nil)
+    }
+    
+    func accountHeaderView(_ homeViewController: NavigationHomeViewController, didRequestProfilePageAtIndex index: Int) {
+        let vc = ProfileViewController(name: AccountController.currentName)
+        vc.openTo = index
+        let navVC = SwipeForwardNavigationController(rootViewController: vc)
+        navVC.navigationBar.isTranslucent = false
+        homeViewController.present(navVC, animated: true)
     }
 
 }

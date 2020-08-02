@@ -639,19 +639,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     @objc func showCurrentAccountMenu(_ sender: UIButton?) {
-        if self is SplitMainViewController {
-            //TODO check for view controller count
-            if let parent = self.parent {
-                parent.navigationController?.popViewController(animated: true)
-            } else {
-                self.navigationController?.popViewController(animated: true)
-            }
+        //TODO check for view controller count
+        if let parent = self.parent {
+            parent.navigationController?.popViewController(animated: true)
         } else {
-            let vc = CurrentAccountViewController()
-            vc.delegate = self as! LegacyMainViewController
-            vc.modalPresentationStyle = .custom
-            vc.transitioningDelegate = currentAccountTransitioningDelegate
-            present(vc, animated: true)
+            self.navigationController?.popViewController(animated: true)
         }
     }
     
@@ -803,7 +795,7 @@ extension MainViewController: UIPageViewControllerDelegate {
 }
 
 //TODO break this out
-extension LegacyMainViewController: CurrentAccountViewControllerDelegate {
+extension MainViewController: CurrentAccountViewControllerDelegate {
     func currentAccountViewController(_ controller: CurrentAccountViewController, didRequestSettingsMenu: Void) {
         let settings = SettingsViewController()
         VCPresenter.showVC(viewController: settings, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
@@ -957,9 +949,7 @@ extension MainViewController: UIContextMenuInteractionDelegate {
                 }))
             } else {
                 buttons.append(UIAction(title: accountName, image: nil, handler: { (_) in
-                    if self is SplitMainViewController {
-                        (self as! SplitMainViewController).currentAccountViewController(nil, didRequestAccountChangeToName: accountName)
-                    }
+                    self.currentAccountViewController(nil, didRequestAccountChangeToName: accountName)
                 }))
             }
         }

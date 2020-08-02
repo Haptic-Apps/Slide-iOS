@@ -441,7 +441,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if SettingValues.appMode == .MULTI_COLUMN {
                 let splitViewController = UISplitViewController()
-                splitViewController.preferredDisplayMode = .primaryOverlay
+                splitViewController.preferredDisplayMode = .secondaryOnly
                 splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
