@@ -915,64 +915,64 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         if single && !offline {
+            sortButton = UIButton.init(type: .custom)
+            sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let sortB = UIBarButtonItem.init(customView: sortButton)
+            doSortImage(sortButton)
+
+            subb = UIButton.init(type: .custom)
+            subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
+            subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
+            subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             if !(parent is SplitMainViewController) {
-                sortButton = UIButton.init(type: .custom)
-                sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-                sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-                let sortB = UIBarButtonItem.init(customView: sortButton)
-                doSortImage(sortButton)
-
-                subb = UIButton.init(type: .custom)
-                subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
-                subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
-                subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
                 navigationItem.rightBarButtonItems = [sortB]
+            }
+            
+            let label = UILabel()
+            label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
+            label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+            label.adjustsFontSizeToFitWidth = true
+            label.font = UIFont.boldSystemFont(ofSize: 20)
+            
+            if SettingValues.reduceColor {
+                let sideView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+                let subreddit = sub
+                sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
                 
-                let label = UILabel()
-                label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
-                label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
-                label.adjustsFontSizeToFitWidth = true
-                label.font = UIFont.boldSystemFont(ofSize: 20)
-                
-                if SettingValues.reduceColor {
-                    let sideView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
-                    let subreddit = sub
-                    sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
-                    
-                    if let icon = Subscriptions.icon(for: subreddit) {
-                        sideView.contentMode = .scaleAspectFill
-                        sideView.image = UIImage()
-                        sideView.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+                if let icon = Subscriptions.icon(for: subreddit) {
+                    sideView.contentMode = .scaleAspectFill
+                    sideView.image = UIImage()
+                    sideView.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+                } else {
+                    sideView.contentMode = .center
+                    if subreddit.contains("m/") {
+                        sideView.image = SubredditCellView.defaultIconMulti
+                    } else if subreddit.lowercased() == "all" {
+                        sideView.image = SubredditCellView.allIcon
+                        sideView.backgroundColor = GMColor.blue500Color()
+                    } else if subreddit.lowercased() == "frontpage" {
+                        sideView.image = SubredditCellView.frontpageIcon
+                        sideView.backgroundColor = GMColor.green500Color()
+                    } else if subreddit.lowercased() == "popular" {
+                        sideView.image = SubredditCellView.popularIcon
+                        sideView.backgroundColor = GMColor.purple500Color()
                     } else {
-                        sideView.contentMode = .center
-                        if subreddit.contains("m/") {
-                            sideView.image = SubredditCellView.defaultIconMulti
-                        } else if subreddit.lowercased() == "all" {
-                            sideView.image = SubredditCellView.allIcon
-                            sideView.backgroundColor = GMColor.blue500Color()
-                        } else if subreddit.lowercased() == "frontpage" {
-                            sideView.image = SubredditCellView.frontpageIcon
-                            sideView.backgroundColor = GMColor.green500Color()
-                        } else if subreddit.lowercased() == "popular" {
-                            sideView.image = SubredditCellView.popularIcon
-                            sideView.backgroundColor = GMColor.purple500Color()
-                        } else {
-                            sideView.image = SubredditCellView.defaultIcon
-                        }
+                        sideView.image = SubredditCellView.defaultIcon
                     }
-                    
-                    label.addSubview(sideView)
-                    sideView.sizeAnchors == CGSize.square(size: 30)
-                    sideView.centerYAnchor == label.centerYAnchor
-                    sideView.leftAnchor == label.leftAnchor
-
-                    sideView.layer.cornerRadius = 15
-                    sideView.clipsToBounds = true
                 }
                 
-                label.sizeToFit()
-                self.navigationItem.titleView = label
+                label.addSubview(sideView)
+                sideView.sizeAnchors == CGSize.square(size: 30)
+                sideView.centerYAnchor == label.centerYAnchor
+                sideView.leftAnchor == label.leftAnchor
+
+                sideView.layer.cornerRadius = 15
+                sideView.clipsToBounds = true
             }
+            
+            label.sizeToFit()
+            self.navigationItem.titleView = label
             
             if !loaded {
                 do {
