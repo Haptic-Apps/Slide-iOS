@@ -7,6 +7,7 @@
       
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000351">
 =======
       <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000546">
@@ -17,10 +18,14 @@
       <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000351">
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
+=======
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000385">
+>>>>>>> develop
         
       </testcase>
     
       
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
       <testcase classname="fastlane.lanes" name="1: increment_build_number" time="1.73496">
@@ -33,10 +38,14 @@
       <testcase classname="fastlane.lanes" name="1: increment_build_number" time="1.73496">
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
+=======
+      <testcase classname="fastlane.lanes" name="1: increment_build_number" time="1.984331">
+>>>>>>> develop
         
       </testcase>
     
       
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
       <testcase classname="fastlane.lanes" name="2: match" time="3.04139">
@@ -49,10 +58,14 @@
       <testcase classname="fastlane.lanes" name="2: match" time="3.04139">
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
+=======
+      <testcase classname="fastlane.lanes" name="2: match" time="5.548434">
+>>>>>>> develop
         
       </testcase>
     
       
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
       <testcase classname="fastlane.lanes" name="3: build_app" time="588.329015">
@@ -65,10 +78,14 @@
       <testcase classname="fastlane.lanes" name="3: build_app" time="588.329015">
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
+=======
+      <testcase classname="fastlane.lanes" name="3: build_app" time="544.711711">
+>>>>>>> develop
         
       </testcase>
     
       
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
       <testcase classname="fastlane.lanes" name="4: upload_to_testflight" time="578.104881">
@@ -81,6 +98,9 @@
       <testcase classname="fastlane.lanes" name="4: upload_to_testflight" time="578.104881">
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
 >>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
+=======
+      <testcase classname="fastlane.lanes" name="4: upload_to_testflight" time="40.782647">
+>>>>>>> develop
         
       </testcase>
     

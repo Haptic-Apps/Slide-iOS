@@ -1308,12 +1308,22 @@ class CommentViewController: MediaViewController {
 
                 self.refreshComments(self)
             }
+        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
+        panGesture.direction = .horizontal
+        panGesture.delegate = self
+        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+           //navGesture.require(toFail: panGesture)
+        }
+        
+        self.presentationController?.delegate = self
 
-            actionSheetController.addAction(title: "Live (beta)", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
-                self.startLiveActivityIndicatorAnimation()
-            }
-            
-            actionSheetController.show(self)
+        if !loaded && (single || forceLoad) {
+            refresh(self)
+        }
+        
+        self.tableView.addGestureRecognizer(panGesture)
+        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
+            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
     }
     
