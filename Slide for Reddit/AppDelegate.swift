@@ -343,7 +343,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
            
-        resetStack()
+        _ = resetStack()
         /* TODO enable new ios 14 layout if #available(iOS 14, *) {
             resetStack()
         } else {

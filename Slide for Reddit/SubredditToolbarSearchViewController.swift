@@ -251,10 +251,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         }
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return otherGestureRecognizer is UIPanGestureRecognizer && (otherGestureRecognizer != (parentController?.parent?.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer ?? nil) && (tableView.contentOffset.y == 0) && !self.view.isHidden
-    }
-    
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let recognizer = gestureRecognizer as? UIPanGestureRecognizer,
             recognizer.velocity(in: self.view).y < 0,

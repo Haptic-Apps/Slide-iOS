@@ -11,8 +11,6 @@ import UIKit
 extension UIImage {
 
     func getCopy(withSize size: CGSize) -> UIImage {
-        let hasAlpha = true
-        let scale: CGFloat = 0.0 // Use scale factor of main screen
         let maxWidth = size.width
         let maxHeight = size.height
         
@@ -35,7 +33,7 @@ extension UIImage {
             let renderFormat = UIGraphicsImageRendererFormat.default()
             renderFormat.opaque = false
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: biggerSize.width, height: biggerSize.height), format: renderFormat)
-            newImage = renderer.image { (context) in
+            newImage = renderer.image { (_) in
                 self.draw(in: CGRect(x: 0, y: 0, width: biggerSize.width, height: biggerSize.height))
             }
         } else {

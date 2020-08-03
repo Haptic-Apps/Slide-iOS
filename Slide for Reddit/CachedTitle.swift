@@ -277,7 +277,7 @@ class CachedTitle {
 
     static func titleForMedia(submission: RSubmission) -> Title {
 
-        var colorF = UIColor.white
+        let colorF = UIColor.white
 
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.foregroundColor: colorF])
 

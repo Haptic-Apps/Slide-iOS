@@ -21,13 +21,13 @@ class SwipeForwardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTrans
         if let toView = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)?.view, let fromView = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)?.view {
             
             let containerViewWidth = containerView.frame.size.width
-            var snapshotToView = toView.snapshotView(afterScreenUpdates: true)
+            let snapshotToView = toView.snapshotView(afterScreenUpdates: true)
 
             if snapshotToView != nil {
                 containerView.addSubview(snapshotToView!)
                 
                 var fromViewFinalFrame = fromView.frame
-                fromViewFinalFrame.origin.x = -containerViewWidth/3.0
+                fromViewFinalFrame.origin.x = -containerViewWidth / 3.0
                 
                 var toViewFinalFrame = toView.frame
                 toViewFinalFrame.origin.x = containerViewWidth
