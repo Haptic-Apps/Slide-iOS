@@ -11,8 +11,8 @@
 # Change these before running the script
 # -------------------------------------------------
 
-your_developer_id="55T4UN5QF4" # Your 10 digit developer ID. Example is FTT89576VQ
-your_usr_id="com.JosiahAgosto" # Anything you want. Sets USR_DOMAIN in the project.
+your_developer_id="1234567890" # Your 10 digit developer ID. Example is FTT89576VQ
+your_usr_id="anything.you.want" # Anything you want. Sets USR_DOMAIN in the project.
 
 # -------------------------------------------------
 # Don't change anything below
