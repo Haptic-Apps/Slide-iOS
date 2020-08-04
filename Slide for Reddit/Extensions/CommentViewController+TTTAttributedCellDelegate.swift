@@ -1,8 +1,8 @@
 //
-//  CommentTTTAttributedCellDelegate.swift
+//  CommentViewController+TTTAttributedCellDelegate.swift
 //  Slide for Reddit
 //
-//  Created by Josiah Agosto on 7/28/20.
+//  Created by Josiah Agosto on 8/3/20.
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 

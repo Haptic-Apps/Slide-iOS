@@ -18,19 +18,6 @@ import YYText
 
 class CommentViewController: MediaViewController {
     // MARK: - Properties / References
-    // Table View Datasource
-    public var commentTableViewDataSource: CommentTableViewDataSource!
-    // Table View Delegate
-    public var commentTableViewDelegate: CommentTableViewDelegate!
-    // Search Bar Delegate
-    public var commentSearchBarDelegate: CommentSearchBarDelegate!
-    // Reply Delegate
-    public var commentReplyDelegate: CommentReplyDelegate!
-    // Submission More Delegate
-    public var submissionMoreDelegate: CommentSubmissionMoreDelegate!
-    // Link Cell View Delegate
-    public var linkCellViewDelegate: CommentLinkCellViewDelegate!
-    
     var version = 0
     var menuCell: CommentDepthCell?
     var menuId: String?
@@ -175,9 +162,9 @@ class CommentViewController: MediaViewController {
                 UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
                 UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
                 UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
-                UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(linkCellViewDelegate.upvote(_:)), discoverabilityTitle: "Like post"),
-                UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(linkCellViewDelegate.reply(_:)), discoverabilityTitle: "Reply to post"),
-                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(linkCellViewDelegate.save(_:)), discoverabilityTitle: "Save post"),
+                UIKeyCommand(input: "l", modifierFlags: .command, action: #selector(upvote(_:)), discoverabilityTitle: "Like post"),
+                UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(reply(_:)), discoverabilityTitle: "Reply to post"),
+                UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(save(_:)), discoverabilityTitle: "Save post"),
             ]
         }
     }
@@ -264,10 +251,8 @@ class CommentViewController: MediaViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
-        commentTableViewDelegate = CommentTableViewDelegate(parentController: self)
-        self.tableView.delegate = commentTableViewDelegate
-        commentTableViewDataSource = CommentTableViewDataSource(parentController: self)
-        self.tableView.dataSource = commentTableViewDataSource
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
 
@@ -296,8 +281,7 @@ class CommentViewController: MediaViewController {
 
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
         
-        commentSearchBarDelegate = CommentSearchBarDelegate(parentController: self)
-        searchBar.delegate = commentSearchBarDelegate
+        searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBar.Style.minimal
         searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
         searchBar.showsCancelButton = false
@@ -327,8 +311,7 @@ class CommentViewController: MediaViewController {
                 object: nil)
 
         headerCell = FullLinkCellView()
-        linkCellViewDelegate = CommentLinkCellViewDelegate(parentController: self)
-        headerCell!.del = linkCellViewDelegate
+        headerCell!.del = self
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
@@ -992,8 +975,7 @@ class CommentViewController: MediaViewController {
                             DispatchQueue.main.async(execute: { () -> Void in
                                 if !self.hasSubmission {
                                     self.headerCell = FullLinkCellView()
-                                    self.linkCellViewDelegate = CommentLinkCellViewDelegate(parentController: self)
-                                    self.headerCell?.del = self.linkCellViewDelegate
+                                    self.headerCell?.del = self
                                     self.headerCell?.parentViewController = self
                                     self.hasDone = true
                                     self.headerCell?.aspectWidth = self.tableView.bounds.size.width
@@ -1308,6 +1290,7 @@ class CommentViewController: MediaViewController {
 
                 self.refreshComments(self)
             }
+        }
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
@@ -1318,7 +1301,7 @@ class CommentViewController: MediaViewController {
         self.presentationController?.delegate = self
 
         if !loaded && (single || forceLoad) {
-            refresh(self)
+            refreshComments(self)
         }
         
         self.tableView.addGestureRecognizer(panGesture)
@@ -1332,8 +1315,7 @@ class CommentViewController: MediaViewController {
         version += 1
         
         self.headerCell = FullLinkCellView()
-        linkCellViewDelegate = CommentLinkCellViewDelegate(parentController: self)
-        self.headerCell?.del = linkCellViewDelegate
+        self.headerCell?.del = self
         self.headerCell?.parentViewController = self
         self.hasDone = true
         self.headerCell?.aspectWidth = self.tableView.bounds.size.width
@@ -1533,7 +1515,7 @@ class CommentViewController: MediaViewController {
             }
 
             alertController.addAction(title: "Reply to submission", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
-                self.linkCellViewDelegate.reply(self.headerCell)
+                self.reply(self.headerCell)
             }
 
             alertController.addAction(title: "Go to r/\(link.subreddit)", icon: UIImage(sfString: .rCircleFill, overrideString: "subs")!.menuIcon()) {
@@ -2594,7 +2576,7 @@ class CommentViewController: MediaViewController {
             count += 1
         }
     }
-    
+
 } // Class End
 
 // TODO: Remove these from here and add to a Helper Function file

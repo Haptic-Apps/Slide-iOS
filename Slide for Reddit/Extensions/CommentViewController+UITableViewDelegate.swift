@@ -1,22 +1,15 @@
 //
-//  CommentTableViewDelegate.swift
+//  CommentViewController+UITableViewDelegate.swift
 //  Slide for Reddit
 //
-//  Created by Josiah Agosto on 7/28/20.
+//  Created by Josiah Agosto on 8/3/20.
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
+
 import Foundation
 import UIKit
 
-class CommentTableViewDelegate: NSObject, UITableViewDelegate {
-    // MARK: - Properties / References
-    private var commentController: CommentViewController!
-    
-    // MARK: - Initialization
-    init(parentController: CommentViewController) {
-        self.commentController = parentController
-    }
-    
+extension CommentViewController: UITableViewDelegate {
     // MARK: - Methods
     // TODO: - Complete Comment Table View Protocols
     

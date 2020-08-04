@@ -1,8 +1,8 @@
 //
-//  CommentViewControllerExtensions.swift
+//  CommentViewController+UIViewControllerPreviewingDelegate.swift
 //  Slide for Reddit
 //
-//  Created by Josiah Agosto on 7/29/20.
+//  Created by Josiah Agosto on 8/3/20.
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
@@ -11,7 +11,7 @@ import YYText
 import reddift
 
 extension CommentViewController: UIViewControllerPreviewingDelegate {
-        
+    // MARK: - Methods
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         guard let indexPath = self.tableView.indexPathForRow(at: location) else {
             return nil

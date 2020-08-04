@@ -1,15 +1,15 @@
 //
-//  CommentGestureRecognizerDelegate.swift
+//  CommentViewController+UIGestureRecognizerDelegate.swift
 //  Slide for Reddit
 //
-//  Created by Josiah Agosto on 8/2/20.
+//  Created by Josiah Agosto on 8/3/20.
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
 import UIKit
 
 extension CommentViewController: UIGestureRecognizerDelegate {
-    
+    // MARK: - Methods
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if gestureRecognizer == panGesture {
             if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {

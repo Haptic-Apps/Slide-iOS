@@ -63,19 +63,19 @@
 		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
-		BD169FDA24D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD169FD924D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift */; };
-		BD61BF9724D676A400067126 /* CommentViewControllerPreviewingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BF9624D676A400067126 /* CommentViewControllerPreviewingDelegate.swift */; };
-		BD61BF9D24D6777900067126 /* CommentNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BF9C24D6777900067126 /* CommentNavigationControllerDelegate.swift */; };
-		BD61BF9F24D677B200067126 /* CommentTapBehindModalDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BF9E24D677B200067126 /* CommentTapBehindModalDelegate.swift */; };
-		BD61BFA124D677D800067126 /* CommentGestureRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BFA024D677D800067126 /* CommentGestureRecognizerDelegate.swift */; };
-		BD61BFA324D6785D00067126 /* CommentThingExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD61BFA224D6785D00067126 /* CommentThingExtension.swift */; };
-		BD8E321724D078FD00AE1D80 /* CommentTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E321624D078FD00AE1D80 /* CommentTableViewDelegate.swift */; };
-		BD8E321924D0790800AE1D80 /* CommentTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E321824D0790800AE1D80 /* CommentTableViewDataSource.swift */; };
-		BD8E321C24D08E6400AE1D80 /* CommentSearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E321B24D08E6400AE1D80 /* CommentSearchBarDelegate.swift */; };
-		BD8E321F24D0922F00AE1D80 /* CommentScrollViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E321E24D0922F00AE1D80 /* CommentScrollViewDelegate.swift */; };
-		BD8E322224D0976700AE1D80 /* CommentReplyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E322124D0976700AE1D80 /* CommentReplyDelegate.swift */; };
-		BD99461224D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD99461124D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift */; };
-		BD99461524D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */; };
+		BD87553724D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */; };
+		BD87553924D8AA210096732F /* CommentViewController+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */; };
+		BD87553B24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */; };
+		BD87553D24D8AA500096732F /* CommentViewController+ReplyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553C24D8AA500096732F /* CommentViewController+ReplyDelegate.swift */; };
+		BD87553F24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553E24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift */; };
+		BD87554124D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift */; };
+		BD87554324D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554224D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift */; };
+		BD87554524D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554424D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift */; };
+		BD87554724D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554624D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift */; };
+		BD87554924D8AB270096732F /* CommentViewController+TapBehindModalViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554824D8AB270096732F /* CommentViewController+TapBehindModalViewControllerDelegate.swift */; };
+		BD87554B24D8AB3A0096732F /* CommentViewController+UIGestureRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554A24D8AB3A0096732F /* CommentViewController+UIGestureRecognizerDelegate.swift */; };
+		BD87554D24D8EADB0096732F /* CommentViewController+UIScrollViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554C24D8EADB0096732F /* CommentViewController+UIScrollViewDelegate.swift */; };
+		BD87554F24D8EF530096732F /* CommentViewController+Thing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554E24D8EF530096732F /* CommentViewController+Thing.swift */; };
 		BDCDC5E324D4F4A10066CA8D /* ParentCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */; };
 		BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B252240C9F5400C457BC /* CommentsRowController.swift */; };
 		BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */; };
@@ -486,19 +486,19 @@
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
 		B8C548645B1B8BEE24800967 /* Pods_Slide_for_RedditUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD169FD924D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTTTAttributedCellDelegate.swift; sourceTree = "<group>"; };
-		BD61BF9624D676A400067126 /* CommentViewControllerPreviewingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewControllerPreviewingDelegate.swift; sourceTree = "<group>"; };
-		BD61BF9C24D6777900067126 /* CommentNavigationControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentNavigationControllerDelegate.swift; sourceTree = "<group>"; };
-		BD61BF9E24D677B200067126 /* CommentTapBehindModalDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTapBehindModalDelegate.swift; sourceTree = "<group>"; };
-		BD61BFA024D677D800067126 /* CommentGestureRecognizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentGestureRecognizerDelegate.swift; sourceTree = "<group>"; };
-		BD61BFA224D6785D00067126 /* CommentThingExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentThingExtension.swift; sourceTree = "<group>"; };
-		BD8E321624D078FD00AE1D80 /* CommentTableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewDelegate.swift; sourceTree = "<group>"; };
-		BD8E321824D0790800AE1D80 /* CommentTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewDataSource.swift; sourceTree = "<group>"; };
-		BD8E321B24D08E6400AE1D80 /* CommentSearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentSearchBarDelegate.swift; sourceTree = "<group>"; };
-		BD8E321E24D0922F00AE1D80 /* CommentScrollViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentScrollViewDelegate.swift; sourceTree = "<group>"; };
-		BD8E322124D0976700AE1D80 /* CommentReplyDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentReplyDelegate.swift; sourceTree = "<group>"; };
-		BD99461124D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentSubmissionMoreDelegate.swift; sourceTree = "<group>"; };
-		BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkCellViewDelegate.swift; sourceTree = "<group>"; };
+		BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDelegate.swift"; sourceTree = "<group>"; };
+		BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDataSource.swift"; sourceTree = "<group>"; };
+		BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UISearchBarDelegate.swift"; sourceTree = "<group>"; };
+		BD87553C24D8AA500096732F /* CommentViewController+ReplyDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+ReplyDelegate.swift"; sourceTree = "<group>"; };
+		BD87553E24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+SubmissionMoreDelegate.swift"; sourceTree = "<group>"; };
+		BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+LinkCellViewDelegate.swift"; sourceTree = "<group>"; };
+		BD87554224D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+TTTAttributedCellDelegate.swift"; sourceTree = "<group>"; };
+		BD87554424D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIViewControllerPreviewingDelegate.swift"; sourceTree = "<group>"; };
+		BD87554624D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UINavigationControllerDelegate.swift"; sourceTree = "<group>"; };
+		BD87554824D8AB270096732F /* CommentViewController+TapBehindModalViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+TapBehindModalViewControllerDelegate.swift"; sourceTree = "<group>"; };
+		BD87554A24D8AB3A0096732F /* CommentViewController+UIGestureRecognizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIGestureRecognizerDelegate.swift"; sourceTree = "<group>"; };
+		BD87554C24D8EADB0096732F /* CommentViewController+UIScrollViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIScrollViewDelegate.swift"; sourceTree = "<group>"; };
+		BD87554E24D8EF530096732F /* CommentViewController+Thing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+Thing.swift"; sourceTree = "<group>"; };
 		BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentCommentViewController.swift; sourceTree = "<group>"; };
 		BE02B252240C9F5400C457BC /* CommentsRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsRowController.swift; sourceTree = "<group>"; };
 		BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepliesController.swift; sourceTree = "<group>"; };
@@ -938,121 +938,42 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		BD61BF9524D6767C00067126 /* ViewControllerPreviewingDelegate */ = {
+		BD87553424D89CB60096732F /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				BD61BF9624D676A400067126 /* CommentViewControllerPreviewingDelegate.swift */,
 			);
-			name = ViewControllerPreviewingDelegate;
+			name = Screens;
 			sourceTree = "<group>";
 		};
-		BD61BF9824D6770000067126 /* NavigationControllerDelegate */ = {
+		BD87553524D8A90C0096732F /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				BD61BF9C24D6777900067126 /* CommentNavigationControllerDelegate.swift */,
+				BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */,
+				BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */,
+				BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */,
+				BD87553C24D8AA500096732F /* CommentViewController+ReplyDelegate.swift */,
+				BD87553E24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift */,
+				BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift */,
+				BD87554224D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift */,
+				BD87554424D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift */,
+				BD87554624D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift */,
+				BD87554824D8AB270096732F /* CommentViewController+TapBehindModalViewControllerDelegate.swift */,
+				BD87554A24D8AB3A0096732F /* CommentViewController+UIGestureRecognizerDelegate.swift */,
+				BD87554C24D8EADB0096732F /* CommentViewController+UIScrollViewDelegate.swift */,
+				BD87554E24D8EF530096732F /* CommentViewController+Thing.swift */,
 			);
-			name = NavigationControllerDelegate;
-			sourceTree = "<group>";
-		};
-		BD61BF9924D6771500067126 /* TapBehindModalViewControllerDelegate */ = {
-			isa = PBXGroup;
-			children = (
-				BD61BF9E24D677B200067126 /* CommentTapBehindModalDelegate.swift */,
-			);
-			name = TapBehindModalViewControllerDelegate;
-			sourceTree = "<group>";
-		};
-		BD61BF9A24D6772D00067126 /* GestureRecognizerDelegate */ = {
-			isa = PBXGroup;
-			children = (
-				BD61BFA024D677D800067126 /* CommentGestureRecognizerDelegate.swift */,
-			);
-			name = GestureRecognizerDelegate;
-			sourceTree = "<group>";
-		};
-		BD61BF9B24D6773F00067126 /* ThingExtension */ = {
-			isa = PBXGroup;
-			children = (
-				BD61BFA224D6785D00067126 /* CommentThingExtension.swift */,
-			);
-			name = ThingExtension;
-			sourceTree = "<group>";
-		};
-		BD7F6C7824D0CD980061969B /* TTTAttributedCellDelegateProtocol */ = {
-			isa = PBXGroup;
-			children = (
-				BD169FD924D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift */,
-			);
-			name = TTTAttributedCellDelegateProtocol;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		BD8E321424CFDAB400AE1D80 /* Comments */ = {
 			isa = PBXGroup;
 			children = (
 				BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */,
-				BD61BF9B24D6773F00067126 /* ThingExtension */,
-				BD61BF9A24D6772D00067126 /* GestureRecognizerDelegate */,
-				BD61BF9924D6771500067126 /* TapBehindModalViewControllerDelegate */,
-				BD61BF9824D6770000067126 /* NavigationControllerDelegate */,
-				BD61BF9524D6767C00067126 /* ViewControllerPreviewingDelegate */,
-				BD7F6C7824D0CD980061969B /* TTTAttributedCellDelegateProtocol */,
-				BD99461324D0A8A400B5C7EC /* LinkCellViewDelegateProtocols */,
-				BD99461024D0A54100B5C7EC /* SubmissionMoreDelegateProtocols */,
-				BD8E322024D0971A00AE1D80 /* ReplyDelegateProtocols */,
-				BD8E321D24D0920D00AE1D80 /* ScrollViewDelegateProtocols */,
-				BD8E321A24D08E1A00AE1D80 /* SeachBarProtocols */,
-				BD8E321524D077FB00AE1D80 /* TableViewProtocols */,
+				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
+				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
+				BD87553524D8A90C0096732F /* Extensions */,
 			);
 			name = Comments;
-			sourceTree = "<group>";
-		};
-		BD8E321524D077FB00AE1D80 /* TableViewProtocols */ = {
-			isa = PBXGroup;
-			children = (
-				BD8E321624D078FD00AE1D80 /* CommentTableViewDelegate.swift */,
-				BD8E321824D0790800AE1D80 /* CommentTableViewDataSource.swift */,
-			);
-			name = TableViewProtocols;
-			sourceTree = "<group>";
-		};
-		BD8E321A24D08E1A00AE1D80 /* SeachBarProtocols */ = {
-			isa = PBXGroup;
-			children = (
-				BD8E321B24D08E6400AE1D80 /* CommentSearchBarDelegate.swift */,
-			);
-			name = SeachBarProtocols;
-			sourceTree = "<group>";
-		};
-		BD8E321D24D0920D00AE1D80 /* ScrollViewDelegateProtocols */ = {
-			isa = PBXGroup;
-			children = (
-				BD8E321E24D0922F00AE1D80 /* CommentScrollViewDelegate.swift */,
-			);
-			name = ScrollViewDelegateProtocols;
-			sourceTree = "<group>";
-		};
-		BD8E322024D0971A00AE1D80 /* ReplyDelegateProtocols */ = {
-			isa = PBXGroup;
-			children = (
-				BD8E322124D0976700AE1D80 /* CommentReplyDelegate.swift */,
-			);
-			name = ReplyDelegateProtocols;
-			sourceTree = "<group>";
-		};
-		BD99461024D0A54100B5C7EC /* SubmissionMoreDelegateProtocols */ = {
-			isa = PBXGroup;
-			children = (
-				BD99461124D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift */,
-			);
-			name = SubmissionMoreDelegateProtocols;
-			sourceTree = "<group>";
-		};
-		BD99461324D0A8A400B5C7EC /* LinkCellViewDelegateProtocols */ = {
-			isa = PBXGroup;
-			children = (
-				BD99461424D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift */,
-			);
-			name = LinkCellViewDelegateProtocols;
 			sourceTree = "<group>";
 		};
 		BE13C2CA21655A31002687F2 /* Extensions */ = {
@@ -1337,6 +1258,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BD87553424D89CB60096732F /* Screens */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEC2FE18235BA2B100374013 /* adaway.json */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
@@ -1355,8 +1277,6 @@
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
 				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
-				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
-				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
 				BD8E321424CFDAB400AE1D80 /* Comments */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
 				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
@@ -2110,9 +2030,9 @@
 				BEBE0C71222330010044FF55 /* SettingsPostMenu.swift in Sources */,
 				BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
+				BD87553B24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift in Sources */,
 				BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */,
 				BE9428EA20C46B5600E1A33A /* PostActions.swift in Sources */,
-				BD8E321724D078FD00AE1D80 /* CommentTableViewDelegate.swift in Sources */,
 				BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
 				BEEA03CD20E1B53E007A8928 /* HapticUtility.swift in Sources */,
@@ -2123,7 +2043,7 @@
 				BE6EA6CC1E1C1E9400E9E709 /* StremableMp4Mobile.swift in Sources */,
 				BE6EA6C31E1C1DCE00E9E709 /* GfyItem.swift in Sources */,
 				BE25CAD424C3A28300736CA5 /* SwipeForwardNavigationController.swift in Sources */,
-				BD99461224D0A56900B5C7EC /* CommentSubmissionMoreDelegate.swift in Sources */,
+				BD87554724D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift in Sources */,
 				BDCDC5E324D4F4A10066CA8D /* ParentCommentViewController.swift in Sources */,
 				BEF7483220DD894100B6236B /* SettingsGestures.swift in Sources */,
 				BEC814EE24BE8B94005C8E8C /* HistoryViewController.swift in Sources */,
@@ -2139,6 +2059,7 @@
 				BE17EE172219FD7B0043185B /* SettingsDonate.swift in Sources */,
 				0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */,
 				BE6EA6E61E1DA5CE00E9E709 /* ProfileContributionLoader.swift in Sources */,
+				BD87553F24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift in Sources */,
 				BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */,
 				BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */,
 				0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */,
@@ -2155,14 +2076,15 @@
 				BE7360A11FB9089B00CA32AD /* TapBehindModalViewController.swift in Sources */,
 				BE3521801E3D3BDD00C30B8D /* LinkParser.swift in Sources */,
 				BE5466271FB93F46007ADD22 /* PlaceholderViewController.swift in Sources */,
+				BD87554324D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift in Sources */,
 				0991D2A5211CDF8100E86B4C /* UIColor+Extensions.swift in Sources */,
 				BE780B691E3527DA00DAA1EB /* Drafts.swift in Sources */,
 				BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */,
 				BE3E5C141E16BA2200749C0C /* Images.swift in Sources */,
+				BD87553724D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift in Sources */,
 				BEF3ACE21E15C101005848B6 /* ContentType.swift in Sources */,
 				098B5A4D20EFC6E200FE201B /* UIViewController+Extensions.swift in Sources */,
 				BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */,
-				BD99461524D0A8BB00B5C7EC /* CommentLinkCellViewDelegate.swift in Sources */,
 				BE2DEAAE1E2682A800FBF0B5 /* SettingsGeneral.swift in Sources */,
 				BE6EA6CD1E1C1E9400E9E709 /* StremableMp4.swift in Sources */,
 				BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */,
@@ -2172,7 +2094,6 @@
 				BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */,
 				0965260B20E2987800EA53BE /* UISearchBar+Extensions.swift in Sources */,
 				BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */,
-				BD8E321C24D08E6400AE1D80 /* CommentSearchBarDelegate.swift in Sources */,
 				BEBE0C6F222199DA0044FF55 /* IAPHandlerTip.swift in Sources */,
 				BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
@@ -2189,9 +2110,11 @@
 				BE780B601E32CA8F00DAA1EB /* RelatedContributionLoader.swift in Sources */,
 				098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */,
 				0965260F20E298BB00EA53BE /* Object+Extensions.swift in Sources */,
+				BD87553924D8AA210096732F /* CommentViewController+UITableViewDataSource.swift in Sources */,
 				09C5A40D212B09A8000339FD /* BottomMenuPresentationController.swift in Sources */,
 				BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,
+				BD87554B24D8AB3A0096732F /* CommentViewController+UIGestureRecognizerDelegate.swift in Sources */,
 				BEC4A1AA232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift in Sources */,
 				BE3B74392107AA1200658DE9 /* UIAlertController+Extensions.swift in Sources */,
 				BE2B8A0B1E2602CD0053D493 /* SubredditReorderViewController.swift in Sources */,
@@ -2209,28 +2132,26 @@
 				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
 				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
+				BD87554124D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift in Sources */,
 				BEC814F024BE8BBD005C8E8C /* HistoryContributionLoader.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
-				BD61BF9F24D677B200067126 /* CommentTapBehindModalDelegate.swift in Sources */,
 				BE1DA5E62208EC59001C7DB4 /* SettingsUserTags.swift in Sources */,
 				0924E527219E088800C31D5E /* UIWindow+RootViewController.swift in Sources */,
+				BD87554D24D8EADB0096732F /* CommentViewController+UIScrollViewDelegate.swift in Sources */,
 				0924E525219C8EA700C31D5E /* NSDate+Extensions.swift in Sources */,
 				BE780B5E1E32B41300DAA1EB /* SubredditThemeViewController.swift in Sources */,
 				BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */,
 				BE3E5C151E16BA2200749C0C /* AlbumJSONBase.swift in Sources */,
 				BEEA03D120E2C8DC007A8928 /* LinkCellImageCache.swift in Sources */,
-				BD8E321F24D0922F00AE1D80 /* CommentScrollViewDelegate.swift in Sources */,
 				BEE5BF841E14836E00E3C9AE /* MediaVCDelegate.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BED3B31924CE278B00B9A664 /* SettingsShortcutMenu.swift in Sources */,
 				BEC4A1B4232F3F1800EE5114 /* CollectionsContributionLoader.swift in Sources */,
 				096A7D172215EC920067106C /* SettingsAudio.swift in Sources */,
-				BD61BF9D24D6777900067126 /* CommentNavigationControllerDelegate.swift in Sources */,
 				09526EFA214C39F0005A3F6B /* CGPoint+Extensions.swift in Sources */,
 				BE0EF7C41F43C9520058D572 /* Spoilers.swift in Sources */,
 				BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */,
 				BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */,
-				BD61BF9724D676A400067126 /* CommentViewControllerPreviewingDelegate.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
@@ -2243,6 +2164,7 @@
 				BE9456021F3375460097EEF0 /* LeftTransition.swift in Sources */,
 				BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */,
 				BE7AF5761F3529E00003B24B /* ShadowboxLinkViewController.swift in Sources */,
+				BD87554524D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift in Sources */,
 				BEBF45C81E230CC900764BB8 /* History.swift in Sources */,
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,
 				BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */,
@@ -2254,12 +2176,10 @@
 				BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */,
 				BE47AF71225C574700A61FB0 /* ManageMultireddit.swift in Sources */,
 				BE8FCA081E0C46090063B8EF /* AppDelegate.swift in Sources */,
-				BD61BFA124D677D800067126 /* CommentGestureRecognizerDelegate.swift in Sources */,
 				BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */,
 				BE6EA6DD1E1C211200E9E709 /* GfycatCheck.swift in Sources */,
 				BEE5BF6C1E12C92F00E3C9AE /* DateFormatter+util.swift in Sources */,
 				BE25CADE24C4E3FB00736CA5 /* SplitMainViewController.swift in Sources */,
-				BD8E321924D0790800AE1D80 /* CommentTableViewDataSource.swift in Sources */,
 				BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */,
 				BEC814EC24BD43EE005C8E8C /* SiriShortcuts.swift in Sources */,
 				BEC4A1B82331533400EE5114 /* AutoplayScrollViewHandler.swift in Sources */,
@@ -2275,7 +2195,6 @@
 				BEB81A6021432C6C007E326B /* AnyModalViewController.swift in Sources */,
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
 				0984BE532114CEA50091C2E1 /* SlideInPresentationController.swift in Sources */,
-				BD8E322224D0976700AE1D80 /* CommentReplyDelegate.swift in Sources */,
 				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,
 				BE854973239310E300D51DDC /* GalleryLinkCellView.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
@@ -2293,8 +2212,6 @@
 				BE762C9522A2FF7200B29757 /* DraftFindReturnViewController.swift in Sources */,
 				09B2AF6420F7A2ED00580F15 /* VideoSource.swift in Sources */,
 				BE8AE94121F919FF00E1C0D1 /* SettingsCustomTheme.swift in Sources */,
-				BD61BFA324D6785D00067126 /* CommentThingExtension.swift in Sources */,
-				BD169FDA24D0E7CD001B15D8 /* CommentTTTAttributedCellDelegate.swift in Sources */,
 				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
 				B776BB46CB68FCCCA9E843A9 /* CacheSettings.swift in Sources */,
@@ -2310,12 +2227,15 @@
 				BE257A7D21F8D9710082A47E /* SettingsThemeChooser.swift in Sources */,
 				BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */,
 				0965260520E168B200EA53BE /* UIView+Extensions.swift in Sources */,
+				BD87553D24D8AA500096732F /* CommentViewController+ReplyDelegate.swift in Sources */,
+				BD87554F24D8EF530096732F /* CommentViewController+Thing.swift in Sources */,
 				BEC4A1B6232F3F9A00EE5114 /* CollectionsViewController.swift in Sources */,
 				B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */,
 				B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */,
 				B776BB7F8D38650384698FD1 /* LiveThreadViewController.swift in Sources */,
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
+				BD87554924D8AB270096732F /* CommentViewController+TapBehindModalViewControllerDelegate.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
 				BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */,
 				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,
@@ -2426,7 +2346,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 164;
+                CURRENT_PROJECT_VERSION = 164;
 				CURRENT_PROJECT_VERSION = 166;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2461,7 +2381,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 164;
+                CURRENT_PROJECT_VERSION = 164;
 				CURRENT_PROJECT_VERSION = 166;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2490,7 +2410,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 164;
+                CURRENT_PROJECT_VERSION = 164;
 				CURRENT_PROJECT_VERSION = 166;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2521,7 +2441,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 164;
+                CURRENT_PROJECT_VERSION = 164;
 				CURRENT_PROJECT_VERSION = 166;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2552,7 +2472,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 164;
+                CURRENT_PROJECT_VERSION = 164;
 				CURRENT_PROJECT_VERSION = 166;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2583,7 +2503,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 164;
+                CURRENT_PROJECT_VERSION = 164;
 				CURRENT_PROJECT_VERSION = 166;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2735,7 +2655,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 164;
+                CURRENT_PROJECT_VERSION = 164;
 				CURRENT_PROJECT_VERSION = 166;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
@@ -2775,7 +2695,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 164;
+                CURRENT_PROJECT_VERSION = 164;
 				CURRENT_PROJECT_VERSION = 166;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
