@@ -52,10 +52,19 @@ class SplitMainViewController: MainViewController {
         if menu.superview != nil && !MainViewController.needsReTheme {
             return
         }
+        
+        splitViewController?.navigationItem.hidesBackButton = true
+        
         sortButton = ExpandedHitButton(type: .custom)
         sortButton.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        
+        if viewControllers != nil && viewControllers!.count > 0 {
+            if let currentVC = viewControllers?[0] as? SingleSubredditViewController {
+                currentVC.doSortImage(sortButton)
+            }
+        }
         sortB = UIBarButtonItem.init(customView: sortButton)
 
         let account = ExpandedHitButton(type: .custom)
@@ -69,7 +78,7 @@ class SplitMainViewController: MainViewController {
         account.layer.cornerRadius = 5
         account.clipsToBounds = true
         account.contentMode = .scaleAspectFill
-        account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
+        account.addTarget(self, action: #selector(self.openDrawer(_:)), for: UIControl.Event.touchUpInside)
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.sizeAnchors == CGSize.square(size: 30)
         accountB = UIBarButtonItem(customView: account)
@@ -106,9 +115,17 @@ class SplitMainViewController: MainViewController {
         }
         didUpdate()
     }
+    
+    @objc func openDrawer(_ sender: AnyObject) {
+        if self.navigationController?.viewControllers[0] is NavigationHomeViewController {
+            self.navigationController?.popViewController(animated: true)
+        } else if #available(iOS 14, *) {
+            self.splitViewController?.show(UISplitViewController.Column.primary)
+        }
+    }
 
     override func viewDidLoad() {
-        self.navToMux = self.navigationController!.navigationBar
+        self.navToMux = self.navigationController?.navigationBar
         self.color1 = ColorUtil.theme.foregroundColor
         self.color2 = ColorUtil.theme.foregroundColor
         
@@ -207,11 +224,6 @@ class SplitMainViewController: MainViewController {
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
         self.parent?.navigationController?.navigationBar.layoutIfNeeded()
         
-        // Clear the menuNav's searchBar to refresh the menuNav
-        //TODO make this affect the sidebar
-        self.menuNav?.searchBar.text = nil
-        self.menuNav?.searchBar.endEditing(true)
-        
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
         if !selected {
             let page = finalSubs.firstIndex(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
@@ -270,11 +282,6 @@ class SplitMainViewController: MainViewController {
         self.parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         
-        //TODO make the sidebar do this
-        if menuNav?.tableView != nil {
-            menuNav?.tableView.reloadData()
-        }
-        
         setNeedsStatusBarAppearanceUpdate()
     }
 
@@ -311,7 +318,11 @@ class SplitMainViewController: MainViewController {
     override func hardReset(soft: Bool = false) {
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
-            _ = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+            if #available(iOS 14, *) {
+                (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+            } else {
+                (UIApplication.shared.delegate as! AppDelegate).resetStack()
+            }
         }
     }
 
@@ -331,7 +342,12 @@ class SplitMainViewController: MainViewController {
             fatalError("Window must exist when resetting the stack!")
         }
 
-        let main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+        let main: MainViewController!
+        if #available(iOS 14, *) {
+            main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+        } else {
+            main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+        }
         (UIApplication.shared.delegate as! AppDelegate).login = main
         AccountController.addAccount(context: main, register: register)
     }
@@ -520,6 +536,9 @@ extension SplitMainViewController: NavigationHomeDelegate {
         
         if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
             nav.pushNextViewControllerFromRight() {
+                if !self.finalSubs.contains(didRequestSubreddit) {
+                    self.goToSubreddit(subreddit: didRequestSubreddit)
+                }
             }
         }
     }

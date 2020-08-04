@@ -353,12 +353,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
            
-        _ = resetStack()
-        /* TODO enable new ios 14 layout if #available(iOS 14, *) {
-            resetStack()
+        if #available(iOS 14, *) {
+            resetStackNew()
         } else {
             resetStack()
-        }*/
+        }
         
         window?.makeKeyAndVisible()
         
@@ -603,14 +602,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             }
         } else {
-            let splitViewController = UISplitViewController(style: .doubleColumn)
+            let splitViewController = UISplitViewController()
             splitViewController.preferredDisplayMode = .primaryOverlay
             splitViewController.presentsWithGesture = true
-            splitViewController.preferredSplitBehavior = .overlay
             
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
-            splitViewController.setViewController(main, for: .secondary)
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
+            
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()

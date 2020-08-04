@@ -178,6 +178,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         return true
     }
     
+    @objc func showDrawer(_ sender: AnyObject) {
+        menuNav?.expand()
+    }
+    
+    @objc func showMenu(_ sender: AnyObject) {
+        showMore(sender)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
@@ -383,8 +391,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             
             more = UIButton(type: .custom).then {
                 $0.setImage(UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-                //TODO $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-
+                $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
                 $0.accessibilityIdentifier = "Subreddit options button"
                 $0.accessibilityLabel = "Options"
                 $0.accessibilityHint = "Open subreddit options menu"
@@ -394,7 +401,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             
             menu = UIButton(type: .custom).then {
                 $0.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
-                //TODO $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
+                $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
                 $0.accessibilityIdentifier = "Nav drawer button"
                 $0.accessibilityLabel = "Navigate"
                 $0.accessibilityHint = "Open navigation drawer"
@@ -409,7 +416,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 more.topAnchor == tool.topAnchor
             }
         }
-        
+                
         UIView.animate(withDuration: 0.25) {
             self.menu.deactivateImmediateConstraints()
             self.menu.topAnchor == self.toolbar!.topAnchor
@@ -435,7 +442,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             if single {
                 showMenuNav()
             } else {
-                parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (parentController?.menuNav?.bottomOffset ?? 64), width: parentController?.menuNav?.view.frame.width ?? 0, height: parentController?.menuNav?.view.frame.height ?? 0)
+                menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 64), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
             }
             self.isToolbarHidden = false
             if fab == nil {
@@ -590,21 +597,21 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if single {
             hideMenuNav()
         } else {
-            if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView {
-                parent.menu.deactivateImmediateConstraints()
-                parent.menu.topAnchor == topView.topAnchor - 10
-                parent.menu.widthAnchor == 56
-                parent.menu.heightAnchor == 56
-                parent.menu.leftAnchor == topView.leftAnchor
+            if let topView = self.menuNav?.topView {
+                self.menu.deactivateImmediateConstraints()
+                self.menu.topAnchor == topView.topAnchor - 10
+                self.menu.widthAnchor == 56
+                self.menu.heightAnchor == 56
+                self.menu.leftAnchor == topView.leftAnchor
                 
-                parent.more.deactivateImmediateConstraints()
-                parent.more.topAnchor == topView.topAnchor - 10
-                parent.more.widthAnchor == 56
-                parent.more.heightAnchor == 56
-                parent.more.rightAnchor == topView.rightAnchor
+                self.more.deactivateImmediateConstraints()
+                self.more.topAnchor == topView.topAnchor - 10
+                self.more.widthAnchor == 56
+                self.more.heightAnchor == 56
+                self.more.rightAnchor == topView.rightAnchor
             }
             UIView.animate(withDuration: 0.25) {
-                self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.parentController?.menuNav?.bottomOffset ?? 56) / 2)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
                 self.parentController?.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
                 self.parentController?.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
             }
@@ -633,25 +640,23 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             showMenuNav()
         } else if !disableBottom {
             UIView.animate(withDuration: 0.25) {
-                if let parent = self.parentController {
-                    if parent.menu.superview != nil, let topView = parent.menuNav?.topView {
-                        parent.menu.deactivateImmediateConstraints()
-                        parent.menu.topAnchor == topView.topAnchor
-                        parent.menu.widthAnchor == 56
-                        parent.menu.heightAnchor == 56
-                        parent.menu.leftAnchor == topView.leftAnchor
+                if self.menu.superview != nil, let topView = self.menuNav?.topView {
+                    self.menu.deactivateImmediateConstraints()
+                    self.menu.topAnchor == topView.topAnchor
+                    self.menu.widthAnchor == 56
+                    self.menu.heightAnchor == 56
+                    self.menu.leftAnchor == topView.leftAnchor
 
-                        parent.more.deactivateImmediateConstraints()
-                        parent.more.topAnchor == topView.topAnchor
-                        parent.more.widthAnchor == 56
-                        parent.more.heightAnchor == 56
-                        parent.more.rightAnchor == topView.rightAnchor
-                    }
-
-                    parent.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (parent.menuNav?.bottomOffset ?? 0)), width: parent.menuNav?.view.frame.width ?? 0, height: parent.menuNav?.view.frame.height ?? 0)
-                    parent.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-                    parent.more.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    self.more.deactivateImmediateConstraints()
+                    self.more.topAnchor == topView.topAnchor
+                    self.more.widthAnchor == 56
+                    self.more.heightAnchor == 56
+                    self.more.rightAnchor == topView.rightAnchor
                 }
+
+                self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
+                self.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+                self.more.transform = CGAffineTransform(scaleX: 1, y: 1)
             }
         }
         self.isToolbarHidden = false
@@ -949,7 +954,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let offline = MainViewController.isOffline
 
-        if let mainVC = self.navigationController?.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
+        if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
             doSortImage(mainVC.sortButton)
         }
 
@@ -1417,7 +1422,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func showTimeMenu(s: LinkSortType, selector: UIView?, isDefault: UISwitch) {
         if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
-            if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
+            if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
                 self.doSortImage(mainVC.sortButton)
             } else {
                 self.doSortImage(sortButton)
@@ -1435,7 +1440,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: nil) {
                     self.sort = s
-                    if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
+                    if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
                         self.doSortImage(mainVC.sortButton)
                     } else {
                         self.doSortImage(self.sortButton)

@@ -40,4 +40,16 @@ platform :ios do
     build_app(workspace: "Slide for Reddit.xcworkspace", scheme: "Slide for Reddit")
     upload_to_testflight
   end
+
+  lane :beta14 do
+    xcode_select('/Applications/Xcode-beta.app')
+    increment_build_number(xcodeproj: "Slide for Reddit.xcodeproj")
+    match(
+      readonly: true,
+      type: 'appstore',
+      app_identifier: ["ccrama.me.redditslide", "ccrama.me.redditslide.bundledwatchkitapp", "ccrama.me.redditslide.bundledwatchkitapp.watchkitextension", "ccrama.me.redditslide.bundledOpen-in-Slide"]
+    )
+    build_app(workspace: "Slide for Reddit.xcworkspace", scheme: "Slide for Reddit")
+    upload_to_testflight
+  end
 end

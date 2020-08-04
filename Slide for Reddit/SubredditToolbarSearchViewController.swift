@@ -946,11 +946,7 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                         self.suggestions.append(s.displayName)
                     }
                     DispatchQueue.main.async {
-                        if self.tableView.numberOfSections == 1 {
-                            self.tableView.insertSections(IndexSet(integer: 1), with: .none)
-                        } else {
-                            self.tableView.reloadSections(IndexSet(integer: 1), with: .none)
-                        }
+                        self.tableView.reloadData()
                     }
                 case .failure(let error):
                     print(error)

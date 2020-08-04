@@ -78,7 +78,7 @@ PODS:
     - MotionInterchange (~> 1.6)
   - MotionInterchange (1.6.0)
   - MTColorDistance (0.0.3)
-  - OpalImagePicker (2.1.2)
+  - OpalImagePicker (3.0.0)
   - QuickLayout (3.0.0)
   - Realm (5.3.3):
     - Realm/Headers (= 5.3.3)
@@ -129,7 +129,7 @@ DEPENDENCIES:
   - SwiftEntryKit (from `https://github.com/ccrama/SwiftEntryKit`)
   - SwiftLinkPreview (~> 3.0.1)
   - SwiftLint
-  - SwiftyJSON
+  - SwiftyJSON (from `https://github.com/ccrama/SwiftyJSON.git`, branch `hotfix-xcode12`)
   - TGPControls
   - Then
   - YoutubePlayer-in-WKWebView (~> 0.3.0)
@@ -161,7 +161,6 @@ SPEC REPOS:
     - SubtleVolume
     - SwiftLinkPreview
     - SwiftLint
-    - SwiftyJSON
     - TGPControls
     - Then
     - YoutubePlayer-in-WKWebView
@@ -180,6 +179,9 @@ EXTERNAL SOURCES:
     :git: https://github.com/ccrama/SDCAlertView
   SwiftEntryKit:
     :git: https://github.com/ccrama/SwiftEntryKit
+  SwiftyJSON:
+    :branch: hotfix-xcode12
+    :git: https://github.com/ccrama/SwiftyJSON.git
 
 CHECKOUT OPTIONS:
   DTCoreText:
@@ -200,6 +202,9 @@ CHECKOUT OPTIONS:
   SwiftEntryKit:
     :commit: 4418c7bdda528b850483ea70a786003fce4f4a68
     :git: https://github.com/ccrama/SwiftEntryKit
+  SwiftyJSON:
+    :commit: 29ee46ee23593f08e33e0d4364aa4bb91e950847
+    :git: https://github.com/ccrama/SwiftyJSON.git
 
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
@@ -219,7 +224,7 @@ SPEC CHECKSUMS:
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
   MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
-  OpalImagePicker: 51cbf714f337a93c2631219f1a90389ba936077f
+  OpalImagePicker: 38e772dd93a54431fc516b33e1f337c50f745834
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
   Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
   RealmSwift: 0a709536ecea30eea1d3c514f6ade2ed078dee3c
@@ -232,12 +237,12 @@ SPEC CHECKSUMS:
   SwiftEntryKit: 1661b766dd22b07679e6ebb326ccfbd81ceb0a20
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
   SwiftLint: 22ccbbe3b8008684be5955693bab135e0ed6a447
-  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
+  SwiftyJSON: f0574c07d8ca1644050db687067209e3033a89a0
   TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
   Then: acfe0be7e98221c6204e12f8161459606d5d822d
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 57aca7ef8a109a8938111cd954af6edb5fe48f18
+PODFILE CHECKSUM: 33060347e8b00e95fe117e381626fbfbb6465ae7
 
 COCOAPODS: 1.8.4

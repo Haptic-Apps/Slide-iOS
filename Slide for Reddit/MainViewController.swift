@@ -92,8 +92,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var alertController: UIAlertController?
     var tempToken: OAuth2Token?
 
-    var menuNav: SubredditToolbarSearchViewController?
-
     var currentTitle = "Slide"
 
     //MARK: - Shared functions
@@ -334,10 +332,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func finalizeSetup(_ subs: [String]) {
         Subscriptions.set(name: (tempToken?.name)!, subs: subs, completion: {
-            self.menuNav?.view.removeFromSuperview()
-            self.menuNav?.backgroundView.removeFromSuperview()
-            self.menuNav?.removeFromParent()
-            self.menuNav = nil
             self.hardReset()
         })
     }
@@ -539,7 +533,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func screenEdgeSwiped() {
         switch SettingValues.sideGesture {
         case .SUBS:
-            menuNav?.expand()
+            if self.viewControllers != nil && self.viewControllers!.count > 0 {
+                if let vc = self.viewControllers?[0] as? SingleSubredditViewController {
+                    vc.menuNav?.expand()
+                }
+            }
         case .INBOX:
             self.showCurrentAccountMenu(nil)
         case .POST:
