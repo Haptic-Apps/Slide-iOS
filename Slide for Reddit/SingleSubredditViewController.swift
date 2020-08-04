@@ -346,7 +346,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         menu.heightAnchor == 56
         menu.rightAnchor == toolbar!.rightAnchor
         UIView.animate(withDuration: 0.25) {
-            self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
+            self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
             self.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
             self.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
         }
@@ -439,11 +439,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if toolbarEnabled && !MainViewController.isOffline {
-            if single {
-                showMenuNav()
-            } else {
-                menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 64), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
-            }
+            showMenuNav()
             self.isToolbarHidden = false
             if fab == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in
@@ -654,7 +650,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     self.more.rightAnchor == topView.rightAnchor
                 }
 
-                self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
+                self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.view.frame.width, height: self.menuNav?.view.frame.height ?? 0)
                 self.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
                 self.more.transform = CGAffineTransform(scaleX: 1, y: 1)
             }

@@ -214,6 +214,8 @@ class NavigationHomeViewController: UIViewController {
         if SettingValues.autoKeyboard {
             //TODO enable this? searchBar.becomeFirstResponder()
         }
+        splitViewController?.navigationItem.hidesBackButton = true
+        navigationController?.navigationItem.hidesBackButton = true
     }
 
     override func viewDidLayoutSubviews() {

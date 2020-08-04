@@ -54,6 +54,7 @@ class SplitMainViewController: MainViewController {
         }
         
         splitViewController?.navigationItem.hidesBackButton = true
+        navigationController?.navigationItem.hidesBackButton = true
         
         sortButton = ExpandedHitButton(type: .custom)
         sortButton.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
@@ -130,7 +131,8 @@ class SplitMainViewController: MainViewController {
         self.color2 = ColorUtil.theme.foregroundColor
         
         self.restartVC()
-        
+        self.navigationController?.modalPresentationStyle = .currentContext
+
         doButtons()
         
         super.viewDidLoad()

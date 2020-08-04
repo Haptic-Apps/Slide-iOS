@@ -1635,17 +1635,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         didDisappearCompletely = false
         let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if isModal && self.navigationController is TapBehindModalViewController{
+        if isModal && self.navigationController is TapBehindModalViewController {
             self.navigationController?.delegate = self
             (self.navigationController as! TapBehindModalViewController).del = self
         }
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
-        if self.shouldAnimateLoad {
-            self.reloadTableViewAnimated()
-            self.shouldAnimateLoad = false
-        }
         self.finishedPush = true
     }
  

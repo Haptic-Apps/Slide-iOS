@@ -101,6 +101,12 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                 bottomOffset += (window.screen.bounds.height - window.frame.height) / 2
             }
         }
+        if controller.navigationController?.viewControllers.count ?? 0 == 1 && controller.navigationController?.modalPresentationStyle ?? controller.modalPresentationStyle == .pageSheet {
+            bottomOffset += 64
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                bottomOffset += 24
+            }
+        }
     }
     
     public func didSlideOver() {
@@ -329,7 +335,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                        completion: completionBlock)
     }
     
-    @objc func collapse(_ completion: (() -> Void)? = nil) {
+    @objc func collapse() {
         doneOnce = false
         searchBar.isUserInteractionEnabled = false
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
@@ -371,7 +377,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.backgroundView.isHidden = true
             strongSelf.expanded = false
             strongSelf.updateAccessibility()
-            completion?()
         }
 
         UIView.animate(withDuration: 0.4,
