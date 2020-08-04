@@ -787,9 +787,8 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
         } else {
             let sub = cell.subreddit
             if let parent = parentController?.parent as? SplitMainViewController {
-                self.collapse() {
-                    parent.goToSubreddit(subreddit: sub)
-                }
+                self.collapse()
+                parent.goToSubreddit(subreddit: sub)
             } else {
                 VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
             }

@@ -47,13 +47,42 @@ class SplitMainViewController: MainViewController {
             inHeadView.backgroundColor = .clear
         }
     }
-
+    override func doProfileIcon() {
+        let account = ExpandedHitButton(type: .custom)
+        let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
+        if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
+            account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
+        } else {
+            account.setImage(accountImage, for: UIControl.State.normal)
+        }
+        account.layer.cornerRadius = 5
+        account.clipsToBounds = true
+        account.contentMode = .scaleAspectFill
+        account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
+        account.sizeAnchors == CGSize.square(size: 30)
+        accountB = UIBarButtonItem(customView: account)
+        accountB.accessibilityIdentifier = "Account button"
+        accountB.accessibilityLabel = "Account"
+        accountB.accessibilityHint = "Open account page"
+        if #available(iOS 13, *) {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            self.accountB.customView?.addInteraction(interaction)
+        }
+        didUpdate()
+    }
+    
     override func doButtons() {
         if menu.superview != nil && !MainViewController.needsReTheme {
             return
         }
         
         splitViewController?.navigationItem.hidesBackButton = true
+        if #available(iOS 14.0, *) {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                splitViewController?.showsSecondaryOnlyButton = false
+            }
+        }
         navigationController?.navigationItem.hidesBackButton = true
         
         sortButton = ExpandedHitButton(type: .custom)
@@ -79,13 +108,14 @@ class SplitMainViewController: MainViewController {
         account.layer.cornerRadius = 5
         account.clipsToBounds = true
         account.contentMode = .scaleAspectFill
-        account.addTarget(self, action: #selector(self.openDrawer(_:)), for: UIControl.Event.touchUpInside)
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.sizeAnchors == CGSize.square(size: 30)
+        account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
         accountB.accessibilityHint = "Open account page"
+
         if #available(iOS 13, *) {
             let interaction = UIContextMenuInteraction(delegate: self)
             self.accountB.customView?.addInteraction(interaction)
@@ -118,10 +148,15 @@ class SplitMainViewController: MainViewController {
     }
     
     @objc func openDrawer(_ sender: AnyObject) {
+        print("DRAWER")
         if self.navigationController?.viewControllers[0] is NavigationHomeViewController {
             self.navigationController?.popViewController(animated: true)
         } else if #available(iOS 14, *) {
-            self.splitViewController?.show(UISplitViewController.Column.primary)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.splitViewController?.show(UISplitViewController.Column.primary)
+            } else {
+                self.navigationController?.popViewController(animated: true)
+            }
         }
     }
 
