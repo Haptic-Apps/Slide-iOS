@@ -24,6 +24,17 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         }
     }
     
+    public func requireFailureOf(_ gesture: UIGestureRecognizer) {
+        for view in self.view.subviews {
+            if !(view is UICollectionView) {
+                if let scrollView = view as? UIScrollView {
+                    scrollView.delaysContentTouches = false
+                    gesture.require(toFail: scrollView.panGestureRecognizer)
+                }
+            }
+        }
+    }
+    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let point = scrollView.contentOffset
 

@@ -20,6 +20,9 @@ import UIKit
 import WatchConnectivity
 
 class SplitMainViewController: MainViewController {
+    
+    static var isFirst = true
+
     override var shouldAutomaticallyForwardAppearanceMethods: Bool {
         return true
     }
@@ -161,6 +164,8 @@ class SplitMainViewController: MainViewController {
     }
 
     override func viewDidLoad() {
+        SplitMainViewController.isFirst = true
+        
         self.navToMux = self.navigationController?.navigationBar
         self.color1 = ColorUtil.theme.foregroundColor
         self.color2 = ColorUtil.theme.foregroundColor
@@ -239,6 +244,9 @@ class SplitMainViewController: MainViewController {
         guard page < finalSubs.count else { return }
         currentIndex = page
         let vc = self.viewControllers![0] as! SingleSubredditViewController
+        if currentIndex == 0 && SettingValues.subredditBar {
+            vc.setupSwipeGesture()
+        }
         MainViewController.current = vc.sub
         UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
         self.currentTitle = MainViewController.current
@@ -505,7 +513,6 @@ class SplitMainViewController: MainViewController {
         }
         
         let firstViewController = SingleSubredditViewController(subName: finalSubs[newIndex], parent: self)
-        
         weak var weakPageVc = self
         setViewControllers([firstViewController],
                            direction: .forward,

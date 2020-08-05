@@ -202,15 +202,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         tableView.verticalAnchors == view.verticalAnchors
         tableView.horizontalAnchors == view.safeHorizontalAnchors
 
+        /*Disable for now
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
-        self.tableView.addGestureRecognizer(panGesture)
+        self.tableView.addGestureRecognizer(panGesture)*/
         
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
         if single && !isModal && navigationController != nil {
-            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+            //panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         } else if isModal {
             navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         }
@@ -2967,45 +2968,34 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
 extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if gestureRecognizer == panGesture {
-            if !SettingValues.submissionGesturesEnabled {
-                return false
-            }
-            
-            if SettingValues.submissionActionLeft == .NONE && SettingValues.submissionActionRight == .NONE {
-                return false
+    func setupSwipeGesture() {
+        let fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+        if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
+            fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+            fullWidthBackGestureRecognizer.delegate = self
+            //parent.requireFailureOf(fullWidthBackGestureRecognizer)
+            tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            if #available(iOS 13.4, *) {
+                fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
             }
         }
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer.numberOfTouches == 2 {
-            return true
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            let translation = panGestureRecognizer.translation(in: tableView)
+            if translation.x >= 0 {
+                return true
+            }
+            return false
         }
         return false
     }
-
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        // Limit angle of pan gesture recognizer to avoid interfering with scrolling
-        if gestureRecognizer == panGesture {
-            if !SettingValues.submissionGesturesEnabled {
-                return false
-            }
-            
-            if SettingValues.submissionActionLeft == .NONE && SettingValues.submissionActionRight == .NONE {
-                return false
-            }
-        }
         
-        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
-            return recognizer.shouldRecognizeForAxis(.horizontal, withAngleToleranceInDegrees: 45)
-        }
-
-        return true
-    }
-    
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil && recognizer.state == .began {
