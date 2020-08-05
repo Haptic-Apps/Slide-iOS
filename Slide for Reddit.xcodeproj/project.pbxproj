@@ -67,8 +67,7 @@
 		BD87553924D8AA210096732F /* CommentViewController+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */; };
 		BD87553B24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */; };
 		BD87553D24D8AA500096732F /* CommentViewController+ReplyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553C24D8AA500096732F /* CommentViewController+ReplyDelegate.swift */; };
-		BD87553F24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553E24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift */; };
-		BD87554124D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift */; };
+		BD87554124D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift */; };
 		BD87554324D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554224D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift */; };
 		BD87554524D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554424D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift */; };
 		BD87554724D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554624D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift */; };
@@ -490,8 +489,7 @@
 		BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDataSource.swift"; sourceTree = "<group>"; };
 		BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UISearchBarDelegate.swift"; sourceTree = "<group>"; };
 		BD87553C24D8AA500096732F /* CommentViewController+ReplyDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+ReplyDelegate.swift"; sourceTree = "<group>"; };
-		BD87553E24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+SubmissionMoreDelegate.swift"; sourceTree = "<group>"; };
-		BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+LinkCellViewDelegate.swift"; sourceTree = "<group>"; };
+		BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift"; sourceTree = "<group>"; };
 		BD87554224D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+TTTAttributedCellDelegate.swift"; sourceTree = "<group>"; };
 		BD87554424D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIViewControllerPreviewingDelegate.swift"; sourceTree = "<group>"; };
 		BD87554624D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UINavigationControllerDelegate.swift"; sourceTree = "<group>"; };
@@ -938,13 +936,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		BD87553424D89CB60096732F /* Screens */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Screens;
-			sourceTree = "<group>";
-		};
 		BD87553524D8A90C0096732F /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -952,8 +943,7 @@
 				BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */,
 				BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */,
 				BD87553C24D8AA500096732F /* CommentViewController+ReplyDelegate.swift */,
-				BD87553E24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift */,
-				BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift */,
+				BD87554024D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift */,
 				BD87554224D8AA8F0096732F /* CommentViewController+TTTAttributedCellDelegate.swift */,
 				BD87554424D8AAF60096732F /* CommentViewController+UIViewControllerPreviewingDelegate.swift */,
 				BD87554624D8AB0A0096732F /* CommentViewController+UINavigationControllerDelegate.swift */,
@@ -965,15 +955,23 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		BD8E321424CFDAB400AE1D80 /* Comments */ = {
+		BDA8F45B24DA864A00F82171 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
+				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BDA8F45C24DA867900F82171 /* Comments */ = {
 			isa = PBXGroup;
 			children = (
 				BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */,
-				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
-				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
+				BDA8F45B24DA864A00F82171 /* Views */,
 				BD87553524D8A90C0096732F /* Extensions */,
 			);
-			name = Comments;
+			path = Comments;
 			sourceTree = "<group>";
 		};
 		BE13C2CA21655A31002687F2 /* Extensions */ = {
@@ -1258,7 +1256,6 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
-				BD87553424D89CB60096732F /* Screens */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEC2FE18235BA2B100374013 /* adaway.json */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
@@ -1277,7 +1274,7 @@
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
 				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
-				BD8E321424CFDAB400AE1D80 /* Comments */,
+				BDA8F45C24DA867900F82171 /* Comments */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
 				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
 				BEF3ACE11E15C101005848B6 /* ContentType.swift */,
@@ -2059,7 +2056,6 @@
 				BE17EE172219FD7B0043185B /* SettingsDonate.swift in Sources */,
 				0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */,
 				BE6EA6E61E1DA5CE00E9E709 /* ProfileContributionLoader.swift in Sources */,
-				BD87553F24D8AA680096732F /* CommentViewController+SubmissionMoreDelegate.swift in Sources */,
 				BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */,
 				BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */,
 				0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */,
@@ -2132,7 +2128,7 @@
 				BE97422C1F00116D00BF48E0 /* BannerLinkCellView.swift in Sources */,
 				BE7AF5781F363A7C0003B24B /* ShadowboxViewController.swift in Sources */,
 				BE3521701E3D238400C30B8D /* FontGenerator.swift in Sources */,
-				BD87554124D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate.swift in Sources */,
+				BD87554124D8AA7A0096732F /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift in Sources */,
 				BEC814F024BE8BBD005C8E8C /* HistoryContributionLoader.swift in Sources */,
 				BE2B89F71E246CA60053D493 /* GMPalette.swift in Sources */,
 				BE1DA5E62208EC59001C7DB4 /* SettingsUserTags.swift in Sources */,
