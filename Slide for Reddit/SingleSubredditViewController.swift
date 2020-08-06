@@ -2980,6 +2980,13 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     }
     
     func setupSwipeGesture() {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if #available(iOS 14, *) {
+                return
+            } else if SettingValues.appMode == .MULTI_COLUMN {
+                return
+            }
+        }
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
@@ -3053,7 +3060,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             }
             
             let cellPoint = recognizer.location(in: cell.contentView)
-            if cellPoint.x < cell.contentView.frame.width * 0.6 {
+            if cellPoint.x < cell.contentView.frame.width * 0.75 {
                 recognizer.cancel()
                 return
             }
