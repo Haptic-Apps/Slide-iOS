@@ -376,6 +376,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         if dragCancelled {
+            sender.cancel()
             return
         }
         let xVelocity = sender.velocity(in: self).x

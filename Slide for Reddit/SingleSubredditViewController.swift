@@ -27,7 +27,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var emptyStateView = EmptyStateView()
     
     var lastScrollDirectionWasDown = false
-    
+    var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
+    var cellGestureRecognizer: UIPanGestureRecognizer!
+
     func getTableView() -> UICollectionView {
         return tableView
     }
@@ -202,6 +204,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         tableView.verticalAnchors == view.verticalAnchors
         tableView.horizontalAnchors == view.safeHorizontalAnchors
 
+        setupGestures()
         /*Disable for now
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
@@ -2966,8 +2969,18 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
 extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
+    func setupGestures() {
+        cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
+        cellGestureRecognizer.delegate = self
+        tableView.addGestureRecognizer(cellGestureRecognizer)
+        cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        if let parent = parent as? ColorMuxPagingViewController {
+            parent.requireFailureOf(cellGestureRecognizer)
+        }
+    }
+    
     func setupSwipeGesture() {
-        let fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+        fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
             fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
@@ -2990,6 +3003,25 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
+            if panGestureRecognizer == cellGestureRecognizer {
+                if translation.x < 0 {
+                    let point = gestureRecognizer.location(in: self.tableView)
+                    let indexpath = self.tableView.indexPathForItem(at: point)
+                    if indexpath == nil {
+                        return false
+                    }
+                    
+                    guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
+                        return false
+                    }
+                    
+                    let cellPoint = gestureRecognizer.location(in: cell.contentView)
+                    if cellPoint.x > cell.contentView.frame.width * 0.6 {
+                        return true
+                    }
+                }
+                return false
+            }
             if translation.x >= 0 {
                 return true
             }
@@ -3003,6 +3035,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         if recognizer.view != nil && recognizer.state == .began {
             let velocity = recognizer.velocity(in: recognizer.view!).x
             if (velocity > 0 && SettingValues.submissionActionRight == .NONE) || (velocity < 0 && SettingValues.submissionActionLeft == .NONE) {
+                recognizer.cancel()
                 return
             }
         }
@@ -3010,12 +3043,21 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForItem(at: point)
             if indexpath == nil {
+                recognizer.cancel()
                 return
             }
             
             guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
+                recognizer.cancel()
                 return
             }
+            
+            let cellPoint = recognizer.location(in: cell.contentView)
+            if cellPoint.x < cell.contentView.frame.width * 0.6 {
+                recognizer.cancel()
+                return
+            }
+
             translatingCell = cell
         }
         translatingCell?.handlePan(recognizer)

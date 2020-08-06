@@ -3140,6 +3140,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
         tableView.addGestureRecognizer(cellGestureRecognizer)
+        cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
         if let parent = parent as? ColorMuxPagingViewController {
             parent.requireFailureOf(cellGestureRecognizer)
         }
