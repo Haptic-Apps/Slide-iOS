@@ -2970,6 +2970,10 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         let fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+            fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+            if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
+                fullWidthBackGestureRecognizer.require(toFail: navGesture)
+            }
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
             tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
@@ -2986,8 +2990,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
-            let velocity = panGestureRecognizer.velocity(in: tableView)
-            if translation.x >= 0 && abs(translation.y) < 1 && velocity.x > 120 {
+            if translation.x >= 0 {
                 return true
             }
             return false

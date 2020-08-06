@@ -20,7 +20,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     var version = 0
     var swipeBackAdded = false
-    
+    var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
+    var cellGestureRecognizer: UIPanGestureRecognizer!
+
     func hide(index: Int) {
         if index >= 0 {
             self.navigationController?.popViewController(animated: true)
@@ -1307,13 +1309,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
-        /* Disable for now
-        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
-        panGesture.direction = .horizontal
-        panGesture.delegate = self
-        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-           //navGesture.require(toFail: panGesture)
-        }*/
+        setupGestures()
         
         self.presentationController?.delegate = self
 
@@ -1321,10 +1317,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             refresh(self)
         }
         
-        //self.tableView.addGestureRecognizer(panGesture)
-        //if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
-         //   panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-        //}
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
     }
 
@@ -3144,10 +3136,23 @@ extension Thing {
 
 extension CommentViewController: UIGestureRecognizerDelegate {
     
+    func setupGestures() {
+        cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
+        cellGestureRecognizer.delegate = self
+        tableView.addGestureRecognizer(cellGestureRecognizer)
+        if let parent = parent as? ColorMuxPagingViewController {
+            parent.requireFailureOf(cellGestureRecognizer)
+        }
+    }
+    
     func setupSwipeGesture() {
-        let fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+        fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController, !swipeBackAdded {
             swipeBackAdded = true
+            fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+            if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
+                fullWidthBackGestureRecognizer.require(toFail: navGesture)
+            }
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
@@ -3165,8 +3170,15 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
-            let velocity = panGestureRecognizer.velocity(in: tableView)
-            if translation.x >= 0 && abs(translation.y) < 1 && velocity.x > 120 {
+            if panGestureRecognizer == cellGestureRecognizer {
+                if translation.x < 0 {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.60 {
+                        return true
+                    }
+                }
+                return false
+            }
+            if translation.x >= 0 {
                 return true
             }
             return false
@@ -3179,6 +3191,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!).x
             if (velocity < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity > 0 && (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE) && translatingCell == nil) {
+                recognizer.cancel()
                 return
             }
         }
@@ -3187,6 +3200,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForRow(at: point)
             if indexpath == nil {
+                recognizer.cancel()
                 return
             }
 

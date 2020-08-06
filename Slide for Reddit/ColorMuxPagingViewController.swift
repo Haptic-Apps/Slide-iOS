@@ -29,7 +29,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
             if !(view is UICollectionView) {
                 if let scrollView = view as? UIScrollView {
                     scrollView.delaysContentTouches = false
-                    gesture.require(toFail: scrollView.panGestureRecognizer)
+                    scrollView.panGestureRecognizer.require(toFail: gesture)
                 }
             }
         }
