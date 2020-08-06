@@ -274,7 +274,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        navigationController?.setToolbarHidden(true, animated: false)
+
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
         if isModal {
@@ -439,6 +440,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         if toolbarEnabled && !MainViewController.isOffline {
             showMenuNav()
             self.isToolbarHidden = false
@@ -451,10 +453,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 }
             } else {
                 show(true)
-            }
-        } else {
-            if single {
-                navigationController?.setToolbarHidden(true, animated: false)
             }
         }
         if !links.isEmpty {
@@ -2988,7 +2986,8 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
-            if translation.x >= 0 {
+            let velocity = panGestureRecognizer.velocity(in: tableView)
+            if translation.x >= 0 && abs(translation.y) < 1 && velocity.x > 120 {
                 return true
             }
             return false

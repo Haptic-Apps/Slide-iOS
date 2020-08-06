@@ -3165,7 +3165,8 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
-            if translation.x >= 0 {
+            let velocity = panGestureRecognizer.velocity(in: tableView)
+            if translation.x >= 0 && abs(translation.y) < 1 && velocity.x > 120 {
                 return true
             }
             return false
