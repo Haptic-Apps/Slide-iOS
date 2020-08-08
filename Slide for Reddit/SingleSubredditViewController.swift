@@ -203,7 +203,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         tableView.verticalAnchors == view.verticalAnchors
         tableView.horizontalAnchors == view.safeHorizontalAnchors
 
-        setupGestures()
+        if SettingValues.submissionGesturesEnabled {
+            setupGestures()
+        }
         /*Disable for now
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
