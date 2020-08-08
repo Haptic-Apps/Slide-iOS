@@ -43,6 +43,8 @@ public class VCPresenter {
             override13 = false
         }
         
+        var respectedOverride13 = override13
+
         override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
         
         if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .MULTI_COLUMN) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
@@ -71,9 +73,9 @@ public class VCPresenter {
             //Let's figure out how to present it
             let small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
-            if small || override13 {
+            if small || override13 || respectedOverride13 {
                 newParent.modalPresentationStyle = .pageSheet
-                if !override13 {
+                if !override13 && !respectedOverride13 {
                     newParent.modalTransitionStyle = .crossDissolve
                 }
             } else {

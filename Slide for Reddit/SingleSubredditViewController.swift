@@ -74,7 +74,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 }.count
     }
     
-    var panGesture: UIPanGestureRecognizer!
     var translatingCell: LinkCellView?
 
     var times = 0
@@ -2973,9 +2972,24 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
-        if let parent = parent as? ColorMuxPagingViewController {
+        tableView.panGestureRecognizer.require(toFail: cellGestureRecognizer)
+        if let parent = parent as? ColorMuxPagingViewController, SettingValues.subredditBar {
             parent.requireFailureOf(cellGestureRecognizer)
+        }
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            if let interactivePush = nav.interactivePushGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePush)
+            }
+        }
+        if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            if let interactivePush = nav.interactivePushGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePush)
+            }
+        }
+        if fullWidthBackGestureRecognizer != nil {
+            fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
         }
     }
     
@@ -3004,7 +3018,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+        return !(otherGestureRecognizer == cellGestureRecognizer && otherGestureRecognizer.state != .ended)
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -3013,6 +3027,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             if panGestureRecognizer == cellGestureRecognizer {
                 if translation.x < 0 {
                     let point = gestureRecognizer.location(in: self.tableView)
+                    print(point)
                     let indexpath = self.tableView.indexPathForItem(at: point)
                     if indexpath == nil {
                         return false
@@ -3022,14 +3037,15 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                         return false
                     }
                     
-                    let cellPoint = gestureRecognizer.location(in: cell.contentView)
-                    if cellPoint.x > cell.contentView.frame.width * 0.6 {
+                    let cellPoint = gestureRecognizer.location(in: cell)
+                    print(cellPoint)
+                    if cellPoint.x > cell.frame.width * 0.6 {
                         return true
                     }
                 }
                 return false
             }
-            if translation.x >= 0 {
+            if panGestureRecognizer == fullWidthBackGestureRecognizer && translation.x >= 0 {
                 return true
             }
             return false
@@ -3038,9 +3054,8 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     }
         
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
-        
         if recognizer.view != nil && recognizer.state == .began {
-            let velocity = recognizer.velocity(in: recognizer.view!).x
+            let velocity = recognizer.velocity(in: self.tableView).x
             if (velocity > 0 && SettingValues.submissionActionRight == .NONE) || (velocity < 0 && SettingValues.submissionActionLeft == .NONE) {
                 recognizer.cancel()
                 return
@@ -3055,12 +3070,6 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             }
             
             guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
-                recognizer.cancel()
-                return
-            }
-            
-            let cellPoint = recognizer.location(in: cell.contentView)
-            if cellPoint.x < cell.contentView.frame.width * 0.75 {
                 recognizer.cancel()
                 return
             }

@@ -761,12 +761,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var tiConstraints = [NSLayoutConstraint]()
     
     @objc func handlePan(_ sender: UIPanGestureRecognizer) {
+        print("First \(self.contentView.frame.origin.x)")
         if sender.state == .began || typeImage == nil {
             dragCancelled = false
             direction = 0
-            originalLocation = sender.location(in: contentView).x
+            originalLocation = sender.location(in: self).x
             originalPos = self.contentView.frame.origin.x
-            diff = self.contentView.frame.width - originalLocation
+            diff = self.frame.width - originalLocation
             typeImage = UIImageView().then {
                 $0.accessibilityIdentifier = "Action type"
                 $0.layer.cornerRadius = 22.5
@@ -788,7 +789,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
                 if getFirstAction(left: false) != .NONE {
                     direction = 0
-                    diff = self.contentView.frame.width - diff
+                    diff = self.frame.width - diff
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
                         typeImage.leftAnchor == self.leftAnchor + 4
@@ -807,7 +808,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
-                    diff = self.contentView.frame.width - diff
+                    diff = self.frame.width - diff
                     action = getFirstAction(left: true)
                     if action == .NONE {
                         sender.cancel()
@@ -833,7 +834,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
             }
             
-            let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx - diff
+            let currentTranslation = direction == -1 ? 0 - (self.bounds.size.width - posx - diff) : posx - diff
             self.contentView.frame.origin.x = posx - originalLocation
 
             if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionRightLeft == .NONE) {
@@ -933,7 +934,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else if sender.state != .began {
             dragCancelled = true
         }
-        
+        print(self.contentView.frame.origin.x)
+
         if dragCancelled || sender.state == .cancelled {
             if self.typeImage.superview == nil {
                 return

@@ -577,7 +577,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                 splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
 
-                splitViewController.setViewController(main, for: .secondary)
+                splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: main), for: .secondary)
                 window.rootViewController = splitViewController
                 self.window = window
                 window.makeKeyAndVisible()

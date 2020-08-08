@@ -3140,9 +3140,15 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        tableView.panGestureRecognizer.require(toFail: cellGestureRecognizer)
         if let parent = parent as? ColorMuxPagingViewController {
             parent.requireFailureOf(cellGestureRecognizer)
+        }
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            if let interactivePush = nav.interactivePushGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePush)
+            }
         }
     }
     
@@ -3184,7 +3190,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 }
                 return false
             }
-            if translation.x >= 0 {
+            if panGestureRecognizer == fullWidthBackGestureRecognizer && translation.x >= 0 {
                 return true
             }
             return false

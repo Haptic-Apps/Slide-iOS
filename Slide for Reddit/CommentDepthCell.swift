@@ -433,7 +433,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx - diff
             self.contentView.frame.origin.x = posx - originalLocation
-
+            print(self.contentView.frame.origin.x)
             if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionRightLeft == .NONE) {
                 dragCancelled = true
                 sender.cancel()
