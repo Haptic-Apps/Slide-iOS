@@ -1039,6 +1039,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
         
+        self.clipsToBounds = true
         if videoView != nil {
             progressDot.widthAnchor == 20
             progressDot.heightAnchor == 20

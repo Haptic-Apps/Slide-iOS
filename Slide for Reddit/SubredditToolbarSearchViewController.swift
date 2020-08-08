@@ -258,15 +258,22 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer,
-            recognizer.velocity(in: self.view).y < 0,
-            let topView = topView,
-            topView.alpha == 0 {
-            return false
+        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            if recognizer == self.gestureRecognizer {
+                print(recognizer.velocity(in: self.view))
+                let velocity = recognizer.velocity(in: self.view)
+                if let topView = topView, velocity.y < 0, topView.alpha == 0 {
+                    return false
+                } else if abs(velocity.x) > abs(velocity.y) {
+                    return false
+                }
+            } else {
+                return recognizer.velocity(in: self.view).x < 0
+            }
         }
         return true
     }
-    
+        
     func update(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         let y = self.view.frame.minY
@@ -649,6 +656,17 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     func configureGestures() {
         gestureRecognizer = UIPanGestureRecognizer()
         view.addGestureRecognizer(gestureRecognizer)
+        
+        var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+        if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
+            fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+            fullWidthBackGestureRecognizer.require(toFail: gestureRecognizer)
+            fullWidthBackGestureRecognizer.delegate = self
+            self.view.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            if #available(iOS 13.4, *) {
+                fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+            }
+        }
         
         gestureRecognizer.delegate = self
         gestureRecognizer.addTarget(self, action: #selector(viewPanned(sender:)))

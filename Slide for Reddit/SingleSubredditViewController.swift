@@ -379,6 +379,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
             toolbar!.topAnchor == menuNav!.view.topAnchor
             toolbar!.heightAnchor == 90
+            
+            /*(var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+            if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
+                fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+                toolbar!.addGestureRecognizer(fullWidthBackGestureRecognizer)
+                if #available(iOS 13.4, *) {
+                    fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+                }
+            }*/
+
 
             self.menuNav?.setSubreddit(subreddit: sub)
             
