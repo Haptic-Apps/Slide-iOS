@@ -290,6 +290,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
+        
+        menuNav?.configureToolbarSwipe()
 
         server?.stop()
         loop?.stop()
