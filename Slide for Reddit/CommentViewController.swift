@@ -1309,7 +1309,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
-        if SettingValues.commentActionRightLeft != .NONE || SettingValues.commentActionRightRight != .NONE {
+        if SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE {
             setupGestures()
         }
         

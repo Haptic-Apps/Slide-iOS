@@ -491,19 +491,7 @@ class SplitMainViewController: MainViewController {
         subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" as NSSecureCoding ]))
         subs.reverse()
         UIApplication.shared.shortcutItems = subs
-        
-        if SettingValues.submissionGesturesEnabled {
-            for view in view.subviews {
-                if view is UIScrollView {
-                    let scrollView = view as! UIScrollView
-                    if scrollView.isPagingEnabled {
-                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                    }
-                    break
-                }
-            }
-        }
-        
+                
         var newIndex = 0
         
         for sub in self.finalSubs {
