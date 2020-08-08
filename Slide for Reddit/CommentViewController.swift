@@ -3203,7 +3203,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!).x
             if (velocity < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity > 0 && (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE) && translatingCell == nil) {
-                recognizer.cancel()
                 return
             }
         }
@@ -3212,7 +3211,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForRow(at: point)
             if indexpath == nil {
-                recognizer.cancel()
                 return
             }
 
@@ -3220,7 +3218,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             for view in cell.commentBody.subviews {
                 let cellPoint = recognizer.location(in: view)
                 if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
-                    recognizer.cancel()
                     return
                 }
             }

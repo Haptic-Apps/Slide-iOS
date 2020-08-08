@@ -965,6 +965,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
         }
     }
+    override func layoutSubviews() {
+        if typeImage != nil {
+            return
+        }
+        super.layoutSubviews()
+    }
     
     var replyDelegate: ReplyDelegate?
     @objc func reply(_ s: AnyObject) {

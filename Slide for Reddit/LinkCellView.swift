@@ -761,7 +761,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var tiConstraints = [NSLayoutConstraint]()
     
     @objc func handlePan(_ sender: UIPanGestureRecognizer) {
-        print("First \(self.contentView.frame.origin.x)")
         if sender.state == .began || typeImage == nil {
             dragCancelled = false
             direction = 0
@@ -2612,6 +2611,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     override func layoutSubviews() {
+        if typeImage != nil {
+            return
+        }
         super.layoutSubviews()
         var topmargin = 0
         var bottommargin = 2
