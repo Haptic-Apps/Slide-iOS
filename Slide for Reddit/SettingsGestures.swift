@@ -103,10 +103,10 @@ class SettingsGestures: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.row == 0 && indexPath.section == 1 {
+        /*if indexPath.row == 0 && indexPath.section == 1 {
             showCommentGesturesMenu()
             return
-        }
+        }*/
         
         if indexPath.section == 2 {
             showShortcutActionsMenu()
@@ -130,17 +130,17 @@ class SettingsGestures: BubbleSettingTableViewController {
         if indexPath.section != 1 {
             return
         }
-        if indexPath.row == 1 {
+        if indexPath.row == 6 {
             showAction(cell: rightRightActionCell)
-        } else if indexPath.row == 2 {
-            showAction(cell: rightLeftActionCell)
-        } else if indexPath.row == 3 {
-            showAction(cell: leftLeftActionCell)
-        } else if indexPath.row == 4 {
-            showAction(cell: leftRightActionCell)
-        } else if indexPath.row == 5 {
-            showAction(cell: doubleTapActionCell)
         } else if indexPath.row == 6 {
+            showAction(cell: rightLeftActionCell)
+        } else if indexPath.row == 0 {
+            showAction(cell: leftLeftActionCell)
+        } else if indexPath.row == 1 {
+            showAction(cell: leftRightActionCell)
+        } else if indexPath.row == 2 {
+            showAction(cell: doubleTapActionCell)
+        } else if indexPath.row == 3 {
             showAction(cell: forceTouchActionCell)
         }
     }
@@ -380,7 +380,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.sideShortcutActionCell.detailTextLabel?.text = SettingValues.sideGesture.description()
         self.sideShortcutActionCell.imageView?.layer.cornerRadius = 5
 
-        if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
+        /*if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
             self.rightRightActionCell.isUserInteractionEnabled = false
             self.rightRightActionCell.contentView.alpha = 0.5
             self.rightLeftActionCell.isUserInteractionEnabled = false
@@ -398,7 +398,7 @@ class SettingsGestures: BubbleSettingTableViewController {
             self.leftRightActionCell.contentView.alpha = 1
             self.leftLeftActionCell.isUserInteractionEnabled = true
             self.leftLeftActionCell.contentView.alpha = 1
-        }
+        }*/
         
         if !SettingValues.submissionGesturesEnabled {
             self.leftSubActionCell.isUserInteractionEnabled = false
@@ -440,14 +440,14 @@ class SettingsGestures: BubbleSettingTableViewController {
         switch indexPath.section {
         case 1:
             switch indexPath.row {
-            case 0: return self.commentGesturesCell
+            //case 0: return self.commentGesturesCell
             //case 1: return self.commentCell
-            case 1: return self.rightRightActionCell
-            case 2: return self.rightLeftActionCell
-            case 3: return self.leftLeftActionCell
-            case 4: return self.leftRightActionCell
-            case 5: return self.doubleTapActionCell
-            case 6: return self.forceTouchActionCell
+            //case 1: return self.rightRightActionCell
+            //case 2: return self.rightLeftActionCell
+            case 0: return self.leftLeftActionCell
+            case 1: return self.leftRightActionCell
+            case 2: return self.doubleTapActionCell
+            case 3: return self.forceTouchActionCell
             default: fatalError("Unknown row in section 0")
             }
         case 0:
@@ -470,7 +470,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 5 + (canForceTouch ? 1 : 0)
-        case 1: return 6 + (canForceTouch ? 1 : 0)
+        case 1: return 3 + (canForceTouch ? 1 : 0)
         case 2: return 1
         default: fatalError("Unknown number of sections")
         }

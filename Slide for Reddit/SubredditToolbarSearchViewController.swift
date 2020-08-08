@@ -25,6 +25,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     var lastY: CGFloat = 0.0
     var timer: Timer?
     var isSearchComplete = false
+    var toolbarDone = false
     
     var subredditInfoView = UIView()
     var subTitleView = UILabel()
@@ -159,7 +160,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
         configureViews()
         configureLayout()
-        configureGestures()
         
         configureBackground()
 
@@ -258,15 +258,21 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer,
-            recognizer.velocity(in: self.view).y < 0,
-            let topView = topView,
-            topView.alpha == 0 {
-            return false
+        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            if recognizer == self.gestureRecognizer {
+                let velocity = recognizer.velocity(in: self.view)
+                if let topView = topView, velocity.y < 0, topView.alpha == 0 {
+                    return false
+                } else if abs(velocity.x) > abs(velocity.y) {
+                    return false
+                }
+            } else {
+                return recognizer.velocity(in: self.view).x < 0
+            }
         }
         return true
     }
-    
+        
     func update(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         let y = self.view.frame.minY
@@ -646,6 +652,21 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         }
     }
 
+    func configureToolbarSwipe() {
+        if !toolbarDone && gestureRecognizer != nil {
+            toolbarDone = true
+            let fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+            if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer ?? parent?.parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
+                fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+                fullWidthBackGestureRecognizer.require(toFail: gestureRecognizer)
+                fullWidthBackGestureRecognizer.delegate = self
+                self.view.addGestureRecognizer(fullWidthBackGestureRecognizer)
+                if #available(iOS 13.4, *) {
+                    fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+                }
+            }
+        }
+    }
     func configureGestures() {
         gestureRecognizer = UIPanGestureRecognizer()
         view.addGestureRecognizer(gestureRecognizer)

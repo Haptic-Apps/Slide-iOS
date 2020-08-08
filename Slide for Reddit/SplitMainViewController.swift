@@ -20,6 +20,9 @@ import UIKit
 import WatchConnectivity
 
 class SplitMainViewController: MainViewController {
+    
+    static var isFirst = true
+
     override var shouldAutomaticallyForwardAppearanceMethods: Bool {
         return true
     }
@@ -161,6 +164,8 @@ class SplitMainViewController: MainViewController {
     }
 
     override func viewDidLoad() {
+        SplitMainViewController.isFirst = true
+        
         self.navToMux = self.navigationController?.navigationBar
         self.color1 = ColorUtil.theme.foregroundColor
         self.color2 = ColorUtil.theme.foregroundColor
@@ -239,6 +244,9 @@ class SplitMainViewController: MainViewController {
         guard page < finalSubs.count else { return }
         currentIndex = page
         let vc = self.viewControllers![0] as! SingleSubredditViewController
+        if currentIndex == 0 && SettingValues.subredditBar {
+            vc.setupSwipeGesture()
+        }
         MainViewController.current = vc.sub
         UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
         self.currentTitle = MainViewController.current
@@ -483,19 +491,7 @@ class SplitMainViewController: MainViewController {
         subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" as NSSecureCoding ]))
         subs.reverse()
         UIApplication.shared.shortcutItems = subs
-        
-        if SettingValues.submissionGesturesEnabled {
-            for view in view.subviews {
-                if view is UIScrollView {
-                    let scrollView = view as! UIScrollView
-                    if scrollView.isPagingEnabled {
-                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                    }
-                    break
-                }
-            }
-        }
-        
+                
         var newIndex = 0
         
         for sub in self.finalSubs {
@@ -505,7 +501,6 @@ class SplitMainViewController: MainViewController {
         }
         
         let firstViewController = SingleSubredditViewController(subName: finalSubs[newIndex], parent: self)
-        
         weak var weakPageVc = self
         setViewControllers([firstViewController],
                            direction: .forward,

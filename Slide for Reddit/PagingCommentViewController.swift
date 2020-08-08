@@ -83,7 +83,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
         
-        let firstViewController: UIViewController
+        let firstViewController: CommentViewController
         let sub = self.vCs[0]
         if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
             firstViewController = PagingCommentViewController.savedComment!
@@ -94,26 +94,17 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
         first = false
         
-        for view in view.subviews {
-            if view is UIScrollView {
-                let scrollView = view as! UIScrollView
-                scrollView.delegate = self
-                if scrollView.isPagingEnabled && SettingValues.commentGesturesMode != .NONE {
-                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                }
-                scrollView.panGestureRecognizer.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-            }
-        }
-        
-        if !(firstViewController as! CommentViewController).loaded {
-            PagingCommentViewController.savedComment = firstViewController as? CommentViewController
-            (firstViewController as! CommentViewController).forceLoad = true
+        if !firstViewController.loaded {
+            PagingCommentViewController.savedComment = firstViewController
+            firstViewController.forceLoad = true
         }
 
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,
-                           completion: nil)
+                           completion: {(_) in
+                            firstViewController.setupSwipeGesture()
+                           })
     }
     
     //From https://stackoverflow.com/a/25167681/3697225
@@ -154,6 +145,9 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                 break
             }
         }
+        if currentIndex == 0 {
+            (self.viewControllers?.first as? CommentViewController)?.setupSwipeGesture()
+        }
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -181,7 +175,8 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             return nil
         }
         
-        return CommentViewController(submission: vCs[previousIndex], single: false)
+        let comment = CommentViewController(submission: vCs[previousIndex], single: false)
+        return comment
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -213,8 +208,11 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         guard orderedViewControllersCount > nextIndex else {
             return nil
         }
-        
-        return CommentViewController(submission: vCs[nextIndex], single: false)
+        let comment = CommentViewController(submission: vCs[nextIndex], single: false)
+        if nextIndex == 0 {
+            comment.setupSwipeGesture()
+        }
+        return comment
     }
     
 }

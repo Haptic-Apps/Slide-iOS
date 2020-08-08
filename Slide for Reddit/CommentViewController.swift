@@ -19,7 +19,10 @@ import YYText
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
     
     var version = 0
-    
+    var swipeBackAdded = false
+    var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
+    var cellGestureRecognizer: UIPanGestureRecognizer!
+
     func hide(index: Int) {
         if index >= 0 {
             self.navigationController?.popViewController(animated: true)
@@ -75,7 +78,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     public var inHeadView = UIView()
     
     var commentDepthColors = [UIColor]()
-    var pan: UIPanGestureRecognizer!
 
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: CommentDepthCell?
@@ -1307,11 +1309,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
-        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
-        panGesture.direction = .horizontal
-        panGesture.delegate = self
-        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-           //navGesture.require(toFail: panGesture)
+        if SettingValues.commentActionLeftLeft != .NONE || SettingValues.commentActionLeftRight != .NONE {
+            setupGestures()
         }
         
         self.presentationController?.delegate = self
@@ -1320,10 +1319,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             refresh(self)
         }
         
-        self.tableView.addGestureRecognizer(panGesture)
-        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
-            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-        }
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
     }
 
@@ -3143,43 +3138,68 @@ extension Thing {
 
 extension CommentViewController: UIGestureRecognizerDelegate {
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if gestureRecognizer == panGesture {
-            if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
-                return false
+    func setupGestures() {
+        cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
+        cellGestureRecognizer.delegate = self
+        tableView.addGestureRecognizer(cellGestureRecognizer)
+        tableView.panGestureRecognizer.require(toFail: cellGestureRecognizer)
+        if let parent = parent as? ColorMuxPagingViewController {
+            parent.requireFailureOf(cellGestureRecognizer)
+        }
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            if let interactivePush = nav.interactivePushGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePush)
             }
         }
-        return true
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if SettingValues.commentGesturesMode == .GESTURES {
-            if gestureRecognizer.numberOfTouches == 2 {
-                return true
+    func setupSwipeGesture() {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if #available(iOS 14, *) {
+                return
             }
         }
-        return false
+        fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+        if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController, !swipeBackAdded {
+            swipeBackAdded = true
+            fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+            if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
+                fullWidthBackGestureRecognizer.require(toFail: navGesture)
+            }
+            fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+            fullWidthBackGestureRecognizer.delegate = self
+            //parent.requireFailureOf(fullWidthBackGestureRecognizer)
+            tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            if #available(iOS 13.4, *) {
+                fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+            }
+        }
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        // Limit angle of pan gesture recognizer to avoid interfering with scrolling
-        if gestureRecognizer == panGesture {
-            if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
+        if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            let translation = panGestureRecognizer.translation(in: tableView)
+            if panGestureRecognizer == cellGestureRecognizer {
+                if translation.x < 0 {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.75 {
+                        return true
+                    }
+                }
                 return false
             }
+            if panGestureRecognizer == fullWidthBackGestureRecognizer && translation.x >= 0 {
+                return true
+            }
+            return false
         }
-        
-        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
-            return recognizer.shouldRecognizeForAxis(.horizontal, withAngleToleranceInDegrees: 45)
-        }
-        
-        return true
+        return false
     }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && translatingCell == nil
-    }
-    
+
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {
@@ -3200,7 +3220,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             for view in cell.commentBody.subviews {
                 let cellPoint = recognizer.location(in: view)
                 if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
-                    recognizer.cancel()
                     return
                 }
             }
