@@ -215,7 +215,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        self.view.backgroundColor = UIColor.clear
+        self.view.backgroundColor = UIColor.black
         setNeedsStatusBarAppearanceUpdate()
     }
 
