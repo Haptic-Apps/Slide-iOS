@@ -47,7 +47,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: link!)
         }
     }
 
@@ -1810,6 +1810,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             switch type {
             case .ALBUM:
                 text = ("Album")
+            case .REDDIT_GALLERY:
+                text = ("Gallery")
             case .EXTERNAL:
                 text = "External Link"
             case .LINK, .EMBEDDED, .NONE:
@@ -2657,7 +2659,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 self.title.alpha = 1
             }
-        if let url = link?.url, let controller = parentViewController?.getControllerForUrl(baseUrl: url) {
+        if let url = link?.url, let controller = parentViewController?.getControllerForUrl(baseUrl: url, link: link!) {
                 return controller
             }
         //}
@@ -2882,7 +2884,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
-            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: link.width, height: link.height), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
+            (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: link.width, height: link.height), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
                 }
@@ -3153,7 +3155,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     if vc is WebsiteViewController || vc is SFHideSafariViewController {
                         self.previewedVC = nil
                         if let url = self.previewedURL {
-                            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+                            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: self.link!)
                         }
                     } else {
                         if self.parentViewController != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {
@@ -3293,7 +3295,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
-            if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
+            if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url, link: self.link!) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
                     return SwipeForwardNavigationController(rootViewController: vc)

@@ -750,7 +750,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.updateStringsSingle(temp)
                         self.doArrays()
                         if !self.offline {
-                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.link) : Double(0))
+                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
                         }
                     }
                     

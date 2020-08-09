@@ -15,12 +15,11 @@ import UIKit
 protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
 
     var subChanged: Bool { get set }
-    var link: RSubmission! { get set }
     var commentCallback: (() -> Void)? { get set }
 
-    func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)?)
+    func setLink(link: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)?)
 
-    func getControllerForUrl(baseUrl: URL, lq: URL?) -> UIViewController?
+    func getControllerForUrl(baseUrl: URL, lq: URL?, link: RSubmission) -> UIViewController?
     var contentUrl: URL? { get set }
 
     func shouldTruncate(url: URL) -> Bool
@@ -29,19 +28,19 @@ protocol MediaVCDelegate: UIViewControllerTransitioningDelegate {
 
     static func handleCloseNav(controller: UIButtonWithContext)
 
-    func doShow(url: URL, lq: URL?, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?)
+    func doShow(url: URL, lq: URL?, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, link: RSubmission)
     var color: UIColor? { get set }
     func setBarColors(color: UIColor)
     func setNavColors()
 }
 
 extension MediaVCDelegate {
-    func getControllerForUrl(baseUrl: URL) -> UIViewController? {
-        return getControllerForUrl(baseUrl: baseUrl, lq: nil)
+    func getControllerForUrl(baseUrl: URL, link: RSubmission) -> UIViewController? {
+        return getControllerForUrl(baseUrl: baseUrl, lq: nil, link: link)
     }
 
-    func doShow(url: URL, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?) {
-        doShow(url: url, lq: nil, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
+    func doShow(url: URL, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, link: RSubmission) {
+        doShow(url: url, lq: nil, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
     }
 }
 

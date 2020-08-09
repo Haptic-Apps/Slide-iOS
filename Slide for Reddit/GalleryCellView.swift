@@ -41,7 +41,7 @@ class GalleryCellView: UITableViewCell {
             VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: self.link!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
         }
         bannerImage.addTapGestureRecognizer {
-            parent.setLink(lnk: self.link!, shownURL: nil, lq: false, saveHistory: true, heroView: self.bannerImage, finalSize: self.bannerImage.image?.size, heroVC: parent, upvoteCallbackIn: nil)
+            parent.setLink(link: self.link!, shownURL: nil, lq: false, saveHistory: true, heroView: self.bannerImage, finalSize: self.bannerImage.image?.size, heroVC: parent, upvoteCallbackIn: nil)
         }
 
         self.contentView.backgroundColor = UIColor.black
@@ -56,7 +56,7 @@ class GalleryCellView: UITableViewCell {
         bannerImage.sd_setImage(with: URL.init(string: preview))
         
         switch ContentType.getContentType(submission: link) {
-        case .ALBUM:
+        case .ALBUM, .REDDIT_GALLERY:
             typeImage.image = UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")?.navIcon(true)
         case .EXTERNAL, .LINK, .REDDIT:
             typeImage.image = UIImage(named: "world")?.navIcon(true)

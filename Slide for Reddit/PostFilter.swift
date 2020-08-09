@@ -93,7 +93,7 @@ class PostFilter {
             if isSelftext(baseSubreddit) || gallery {
                 contentMatch = true
             }
-        case .ALBUM:
+        case .ALBUM, .REDDIT_GALLERY:
             if isAlbum(baseSubreddit) {
                 contentMatch = true
             }

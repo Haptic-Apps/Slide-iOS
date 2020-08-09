@@ -117,6 +117,8 @@ public class SubmissionRowController: NSObject {
         switch type {
         case .ALBUM:
             text = ("Album")
+        case .REDDIT_GALLERY:
+            text = ("Reddit Gallery")
         case .EXTERNAL:
             text = "External Link"
         case .LINK, .EMBEDDED, .NONE:

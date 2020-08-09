@@ -1900,7 +1900,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
             previewingContext.sourceRect = title.convert(rect, from: title)
-            if let controller = parent?.getControllerForUrl(baseUrl: url) {
+            if let controller = parent?.getControllerForUrl(baseUrl: url, link: RSubmission()) {
                 return controller
             }
         }
@@ -1959,7 +1959,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         if !text.isEmpty {
             self.parent?.showSpoiler(text)
         } else {
-            self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+            self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
         }
     }
 
@@ -2295,7 +2295,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
                     self.previewedVC = nil
                     if let url = self.previewedURL {
-                        self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+                        self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
                     }
                 } else if vc is ParentCommentViewController && self.parent != nil {
                     let context = (vc as! ParentCommentViewController).parentContext
@@ -2436,7 +2436,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
-            if let vc = self.parent?.getControllerForUrl(baseUrl: url) {
+            if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: RSubmission()) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
                     return SwipeForwardNavigationController(rootViewController: vc)
