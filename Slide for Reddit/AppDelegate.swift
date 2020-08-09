@@ -354,9 +354,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
            
         if #available(iOS 14, *) {
-            resetStackNew()
+            _ = resetStackNew()
         } else {
-            resetStack()
+            _ = resetStack()
         }
         
         window?.makeKeyAndVisible()
@@ -466,7 +466,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                
+                splitViewController.maximumPrimaryColumnWidth = 0.4 * UIScreen.main.bounds.width
+
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                 let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
                 swipeNav.pushViewController(main, animated: false)

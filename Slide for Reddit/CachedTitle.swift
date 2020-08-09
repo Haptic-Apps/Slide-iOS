@@ -263,7 +263,7 @@ class CachedTitle {
             extraLine.append(crosspost)
         }
 
-        if submission.pollTotal != -1 {
+        if submission.pollOptions.count > 0 {
             if extraLine.string.length > 0 {
                 extraLine.append(NSAttributedString.init(string: "\n"))
             }

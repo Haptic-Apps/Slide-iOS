@@ -3155,6 +3155,9 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
     
     func setupSwipeGesture() {
+        if swipeBackAdded {
+            return
+        }
         if UIDevice.current.userInterfaceIdiom == .pad {
             if #available(iOS 14, *) {
                 return

@@ -654,12 +654,14 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
 
     func configureToolbarSwipe() {
-        if !toolbarDone && gestureRecognizer != nil {
+        if !toolbarDone {
             toolbarDone = true
             let fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
             if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer ?? parent?.parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
                 fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
-                fullWidthBackGestureRecognizer.require(toFail: gestureRecognizer)
+                if gestureRecognizer != nil {
+                    fullWidthBackGestureRecognizer.require(toFail: gestureRecognizer)
+                }
                 fullWidthBackGestureRecognizer.delegate = self
                 self.view.addGestureRecognizer(fullWidthBackGestureRecognizer)
                 if #available(iOS 13.4, *) {
@@ -699,7 +701,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                     }
                 }
             }
-
         }
     }
 

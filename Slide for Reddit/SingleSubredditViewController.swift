@@ -27,7 +27,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var emptyStateView = EmptyStateView()
     
     var lastScrollDirectionWasDown = false
-    var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
+    var fullWidthBackGestureRecognizer: UIGestureRecognizer!
     var cellGestureRecognizer: UIPanGestureRecognizer!
 
     func getTableView() -> UICollectionView {
@@ -454,10 +454,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        menuNav?.configureToolbarSwipe()
 
         if toolbarEnabled && !MainViewController.isOffline {
             showMenuNav()
-            menuNav?.configureToolbarSwipe()
             self.isToolbarHidden = false
             if fab == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in
@@ -3008,11 +3008,12 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     
     func setupSwipeGesture() {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            if #available(iOS 14, *) {
-                return
-            } else if SettingValues.appMode == .MULTI_COLUMN {
-                return
-            }
+            fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
+            guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
+            swipe.direction = .right
+            swipe.delegate = self
+            tableView.addGestureRecognizer(swipe)
+            return
         }
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
@@ -3025,7 +3026,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
             tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
             if #available(iOS 13.4, *) {
-                fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+                (fullWidthBackGestureRecognizer as! UIPanGestureRecognizer).allowedScrollTypesMask = .continuous
             }
         }
     }
@@ -3063,9 +3064,20 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             }
             return false
         }
+        
+        if gestureRecognizer is UISwipeGestureRecognizer {
+            return true
+        }
+
         return false
     }
         
+    @objc func showParentMenu(_ recognizer: UISwipeGestureRecognizer) {
+        if let parent = self.parentController as? SplitMainViewController {
+            parent.openDrawer(recognizer)
+        }
+    }
+
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         if recognizer.view != nil && recognizer.state == .began {
             let velocity = recognizer.velocity(in: self.tableView).x

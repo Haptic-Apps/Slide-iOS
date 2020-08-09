@@ -81,11 +81,11 @@ class SplitMainViewController: MainViewController {
         }
         
         splitViewController?.navigationItem.hidesBackButton = true
-        if #available(iOS 14.0, *) {
+        /* Doesn't work yet if #available(iOS 14.0, *) {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 splitViewController?.showsSecondaryOnlyButton = false
             }
-        }
+        }*/
         navigationController?.navigationItem.hidesBackButton = true
         
         sortButton = ExpandedHitButton(type: .custom)
@@ -151,7 +151,6 @@ class SplitMainViewController: MainViewController {
     }
     
     @objc func openDrawer(_ sender: AnyObject) {
-        print("DRAWER")
         if self.navigationController?.viewControllers[0] is NavigationHomeViewController {
             self.navigationController?.popViewController(animated: true)
         } else if #available(iOS 14, *) {
@@ -159,6 +158,10 @@ class SplitMainViewController: MainViewController {
                 self.splitViewController?.show(UISplitViewController.Column.primary)
             } else {
                 self.navigationController?.popViewController(animated: true)
+            }
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.splitViewController?.preferredDisplayMode = .primaryOverlay
             }
         }
     }
@@ -245,6 +248,8 @@ class SplitMainViewController: MainViewController {
         currentIndex = page
         let vc = self.viewControllers![0] as! SingleSubredditViewController
         if currentIndex == 0 && SettingValues.subredditBar {
+            vc.setupSwipeGesture()
+        } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar {
             vc.setupSwipeGesture()
         }
         MainViewController.current = vc.sub
