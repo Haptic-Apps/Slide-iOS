@@ -263,6 +263,36 @@ class CachedTitle {
             extraLine.append(crosspost)
         }
 
+        if submission.pollTotal != -1 {
+            if extraLine.string.length > 0 {
+                extraLine.append(NSAttributedString.init(string: "\n"))
+            }
+            
+            let poll = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "poll")!.getCopy(withColor: ColorUtil.theme.fontColor), fontSize: titleFont.pointSize * 0.75)!
+
+            let finalText = NSMutableAttributedString.init(string: " Poll", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                        
+            poll.append(finalText)
+
+            for option in submission.pollOptions {
+                let split = option.split(";")
+                poll.append(NSAttributedString.init(string: "\n"))
+                let option = split[0]
+                let count = Int(split[1]) ?? -1
+                                
+                if count != -1 {
+                    poll.append(NSAttributedString(string: "\(count)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: submission.subreddit), NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]))
+                    let value = (100.0 * CGFloat(count / submission.pollTotal))
+                    let percent = String(format: " (%.1f%%)", value)
+                    poll.append(NSAttributedString(string: percent, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: submission.subreddit), NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 10, submission: true)]))
+                }
+                
+                poll.append(NSAttributedString(string: "  \(option) ", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true)]))
+
+            }
+            extraLine.append(poll)
+        }
+        
         if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.nsfw && !full && !submission.body.trimmed().isEmpty {
             let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
             let text = submission.htmlBody.substring(0, length: length).trimmed()

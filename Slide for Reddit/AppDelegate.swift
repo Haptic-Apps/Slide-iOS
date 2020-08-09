@@ -145,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         colorsFile = documentDirectory.appending("/subcolors.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 27,
+                schemaVersion: 28,
                 migrationBlock: migrationBlock,
                 deleteRealmIfMigrationNeeded: true)
 
