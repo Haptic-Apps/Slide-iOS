@@ -234,7 +234,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        view.backgroundColor = UIColor.black
         self.navigationController?.view.backgroundColor = UIColor.clear
         
         let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 5 + (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
@@ -256,7 +256,6 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         spinnerIndicator.center = self.view.center
         spinnerIndicator.color = UIColor.white
         self.view.addSubview(spinnerIndicator)
-        spinnerIndicator.startAnimating()
         
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
@@ -266,6 +265,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.heightAnchor == 56
         
         if galleryItems.isEmpty {
+            spinnerIndicator.startAnimating()
             var url = baseURL!.absoluteString
             if url.contains("/layout/") {
                 url = url.substring(0, length: (url.indexOf("/layout")!))
