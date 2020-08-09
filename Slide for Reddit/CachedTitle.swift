@@ -282,7 +282,7 @@ class CachedTitle {
                                 
                 if count != -1 {
                     poll.append(NSAttributedString(string: "\(count)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: submission.subreddit), NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]))
-                    let value = (100.0 * CGFloat(count / submission.pollTotal))
+                    let value = (100.0 * CGFloat(count) / CGFloat(submission.pollTotal))
                     let percent = String(format: " (%.1f%%)", value)
                     poll.append(NSAttributedString(string: percent, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: submission.subreddit), NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 10, submission: true)]))
                 }
@@ -290,6 +290,11 @@ class CachedTitle {
                 poll.append(NSAttributedString(string: "  \(option) ", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true)]))
 
             }
+            
+            poll.append(NSAttributedString.init(string: "\n"))
+            poll.append(NSAttributedString(string: "\(submission.pollTotal) total votes", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: submission.subreddit), NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]))
+
+            poll.append(NSAttributedString.init(string: "\n"))
             extraLine.append(poll)
         }
         
