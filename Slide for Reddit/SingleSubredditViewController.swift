@@ -291,8 +291,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
         
-        menuNav?.configureToolbarSwipe()
-
         server?.stop()
         loop?.stop()
 
@@ -459,6 +457,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         if toolbarEnabled && !MainViewController.isOffline {
             showMenuNav()
+            menuNav?.configureToolbarSwipe()
             self.isToolbarHidden = false
             if fab == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in

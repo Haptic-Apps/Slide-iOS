@@ -160,6 +160,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
         configureViews()
         configureLayout()
+        configureGestures()
         
         configureBackground()
 
@@ -667,6 +668,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             }
         }
     }
+    
     func configureGestures() {
         gestureRecognizer = UIPanGestureRecognizer()
         view.addGestureRecognizer(gestureRecognizer)
