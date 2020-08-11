@@ -551,7 +551,18 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
 extension NavigationHomeViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        tableView.setContentOffset(searchBar.frame.origin, animated: true)
+        // Scroll the search bar to the top
+        if let origin = searchBar.superview {
+            let searchBarStartPoint = origin.convert(searchBar.frame.origin, to: tableView)
+            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                /*
+                 Note: Setting setContentOffset's `animated` to true is making the content offset
+                 change happen incorrectly when a keyboard is also being presented. We can still
+                 animate it by wrapping it in an animate block, as we've done here.
+                 */
+                self.tableView.setContentOffset(CGPoint(x: 0, y: searchBarStartPoint.y), animated: false)
+            })
+        }
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
@@ -662,13 +673,17 @@ extension NavigationHomeViewController: UISearchBarDelegate {
 
 extension NavigationHomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOffset.y
-        if self.searchBar.text?.isEmpty() ?? false {
-            //TODO this?
-            //self.tableView.endEditing(true)
-            //searchBar.resignFirstResponder()
-        }
+        // Any scrolling
         lastY = scrollView.contentOffset.y
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        // User-initiated scrolling
+
+        // Hide the keyboard if it's out
+        //TODO this?
+        //self.tableView.endEditing(true)
+        searchBar.resignFirstResponder()
     }
 }
 
