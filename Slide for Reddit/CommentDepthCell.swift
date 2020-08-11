@@ -2343,7 +2343,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         } else if self.commentBody.overflow.frame.contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
-                if let view = view as? UILabel, view.frame.contains(innerLocation) {
+                if let view = view as? CoolTextView, view.frame.contains(innerLocation) {
                     return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(view, innerLocation, self.previewedURL?.absoluteString, self.commentBody) ?? parameters)
                 }
             }
@@ -2363,7 +2363,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         } else if self.commentBody.overflow.frame.contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
-                if let view = view as? UILabel, view.frame.contains(innerLocation) {
+                if let view = view as? CoolTextView, view.frame.contains(innerLocation) {
                     return getConfigurationForTextView(view, innerLocation)
                 }
             }

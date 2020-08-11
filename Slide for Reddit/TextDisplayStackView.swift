@@ -30,7 +30,7 @@ public class TextDisplayStackView: UIStackView {
     var estimatedHeight = CGFloat(0)
     weak var parentLongPress: UILongPressGestureRecognizer?
     
-    let firstTextView: UILabel
+    let firstTextView: CoolTextView
     let overflow: UIStackView
     let links: UIScrollView
     
@@ -54,7 +54,7 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = .black
         self.baseFontColor = .white
         self.delegate = delegate
-        self.firstTextView = UILabel(frame: .zero)
+        self.firstTextView = CoolTextView(frame: .zero)
         self.overflow = UIStackView()
         self.overflow.isUserInteractionEnabled = true
         self.links = TouchUIScrollView()
@@ -114,9 +114,8 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = color
         self.delegate = delegate
         self.baseFontColor = baseFontColor
-        self.firstTextView = UILabel(frame: CGRect.zero).then({
+        self.firstTextView = CoolTextView(frame: CGRect.zero).then({
             $0.accessibilityIdentifier = "Top title"
-            $0.numberOfLines = 0
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         })
         self.links = TouchUIScrollView()
@@ -189,7 +188,6 @@ public class TextDisplayStackView: UIStackView {
         }
 
         firstTextView.attributedText = string
-        firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
         if !ignoreHeight {
 //            let framesetterB = CTFramesetterCreateWithAttributedString(string)
@@ -256,7 +254,6 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = newTitle
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
@@ -312,7 +309,6 @@ public class TextDisplayStackView: UIStackView {
 //            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
             firstTextView.attributedText = newTitle
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
             
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
@@ -423,7 +419,6 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = text
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(text)
@@ -493,12 +488,10 @@ public class TextDisplayStackView: UIStackView {
                 if body.isEmpty {
                     continue
                 }
-                let label = UILabel(frame: .zero)
+                let label = CoolTextView(frame: .zero)
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: body, accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 label.alpha = 0.7
-                label.numberOfLines = 0
-                label.lineBreakMode = .byWordWrapping
                 // TODOjon:
 //                label.highlightLongPressAction = longTouchLinkAction
 //                label.highlightTapAction = touchLinkAction
@@ -509,7 +502,6 @@ public class TextDisplayStackView: UIStackView {
                 
                 let size = text.boundingSize(givenSize: CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude))
                 estimatedHeight += size.height
-                label.preferredMaxLayoutWidth = size.width
                 label.attributedText = text
 
                 baseView.addSubview(label)
@@ -529,10 +521,8 @@ public class TextDisplayStackView: UIStackView {
                     continue
                 }
                 let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
-                let label = UILabel(frame: CGRect.zero).then {
+                let label = CoolTextView(frame: CGRect.zero).then {
                     $0.accessibilityIdentifier = "Paragraph"
-                    $0.numberOfLines = 0
-                    $0.lineBreakMode = .byWordWrapping
                     $0.attributedText = text
                     $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 }
@@ -541,7 +531,6 @@ public class TextDisplayStackView: UIStackView {
 //                label.highlightTapAction = touchLinkAction
 
                 let size = text.boundingSize(givenSize: CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude))
-                label.preferredMaxLayoutWidth = size.width
 
                 estimatedHeight += size.height
 
