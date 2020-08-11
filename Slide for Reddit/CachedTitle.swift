@@ -396,11 +396,11 @@ class CachedTitle {
         let color = ColorUtil.getColorForSub(sub: link.subreddit)
 
         var iconString = NSMutableAttributedString()
-        if link.subreddit_icon != "" && SettingValues.subredditIcons && !full {
+        if (link.subreddit_icon != "" || Subscriptions.icon(for: link.subreddit) != nil) && SettingValues.subredditIcons && !full {
             if Subscriptions.icon(for: link.subreddit) == nil {
                 Subscriptions.subIcons[link.subreddit.lowercased()] = link.subreddit_icon
             }
-            if let urlAsURL = URL(string: link.subreddit_icon) {
+            if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit)!) {
                 if loadImages {
                     let flairView = UIImageView(frame: CGRect(x: 0, y: 3, width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset))
                     flairView.layer.cornerRadius = CGFloat(20 + SettingValues.postFontOffset) / 2
