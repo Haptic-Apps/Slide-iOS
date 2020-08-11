@@ -3005,8 +3005,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             if let interactivePush = nav.interactivePushGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePush)
             }
-        }
-        if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
+        } else if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
             if let interactivePush = nav.interactivePushGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePush)

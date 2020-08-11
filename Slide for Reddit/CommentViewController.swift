@@ -319,7 +319,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 $0.textAlignment = .center
                                                 $0.addTapGestureRecognizer {
                                                     UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-                                                        self.tableView.contentOffset.y = 0
+                                                        self.tableView.contentOffset.y = (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64
                                                     }, completion: { (_) in
                                                         self.lastY = self.tableView.contentOffset.y
                                                         self.olderY = self.tableView.contentOffset.y
@@ -2578,7 +2578,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         //Sometimes the ScrollView will jump one time in the wrong direction. Unsure why this is happening, but this
         //will check for that case and ignore it
-        if (currentY > lastY && lastY < olderY) || (currentY < lastY && lastY > olderY) {
+        if currentY > lastY && lastY < olderY {
             currentY = lastY
         }
         
@@ -2590,6 +2590,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             if currentY > lastY && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
+                    print("HIDEUI")
                     hideUI(inHeader: true)
                 }
             } else if (currentY < lastY - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
@@ -3259,7 +3260,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!).x
-            if (velocity < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity > 0 && (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE) && translatingCell == nil) {
+            if (velocity < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity > 0 && (SettingValues.commentGesturesMode == .HALF ||  (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) && translatingCell == nil) {
                 return
             }
         }
