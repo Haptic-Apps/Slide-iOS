@@ -3186,8 +3186,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             } else if self.textView.overflow.frame.contains(location) {
                 let innerLocation = self.textView.convert(location, to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is YYLabel {
-                        return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(view as! YYLabel, innerLocation, self.previewedURL?.absoluteString, self.textView) ?? parameters)
+                    if let view = view as? UILabel, view.frame.contains(innerLocation) {
+                        return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(view, innerLocation, self.previewedURL?.absoluteString, self.textView) ?? parameters)
                     }
                 }
             }
@@ -3203,7 +3203,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }
     }
     
-    func getLocationForPreviewedText(_ label: YYLabel, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+    func getLocationForPreviewedText(_ label: UILabel, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+        // TODOjon:
         if inputURL == nil {
             return nil
         }
@@ -3247,8 +3248,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 let innerLocation = self.contentView.convert(innerPoint, to: self.textView.overflow)
                 print(innerLocation)
                 for view in self.textView.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is YYLabel {
-                        return getConfigurationForTextView(view as! YYLabel, innerLocation)
+                    if let view = view as? UILabel, view.frame.contains(innerLocation) {
+                        return getConfigurationForTextView(view, innerLocation)
                     }
                 }
             }
@@ -3268,7 +3269,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         return nil
     }
     
-    func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
+    func getConfigurationForTextView(_ label: UILabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
+        // TODOjon:
         let point = label.superview?.convert(location, to: label) ?? location
                 if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
             let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
