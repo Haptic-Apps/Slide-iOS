@@ -25,6 +25,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     var isScrollingDown = true
     var emptyStateView = EmptyStateView()
+    var numberFiltered = 0
     
     var lastScrollDirectionWasDown = false
     var fullWidthBackGestureRecognizer: UIGestureRecognizer!
@@ -1658,6 +1659,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         if reset {
                             self.links = []
                             self.page = 0
+                            self.numberFiltered = 0
                         }
                         self.offline = false
                         let before = self.links.count
@@ -1678,6 +1680,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             CachedTitle.addTitle(s: newRS)
                         }
                         var values = PostFilter.filter(converted, previous: self.links, baseSubreddit: self.sub, gallery: self.isGallery).map { $0 as! RSubmission }
+                        self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
                             let pageItem = RSubmission()
                             pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
@@ -2595,8 +2598,8 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
                 let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nothing", for: indexPath) as! NothingHereCell
                 if links.count < 10 {
                     var title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                    title.append(NSAttributedString(string: "/n"))
-                    title.append(NSMutableAttributedString(string: "If you are unable to view new posts, check your Filter settings", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
+                    title.append(NSAttributedString(string: "\n"))
+                    title.append(NSMutableAttributedString(string: "\(numberFiltered) posts were filtered out", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
                     cell.text.attributedText = title
                 }
                 
