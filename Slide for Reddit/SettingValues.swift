@@ -111,7 +111,7 @@ class SettingValues {
     public static let pref_submissionActionLeft = "SUBMISSION_LEFT"
     public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
     public static let pref_submissionActionForceTouch = "SUBMISSION_FORCE_TOUCH"
-    public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE"
+    public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE_2"
     public static let pref_notifications = "NOTIFICATIONS"
     public static let pref_subBar = "SUB_BAR"
     public static let pref_appMode = "APP_MODE"
@@ -325,20 +325,20 @@ class SettingValues {
     }
 
     enum CommentGesturesMode: String {
-        static let cases: [CommentGesturesMode] = [.GESTURES, .NONE, .SWIPE_ANYWHERE]
+        static let cases: [CommentGesturesMode] = [.HALF, .NONE, .FULL]
         
-        case GESTURES = "gestures"
+        case HALF = "half"
         case NONE = "none"
-        case SWIPE_ANYWHERE = "swipe_anywhere"
+        case FULL = "full"
 
         func description() -> String {
             switch self {
-            case .GESTURES:
-                return "Swipe gestures"
+            case .HALF:
+                return "Gestures"
             case .NONE:
-                return "Slide between posts"
-            case .SWIPE_ANYWHERE:
-                return "Swipe anywhere to exit"
+                return "No Gestures"
+            case .FULL:
+                return "Full gesutres (disables swipe between posts)"
             }
         }
     }
@@ -618,7 +618,7 @@ class SettingValues {
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
-        SettingValues.commentGesturesMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "swipe_anywhere") ?? .SWIPE_ANYWHERE
+        SettingValues.commentGesturesMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "half") ?? .HALF
         SettingValues.commentActionRightLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightLeft) ?? "downvote") ?? .DOWNVOTE
         SettingValues.commentActionRightRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightRight) ?? "upvote") ?? .UPVOTE
         SettingValues.commentActionLeftLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftLeft) ?? "collapse") ?? .COLLAPSE
@@ -1104,7 +1104,7 @@ class SettingValues {
             case .COLLECTIONS:
                 return UIImage(sfString: SFSymbol.squareStackFill, overrideString: "multis")!.menuIcon()
             case .CREATE_MULTI:
-                return UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "multis")!.menuIcon()
+                return UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "multis")!.menuIcon()
             case .TRENDING:
                 return UIImage(named: "trending")!.menuIcon()
             }

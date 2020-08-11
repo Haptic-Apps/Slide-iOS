@@ -306,9 +306,9 @@ class AnyModalViewController: UIViewController {
     func setMuteButtonImage(muted: Bool) {
         let image: UIImage?
         if muted {
-            image = UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true)
+            image = UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.navIcon(true)
         } else {
-            image = UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(true)
+            image = UIImage(sfString: SFSymbol.speaker2Fill, overrideString: "audio")?.navIcon(true)
         }
         muteButton.setImage(image, for: [])
     }

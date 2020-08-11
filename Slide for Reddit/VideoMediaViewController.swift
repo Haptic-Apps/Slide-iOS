@@ -23,7 +23,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var youtubeMute = false {
         didSet(fromValue) {
-            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(true)
+            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.speaker2Fill, overrideString: "audio")?.navIcon(true)
             
             UIView.animate(withDuration: 0.5, animations: {
                 self.muteButton.setImage(changeImage, for: UIControl.State.normal)
@@ -271,7 +271,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
             muteButton = UIButton().then {
                 $0.accessibilityIdentifier = "Un-mute video"
-                $0.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
                 $0.isHidden = true // The button will be unhidden once the content has loaded.
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }

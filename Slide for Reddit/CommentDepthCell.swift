@@ -527,6 +527,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 self.contentView.frame.origin.x = self.originalPos
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
+                self.typeImage = nil
             })
         } else if sender.state != .began {
             dragCancelled = true
@@ -542,6 +543,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 self.backgroundColor = ColorUtil.theme.backgroundColor
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
+                self.typeImage = nil
             })
         }
     }

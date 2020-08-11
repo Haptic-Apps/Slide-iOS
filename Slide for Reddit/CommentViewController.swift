@@ -3163,6 +3163,10 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 return
             }
         }
+        if SettingValues.commentGesturesMode == .FULL {
+            
+            return
+        }
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController, !swipeBackAdded {
             swipeBackAdded = true
@@ -3192,6 +3196,8 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                     if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.75 {
                         return true
                     }
+                } else if SettingValues.commentGesturesMode == .FULL && abs(translation.x) > abs(translation.y) {
+                    return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.25
                 }
                 return false
             }

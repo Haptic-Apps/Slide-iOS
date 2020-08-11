@@ -512,7 +512,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
             if SettingValues.muteInlineVideos {
-                sound.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+                sound.setImage(UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
                 sound.isHidden = true
             } else {
                 sound.isHidden = true
@@ -929,6 +929,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.contentView.frame.origin.x = self.originalPos
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
+                self.typeImage = nil
             })
         } else if sender.state != .began {
             dragCancelled = true
@@ -945,6 +946,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.backgroundColor = ColorUtil.theme.backgroundColor
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
+                self.typeImage = nil
+
             })
         }
     }
@@ -2362,14 +2365,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.videoView?.player?.isMuted = false
             
             UIView.animate(withDuration: 0.5, animations: {
-                self.sound.setImage(UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(), for: UIControl.State.normal)
+                self.sound.setImage(UIImage(sfString: SFSymbol.speaker2Fill, overrideString: "audio")?.navIcon(), for: UIControl.State.normal)
             }, completion: nil)
         } else {
             try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             self.videoView?.player?.isMuted = true
             
             UIView.animate(withDuration: 0.5, animations: {
-                self.sound.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+                self.sound.setImage(UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
             }, completion: nil)
         }
     }
@@ -3473,7 +3476,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
 
         // Create a UIAction for sharing
         var buttons = [UIAction]()
-        let create = UIAction(title: "Create a collection", image: UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "add")) { _ in
+        let create = UIAction(title: "Create a collection", image: UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "add")) { _ in
             let bottom = DragDownAlertMenu(title: "Create a collection", subtitle: "", icon: nil)
             bottom.addTextInput(title: "Save", icon: nil, action: {
                 if let title = bottom.getText() {

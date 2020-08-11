@@ -180,7 +180,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.gallery.detailTextLabel?.numberOfLines = 0
         self.gallery.backgroundColor = ColorUtil.theme.foregroundColor
         self.gallery.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.gallery.imageView?.image = UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")?.toolbarIcon()
+        self.gallery.imageView?.image = UIImage(sfString: SFSymbol.photoFillOnRectangleFill, overrideString: "image")?.toolbarIcon()
         self.gallery.imageView?.tintColor = ColorUtil.theme.fontColor
         self.gallery.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         

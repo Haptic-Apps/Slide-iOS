@@ -1105,11 +1105,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         case .controversial:
             sortButton.setImage(UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .new:
-            sortButton.setImage(UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sortButton.setImage(UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .rising:
             sortButton.setImage(UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .top:
-            sortButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            if #available(iOS 14, *) {
+                sortButton.setImage(UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            } else {
+                sortButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            }
         }
     }
 
@@ -1414,11 +1418,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             case .controversial:
                 sortIcon = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .new:
-                sortIcon = UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                sortIcon = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .rising:
                 sortIcon = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .top:
-                sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                if #available(iOS 14, *) {
+                    sortIcon = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                } else {
+                    sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                }
             }
             
             actionSheetController.addAction(title: link.description, icon: sortIcon, primary: sort == link) {
@@ -2469,7 +2477,7 @@ extension SingleSubredditViewController {
             self.refresh()
         }
 
-        alertController.addAction(title: "Gallery view", icon: UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")!.menuIcon()) {
+        alertController.addAction(title: "Gallery view", icon: UIImage(sfString: SFSymbol.photoFillOnRectangleFill, overrideString: "image")!.menuIcon()) {
             self.galleryMode()
         }
 

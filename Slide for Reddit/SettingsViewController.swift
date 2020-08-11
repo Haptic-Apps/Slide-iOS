@@ -454,7 +454,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         audioSettings.accessoryType = .disclosureIndicator
         audioSettings.backgroundColor = ColorUtil.theme.foregroundColor
         audioSettings.textLabel?.textColor = ColorUtil.theme.fontColor
-        audioSettings.imageView?.image = UIImage(sfString: SFSymbol.volume3Fill, overrideString: "audio")?.toolbarIcon()
+        audioSettings.imageView?.image = UIImage(sfString: SFSymbol.speaker3Fill, overrideString: "audio")?.toolbarIcon()
         audioSettings.imageView?.tintColor = ColorUtil.theme.fontColor
 
         if reset {

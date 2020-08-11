@@ -56,7 +56,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
 
     var multiButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Create a Multireddit"
     }

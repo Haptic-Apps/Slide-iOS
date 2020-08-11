@@ -79,7 +79,9 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var first = true
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.dataSource = self
+        if SettingValues.commentGesturesMode != .FULL {
+            self.dataSource = self
+        }
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
         
@@ -152,6 +154,9 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        if SettingValues.commentGesturesMode == .FULL {
+            return nil
+        }
         let id = (viewController as! CommentViewController).submission!.getId()
         var viewControllerIndex = -1
         for item in vCs {
@@ -181,6 +186,9 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        if SettingValues.commentGesturesMode == .FULL {
+            return nil
+        }
         let id = (viewController as! CommentViewController).submission!.getId()
         var viewControllerIndex = -1
         for item in vCs {

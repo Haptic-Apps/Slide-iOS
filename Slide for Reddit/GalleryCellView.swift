@@ -57,7 +57,7 @@ class GalleryCellView: UITableViewCell {
         
         switch ContentType.getContentType(submission: link) {
         case .ALBUM, .REDDIT_GALLERY:
-            typeImage.image = UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")?.navIcon(true)
+            typeImage.image = UIImage(sfString: SFSymbol.photoFillOnRectangleFill, overrideString: "image")?.navIcon(true)
         case .EXTERNAL, .LINK, .REDDIT:
             typeImage.image = UIImage(named: "world")?.navIcon(true)
         case .SELF:
