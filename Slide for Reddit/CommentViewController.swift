@@ -22,6 +22,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var swipeBackAdded = false
     var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
     var cellGestureRecognizer: UIPanGestureRecognizer!
+    var liveView: UILabel?
+    var liveNewCount = 0
 
     func hide(index: Int) {
         if index >= 0 {
@@ -249,7 +251,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             name = name.replacingOccurrences(of: "t3_", with: "")
         }
         do {
-            try session?.getArticles(name, sort: .new, completion: { (result) in
+            try session?.getArticles(name, sort: .new, limit: SettingValues.commentLimit, completion: { (result) in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -290,6 +292,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             self.doArrays()
                             var paths: [IndexPath] = []
                             for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1) {
+                                self.liveNewCount += 1
                                 paths.append(IndexPath.init(row: i, section: 0))
                             }
                             let contentHeight = self.tableView.contentSize.height
@@ -298,10 +301,41 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             if #available(iOS 11.0, *) {
                                 CATransaction.begin()
                                 CATransaction.setDisableActions(true)
+                                self.isHiding = true
                                 self.tableView.performBatchUpdates({
                                     self.tableView.insertRows(at: paths, with: .fade)
                                 }, completion: { (_) in
-                                    self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
+                                    self.lastY = self.tableView.contentOffset.y
+                                    self.olderY = self.tableView.contentOffset.y
+                                    self.isHiding = false
+                                    if self.tableView.contentOffset.y > (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64 + 10 {
+                                        if self.liveView == nil {
+                                            self.liveView = UILabel().then {
+                                                $0.textColor = .white
+                                                $0.font = UIFont.boldSystemFont(ofSize: 10)
+                                                $0.backgroundColor = ColorUtil.getColorForSub(sub: self.subreddit)
+                                                $0.layer.cornerRadius = 20
+                                                $0.clipsToBounds = true
+                                                $0.textAlignment = .center
+                                                $0.addTapGestureRecognizer {
+                                                    UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                                                        self.tableView.contentOffset.y = 0
+                                                    }, completion: { (_) in
+                                                        self.lastY = self.tableView.contentOffset.y
+                                                        self.olderY = self.tableView.contentOffset.y
+                                                    })
+                                                }
+                                            }
+                                            self.view.addSubview(self.liveView!)
+                                            self.liveView!.topAnchor == self.view.safeTopAnchor + 20
+                                            self.liveView!.centerXAnchor == self.view.centerXAnchor
+                                            self.liveView!.heightAnchor == 40
+                                            self.liveView!.widthAnchor == 130
+                                        }
+                                        self.liveView!.text = "\(self.liveNewCount) NEW COMMENT\((self.liveNewCount > 1) ? "S" : "")"
+                                        self.liveView!.setNeedsLayout()
+                                    }
+                                    //self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
                                     CATransaction.commit()
                                 })
                             } else {
@@ -1176,6 +1210,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
                 var sortIcon = UIImage()
                 
+                if c == .controversial {
+                    actionSheetController.addAction(title: "Sort by Live", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
+                        self.setLive()
+                    }
+                }
+                
                 switch c {
                 case .suggested, .confidence:
                     sortIcon = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
@@ -1226,10 +1266,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 self.doSortImage(self.sortButton)
 
                 self.refresh(self)
-            }
-
-            actionSheetController.addAction(title: "Live (beta)", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
-                self.setLive()
             }
             
             actionSheetController.show(self)
@@ -2530,27 +2566,37 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }, completion: nil)
     }
     
-    var lastYUsed = CGFloat(0)
     var isToolbarHidden = false
     var isHiding = false
     var lastY = CGFloat(0)
-    var oldY = CGFloat(0)
+    var olderY = CGFloat(0)
     
     var isSearch = false
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOffset.y
-
+        var currentY = scrollView.contentOffset.y
+        
+        //Sometimes the ScrollView will jump one time in the wrong direction. Unsure why this is happening, but this
+        //will check for that case and ignore it
+        if (currentY > lastY && lastY < olderY) || (currentY < lastY && lastY > olderY) {
+            currentY = lastY
+        }
+        
         if !SettingValues.pinToolbar && !isReply && !isSearch {
-            if currentY > lastYUsed && currentY > 60 {
+            if currentY <= (tableView.tableHeaderView?.frame.size.height ?? 20) + 64 + 10 {
+                liveView?.removeFromSuperview()
+                liveView = nil
+                liveNewCount = 0
+            }
+            if currentY > lastY && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
                 }
-            } else if (currentY < lastYUsed - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
+            } else if (currentY < lastY - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
                 showUI()
             }
         }
-        lastYUsed = currentY
+        olderY = lastY
         lastY = currentY
     }
 
