@@ -1213,6 +1213,8 @@ class AccountShortcutsView: UIView {
                     }
                 }
                 $0.heightAnchor >= 50
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
+                $0.contentView.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.accessoryType = .disclosureIndicator
             })
         }
