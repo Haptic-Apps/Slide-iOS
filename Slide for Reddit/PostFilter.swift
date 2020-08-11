@@ -112,6 +112,10 @@ class PostFilter {
         default:
             break
         }
+        
+        if ContentType.hostContains(host: link.domain, bases: ["v.redd.it"]) && isVideo(baseSubreddit) { //Handle Reddit videos
+            contentMatch = true
+        }
 
         return mainMatch || contentMatch
     }
