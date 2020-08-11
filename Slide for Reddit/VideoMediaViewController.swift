@@ -522,7 +522,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
 
         // Otherwise load AVPlayer
-        let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.shouldAutoPlay())
+        let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.streamVideos)
         videoType = VideoType.fromPath(url)
         
         if videoType != .DIRECT && videoType != .REDDIT && videoType != .IMGUR {
@@ -580,7 +580,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     func getVideo(_ toLoad: String) {
         self.hideSpinner()
 
-        if FileManager.default.fileExists(atPath: getKeyFromURL()) || SettingValues.shouldAutoPlay() {
+        if FileManager.default.fileExists(atPath: getKeyFromURL()) || SettingValues.streamVideos {
             playVideo(toLoad)
         } else {
             print(toLoad)
@@ -693,7 +693,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
         print("Wanting to play " +  getKeyFromURL())
-        if let videoUrl = SettingValues.shouldAutoPlay() ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
+        if let videoUrl = SettingValues.streamVideos ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
             let playerItem = AVPlayerItem(url: videoUrl)
             videoView.player = AVPlayer(playerItem: playerItem)
             videoView.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
@@ -769,7 +769,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func formatUrl(sS: String, _ vreddit: Bool = false) -> String {
-        return VideoMediaViewController.format(sS: sS, SettingValues.shouldAutoPlay())
+        return VideoMediaViewController.format(sS: sS, SettingValues.streamVideos)
     }
 
     public enum VideoType {
