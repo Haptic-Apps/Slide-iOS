@@ -115,8 +115,14 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         return cell
     }
 
+    public var currentIndex = 0
+    public var originalOffset = CGFloat(0)
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         indexOfCellBeforeDragging = indexOfMajorCell()
+        currentIndex = indexOfMajorCell()
+        if let parent = parentScroll {
+            originalOffset = parent.contentOffset.x
+        }
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -126,12 +132,15 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             let currentY = scrollView.contentOffset.x
 
             var currentBackgroundOffset = parent.contentOffset
-            currentBackgroundOffset.x = currentY / (scrollView.frame.size.width / parent.frame.size.width)
+                        
+            //Translate percentage of current view translation to the parent scroll view, add in original offset
+            currentBackgroundOffset.x = originalOffset + ((currentY - (CGFloat(currentIndex) * collectionViewLayout.itemSize.width)) / (scrollView.frame.size.width - 140 )) * parent.frame.size.width
             print(currentBackgroundOffset.x)
             parent.contentOffset = currentBackgroundOffset
             parent.layoutIfNeeded()
         }
     }
+    
 
     //From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
     public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
