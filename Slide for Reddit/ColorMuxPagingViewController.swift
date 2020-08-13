@@ -15,7 +15,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         for view in self.view.subviews {
             if !(view is UICollectionView) {
                 if let scrollView = view as? UIScrollView {
-                    scrollView.delegate = self
+                    //scrollView.delegate = self
                     if let nav = self.navigationController?.interactivePopGestureRecognizer {
                         scrollView.panGestureRecognizer.require(toFail: nav)
                     }
