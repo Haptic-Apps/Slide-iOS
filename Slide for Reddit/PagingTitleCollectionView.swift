@@ -15,6 +15,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     private var collectionViewLayout: UICollectionViewFlowLayout!
     
     private var dataSource: [String] = []
+    public weak var parentScroll: UIScrollView?
     
     private var indexOfCellBeforeDragging = 0
     
@@ -124,6 +125,14 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.collectionView.mask?.frame = self.collectionView.bounds
+        
+        if let parent = parentScroll {
+            let currentY = scrollView.contentOffset.x
+
+            var currentBackgroundOffset = parent.contentOffset
+            currentBackgroundOffset.x = currentY / (scrollView.frame.size.width / parent.frame.size.width)
+            parent.contentOffset = currentBackgroundOffset
+        }
     }
 
     public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {

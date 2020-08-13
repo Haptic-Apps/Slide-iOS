@@ -350,6 +350,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: tabBar.collectionView.panGestureRecognizer)
         }
+        for view in self.view.subviews {
+            if !(view is UICollectionView) {
+                if let scrollView = view as? UIScrollView {
+                    tabBar.parentScroll = scrollView
+                }
+            }
+        }
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
