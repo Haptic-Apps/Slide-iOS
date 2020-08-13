@@ -44,7 +44,7 @@ class SplitMainViewController: MainViewController {
     }
 
     override func colorChanged(_ color: UIColor) {
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
+        tabBar?.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : color
         if SettingValues.fullyHideNavbar {
             inHeadView.backgroundColor = .clear
@@ -274,12 +274,12 @@ class SplitMainViewController: MainViewController {
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
         self.parent?.navigationController?.navigationBar.layoutIfNeeded()
         
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
+        tabBar?.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
         if !selected {
             let page = finalSubs.firstIndex(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
-            if !tabBar.items.isEmpty {
+            /* todoif !tabBar.items.isEmpty {
                 tabBar.setSelectedItem(tabBar.items[page!], animated: true)
-            }
+            }*/
         } else {
             selected = false
         }
@@ -291,7 +291,7 @@ class SplitMainViewController: MainViewController {
                 sub.reTheme()
             }
         }
-        tabBar.removeFromSuperview()
+        tabBar?.removeFromSuperview()
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
         }
@@ -349,7 +349,7 @@ class SplitMainViewController: MainViewController {
         
         if MainViewController.needsRestart {
             MainViewController.needsRestart = false
-            tabBar.removeFromSuperview()
+            tabBar?.removeFromSuperview()
             self.navigationItem.leftBarButtonItems = []
             self.navigationItem.rightBarButtonItems = []
             if SettingValues.subredditBar {
@@ -524,7 +524,7 @@ class SplitMainViewController: MainViewController {
         
         doButtons()
         
-        tabBar.removeFromSuperview()
+        tabBar?.removeFromSuperview()
         self.navigationItem.leftBarButtonItems = []
         self.navigationItem.rightBarButtonItems = []
         self.delegate = self
