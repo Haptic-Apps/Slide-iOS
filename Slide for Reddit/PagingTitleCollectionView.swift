@@ -125,13 +125,14 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.collectionView.mask?.frame = self.collectionView.bounds
-        
+        print(scrollView.contentOffset.y)
         if let parent = parentScroll {
-            let currentY = scrollView.contentOffset.x
+            let currentY = scrollView.contentOffset.x + collectionViewLayout.sectionInset.left
 
             var currentBackgroundOffset = parent.contentOffset
             currentBackgroundOffset.x = currentY / (scrollView.frame.size.width / parent.frame.size.width)
             parent.contentOffset = currentBackgroundOffset
+            parent.layoutIfNeeded()
         }
     }
 
@@ -155,6 +156,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             let snapToIndex = indexOfCellBeforeDragging + (hasEnoughVelocityToSlideToTheNextCell ? 1 : -1)
             let toValue = collectionViewLayout.itemSize.width * CGFloat(snapToIndex)
 
+            print(toValue)
             // Damping equal 1 => no oscillations => decay animation:
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: velocity.x, options: .allowUserInteraction, animations: {
                 scrollView.contentOffset = CGPoint(x: toValue, y: 0)
