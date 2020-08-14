@@ -3304,7 +3304,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
         }
         view.addTapGestureRecognizer(action: {
@@ -3330,7 +3330,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {
                 PostActions.showPostMenu(self.del!, sub: self.sub)
@@ -3350,7 +3350,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {
                 self.del?.doDisplaySidebar()
