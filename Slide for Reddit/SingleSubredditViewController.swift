@@ -144,7 +144,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var refreshControl: UIRefreshControl!
 
     var realmListing: RListing?
-    var hasHeader = false
+    var hasHeader = true //Always show now, for search and sort bars
     var subLinks = [SubLinkItem]()
 
     var oldsize = CGFloat(0)
@@ -3264,6 +3264,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
     var links = [SubLinkItem]()
     var sub = ""
     var header = UIView()
+    var sort = UIView()
+    var sortImage = UIImageView()
+    var sortTitle = UILabel()
     var hasHeaderImage = false
     weak var del: SingleSubredditViewController?
     
@@ -3273,6 +3276,27 @@ public class LinksHeaderCellView: UICollectionViewCell {
         self.del = delegate
         self.hasHeaderImage = delegate.headerImage != nil
         setupViews()
+        switch del?.sort ?? LinkSortType.top {
+        case .best:
+            sortImage.image = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon()
+        case .hot:
+            sortImage.image = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon()
+        case .controversial:
+            sortImage.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon()
+        case .new:
+            sortImage.image = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.navIcon()
+        case .rising:
+            sortImage.image = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon()
+        case .top:
+            if #available(iOS 14, *) {
+                sortImage.image = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.navIcon()
+            } else {
+                sortImage.image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon()
+            }
+        }
+        sortTitle.font = UIFont.boldSystemFont(ofSize: 14)
+        sortTitle.textColor = ColorUtil.theme.fontColor
+        sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
     }
     
     func addSubscribe(_ stack: UIStackView, _ scroll: UIScrollView) -> CGFloat {
@@ -3357,6 +3381,22 @@ public class LinksHeaderCellView: UICollectionViewCell {
             var spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
 
+            sort.heightAnchor == 30
+            sort.addSubviews(sortImage, sortTitle)
+            sortImage.sizeAnchors == CGSize.square(size: 25)
+            sortImage.centerYAnchor == sort.centerYAnchor
+            sortImage.leftAnchor == sort.leftAnchor + 8
+            sortTitle.leftAnchor == sortImage.rightAnchor + 8
+            sortTitle.centerYAnchor == sortImage.centerYAnchor
+            sortTitle.rightAnchor == sort.rightAnchor
+            sort.addTapGestureRecognizer {
+                self.del?.showSortMenu(self)
+            }
+            var sortWidth = 25 + 8 + 8 + sortTitle.text?.size(with: sortTitle.font).width ?? 0
+            sort.widthAnchor == sortWidth
+
+            buttonBase.addArrangedSubview(sort)
+            finalWidth += sortWidth + 8
             if Subscriptions.subreddits.contains(sub) {
                 finalWidth += self.addSubmit(buttonBase) + 8
             } else {
@@ -3394,14 +3434,14 @@ public class LinksHeaderCellView: UICollectionViewCell {
             spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
             
-            self.contentView.addSubview(scroll)
+            self.contentView.addSubviews(scroll)
             self.scroll.isUserInteractionEnabled = true
             self.contentView.isUserInteractionEnabled = true
             buttonBase.isUserInteractionEnabled = true
             
             scroll.heightAnchor == CGFloat(30)
             scroll.horizontalAnchors == self.contentView.horizontalAnchors
-            
+
             scroll.addSubview(buttonBase)
             buttonBase.heightAnchor == CGFloat(30)
             buttonBase.edgeAnchors == scroll.edgeAnchors
@@ -3432,9 +3472,11 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 scroll.topAnchor == self.header.bottomAnchor + 4
                 imageView.sd_setImage(with: del!.headerImage!)
                 header.heightAnchor == 140
+                
             } else {
                 scroll.topAnchor == self.contentView.topAnchor + 4
             }
+
             scroll.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
         }
     }
