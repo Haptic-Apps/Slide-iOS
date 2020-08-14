@@ -731,7 +731,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if !MainViewController.isOffline && !SettingValues.hiddenFAB {
             self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
-            self.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            self.fab!.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
             self.fab!.layer.cornerRadius = 22.5
             self.fab!.clipsToBounds = true
@@ -3278,20 +3278,20 @@ public class LinksHeaderCellView: UICollectionViewCell {
         setupViews()
         switch del?.sort ?? LinkSortType.top {
         case .best:
-            sortImage.image = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon()
+            sortImage.image = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
         case .hot:
-            sortImage.image = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon()
+            sortImage.image = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
         case .controversial:
-            sortImage.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon()
+            sortImage.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
         case .new:
-            sortImage.image = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.navIcon()
+            sortImage.image = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
         case .rising:
-            sortImage.image = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon()
+            sortImage.image = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
         case .top:
             if #available(iOS 14, *) {
-                sortImage.image = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.navIcon()
+                sortImage.image = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
             } else {
-                sortImage.image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon()
+                sortImage.image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
             }
         }
         sortTitle.font = UIFont.boldSystemFont(ofSize: 14)
@@ -3392,7 +3392,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
             sort.addTapGestureRecognizer {
                 self.del?.showSortMenu(self)
             }
-            var sortWidth = 25 + 8 + 8 + sortTitle.text?.size(with: sortTitle.font).width ?? 0
+            sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
+
+            var sortWidth = 25 + 8 + 8 + (sortTitle.text ?? "").size(with: sortTitle.font).width
             sort.widthAnchor == sortWidth
 
             buttonBase.addArrangedSubview(sort)
@@ -3414,7 +3416,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-                    $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor
                     $0.addTapGestureRecognizer(action: {
                         self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
                     })

@@ -400,7 +400,7 @@ class CachedTitle {
             if Subscriptions.icon(for: link.subreddit) == nil {
                 Subscriptions.subIcons[link.subreddit.lowercased()] = link.subreddit_icon
             }
-            if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit)!) {
+            if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit.lowercased())!) {
                 if loadImages {
                     let flairView = UIImageView(frame: CGRect(x: 0, y: 3, width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset))
                     flairView.layer.cornerRadius = CGFloat(20 + SettingValues.postFontOffset) / 2
