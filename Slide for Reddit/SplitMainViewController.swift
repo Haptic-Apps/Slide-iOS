@@ -272,7 +272,7 @@ class SplitMainViewController: MainViewController {
         
         var currentBackgroundOffset = tabBar.collectionView.contentOffset
         currentBackgroundOffset.x = (tabBar.frame.origin.x / 2) + ((tabBar.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * CGFloat(page)
-        UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.4, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
             self.tabBar.collectionView.contentOffset = currentBackgroundOffset
         }, completion: { [weak self] (_)in
             self?.dontMatch = false
