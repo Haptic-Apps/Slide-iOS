@@ -270,19 +270,19 @@ class SplitMainViewController: MainViewController {
             }
         }
         
+        var currentBackgroundOffset = tabBar.collectionView.contentOffset
+        currentBackgroundOffset.x = (tabBar.frame.origin.x / 2) + ((tabBar.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * CGFloat(page)
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+            self.tabBar.collectionView.contentOffset = currentBackgroundOffset
+        }, completion: { [weak self] (_)in
+            self?.dontMatch = false
+        })
+
         doLeftItem()
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
         self.parent?.navigationController?.navigationBar.layoutIfNeeded()
         
         tabBar?.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
-        if !selected {
-            let page = finalSubs.firstIndex(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
-            /* todoif !tabBar.items.isEmpty {
-                tabBar.setSelectedItem(tabBar.items[page!], animated: true)
-            }*/
-        } else {
-            selected = false
-        }
     }
 
     override func doRetheme() {
@@ -407,12 +407,16 @@ class SplitMainViewController: MainViewController {
     }
     
     override func goToSubreddit(subreddit: String, override: Bool = false) {
+        if finalSubs.firstIndex(of: subreddit) == currentIndex {
+            return
+        }
         //Temporary fix for 13
         UIView.animate(withDuration: 0.3, animations: {
             if SettingValues.appMode == .MULTI_COLUMN {
                 self.splitViewController?.preferredDisplayMode = .primaryHidden
             }
         }, completion: nil)
+        
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
@@ -439,6 +443,7 @@ class SplitMainViewController: MainViewController {
             DispatchQueue.main.async {
                 self.doCurrentPage(index!)
             }
+            self.dontMatch = true
 
             self.setViewControllers([firstViewController],
                                     direction: index! > self.currentPage ? .forward : .reverse,
@@ -483,7 +488,7 @@ class SplitMainViewController: MainViewController {
         LinkCellView.cachedInternet = nil
         
         finalSubs.append(contentsOf: Subscriptions.pinned)
-        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.containsIgnoringCase($0) }))
 
         MainViewController.isOffline = false
         var subs = [UIMutableApplicationShortcutItem]()
@@ -810,5 +815,11 @@ extension SplitMainViewController: NavigationHomeDelegate {
         let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         homeViewController.present(navVC, animated: true)
+    }
+}
+
+extension MainViewController: PagingTitleDelegate {
+    func didSelect(_ subreddit: String) {
+        goToSubreddit(subreddit: subreddit)
     }
 }

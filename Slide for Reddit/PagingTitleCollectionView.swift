@@ -9,18 +9,25 @@
 import Anchorage
 import UIKit
 
+public protocol PagingTitleDelegate {
+    func didSelect(_ subreddit: String)
+}
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
     public var collectionView: UICollectionView!
     private var collectionViewLayout: UICollectionViewFlowLayout!
+    private var delegate: PagingTitleDelegate
     
     private var dataSource: [String] = []
     public weak var parentScroll: UIScrollView?
     
     private var indexOfCellBeforeDragging = 0
+    private var widthSet = false
     
-    init(withSubreddits: [String]) {
+    init(withSubreddits: [String], delegate: PagingTitleDelegate) {
         self.dataSource = withSubreddits
+        self.delegate = delegate
+
         super.init(frame: CGRect.zero)
         configureViews()
         collectionViewLayout.minimumLineSpacing = 0
@@ -45,7 +52,12 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     }
     
     public override var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.layoutFittingExpandedSize.width, height: UIView.layoutFittingExpandedSize.height)
+        get {
+            if widthSet {
+                return CGSize(width: collectionViewLayout.itemSize.width + 140, height: 40)
+            }
+            return CGSize(width: UIView.layoutFittingExpandedSize.width, height: UIView.layoutFittingExpandedSize.height)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -66,38 +78,41 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        configureCollectionViewLayoutItemSize()
-        collectionView.reloadData()
+        if !widthSet {
+            configureCollectionViewLayoutItemSize()
+            collectionView.reloadData()
+        } else {
+            let diff = collectionViewLayout.collectionView!.frame.size.width - 140 - (self.collectionViewLayout.itemSize.width)
+            if diff <= 0 && collectionViewLayout.sectionInset.left > 70 {
+                collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70, bottom: 0, right: 70)
+            } else if diff > 0 && collectionViewLayout.sectionInset.left == 70 {
+                collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70 + diff, bottom: 0, right: 70)
+            }
+        }
         addGradientMask()
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        delegate.didSelect(dataSource[indexPath.row])
     }
     
     private func addGradientMask() {
         let coverView = GradientMaskView(frame: self.collectionView.bounds)
          let coverLayer = coverView.layer as! CAGradientLayer
          coverLayer.colors = [ColorUtil.theme.foregroundColor.withAlphaComponent(0).cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.withAlphaComponent(0).cgColor]
-        coverLayer.locations = [0.0, 0.15, 0.15, 1.0]
+        coverLayer.locations = [0.0, 0.15, 0.85, 1.0]
          coverLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
          coverLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
         collectionView.mask = coverView
     }
 
-    
     public func configureCollectionViewLayoutItemSize() {
-        let inset: CGFloat = calculateSectionInset() // This inset calculation is some magic so the next and the previous cells will peek from the sides. Don't worry about it
         collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70, bottom: 0, right: 70)
         
         collectionViewLayout.itemSize = CGSize(width: collectionViewLayout.collectionView!.frame.size.width - 140, height: collectionViewLayout.collectionView!.frame.size.height)
-        print("SIZE IS \(collectionViewLayout.itemSize)")
+        widthSet = true
     }
-    
-    private func indexOfMajorCell() -> Int {
-        let itemWidth = collectionViewLayout.itemSize.width
-        let proportionalOffset = collectionViewLayout.collectionView!.contentOffset.x / itemWidth
-        let index = Int(round(proportionalOffset))
-        let safeIndex = max(0, min(dataSource.count - 1, index))
-        return safeIndex
-    }
-    
+        
     //From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.count
@@ -107,26 +122,23 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subreddit", for: indexPath) as! SubredditTitleCollectionViewCell
         
         cell.setSubreddit(subreddit: dataSource[indexPath.row])
-        
-        // You can color the cells so you could see how they behave:
-        //        let isEvenCell = CGFloat(indexPath.row).truncatingRemainder(dividingBy: 2) == 0
-        //        cell.backgroundColor = isEvenCell ? UIColor(white: 0.9, alpha: 1) : .white
-        
         return cell
     }
 
     public var currentIndex = 0
     public var originalOffset = CGFloat(0)
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        indexOfCellBeforeDragging = indexOfMajorCell()
+        /*indexOfCellBeforeDragging = indexOfMajorCell()
         currentIndex = indexOfMajorCell()
         if let parent = parentScroll {
             originalOffset = parent.contentOffset.x
-        }
+        }*/
     }
-    
+        
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.collectionView.mask?.frame = self.collectionView.bounds
+        print(scrollView.contentOffset.x)
+        /* Disable for now
         print(scrollView.contentOffset.x)
         if let parent = parentScroll {
             let currentY = scrollView.contentOffset.x
@@ -135,14 +147,21 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
                         
             //Translate percentage of current view translation to the parent scroll view, add in original offset
             currentBackgroundOffset.x = originalOffset + ((currentY - (CGFloat(currentIndex) * collectionViewLayout.itemSize.width)) / (scrollView.frame.size.width - 140 )) * parent.frame.size.width
-            print(currentBackgroundOffset.x)
             parent.contentOffset = currentBackgroundOffset
             parent.layoutIfNeeded()
-        }
+        }*/
     }
     
 
-    //From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
+    /*//From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
+     private func indexOfMajorCell() -> Int {
+         let itemWidth = collectionViewLayout.itemSize.width
+         let proportionalOffset = collectionViewLayout.collectionView!.contentOffset.x / itemWidth
+         let index = Int(round(proportionalOffset))
+         let safeIndex = max(0, min(dataSource.count - 1, index))
+         return safeIndex
+     }
+
     public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         // Stop scrollView sliding:
         targetContentOffset.pointee = scrollView.contentOffset
@@ -174,7 +193,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             let indexPath = IndexPath(row: indexOfMajorCell, section: 0)
             collectionViewLayout.collectionView!.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
-    }
+    }*/
 }
 
 class SubredditTitleCollectionViewCell: UICollectionViewCell {
@@ -243,6 +262,8 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         self.sideView.isHidden = false
         self.icon.isHidden = false
         title.text = subreddit
+        title.adjustsFontSizeToFitWidth = true
+        title.sizeToFit()
         
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()

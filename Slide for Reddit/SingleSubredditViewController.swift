@@ -2930,7 +2930,9 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
     }
 
     func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        if let nav = self.navigationController {
+            PostActions.showMoreMenu(cell: cell, parent: self, nav: nav, mutableList: true, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        }
     }
 
     func readLater(_ cell: LinkCellView) {

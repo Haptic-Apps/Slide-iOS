@@ -121,11 +121,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
-            navigationItem.rightBarButtonItems = [sortB]
+            //navigationItem.rightBarButtonItems = [sortB]
             doLeftItem()
 
         } else {
-            navigationItem.rightBarButtonItems = [sortB]
+            //navigationItem.rightBarButtonItems = [sortB]
             doLeftItem()
         }
     }
@@ -341,7 +341,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             return
         }
         tabBar?.removeFromSuperview()
-        tabBar = PagingTitleCollectionView(withSubreddits: subs)
+        tabBar = PagingTitleCollectionView(withSubreddits: subs, delegate: self)
         //self.viewToMux = self.tabBar
         self.navigationItem.titleView = tabBar
         tabBar.sizeToFit()
@@ -350,6 +350,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: tabBar.collectionView.panGestureRecognizer)
         }
+        matchScroll(scrollView: tabBar.collectionView)
         for view in self.view.subviews {
             if !(view is UICollectionView) {
                 if let scrollView = view as? UIScrollView {
@@ -737,7 +738,7 @@ extension MainViewController: UIPageViewControllerDataSource {
         
         return SingleSubredditViewController(subName: finalSubs[previousIndex], parent: self)
     }
-    
+        
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = finalSubs.firstIndex(of: (viewController as! SingleSubredditViewController).sub) else {
