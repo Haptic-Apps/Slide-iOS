@@ -71,6 +71,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     public static var isOffline = false
     var menuB = UIBarButtonItem()
     var drawerButton = UIImageView()
+    
+    override var shouldAutomaticallyForwardAppearanceMethods: Bool {
+        return true
+    }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
@@ -340,6 +344,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if !SettingValues.subredditBar {
             return
         }
+        let oldOffset = tabBar?.collectionView.contentOffset ?? CGPoint.zero
         tabBar?.removeFromSuperview()
         tabBar = PagingTitleCollectionView(withSubreddits: subs, delegate: self)
         //self.viewToMux = self.tabBar
@@ -358,14 +363,21 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 }
             }
         }
-        var currentBackgroundOffset = tabBar.collectionView.contentOffset
-        currentBackgroundOffset.x = (tabBar.frame.origin.x / 2) + ((tabBar.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * CGFloat(currentIndex)
-            self.tabBar.collectionView.contentOffset = currentBackgroundOffset
+        tabBar.collectionView.contentOffset = oldOffset
+        print("Set offset to \(oldOffset), is now \(tabBar.collectionView.contentOffset)")
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
         let sub = gesture.view!.tag
         goToSubreddit(index: sub)
+    }
+    
+    func doToolbarOffset() {
+        var currentBackgroundOffset = tabBar.collectionView.contentOffset
+        var frameOffset = (tabBar.frame.origin.x / 2) - ((tabBar.frame.maxX - tabBar.frame.size.width) / 2)
+        currentBackgroundOffset.x = frameOffset + ((tabBar.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * CGFloat(currentIndex)
+        self.tabBar?.collectionView.contentOffset = currentBackgroundOffset
+        print("Set offset \(currentBackgroundOffset.x)")
     }
     
     func goToSubreddit(index: Int) {
@@ -659,16 +671,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     public func viewWillAppearActions(override: Bool = false) {
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
     
     func hardReset(soft: Bool = false) {
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
     }
 
     func addAccount(register: Bool) {

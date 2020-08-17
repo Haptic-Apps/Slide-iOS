@@ -76,6 +76,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     }
     
     public override func layoutSubviews() {
+        let oldOffset = collectionView.contentOffset
         super.layoutSubviews()
         if !widthSet {
             configureCollectionViewLayoutItemSize()
@@ -89,6 +90,8 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             }
         }
         addGradientMask()
+        
+        collectionView.contentOffset = oldOffset
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -310,6 +313,7 @@ class GradientMaskView: UIView {
     }
 }
 
+//Based on https://stackoverflow.com/a/42705208/3697225
 class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDelegateFlowLayout {
 
     private let fadeFactor: CGFloat = 0.5
