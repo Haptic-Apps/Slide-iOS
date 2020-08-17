@@ -12,6 +12,8 @@ import Then
 import UIKit
 import YYText
 
+typealias TextAction = (UIView, NSAttributedString, NSRange, CGRect) -> Void
+
 public protocol TextDisplayStackViewDelegate: class {
     func linkTapped(url: URL, text: String)
     func linkLongTapped(url: URL)
@@ -28,7 +30,7 @@ public class TextDisplayStackView: UIStackView {
     var estimatedHeight = CGFloat(0)
     weak var parentLongPress: UILongPressGestureRecognizer?
     
-    let firstTextView: YYLabel
+    let firstTextView: CoolTextView
     let overflow: UIStackView
     let links: UIScrollView
     
@@ -41,8 +43,8 @@ public class TextDisplayStackView: UIStackView {
     var delegate: TextDisplayStackViewDelegate
 
     var ignoreHeight = false
-    var touchLinkAction: YYTextAction?
-    var longTouchLinkAction: YYTextAction?
+    var touchLinkAction: TextAction?
+    var longTouchLinkAction: TextAction?
 
     var activeSet = false
     
@@ -52,7 +54,7 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = .black
         self.baseFontColor = .white
         self.delegate = delegate
-        self.firstTextView = YYLabel(frame: .zero)
+        self.firstTextView = CoolTextView(frame: .zero)
         self.overflow = UIStackView()
         self.overflow.isUserInteractionEnabled = true
         self.links = TouchUIScrollView()
@@ -96,8 +98,9 @@ public class TextDisplayStackView: UIStackView {
         }
         
         self.isUserInteractionEnabled = true
-        self.firstTextView.highlightLongPressAction = longTouchLinkAction
-        self.firstTextView.highlightTapAction = touchLinkAction
+        // TODOjon:
+//        self.firstTextView.highlightLongPressAction = longTouchLinkAction
+//        self.firstTextView.highlightTapAction = touchLinkAction
     }
     
     func setColor(_ color: UIColor) {
@@ -111,9 +114,8 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = color
         self.delegate = delegate
         self.baseFontColor = baseFontColor
-        self.firstTextView = YYLabel(frame: CGRect.zero).then({
+        self.firstTextView = CoolTextView(frame: CGRect.zero).then({
             $0.accessibilityIdentifier = "Top title"
-            $0.numberOfLines = 0
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         })
         self.links = TouchUIScrollView()
@@ -168,8 +170,9 @@ public class TextDisplayStackView: UIStackView {
                 }
             })
         }
-        self.firstTextView.highlightLongPressAction = longTouchLinkAction
-        self.firstTextView.highlightTapAction = touchLinkAction
+        // TODOjon:
+//        self.firstTextView.highlightLongPressAction = longTouchLinkAction
+//        self.firstTextView.highlightTapAction = touchLinkAction
     }
     
     required public init(coder: NSCoder) {
@@ -185,21 +188,19 @@ public class TextDisplayStackView: UIStackView {
         }
 
         firstTextView.attributedText = string
-        firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
         if !ignoreHeight {
 //            let framesetterB = CTFramesetterCreateWithAttributedString(string)
 //            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //            estimatedHeight += textSizeB.height
 
-            let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: string)!
-            firstTextView.textLayout = layout
-            estimatedHeight += layout.textBoundingSize.height
+            // TODOjon:
+            let size = string.boundingSize(givenSize: CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude))
+            estimatedHeight += size.height
             firstTextView.horizontalAnchors == horizontalAnchors
             firstTextView.removeConstraints(addedConstraints)
             addedConstraints = batch {
-                firstTextView.heightAnchor == layout.textBoundingSize.height
+                firstTextView.heightAnchor == size.height
             }
         }
 
@@ -253,16 +254,15 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = newTitle
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
 //                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //                estimatedHeight += textSizeB.height
 
-                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: newTitle)!
-                estimatedHeight += layout.textBoundingSize.height
+                // TODOjon:
+                let size = newTitle.boundingSize(givenSize: CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude))
+                estimatedHeight += size.height
             }
             
             if blocks.count > 1 {
@@ -309,20 +309,17 @@ public class TextDisplayStackView: UIStackView {
 //            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
             firstTextView.attributedText = newTitle
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
             
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
 //                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //                estimatedHeight += textSizeB.height
 
-                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: newTitle)!
-                firstTextView.textLayout = layout
-                estimatedHeight += layout.textBoundingSize.height
+                let size = newTitle.boundingSize(givenSize: CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude))
+                estimatedHeight += size.height
                 firstTextView.removeConstraints(addedConstraints)
                 addedConstraints = batch {
-                    firstTextView.heightAnchor == layout.textBoundingSize.height
+                    firstTextView.heightAnchor == size.height
                 }
                 firstTextView.horizontalAnchors == horizontalAnchors
             }
@@ -422,16 +419,14 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = text
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(text)
 //                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //                estimatedHeight += textSizeB.height
 
-                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: text)!
-                estimatedHeight += layout.textBoundingSize.height
+                let size = text.boundingSize(givenSize: CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude))
+                estimatedHeight += size.height
             }
 
             startIndex = 1
@@ -493,24 +488,20 @@ public class TextDisplayStackView: UIStackView {
                 if body.isEmpty {
                     continue
                 }
-                let label = YYLabel(frame: .zero)
+                let label = CoolTextView(frame: .zero)
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: body, accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 label.alpha = 0.7
-                label.numberOfLines = 0
-                label.lineBreakMode = .byWordWrapping
-                label.highlightLongPressAction = longTouchLinkAction
-                label.highlightTapAction = touchLinkAction
+                // TODOjon:
+//                label.highlightLongPressAction = longTouchLinkAction
+//                label.highlightTapAction = touchLinkAction
                 
                 let baseView = UIView()
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 
-                let size = CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: text)!
-                estimatedHeight += layout.textBoundingSize.height
-                label.textLayout = layout
-                label.preferredMaxLayoutWidth = layout.textBoundingSize.width
+                let size = text.boundingSize(givenSize: CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude))
+                estimatedHeight += size.height
                 label.attributedText = text
 
                 baseView.addSubview(label)
@@ -523,35 +514,31 @@ public class TextDisplayStackView: UIStackView {
                             
                 baseView.horizontalAnchors == overflow.horizontalAnchors
                 if !ignoreHeight {
-                    baseView.heightAnchor == layout.textBoundingSize.height
+                    baseView.heightAnchor == size.height
                 }
             } else {
                 if block.trimmed().isEmpty || block.trimmed() == "\n" {
                     continue
                 }
                 let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
-                let label = YYLabel(frame: CGRect.zero).then {
+                let label = CoolTextView(frame: CGRect.zero).then {
                     $0.accessibilityIdentifier = "Paragraph"
-                    $0.numberOfLines = 0
-                    $0.lineBreakMode = .byWordWrapping
                     $0.attributedText = text
                     $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 }
-                label.highlightLongPressAction = longTouchLinkAction
-                label.highlightTapAction = touchLinkAction
+                // TODOjon:
+//                label.highlightLongPressAction = longTouchLinkAction
+//                label.highlightTapAction = touchLinkAction
 
-                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: text)!
-                label.textLayout = layout
-                label.preferredMaxLayoutWidth = layout.textBoundingSize.width
+                let size = text.boundingSize(givenSize: CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude))
 
-                estimatedHeight += layout.textBoundingSize.height
+                estimatedHeight += size.height
 
                 overflow.addArrangedSubview(label)
 
                 label.horizontalAnchors == overflow.horizontalAnchors
                 if !ignoreHeight {
-                    label.heightAnchor == layout.textBoundingSize.height
+                    label.heightAnchor == size.height
                 }
             }
         }
@@ -566,9 +553,16 @@ public class TextDisplayStackView: UIStackView {
     public static func
         createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>").replacingOccurrences(of: "<code>", with: "<font color=\"blue\">").replacingOccurrences(of: "</code>", with: "</font>")
-        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontSize: font.pointSize], documentAttributes: nil).generatedAttributedString()!
-        let html = NSMutableAttributedString(attributedString: baseHtml)
+        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML)
+            .replacingOccurrences(of: "<del>", with: "<font color=\"green\">")
+            .replacingOccurrences(of: "</del>", with: "</font>")
+            .replacingOccurrences(of: "<code>", with: "<font color=\"blue\">")
+            .replacingOccurrences(of: "</code>", with: "</font>")
+
+        let htmlString = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontSize: font.pointSize], documentAttributes: nil).generatedAttributedString()!
+
+        let html = NSMutableAttributedString(attributedString: htmlString)
+
         while html.mutableString.contains("\t•\t") {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
@@ -581,8 +575,11 @@ public class TextDisplayStackView: UIStackView {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t▪\t")
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
         }
-        
-        return LinkParser.parse(html, accentColor, font: font, fontColor: fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
+
+        // Repair superscript styling
+        let fixed = html.fixCoreTextIssues(with: font)
+
+        return LinkParser.parse(fixed, accentColor, font: font, fontColor: fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
     }
     
 //    public func link(at: CGPoint, withTouch: UITouch) -> TTTAttributedLabelLink? {
@@ -741,9 +738,8 @@ public class TextDisplayStackView: UIStackView {
                 startIndex = 1
             }
             
-            let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: newTitle)!
-            totalHeight += layout.textBoundingSize.height
+            let size = newTitle.boundingSize(givenSize: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude))
+            totalHeight += size.height
             
             if blocks.count > 1 {
                 if startIndex == 0 {
@@ -762,9 +758,8 @@ public class TextDisplayStackView: UIStackView {
                 }
             }
             
-            let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: newTitle)!
-            totalHeight += layout.textBoundingSize.height
+            let size = newTitle.boundingSize(givenSize: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude))
+            totalHeight += size.height
         }
         
         for block in blocks {
@@ -782,11 +777,9 @@ public class TextDisplayStackView: UIStackView {
                 totalHeight += body.globalHeight
             } else {
                 let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil)
-                let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: text)!
-                let textSize = layout.textBoundingSize
+                let size = text.boundingSize(givenSize: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude))
                 
-                totalHeight += textSize.height
+                totalHeight += size.height
             }
         }
         if hasLinks && !SettingValues.disablePreviews {
@@ -839,4 +832,48 @@ private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+}
+
+private extension NSAttributedString {
+    /**
+     Fixes the following:
+     - Nested superscript is rendered incorrectly
+     */
+    func fixCoreTextIssues(with font: UIFont) -> NSAttributedString {
+        let mutable = NSMutableAttributedString(attributedString: self)
+
+        var superscriptLevel: Int = 0
+
+        mutable.enumerateAttributes(in: NSRange(location: 0, length: mutable.length), options: .longestEffectiveRangeNotRequired) { (value, range, stop) in
+            let value = value as [NSAttributedString.Key: Any]
+            if value[NSAttributedString.Key(rawValue: "NSSuperScript")] != nil || value[NSAttributedString.Key(rawValue: "CTSuperscript")] != nil { // kCTSuperscriptAttributeName
+                // Extract font from attributed string; this includes bold/italic information
+                let fontForChunk = value[NSAttributedString.Key.font] as! UIFont
+                superscriptLevel += 1
+                let newFontSize = max(CGFloat(font.pointSize / 2), 10)
+                let newFont = UIFont(name: fontForChunk.fontName, size: newFontSize) ?? fontForChunk
+                let newBaseline = (font.pointSize * 0.25) + (CGFloat(superscriptLevel) * (font.pointSize / 4.0))
+
+                mutable.setAttributes(nil, range: range)
+
+                mutable.addAttributes([
+                    .font: newFont,
+                    .baselineOffset: newBaseline
+                ], range: range)
+            } else {
+                // Reset superscript level if we hit a chunk with no superscript attribute
+                superscriptLevel = 0
+            }
+        }
+
+        return mutable
+    }
+
+    func boundingSize(givenSize size: CGSize) -> CGSize {
+        return self.boundingRect(
+            with: size,
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            context: nil
+        ).size
+    }
 }

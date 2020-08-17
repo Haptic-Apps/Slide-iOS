@@ -148,7 +148,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
             $0.ignoreHeight = true
-            $0.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
+            // TODOjon:
+//            $0.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         })
         
         self.title = YYLabel().then({
@@ -2344,8 +2345,8 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         } else if self.commentBody.overflow.frame.contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
-                if view.frame.contains(innerLocation) && view is YYLabel {
-                    return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(view as! YYLabel, innerLocation, self.previewedURL?.absoluteString, self.commentBody) ?? parameters)
+                if let view = view as? CoolTextView, view.frame.contains(innerLocation) {
+                    return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(view, innerLocation, self.previewedURL?.absoluteString, self.commentBody) ?? parameters)
                 }
             }
         }
@@ -2364,8 +2365,8 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         } else if self.commentBody.overflow.frame.contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
-                if view.frame.contains(innerLocation) && view is YYLabel {
-                    return getConfigurationForTextView(view as! YYLabel, innerLocation)
+                if let view = view as? CoolTextView, view.frame.contains(innerLocation) {
+                    return getConfigurationForTextView(view, innerLocation)
                 }
             }
         } else if self.commentBody.links.frame.contains(location) {
@@ -2382,33 +2383,23 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         self.previewedVC = nil
     }
     
-    func getLocationForPreviewedText(_ label: YYLabel, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+    func getLocationForPreviewedText(_ textView: CoolTextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
         if inputURL == nil {
             return nil
         }
-        let point = label.superview?.convert(location, to: label) ?? location
+        // TODOjon:
+        let point = textView.superview?.convert(location, to: textView) ?? location // Convert touch point from frame space to label space
         var params: UIPreviewParameters?
-        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
-            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
-            if locationFinal < 1000000 {
-                attributedText.enumerateAttribute(
-                    .link,
-                    in: NSRange(location: 0, length: attributedText.length)
-                ) { (value, range, _) in
-                    if let url = value as? NSURL {
-                        if url.absoluteString == inputURL! {
-                            let baseRects = layoutManager.selectionRects(for: YYTextRange(range: range))
-                            var cgs = [NSValue]()
-                            for rect in baseRects {
-                                if changeRectTo != nil {
-                                    cgs.append(NSValue(cgRect: changeRectTo!.convert(rect.rect, from: label)))
-                                } else {
-                                    cgs.append(NSValue(cgRect: rect.rect))
-                                }
-                            }
-                            params = UIPreviewParameters(textLineRects: cgs)
-                            params?.backgroundColor = .clear
-                        }
+        if let attributedText = textView.attributedText {
+            attributedText.enumerateAttribute(
+                .link,
+                in: NSRange(location: 0, length: attributedText.length)
+            ) { (value, range, _) in
+                if let url = value as? NSURL {
+                    if url.absoluteString == inputURL! {
+                        let rects = textView.selectionRects(for: range.toTextRange(textInput: textView)!).map {NSValue(cgRect: $0.rect)}
+                        params = UIPreviewParameters(textLineRects: rects)
+                        params?.backgroundColor = .clear
                     }
                 }
             }
@@ -2416,10 +2407,10 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         return params
     }
     
-    func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
-        let point = label.superview?.convert(location, to: label) ?? location
+    func getConfigurationForTextView(_ textView: CoolTextView, _ location: CGPoint) -> UIContextMenuConfiguration? {
+//        let point = textView.superview?.convert(location, to: label) ?? location
         
-        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
+        if let attributedText = textView.attributedText, let layoutManager = YYTextLayout(containerSize: textView.frame.size, text: attributedText) {
             let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
             if locationFinal < 1000000 {
                 let attributes = attributedText.attributes(at: Int(locationFinal), effectiveRange: nil)
@@ -2547,5 +2538,39 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
 
         }
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
+    }
+}
+
+extension UILabel {
+    func boundingRect(forCharacterRange range: NSRange) -> CGRect? {
+
+        guard let attributedText = attributedText else { return nil }
+
+        let textStorage = NSTextStorage(attributedString: attributedText)
+        let layoutManager = NSLayoutManager()
+
+        textStorage.addLayoutManager(layoutManager)
+
+        let textContainer = NSTextContainer(size: bounds.size)
+        textContainer.lineFragmentPadding = 0.0
+
+        layoutManager.addTextContainer(textContainer)
+
+        var glyphRange = NSRange()
+
+        // Convert the range for glyphs.
+        layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
+
+        return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
+    }
+}
+
+extension NSRange {
+    func toTextRange(textInput: UITextInput) -> UITextRange? {
+        if let rangeStart = textInput.position(from: textInput.beginningOfDocument, offset: location),
+            let rangeEnd = textInput.position(from: rangeStart, offset: length) {
+            return textInput.textRange(from: rangeStart, to: rangeEnd)
+        }
+        return nil
     }
 }

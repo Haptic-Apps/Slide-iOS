@@ -46,6 +46,7 @@
 		09F48EBC20F652CF00BAC8AC /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F48EBB20F652CF00BAC8AC /* VideoView.swift */; };
 		2D3972CE071AEB2AC2811512 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 733616027CB406046CABF77A /* Pods_Slide_for_RedditTests.framework */; };
 		323EFB2821434781005157FA /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323EFB2721434781005157FA /* ProgressBarView.swift */; };
+		B4BF517224D4EA23000000D9 /* CoolTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BF517124D4EA23000000D9 /* CoolTextView.swift */; };
 		B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */; };
 		B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B2AEE4A2438F5803329C /* SettingsPro.swift */; };
 		B776B1E23F4DEC18069F1579 /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BC65995FE8D1EE75E2AB /* MediaViewController.swift */; };
@@ -455,6 +456,7 @@
 		5A3C22D1F67B7A388DDF34E6 /* Pods-Slide for Reddit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.release.xcconfig"; sourceTree = "<group>"; };
 		733616027CB406046CABF77A /* Pods_Slide_for_RedditTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B12412FF705B2BEB9D3B245F /* Pods_Slide_for_Reddit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_Reddit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4BF517124D4EA23000000D9 /* CoolTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoolTextView.swift; sourceTree = "<group>"; };
 		B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorMuxPagingViewController.swift; sourceTree = "<group>"; };
 		B776B2AEE4A2438F5803329C /* SettingsPro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPro.swift; sourceTree = "<group>"; };
 		B776B2E54F7438959A76E42E /* LiveThreadUpdate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveThreadUpdate.swift; sourceTree = "<group>"; };
@@ -1302,6 +1304,34 @@
 				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
 				BECF52432012AF7A00A310F9 /* VCPresenter.swift */,
 				BE11351B2159390700502C5B /* WatchSessionManager.swift */,
+				BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */,
+				BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */,
+				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
+				BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */,
+				BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */,
+				BE8AE94221F9225000E1C0D1 /* Main.storyboard */,
+				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
+				BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */,
+				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
+				BE602AF9229F3A5200AF0DC3 /* LinkBubble.swift */,
+				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
+				BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */,
+				BEC4A1B1232F3B4F00EE5114 /* collections.plist */,
+				BEC4A1B3232F3F1800EE5114 /* CollectionsContributionLoader.swift */,
+				BEC4A1B5232F3F9A00EE5114 /* CollectionsViewController.swift */,
+				BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */,
+				BEB7BAD923A05F2500E39593 /* InsetTransitioningDelegate.swift */,
+				BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */,
+				BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */,
+				BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */,
+				BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */,
+				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
+				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
+				BE25CADB24C4E3DA00736CA5 /* MainViewController.swift */,
+				BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */,
+				BE93DECE24CE4D8300464B64 /* icons.plist */,
+				BE93DED024CE550800464B64 /* subcolors.plist */,
+				B4BF517124D4EA23000000D9 /* CoolTextView.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -2154,6 +2184,7 @@
 				09526EF8214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift in Sources */,
 				B776B69E386227A51C8E10DF /* MediaTableViewController.swift in Sources */,
 				B776B1E23F4DEC18069F1579 /* MediaViewController.swift in Sources */,
+				B4BF517224D4EA23000000D9 /* CoolTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
