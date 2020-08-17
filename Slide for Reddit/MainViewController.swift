@@ -121,11 +121,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
-            //navigationItem.rightBarButtonItems = [sortB]
+            navigationItem.rightBarButtonItems = [sortB]
             doLeftItem()
 
         } else {
-            //navigationItem.rightBarButtonItems = [sortB]
+            navigationItem.rightBarButtonItems = [sortB]
             doLeftItem()
         }
     }
@@ -358,6 +358,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 }
             }
         }
+        var currentBackgroundOffset = tabBar.collectionView.contentOffset
+        currentBackgroundOffset.x = (tabBar.frame.origin.x / 2) + ((tabBar.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * CGFloat(currentIndex)
+            self.tabBar.collectionView.contentOffset = currentBackgroundOffset
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {

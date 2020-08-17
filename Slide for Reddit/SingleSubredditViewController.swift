@@ -144,7 +144,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var refreshControl: UIRefreshControl!
 
     var realmListing: RListing?
-    var hasHeader = true //Always show now, for search and sort bars
+    var hasHeader = false
     var subLinks = [SubLinkItem]()
 
     var oldsize = CGFloat(0)
@@ -3381,7 +3381,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             var spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
 
-            sort.heightAnchor == 30
+            /*sort.heightAnchor == 30
             sort.addSubviews(sortImage, sortTitle)
             sortImage.sizeAnchors == CGSize.square(size: 25)
             sortImage.centerYAnchor == sort.centerYAnchor
@@ -3398,7 +3398,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             sort.widthAnchor == sortWidth
 
             buttonBase.addArrangedSubview(sort)
-            finalWidth += sortWidth + 8
+            finalWidth += sortWidth + 8*/
             if Subscriptions.subreddits.contains(sub) {
                 finalWidth += self.addSubmit(buttonBase) + 8
             } else {

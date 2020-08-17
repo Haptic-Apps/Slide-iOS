@@ -15,7 +15,7 @@ public protocol PagingTitleDelegate {
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
     public var collectionView: UICollectionView!
-    private var collectionViewLayout: UICollectionViewFlowLayout!
+    private var collectionViewLayout: FadingCollectionViewLayout!
     private var delegate: PagingTitleDelegate
     
     private var dataSource: [String] = []
@@ -35,8 +35,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     
     func configureViews() {
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.collectionViewLayout = UICollectionViewFlowLayout()
-        self.collectionViewLayout.scrollDirection = .horizontal
+        self.collectionViewLayout = FadingCollectionViewLayout(scrollDirection: .horizontal)
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         self.addSubview(collectionView)
         collectionView.edgeAnchors == self.edgeAnchors
@@ -121,7 +120,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subreddit", for: indexPath) as! SubredditTitleCollectionViewCell
         
-        cell.setSubreddit(subreddit: dataSource[indexPath.row])
+        cell.setSubreddit(subreddit: dataSource[indexPath.row], width: collectionViewLayout.itemSize.width)
         return cell
     }
 
@@ -241,30 +240,40 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
 
     func configureLayout() {
         batch {
-            sideView.leftAnchor == innerView.leftAnchor
+            sideView.leftAnchor == innerView.leftAnchor + 4
             sideView.sizeAnchors == CGSize.square(size: 30)
             sideView.centerYAnchor == innerView.centerYAnchor
 
             icon.edgeAnchors == sideView.edgeAnchors
+            icon.sizeAnchors == CGSize.square(size: 30)
 
             title.leftAnchor == sideView.rightAnchor + 8
             title.centerYAnchor == innerView.centerYAnchor
-            title.rightAnchor == innerView.rightAnchor
+            title.rightAnchor == innerView.rightAnchor - 4
             
             innerView.centerAnchors == self.contentView.centerAnchors
         }
     }
+    
+    var widthConstraints: [NSLayoutConstraint] = []
 
-    func setSubreddit(subreddit: String) {
+    func setSubreddit(subreddit: String, width: CGFloat) {
         title.textColor = ColorUtil.theme.fontColor
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.subreddit = subreddit
         self.sideView.isHidden = false
         self.icon.isHidden = false
-        title.text = subreddit
-        title.adjustsFontSizeToFitWidth = true
-        title.sizeToFit()
         
+        innerView.removeConstraints(widthConstraints)
+        widthConstraints = batch {
+            innerView.widthAnchor <= width
+        }
+
+        title.adjustsFontSizeToFitWidth = true
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.text = subreddit
+        title.numberOfLines = 1
+        title.sizeToFit()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
         selectedView.backgroundColor = ColorUtil.theme.backgroundColor
@@ -298,5 +307,66 @@ class GradientMaskView: UIView {
         get {
             return CAGradientLayer.self
         }
+    }
+}
+
+class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDelegateFlowLayout {
+
+    private let fadeFactor: CGFloat = 0.5
+    private var cellWidth : CGFloat {
+        return itemSize.width
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+
+    init(scrollDirection: UICollectionView.ScrollDirection) {
+        super.init()
+        self.scrollDirection = scrollDirection
+
+    }
+
+    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return true
+    }
+
+    func scrollDirectionOver() -> UICollectionView.ScrollDirection {
+        return UICollectionView.ScrollDirection.vertical
+    }
+    
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        if let attributesSuper: [UICollectionViewLayoutAttributes] = super.layoutAttributesForElements(in: rect) {
+            if let attributes = NSArray(array: attributesSuper, copyItems: true) as? [UICollectionViewLayoutAttributes] {
+                var visibleRect = CGRect()
+                visibleRect.origin = collectionView!.contentOffset
+                visibleRect.size = collectionView!.bounds.size
+                for attrs in attributes {
+                    if attrs.frame.intersects(rect) {
+                        let distance = visibleRect.midX - attrs.center.x
+                        let normalizedDistance = abs(distance) / (visibleRect.width * fadeFactor)
+                        let fade = 1 - normalizedDistance
+                        attrs.alpha = fade
+                    }
+                }
+                return attributes
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+
+    override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let attributes = super.layoutAttributesForItem(at: itemIndexPath)! as UICollectionViewLayoutAttributes
+        attributes.alpha = 0
+        return attributes
+    }
+
+    override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let attributes = super.layoutAttributesForItem(at: itemIndexPath)! as UICollectionViewLayoutAttributes
+        attributes.alpha = 0
+        return attributes
     }
 }
