@@ -63,6 +63,7 @@
 		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
+		BD43E0F324EA162500D18328 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD43E0F224EA162500D18328 /* NetworkMonitor.swift */; };
 		BD87553724D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */; };
 		BD87553924D8AA210096732F /* CommentViewController+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */; };
 		BD87553B24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */; };
@@ -485,6 +486,7 @@
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
 		B8C548645B1B8BEE24800967 /* Pods_Slide_for_RedditUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD43E0F224EA162500D18328 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDelegate.swift"; sourceTree = "<group>"; };
 		BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDataSource.swift"; sourceTree = "<group>"; };
 		BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UISearchBarDelegate.swift"; sourceTree = "<group>"; };
@@ -974,6 +976,14 @@
 			path = Comments;
 			sourceTree = "<group>";
 		};
+		BDDFAF8A24EB1743001B2BA2 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				BD43E0F224EA162500D18328 /* NetworkMonitor.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
 		BE13C2CA21655A31002687F2 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1321,6 +1331,7 @@
 				B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */,
 				B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */,
 				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
+				BDDFAF8A24EB1743001B2BA2 /* Networking */,
 				BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */,
 				BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */,
 				BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */,
@@ -2113,6 +2124,7 @@
 				BD87554B24D8AB3A0096732F /* CommentViewController+UIGestureRecognizerDelegate.swift in Sources */,
 				BEC4A1AA232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift in Sources */,
 				BE3B74392107AA1200658DE9 /* UIAlertController+Extensions.swift in Sources */,
+				BD43E0F324EA162500D18328 /* NetworkMonitor.swift in Sources */,
 				BE2B8A0B1E2602CD0053D493 /* SubredditReorderViewController.swift in Sources */,
 				098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */,
 				BEE206F61F1CF7D3008BB5F1 /* SettingsLinkHandling.swift in Sources */,
