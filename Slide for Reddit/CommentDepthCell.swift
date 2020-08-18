@@ -356,7 +356,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if sender.state == .began || typeImage == nil {
             dragCancelled = false
             direction = 0
-            originalLocation = sender.location(in: contentView).x
+            originalLocation = sender.location(in: self).x
             originalPos = self.contentView.frame.origin.x
             diff = self.contentView.frame.width - originalLocation
             typeImage = UIImageView().then {
@@ -386,7 +386,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
                 if getFirstAction(left: false) != .NONE {
                     direction = 0
-                    diff = self.contentView.frame.width - diff
+                    diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
                         typeImage.leftAnchor == self.leftAnchor + 4
@@ -395,6 +395,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } else if direction == 1 && self.contentView.frame.origin.x < originalPos {
                 if getFirstAction(left: true) != .NONE {
                     direction = 0
+                    diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
                         typeImage.rightAnchor == self.rightAnchor - 4
@@ -419,6 +420,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 } else {
                     direction = -1
                     action = getFirstAction(left: false)
+                    diff = self.contentView.frame.width - originalLocation
+
                     if action == .NONE {
                         sender.cancel()
                         return
@@ -510,14 +513,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             CATransaction.setDisableActions(true)
             CATransaction.commit()
             currentProgress = progress
-            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.35 && previousProgress < 0.35) || sender.state == .ended {
+            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.25 && previousProgress < 0.25) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
                 }
             }
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.35) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
+        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.25) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
             doAction(item: self.action)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0

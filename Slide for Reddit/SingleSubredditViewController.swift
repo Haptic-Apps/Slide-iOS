@@ -3020,6 +3020,9 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     }
     
     func setupSwipeGesture() {
+        if SettingValues.submissionGestureMode == .FULL {
+            return
+        }
         if UIDevice.current.userInterfaceIdiom == .pad {
             fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
             guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
@@ -3052,23 +3055,15 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
             if panGestureRecognizer == cellGestureRecognizer {
+                if abs(translation.y) >= abs(translation.x) {
+                    return false
+                }
                 if translation.x < 0 {
-                    let point = gestureRecognizer.location(in: self.tableView)
-                    print(point)
-                    let indexpath = self.tableView.indexPathForItem(at: point)
-                    if indexpath == nil {
-                        return false
-                    }
-                    
-                    guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
-                        return false
-                    }
-                    
-                    let cellPoint = gestureRecognizer.location(in: cell)
-                    print(cellPoint)
-                    if cellPoint.x > cell.frame.width * 0.6 {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.submissionGestureMode == .FULL {
                         return true
                     }
+                } else if SettingValues.submissionGestureMode == .FULL && abs(translation.x) > abs(translation.y) {
+                    return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.1
                 }
                 return false
             }

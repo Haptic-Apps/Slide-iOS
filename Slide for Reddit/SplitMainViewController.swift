@@ -249,9 +249,9 @@ class SplitMainViewController: MainViewController {
         guard page < finalSubs.count else { return }
         currentIndex = page
         let vc = self.viewControllers![0] as! SingleSubredditViewController
-        if currentIndex == 0 && SettingValues.subredditBar {
+        if currentIndex == 0 && SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
-        } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar {
+        } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
         }
         MainViewController.current = vc.sub

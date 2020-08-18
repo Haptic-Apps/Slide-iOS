@@ -766,7 +766,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             direction = 0
             originalLocation = sender.location(in: self).x
             originalPos = self.contentView.frame.origin.x
-            diff = self.frame.width - originalLocation
+            diff = self.contentView.frame.width - originalLocation
             typeImage = UIImageView().then {
                 $0.accessibilityIdentifier = "Action type"
                 $0.layer.cornerRadius = 22.5
@@ -788,7 +788,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
                 if getFirstAction(left: false) != .NONE {
                     direction = 0
-                    diff = self.frame.width - diff
+                    diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
                         typeImage.leftAnchor == self.leftAnchor + 4
@@ -797,6 +797,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else if direction == 1 && self.contentView.frame.origin.x < originalPos {
                 if getFirstAction(left: true) != .NONE {
                     direction = 0
+                    diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
                         typeImage.rightAnchor == self.rightAnchor - 4
@@ -807,7 +808,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
-                    diff = self.frame.width - diff
+                    diff = self.contentView.frame.width - diff
                     action = getFirstAction(left: true)
                     if action == .NONE {
                         sender.cancel()
@@ -821,6 +822,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 } else {
                     direction = -1
                     action = getFirstAction(left: false)
+                    diff = self.contentView.frame.width - originalLocation
+
                     if action == .NONE {
                         sender.cancel()
                         return
@@ -833,23 +836,28 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
             }
             
-            let currentTranslation = direction == -1 ? 0 - (self.bounds.size.width - posx - diff) : posx - diff
+            let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx - diff
+            
             self.contentView.frame.origin.x = posx - originalLocation
-
-            if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionRightLeft == .NONE) {
+            if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
                 dragCancelled = true
                 sender.cancel()
                 return
             } else if typeImage.superview == nil {
                 self.addSubviews(typeImage)
                 self.bringSubviewToFront(typeImage)
-                tiConstraints = batch {
-                    if direction == 1 {
+                NSLayoutConstraint.deactivate(tiConstraints)
+
+                if direction == 1 {
+                    tiConstraints = batch {
                         typeImage.leftAnchor == self.leftAnchor + 4
-                    } else {
+                    }
+                } else {
+                    tiConstraints = batch {
                         typeImage.rightAnchor == self.rightAnchor - 4
                     }
                 }
+
                 typeImage.centerYAnchor == self.centerYAnchor
                 typeImage.heightAnchor == 45
                 typeImage.widthAnchor == 45
@@ -913,14 +921,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             CATransaction.setDisableActions(true)
             CATransaction.commit()
             currentProgress = progress
-            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.35 && previousProgress < 0.35) || sender.state == .ended {
+            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.25 && previousProgress < 0.25) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
                 }
             }
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.35) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
+        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.25) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
             doAction(item: self.action)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
@@ -934,7 +942,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else if sender.state != .began {
             dragCancelled = true
         }
-        print(self.contentView.frame.origin.x)
 
         if dragCancelled || sender.state == .cancelled {
             if self.typeImage.superview == nil {
@@ -953,15 +960,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func isTwoForDirection(left: Bool) -> Bool {
-        return SettingValues.submissionActionLeft != .NONE && SettingValues.submissionActionRight != .NONE
+        return false
     }
 
     func getFirstAction(left: Bool) -> SettingValues.SubmissionAction {
-        return SettingValues.submissionActionLeft == .NONE ? SettingValues.submissionActionRight : SettingValues.submissionActionLeft
+        return left ? SettingValues.submissionActionRight : SettingValues.submissionActionLeft
     }
     
     func getSecondAction(left: Bool) -> SettingValues.SubmissionAction {
-        return SettingValues.submissionActionRight == .NONE ? SettingValues.submissionActionLeft : SettingValues.submissionActionRight
+        return .NONE
     }
 
     func updateProgress(_ oldPercent: CGFloat, _ total: String, buffering: Bool) {
@@ -1688,7 +1695,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-                print(submission.smallPreview)
                 thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web)
             }
         } else {
