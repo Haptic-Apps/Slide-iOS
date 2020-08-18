@@ -3195,8 +3195,8 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         }
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
-            if let interactivePush = nav.interactivePushGestureRecognizer {
-                cellGestureRecognizer.require(toFail: interactivePush)
+            if let interactivePop = nav.interactivePopGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePop)
             }
         }
     }
@@ -3211,7 +3211,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
         }
         if SettingValues.commentGesturesMode == .FULL {
-            
             return
         }
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
@@ -3243,11 +3242,11 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                     return false
                 }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.75 || SettingValues.commentGesturesMode == .FULL {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.commentGesturesMode == .FULL {
                         return true
                     }
                 } else if SettingValues.commentGesturesMode == .FULL && abs(translation.x) > abs(translation.y) {
-                    return gestureRecognizer.location(in: tableView).x > 0
+                    return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.1
                 }
                 return false
             }
