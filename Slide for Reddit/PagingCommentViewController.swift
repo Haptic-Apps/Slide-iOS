@@ -79,7 +79,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var first = true
     override func viewDidLoad() {
         super.viewDidLoad()
-        if SettingValues.commentGesturesMode == .FULL {
+        if SettingValues.commentGesturesMode != .FULL {
             self.dataSource = self
         }
         self.delegate = self

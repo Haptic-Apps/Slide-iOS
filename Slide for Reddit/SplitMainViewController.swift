@@ -192,10 +192,10 @@ class SplitMainViewController: MainViewController {
                 let scrollView = view as! UIScrollView
                 scrollView.delegate = self
                 
-                if SettingValues.submissionGestureMode == .NONE {
+                if SettingValues.submissionGestureMode != .FULL {
                     scrollView.panGestureRecognizer.minimumNumberOfTouches = 1
                 } else {
-                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 1
+                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
                 }
                 
                 if let pop = self.parent?.navigationController?.interactivePopGestureRecognizer {
