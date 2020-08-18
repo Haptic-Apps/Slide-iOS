@@ -18,9 +18,7 @@ import UIKit
 import WatchConnectivity
 
 class MainViewController: ColorMuxPagingViewController, UINavigationControllerDelegate, ReadLaterDelegate {
-
     //MARK: - Variables
-    
     var isReload = false
     var readLaterBadge: BadgeSwift?
     public static var current: String = ""
@@ -68,7 +66,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     var currentIndex = 0
     
-    public static var isOffline = false
     var menuB = UIBarButtonItem()
     var drawerButton = UIImageView()
 

@@ -712,16 +712,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if comment == nil {
             return
         }
-        
-        if !AccountController.isLoggedIn || comment!.archived || parent!.np || (parent?.offline ?? false) {
+
+        if !AccountController.isLoggedIn || comment!.archived || parent!.np || (!NetworkMonitor.shared.online) {
             upvoteButton.isHidden = true
             downvoteButton.isHidden = true
             replyButton.isHidden = true
         }
-        if !comment!.canMod || (parent?.offline ?? false) {
+        if !comment!.canMod || (!NetworkMonitor.shared.online) {
             modButton.isHidden = true
         }
-        if comment!.author != AccountController.currentName || (parent?.offline ?? false) {
+        if comment!.author != AccountController.currentName || (!NetworkMonitor.shared.online) {
             editButton.isHidden = true
             deleteButton.isHidden = true
         }
@@ -2192,7 +2192,7 @@ class CommentActionsManager {
     var comment: RComment
 
     private lazy var networkActionsArePossible: Bool = {
-        return AccountController.isLoggedIn && LinkCellView.checkInternet()
+        return AccountController.isLoggedIn && NetworkMonitor.shared.online
     }()
 
     var isOwnComment: Bool {

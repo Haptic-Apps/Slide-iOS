@@ -403,7 +403,7 @@ class SettingValues {
         case .ALWAYS:
             return true
         case .WIFI:
-            return LinkCellView.checkWiFi()
+            return NetworkMonitor.shared.online
         case .NEVER:
             return false
         case .TAP:

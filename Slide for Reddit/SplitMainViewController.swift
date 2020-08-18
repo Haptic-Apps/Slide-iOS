@@ -101,7 +101,7 @@ class SplitMainViewController: MainViewController {
         for view in toolbar?.subviews ?? [UIView]() {
             view.removeFromSuperview()
         }
-        if MainViewController.isOffline {
+        if !NetworkMonitor.shared.online {
             toolbarItems = [settingsB, accountB, flexButton, offlineB]
         }
         didUpdate()
@@ -284,8 +284,7 @@ class SplitMainViewController: MainViewController {
         self.handleToolbars()
 
         ReadLater.delegate = self
-        if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
-            MainViewController.isOffline = true
+        if !NetworkMonitor.shared.online {
             let offlineVC = OfflineOverviewViewController(subs: finalSubs)
             VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
         }
@@ -414,12 +413,10 @@ class SplitMainViewController: MainViewController {
         SubredditReorderViewController.changed = false
         
         finalSubs = []
-        LinkCellView.cachedInternet = nil
         
         finalSubs.append(contentsOf: Subscriptions.pinned)
         finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
 
-        MainViewController.isOffline = false
         var subs = [UIMutableApplicationShortcutItem]()
         for subname in finalSubs {
             if subs.count < 2 && !subname.contains("/") {

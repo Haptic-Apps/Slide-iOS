@@ -192,7 +192,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     }
 
     func loadContent() {
-        let shouldShowLq = SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+        let shouldShowLq = SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi) && NetworkMonitor.shared.online
         let imageURL: URL
         if let lqURL = data.lqURL, !SettingValues.loadContentHQ && shouldShowLq && !forceHD {
             imageURL = lqURL

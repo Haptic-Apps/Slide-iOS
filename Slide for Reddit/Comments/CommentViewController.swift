@@ -29,7 +29,7 @@ class CommentViewController: MediaViewController {
     var parents: [String: String] = [:]
     var approved: [String] = []
     var removed: [String] = []
-    var offline = false
+
     var np = false
     var modLink = ""
     
@@ -360,7 +360,6 @@ class CommentViewController: MediaViewController {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
-        // Link Cell View Delegate
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -843,7 +842,6 @@ class CommentViewController: MediaViewController {
     /// Loads cached data for offline use.
     func loadOffline() {
         self.loaded = true
-        self.offline = true
             do {
                 let realm = try Realm()
                 if let listing = realm.objects(RSubmission.self).filter({ (item) -> Bool in
@@ -872,7 +870,7 @@ class CommentViewController: MediaViewController {
                     if !self.comments.isEmpty {
                         self.updateStringsSingle(temp)
                         self.doArrays()
-                        if !self.offline {
+                        if NetworkMonitor.shared.online {
                             self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.link) : Double(0))
                         }
                     }
@@ -1282,7 +1280,7 @@ class CommentViewController: MediaViewController {
         - selector: UIButton?
      */
     @objc func sortCommentsAction(_ selector: UIButton?) {
-        if !offline {
+        if NetworkMonitor.shared.online {
             let isDefault = UISwitch()
             isDefault.onTintColor = ColorUtil.accentColorForSub(sub: self.sub)
             let defaultLabel = UILabel()
@@ -1376,7 +1374,6 @@ class CommentViewController: MediaViewController {
         }
     }
     
-    // TODO: What does this do?
     /// When a theme changes.
     @objc func onThemeChanged() {
         version += 1
@@ -1587,7 +1584,7 @@ class CommentViewController: MediaViewController {
         - sender: AnyObject
      */
     @objc func showOptionsMenu(_ sender: AnyObject) {
-        if !offline {
+        if NetworkMonitor.shared.online {
             let link = submission!
 
             let alertController = DragDownAlertMenu(title: "Comment actions", subtitle: self.submission?.title ?? "", icon: self.submission?.thumbnailUrl)
@@ -1659,7 +1656,13 @@ class CommentViewController: MediaViewController {
         return buf
     }
 
-    /// TODO: What does this do?
+    /**
+     ??? Return Array of Tuple Thing and Int.
+     - Parameters:
+        - parentId: String
+        - comments: [Thing]
+        - depth: Int
+     */
     public func extendForMore(parentId: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
 
@@ -1709,7 +1712,11 @@ class CommentViewController: MediaViewController {
         })
     }
     
-    // TODO: What does this do?
+    /**
+     ???
+     - Parameters:
+        - newComments: [(Thing, Int)]
+     */
     func updateStrings(_ newComments: [(Thing, Int)]) {
         var color = UIColor.black
         var first = true
@@ -1727,7 +1734,11 @@ class CommentViewController: MediaViewController {
         }
     }
     
-    // TODO: What does this do?
+    /**
+     ???
+     - Parameters:
+        - comments: [AnyObject]
+     */
     func updateStringsTheme(_ comments: [AnyObject]) {
         var color = UIColor.black
         var first = true
@@ -1745,7 +1756,11 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    // TODO: What does this do?
+    /**
+     ???
+     - Parameters:
+        - newComments: [Object]
+     */
     func updateStringsSingle(_ newComments: [Object]) {
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0] as! RComment).subreddit))
         for thing in newComments {

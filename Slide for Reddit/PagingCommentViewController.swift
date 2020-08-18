@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 import Foundation
+import RealmSwift
 
 class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     var submissions: [RSubmission] = []
@@ -16,12 +17,12 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         return SettingValues.fullyHideNavbar
     }
     
-    var offline = false
+//    var offline = false
     var reloadCallback: (() -> Void)?
 
-    public init(submissions: [RSubmission], offline: Bool, reloadCallback: @escaping () -> Void) {
+    public init(submissions: [RSubmission], reloadCallback: @escaping () -> Void) {
         self.submissions = submissions
-        self.offline = offline
+//        self.offline = offline
         self.reloadCallback = reloadCallback
         for sub in submissions {
             self.vCs.append(sub)
@@ -88,7 +89,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             firstViewController = PagingCommentViewController.savedComment!
         } else {
             let comment = CommentViewController.init(submission: sub, single: false)
-            comment.offline = offline
+//            comment.offline = offline
             firstViewController = comment
         }
         first = false
@@ -215,7 +216,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         
         return CommentViewController(submission: vCs[nextIndex], single: false)
     }
-    
+
 }
 
 class ClearVC: UIViewController {

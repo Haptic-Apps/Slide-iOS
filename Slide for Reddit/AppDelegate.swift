@@ -122,6 +122,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     static var removeDict = NSMutableDictionary()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Starts Monitoring of Network Connection
+        NetworkMonitor.shared.startNetworkMonitoring()
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
         UIPanGestureRecognizer.swizzle()
@@ -230,7 +232,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             print("file myData.plist already exits at path.")
         }
-
         session = Session()
         History.seenTimes = NSMutableDictionary.init(contentsOfFile: seenFile!)!
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
@@ -1065,6 +1066,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
+        NetworkMonitor.shared.stopNetworkMonitoring()
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)

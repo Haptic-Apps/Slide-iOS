@@ -85,7 +85,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var primaryChosen: UIColor?
 
     var isModal = false
-    var offline = false
 
     var isAccent = false
 
@@ -431,7 +430,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if toolbarEnabled && !MainViewController.isOffline {
+        if toolbarEnabled && NetworkMonitor.shared.online {
             if single {
                 showMenuNav()
             } else {
@@ -629,7 +628,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             })
         }
 
-        if single && !MainViewController.isOffline {
+        if single && NetworkMonitor.shared.online {
             showMenuNav()
         } else if !disableBottom {
             UIView.animate(withDuration: 0.25) {
@@ -713,7 +712,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         }
         
-        if !MainViewController.isOffline && !SettingValues.hiddenFAB {
+        if NetworkMonitor.shared.online && !SettingValues.hiddenFAB {
             self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
             self.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
@@ -849,7 +848,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         }
                         if let styles = data["style"] as? [String: Any] {
                             if let headerUrl = styles["bannerBackgroundImage"] as? String {
-                                if !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi() && SettingValues.dataSavingEnabled) {
+                                if !(SettingValues.dataSavingDisableWiFi && SettingValues.dataSavingEnabled) && NetworkMonitor.shared.online {
                                     self.headerImage = URL(string: headerUrl.unescapeHTML)
                                 }
                             }
@@ -947,13 +946,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
         self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
         
-        let offline = MainViewController.isOffline
-
         if let mainVC = self.navigationController?.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
             doSortImage(mainVC.sortButton)
         }
 
-        if single && !offline {
+        if single && NetworkMonitor.shared.online {
             sortButton = UIButton.init(type: .custom)
             sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -1074,7 +1071,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 } catch {
                 }
             }
-        } else if offline && single && !loaded {
+        } else if NetworkMonitor.shared.online && single && !loaded {
             title = sub
             hideMenuNav()
             self.load(reset: true)
@@ -1497,7 +1494,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
         self.emptyStateView.isHidden = true
         PagingCommentViewController.savedComment = nil
-        LinkCellView.checkedWifi = false
         if sub.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
             DispatchQueue.main.async {
                 let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
@@ -1588,7 +1584,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                         self.loading = false
                                         self.loading = false
                                         self.nomore = true
-                                        self.offline = true
                                         
                                         var is13Popover = false
                                         if self.navigationController != nil {
@@ -1636,7 +1631,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             self.links = []
                             self.page = 0
                         }
-                        self.offline = false
                         let before = self.links.count
                         if self.realmListing == nil {
                             self.realmListing = RListing()
@@ -1795,7 +1789,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
-        if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
+        if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi) && SettingValues.dataSavingEnabled && NetworkMonitor.shared.online {
             for submission in values {
                 var thumb = submission.thumbnail
                 var big = submission.banner
@@ -1829,7 +1823,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     big = false
                 }
 
-                let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+                let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi) && NetworkMonitor.shared.online
                 if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                         || SettingValues.noImages && submission.isSelf {
                     big = false
@@ -1930,7 +1924,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = true
         }
         
-        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi) && NetworkMonitor.shared.online && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }
@@ -2130,7 +2124,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = false
         }
         
-        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi) && NetworkMonitor.shared.online && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }
@@ -2719,7 +2713,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
         for i in index ..< links.count {
             newLinks.append(links[i])
         }
-        let comment = PagingCommentViewController.init(submissions: newLinks, offline: self.offline, reloadCallback: { [weak self] in
+        let comment = PagingCommentViewController.init(submissions: newLinks, reloadCallback: { [weak self] in
             if let strongSelf = self {
                 strongSelf.tableView.reloadData()
             }
