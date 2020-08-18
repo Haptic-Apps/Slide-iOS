@@ -745,17 +745,20 @@ class CommentViewController: MediaViewController {
                     })
                 }
             })
-
         } catch {
             
         }
     }
     
-    /// Undefined
-    internal func pushedMoreButton(_ cell: CommentDepthCell) {
+    /**
+     More button has been pressed.
+     - Parameters:
+        - cell: CommentDepthCell
+     */
+    func pushedMoreButton(_ cell: CommentDepthCell) {
 
     }
-    // TODO: What does this do?
+
     /**
      To be determined
      - Parameters:
@@ -775,7 +778,7 @@ class CommentViewController: MediaViewController {
     }
     
     /**
-     Not Implemented: Saves a comment.
+     Saves a comment.
      - Parameters:
         - comment: RComment
      */
@@ -793,7 +796,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
-    /// Not Implemented: Fixes table view heights.
+    /// Fixes table view heights.
     func reloadHeights() {
         //UIView.performWithoutAnimation {
             tableView.beginUpdates()
@@ -801,7 +804,7 @@ class CommentViewController: MediaViewController {
        // }
     }
     
-    /// Not Implemented
+    /// ???
     func reloadHeightsNone() {
         UIView.performWithoutAnimation {
             tableView.beginUpdates()
@@ -809,7 +812,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
-    /// Not Implemented
+    /// ???
     func prepareReply() {
         tableView.beginUpdates()
         tableView.endUpdates()

@@ -17,12 +17,10 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         return SettingValues.fullyHideNavbar
     }
     
-//    var offline = false
     var reloadCallback: (() -> Void)?
 
     public init(submissions: [RSubmission], reloadCallback: @escaping () -> Void) {
         self.submissions = submissions
-//        self.offline = offline
         self.reloadCallback = reloadCallback
         for sub in submissions {
             self.vCs.append(sub)
@@ -89,7 +87,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             firstViewController = PagingCommentViewController.savedComment!
         } else {
             let comment = CommentViewController.init(submission: sub, single: false)
-//            comment.offline = offline
             firstViewController = comment
         }
         first = false
