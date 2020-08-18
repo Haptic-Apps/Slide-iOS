@@ -450,7 +450,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.doubleTapSubActionCell.detailTextLabel?.text = SettingValues.submissionActionDoubleTap.getTitle()
         self.doubleTapSubActionCell.imageView?.layer.cornerRadius = 5
         
-        UIView.transition(with: tableView, duration: 1.0, options: .transitionCrossDissolve, animations: {
+        UIView.transition(with: tableView, duration: 0.2, options: .transitionCrossDissolve, animations: {
             self.tableView.reloadData()
         }, completion: nil)
     }

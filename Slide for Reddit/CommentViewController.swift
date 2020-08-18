@@ -3239,12 +3239,15 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
             if panGestureRecognizer == cellGestureRecognizer {
+                if (abs(translation.y) > abs(translation.x)) {
+                    return false
+                }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.75 {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.75 || SettingValues.commentGesturesMode == .FULL {
                         return true
                     }
                 } else if SettingValues.commentGesturesMode == .FULL && abs(translation.x) > abs(translation.y) {
-                    return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.25
+                    return gestureRecognizer.location(in: tableView).x > 0
                 }
                 return false
             }

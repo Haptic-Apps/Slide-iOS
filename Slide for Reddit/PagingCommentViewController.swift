@@ -100,6 +100,15 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             PagingCommentViewController.savedComment = firstViewController
             firstViewController.forceLoad = true
         }
+        if SettingValues.commentGesturesMode == .FULL {
+            for view in self.view.subviews {
+                if !(view is UICollectionView) {
+                    if let scrollView = view as? UIScrollView {
+                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                    }
+                }
+            }
+        }
 
         setViewControllers([firstViewController],
                            direction: .forward,
@@ -186,15 +195,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        if SettingValues.commentGesturesMode == .FULL {
-            for view in self.view.subviews {
-                if !(view is UICollectionView) {
-                    if let scrollView = view as? UIScrollView {
-                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                    }
-                }
-            }
-        }
         let id = (viewController as! CommentViewController).submission!.getId()
         var viewControllerIndex = -1
         for item in vCs {
