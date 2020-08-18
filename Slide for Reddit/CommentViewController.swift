@@ -2590,7 +2590,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             if currentY > lastY && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
-                    print("HIDEUI")
                     hideUI(inHeader: true)
                 }
             } else if (currentY < lastY - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
@@ -3188,8 +3187,9 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     func setupGestures() {
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
+        cellGestureRecognizer.maximumNumberOfTouches = 1
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        tableView.panGestureRecognizer.require(toFail: cellGestureRecognizer)
+        cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
         if let parent = parent as? ColorMuxPagingViewController {
             parent.requireFailureOf(cellGestureRecognizer)
         }
@@ -3239,7 +3239,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
             if panGestureRecognizer == cellGestureRecognizer {
-                if (abs(translation.y) > abs(translation.x)) {
+                if abs(translation.y) >= abs(translation.x) {
                     return false
                 }
                 if translation.x < 0 {
@@ -3262,8 +3262,9 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {
-            let velocity = recognizer.velocity(in: recognizer.view!).x
-            if (velocity < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity > 0 && (SettingValues.commentGesturesMode == .HALF ||  (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) && translatingCell == nil) {
+            let velocity = recognizer.velocity(in: recognizer.view!)
+
+            if (velocity.x < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity.x > 0 && (SettingValues.commentGesturesMode == .HALF ||  (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) && translatingCell == nil) {
                 return
             }
         }

@@ -433,7 +433,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx - diff
             self.contentView.frame.origin.x = posx - originalLocation
-            print(self.contentView.frame.origin.x)
             if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionRightLeft == .NONE) {
                 dragCancelled = true
                 sender.cancel()
@@ -2291,7 +2290,6 @@ private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: 
 @available(iOS 13.0, *)
 extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-        print("Context Menu 2")
         animator.addCompletion {
             if let vc = self.previewedVC {
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
@@ -2330,7 +2328,6 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        print("Context Menu")
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         let location = interaction.location(in: self.commentBody)
@@ -2353,7 +2350,6 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        print("Context Menu 3")
         let specialLocation = interaction.location(in: self.contentView)
         if self.sideViewSpace.frame.contains(specialLocation) {
             return getConfigurationParentComment()
