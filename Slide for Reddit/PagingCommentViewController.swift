@@ -79,7 +79,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var first = true
     override func viewDidLoad() {
         super.viewDidLoad()
-        if SettingValues.commentGesturesMode != .FULL {
+        if SettingValues.commentGesturesMode == .FULL {
             self.dataSource = self
         }
         self.delegate = self
@@ -187,7 +187,13 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
         if SettingValues.commentGesturesMode == .FULL {
-            return nil
+            for view in self.view.subviews {
+                if !(view is UICollectionView) {
+                    if let scrollView = view as? UIScrollView {
+                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                    }
+                }
+            }
         }
         let id = (viewController as! CommentViewController).submission!.getId()
         var viewControllerIndex = -1
