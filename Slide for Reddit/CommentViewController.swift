@@ -3221,6 +3221,12 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
                 fullWidthBackGestureRecognizer.require(toFail: navGesture)
             }
+            for view in parent?.view.subviews ?? [] {
+                if view is UIScrollView {
+                    (view as! UIScrollView).panGestureRecognizer.require(toFail: fullWidthBackGestureRecognizer)
+                }
+            }
+
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
@@ -3280,6 +3286,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             for view in cell.commentBody.subviews {
                 let cellPoint = recognizer.location(in: view)
                 if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
+                    recognizer.cancel()
                     return
                 }
             }

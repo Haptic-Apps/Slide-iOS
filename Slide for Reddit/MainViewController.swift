@@ -364,7 +364,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
         }
         tabBar.collectionView.contentOffset = oldOffset
-        print("Set offset to \(oldOffset), is now \(tabBar.collectionView.contentOffset)")
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
