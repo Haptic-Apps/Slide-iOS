@@ -297,7 +297,7 @@ class CommentViewController: MediaViewController {
         refreshControl = UIRefreshControl()
         refreshControl?.tintColor = ColorUtil.theme.fontColor
         refreshControl?.attributedTitle = NSAttributedString(string: "")
-        refreshControl?.addTarget(self, action: #selector(CommentViewController.refreshComments(_:)), for: UIControl.Event.valueChanged)
+        refreshControl?.addTarget(self, action: #selector(refreshComments(_:)), for: UIControl.Event.valueChanged)
         var top = CGFloat(64)
         let bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
@@ -919,6 +919,204 @@ class CommentViewController: MediaViewController {
         tableView.reloadData()
     }
     
+    private func addCommentsToRealm() {
+        if !self.comments.isEmpty {
+            do {
+                let realm = try Realm()
+               // TODO: insert
+                realm.beginWrite()
+                for comment in self.comments {
+                    if let content = self.content[comment] {
+                        if content is RComment {
+                            realm.create(RComment.self, value: content, update: .all)
+                        } else {
+                            realm.create(RMore.self, value: content, update: .all)
+                        }
+                        if content is RComment {
+                            self.submission!.comments.append(content as! RComment)
+                        }
+                    }
+                }
+                realm.create(type(of: self.submission!), value: self.submission!, update: .all)
+                try realm.commitWrite()
+            } catch {
+                print("Realm Error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func loadOnlineComments(from tuple: ((Listing, Listing)), and link: RSubmission) {
+        let startDepth = 1
+        let listing = tuple.1
+        self.comments = []
+        self.hiddenPersons = []
+        self.hidden = []
+        self.text = [:]
+        self.content = [:]
+        
+        if self.submission == nil || self.submission!.id.isEmpty() {
+            self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
+        } else {
+            self.submission = RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
+        }
+        
+        var allIncoming: [(Thing, Int)] = []
+        self.submission!.comments.removeAll()
+        self.parents = [:]
+        
+        for child in listing.children {
+            let incoming = self.extendKeepMore(in: child, current: startDepth)
+            allIncoming.append(contentsOf: incoming)
+            var currentIndex = 0
+            var currentOP = ""
+            
+            for i in incoming {
+                let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
+                self.content[item.getIdentifier()] = item
+                self.comments.append(item.getIdentifier())
+                if item is RComment {
+                    self.submission!.comments.append(item as! RComment)
+                }
+                if i.1 == 1 && item is RComment {
+                    currentOP = (item as! RComment).author
+                }
+                self.parents[item.getIdentifier()] = currentOP
+                currentIndex += 1
+                
+                self.cDepth[item.getIdentifier()] = i.1
+            }
+        }
+        
+        var time = timeval(tv_sec: 0, tv_usec: 0)
+        gettimeofday(&time, nil)
+        self.paginator = listing.paginator
+        
+        if !allIncoming.isEmpty {
+            self.updateStrings(allIncoming)
+        }
+        
+        addCommentsToRealm()
+        
+        self.doArrays()
+        self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
+        History.setComments(s: link)
+        History.addSeen(s: link, skipDuplicates: false)
+        DispatchQueue.main.async(execute: { () -> Void in
+            if !self.hasSubmission {
+                self.headerCell = FullLinkCellView()
+                self.headerCell?.del = self
+                self.headerCell?.parentViewController = self
+                self.hasDone = true
+                self.headerCell?.aspectWidth = self.tableView.bounds.size.width
+                self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width, np: self.np)
+                if self.submission!.isSelf {
+                    self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                }
+                self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
+                if let tableHeaderView = self.headerCell {
+                    var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
+                    // Add safe area insets to left and right if available
+                    if #available(iOS 11.0, *) {
+                        frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
+                    }
+                    if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
+                        tableHeaderView.frame = frame
+                        tableHeaderView.layoutIfNeeded()
+                        let view = UIView(frame: tableHeaderView.frame)
+                        view.addSubview(tableHeaderView)
+                        self.tableView.tableHeaderView = view
+                    }
+                }
+                
+                self.setupTitleView(self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+                
+                self.navigationItem.backBarButtonItem?.title = ""
+                self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
+            } else {
+                self.headerCell?.aspectWidth = self.tableView.bounds.size.width
+                self.headerCell?.refreshLink(self.submission!, np: self.np)
+                if self.submission!.isSelf {
+                    self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+                }
+
+                var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
+                // Add safe area insets to left and right if available
+                if #available(iOS 11.0, *) {
+                    frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
+                }
+                
+                self.headerCell!.contentView.frame = frame
+                self.headerCell!.contentView.layoutIfNeeded()
+                let view = UIView(frame: self.headerCell!.contentView.frame)
+                view.addSubview(self.headerCell!.contentView)
+                self.tableView.tableHeaderView = view
+            }
+            self.refreshControl?.endRefreshing()
+            self.activityIndicator.stopAnimating()
+            if self.live {
+                self.liveTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.loadLiveComments), userInfo: nil, repeats: true)
+                self.startPulseAnimation()
+            } else {
+                if self.sortB != nil && self.searchB != nil {
+                    self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
+                }
+            }
+            self.indicator.stopAnimating()
+            self.indicator.isHidden = true
+            
+            var index = 0
+            var loaded = true
+            
+            if SettingValues.hideAutomod && self.context.isEmpty() && self.submission!.author != AccountController.currentName && !self.comments.isEmpty {
+                if let comment = self.content[self.comments[0]] as? RComment {
+                    if comment.author == "AutoModerator" {
+                        var toRemove = [String]()
+                        toRemove.append(comment.getIdentifier())
+                        self.modLink = comment.permalink
+                        self.hidden.insert(comment.getIdentifier())
+                        
+                        for next in self.walkTreeFlat(n: comment.getIdentifier()) {
+                            toRemove.append(next)
+                            self.hidden.insert(next)
+                        }
+                        self.dataArray = self.dataArray.filter({ (comment) -> Bool in
+                            return !toRemove.contains(comment)
+                        })
+                        self.modB.customView?.alpha = 1
+                    }
+                }
+            }
+            if !self.context.isEmpty() {
+                for comment in self.comments {
+                    if comment.contains(self.context) {
+                        self.menuId = comment
+                        self.tableView.reloadData()
+                        loaded = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
+                            self.goToCell(i: index)
+                        }
+                        break
+                    } else {
+                        index += 1
+                    }
+                }
+                if !loaded {
+                    self.tableView.reloadData()
+                }
+            } else if SettingValues.collapseDefault {
+                self.tableView.reloadData()
+                self.collapseAll()
+            } else {
+                if self.finishedPush {
+                    self.tableViewReloadingAnimation()
+                } else {
+                    self.shouldAnimateLoad = true
+                }
+            }
+            self.loaded = true
+        })
+    }
+    
     /**
      Retrieves Comments from Post.
      - Parameters:
@@ -933,201 +1131,11 @@ class CommentViewController: MediaViewController {
                     print(error)
                     self.loadOffline()
                 case .success(let tuple):
-                    let startDepth = 1
-                    let listing = tuple.1
-                    self.comments = []
-                    self.hiddenPersons = []
-                    self.hidden = []
-                    self.text = [:]
-                    self.content = [:]
-                    
-                    if self.submission == nil || self.submission!.id.isEmpty() {
-                        self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
-                    } else {
-                        self.submission = RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
-                    }
-                    
-                    var allIncoming: [(Thing, Int)] = []
-                    self.submission!.comments.removeAll()
-                    self.parents = [:]
-                    
-                    for child in listing.children {
-                        let incoming = self.extendKeepMore(in: child, current: startDepth)
-                        allIncoming.append(contentsOf: incoming)
-                        var currentIndex = 0
-                        var currentOP = ""
-                        
-                        for i in incoming {
-                            let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
-                            self.content[item.getIdentifier()] = item
-                            self.comments.append(item.getIdentifier())
-                            if item is RComment {
-                                self.submission!.comments.append(item as! RComment)
-                            }
-                            if i.1 == 1 && item is RComment {
-                                currentOP = (item as! RComment).author
-                            }
-                            self.parents[item.getIdentifier()] = currentOP
-                            currentIndex += 1
-                            
-                            self.cDepth[item.getIdentifier()] = i.1
-                        }
-                    }
-                    
-                    var time = timeval(tv_sec: 0, tv_usec: 0)
-                    gettimeofday(&time, nil)
-                    self.paginator = listing.paginator
-                    
-                    if !self.comments.isEmpty {
-                        do {
-                            let realm = try Realm()
-                           // TODO: insert
-                            realm.beginWrite()
-                            for comment in self.comments {
-                                if let content = self.content[comment] {
-                                    if content is RComment {
-                                        realm.create(RComment.self, value: content, update: .all)
-                                    } else {
-                                        realm.create(RMore.self, value: content, update: .all)
-                                    }
-                                    if content is RComment {
-                                        self.submission!.comments.append(content as! RComment)
-                                    }
-                                }
-                            }
-                            realm.create(type(of: self.submission!), value: self.submission!, update: .all)
-                            try realm.commitWrite()
-                        } catch {
-                            
-                        }
-                    }
-                    
-                    if !allIncoming.isEmpty {
-                        self.updateStrings(allIncoming)
-                    }
-                    
-                    self.doArrays()
-                    self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
-                    History.setComments(s: link)
-                    History.addSeen(s: link, skipDuplicates: false)
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        if !self.hasSubmission {
-                            self.headerCell = FullLinkCellView()
-                            self.headerCell?.del = self
-                            self.headerCell?.parentViewController = self
-                            self.hasDone = true
-                            self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-                            self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width, np: self.np)
-                            if self.submission!.isSelf {
-                                self.headerCell?.showBody(width: self.view.frame.size.width - 24)
-                            }
-                            self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
-                            if let tableHeaderView = self.headerCell {
-                                var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
-                                // Add safe area insets to left and right if available
-                                if #available(iOS 11.0, *) {
-                                    frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
-                                }
-                                if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
-                                    tableHeaderView.frame = frame
-                                    tableHeaderView.layoutIfNeeded()
-                                    let view = UIView(frame: tableHeaderView.frame)
-                                    view.addSubview(tableHeaderView)
-                                    self.tableView.tableHeaderView = view
-                                }
-                            }
-                            
-                            self.setupTitleView(self.submission!.subreddit, icon: self.submission!.subreddit_icon)
-                            
-                            self.navigationItem.backBarButtonItem?.title = ""
-                            self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
-                        } else {
-                            self.headerCell?.aspectWidth = self.tableView.bounds.size.width
-                            self.headerCell?.refreshLink(self.submission!, np: self.np)
-                            if self.submission!.isSelf {
-                                self.headerCell?.showBody(width: self.view.frame.size.width - 24)
-                            }
-
-                            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
-                            // Add safe area insets to left and right if available
-                            if #available(iOS 11.0, *) {
-                                frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
-                            }
-                            
-                            self.headerCell!.contentView.frame = frame
-                            self.headerCell!.contentView.layoutIfNeeded()
-                            let view = UIView(frame: self.headerCell!.contentView.frame)
-                            view.addSubview(self.headerCell!.contentView)
-                            self.tableView.tableHeaderView = view
-                        }
-                        self.refreshControl?.endRefreshing()
-                        self.activityIndicator.stopAnimating()
-                        if self.live {
-                            self.liveTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.loadLiveComments), userInfo: nil, repeats: true)
-                            self.startPulseAnimation()
-                        } else {
-                            if self.sortB != nil && self.searchB != nil {
-                                self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB]
-                            }
-                        }
-                        self.indicator.stopAnimating()
-                        self.indicator.isHidden = true
-                        
-                        var index = 0
-                        var loaded = true
-                        
-                        if SettingValues.hideAutomod && self.context.isEmpty() && self.submission!.author != AccountController.currentName && !self.comments.isEmpty {
-                            if let comment = self.content[self.comments[0]] as? RComment {
-                                if comment.author == "AutoModerator" {
-                                    var toRemove = [String]()
-                                    toRemove.append(comment.getIdentifier())
-                                    self.modLink = comment.permalink
-                                    self.hidden.insert(comment.getIdentifier())
-                                    
-                                    for next in self.walkTreeFlat(n: comment.getIdentifier()) {
-                                        toRemove.append(next)
-                                        self.hidden.insert(next)
-                                    }
-                                    self.dataArray = self.dataArray.filter({ (comment) -> Bool in
-                                        return !toRemove.contains(comment)
-                                    })
-                                    self.modB.customView?.alpha = 1
-                                }
-                            }
-                        }
-                        if !self.context.isEmpty() {
-                            for comment in self.comments {
-                                if comment.contains(self.context) {
-                                    self.menuId = comment
-                                    self.tableView.reloadData()
-                                    loaded = true
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
-                                        self.goToCell(i: index)
-                                    }
-                                    break
-                                } else {
-                                    index += 1
-                                }
-                            }
-                            if !loaded {
-                                self.tableView.reloadData()
-                            }
-                        } else if SettingValues.collapseDefault {
-                            self.tableView.reloadData()
-                            self.collapseAll()
-                        } else {
-                            if self.finishedPush {
-                                self.tableViewReloadingAnimation()
-                            } else {
-                                self.shouldAnimateLoad = true
-                            }
-                        }
-                        self.loaded = true
-                    })
+                    self.loadOnlineComments(from: tuple, and: link)
                 }
             })
         } catch {
-            print("Error retrieving Comments: \(error.localizedDescription)")
+            BannerUtil.makeBanner(text: "Unable to Retrieve Comments! Try Again Later.", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
         }
     }
     
@@ -1137,6 +1145,9 @@ class CommentViewController: MediaViewController {
         - sender: AnyObject
      */
     @objc func refreshComments(_ sender: AnyObject) {
+        NetworkMonitor.shared.networkStatusDidChange = {
+            
+        }
         removeCommentsData()
         if let link = self.submission {
             sub = link.subreddit

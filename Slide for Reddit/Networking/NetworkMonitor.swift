@@ -34,24 +34,15 @@ final class NetworkMonitor {
         guard let pathMonitor = pathMonitor else { return nil }
         return pathMonitor.currentPath.availableInterfaces.map({ $0.name }).first
     }
-    /// Full description of Network Interface
+    /// Full description of Network Interface.
     public var networkInterfaceDescription: String? {
         guard let pathMonitor = pathMonitor else { return nil }
         return pathMonitor.currentPath.availableInterfaces.map({ $0.debugDescription }).first
     }
-    /// Checks if the current Network is Online or not.
+    /// Checks if the current Network is Online.
     public var online: Bool {
         guard let pathMonitor = pathMonitor else { return false }
-        switch pathMonitor.currentPath.status {
-            case .satisfied:
-                return true
-            case .unsatisfied:
-                return false
-            case .requiresConnection:
-                return false
-            @unknown default:
-                return false
-        }
+        return pathMonitor.currentPath.status == .satisfied
     }
     /// Checks if the User has an Interface in Low Data Mode.
     @available(iOS 13.0, *)
@@ -73,17 +64,24 @@ final class NetworkMonitor {
      Handler starting the monitoring of the Network.
      - Make any updates after the Monitoring started.
      */
-    private var startedMonitoringNetwork: (() -> Void)?
+    public var startedMonitoringNetwork: (() -> Void)?
     /**
      Handler stopping Network monitoring.
      - Make any updates to the User alerting them that the Monitoring Stopped.
      */
-    private var stoppedMonitoringNetwork: (() -> Void)?
+    public var stoppedMonitoringNetwork: (() -> Void)?
     /**
      Handler called every time the Network changes.
      - Use when a view is being created, do any additional changes inside to update the view of any changes that occur.
      */
-    private var networkStatusDidChange: (() -> Void)?
+    public var networkStatusDidChange: (() -> Void)?
+    
+    private init() {
+    }
+    
+    deinit {
+        stopNetworkMonitoring()
+    }
     
     // MARK: - Public Methods
     /**
@@ -98,12 +96,14 @@ final class NetworkMonitor {
         // Starts the Monitoring of Network on a separate Queue.
         pathMonitor?.start(queue: networkQueue)
         // Handler which updates anytime changes happen with Network.
-        pathMonitor?.pathUpdateHandler = { _ in
-            // Sets monitoring to True.
-            self.isPathMonitoring = true
+        pathMonitor?.pathUpdateHandler = { [weak self] path in
             // Calls property handler for any changes made to Network.
-            self.networkStatusDidChange?()
+            self?.networkStatusDidChange?()
         }
+        // Sets monitoring to True.
+        isPathMonitoring = true
+        // Tells the handler it started monitoring.
+        startedMonitoringNetwork?()
     }
     
     /**
