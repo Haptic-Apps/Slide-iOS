@@ -248,6 +248,7 @@ class SplitMainViewController: MainViewController {
     override func doCurrentPage(_ page: Int) {
         guard page < finalSubs.count else { return }
         currentIndex = page
+
         let vc = self.viewControllers![0] as! SingleSubredditViewController
         if currentIndex == 0 && SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
@@ -424,7 +425,6 @@ class SplitMainViewController: MainViewController {
             }
 
             let firstViewController = SingleSubredditViewController(subName: self.finalSubs[index!], parent: self)
-            
             //Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = SingleSubredditViewController.openSubredditActivity(subreddit: self.finalSubs[index!])
