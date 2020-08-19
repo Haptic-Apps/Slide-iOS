@@ -81,12 +81,14 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         if !widthSet {
             configureCollectionViewLayoutItemSize()
             collectionView.reloadData()
+            let diff = (collectionViewLayout.collectionView!.frame.size.width - 140 - (self.collectionViewLayout.itemSize.width)) / 2
+            collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70 + diff, bottom: 0, right: 70 + diff)
         } else {
-            let diff = collectionViewLayout.collectionView!.frame.size.width - 140 - (self.collectionViewLayout.itemSize.width)
+            let diff = (collectionViewLayout.collectionView!.frame.size.width - 140 - (self.collectionViewLayout.itemSize.width)) / 2
             if diff <= 0 && collectionViewLayout.sectionInset.left > 70 {
                 collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70, bottom: 0, right: 70)
             } else if diff > 0 && collectionViewLayout.sectionInset.left == 70 {
-                collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70 + diff, bottom: 0, right: 70)
+                collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70 + diff, bottom: 0, right: 70 + diff)
             }
         }
         addGradientMask()
@@ -111,7 +113,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     public func configureCollectionViewLayoutItemSize() {
         collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70, bottom: 0, right: 70)
         
-        collectionViewLayout.itemSize = CGSize(width: collectionViewLayout.collectionView!.frame.size.width - 140, height: collectionViewLayout.collectionView!.frame.size.height)
+        collectionViewLayout.itemSize = CGSize(width: min(250, collectionViewLayout.collectionView!.frame.size.width - 140), height: collectionViewLayout.collectionView!.frame.size.height)
         widthSet = true
     }
         

@@ -384,6 +384,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: self).x
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
+                if SettingValues.commentGesturesMode == .HALF {
+                    return
+                }
                 if getFirstAction(left: false) != .NONE {
                     direction = 0
                     diff = self.contentView.frame.width - originalLocation

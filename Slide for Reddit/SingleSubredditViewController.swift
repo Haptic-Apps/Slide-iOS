@@ -2999,23 +2999,22 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        }
         if let parent = parent as? ColorMuxPagingViewController, SettingValues.subredditBar {
             parent.requireFailureOf(cellGestureRecognizer)
         }
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
-            if let interactivePush = nav.interactivePushGestureRecognizer {
-                cellGestureRecognizer.require(toFail: interactivePush)
+            if let interactivePop = nav.interactivePopGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePop)
             }
         } else if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
             if let interactivePop = nav.interactivePopGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePop)
             }
-        }
-        if fullWidthBackGestureRecognizer != nil {
-            fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
         }
     }
     

@@ -69,6 +69,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                 //currentBackgroundOffset.x = ((currentY - (CGFloat(currentIndex) * strongMatch.collectionViewLayout.itemSize.width)) / (scrollView.frame.size.width - 140 )) * parent.frame.size.width
                 var offsetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
                 currentBackgroundOffset.x = offsetX + ((scrollView.contentOffset.x / scrollView.frame.size.width) * (strongMatch.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) + (strongMatch.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width * CGFloat(currentIndex - 1)
+                print(currentBackgroundOffset)
                 strongMatch.contentOffset = currentBackgroundOffset
                 strongMatch.layoutIfNeeded()
             }

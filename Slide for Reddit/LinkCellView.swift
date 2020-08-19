@@ -786,6 +786,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: self).x
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
+                if SettingValues.submissionGestureMode == .HALF {
+                    return
+                }
                 if getFirstAction(left: false) != .NONE {
                     direction = 0
                     diff = self.contentView.frame.width - originalLocation
@@ -799,6 +802,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     direction = 0
                     diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
+                    
+                    //TODO: Bug here, this is triggering on first left-to-right swipe for some reason, doesn't affect comments
                     tiConstraints = batch {
                         typeImage.rightAnchor == self.rightAnchor - 4
                     }
@@ -846,8 +851,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else if typeImage.superview == nil {
                 self.addSubviews(typeImage)
                 self.bringSubviewToFront(typeImage)
-                NSLayoutConstraint.deactivate(tiConstraints)
-
+                print(direction)
                 if direction == 1 {
                     tiConstraints = batch {
                         typeImage.leftAnchor == self.leftAnchor + 4
