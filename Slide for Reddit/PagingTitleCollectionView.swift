@@ -318,8 +318,8 @@ class GradientMaskView: UIView {
 //Based on https://stackoverflow.com/a/42705208/3697225
 class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDelegateFlowLayout {
 
-    private let fadeFactor: CGFloat = 0.5
-    private var cellWidth : CGFloat {
+    private let fadeFactor: CGFloat = 0.65
+    private var cellWidth: CGFloat {
         return itemSize.width
     }
 

@@ -574,15 +574,15 @@ extension SplitMainViewController: NavigationHomeDelegate {
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
-        goToSubreddit(subreddit: didRequestSubreddit)
-        
         if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
             nav.pushNextViewControllerFromRight() {
                 if !self.finalSubs.contains(didRequestSubreddit) {
                     self.goToSubreddit(subreddit: didRequestSubreddit)
+                    return
                 }
             }
         }
+        goToSubreddit(subreddit: didRequestSubreddit)
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
