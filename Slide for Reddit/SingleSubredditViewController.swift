@@ -3105,6 +3105,8 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 recognizer.cancel()
                 return
             }
+            
+            tableView.panGestureRecognizer.cancel()
 
             translatingCell = cell
         }

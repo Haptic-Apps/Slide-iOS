@@ -3283,6 +3283,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                     return
                 }
             }
+            tableView.panGestureRecognizer.cancel()
             translatingCell = cell
         }
         
