@@ -919,6 +919,7 @@ class CommentViewController: MediaViewController {
         tableView.reloadData()
     }
     
+    // Adds the comments as an RComment.
     private func addCommentsToRealm() {
         if !self.comments.isEmpty {
             do {
@@ -945,6 +946,7 @@ class CommentViewController: MediaViewController {
         }
     }
     
+    // Refreshes and loads Comments
     private func loadOnlineComments(from tuple: ((Listing, Listing)), and link: RSubmission) {
         let startDepth = 1
         let listing = tuple.1
@@ -1145,22 +1147,31 @@ class CommentViewController: MediaViewController {
         - sender: AnyObject
      */
     @objc func refreshComments(_ sender: AnyObject) {
-        NetworkMonitor.shared.networkStatusDidChange = {
-            
+        // Monitors network changes automatically even without calling this in any other method. Any changes go through this refreshComments method.
+        NetworkMonitor.shared.networkStatusDidChange = { online in
+            // Assigns the Network Monitor property to the newly changed network status.
+            NetworkMonitor.shared.online = online
         }
+        // Removes any saved data that can be lingering behind.
         removeCommentsData()
+        // Checks if there is a submission.
         if let link = self.submission {
+            // Assigning global variable to link.subreddit.
             sub = link.subreddit
+            // Changes the Bar accordingly.
             setupTitleView(link.subreddit, icon: link.subreddit_icon)
             reset = false
+            // Assigns name of the Post.
             var name = link.name
             if name.contains("t3_") {
                 name = name.replacingOccurrences(of: "t3_", with: "")
             }
             if !NetworkMonitor.shared.online {
-                loadOffline()
+                // Loads offline if there is no connection.
+                self.loadOffline()
             } else {
-                retrieveCommentsFromPost(with: name, and: link)
+                // Automatically reloads and refreshes data and tableView if connection comes back on.
+                self.retrieveCommentsFromPost(with: name, and: link)
             }
         }
     }

@@ -108,7 +108,7 @@ class SplitMainViewController: MainViewController {
     }
 
     override func viewDidLoad() {
-        self.navToMux = self.navigationController!.navigationBar
+        self.navToMux = self.parent?.navigationController?.navigationBar
         self.color1 = ColorUtil.theme.foregroundColor
         self.color2 = ColorUtil.theme.foregroundColor
         

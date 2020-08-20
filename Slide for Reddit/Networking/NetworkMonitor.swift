@@ -41,8 +41,13 @@ final class NetworkMonitor {
     }
     /// Checks if the current Network is Online.
     public var online: Bool {
-        guard let pathMonitor = pathMonitor else { return false }
-        return pathMonitor.currentPath.status == .satisfied
+        get {
+            guard let pathMonitor = pathMonitor else { return false }
+            return pathMonitor.currentPath.status == .satisfied
+        }
+        // Allows for setting this property when network status changes.
+        set {
+        }
     }
     /// Checks if the User has an Interface in Low Data Mode.
     @available(iOS 13.0, *)
@@ -71,13 +76,10 @@ final class NetworkMonitor {
      */
     public var stoppedMonitoringNetwork: (() -> Void)?
     /**
-     Handler called every time the Network changes.
-     - Use when a view is being created, do any additional changes inside to update the view of any changes that occur.
+     Handler called every time the Network changes. Bool represents if the Network is Online or not.
+     - Only call once if needed in a View Controller. The function this is called in will be triggered and called whenever there is a change in networks.
      */
-    public var networkStatusDidChange: (() -> Void)?
-    
-    private init() {
-    }
+    public var networkStatusDidChange: ((Bool) -> Void)?
     
     deinit {
         stopNetworkMonitoring()
@@ -98,7 +100,7 @@ final class NetworkMonitor {
         // Handler which updates anytime changes happen with Network.
         pathMonitor?.pathUpdateHandler = { [weak self] path in
             // Calls property handler for any changes made to Network.
-            self?.networkStatusDidChange?()
+            self?.networkStatusDidChange?(path.status == .satisfied)
         }
         // Sets monitoring to True.
         isPathMonitoring = true
