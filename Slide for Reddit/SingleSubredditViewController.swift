@@ -204,9 +204,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         tableView.verticalAnchors == view.verticalAnchors
         tableView.horizontalAnchors == view.safeHorizontalAnchors
 
-        if SettingValues.submissionGesturesEnabled {
+        if SettingValues.submissionGestureMode != .NONE {
             setupGestures()
         }
+        
         /*Disable for now
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
@@ -731,7 +732,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if !MainViewController.isOffline && !SettingValues.hiddenFAB {
             self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
-            self.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            self.fab!.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
             self.fab!.layer.cornerRadius = 22.5
             self.fab!.clipsToBounds = true
@@ -2930,7 +2931,9 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
     }
 
     func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        if let nav = self.navigationController {
+            PostActions.showMoreMenu(cell: cell, parent: self, nav: nav, mutableList: true, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        }
     }
 
     func readLater(_ cell: LinkCellView) {
@@ -2996,27 +2999,29 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        tableView.panGestureRecognizer.require(toFail: cellGestureRecognizer)
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        }
         if let parent = parent as? ColorMuxPagingViewController, SettingValues.subredditBar {
             parent.requireFailureOf(cellGestureRecognizer)
         }
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
-            if let interactivePush = nav.interactivePushGestureRecognizer {
-                cellGestureRecognizer.require(toFail: interactivePush)
+            if let interactivePop = nav.interactivePopGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePop)
             }
         } else if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
-            if let interactivePush = nav.interactivePushGestureRecognizer {
-                cellGestureRecognizer.require(toFail: interactivePush)
+            if let interactivePop = nav.interactivePopGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePop)
             }
-        }
-        if fullWidthBackGestureRecognizer != nil {
-            fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
         }
     }
     
     func setupSwipeGesture() {
+        if SettingValues.submissionGestureMode == .FULL {
+            return
+        }
         if UIDevice.current.userInterfaceIdiom == .pad {
             fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
             guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
@@ -3049,23 +3054,15 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
             if panGestureRecognizer == cellGestureRecognizer {
+                if abs(translation.y) >= abs(translation.x) {
+                    return false
+                }
                 if translation.x < 0 {
-                    let point = gestureRecognizer.location(in: self.tableView)
-                    print(point)
-                    let indexpath = self.tableView.indexPathForItem(at: point)
-                    if indexpath == nil {
-                        return false
-                    }
-                    
-                    guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
-                        return false
-                    }
-                    
-                    let cellPoint = gestureRecognizer.location(in: cell)
-                    print(cellPoint)
-                    if cellPoint.x > cell.frame.width * 0.6 {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.submissionGestureMode == .FULL {
                         return true
                     }
+                } else if SettingValues.submissionGestureMode == .FULL && abs(translation.x) > abs(translation.y) {
+                    return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.1
                 }
                 return false
             }
@@ -3108,6 +3105,8 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 recognizer.cancel()
                 return
             }
+            
+            tableView.panGestureRecognizer.cancel()
 
             translatingCell = cell
         }
@@ -3262,6 +3261,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
     var links = [SubLinkItem]()
     var sub = ""
     var header = UIView()
+    var sort = UIView()
+    var sortImage = UIImageView()
+    var sortTitle = UILabel()
     var hasHeaderImage = false
     weak var del: SingleSubredditViewController?
     
@@ -3271,6 +3273,27 @@ public class LinksHeaderCellView: UICollectionViewCell {
         self.del = delegate
         self.hasHeaderImage = delegate.headerImage != nil
         setupViews()
+        switch del?.sort ?? LinkSortType.top {
+        case .best:
+            sortImage.image = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .hot:
+            sortImage.image = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .controversial:
+            sortImage.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .new:
+            sortImage.image = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .rising:
+            sortImage.image = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .top:
+            if #available(iOS 14, *) {
+                sortImage.image = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            } else {
+                sortImage.image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            }
+        }
+        sortTitle.font = UIFont.boldSystemFont(ofSize: 14)
+        sortTitle.textColor = ColorUtil.theme.fontColor
+        sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
     }
     
     func addSubscribe(_ stack: UIStackView, _ scroll: UIScrollView) -> CGFloat {
@@ -3278,7 +3301,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
         }
         view.addTapGestureRecognizer(action: {
@@ -3304,7 +3327,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {
                 PostActions.showPostMenu(self.del!, sub: self.sub)
@@ -3324,7 +3347,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {
                 self.del?.doDisplaySidebar()
@@ -3355,6 +3378,24 @@ public class LinksHeaderCellView: UICollectionViewCell {
             var spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
 
+            /*sort.heightAnchor == 30
+            sort.addSubviews(sortImage, sortTitle)
+            sortImage.sizeAnchors == CGSize.square(size: 25)
+            sortImage.centerYAnchor == sort.centerYAnchor
+            sortImage.leftAnchor == sort.leftAnchor + 8
+            sortTitle.leftAnchor == sortImage.rightAnchor + 8
+            sortTitle.centerYAnchor == sortImage.centerYAnchor
+            sortTitle.rightAnchor == sort.rightAnchor
+            sort.addTapGestureRecognizer {
+                self.del?.showSortMenu(self)
+            }
+            sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
+
+            var sortWidth = 25 + 8 + 8 + (sortTitle.text ?? "").size(with: sortTitle.font).width
+            sort.widthAnchor == sortWidth
+
+            buttonBase.addArrangedSubview(sort)
+            finalWidth += sortWidth + 8*/
             if Subscriptions.subreddits.contains(sub) {
                 finalWidth += self.addSubmit(buttonBase) + 8
             } else {
@@ -3372,7 +3413,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-                    $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor
                     $0.addTapGestureRecognizer(action: {
                         self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
                     })
@@ -3392,14 +3433,14 @@ public class LinksHeaderCellView: UICollectionViewCell {
             spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
             
-            self.contentView.addSubview(scroll)
+            self.contentView.addSubviews(scroll)
             self.scroll.isUserInteractionEnabled = true
             self.contentView.isUserInteractionEnabled = true
             buttonBase.isUserInteractionEnabled = true
             
             scroll.heightAnchor == CGFloat(30)
             scroll.horizontalAnchors == self.contentView.horizontalAnchors
-            
+
             scroll.addSubview(buttonBase)
             buttonBase.heightAnchor == CGFloat(30)
             buttonBase.edgeAnchors == scroll.edgeAnchors
@@ -3430,9 +3471,11 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 scroll.topAnchor == self.header.bottomAnchor + 4
                 imageView.sd_setImage(with: del!.headerImage!)
                 header.heightAnchor == 140
+                
             } else {
                 scroll.topAnchor == self.contentView.topAnchor + 4
             }
+
             scroll.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
         }
     }

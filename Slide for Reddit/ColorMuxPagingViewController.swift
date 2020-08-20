@@ -9,6 +9,8 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
     public var color1, color2: UIColor?
     public var viewToMux: UIView?
     public var navToMux: UINavigationBar?
+    private weak var match: UICollectionView?
+    public var dontMatch = false
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -35,9 +37,12 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         }
     }
     
+    public func matchScroll(scrollView: UICollectionView) {
+        self.match = scrollView
+    }
+    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let point = scrollView.contentOffset
-
         var percentComplete: CGFloat
         percentComplete = abs(point.x - self.view.frame.size.width) / self.view.frame.size.width
 
@@ -57,6 +62,18 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
             } else if currentIndex == totalCount - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
                 scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
             }
+            if let strongMatch = match, !dontMatch {
+                var currentBackgroundOffset = strongMatch.contentOffset
+                            
+                //Translate percentage of current view translation to the parent scroll view, add in original offset
+                //currentBackgroundOffset.x = ((currentY - (CGFloat(currentIndex) * strongMatch.collectionViewLayout.itemSize.width)) / (scrollView.frame.size.width - 140 )) * parent.frame.size.width
+                var offsetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
+                currentBackgroundOffset.x = offsetX + ((scrollView.contentOffset.x / scrollView.frame.size.width) * (strongMatch.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) + (strongMatch.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width * CGFloat(currentIndex - 1)
+                print(currentBackgroundOffset)
+                strongMatch.contentOffset = currentBackgroundOffset
+                strongMatch.layoutIfNeeded()
+            }
+
         }
     }
         

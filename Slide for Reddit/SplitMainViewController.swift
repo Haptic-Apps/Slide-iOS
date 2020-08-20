@@ -23,10 +23,6 @@ class SplitMainViewController: MainViewController {
     
     static var isFirst = true
 
-    override var shouldAutomaticallyForwardAppearanceMethods: Bool {
-        return true
-    }
-
     override func handleToolbars() {
         navigationController?.setToolbarHidden(true, animated: false)
     }
@@ -44,7 +40,7 @@ class SplitMainViewController: MainViewController {
     }
 
     override func colorChanged(_ color: UIColor) {
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
+        tabBar?.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : color
         if SettingValues.fullyHideNavbar {
             inHeadView.backgroundColor = .clear
@@ -196,6 +192,12 @@ class SplitMainViewController: MainViewController {
                 let scrollView = view as! UIScrollView
                 scrollView.delegate = self
                 
+                if SettingValues.submissionGestureMode != .FULL {
+                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 1
+                } else {
+                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                }
+                
                 if let pop = self.parent?.navigationController?.interactivePopGestureRecognizer {
                     scrollView.panGestureRecognizer.require(toFail: pop)
                 }
@@ -246,10 +248,11 @@ class SplitMainViewController: MainViewController {
     override func doCurrentPage(_ page: Int) {
         guard page < finalSubs.count else { return }
         currentIndex = page
+
         let vc = self.viewControllers![0] as! SingleSubredditViewController
-        if currentIndex == 0 && SettingValues.subredditBar {
+        if currentIndex == 0 && SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
-        } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar {
+        } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
         }
         MainViewController.current = vc.sub
@@ -270,19 +273,17 @@ class SplitMainViewController: MainViewController {
             }
         }
         
+        UIView.animate(withDuration: 0.4, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+            self.doToolbarOffset()
+        }, completion: { [weak self] (_)in
+            self?.dontMatch = false
+        })
+
         doLeftItem()
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
         self.parent?.navigationController?.navigationBar.layoutIfNeeded()
         
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
-        if !selected {
-            let page = finalSubs.firstIndex(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
-            if !tabBar.items.isEmpty {
-                tabBar.setSelectedItem(tabBar.items[page!], animated: true)
-            }
-        } else {
-            selected = false
-        }
+        tabBar?.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
     }
 
     override func doRetheme() {
@@ -291,7 +292,7 @@ class SplitMainViewController: MainViewController {
                 sub.reTheme()
             }
         }
-        tabBar.removeFromSuperview()
+        tabBar?.removeFromSuperview()
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
         }
@@ -334,7 +335,7 @@ class SplitMainViewController: MainViewController {
         
         setNeedsStatusBarAppearanceUpdate()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
@@ -349,7 +350,7 @@ class SplitMainViewController: MainViewController {
         
         if MainViewController.needsRestart {
             MainViewController.needsRestart = false
-            tabBar.removeFromSuperview()
+            tabBar?.removeFromSuperview()
             self.navigationItem.leftBarButtonItems = []
             self.navigationItem.rightBarButtonItems = []
             if SettingValues.subredditBar {
@@ -407,12 +408,16 @@ class SplitMainViewController: MainViewController {
     }
     
     override func goToSubreddit(subreddit: String, override: Bool = false) {
+        if finalSubs.firstIndex(of: subreddit) == currentIndex {
+            return
+        }
         //Temporary fix for 13
         UIView.animate(withDuration: 0.3, animations: {
             if SettingValues.appMode == .MULTI_COLUMN {
                 self.splitViewController?.preferredDisplayMode = .primaryHidden
             }
         }, completion: nil)
+        
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
@@ -420,7 +425,6 @@ class SplitMainViewController: MainViewController {
             }
 
             let firstViewController = SingleSubredditViewController(subName: self.finalSubs[index!], parent: self)
-            
             //Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = SingleSubredditViewController.openSubredditActivity(subreddit: self.finalSubs[index!])
@@ -439,6 +443,7 @@ class SplitMainViewController: MainViewController {
             DispatchQueue.main.async {
                 self.doCurrentPage(index!)
             }
+            self.dontMatch = true
 
             self.setViewControllers([firstViewController],
                                     direction: index! > self.currentPage ? .forward : .reverse,
@@ -483,7 +488,7 @@ class SplitMainViewController: MainViewController {
         LinkCellView.cachedInternet = nil
         
         finalSubs.append(contentsOf: Subscriptions.pinned)
-        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.containsIgnoringCase($0) }))
 
         MainViewController.isOffline = false
         var subs = [UIMutableApplicationShortcutItem]()
@@ -524,7 +529,7 @@ class SplitMainViewController: MainViewController {
         
         doButtons()
         
-        tabBar.removeFromSuperview()
+        tabBar?.removeFromSuperview()
         self.navigationItem.leftBarButtonItems = []
         self.navigationItem.rightBarButtonItems = []
         self.delegate = self
@@ -569,15 +574,15 @@ extension SplitMainViewController: NavigationHomeDelegate {
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
-        goToSubreddit(subreddit: didRequestSubreddit)
-        
         if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
             nav.pushNextViewControllerFromRight() {
                 if !self.finalSubs.contains(didRequestSubreddit) {
                     self.goToSubreddit(subreddit: didRequestSubreddit)
+                    return
                 }
             }
         }
+        goToSubreddit(subreddit: didRequestSubreddit)
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
@@ -810,5 +815,11 @@ extension SplitMainViewController: NavigationHomeDelegate {
         let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         homeViewController.present(navVC, animated: true)
+    }
+}
+
+extension MainViewController: PagingTitleDelegate {
+    func didSelect(_ subreddit: String) {
+        goToSubreddit(subreddit: subreddit)
     }
 }

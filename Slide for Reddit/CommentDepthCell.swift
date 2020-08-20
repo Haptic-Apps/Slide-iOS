@@ -356,7 +356,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if sender.state == .began || typeImage == nil {
             dragCancelled = false
             direction = 0
-            originalLocation = sender.location(in: contentView).x
+            originalLocation = sender.location(in: self).x
             originalPos = self.contentView.frame.origin.x
             diff = self.contentView.frame.width - originalLocation
             typeImage = UIImageView().then {
@@ -384,9 +384,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: self).x
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
+                if SettingValues.commentGesturesMode == .HALF {
+                    return
+                }
                 if getFirstAction(left: false) != .NONE {
                     direction = 0
-                    diff = self.contentView.frame.width - diff
+                    diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
                         typeImage.leftAnchor == self.leftAnchor + 4
@@ -395,6 +398,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } else if direction == 1 && self.contentView.frame.origin.x < originalPos {
                 if getFirstAction(left: true) != .NONE {
                     direction = 0
+                    diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
                         typeImage.rightAnchor == self.rightAnchor - 4
@@ -419,6 +423,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 } else {
                     direction = -1
                     action = getFirstAction(left: false)
+                    diff = self.contentView.frame.width - originalLocation
+
                     if action == .NONE {
                         sender.cancel()
                         return
@@ -433,7 +439,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx - diff
             self.contentView.frame.origin.x = posx - originalLocation
-            print(self.contentView.frame.origin.x)
             if (direction == -1 && SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) || (direction == 1 && SettingValues.commentActionRightRight == .NONE && SettingValues.commentActionRightLeft == .NONE) {
                 dragCancelled = true
                 sender.cancel()
@@ -511,14 +516,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             CATransaction.setDisableActions(true)
             CATransaction.commit()
             currentProgress = progress
-            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.35 && previousProgress < 0.35) || sender.state == .ended {
+            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.25 && previousProgress < 0.25) || sender.state == .ended {
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionWeak()
                 }
             }
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.35) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
+        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.25) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
             doAction(item: self.action)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
@@ -2291,7 +2296,6 @@ private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: 
 @available(iOS 13.0, *)
 extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-        print("Context Menu 2")
         animator.addCompletion {
             if let vc = self.previewedVC {
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
@@ -2330,7 +2334,6 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        print("Context Menu")
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         let location = interaction.location(in: self.commentBody)
@@ -2353,7 +2356,6 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        print("Context Menu 3")
         let specialLocation = interaction.location(in: self.contentView)
         if self.sideViewSpace.frame.contains(specialLocation) {
             return getConfigurationParentComment()
