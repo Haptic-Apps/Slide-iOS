@@ -199,11 +199,10 @@ class NavigationHomeViewController: UIViewController {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
 
-        navigationController?.setNavigationBarHidden(false, animated: false)
-        navigationController?.setToolbarHidden(true, animated: false)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.setToolbarHidden(false, animated: false)
+        self.navigationController?.toolbar.isTranslucent = false
+        self.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
         self.splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
         
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
@@ -907,9 +906,10 @@ class CurrentAccountHeaderView: UIView {
         let leftItem = UIBarButtonItem(customView: upperButtonStack)
         let rightItem = UIBarButtonItem(customView: settingsButton)
         let forwardItem = UIBarButtonItem(customView: forwardButton)
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
-        parent.navigationItem.leftBarButtonItem = leftItem
-        parent.navigationItem.rightBarButtonItems = [forwardItem, rightItem]
+        parent.toolbarItems = [leftItem, space, rightItem]
+        //parent.toolbarItems.rightBarButtonItems = [forwardItem, rightItem]
 
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
@@ -1039,9 +1039,9 @@ extension CurrentAccountHeaderView {
             let day = Calendar.current.ordinality(of: .day, in: .month, for: Date()) == Calendar.current.ordinality(of: .day, in: .month, for: creationDate as Date)
             let month = Calendar.current.ordinality(of: .month, in: .year, for: Date()) == Calendar.current.ordinality(of: .month, in: .year, for: creationDate as Date)
             if day && month {
-                accountAgeLabel.text = "🍰 Created \(creationDateString) 🍰"
+                accountAgeLabel.text = "🍰 Created \(creationDateString) 🍰\n\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0)) Karma"
             } else {
-                accountAgeLabel.text = "Created \(creationDateString)"
+                accountAgeLabel.text = "Created \(creationDateString)\n\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0)) Karma"
             }
             setLoadingState(false)
         } else {

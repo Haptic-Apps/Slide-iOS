@@ -421,6 +421,7 @@ class SplitMainViewController: MainViewController {
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
+                VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
                 return
             }
 
@@ -447,7 +448,7 @@ class SplitMainViewController: MainViewController {
 
             self.setViewControllers([firstViewController],
                                     direction: index! > self.currentPage ? .forward : .reverse,
-                                    animated: SettingValues.subredditBar ? true : false,
+                                    animated: false,
                                     completion: { (_) in
                                      })
         } else {
