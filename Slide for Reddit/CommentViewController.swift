@@ -2804,7 +2804,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
             if !skipTop {
                 self.tableView.scrollToRow(at: indexPath,
-                                           at: UITableView.ScrollPosition.none, animated: false)
+                                           at: UITableView.ScrollPosition.top, animated: false)
             }
             
             id = (contents as! RComment).getIdentifier()
@@ -3187,6 +3187,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     func setupGestures() {
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
+        cellGestureRecognizer.maximumNumberOfTouches = 1
         tableView.addGestureRecognizer(cellGestureRecognizer)
         if UIDevice.current.userInterfaceIdiom != .pad {
             cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
