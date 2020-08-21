@@ -202,7 +202,29 @@ class RealmDataWrapper {
                 }
             }
         }
+
+        rSubmission.gallery.removeAll()
+        for item in (submission.baseJson["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
+            if let image = (submission.baseJson["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
+                if image["s"] != nil && (image["s"] as? JSONDictionary)?["u"] != nil {
+                    rSubmission.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
+                }
+            }
+        }
+
+        rSubmission.pollOptions.removeAll()
+        for item in (submission.baseJson["poll_data"] as? JSONDictionary)?["options"] as? [AnyObject] ?? [] {
+            if let poll = item as? JSONDictionary {
+                if poll["text"] != nil {
+                    let name = poll["text"] as? String ?? ""
+                    let amount = poll["vote_count"] as? Int ?? -1
+                    rSubmission.pollOptions.append("\(name);\(amount)")
+                }
+            }
+        }
         
+        rSubmission.pollTotal = (submission.baseJson["poll_data"] as? JSONDictionary)?["total_vote_count"] as? Int ?? 0
+
         rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum + rSubmission.awards.count > 0
 
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
@@ -319,6 +341,28 @@ class RealmDataWrapper {
             }
         }
         
+        rSubmission.gallery.removeAll()
+        for item in (submission.baseJson["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
+            if let image = (submission.baseJson["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
+                if image["s"] != nil && (image["s"] as? JSONDictionary)?["u"] != nil {
+                    rSubmission.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
+                }
+            }
+        }
+
+        rSubmission.pollOptions.removeAll()
+        for item in (submission.baseJson["poll_data"] as? JSONDictionary)?["options"] as? [AnyObject] ?? [] {
+            if let poll = item as? JSONDictionary {
+                if poll["text"] != nil {
+                    let name = poll["text"] as? String ?? ""
+                    let amount = poll["vote_count"] as? Int ?? -1
+                    rSubmission.pollOptions.append("\(name);\(amount)")
+                }
+            }
+        }
+        
+        rSubmission.pollTotal = (submission.baseJson["poll_data"] as? JSONDictionary)?["total_vote_count"] as? Int ?? 0
+
         rSubmission.author = submission.author
         rSubmission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
         rSubmission.isEdited = submission.edited > 0
@@ -606,6 +650,9 @@ class RSubmission: Object {
     
     var reports = List<String>()
     var awards = List<String>()
+    var gallery = List<String>()
+    var pollOptions = List<String>()
+    @objc dynamic var pollTotal = -1
     @objc dynamic var removedBy = ""
     @objc dynamic var removed = false
     @objc dynamic var approvedBy = ""

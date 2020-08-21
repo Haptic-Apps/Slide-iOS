@@ -19,7 +19,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         if !text.isEmpty {
             self.showSpoiler(text)
         } else {
-            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: submission)
         }
     }
 
@@ -339,7 +339,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             bodyScrollView.contentSize = CGSize(width: bodyScrollView.bounds.width, height: textView.estimatedHeight + 100)
             parentVC.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
-        } else if type != .ALBUM && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is RSubmission && !(content as! RSubmission).nsfw) || SettingValues.nsfwPreviews) {
+        } else if type != .ALBUM && type != .REDDIT_GALLERY && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is RSubmission && !(content as! RSubmission).nsfw) || SettingValues.nsfwPreviews) {
             if !ContentType.displayVideo(t: type) || !populated {
                 let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false, buttons: false))
                 if embed != nil {
@@ -356,7 +356,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             } else {
                 populated = false
             }
-        } else if type == .LINK || type == .NONE || type == .ALBUM || ((content is RSubmission && (content as! RSubmission).nsfw) && !SettingValues.nsfwPreviews) {
+        } else if type == .LINK || type == .NONE || type == .ALBUM || type == .REDDIT_GALLERY || ((content is RSubmission && (content as! RSubmission).nsfw) && !SettingValues.nsfwPreviews) {
             topBody.addSubviews(thumbImageContainer, infoContainer)
             thumbImageContainer.centerAnchors == topBody.centerAnchors
             infoContainer.horizontalAnchors == topBody.horizontalAnchors
@@ -369,6 +369,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 switch type {
                 case .ALBUM:
                     text = ("Album")
+                case .REDDIT_GALLERY:
+                    text = ("Gallery")
                 case .EXTERNAL:
                     text = "External Link"
                 case .LINK, .EMBEDDED, .NONE:
@@ -467,7 +469,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     @objc func content(_ sender: AnyObject) {
-        doShow(url: baseURL!, heroView: thumbImageContainer.isHidden ? embeddedVC.view : thumbImage, finalSize: nil, heroVC: parentVC)
+        doShow(url: baseURL!, heroView: thumbImageContainer.isHidden ? embeddedVC.view : thumbImage, finalSize: nil, heroVC: parentVC, link: submission)
     }
 
     override func viewWillAppear(_ animated: Bool) {

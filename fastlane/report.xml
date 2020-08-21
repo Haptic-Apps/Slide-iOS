@@ -5,102 +5,34 @@
     
     
       
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000351">
-=======
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000546">
->>>>>>> Fix build issues, Fastlane beta changes, Fix Slide Shortcuts from firing on iPad 13, add back button to NavHomeVC
-=======
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000546">
-=======
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000351">
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
-=======
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000385">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000437">
         
       </testcase>
     
       
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="1: increment_build_number" time="1.73496">
-=======
-      <testcase classname="fastlane.lanes" name="1: increment_build_number" time="2.132328">
->>>>>>> Fix build issues, Fastlane beta changes, Fix Slide Shortcuts from firing on iPad 13, add back button to NavHomeVC
-=======
-      <testcase classname="fastlane.lanes" name="1: increment_build_number" time="2.132328">
-=======
-      <testcase classname="fastlane.lanes" name="1: increment_build_number" time="1.73496">
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
-=======
-      <testcase classname="fastlane.lanes" name="1: increment_build_number" time="1.984331">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="1: xcode_select" time="0.000349">
         
       </testcase>
     
       
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="2: match" time="3.04139">
-=======
-      <testcase classname="fastlane.lanes" name="2: match" time="3.22291">
->>>>>>> Fix build issues, Fastlane beta changes, Fix Slide Shortcuts from firing on iPad 13, add back button to NavHomeVC
-=======
-      <testcase classname="fastlane.lanes" name="2: match" time="3.22291">
-=======
-      <testcase classname="fastlane.lanes" name="2: match" time="3.04139">
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
-=======
-      <testcase classname="fastlane.lanes" name="2: match" time="5.548434">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="2: increment_build_number" time="2.313689">
         
       </testcase>
     
       
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="3: build_app" time="588.329015">
-=======
-      <testcase classname="fastlane.lanes" name="3: build_app" time="515.355384">
->>>>>>> Fix build issues, Fastlane beta changes, Fix Slide Shortcuts from firing on iPad 13, add back button to NavHomeVC
-=======
-      <testcase classname="fastlane.lanes" name="3: build_app" time="515.355384">
-=======
-      <testcase classname="fastlane.lanes" name="3: build_app" time="588.329015">
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
-=======
-      <testcase classname="fastlane.lanes" name="3: build_app" time="544.711711">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="3: match" time="62.650856">
         
       </testcase>
     
       
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <testcase classname="fastlane.lanes" name="4: upload_to_testflight" time="578.104881">
-=======
-      <testcase classname="fastlane.lanes" name="4: upload_to_testflight" time="517.901821">
->>>>>>> Fix build issues, Fastlane beta changes, Fix Slide Shortcuts from firing on iPad 13, add back button to NavHomeVC
-=======
-      <testcase classname="fastlane.lanes" name="4: upload_to_testflight" time="517.901821">
-=======
-      <testcase classname="fastlane.lanes" name="4: upload_to_testflight" time="578.104881">
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
->>>>>>> Fixed some Xcode Beta build issues, Various layout fixes for new menu
-=======
-      <testcase classname="fastlane.lanes" name="4: upload_to_testflight" time="40.782647">
->>>>>>> develop
+      <testcase classname="fastlane.lanes" name="4: build_app" time="422.661985">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: upload_to_testflight" time="7.632091">
+        
+          <failure message="/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/actions/actions_helper.rb:48:in `execute_action'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/runner.rb:253:in `block in execute_action'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/runner.rb:227:in `chdir'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/runner.rb:227:in `execute_action'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/runner.rb:157:in `trigger_action_by_name'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/fast_file.rb:159:in `method_missing'&#10;Fastfile:53:in `block (2 levels) in parsing_binding'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/lane.rb:33:in `call'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/runner.rb:49:in `block in execute'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/runner.rb:45:in `chdir'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/runner.rb:45:in `execute'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/lane_manager.rb:47:in `cruise_lane'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/command_line_handler.rb:36:in `handle'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/commands_generator.rb:108:in `block (2 levels) in run'&#10;/Library/Ruby/Gems/2.6.0/gems/commander-fastlane-4.4.6/lib/commander/command.rb:178:in `call'&#10;/Library/Ruby/Gems/2.6.0/gems/commander-fastlane-4.4.6/lib/commander/command.rb:153:in `run'&#10;/Library/Ruby/Gems/2.6.0/gems/commander-fastlane-4.4.6/lib/commander/runner.rb:476:in `run_active_command'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane_core/lib/fastlane_core/ui/fastlane_runner.rb:76:in `run!'&#10;/Library/Ruby/Gems/2.6.0/gems/commander-fastlane-4.4.6/lib/commander/delegates.rb:15:in `run!'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/commands_generator.rb:352:in `run'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/commands_generator.rb:41:in `start'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/fastlane/lib/fastlane/cli_tools_distributor.rb:119:in `take_off'&#10;/Library/Ruby/Gems/2.6.0/gems/fastlane-2.149.1/bin/fastlane:23:in `&lt;top (required)&gt;'&#10;/usr/local/bin/fastlane:23:in `load'&#10;/usr/local/bin/fastlane:23:in `&lt;main&gt;'&#10;&#10;Error uploading ipa file, for more information see above" />
         
       </testcase>
     

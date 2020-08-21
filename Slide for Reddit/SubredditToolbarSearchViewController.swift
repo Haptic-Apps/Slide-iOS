@@ -25,6 +25,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     var lastY: CGFloat = 0.0
     var timer: Timer?
     var isSearchComplete = false
+    var toolbarDone = false
     
     var subredditInfoView = UIView()
     var subTitleView = UILabel()
@@ -55,7 +56,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
 
     var multiButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Create a Multireddit"
     }
@@ -99,6 +100,12 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             bottomOffset = 84
             if let w = UIApplication.shared.delegate?.window, let window = w {
                 bottomOffset += (window.screen.bounds.height - window.frame.height) / 2
+            }
+        }
+        if controller.navigationController?.viewControllers.count ?? 0 == 1 && controller.navigationController?.modalPresentationStyle ?? controller.modalPresentationStyle == .pageSheet {
+            bottomOffset += 64
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                bottomOffset += 24
             }
         }
     }
@@ -252,15 +259,21 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer,
-            recognizer.velocity(in: self.view).y < 0,
-            let topView = topView,
-            topView.alpha == 0 {
-            return false
+        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            if recognizer == self.gestureRecognizer {
+                let velocity = recognizer.velocity(in: self.view)
+                if let topView = topView, velocity.y < 0, topView.alpha == 0 {
+                    return false
+                } else if abs(velocity.x) > abs(velocity.y) {
+                    return false
+                }
+            } else {
+                return recognizer.velocity(in: self.view).x < 0
+            }
         }
         return true
     }
-    
+        
     func update(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         let y = self.view.frame.minY
@@ -329,7 +342,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                        completion: completionBlock)
     }
     
-    @objc func collapse(_ completion: (() -> Void)? = nil) {
+    @objc func collapse() {
         doneOnce = false
         searchBar.isUserInteractionEnabled = false
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
@@ -371,7 +384,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.backgroundView.isHidden = true
             strongSelf.expanded = false
             strongSelf.updateAccessibility()
-            completion?()
         }
 
         UIView.animate(withDuration: 0.4,
@@ -641,6 +653,24 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         }
     }
 
+    func configureToolbarSwipe() {
+        if !toolbarDone {
+            toolbarDone = true
+            let fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+            if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer ?? parent?.parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
+                fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+                if gestureRecognizer != nil {
+                    fullWidthBackGestureRecognizer.require(toFail: gestureRecognizer)
+                }
+                fullWidthBackGestureRecognizer.delegate = self
+                self.view.addGestureRecognizer(fullWidthBackGestureRecognizer)
+                if #available(iOS 13.4, *) {
+                    fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+                }
+            }
+        }
+    }
+    
     func configureGestures() {
         gestureRecognizer = UIPanGestureRecognizer()
         view.addGestureRecognizer(gestureRecognizer)
@@ -671,7 +701,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                     }
                 }
             }
-
         }
     }
 
@@ -782,9 +811,8 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
         } else {
             let sub = cell.subreddit
             if let parent = parentController?.parent as? SplitMainViewController {
-                self.collapse() {
-                    parent.goToSubreddit(subreddit: sub)
-                }
+                self.collapse()
+                parent.goToSubreddit(subreddit: sub)
             } else {
                 VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
             }
@@ -946,11 +974,7 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                         self.suggestions.append(s.displayName)
                     }
                     DispatchQueue.main.async {
-                        if self.tableView.numberOfSections == 1 {
-                            self.tableView.insertSections(IndexSet(integer: 1), with: .none)
-                        } else {
-                            self.tableView.reloadSections(IndexSet(integer: 1), with: .none)
-                        }
+                        self.tableView.reloadData()
                     }
                 case .failure(let error):
                     print(error)

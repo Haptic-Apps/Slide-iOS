@@ -65,8 +65,10 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       notificationPayloadFile = "Slide for Apple Watch Extension/PushNotificationPayload.apns">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <RemoteRunnable
+         runnableDebuggingMode = "2"
+         BundleIdentifier = "com.apple.Carousel"
+         RemotePath = "/Slide for Reddit">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BE20851021588F3900D8F33C"
@@ -82,8 +84,10 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <RemoteRunnable
+         runnableDebuggingMode = "2"
+         BundleIdentifier = "com.apple.Carousel"
+         RemotePath = "/Slide for Reddit">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BE20851021588F3900D8F33C"

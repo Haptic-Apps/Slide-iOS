@@ -332,7 +332,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>166</string>
+	<string>177</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -402,5 +402,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>USR_DOMAIN</key>
+	<string>${USR_DOMAIN}</string>
 </dict>
 </plist>

@@ -37,7 +37,12 @@ class SettingsData: BubbleSettingTableViewController {
     var dontLoadImagePreviews = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
-    
+
+    var streamVideosCell: UITableViewCell = InsetCell()
+    var streamVideos = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == enableDataSaving {
             SettingValues.dataSavingEnabled = changed.isOn
@@ -48,6 +53,9 @@ class SettingsData: BubbleSettingTableViewController {
         } else if changed == loadHQViewer {
             SettingValues.loadContentHQ = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_loadContentHQ)
+        } else if changed == streamVideos {
+            SettingValues.streamVideos = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_streamVideos)
         } else if changed == lowerQualityMode {
             SettingValues.lqLow = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_lqLow)
@@ -100,8 +108,15 @@ class SettingsData: BubbleSettingTableViewController {
         createCell(disableOnWifiCell, disableOnWifi, isOn: !SettingValues.dataSavingDisableWiFi, text: "Data Saving mode on WiFi")
         createCell(loadHQViewerCell, loadHQViewer, isOn: SettingValues.loadContentHQ, text: "Load full-size images when opened")
         createCell(lowerQualityModeCell, lowerQualityMode, isOn: SettingValues.lqLow, text: "Load lowest image quality")
-        createCell(dontLoadImagePreviewsCell, dontLoadImagePreviews, isOn: SettingValues.noImages, text: "Don't load any images when Data Saving mode is active")
-        
+        createCell(dontLoadImagePreviewsCell, dontLoadImagePreviews, isOn: SettingValues.noImages, text: "Don't load banner images")
+        self.dontLoadImagePreviewsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.dontLoadImagePreviewsCell.detailTextLabel?.text = "While Data Saving mode is enabled"
+        self.dontLoadImagePreviewsCell.detailTextLabel?.numberOfLines = 0
+        createCell(streamVideosCell, streamVideos, isOn: SettingValues.streamVideos, text: "Stream videos")
+        self.streamVideosCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.streamVideosCell.detailTextLabel?.text = "Disabling streaming will download videos before displaying them"
+        self.streamVideosCell.detailTextLabel?.numberOfLines = 0
+
         doDisables()
         self.tableView.tableFooterView = UIView()
     }

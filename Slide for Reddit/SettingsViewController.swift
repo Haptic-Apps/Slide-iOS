@@ -80,7 +80,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         }
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
@@ -454,7 +454,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         audioSettings.accessoryType = .disclosureIndicator
         audioSettings.backgroundColor = ColorUtil.theme.foregroundColor
         audioSettings.textLabel?.textColor = ColorUtil.theme.fontColor
-        audioSettings.imageView?.image = UIImage(sfString: SFSymbol.volume3Fill, overrideString: "audio")?.toolbarIcon()
+        audioSettings.imageView?.image = UIImage(sfString: SFSymbol.speaker3Fill, overrideString: "audio")?.toolbarIcon()
         audioSettings.imageView?.tintColor = ColorUtil.theme.fontColor
 
         if reset {

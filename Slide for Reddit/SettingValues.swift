@@ -100,7 +100,7 @@ class SettingValues {
     public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
     public static let pref_hideAutomod = "HIDE_AUTOMOD"
     public static let pref_commentGesturesEnabled = "COMMENT_GESTURES"
-    public static let pref_submissionGesturesEnabled = "SUBMISSIONS_GESTURES"
+    public static let pref_submissionGesturesMode = "SUBMISSION_GESTURE_MODE_2"
     public static let pref_autoKeyboard = "AUTO_KEYBOARD"
     public static let pref_reduceColor = "REDUCE_COLORS"
     public static let pref_browser = "WEB_BROWSER"
@@ -111,7 +111,7 @@ class SettingValues {
     public static let pref_submissionActionLeft = "SUBMISSION_LEFT"
     public static let pref_submissionActionRight = "SUBMISSION_RIGHT"
     public static let pref_submissionActionForceTouch = "SUBMISSION_FORCE_TOUCH"
-    public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE"
+    public static let pref_commentGesturesMode = "COMMENT_GESTURE_MODE_2"
     public static let pref_notifications = "NOTIFICATIONS"
     public static let pref_subBar = "SUB_BAR"
     public static let pref_appMode = "APP_MODE"
@@ -136,6 +136,7 @@ class SettingValues {
     public static let pref_submissionLimit = "SUBMISSION_LIMIT"
     public static let pref_hideAwards = "HIDE_AWARDS"
     public static let pref_subredditIcons = "SUBREDDIT_ICONS"
+    public static let pref_streamVideos = "STREAM_VIDEOS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -196,7 +197,7 @@ class SettingValues {
     public static var wideIndicators = false
     public static var blackShadowbox = false
     public static var hideAutomod = false
-    public static var submissionGesturesEnabled = false
+    public static var submissionGestureMode = CommentGesturesMode.NONE
     public static var infoBelowTitle = false
     public static var subredditIcons = false
    // public static var matchSilence = true
@@ -268,6 +269,7 @@ class SettingValues {
     public static var disable13Popup = true
     public static var thumbTag = true
     public static var hideAwards = false
+    public static var streamVideos = true
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -325,20 +327,20 @@ class SettingValues {
     }
 
     enum CommentGesturesMode: String {
-        static let cases: [CommentGesturesMode] = [.GESTURES, .NONE, .SWIPE_ANYWHERE]
+        static let cases: [CommentGesturesMode] = [.HALF, .NONE, .FULL]
         
-        case GESTURES = "gestures"
+        case HALF = "half"
         case NONE = "none"
-        case SWIPE_ANYWHERE = "swipe_anywhere"
+        case FULL = "full"
 
         func description() -> String {
             switch self {
-            case .GESTURES:
-                return "Swipe gestures"
+            case .HALF:
+                return "Gestures"
             case .NONE:
-                return "Slide between posts"
-            case .SWIPE_ANYWHERE:
-                return "Swipe anywhere to exit"
+                return "No Gestures"
+            case .FULL:
+                return "Full gesutres (disables swipe between posts)"
             }
         }
     }
@@ -484,7 +486,6 @@ class SettingValues {
         }
         
         SettingValues.hapticFeedback = settings.object(forKey: SettingValues.pref_hapticFeedback) == nil ? true : settings.bool(forKey: SettingValues.pref_hapticFeedback)
-        SettingValues.submissionGesturesEnabled = settings.object(forKey: SettingValues.pref_submissionGesturesEnabled) == nil ? false : settings.bool(forKey: SettingValues.pref_submissionGesturesEnabled)
         SettingValues.menuButton = settings.object(forKey: SettingValues.pref_moreButton) == nil ? true : settings.bool(forKey: SettingValues.pref_moreButton)
         SettingValues.shareButton = settings.object(forKey: SettingValues.pref_shareButton) == nil ? false : settings.bool(forKey: SettingValues.pref_shareButton)
 
@@ -543,7 +544,8 @@ class SettingValues {
         
         SettingValues.hideImageSelftext = settings.object(forKey: SettingValues.pref_hideImageSelftext) == nil ? true : settings.bool(forKey: SettingValues.pref_hideImageSelftext)
         SettingValues.disable13Popup = false //REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
-        
+        SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
+
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
 
         SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
@@ -602,7 +604,7 @@ class SettingValues {
         }
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
-        SettingValues.subredditBar = settings.object(forKey: SettingValues.pref_subBar) == nil ? true : settings.bool(forKey: SettingValues.pref_subBar)
+        SettingValues.subredditBar = true //Enable this forever now settings.object(forKey: SettingValues.pref_subBar) == nil ? true : settings.bool(forKey: SettingValues.pref_subBar)
         //SettingValues.matchSilence = settings.bool(forKey: SettingValues.pref_matchSilence)
         SettingValues.infoBelowTitle = settings.bool(forKey: SettingValues.pref_infoBelowTitle)
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
@@ -618,7 +620,8 @@ class SettingValues {
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
-        SettingValues.commentGesturesMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "swipe_anywhere") ?? .SWIPE_ANYWHERE
+        SettingValues.commentGesturesMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "half") ?? .HALF
+        SettingValues.submissionGestureMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_submissionGesturesMode) ?? "none") ?? .NONE
         SettingValues.commentActionRightLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightLeft) ?? "downvote") ?? .DOWNVOTE
         SettingValues.commentActionRightRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightRight) ?? "upvote") ?? .UPVOTE
         SettingValues.commentActionLeftLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftLeft) ?? "collapse") ?? .COLLAPSE
@@ -1104,7 +1107,7 @@ class SettingValues {
             case .COLLECTIONS:
                 return UIImage(sfString: SFSymbol.squareStackFill, overrideString: "multis")!.menuIcon()
             case .CREATE_MULTI:
-                return UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "multis")!.menuIcon()
+                return UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "multis")!.menuIcon()
             case .TRENDING:
                 return UIImage(named: "trending")!.menuIcon()
             }

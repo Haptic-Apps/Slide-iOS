@@ -26,6 +26,11 @@ Push a new beta build to TestFlight
 fastlane ios beta
 ```
 
+### ios beta14
+```
+fastlane ios beta14
+```
+
 
 ----
 

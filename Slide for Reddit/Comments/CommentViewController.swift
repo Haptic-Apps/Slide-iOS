@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 12/30/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import AudioToolbox.AudioServices
 import MaterialComponents.MDCActivityIndicator

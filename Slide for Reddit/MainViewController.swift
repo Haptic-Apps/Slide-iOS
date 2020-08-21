@@ -25,7 +25,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     public static var needsRestart = false
     public static var needsReTheme = false
     public var toolbar: UIView?
-    var tabBar = MDCTabBar()
+    var tabBar: PagingTitleCollectionView!
     var subs: UIView?
     var selected = false
 
@@ -68,6 +68,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     var menuB = UIBarButtonItem()
     var drawerButton = UIImageView()
+    
+    override var shouldAutomaticallyForwardAppearanceMethods: Bool {
+        return true
+    }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
@@ -88,8 +92,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
     var alertController: UIAlertController?
     var tempToken: OAuth2Token?
-
-    var menuNav: SubredditToolbarSearchViewController?
 
     var currentTitle = "Slide"
 
@@ -120,7 +122,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
             
-            navigationItem.rightBarButtonItems = [sortB, readLaterB]
+            navigationItem.rightBarButtonItems = [sortB]
             doLeftItem()
 
         } else {
@@ -331,10 +333,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func finalizeSetup(_ subs: [String]) {
         Subscriptions.set(name: (tempToken?.name)!, subs: subs, completion: {
-            self.menuNav?.view.removeFromSuperview()
-            self.menuNav?.backgroundView.removeFromSuperview()
-            self.menuNav?.removeFromParent()
-            self.menuNav = nil
             self.hardReset()
         })
     }
@@ -343,40 +341,39 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if !SettingValues.subredditBar {
             return
         }
-        tabBar.removeFromSuperview()
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 48))
-        tabBar.itemAppearance = .titles
-        
-        tabBar.selectedItemTintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
-        tabBar.unselectedItemTintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor.withAlphaComponent(0.45) : UIColor.white.withAlphaComponent(0.45)
-        
-        tabBar.selectedItemTitleFont = UIFont.boldSystemFont(ofSize: 14)
-        tabBar.unselectedItemTitleFont = UIFont.boldSystemFont(ofSize: 14)
-        
-        tabBar.items = subs.enumerated().map { index, source in
-            return UITabBarItem(title: source, image: nil, tag: index)
-        }
-        tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
-        tabBar.selectionIndicatorTemplate = IndicatorTemplate()
-        tabBar.delegate = self
-        tabBar.inkColor = UIColor.clear
-        tabBar.selectedItem = tabBar.items[0]
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: subs.isEmpty ? "NONE" : subs[0])
-        tabBar.backgroundColor = .clear
-        tabBar.sizeToFit()
+        let oldOffset = tabBar?.collectionView.contentOffset ?? CGPoint.zero
+        tabBar?.removeFromSuperview()
+        tabBar = PagingTitleCollectionView(withSubreddits: subs, delegate: self)
         //self.viewToMux = self.tabBar
         self.navigationItem.titleView = tabBar
-        
-        for item in tabBar.items {
-            if item.title == currentTitle {
-                tabBar.setSelectedItem(item, animated: false)
+        tabBar.sizeToFit()
+        tabBar.collectionView.setNeedsLayout()
+        tabBar.collectionView.setNeedsDisplay()
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.require(toFail: tabBar.collectionView.panGestureRecognizer)
+        }
+        matchScroll(scrollView: tabBar.collectionView)
+        for view in self.view.subviews {
+            if !(view is UICollectionView) {
+                if let scrollView = view as? UIScrollView {
+                    tabBar.parentScroll = scrollView
+                }
             }
         }
+        tabBar.collectionView.contentOffset = oldOffset
     }
     
     func didChooseSub(_ gesture: UITapGestureRecognizer) {
         let sub = gesture.view!.tag
         goToSubreddit(index: sub)
+    }
+    
+    func doToolbarOffset() {
+        var currentBackgroundOffset = tabBar.collectionView.contentOffset
+        var frameOffset = (tabBar.frame.origin.x / 2) - ((tabBar.frame.maxX - tabBar.frame.size.width) / 2)
+        currentBackgroundOffset.x = frameOffset + ((tabBar.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * CGFloat(currentIndex)
+        self.tabBar?.collectionView.contentOffset = currentBackgroundOffset
+        print("Set offset \(currentBackgroundOffset.x)")
     }
     
     func goToSubreddit(index: Int) {
@@ -536,7 +533,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func screenEdgeSwiped() {
         switch SettingValues.sideGesture {
         case .SUBS:
-            menuNav?.expand()
+            if self.viewControllers != nil && self.viewControllers!.count > 0 {
+                if let vc = self.viewControllers?[0] as? SingleSubredditViewController {
+                    vc.menuNav?.expand()
+                }
+            }
         case .INBOX:
             self.showCurrentAccountMenu(nil)
         case .POST:
@@ -666,16 +667,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     public func viewWillAppearActions(override: Bool = false) {
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
     
     func hardReset(soft: Bool = false) {
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
     }
 
     func addAccount(register: Bool) {
@@ -748,7 +741,7 @@ extension MainViewController: UIPageViewControllerDataSource {
         
         return SingleSubredditViewController(subName: finalSubs[previousIndex], parent: self)
     }
-    
+        
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewControllerIndex = finalSubs.firstIndex(of: (viewController as! SingleSubredditViewController).sub) else {

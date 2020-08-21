@@ -8,6 +8,7 @@
 
 import Anchorage
 import AVKit
+import RealmSwift
 import RLBAlertsPickers
 import SDCAlertView
 import SDWebImage
@@ -21,13 +22,18 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     var bottomScroll = UIScrollView()
     var failureCallback: ((_ url: URL) -> Void)?
     var albumHash: String = ""
+    var galleryItems: List<String> = List<String>()
     
-    public init(urlB: URL) {
+    init(urlB: URL) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        
         self.baseURL = urlB
     }
     
+    init(galleryItems: List<String>) {
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        self.galleryItems = galleryItems
+    }
+
     func cutEnds(s: String) -> String {
         if s.endsWith("/") {
             return s.substring(0, length: s.length - 1)
@@ -209,7 +215,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        self.view.backgroundColor = UIColor.clear
+        self.view.backgroundColor = UIColor.black
         setNeedsStatusBarAppearanceUpdate()
     }
 
@@ -228,7 +234,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        view.backgroundColor = UIColor.black
         self.navigationController?.view.backgroundColor = UIColor.clear
         
         let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 5 + (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
@@ -250,7 +256,6 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         spinnerIndicator.center = self.view.center
         spinnerIndicator.color = UIColor.white
         self.view.addSubview(spinnerIndicator)
-        spinnerIndicator.startAnimating()
         
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
@@ -259,34 +264,66 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.horizontalAnchors == self.view.horizontalAnchors
         navigationBar.heightAnchor == 56
         
-        var url = baseURL!.absoluteString
-        if url.contains("/layout/") {
-            url = url.substring(0, length: (url.indexOf("/layout")!))
-        }
-        if url.contains("/new") {
-            url = url.substring(0, length: (url.indexOf("/new")!))
-        }
-        var rawDat = cutEnds(s: url)
+        if galleryItems.isEmpty {
+            spinnerIndicator.startAnimating()
+            var url = baseURL!.absoluteString
+            if url.contains("/layout/") {
+                url = url.substring(0, length: (url.indexOf("/layout")!))
+            }
+            if url.contains("/new") {
+                url = url.substring(0, length: (url.indexOf("/new")!))
+            }
+            var rawDat = cutEnds(s: url)
 
-        if rawDat.endsWith("/") {
-            rawDat = rawDat.substring(0, length: rawDat.length - 1)
-        }
-        
-        if rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4 {
-            rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "")
-        }
+            if rawDat.endsWith("/") {
+                rawDat = rawDat.substring(0, length: rawDat.length - 1)
+            }
+            
+            if rawDat.contains("/") && (rawDat.length - (rawDat.lastIndexOf("/")!+1)) < 4 {
+                rawDat = rawDat.replacingOccurrences(of: rawDat.substring(rawDat.lastIndexOf("/")!, length: rawDat.length - (rawDat.lastIndexOf("/")!+1)), with: "")
+            }
 
-        if rawDat.contains("?") {
-            rawDat = rawDat.substring(0, length: rawDat.indexOf("?")!)
-        }
-        
-        if rawDat.contains(",") {
-            let index = rawDat.lastIndexOf("/") ?? -1
-            let split = rawDat.substring(index + 1, length: rawDat.length - index - 1)
-            splitHashes(split)
+            if rawDat.contains("?") {
+                rawDat = rawDat.substring(0, length: rawDat.indexOf("?")!)
+            }
+            
+            if rawDat.contains(",") {
+                let index = rawDat.lastIndexOf("/") ?? -1
+                let split = rawDat.substring(index + 1, length: rawDat.length - index - 1)
+                splitHashes(split)
+            } else {
+                albumHash = getHash(sS: rawDat)
+                getAlbum(hash: albumHash)
+            }
         } else {
-            albumHash = getHash(sS: rawDat)
-            getAlbum(hash: albumHash)
+            for imageRaw in galleryItems {
+                let image = imageRaw.unescapeHTML
+                self.thumbs.append(URL(string: image)!)
+                let urlStringkey = image
+                self.urlStringKeys.append(urlStringkey)
+                self.embeddableMediaDataCache[urlStringkey] = EmbeddableMediaDataModel(
+                    baseURL: URL.init(string: urlStringkey)!,
+                    lqURL: URL.init(string: image),
+                    text: image.description,
+                    inAlbum: true,
+                    buttons: true
+                )
+            }
+            let firstViewController = ModalMediaViewController(model: self.embeddableMediaDataCache[self.urlStringKeys[0]]!)
+            
+            self.setViewControllers([firstViewController],
+                                    direction: .forward,
+                                    animated: true,
+                                    completion: nil)
+            self.navItem?.title = "\(self.urlStringKeys.firstIndex(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
+            let overview = UIButton.init(type: .custom)
+            overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
+            overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
+            overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            let gridB = UIBarButtonItem.init(customView: overview)
+
+            self.navItem?.rightBarButtonItem = gridB
+
         }
     }
     

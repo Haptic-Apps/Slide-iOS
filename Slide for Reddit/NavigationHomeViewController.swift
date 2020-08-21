@@ -47,7 +47,7 @@ class NavigationHomeViewController: UIViewController {
     }
 
     var multiButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "compact")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
         $0.accessibilityLabel = "Create a Multireddit"
     }
@@ -199,11 +199,10 @@ class NavigationHomeViewController: UIViewController {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
 
-        navigationController?.setNavigationBarHidden(false, animated: false)
-        navigationController?.setToolbarHidden(true, animated: false)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.setToolbarHidden(false, animated: false)
+        self.navigationController?.toolbar.isTranslucent = false
+        self.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
         self.splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
         
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
@@ -214,6 +213,8 @@ class NavigationHomeViewController: UIViewController {
         if SettingValues.autoKeyboard {
             //TODO enable this? searchBar.becomeFirstResponder()
         }
+        splitViewController?.navigationItem.hidesBackButton = true
+        navigationController?.navigationItem.hidesBackButton = true
     }
 
     override func viewDidLayoutSubviews() {
@@ -549,7 +550,18 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
 extension NavigationHomeViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        tableView.setContentOffset(searchBar.frame.origin, animated: true)
+        // Scroll the search bar to the top
+        if let origin = searchBar.superview {
+            let searchBarStartPoint = origin.convert(searchBar.frame.origin, to: tableView)
+            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                /*
+                 Note: Setting setContentOffset's `animated` to true is making the content offset
+                 change happen incorrectly when a keyboard is also being presented. We can still
+                 animate it by wrapping it in an animate block, as we've done here.
+                 */
+                self.tableView.setContentOffset(CGPoint(x: 0, y: searchBarStartPoint.y), animated: false)
+            })
+        }
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange textSearched: String) {
@@ -660,13 +672,17 @@ extension NavigationHomeViewController: UISearchBarDelegate {
 
 extension NavigationHomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOffset.y
-        if self.searchBar.text?.isEmpty() ?? false {
-            //TODO this?
-            //self.tableView.endEditing(true)
-            //searchBar.resignFirstResponder()
-        }
+        // Any scrolling
         lastY = scrollView.contentOffset.y
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        // User-initiated scrolling
+
+        // Hide the keyboard if it's out
+        //TODO this?
+        //self.tableView.endEditing(true)
+        searchBar.resignFirstResponder()
     }
 }
 
@@ -808,7 +824,7 @@ class CurrentAccountHeaderView: UIView {
         $0.accessibilityLabel = "Inbox"
     }
     var switchAccountsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: SFSymbol.personAndPersonFill, overrideString: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: SFSymbol.person2Fill, overrideString: "user")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.baseAccent), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Switch Accounts"
     }
@@ -890,9 +906,10 @@ class CurrentAccountHeaderView: UIView {
         let leftItem = UIBarButtonItem(customView: upperButtonStack)
         let rightItem = UIBarButtonItem(customView: settingsButton)
         let forwardItem = UIBarButtonItem(customView: forwardButton)
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
-        parent.navigationItem.leftBarButtonItem = leftItem
-        parent.navigationItem.rightBarButtonItems = [forwardItem, rightItem]
+        parent.toolbarItems = [leftItem, space, rightItem]
+        //parent.toolbarItems.rightBarButtonItems = [forwardItem, rightItem]
 
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
@@ -1022,9 +1039,9 @@ extension CurrentAccountHeaderView {
             let day = Calendar.current.ordinality(of: .day, in: .month, for: Date()) == Calendar.current.ordinality(of: .day, in: .month, for: creationDate as Date)
             let month = Calendar.current.ordinality(of: .month, in: .year, for: Date()) == Calendar.current.ordinality(of: .month, in: .year, for: creationDate as Date)
             if day && month {
-                accountAgeLabel.text = "🍰 Created \(creationDateString) 🍰"
+                accountAgeLabel.text = "🍰 Created \(creationDateString) 🍰\n\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0)) Karma"
             } else {
-                accountAgeLabel.text = "Created \(creationDateString)"
+                accountAgeLabel.text = "Created \(creationDateString)\n\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0)) Karma"
             }
             setLoadingState(false)
         } else {
@@ -1196,6 +1213,8 @@ class AccountShortcutsView: UIView {
                     }
                 }
                 $0.heightAnchor >= 50
+                $0.backgroundColor = ColorUtil.theme.foregroundColor
+                $0.contentView.backgroundColor = ColorUtil.theme.foregroundColor
                 $0.accessoryType = .disclosureIndicator
             })
         }

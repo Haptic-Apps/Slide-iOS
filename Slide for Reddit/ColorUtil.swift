@@ -125,6 +125,19 @@ public class ColorUtil {
         }
     }
     
+    public static func getNavColorForSub(sub: String, _ header: Bool = false) -> UIColor? {
+        if header && SettingValues.reduceColor {
+            return nil
+        }
+        if let color = Subscriptions.color(for: sub) {
+            return color
+        } else if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
+            return color
+        } else {
+            return nil
+        }
+    }
+
     public static func matchTraitCollection() {
         print("Switching match trait")
         if shouldBeNight() && theme.displayName != SettingValues.nightTheme {
@@ -227,11 +240,10 @@ public class ColorUtil {
     }
 
     public static func accentColorForSub(sub: String) -> UIColor {
-        let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
-        if color == nil {
-            return baseAccent
+        if let color = UserDefaults.standard.colorForKey(key: "accent+" + sub) {
+            return color
         } else {
-            return color!
+            return baseAccent
         }
     }
     

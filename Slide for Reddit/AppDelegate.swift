@@ -49,6 +49,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
 
+    /**
+     Corresponds to USR_DOMAIN in info.plist, which derives its value
+     from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+     */
+    lazy var USR_DOMAIN: String = {
+        return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }()
+
     let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
         if oldSchemaVersion < 13 {
             /*
@@ -137,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         colorsFile = documentDirectory.appending("/subcolors.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 26,
+                schemaVersion: 28,
                 migrationBlock: migrationBlock,
                 deleteRealmIfMigrationNeeded: true)
 
@@ -344,12 +352,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
            
-        _ = resetStack()
-        /* TODO enable new ios 14 layout if #available(iOS 14, *) {
-            resetStack()
+        if #available(iOS 14, *) {
+            _ = resetStackNew()
         } else {
-            resetStack()
-        }*/
+            _ = resetStack()
+        }
         
         window?.makeKeyAndVisible()
         
@@ -458,7 +465,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                
+                splitViewController.maximumPrimaryColumnWidth = 0.4 * UIScreen.main.bounds.width
+
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                 let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
                 swipeNav.pushViewController(main, animated: false)
@@ -569,7 +577,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                 splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
 
-                splitViewController.setViewController(main, for: .secondary)
+                splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: main), for: .secondary)
                 window.rootViewController = splitViewController
                 self.window = window
                 window.makeKeyAndVisible()
@@ -586,7 +594,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                 splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
 
-                splitViewController.setViewController(main, for: .supplementary)
+                splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: main), for: .supplementary)
                 splitViewController.setViewController(PlaceholderViewController(), for: .secondary)
                 window.rootViewController = splitViewController
                 self.window = window
@@ -594,14 +602,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             }
         } else {
-            let splitViewController = UISplitViewController(style: .doubleColumn)
+            let splitViewController = UISplitViewController()
             splitViewController.preferredDisplayMode = .primaryOverlay
             splitViewController.presentsWithGesture = true
-            splitViewController.preferredSplitBehavior = .overlay
             
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
-            splitViewController.setViewController(main, for: .secondary)
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
+            
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
@@ -1000,7 +1007,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             print("Saving to iCloud \(key)")
-            CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase.save(collectionsRecord) { (_, error) in
+            CKContainer(identifier: "iCloud.\(USR_DOMAIN).redditslide").privateCloudDatabase.save(collectionsRecord) { (_, error) in
                 if error != nil {
                     print("iCloud error")
                     print(error.debugDescription)
@@ -1012,7 +1019,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func fetchFromiCloud(_ key: String, dictionaryToAppend: NSMutableDictionary, completion: ((_ record: CKRecord) -> Void)? = nil) {
-        let privateDatabase = CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase
+        let privateDatabase = CKContainer(identifier: "iCloud.\(USR_DOMAIN).redditslide").privateCloudDatabase
         
         let query = CKQuery(recordType: CKRecord.RecordType(stringLiteral: key), predicate: NSPredicate(value: true))
         print("Reading from iCloud")

@@ -47,7 +47,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: link!)
         }
     }
 
@@ -512,7 +512,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             sound = UIButton(type: .custom)
             sound.isUserInteractionEnabled = true
             if SettingValues.muteInlineVideos {
-                sound.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+                sound.setImage(UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
                 sound.isHidden = true
             } else {
                 sound.isHidden = true
@@ -753,17 +753,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
     }
     
+    var originalPos = CGFloat.zero
+    var originalLocation = CGFloat.zero
+    var currentProgress = Float(0)
+    var diff = CGFloat.zero
+    var action = SettingValues.SubmissionAction.UPVOTE
+    var tiConstraints = [NSLayoutConstraint]()
+    
     @objc func handlePan(_ sender: UIPanGestureRecognizer) {
-        if sender.state == .began || progressBar == nil {
+        if sender.state == .began || typeImage == nil {
             dragCancelled = false
             direction = 0
-            progressBar = ProgressBarView(frame: contentView.bounds).then {
-                $0.accessibilityIdentifier = "Progress Bar"
-                if !SettingValues.flatMode {
-                    $0.layer.cornerRadius = 15
-                    $0.clipsToBounds = true
-                }
-            }
+            originalLocation = sender.location(in: self).x
+            originalPos = self.contentView.frame.origin.x
+            diff = self.contentView.frame.width - originalLocation
             typeImage = UIImageView().then {
                 $0.accessibilityIdentifier = "Action type"
                 $0.layer.cornerRadius = 22.5
@@ -775,95 +778,203 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if dragCancelled {
+            sender.cancel()
             return
         }
-        let xVelocity = sender.velocity(in: contentView).x
+        let xVelocity = sender.velocity(in: self).x
         if sender.state != .ended && sender.state != .began && sender.state != .cancelled {
             guard previousProgress != 1 else { return }
-            let posx = sender.location(in: contentView).x
+            let posx = sender.location(in: self).x
+            if direction == -1 && self.contentView.frame.origin.x > originalPos {
+                if SettingValues.submissionGestureMode == .HALF {
+                    return
+                }
+                if getFirstAction(left: false) != .NONE {
+                    direction = 0
+                    diff = self.contentView.frame.width - originalLocation
+                    NSLayoutConstraint.deactivate(tiConstraints)
+                    tiConstraints = batch {
+                        typeImage.leftAnchor == self.leftAnchor + 4
+                    }
+                }
+            } else if direction == 1 && self.contentView.frame.origin.x < originalPos {
+                if getFirstAction(left: true) != .NONE {
+                    direction = 0
+                    diff = self.contentView.frame.width - originalLocation
+                    NSLayoutConstraint.deactivate(tiConstraints)
+                    
+                    //TODO: Bug here, this is triggering on first left-to-right swipe for some reason, doesn't affect comments
+                    tiConstraints = batch {
+                        typeImage.rightAnchor == self.rightAnchor - 4
+                    }
+                }
+            }
             
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
-                    progressBar.setMode(type: SettingValues.submissionActionRight, flip: false)
-                    typeImage.image = UIImage(named: SettingValues.submissionActionRight.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
-                    typeImage.backgroundColor = SettingValues.submissionActionRight.getColor()
+                    diff = self.contentView.frame.width - diff
+                    action = getFirstAction(left: true)
+                    if action == .NONE {
+                        sender.cancel()
+                        return
+                    }
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.isHidden = true
+                    UIView.animate(withDuration: 0.1) {
+                        self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                    }
                 } else {
                     direction = -1
-                    progressBar.setMode(type: SettingValues.submissionActionLeft, flip: true)
-                    typeImage.image = UIImage(named: SettingValues.submissionActionLeft.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
-                    typeImage.backgroundColor = SettingValues.submissionActionLeft.getColor()
+                    action = getFirstAction(left: false)
+                    diff = self.contentView.frame.width - originalLocation
+
+                    if action == .NONE {
+                        sender.cancel()
+                        return
+                    }
+                    typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    typeImage.isHidden = true
+                    UIView.animate(withDuration: 0.1) {
+                        self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                    }
                 }
             }
             
+            let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx - diff
+            
+            self.contentView.frame.origin.x = posx - originalLocation
             if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
                 dragCancelled = true
                 sender.cancel()
                 return
-            } else if progressBar.superview == nil {
-                contentView.addSubviews(typeImage, progressBar)
-                contentView.bringSubviewToFront(typeImage)
-                typeImage.centerAnchors == self.contentView.centerAnchors
+            } else if typeImage.superview == nil {
+                self.addSubviews(typeImage)
+                self.bringSubviewToFront(typeImage)
+                print(direction)
+                if direction == 1 {
+                    tiConstraints = batch {
+                        typeImage.leftAnchor == self.leftAnchor + 4
+                    }
+                } else {
+                    tiConstraints = batch {
+                        typeImage.rightAnchor == self.rightAnchor - 4
+                    }
+                }
+
+                typeImage.centerYAnchor == self.centerYAnchor
                 typeImage.heightAnchor == 45
                 typeImage.widthAnchor == 45
             }
             
-            let currentTranslation = direction == -1 ? 0 - (contentView.bounds.size.width - posx) : posx
+            let progress = Float(min(abs(currentTranslation) / (self.contentView.bounds.width), 1))
             
-            CATransaction.begin()
-            CATransaction.setDisableActions(true)
-            progressBar.progress = Float(min(abs(currentTranslation) / (contentView.bounds.width), 1))
-            CATransaction.commit()
-
-            let currentProgress = progressBar.progress
-            if currentProgress >= 0.5 && previousProgress < 0.5 || sender.state == .ended {
+            if progress > 0.1 && previousProgress <= 0.1 {
+                typeImage.alpha = 0
+                UIView.animate(withDuration: 0.2) {
+                    self.typeImage.alpha = 1
+                }
+                UIView.animate(withDuration: 0.2) {
+                    self.backgroundColor = self.action.getColor()
+                }
+            } else if progress < 0.1  && previousProgress >= 0.1 {
+                typeImage.alpha = 1
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.typeImage.alpha = 0
+                }, completion: { (_) in
+                })
+                UIView.animate(withDuration: 0.2) {
+                    self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                }
+            } else if progress > 0.35 && previousProgress <= 0.35 && isTwoForDirection(left: direction == 1) {
+                action = getSecondAction(left: direction == 1)
                 if #available(iOS 10.0, *) {
                     HapticUtility.hapticActionStrong()
                 }
+                self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((0.1) / 0.25), y: CGFloat((0.1) / 0.25))
+                UIView.animate(withDuration: 0.2) {
+                    self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat(1), y: CGFloat(1))
+                    self.typeImage.image = UIImage(named: self.action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    self.backgroundColor = self.action.getColor()
+                }
+            } else if progress < 0.35 && previousProgress >= 0.35 && isTwoForDirection(left: direction == 1) {
+                action = getFirstAction(left: direction == 1)
+                if #available(iOS 10.0, *) {
+                    HapticUtility.hapticActionStrong()
+                }
+                self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat((0.1) / 0.25), y: CGFloat((0.1) / 0.25))
+                UIView.animate(withDuration: 0.2) {
+                    self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat(1), y: CGFloat(1))
+                    self.typeImage.image = UIImage(named: self.action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
+                    self.backgroundColor = self.action.getColor()
+                }
             }
-            typeImage.alpha = CGFloat(currentProgress)
+            if progress > 0.1 && progress <= 0.25 {
+                typeImage.alpha = 1
+                typeImage.isHidden = false
+                var prog = (progress * 1.2) / 0.25
+                if prog > 1 {
+                    prog = 1
+                }
+                UIView.animate(withDuration: 0.1) {
+                    self.typeImage.transform = CGAffineTransform.init(scaleX: CGFloat(prog), y: CGFloat(prog))
+                }
+            }
+            
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            CATransaction.commit()
+            currentProgress = progress
+            if (isTwoForDirection(left: direction == 1) && ((currentProgress >= 0.1 && previousProgress < 0.1) || (currentProgress <= 0.1 && previousProgress > 0.1))) || (!isTwoForDirection(left: direction == 1) && currentProgress >= 0.25 && previousProgress < 0.25) || sender.state == .ended {
+                if #available(iOS 10.0, *) {
+                    HapticUtility.hapticActionWeak()
+                }
+            }
             previousTranslation = currentTranslation
             previousProgress = currentProgress
-        } else if sender.state == .ended && (progressBar.progress >= 0.5 || ((xVelocity > 0 && direction == 1 || xVelocity < 0 && direction == -1) && abs(xVelocity) > 1000)) {
-            self.progressBar.progressLayer.strokeEnd = 1
-            doAction(item: progressBar.progressType!)
+        } else if sender.state == .ended && ((currentProgress >= (isTwoForDirection(left: direction == 1) ? 0.1 : 0.25) && !((xVelocity > 300 && direction == -1) || (xVelocity < -300 && direction == 1))) || (((xVelocity > 0 && direction == 1) || (xVelocity < 0 && direction == -1)) && abs(xVelocity) > 1000)) {
+            doAction(item: self.action)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
-                self.progressBar.alpha = 0
+                self.backgroundColor = ColorUtil.theme.backgroundColor
                 self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                self.contentView.frame.origin.x = self.originalPos
             }, completion: { (_) in
-                self.progressBar.removeFromSuperview()
                 self.typeImage.removeFromSuperview()
+                self.typeImage = nil
             })
         } else if sender.state != .began {
-            if self.progressBar.superview == nil {
-                return
-            }
-            self.progressBar.progressLayer.strokeEnd = 0
-            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-                self.progressBar.alpha = 0
-                self.typeImage.alpha = 0
-            }, completion: { (_) in
-                self.progressBar.removeFromSuperview()
-                self.typeImage.removeFromSuperview()
-            })
+            dragCancelled = true
         }
-    
+
         if dragCancelled || sender.state == .cancelled {
-            if self.progressBar.superview == nil {
+            if self.typeImage.superview == nil {
                 return
             }
-            self.progressBar.progressLayer.strokeEnd = 0
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
-                self.progressBar.alpha = 0
+                self.contentView.frame.origin.x = self.originalPos
+                self.backgroundColor = ColorUtil.theme.backgroundColor
             }, completion: { (_) in
-                self.progressBar.removeFromSuperview()
                 self.typeImage.removeFromSuperview()
+                self.typeImage = nil
+
             })
         }
     }
     
+    func isTwoForDirection(left: Bool) -> Bool {
+        return false
+    }
+
+    func getFirstAction(left: Bool) -> SettingValues.SubmissionAction {
+        return left ? SettingValues.submissionActionRight : SettingValues.submissionActionLeft
+    }
+    
+    func getSecondAction(left: Bool) -> SettingValues.SubmissionAction {
+        return .NONE
+    }
+
     func updateProgress(_ oldPercent: CGFloat, _ total: String, buffering: Bool) {
         var percent = oldPercent
         if percent == -1 {
@@ -942,6 +1053,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
         
+        self.clipsToBounds = true
         if videoView != nil {
             progressDot.widthAnchor == 20
             progressDot.heightAnchor == 20
@@ -1587,7 +1699,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-                print(submission.smallPreview)
                 thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web)
             }
         } else {
@@ -1712,6 +1823,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             switch type {
             case .ALBUM:
                 text = ("Album")
+            case .REDDIT_GALLERY:
+                text = ("Gallery")
             case .EXTERNAL:
                 text = "External Link"
             case .LINK, .EMBEDDED, .NONE:
@@ -2227,14 +2340,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.videoView?.player?.isMuted = false
             
             UIView.animate(withDuration: 0.5, animations: {
-                self.sound.setImage(UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(), for: UIControl.State.normal)
+                self.sound.setImage(UIImage(sfString: SFSymbol.speaker2Fill, overrideString: "audio")?.navIcon(), for: UIControl.State.normal)
             }, completion: nil)
         } else {
             try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
             self.videoView?.player?.isMuted = true
             
             UIView.animate(withDuration: 0.5, animations: {
-                self.sound.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
+                self.sound.setImage(UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
             }, completion: nil)
         }
     }
@@ -2479,6 +2592,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     override func layoutSubviews() {
+        if typeImage != nil {
+            return
+        }
         super.layoutSubviews()
         var topmargin = 0
         var bottommargin = 2
@@ -2521,7 +2637,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 self.title.alpha = 1
             }
-        if let url = link?.url, let controller = parentViewController?.getControllerForUrl(baseUrl: url) {
+        if let url = link?.url, let controller = parentViewController?.getControllerForUrl(baseUrl: url, link: link!) {
                 return controller
             }
         //}
@@ -2746,7 +2862,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
-            (parentViewController)?.setLink(lnk: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: link.width, height: link.height), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
+            (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: link.width, height: link.height), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
                 }
@@ -3017,7 +3133,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     if vc is WebsiteViewController || vc is SFHideSafariViewController {
                         self.previewedVC = nil
                         if let url = self.previewedURL {
-                            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+                            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: self.link!)
                         }
                     } else {
                         if self.parentViewController != nil && (vc is AlbumViewController || vc is ModalMediaViewController) {
@@ -3157,7 +3273,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
-            if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url) {
+            if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url, link: self.link!) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
                     return SwipeForwardNavigationController(rootViewController: vc)
@@ -3335,7 +3451,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
 
         // Create a UIAction for sharing
         var buttons = [UIAction]()
-        let create = UIAction(title: "Create a collection", image: UIImage(sfString: SFSymbol.folderBadgePlusFill, overrideString: "add")) { _ in
+        let create = UIAction(title: "Create a collection", image: UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "add")) { _ in
             let bottom = DragDownAlertMenu(title: "Create a collection", subtitle: "", icon: nil)
             bottom.addTextInput(title: "Save", icon: nil, action: {
                 if let title = bottom.getText() {

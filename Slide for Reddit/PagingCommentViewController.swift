@@ -77,11 +77,13 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var first = true
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.dataSource = self
+        if SettingValues.commentGesturesMode != .FULL {
+            self.dataSource = self
+        }
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
         
-        let firstViewController: UIViewController
+        let firstViewController: CommentViewController
         let sub = self.vCs[0]
         if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
             firstViewController = PagingCommentViewController.savedComment!
@@ -91,26 +93,26 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
         first = false
         
-        for view in view.subviews {
-            if view is UIScrollView {
-                let scrollView = view as! UIScrollView
-                scrollView.delegate = self
-                if scrollView.isPagingEnabled && SettingValues.commentGesturesMode != .NONE {
-                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                }
-                scrollView.panGestureRecognizer.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-            }
+        if !firstViewController.loaded {
+            PagingCommentViewController.savedComment = firstViewController
+            firstViewController.forceLoad = true
         }
-        
-        if !(firstViewController as! CommentViewController).loaded {
-            PagingCommentViewController.savedComment = firstViewController as? CommentViewController
-            (firstViewController as! CommentViewController).forceLoad = true
+        if SettingValues.commentGesturesMode == .FULL {
+            for view in self.view.subviews {
+                if !(view is UICollectionView) {
+                    if let scrollView = view as? UIScrollView {
+                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                    }
+                }
+            }
         }
 
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,
-                           completion: nil)
+                           completion: {(_) in
+                            firstViewController.setupSwipeGesture()
+                           })
     }
     
     //From https://stackoverflow.com/a/25167681/3697225
@@ -151,10 +153,16 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                 break
             }
         }
+        if currentIndex == 0 {
+            (self.viewControllers?.first as? CommentViewController)?.setupSwipeGesture()
+        }
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        if SettingValues.commentGesturesMode == .FULL {
+            return nil
+        }
         let id = (viewController as! CommentViewController).submission!.getId()
         var viewControllerIndex = -1
         for item in vCs {
@@ -178,7 +186,8 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             return nil
         }
         
-        return CommentViewController(submission: vCs[previousIndex], single: false)
+        let comment = CommentViewController(submission: vCs[previousIndex], single: false)
+        return comment
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -210,8 +219,11 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         guard orderedViewControllersCount > nextIndex else {
             return nil
         }
-        
-        return CommentViewController(submission: vCs[nextIndex], single: false)
+        let comment = CommentViewController(submission: vCs[nextIndex], single: false)
+        if nextIndex == 0 {
+            comment.setupSwipeGesture()
+        }
+        return comment
     }
 
 }

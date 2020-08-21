@@ -25,9 +25,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     var isScrollingDown = true
     var emptyStateView = EmptyStateView()
+    var numberFiltered = 0
     
     var lastScrollDirectionWasDown = false
-    
+    var fullWidthBackGestureRecognizer: UIGestureRecognizer!
+    var cellGestureRecognizer: UIPanGestureRecognizer!
+
     func getTableView() -> UICollectionView {
         return tableView
     }
@@ -72,7 +75,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 }.count
     }
     
-    var panGesture: UIPanGestureRecognizer!
     var translatingCell: LinkCellView?
 
     var times = 0
@@ -177,6 +179,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         return true
     }
     
+    @objc func showDrawer(_ sender: AnyObject) {
+        menuNav?.expand()
+    }
+    
+    @objc func showMenu(_ sender: AnyObject) {
+        showMore(sender)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
@@ -193,15 +203,20 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         tableView.verticalAnchors == view.verticalAnchors
         tableView.horizontalAnchors == view.safeHorizontalAnchors
 
+        if SettingValues.submissionGestureMode != .NONE {
+            setupGestures()
+        }
+        
+        /*Disable for now
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
         panGesture.direction = .horizontal
         panGesture.delegate = self
-        self.tableView.addGestureRecognizer(panGesture)
+        self.tableView.addGestureRecognizer(panGesture)*/
         
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
         if single && !isModal && navigationController != nil {
-            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+            //panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         } else if isModal {
             navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         }
@@ -264,7 +279,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        navigationController?.setToolbarHidden(true, animated: false)
+
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
         if isModal {
@@ -275,7 +291,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
-
+        
         server?.stop()
         loop?.stop()
 
@@ -337,7 +353,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         menu.heightAnchor == 56
         menu.rightAnchor == toolbar!.rightAnchor
         UIView.animate(withDuration: 0.25) {
-            self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
+            self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
             self.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
             self.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
         }
@@ -366,6 +382,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
             toolbar!.topAnchor == menuNav!.view.topAnchor
             toolbar!.heightAnchor == 90
+            
+            /*(var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+            if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
+                fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+                toolbar!.addGestureRecognizer(fullWidthBackGestureRecognizer)
+                if #available(iOS 13.4, *) {
+                    fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+                }
+            }*/
+
 
             self.menuNav?.setSubreddit(subreddit: sub)
             
@@ -382,8 +408,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             
             more = UIButton(type: .custom).then {
                 $0.setImage(UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-                //TODO $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-
+                $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
                 $0.accessibilityIdentifier = "Subreddit options button"
                 $0.accessibilityLabel = "Options"
                 $0.accessibilityHint = "Open subreddit options menu"
@@ -393,7 +418,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             
             menu = UIButton(type: .custom).then {
                 $0.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
-                //TODO $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
+                $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
                 $0.accessibilityIdentifier = "Nav drawer button"
                 $0.accessibilityLabel = "Navigate"
                 $0.accessibilityHint = "Open navigation drawer"
@@ -408,7 +433,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 more.topAnchor == tool.topAnchor
             }
         }
-        
+                
         UIView.animate(withDuration: 0.25) {
             self.menu.deactivateImmediateConstraints()
             self.menu.topAnchor == self.toolbar!.topAnchor
@@ -430,12 +455,19 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+<<<<<<< HEAD
         if toolbarEnabled && NetworkMonitor.shared.online {
             if single {
                 showMenuNav()
             } else {
                 parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (parentController?.menuNav?.bottomOffset ?? 64), width: parentController?.menuNav?.view.frame.width ?? 0, height: parentController?.menuNav?.view.frame.height ?? 0)
             }
+=======
+        menuNav?.configureToolbarSwipe()
+
+        if toolbarEnabled && !MainViewController.isOffline {
+            showMenuNav()
+>>>>>>> upstream/develop
             self.isToolbarHidden = false
             if fab == nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in
@@ -446,10 +478,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 }
             } else {
                 show(true)
-            }
-        } else {
-            if single {
-                navigationController?.setToolbarHidden(true, animated: false)
             }
         }
         if !links.isEmpty {
@@ -589,21 +617,21 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if single {
             hideMenuNav()
         } else {
-            if let parent = self.parentController, parent.menu.superview != nil, let topView = parent.menuNav?.topView {
-                parent.menu.deactivateImmediateConstraints()
-                parent.menu.topAnchor == topView.topAnchor - 10
-                parent.menu.widthAnchor == 56
-                parent.menu.heightAnchor == 56
-                parent.menu.leftAnchor == topView.leftAnchor
+            if let topView = self.menuNav?.topView {
+                self.menu.deactivateImmediateConstraints()
+                self.menu.topAnchor == topView.topAnchor - 10
+                self.menu.widthAnchor == 56
+                self.menu.heightAnchor == 56
+                self.menu.leftAnchor == topView.leftAnchor
                 
-                parent.more.deactivateImmediateConstraints()
-                parent.more.topAnchor == topView.topAnchor - 10
-                parent.more.widthAnchor == 56
-                parent.more.heightAnchor == 56
-                parent.more.rightAnchor == topView.rightAnchor
+                self.more.deactivateImmediateConstraints()
+                self.more.topAnchor == topView.topAnchor - 10
+                self.more.widthAnchor == 56
+                self.more.heightAnchor == 56
+                self.more.rightAnchor == topView.rightAnchor
             }
             UIView.animate(withDuration: 0.25) {
-                self.parentController?.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.parentController?.menuNav?.bottomOffset ?? 56) / 2)), width: self.parentController?.menuNav?.view.frame.width ?? 0, height: self.parentController?.menuNav?.view.frame.height ?? 0)
+                self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
                 self.parentController?.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
                 self.parentController?.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
             }
@@ -632,25 +660,23 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             showMenuNav()
         } else if !disableBottom {
             UIView.animate(withDuration: 0.25) {
-                if let parent = self.parentController {
-                    if parent.menu.superview != nil, let topView = parent.menuNav?.topView {
-                        parent.menu.deactivateImmediateConstraints()
-                        parent.menu.topAnchor == topView.topAnchor
-                        parent.menu.widthAnchor == 56
-                        parent.menu.heightAnchor == 56
-                        parent.menu.leftAnchor == topView.leftAnchor
+                if self.menu.superview != nil, let topView = self.menuNav?.topView {
+                    self.menu.deactivateImmediateConstraints()
+                    self.menu.topAnchor == topView.topAnchor
+                    self.menu.widthAnchor == 56
+                    self.menu.heightAnchor == 56
+                    self.menu.leftAnchor == topView.leftAnchor
 
-                        parent.more.deactivateImmediateConstraints()
-                        parent.more.topAnchor == topView.topAnchor
-                        parent.more.widthAnchor == 56
-                        parent.more.heightAnchor == 56
-                        parent.more.rightAnchor == topView.rightAnchor
-                    }
-
-                    parent.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (parent.menuNav?.bottomOffset ?? 0)), width: parent.menuNav?.view.frame.width ?? 0, height: parent.menuNav?.view.frame.height ?? 0)
-                    parent.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-                    parent.more.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    self.more.deactivateImmediateConstraints()
+                    self.more.topAnchor == topView.topAnchor
+                    self.more.widthAnchor == 56
+                    self.more.heightAnchor == 56
+                    self.more.rightAnchor == topView.rightAnchor
                 }
+
+                self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.view.frame.width, height: self.menuNav?.view.frame.height ?? 0)
+                self.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
+                self.more.transform = CGAffineTransform(scaleX: 1, y: 1)
             }
         }
         self.isToolbarHidden = false
@@ -714,7 +740,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if NetworkMonitor.shared.online && !SettingValues.hiddenFAB {
             self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
-            self.fab!.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            self.fab!.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
             self.fab!.layer.cornerRadius = 22.5
             self.fab!.clipsToBounds = true
@@ -946,7 +972,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
         self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
         
+<<<<<<< HEAD
         if let mainVC = self.navigationController?.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
+=======
+        let offline = MainViewController.isOffline
+
+        if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
+>>>>>>> upstream/develop
             doSortImage(mainVC.sortButton)
         }
 
@@ -1087,11 +1119,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         case .controversial:
             sortButton.setImage(UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .new:
-            sortButton.setImage(UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            sortButton.setImage(UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .rising:
             sortButton.setImage(UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .top:
-            sortButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            if #available(iOS 14, *) {
+                sortButton.setImage(UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            } else {
+                sortButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+            }
         }
     }
 
@@ -1396,11 +1432,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             case .controversial:
                 sortIcon = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .new:
-                sortIcon = UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                sortIcon = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .rising:
                 sortIcon = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
             case .top:
-                sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                if #available(iOS 14, *) {
+                    sortIcon = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                } else {
+                    sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                }
             }
             
             actionSheetController.addAction(title: link.description, icon: sortIcon, primary: sort == link) {
@@ -1414,7 +1454,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func showTimeMenu(s: LinkSortType, selector: UIView?, isDefault: UISwitch) {
         if s == .hot || s == .new || s == .rising || s == .best {
             sort = s
-            if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!single || mainVC is SplitMainViewController) {
+            if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
                 self.doSortImage(mainVC.sortButton)
             } else {
                 self.doSortImage(sortButton)
@@ -1432,7 +1472,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: nil) {
                     self.sort = s
-                    if let mainVC = self.navigationController!.viewControllers[0] as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
+                    if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
                         self.doSortImage(mainVC.sortButton)
                     } else {
                         self.doSortImage(self.sortButton)
@@ -1630,6 +1670,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         if reset {
                             self.links = []
                             self.page = 0
+                            self.numberFiltered = 0
                         }
                         let before = self.links.count
                         if self.realmListing == nil {
@@ -1649,6 +1690,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             CachedTitle.addTitle(s: newRS)
                         }
                         var values = PostFilter.filter(converted, previous: self.links, baseSubreddit: self.sub, gallery: self.isGallery).map { $0 as! RSubmission }
+                        self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
                             let pageItem = RSubmission()
                             pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
@@ -2448,7 +2490,7 @@ extension SingleSubredditViewController {
             self.refresh()
         }
 
-        alertController.addAction(title: "Gallery view", icon: UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")!.menuIcon()) {
+        alertController.addAction(title: "Gallery view", icon: UIImage(sfString: SFSymbol.photoFillOnRectangleFill, overrideString: "image")!.menuIcon()) {
             self.galleryMode()
         }
 
@@ -2566,8 +2608,8 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
                 let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nothing", for: indexPath) as! NothingHereCell
                 if links.count < 10 {
                     var title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                    title.append(NSAttributedString(string: "/n"))
-                    title.append(NSMutableAttributedString(string: "If you are unable to view new posts, check your Filter settings", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
+                    title.append(NSAttributedString(string: "\n"))
+                    title.append(NSMutableAttributedString(string: "\(numberFiltered) posts were filtered out", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
                     cell.text.attributedText = title
                 }
                 
@@ -2898,7 +2940,9 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
     }
 
     func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: true, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        if let nav = self.navigationController {
+            PostActions.showMoreMenu(cell: cell, parent: self, nav: nav, mutableList: true, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        }
     }
 
     func readLater(_ cell: LinkCellView) {
@@ -2960,50 +3004,102 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
 extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if gestureRecognizer == panGesture {
-            if !SettingValues.submissionGesturesEnabled {
-                return false
+    func setupGestures() {
+        cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
+        cellGestureRecognizer.delegate = self
+        cellGestureRecognizer.maximumNumberOfTouches = 1
+        tableView.addGestureRecognizer(cellGestureRecognizer)
+        if UIDevice.current.userInterfaceIdiom != .pad {
+            cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        }
+        if let parent = parent as? ColorMuxPagingViewController, SettingValues.subredditBar {
+            parent.requireFailureOf(cellGestureRecognizer)
+        }
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            if let interactivePop = nav.interactivePopGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePop)
             }
-            
-            if SettingValues.submissionActionLeft == .NONE && SettingValues.submissionActionRight == .NONE {
-                return false
+        } else if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            if let interactivePop = nav.interactivePopGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePop)
             }
         }
-        return true
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer.numberOfTouches == 2 {
+    func setupSwipeGesture() {
+        if SettingValues.submissionGestureMode == .FULL {
+            return
+        }
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
+            guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
+            swipe.direction = .right
+            swipe.delegate = self
+            tableView.addGestureRecognizer(swipe)
+            return
+        }
+        fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+        if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
+            fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+            fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+            if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
+                fullWidthBackGestureRecognizer.require(toFail: navGesture)
+            }
+            fullWidthBackGestureRecognizer.delegate = self
+            //parent.requireFailureOf(fullWidthBackGestureRecognizer)
+            tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            if #available(iOS 13.4, *) {
+                (fullWidthBackGestureRecognizer as! UIPanGestureRecognizer).allowedScrollTypesMask = .continuous
+            }
+        }
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return !(otherGestureRecognizer == cellGestureRecognizer && otherGestureRecognizer.state != .ended)
+    }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            let translation = panGestureRecognizer.translation(in: tableView)
+            if panGestureRecognizer == cellGestureRecognizer {
+                if abs(translation.y) >= abs(translation.x) {
+                    return false
+                }
+                if translation.x < 0 {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.submissionGestureMode == .FULL {
+                        return true
+                    }
+                } else if SettingValues.submissionGestureMode == .FULL && abs(translation.x) > abs(translation.y) {
+                    return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.1
+                }
+                return false
+            }
+            if panGestureRecognizer == fullWidthBackGestureRecognizer && translation.x >= 0 {
+                return true
+            }
+            return false
+        }
+        
+        if gestureRecognizer is UISwipeGestureRecognizer {
             return true
         }
+
         return false
     }
-
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        // Limit angle of pan gesture recognizer to avoid interfering with scrolling
-        if gestureRecognizer == panGesture {
-            if !SettingValues.submissionGesturesEnabled {
-                return false
-            }
-            
-            if SettingValues.submissionActionLeft == .NONE && SettingValues.submissionActionRight == .NONE {
-                return false
-            }
-        }
         
-        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
-            return recognizer.shouldRecognizeForAxis(.horizontal, withAngleToleranceInDegrees: 45)
+    @objc func showParentMenu(_ recognizer: UISwipeGestureRecognizer) {
+        if let parent = self.parentController as? SplitMainViewController {
+            parent.openDrawer(recognizer)
         }
-
-        return true
     }
-    
+
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
-        
         if recognizer.view != nil && recognizer.state == .began {
-            let velocity = recognizer.velocity(in: recognizer.view!).x
+            let velocity = recognizer.velocity(in: self.tableView).x
             if (velocity > 0 && SettingValues.submissionActionRight == .NONE) || (velocity < 0 && SettingValues.submissionActionLeft == .NONE) {
+                recognizer.cancel()
                 return
             }
         }
@@ -3011,12 +3107,17 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForItem(at: point)
             if indexpath == nil {
+                recognizer.cancel()
                 return
             }
             
             guard let cell = self.tableView.cellForItem(at: indexpath!) as? LinkCellView else {
+                recognizer.cancel()
                 return
             }
+            
+            tableView.panGestureRecognizer.cancel()
+
             translatingCell = cell
         }
         translatingCell?.handlePan(recognizer)
@@ -3170,6 +3271,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
     var links = [SubLinkItem]()
     var sub = ""
     var header = UIView()
+    var sort = UIView()
+    var sortImage = UIImageView()
+    var sortTitle = UILabel()
     var hasHeaderImage = false
     weak var del: SingleSubredditViewController?
     
@@ -3179,6 +3283,27 @@ public class LinksHeaderCellView: UICollectionViewCell {
         self.del = delegate
         self.hasHeaderImage = delegate.headerImage != nil
         setupViews()
+        switch del?.sort ?? LinkSortType.top {
+        case .best:
+            sortImage.image = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .hot:
+            sortImage.image = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .controversial:
+            sortImage.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .new:
+            sortImage.image = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .rising:
+            sortImage.image = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+        case .top:
+            if #available(iOS 14, *) {
+                sortImage.image = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            } else {
+                sortImage.image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            }
+        }
+        sortTitle.font = UIFont.boldSystemFont(ofSize: 14)
+        sortTitle.textColor = ColorUtil.theme.fontColor
+        sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
     }
     
     func addSubscribe(_ stack: UIStackView, _ scroll: UIScrollView) -> CGFloat {
@@ -3186,7 +3311,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
         }
         view.addTapGestureRecognizer(action: {
@@ -3212,7 +3337,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {
                 PostActions.showPostMenu(self.del!, sub: self.sub)
@@ -3232,7 +3357,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.clipsToBounds = true
             $0.layer.cornerRadius = 15
             $0.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
-            $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+            $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
             $0.addTapGestureRecognizer(action: {
                 self.del?.doDisplaySidebar()
@@ -3263,6 +3388,24 @@ public class LinksHeaderCellView: UICollectionViewCell {
             var spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
 
+            /*sort.heightAnchor == 30
+            sort.addSubviews(sortImage, sortTitle)
+            sortImage.sizeAnchors == CGSize.square(size: 25)
+            sortImage.centerYAnchor == sort.centerYAnchor
+            sortImage.leftAnchor == sort.leftAnchor + 8
+            sortTitle.leftAnchor == sortImage.rightAnchor + 8
+            sortTitle.centerYAnchor == sortImage.centerYAnchor
+            sortTitle.rightAnchor == sort.rightAnchor
+            sort.addTapGestureRecognizer {
+                self.del?.showSortMenu(self)
+            }
+            sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
+
+            var sortWidth = 25 + 8 + 8 + (sortTitle.text ?? "").size(with: sortTitle.font).width
+            sort.widthAnchor == sortWidth
+
+            buttonBase.addArrangedSubview(sort)
+            finalWidth += sortWidth + 8*/
             if Subscriptions.subreddits.contains(sub) {
                 finalWidth += self.addSubmit(buttonBase) + 8
             } else {
@@ -3280,9 +3423,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-                    $0.backgroundColor = ColorUtil.accentColorForSub(sub: sub)
+                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor
                     $0.addTapGestureRecognizer(action: {
-                        self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil)
+                        self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
                     })
                 }
                 
@@ -3300,14 +3443,14 @@ public class LinksHeaderCellView: UICollectionViewCell {
             spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
             
-            self.contentView.addSubview(scroll)
+            self.contentView.addSubviews(scroll)
             self.scroll.isUserInteractionEnabled = true
             self.contentView.isUserInteractionEnabled = true
             buttonBase.isUserInteractionEnabled = true
             
             scroll.heightAnchor == CGFloat(30)
             scroll.horizontalAnchors == self.contentView.horizontalAnchors
-            
+
             scroll.addSubview(buttonBase)
             buttonBase.heightAnchor == CGFloat(30)
             buttonBase.edgeAnchors == scroll.edgeAnchors
@@ -3338,9 +3481,11 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 scroll.topAnchor == self.header.bottomAnchor + 4
                 imageView.sd_setImage(with: del!.headerImage!)
                 header.heightAnchor == 140
+                
             } else {
                 scroll.topAnchor == self.contentView.topAnchor + 4
             }
+
             scroll.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
         }
     }

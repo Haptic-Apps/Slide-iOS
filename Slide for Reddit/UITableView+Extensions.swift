@@ -33,7 +33,7 @@ public extension UITableViewCell {
         accessoryType = .none
         backgroundColor = ColorUtil.theme.foregroundColor
         textLabel?.textColor = ColorUtil.theme.fontColor
-        layer.cornerRadius = 5
-        clipsToBounds = true
+        contentView.layer.cornerRadius = 5
+        contentView.clipsToBounds = true
     }
 }

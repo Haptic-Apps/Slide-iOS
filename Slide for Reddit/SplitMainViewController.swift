@@ -20,9 +20,8 @@ import UIKit
 import WatchConnectivity
 
 class SplitMainViewController: MainViewController {
-    override var shouldAutomaticallyForwardAppearanceMethods: Bool {
-        return true
-    }
+    
+    static var isFirst = true
 
     override func handleToolbars() {
         navigationController?.setToolbarHidden(true, animated: false)
@@ -41,21 +40,60 @@ class SplitMainViewController: MainViewController {
     }
 
     override func colorChanged(_ color: UIColor) {
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
+        tabBar?.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : color
         if SettingValues.fullyHideNavbar {
             inHeadView.backgroundColor = .clear
         }
     }
-
+    override func doProfileIcon() {
+        let account = ExpandedHitButton(type: .custom)
+        let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
+        if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
+            account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
+        } else {
+            account.setImage(accountImage, for: UIControl.State.normal)
+        }
+        account.layer.cornerRadius = 5
+        account.clipsToBounds = true
+        account.contentMode = .scaleAspectFill
+        account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
+        account.sizeAnchors == CGSize.square(size: 30)
+        accountB = UIBarButtonItem(customView: account)
+        accountB.accessibilityIdentifier = "Account button"
+        accountB.accessibilityLabel = "Account"
+        accountB.accessibilityHint = "Open account page"
+        if #available(iOS 13, *) {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            self.accountB.customView?.addInteraction(interaction)
+        }
+        didUpdate()
+    }
+    
     override func doButtons() {
         if menu.superview != nil && !MainViewController.needsReTheme {
             return
         }
+        
+        splitViewController?.navigationItem.hidesBackButton = true
+        /* Doesn't work yet if #available(iOS 14.0, *) {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                splitViewController?.showsSecondaryOnlyButton = false
+            }
+        }*/
+        navigationController?.navigationItem.hidesBackButton = true
+        
         sortButton = ExpandedHitButton(type: .custom)
         sortButton.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
         sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        
+        if viewControllers != nil && viewControllers!.count > 0 {
+            if let currentVC = viewControllers?[0] as? SingleSubredditViewController {
+                currentVC.doSortImage(sortButton)
+            }
+        }
         sortB = UIBarButtonItem.init(customView: sortButton)
 
         let account = ExpandedHitButton(type: .custom)
@@ -69,13 +107,14 @@ class SplitMainViewController: MainViewController {
         account.layer.cornerRadius = 5
         account.clipsToBounds = true
         account.contentMode = .scaleAspectFill
-        account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.sizeAnchors == CGSize.square(size: 30)
+        account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
         accountB.accessibilityHint = "Open account page"
+
         if #available(iOS 13, *) {
             let interaction = UIContextMenuInteraction(delegate: self)
             self.accountB.customView?.addInteraction(interaction)
@@ -106,6 +145,22 @@ class SplitMainViewController: MainViewController {
         }
         didUpdate()
     }
+    
+    @objc func openDrawer(_ sender: AnyObject) {
+        if self.navigationController?.viewControllers[0] is NavigationHomeViewController {
+            self.navigationController?.popViewController(animated: true)
+        } else if #available(iOS 14, *) {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.splitViewController?.show(UISplitViewController.Column.primary)
+            } else {
+                self.navigationController?.popViewController(animated: true)
+            }
+        } else {
+            UIView.animate(withDuration: 0.3) {
+                self.splitViewController?.preferredDisplayMode = .primaryOverlay
+            }
+        }
+    }
 
     override func viewDidLoad() {
         self.navToMux = self.parent?.navigationController?.navigationBar
@@ -113,7 +168,8 @@ class SplitMainViewController: MainViewController {
         self.color2 = ColorUtil.theme.foregroundColor
         
         self.restartVC()
-        
+        self.navigationController?.modalPresentationStyle = .currentContext
+
         doButtons()
         
         super.viewDidLoad()
@@ -133,6 +189,12 @@ class SplitMainViewController: MainViewController {
             if view is UIScrollView {
                 let scrollView = view as! UIScrollView
                 scrollView.delegate = self
+                
+                if SettingValues.submissionGestureMode != .FULL {
+                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 1
+                } else {
+                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+                }
                 
                 if let pop = self.parent?.navigationController?.interactivePopGestureRecognizer {
                     scrollView.panGestureRecognizer.require(toFail: pop)
@@ -184,7 +246,13 @@ class SplitMainViewController: MainViewController {
     override func doCurrentPage(_ page: Int) {
         guard page < finalSubs.count else { return }
         currentIndex = page
+
         let vc = self.viewControllers![0] as! SingleSubredditViewController
+        if currentIndex == 0 && SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
+            vc.setupSwipeGesture()
+        } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
+            vc.setupSwipeGesture()
+        }
         MainViewController.current = vc.sub
         UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
         self.currentTitle = MainViewController.current
@@ -203,24 +271,17 @@ class SplitMainViewController: MainViewController {
             }
         }
         
+        UIView.animate(withDuration: 0.4, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+            self.doToolbarOffset()
+        }, completion: { [weak self] (_)in
+            self?.dontMatch = false
+        })
+
         doLeftItem()
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
         self.parent?.navigationController?.navigationBar.layoutIfNeeded()
         
-        // Clear the menuNav's searchBar to refresh the menuNav
-        //TODO make this affect the sidebar
-        self.menuNav?.searchBar.text = nil
-        self.menuNav?.searchBar.endEditing(true)
-        
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
-        if !selected {
-            let page = finalSubs.firstIndex(of: (self.viewControllers!.first as! SingleSubredditViewController).sub)
-            if !tabBar.items.isEmpty {
-                tabBar.setSelectedItem(tabBar.items[page!], animated: true)
-            }
-        } else {
-            selected = false
-        }
+        tabBar?.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
     }
 
     override func doRetheme() {
@@ -229,7 +290,7 @@ class SplitMainViewController: MainViewController {
                 sub.reTheme()
             }
         }
-        tabBar.removeFromSuperview()
+        tabBar?.removeFromSuperview()
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
         }
@@ -270,14 +331,9 @@ class SplitMainViewController: MainViewController {
         self.parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         
-        //TODO make the sidebar do this
-        if menuNav?.tableView != nil {
-            menuNav?.tableView.reloadData()
-        }
-        
         setNeedsStatusBarAppearanceUpdate()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
@@ -291,7 +347,7 @@ class SplitMainViewController: MainViewController {
         
         if MainViewController.needsRestart {
             MainViewController.needsRestart = false
-            tabBar.removeFromSuperview()
+            tabBar?.removeFromSuperview()
             self.navigationItem.leftBarButtonItems = []
             self.navigationItem.rightBarButtonItems = []
             if SettingValues.subredditBar {
@@ -310,7 +366,11 @@ class SplitMainViewController: MainViewController {
     override func hardReset(soft: Bool = false) {
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
-            _ = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+            if #available(iOS 14, *) {
+                (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+            } else {
+                (UIApplication.shared.delegate as! AppDelegate).resetStack()
+            }
         }
     }
 
@@ -330,7 +390,12 @@ class SplitMainViewController: MainViewController {
             fatalError("Window must exist when resetting the stack!")
         }
 
-        let main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+        let main: MainViewController!
+        if #available(iOS 14, *) {
+            main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+        } else {
+            main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+        }
         (UIApplication.shared.delegate as! AppDelegate).login = main
         AccountController.addAccount(context: main, register: register)
     }
@@ -340,20 +405,24 @@ class SplitMainViewController: MainViewController {
     }
     
     override func goToSubreddit(subreddit: String, override: Bool = false) {
+        if finalSubs.firstIndex(of: subreddit) == currentIndex {
+            return
+        }
         //Temporary fix for 13
         UIView.animate(withDuration: 0.3, animations: {
             if SettingValues.appMode == .MULTI_COLUMN {
                 self.splitViewController?.preferredDisplayMode = .primaryHidden
             }
         }, completion: nil)
+        
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
+                VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
                 return
             }
 
             let firstViewController = SingleSubredditViewController(subName: self.finalSubs[index!], parent: self)
-            
             //Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = SingleSubredditViewController.openSubredditActivity(subreddit: self.finalSubs[index!])
@@ -372,10 +441,11 @@ class SplitMainViewController: MainViewController {
             DispatchQueue.main.async {
                 self.doCurrentPage(index!)
             }
+            self.dontMatch = true
 
             self.setViewControllers([firstViewController],
                                     direction: index! > self.currentPage ? .forward : .reverse,
-                                    animated: SettingValues.subredditBar ? true : false,
+                                    animated: false,
                                     completion: { (_) in
                                      })
         } else {
@@ -415,7 +485,7 @@ class SplitMainViewController: MainViewController {
         finalSubs = []
         
         finalSubs.append(contentsOf: Subscriptions.pinned)
-        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.containsIgnoringCase($0) }))
 
         var subs = [UIMutableApplicationShortcutItem]()
         for subname in finalSubs {
@@ -427,19 +497,7 @@ class SplitMainViewController: MainViewController {
         subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" as NSSecureCoding ]))
         subs.reverse()
         UIApplication.shared.shortcutItems = subs
-        
-        if SettingValues.submissionGesturesEnabled {
-            for view in view.subviews {
-                if view is UIScrollView {
-                    let scrollView = view as! UIScrollView
-                    if scrollView.isPagingEnabled {
-                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                    }
-                    break
-                }
-            }
-        }
-        
+                
         var newIndex = 0
         
         for sub in self.finalSubs {
@@ -449,7 +507,6 @@ class SplitMainViewController: MainViewController {
         }
         
         let firstViewController = SingleSubredditViewController(subName: finalSubs[newIndex], parent: self)
-        
         weak var weakPageVc = self
         setViewControllers([firstViewController],
                            direction: .forward,
@@ -468,7 +525,7 @@ class SplitMainViewController: MainViewController {
         
         doButtons()
         
-        tabBar.removeFromSuperview()
+        tabBar?.removeFromSuperview()
         self.navigationItem.leftBarButtonItems = []
         self.navigationItem.rightBarButtonItems = []
         self.delegate = self
@@ -513,12 +570,15 @@ extension SplitMainViewController: NavigationHomeDelegate {
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
-        goToSubreddit(subreddit: didRequestSubreddit)
-        
         if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
             nav.pushNextViewControllerFromRight() {
+                if !self.finalSubs.contains(didRequestSubreddit) {
+                    self.goToSubreddit(subreddit: didRequestSubreddit)
+                    return
+                }
             }
         }
+        goToSubreddit(subreddit: didRequestSubreddit)
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
@@ -751,5 +811,11 @@ extension SplitMainViewController: NavigationHomeDelegate {
         let navVC = SwipeForwardNavigationController(rootViewController: vc)
         navVC.navigationBar.isTranslucent = false
         homeViewController.present(navVC, animated: true)
+    }
+}
+
+extension MainViewController: PagingTitleDelegate {
+    func didSelect(_ subreddit: String) {
+        goToSubreddit(subreddit: subreddit)
     }
 }
