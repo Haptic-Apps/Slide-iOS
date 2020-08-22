@@ -34,7 +34,7 @@ class GfycatVideoSource: VideoSource {
             name = name.split("-")[0]
         }
         name = name.split(".")[0]
-        let finalURL = URL(string: "https://api.gfycat.com/v1/gfycats\(name)")!
+        let finalURL = URL(string: "https://api.\(url.contains("redgifs") ? "redgifs" : "gfycat").com/v1/gfycats\(name)")!
         let dataTask = URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")

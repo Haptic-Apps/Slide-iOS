@@ -2242,7 +2242,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))",
                     buffering: !currentItem.isPlaybackLikelyToKeepUp)
             }
-            if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.97 && lastTime == time)) {
+            if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.94 && lastTime == time)) {
                 handlingPlayerItemDidreachEnd = true
                 self.playerItemDidreachEnd()
             }
