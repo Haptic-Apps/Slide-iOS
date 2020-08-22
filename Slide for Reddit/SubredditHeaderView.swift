@@ -194,7 +194,10 @@ class SubredditHeaderView: UIView {
             let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "\(flair.name)", icon: nil)
             
             alert.addTextInput(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "save-1")?.menuIcon(), action: {
-                self.submitFlairChange(flair, text: alert.getText() ?? "")
+                alert.dismiss(animated: true) { [weak self] in
+                    guard let self = self else { return }
+                    self.submitFlairChange(flair, text: alert.getText() ?? "")
+                }
             }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
             
             alert.show(parentController)

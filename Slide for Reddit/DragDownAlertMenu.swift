@@ -30,37 +30,16 @@ class AlertMenuAction: NSObject {
 }
 
 class AlertMenuInputAction: AlertMenuAction {
-    var inputField: UITextField
     var exitOnAction: Bool
     var textRequired: Bool
 
-    init(title: String, icon: UIImage?, action: @escaping () -> Void, inputField: UITextField, enabled: Bool = true, inputIcon: UIImage, inputPlaceholder: String, inputValue: String?, accentColor: UIColor, exitOnAction: Bool, textRequired: Bool, parent: DragDownAlertMenu) {
-        self.inputField = inputField
+    init(title: String, icon: UIImage?, action: @escaping () -> Void, enabled: Bool = true, inputIcon: UIImage, inputPlaceholder: String, inputValue: String?, accentColor: UIColor, exitOnAction: Bool, textRequired: Bool) {
         self.exitOnAction = exitOnAction
         self.textRequired = textRequired
         super.init(title: title, icon: icon, action: action)
-        inputField.setImageMode(image: inputIcon.getCopy(withSize: CGSize.square(size: 20)), accentColor: accentColor, placeholder: inputPlaceholder)
-        inputField.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
-        inputField.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
-        inputField.text = inputValue
-        if parent.isSearch {
-            inputField.addTarget(parent, action: #selector(parent.textFieldDidChange(textField:)), for: .editingChanged)
-        }
+        
         self.isInput = true
-
         self.enabled = textRequired
-    }
-    
-    @objc func textChanged(_ textField: UITextField) {
-        self.enabled = !(textField.text?.isEmpty ?? true)
-    }
-    
-    @objc func done(_ textField: UITextField) {
-        if let text = textField.text {
-            if !text.isEmpty && exitOnAction {
-                action()
-            }
-        }
     }
 }
 
@@ -250,6 +229,19 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.headerView = view
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        timer?.invalidate()
+        taskSearch?.cancel()
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        actions = []
+    }
+    
     func stylize() {
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -266,22 +258,38 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     func addTextInput(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void, inputPlaceholder: String, inputValue: String? = nil, inputIcon: UIImage, textRequired: Bool, exitOnAction: Bool) {
         let input = InsetTextField()
         
-        actions.append(AlertMenuInputAction(title: title, icon: icon, action: {
-            self.dismiss(animated: true) {
-                action()
-            }
-        }, inputField: input, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, inputValue: inputValue, accentColor: themeColor ?? ColorUtil.theme.fontColor, exitOnAction: exitOnAction, textRequired: textRequired, parent: self))
+        input.setImageMode(image: inputIcon.getCopy(withSize: CGSize.square(size: 20)), accentColor: themeColor ?? ColorUtil.theme.fontColor, placeholder: inputPlaceholder)
+        input.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
+        input.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
+        input.text = inputValue
+
+        actions.append(AlertMenuInputAction(title: title, icon: icon, action: action, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, inputValue: inputValue, accentColor: themeColor ?? ColorUtil.theme.fontColor, exitOnAction: exitOnAction, textRequired: textRequired))
         
         textFields.append(input)
         hasInput = true
     }
     
+    @objc func textChanged(_ textField: UITextField) {
+        actions[0].enabled = !(textField.text?.isEmpty ?? true)
+        textFieldDidChange(textField: textField)
+    }
+    
+    @objc func done(_ textField: UITextField) {
+        guard let firstAction = actions[0] as? AlertMenuInputAction else { return }
+        if let text = textField.text {
+            if !text.isEmpty && firstAction.exitOnAction {
+                firstAction.action()
+            }
+        }
+    }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row < actions.count {
             let item = actions[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: "action") as! BottomActionCell
             cell.setAction(action: item, color: themeColor)
             if isSearch {
+                cell.backgroundColor = ColorUtil.theme.backgroundColor
                 cell.accessoryType = .disclosureIndicator
             }
             return cell
@@ -378,35 +386,25 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
 
         // Focus the title for accessibility users
         UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: descriptor)
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
+    var keyboardHeightFound = false
     @objc func keyboardWillShow(_ notification: Notification) {
+        if keyboardHeightFound {
+            return
+        }
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
-            self.view.frame.origin.y -= keyboardHeight
+            if keyboardHeight != 0 {
+                self.view.frame.origin.y -= keyboardHeight
+                keyboardHeightFound = true
+            }
         }
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {
+        keyboardHeightFound = false
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
@@ -576,6 +574,18 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 }
 
@@ -591,8 +601,8 @@ extension DragDownAlertMenu {
             isSearching = false
         }
         
-        self.tableView.reloadData()
-
+        tableView.reloadData()
+        
         if (textField.text ?? "").count >= 2 {
             timer = Timer.scheduledTimer(timeInterval: 0.35,
                                          target: self,
@@ -628,9 +638,9 @@ extension DragDownAlertMenu {
                     }
                     DispatchQueue.main.async {
                         self.isSearchComplete = true
-                        UIView.transition(with: self.tableView, duration: 0.35, options: .transitionCrossDissolve, animations: {
-                            self.tableView.reloadData()
-                        }, completion: nil)
+                        self.tableView.beginUpdates()
+                        self.tableView.reloadRows(at: [IndexPath(row: self.actions.count, section: 0)], with: .automatic)
+                        self.tableView.endUpdates()
                     }
                 }
             })

@@ -1304,24 +1304,30 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         alert.setSearch(sub)
 
         let searchAction = {
-            if !AccountController.isLoggedIn {
-                let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
-                VCPresenter.presentAlert(alert, parentVC: self)
-            } else {
-                let search = SearchViewController.init(subreddit: self.sub, searchFor: alert.getText() ?? "")
-                VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                if !AccountController.isLoggedIn {
+                    let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
+                    VCPresenter.presentAlert(alert, parentVC: self)
+                } else {
+                    let search = SearchViewController.init(subreddit: self.sub, searchFor: alert.getText() ?? "")
+                    VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+                }
             }
         }
         
         let searchAllAction = {
-            if !AccountController.isLoggedIn {
-                let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
-                VCPresenter.presentAlert(alert, parentVC: self)
-            } else {
-                let search = SearchViewController.init(subreddit: "all", searchFor: alert.getText() ?? "")
-                VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                if !AccountController.isLoggedIn {
+                    let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
+                    VCPresenter.presentAlert(alert, parentVC: self)
+                } else {
+                    let search = SearchViewController.init(subreddit: "all", searchFor: alert.getText() ?? "")
+                    VCPresenter.showVC(viewController: search, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+                }
             }
         }
 

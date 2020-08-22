@@ -344,7 +344,8 @@ class SubredditCellView: UITableViewCell {
             scroll!.contentSize = CGSize(width: (results?.count ?? 0) * 208, height: 150)
             
             self.contentView.addSubview(scroll!)
-            scroll!.edgeAnchors == self.contentView.edgeAnchors + 8
+            scroll!.horizontalAnchors == self.contentView.horizontalAnchors + 8
+            scroll!.verticalAnchors == self.contentView.verticalAnchors + 4
             scroll!.heightAnchor == 150
             
             if nav is SubredditToolbarSearchViewController {

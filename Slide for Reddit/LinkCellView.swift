@@ -2360,7 +2360,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "\(flair.name)", icon: nil)
             
             alert.addTextInput(title: "Set flair", icon: UIImage(sfString: SFSymbol.flag, overrideString: "save-1")?.menuIcon(), action: {
-                self.submitFlairChange(flair, text: alert.getText() ?? "")
+                alert.dismiss(animated: true) { [weak self] in
+                    guard let self = self else { return }
+                    self.submitFlairChange(flair, text: alert.getText() ?? "")
+                }
             }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
             
             alert.show(parentViewController)
@@ -3489,9 +3492,12 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         let create = UIAction(title: "Create a collection", image: UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "add")) { _ in
             let bottom = DragDownAlertMenu(title: "Create a collection", subtitle: "", icon: nil)
             bottom.addTextInput(title: "Save", icon: nil, action: {
-                if let title = bottom.getText() {
-                    Collections.addToCollectionCreate(id: self.link!.getId(), title: title)
-                    BannerUtil.makeBanner(text: "Saved to \(title)", seconds: 3, context: self.parentViewController)
+                bottom.dismiss(animated: true) { [weak self] in
+                    guard let self = self else { return }
+                    if let title = bottom.getText() {
+                        Collections.addToCollectionCreate(id: self.link!.getId(), title: title)
+                        BannerUtil.makeBanner(text: "Saved to \(title)", seconds: 3, context: self.parentViewController)
+                    }
                 }
             }, inputPlaceholder: "", inputIcon: UIImage(sfString: SFSymbol.textbox, overrideString: "size")!, textRequired: true, exitOnAction: true)
             bottom.show(self.parentViewController)
