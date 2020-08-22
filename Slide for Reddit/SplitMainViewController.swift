@@ -76,11 +76,13 @@ class SplitMainViewController: MainViewController {
         }
         
         splitViewController?.navigationItem.hidesBackButton = true
-        /* Doesn't work yet if #available(iOS 14.0, *) {
+        if #available(iOS 14.0, *) {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 splitViewController?.showsSecondaryOnlyButton = false
+                splitViewController?.navigationItem.hidesBackButton = true
+                splitViewController?.navigationItem.backBarButtonItem = UIBarButtonItem()
             }
-        }*/
+        }
         navigationController?.navigationItem.hidesBackButton = true
         
         sortButton = ExpandedHitButton(type: .custom)
