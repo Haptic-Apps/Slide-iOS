@@ -24,7 +24,6 @@ class SplitMainViewController: MainViewController {
     static var isFirst = true
 
     override func handleToolbars() {
-        navigationController?.setToolbarHidden(true, animated: false)
     }
     
     override func redoSubs() {

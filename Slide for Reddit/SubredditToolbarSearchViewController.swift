@@ -296,19 +296,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     
     func animateIn() {
         let y = UIScreen.main.bounds.height - bottomOffset
-        if let parent = self.parentController, parent.menu.superview != nil {
-            parent.menu.deactivateImmediateConstraints()
-            parent.menu.topAnchor == parent.toolbar!.topAnchor
-            parent.menu.widthAnchor == 56
-            parent.menu.heightAnchor == 56
-            parent.menu.leftAnchor == parent.toolbar!.leftAnchor
-            
-            parent.more.deactivateImmediateConstraints()
-            parent.more.topAnchor == parent.toolbar!.topAnchor
-            parent.more.widthAnchor == 56
-            parent.more.heightAnchor == 56
-            parent.more.rightAnchor == parent.toolbar!.rightAnchor
-        }
         self.view.isHidden = false
         self.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - 20, width: self.view.frame.width, height: self.view.frame.height)
 
@@ -319,8 +306,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
-            strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-            strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
         
         self.view.endEditing(true)
@@ -351,19 +336,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         parentController?.view.addSubview(self.view)
 
         let y = UIScreen.main.bounds.height - bottomOffset
-        if let parent = self.parentController, parent.menu.superview != nil {
-            parent.menu.deactivateImmediateConstraints()
-            parent.menu.topAnchor == parent.toolbar!.topAnchor
-            parent.menu.widthAnchor == 56
-            parent.menu.heightAnchor == 56
-            parent.menu.leftAnchor == parent.toolbar!.leftAnchor
-            
-            parent.more.deactivateImmediateConstraints()
-            parent.more.topAnchor == parent.toolbar!.topAnchor
-            parent.more.widthAnchor == 56
-            parent.more.heightAnchor == 56
-            parent.more.rightAnchor == parent.toolbar!.rightAnchor
-        }
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.backgroundView.alpha = 0
@@ -371,8 +343,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
-            strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-            strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
         
         self.view.endEditing(true)
@@ -462,19 +432,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         }
 
         let y = UIScreen.main.bounds.height - self.view.frame.size.height
-        if let parent = self.parentController, parent.menu.superview != nil {
-            parent.menu.deactivateImmediateConstraints()
-            parent.menu.topAnchor == parent.toolbar!.topAnchor
-            parent.menu.widthAnchor == 56
-            parent.menu.heightAnchor == 56
-            parent.menu.leftAnchor == parent.toolbar!.leftAnchor
-            
-            parent.more.deactivateImmediateConstraints()
-            parent.more.topAnchor == parent.toolbar!.topAnchor
-            parent.more.widthAnchor == 56
-            parent.more.heightAnchor == 56
-            parent.more.rightAnchor == parent.toolbar!.rightAnchor
-        }
         let animateBlock = { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.backgroundView.alpha = 1
@@ -482,8 +439,6 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.topView?.alpha = 0
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
             strongSelf.topView?.backgroundColor = strongSelf.headerView.backgroundColor
-            strongSelf.parentController?.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-            strongSelf.parentController?.more.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
         
         let completionBlock: (Bool) -> Void = { [weak self] finished in
@@ -520,8 +475,9 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             blurView.verticalAnchors == backgroundView.verticalAnchors
         }
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collapse))
-        backgroundView.addGestureRecognizer(tapGesture)
+        //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collapse))
+        //backgroundView.addGestureRecognizer(tapGesture)
+        //TODO collapse
         
         parentController!.view.addSubview(backgroundView)
         backgroundView.edgeAnchors == parentController!.view.edgeAnchors
@@ -543,7 +499,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
     
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        collapse()
+        //collapse()
         completion?()
     }
 

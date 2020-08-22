@@ -17,7 +17,7 @@ import UIKit
 import YYText
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
-    
+
     var version = 0
     var swipeBackAdded = false
     var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
@@ -60,6 +60,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return SettingValues.fullyHideNavbar
     }
 
+    func textChanged(_ string: String) {
+        self.savedText = string
+    }
+    
     override var keyCommands: [UIKeyCommand]? {
         if isReply {
             return []
@@ -77,6 +81,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     var menuCell: CommentDepthCell?
     var menuId: String?
+    var savedText: String?
     public var inHeadView = UIView()
     
     var commentDepthColors = [UIColor]()

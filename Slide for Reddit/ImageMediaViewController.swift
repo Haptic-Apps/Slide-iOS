@@ -217,13 +217,10 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                     // This lets us invisibly swap in-place.
                     strongSelf.imageView.image = image
                 } else {
-                    strongSelf.imageView.image = image
-                    print("Image size is \(image.size)")
-
                     if let size = finalSize {
+                        strongSelf.imageView.image = image
                         let maxFrame = strongSelf.view.frame.size
                         var newSize = maxFrame
-                        print("Final size is \(size)")
 
                         let minWidth = maxFrame.width / size.width
                         let minHeight = maxFrame.height / size.height
@@ -240,12 +237,14 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                         strongSelf.scrollView.contentSize = size
                         strongSelf.overrideSize = size
                     } else {
+                        strongSelf.imageView.contentMode = .scaleAspectFit
+                        strongSelf.imageView.image = image
                         strongSelf.imageView.sizeToFit()
                         strongSelf.scrollView.contentSize = image.size
+                        strongSelf.view.setNeedsLayout()
                     }
                     
                     strongSelf.imageView.setNeedsLayout()
-                    print("Frame size is \(strongSelf.imageView.frame.size)")
                 }
                 // Update UI
                 strongSelf.setProgressViewVisible(false)

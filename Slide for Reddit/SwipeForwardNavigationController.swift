@@ -205,8 +205,10 @@ extension SwipeForwardNavigationController {
 
         if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
             push(pushedViewController, animated: true) {
-                self.pushableViewControllers.removeLast()
-                callback?()
+                if !self.pushableViewControllers.isEmpty {
+                    self.pushableViewControllers.removeLast()
+                    callback?()
+                }
             }
         }
     }
