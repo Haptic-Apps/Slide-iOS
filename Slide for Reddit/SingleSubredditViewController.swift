@@ -1332,10 +1332,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
-            alert.addTextInput(title: "More results in \(sub)...", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
-            alert.addAction(title: "More results in all of Reddit...", icon: nil, enabled: true, action: searchAllAction)
+            alert.addTextInput(title: "All results in \(sub)...", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
+            alert.addAction(title: "All results in all of Reddit...", icon: nil, enabled: true, action: searchAllAction)
         } else {
-            alert.addTextInput(title: "More results...", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
+            alert.addTextInput(title: "All results...", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
         }
         alert.show(self)
     }

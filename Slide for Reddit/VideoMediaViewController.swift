@@ -1053,7 +1053,7 @@ extension VideoMediaViewController {
             if let pDuration = player.currentItem?.duration {
                 let duration = Float(CMTimeGetSeconds(pDuration))
                 let time = Float(CMTimeGetSeconds(player.currentTime()))
-                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.97 && lastTime == time)) {
+                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.94 && lastTime == time)) {
                     handlingPlayerItemDidreachEnd = true
                     self.playerItemDidreachEnd()
                 }
