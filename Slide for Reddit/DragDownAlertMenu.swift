@@ -595,7 +595,7 @@ extension DragDownAlertMenu {
         timer?.invalidate()
         isSearchComplete = false
         results = []
-        if (textField.text ?? "").length != 0 {
+        if (textField.text ?? "").length >= 3 {
             isSearching = true
         } else {
             isSearching = false
@@ -603,7 +603,7 @@ extension DragDownAlertMenu {
         
         tableView.reloadData()
         
-        if (textField.text ?? "").count >= 2 {
+        if (textField.text ?? "").count >= 3 {
             timer = Timer.scheduledTimer(timeInterval: 0.35,
                                          target: self,
                                          selector: #selector(self.getSuggestions(_:)),
@@ -638,9 +638,7 @@ extension DragDownAlertMenu {
                     }
                     DispatchQueue.main.async {
                         self.isSearchComplete = true
-                        self.tableView.beginUpdates()
-                        self.tableView.reloadRows(at: [IndexPath(row: self.actions.count, section: 0)], with: .automatic)
-                        self.tableView.endUpdates()
+                        self.tableView.reloadData()
                     }
                 }
             })
