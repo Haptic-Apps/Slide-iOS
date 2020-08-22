@@ -2130,7 +2130,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             more.accessibilityLabel = "Post options"
             more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-            more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)

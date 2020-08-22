@@ -976,7 +976,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         searchbutton = UIButton.init(type: .custom)
         searchbutton.setImage(UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), for: UIControl.State.normal)
-        searchbutton.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
+        searchbutton.addTarget(self, action: #selector(self.search), for: UIControl.Event.touchUpInside)
         searchbutton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: searchbutton)
 
@@ -1301,6 +1301,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     @objc func search() {
         let alert = DragDownAlertMenu(title: "Search", subtitle: sub, icon: nil, full: true)
+        alert.setSearch(sub)
+
         let searchAction = {
             if !AccountController.isLoggedIn {
                 let alert = UIAlertController(title: "Log in to search!", message: "You must be logged into Reddit to search", preferredStyle: .alert)
@@ -1324,12 +1326,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
-            alert.addTextInput(title: "Search in \(sub)", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
-            alert.addAction(title: "Search all of Reddit", icon: nil, enabled: true, action: searchAllAction)
+            alert.addTextInput(title: "More results in \(sub)...", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
+            alert.addAction(title: "More results in all of Reddit...", icon: nil, enabled: true, action: searchAllAction)
         } else {
-            alert.addTextInput(title: "Search all of Reddit", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
+            alert.addTextInput(title: "More results...", icon: nil, enabled: false, action: searchAllAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
         }
-        
         alert.show(self)
     }
     
