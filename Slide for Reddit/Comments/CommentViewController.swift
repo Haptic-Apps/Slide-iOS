@@ -114,8 +114,10 @@ class CommentViewController: MediaViewController {
     var isSearching = false
     
     var isReply = false
-    
+    // Gesture Recognizer
     var cellGestureRecognizer: UIPanGestureRecognizer!
+    var swipeBackAdded = false
+    var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
     // MARK: - UI Properties
     public var inHeadView = UIView()
     var commentDepthColors = [UIColor]()
@@ -886,7 +888,7 @@ class CommentViewController: MediaViewController {
                         self.updateStringsSingle(temp)
                         self.doArrays()
                         if NetworkMonitor.shared.online {
-                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.link) : Double(0))
+                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
                         }
                     }
                     
@@ -1963,7 +1965,7 @@ class CommentViewController: MediaViewController {
     }
     
     /**
-     Scrolls up through comment section.
+     Scrolling up tab bar item, scrolls up between comments.
      - Parameters:
         - sender: AnyObject
      */
@@ -1991,7 +1993,7 @@ class CommentViewController: MediaViewController {
     }
     
     /**
-     Scrolls down through comment section.
+     Scrolling down tab bar item, scrolls down between comments.
      - Parameters:
         - sender: AnyObject
      */

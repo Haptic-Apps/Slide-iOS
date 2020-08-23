@@ -985,7 +985,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             toolbarItems = [searchB, flexButton, moreB]
         }
 
-        if single && !offline {
+        if single && NetworkMonitor.shared.online {
             sortButton = UIButton.init(type: .custom)
             sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -1106,7 +1106,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 } catch {
                 }
             }
-        } else if offline && single && !loaded {
+        } else if !NetworkMonitor.shared.online && single && !loaded {
             title = sub
             //hideMenuNav()
             self.load(reset: true)
@@ -1634,7 +1634,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                         self.loading = false
                                         self.loading = false
                                         self.nomore = true
-                                        self.offline = true
                                         
                                         var is13Popover = false
                                         if self.navigationController != nil {
@@ -1683,7 +1682,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             self.page = 0
                             self.numberFiltered = 0
                         }
-                        self.offline = false
                         let before = self.links.count
                         if self.realmListing == nil {
                             self.realmListing = RListing()
