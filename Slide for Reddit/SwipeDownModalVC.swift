@@ -16,6 +16,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
 
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
+    var viewToMove: UIView?
     
     var didStartPan : (_ panStart: Bool) -> Void = { result in }
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
@@ -64,32 +65,36 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
     
     @objc func panGestureAction(_ panGesture: UIPanGestureRecognizer) {
         let translation = panGesture.translation(in: view)
-
+        guard let viewToMove = viewToMove else { return }
+        
         if panGesture.state == .began {
-            originalPosition = view.center
+            originalPosition = viewToMove.frame.origin
             currentPositionTouched = panGesture.location(in: view)
             didStartPan(true)
         } else if panGesture.state == .changed {
-            view.frame.origin = CGPoint(
-                    x: 0,
-                    y: translation.y
+            if originalPosition == nil {
+                originalPosition = viewToMove.frame.origin
+            }
+            viewToMove.frame.origin = CGPoint(
+                x: 0,
+                y: originalPosition!.y + translation.y
             )
             let progress = translation.y / (self.view.frame.size.height / 2)
             self.view.alpha = 1 - (abs(progress) * 1.3)
-
+            
         } else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
-
+            
             let down = panGesture.velocity(in: view).y > 0
             if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2 {
-
+                
                 UIView.animate(withDuration: 0.2, animations: {
-                    self.view.frame.origin = CGPoint(
-                            x: self.view.frame.origin.x,
-                            y: self.view.frame.size.height * (down ? 1 : -1) )
-
+                    viewToMove.frame.origin = CGPoint(
+                        x: viewToMove.frame.origin.x,
+                        y: viewToMove.frame.size.height * (down ? 1 : -1) )
+                    
                     self.view.alpha = 0.1
-
+                    
                 }, completion: { (isCompleted) in
                     if isCompleted {
                         self.dismiss(animated: false, completion: nil)
@@ -97,9 +102,9 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
                 })
             } else {
                 UIView.animate(withDuration: 0.2, animations: {
-                    self.view.center = self.originalPosition!
+                    viewToMove.frame.origin = self.originalPosition ?? CGPoint.zero
                     self.view.alpha = 1
-
+                    self.background?.alpha = 1
                 })
             }
         }
