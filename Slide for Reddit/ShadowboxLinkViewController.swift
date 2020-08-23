@@ -313,6 +313,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     
     func populateContent() {
+        self.populated = true
         self.baseBody.addTapGestureRecognizer {
             self.comments(self.view)
         }

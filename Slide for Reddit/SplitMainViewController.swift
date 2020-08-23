@@ -24,7 +24,6 @@ class SplitMainViewController: MainViewController {
     static var isFirst = true
 
     override func handleToolbars() {
-        navigationController?.setToolbarHidden(true, animated: false)
     }
     
     override func redoSubs() {
@@ -77,11 +76,13 @@ class SplitMainViewController: MainViewController {
         }
         
         splitViewController?.navigationItem.hidesBackButton = true
-        /* Doesn't work yet if #available(iOS 14.0, *) {
+        if #available(iOS 14.0, *) {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 splitViewController?.showsSecondaryOnlyButton = false
+                splitViewController?.navigationItem.hidesBackButton = true
+                splitViewController?.navigationItem.backBarButtonItem = UIBarButtonItem()
             }
-        }*/
+        }
         navigationController?.navigationItem.hidesBackButton = true
         
         sortButton = ExpandedHitButton(type: .custom)
@@ -585,44 +586,46 @@ extension SplitMainViewController: NavigationHomeDelegate {
         let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)
         
         alert.addTextInput(title: "Create", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")?.menuIcon(), enabled: true, action: {
-            var text = alert.getText() ?? ""
-            text = text.replacingOccurrences(of: " ", with: "_")
-            if text == "" {
-                let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
-                alert.setupTheme()
-                alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                alert.addAction(AlertAction(title: "Ok", style: .normal, handler: { (_) in
-                    self.navigation(homeViewController, didRequestNewMulti: ())
-                }))
-                return
-            }
-            do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.createMultireddit(text, descriptionMd: "", completion: { (result) in
-                    switch result {
-                    case .success(let multireddit):
-                        if let parent = self.parent {
-                            DispatchQueue.main.async {
-                                VCPresenter.presentModally(viewController: ManageMultireddit(multi: multireddit, reloadCallback: {
-                                }, dismissCallback: {
-                                    Subscriptions.subscribe("/m/" + text, false, session: nil)
-                                    self.navigation(homeViewController, goToMultireddit: "/m/" + text)
-                                }), parent, nil)
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                var text = alert.getText() ?? ""
+                text = text.replacingOccurrences(of: " ", with: "_")
+                if text == "" {
+                    let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
+                    alert.setupTheme()
+                    alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                    alert.addAction(AlertAction(title: "Ok", style: .normal, handler: { (_) in
+                        self.navigation(homeViewController, didRequestNewMulti: ())
+                    }))
+                    return
+                }
+                do {
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.createMultireddit(text, descriptionMd: "", completion: { (result) in
+                        switch result {
+                        case .success(let multireddit):
+                            if let parent = self.parent {
+                                DispatchQueue.main.async {
+                                    VCPresenter.presentModally(viewController: ManageMultireddit(multi: multireddit, reloadCallback: {
+                                    }, dismissCallback: {
+                                        Subscriptions.subscribe("/m/" + text, false, session: nil)
+                                        self.navigation(homeViewController, goToMultireddit: "/m/" + text)
+                                    }), parent, nil)
+                                }
+                            }
+                        case .failure:
+                            if let parent = self.parent {
+                                DispatchQueue.main.async {
+                                    BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
+                                }
                             }
                         }
-                    case .failure:
-                        if let parent = self.parent {
-                            DispatchQueue.main.async {
-                                BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: parent)
-                            }
-                        }
+                    })
+                } catch {
+                    DispatchQueue.main.async {
+                        BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: self.parent)
                     }
-                })
-            } catch {
-                DispatchQueue.main.async {
-                    BannerUtil.makeBanner(text: "Error creating Multireddit, try again later", color: GMColor.red500Color(), seconds: 3, context: self.parent)
                 }
             }
-
         }, inputPlaceholder: "Name...", inputValue: nil, inputIcon: UIImage(named: "wiki")!.menuIcon(), textRequired: true, exitOnAction: false)
         
         if let parent = parent {

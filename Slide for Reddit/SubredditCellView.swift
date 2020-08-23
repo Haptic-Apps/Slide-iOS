@@ -217,7 +217,7 @@ class SubredditCellView: UITableViewCell {
 
     func setResults(subreddit: String, nav: UIViewController?, results: [RSubmission]?, complete: Bool) {
         title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
         self.navController = nav
         self.subreddit = subreddit
         self.sideView.isHidden = false
@@ -325,7 +325,7 @@ class SubredditCellView: UITableViewCell {
                 textView.text = submission.title
                 textView.sizeToFit()
                 
-                submissionView.backgroundColor = ColorUtil.theme.backgroundColor
+                submissionView.backgroundColor = ColorUtil.theme.foregroundColor
                 submissionView.clipsToBounds = true
                 submissionView.layer.cornerRadius = 5
                 submissionView.heightAnchor == 150
@@ -344,7 +344,8 @@ class SubredditCellView: UITableViewCell {
             scroll!.contentSize = CGSize(width: (results?.count ?? 0) * 208, height: 150)
             
             self.contentView.addSubview(scroll!)
-            scroll!.edgeAnchors == self.contentView.edgeAnchors + 4
+            scroll!.horizontalAnchors == self.contentView.horizontalAnchors + 8
+            scroll!.verticalAnchors == self.contentView.verticalAnchors + 4
             scroll!.heightAnchor == 150
             
             if nav is SubredditToolbarSearchViewController {

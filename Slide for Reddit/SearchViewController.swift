@@ -87,19 +87,22 @@ class SearchViewController: ContentListingViewController {
         let alert = DragDownAlertMenu(title: "Edit search", subtitle: self.search, icon: nil)
         
         alert.addTextInput(title: "Search again", icon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), action: {
-            let text = alert.getText() ?? ""
-            self.search = text
-            if let base = self.baseData as? SearchContributionLoader {
-                base.query = self.search
-                base.reset()
-                self.tableView.reloadData()
-                self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
-                
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {
-                    self.refreshControl?.beginRefreshing()
-                })
-                base.getData(reload: true)
-                self.navigationItem.titleView = self.setTitle(title: self.search, subtitle: "r/\(self.sub)")
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                let text = alert.getText() ?? ""
+                self.search = text
+                if let base = self.baseData as? SearchContributionLoader {
+                    base.query = self.search
+                    base.reset()
+                    self.tableView.reloadData()
+                    self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {
+                        self.refreshControl?.beginRefreshing()
+                    })
+                    base.getData(reload: true)
+                    self.navigationItem.titleView = self.setTitle(title: self.search, subtitle: "r/\(self.sub)")
+                }
             }
         }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon(), textRequired: true, exitOnAction: true)
         

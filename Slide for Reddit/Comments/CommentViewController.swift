@@ -88,6 +88,8 @@ class CommentViewController: MediaViewController {
     
     var text: [String: NSAttributedString]
     
+    var savedText: String?
+    
     var currentSort: CommentNavType = .PARENTS
     
     var goingToCell = false
@@ -596,6 +598,15 @@ class CommentViewController: MediaViewController {
                 self.jump?.removeFromSuperview()
             })
         }
+    }
+    
+    /**
+     Called when text has changed.
+     - Parameters:
+        - string: String
+     */
+    func textChanged(_ string: String) {
+        self.savedText = string
     }
     
     override func prepareForPopoverPresentation(_ popoverPresentationController: UIPopoverPresentationController) {
@@ -2099,8 +2110,8 @@ class CommentViewController: MediaViewController {
             let more = UIButton(type: .custom)
             more.accessibilityLabel = "Post options"
             more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-            more.addTarget(self, action: #selector(self.showOptionsMenu(_:)), for: UIControl.Event.touchUpInside)
-            more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+            more.addTarget(self, action: #selector(showOptionsMenu(_:)), for: UIControl.Event.touchUpInside)
+            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)
@@ -2146,8 +2157,11 @@ class CommentViewController: MediaViewController {
         let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
         alert.addTextInput(title: "Set tag", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "save-1")?.menuIcon(), action: {
-            ColorUtil.setTagForUser(name: name, tag: alert.getText() ?? "")
-            self.tableView.reloadData()
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                ColorUtil.setTagForUser(name: name, tag: alert.getText() ?? "")
+                self.tableView.reloadData()
+            }
         }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)
 
         if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {

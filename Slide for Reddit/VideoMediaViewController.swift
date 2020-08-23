@@ -787,6 +787,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             if url.contains("gfycat") && !url.contains("mp4") {
                 return VideoType.GFYCAT
             }
+            if url.contains("redgifs") && !url.contains("mp4") {
+                return VideoType.GFYCAT
+            }
             if url.contains("v.redd.it") {
                 return VideoType.REDDIT
             }
@@ -1050,7 +1053,7 @@ extension VideoMediaViewController {
             if let pDuration = player.currentItem?.duration {
                 let duration = Float(CMTimeGetSeconds(pDuration))
                 let time = Float(CMTimeGetSeconds(player.currentTime()))
-                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.97 && lastTime == time)) {
+                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.94 && lastTime == time)) {
                     handlingPlayerItemDidreachEnd = true
                     self.playerItemDidreachEnd()
                 }

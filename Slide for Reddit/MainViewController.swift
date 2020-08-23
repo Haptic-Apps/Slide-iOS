@@ -532,12 +532,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
     @objc func screenEdgeSwiped() {
         switch SettingValues.sideGesture {
-        case .SUBS:
-            if self.viewControllers != nil && self.viewControllers!.count > 0 {
-                if let vc = self.viewControllers?[0] as? SingleSubredditViewController {
-                    vc.menuNav?.expand()
-                }
-            }
+        case .SUBS:()
+            //TODO show sidebar
         case .INBOX:
             self.showCurrentAccountMenu(nil)
         case .POST:

@@ -55,7 +55,7 @@ class ModalMediaViewController: UIViewController {
         self.isUpvoted = isUpvoted
         
         let type = ContentType.getContentType(baseUrl: url)
-        if link != nil {
+        if link != nil && link?.subreddit != "" {
             let title = CachedTitle.getTitleForMedia(submission: link!)
             let finalTitle = NSMutableAttributedString(attributedString: title.infoLine!)
             finalTitle.append(NSAttributedString(string: "\n"))
@@ -395,7 +395,6 @@ class ModalMediaViewController: UIViewController {
         titleView.bottomAnchor == gradientView.bottomAnchor - 8
             
         gradientView.layoutIfNeeded()
-        print("Setting width to \(self.titleView.frame.size.width)")
         titleView.preferredMaxLayoutWidth = self.titleView.frame.size.width
         titleView.sizeToFit()
     }

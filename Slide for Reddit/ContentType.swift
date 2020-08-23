@@ -97,7 +97,7 @@ class ContentType {
     public static func isGfycat(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
         
-        return hostContains(host: host, bases: ["gfycat.com"])
+        return hostContains(host: host, bases: ["gfycat.com", "redgifs.com"])
     }
     
     public static func isImage(uri: URL) -> Bool {

@@ -184,6 +184,7 @@ class NavigationHomeViewController: UIViewController {
     }
     
     var doneOnce = false
+    var inHeadView = UIView()
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
@@ -191,6 +192,13 @@ class NavigationHomeViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        inHeadView.removeFromSuperview()
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
+        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: "", true)
+        
+        if SettingValues.subredditBar {
+            self.view.addSubview(inHeadView)
+        }
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = ColorUtil.theme.foregroundColor
@@ -199,11 +207,9 @@ class NavigationHomeViewController: UIViewController {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
 
-        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.setNavigationBarHidden(true, animated: true)
         navigationController?.setToolbarHidden(false, animated: false)
-        self.navigationController?.toolbar.isTranslucent = false
         self.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
-        self.splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
         
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
     }

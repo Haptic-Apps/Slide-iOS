@@ -25,6 +25,7 @@ protocol ReplyDelegate: class {
     func replySent(comment: Comment?, cell: CommentDepthCell?)
     func updateHeight(textView: UITextView)
     func discard()
+    func textChanged(_ string: String)
     func editSent(cr: Comment?, cell: CommentDepthCell)
 }
 
@@ -37,8 +38,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var previewedURL: URL?
     var lastLength = 0
 
-    /* probably an issue here */
     @objc func textViewDidChange(_ textView: UITextView) {
+        replyDelegate?.textChanged(textView.text)
         let split = textView.text.split("\n").suffix(1)
         if split.first != nil && split.first!.startsWith("* ") && textView.text.endsWith("\n") {
             if split.first == "* " {
@@ -630,6 +631,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if parent == nil {
             return
         }
+
         if parent!.menuCell != nil {
             parent!.menuCell?.checkReply { (finished) in
                 self.contentView.endEditing(true)
@@ -809,6 +811,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         checkReply { (completed) in
             self.endEditing(true)
             if completed {
+                self.parent?.savedText = nil
                 self.parent?.isReply = false
                 self.replyDelegate!.discard()
                 self.showMenuAnimated()
@@ -887,7 +890,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     @objc func send(_ sender: AnyObject) {
         self.endEditing(true)
-        
+        self.parent?.savedText = nil
         if edit {
             doEdit(sender)
             return
@@ -1684,6 +1687,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         if parent.getMenuShown() ?? "" == comment.getIdentifier() {
             showCommentMenu()
+            if parent.savedText != nil {
+                reply(self)
+                body?.text = parent.savedText
+                body?.becomeFirstResponder()
+            }
         } else {
             hideCommentMenu()
         }
