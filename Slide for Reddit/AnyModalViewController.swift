@@ -916,7 +916,7 @@ extension AnyModalViewController {
                 let duration = Float(CMTimeGetSeconds(embeddedPlayer.currentItem!.duration))
                 let time = Float(CMTimeGetSeconds(elapsedTime))
                 
-                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.97 && lastTime == time)) {
+                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.94 && lastTime == time)) {
                     handlingPlayerItemDidreachEnd = true
                     self.playerItemDidreachEnd()
                 }

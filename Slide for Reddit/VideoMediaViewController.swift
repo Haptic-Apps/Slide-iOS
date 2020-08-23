@@ -1061,7 +1061,6 @@ extension VideoMediaViewController {
             }
         }
     }
-
 }
 
 extension VideoMediaViewController: WKYTPlayerViewDelegate {
