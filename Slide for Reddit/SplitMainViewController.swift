@@ -262,15 +262,15 @@ class SplitMainViewController: MainViewController {
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: vc.sub, true)
         
-        if !(vc).loaded || !SettingValues.subredditBar {
-            if vc.loaded {
+        if !(vc).dataSource.loaded || !SettingValues.subredditBar {
+            if vc.dataSource.loaded {
                 vc.indicator?.isHidden = false
                 vc.indicator?.startAnimating()
                 vc.loadBubbles()
                 vc.refresh(false)
             } else {
                 vc.loadBubbles()
-                (vc).load(reset: true)
+                vc.dataSource.getData(reload: true)
             }
         }
         

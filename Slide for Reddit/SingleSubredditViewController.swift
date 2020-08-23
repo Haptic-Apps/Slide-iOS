@@ -76,10 +76,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
     
     var translatingCell: LinkCellView?
-
-    var times = 0
-    var startTime = Date()
-    
     var isGallery = false
 
     var parentController: MainViewController?
@@ -87,7 +83,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var primaryChosen: UIColor?
 
     var isModal = false
-    var offline = false
 
     var isAccent = false
 
@@ -97,14 +92,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     var oldY = CGFloat(0)
 
-    var links: [RSubmission] = []
-    var paginator = Paginator()
     var sub: String
     var session: Session?
     var tableView: UICollectionView!
     var single: Bool = false
 
-    var loaded = false
     var sideView: UIView = UIView()
     var subb: UIButton = UIButton()
     var subInfo: Subreddit?
@@ -134,43 +126,32 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     var searchText: String?
 
-    var loading = false
-    var nomore = false
-
-    var showing = false
-
-    var sort = SettingValues.defaultSorting
-    var time = SettingValues.defaultTimePeriod
-
     var refreshControl: UIRefreshControl!
 
-    var realmListing: RListing?
     var hasHeader = false
     var subLinks = [SubLinkItem]()
 
     var oldsize = CGFloat(0)
+    var dataSource: SubmissionsDataSource
 
     init(subName: String, parent: MainViewController) {
         sub = subName
         self.parentController = parent
         
         single = parent is SplitMainViewController
+        dataSource = SubmissionsDataSource(subreddit: subName, sorting: SettingValues.getLinkSorting(forSubreddit: subName), time: SettingValues.getTimePeriod(forSubreddit: subName))
 
         super.init(nibName: nil, bundle: nil)
         self.autoplayHandler = AutoplayScrollViewHandler(delegate: self)
-        self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
-        self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
     }
 
     init(subName: String, single: Bool) {
         sub = subName
         self.single = true
+        dataSource = SubmissionsDataSource(subreddit: subName, sorting: SettingValues.getLinkSorting(forSubreddit: subName), time: SettingValues.getTimePeriod(forSubreddit: subName))
 
         super.init(nibName: nil, bundle: nil)
         self.autoplayHandler = AutoplayScrollViewHandler(delegate: self)
-
-        self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
-        self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -283,7 +264,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewWillAppear(animated)
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
-
+        
+        dataSource.delegate = self
+        if dataSource.loaded {
+            self.tableView.reloadData()
+        }
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
         if isModal {
@@ -305,7 +290,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             setupBaseBarColors()
         }
         
-        if !loaded {
+        if !dataSource.loaded {
             showUI()
         }
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
@@ -338,124 +323,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         autoplayHandler.autoplayOnce(self.tableView)
     }
-    
-    /*var menuNav: SubredditToolbarSearchViewController?
-    public var toolbar: UIView?
-    var menu = UIButton()
-
-    func hideMenuNav() {
-        menu.deactivateImmediateConstraints()
-        menu.topAnchor == toolbar!.topAnchor - 10
-        menu.widthAnchor == 56
-        menu.heightAnchor == 56
-        menu.leftAnchor == toolbar!.leftAnchor
         
-        menu.deactivateImmediateConstraints()
-        menu.topAnchor == toolbar!.topAnchor - 10
-        menu.widthAnchor == 56
-        menu.heightAnchor == 56
-        menu.rightAnchor == toolbar!.rightAnchor
-        UIView.animate(withDuration: 0.25) {
-            self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
-            self.menu.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
-            self.more.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
-        }
-
-    }
-    
-    func showMenuNav(_ force: Bool = false) {
-        if force && menuNav != nil {
-            more.removeFromSuperview()
-            menu.removeFromSuperview()
-            menuNav?.view.removeFromSuperview()
-            menuNav?.backgroundView.removeFromSuperview()
-            menuNav?.removeFromParent()
-            menuNav = nil
-        }
-        if menuNav == nil {
-            menuNav = SubredditToolbarSearchViewController(controller: self)
-
-            toolbar = UITouchCapturingView()
-
-            menuNav?.topView = toolbar
-            menuNav?.view.addSubview(toolbar!)
-            menuNav?.muxColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
-
-            toolbar!.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
-            toolbar!.horizontalAnchors == menuNav!.view.horizontalAnchors
-            toolbar!.topAnchor == menuNav!.view.topAnchor
-            toolbar!.heightAnchor == 90
-            
-            /*(var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
-            if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
-                fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
-                toolbar!.addGestureRecognizer(fullWidthBackGestureRecognizer)
-                if #available(iOS 13.4, *) {
-                    fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
-                }
-            }*/
-
-
-            self.menuNav?.setSubreddit(subreddit: sub)
-            
-            self.addChild(menuNav!)
-            self.view.addSubview(menuNav!.view)
-            menuNav!.didMove(toParent: self)
-            
-            // 3- Adjust bottomSheet frame and initial position.
-            let height = view.frame.height
-            let width = view.frame.width
-            let nextOffset = CGFloat(0)
-            
-            menuNav!.view.frame = CGRect(x: 0, y: self.view.frame.maxY - CGFloat(menuNav!.bottomOffset) - nextOffset, width: width, height: min(height - menuNav!.minTopOffset, height * 0.9))
-            
-            more = UIButton(type: .custom).then {
-                $0.setImage(UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
-                $0.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-                $0.accessibilityIdentifier = "Subreddit options button"
-                $0.accessibilityLabel = "Options"
-                $0.accessibilityHint = "Open subreddit options menu"
-            }
-            toolbar?.insertSubview(more, at: 0)
-            more.sizeAnchors == .square(size: 56)
-            
-            menu = UIButton(type: .custom).then {
-                $0.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.toolbarIcon(), for: UIControl.State.normal)
-                $0.addTarget(self, action: #selector(self.showDrawer(_:)), for: UIControl.Event.touchUpInside)
-                $0.accessibilityIdentifier = "Nav drawer button"
-                $0.accessibilityLabel = "Navigate"
-                $0.accessibilityHint = "Open navigation drawer"
-            }
-            toolbar?.insertSubview(menu, at: 0)
-            menu.sizeAnchors == .square(size: 56)
-
-            if let tool = toolbar {
-                menu.leftAnchor == tool.leftAnchor
-                menu.topAnchor == tool.topAnchor
-                more.rightAnchor == tool.rightAnchor
-                more.topAnchor == tool.topAnchor
-            }
-        }
-                
-        UIView.animate(withDuration: 0.25) {
-            self.menu.deactivateImmediateConstraints()
-            self.menu.topAnchor == self.toolbar!.topAnchor
-            self.menu.widthAnchor == 56
-            self.menu.heightAnchor == 56
-            self.menu.leftAnchor == self.toolbar!.leftAnchor
-
-            self.more.deactivateImmediateConstraints()
-            self.more.topAnchor == self.toolbar!.topAnchor
-            self.more.widthAnchor == 56
-            self.more.heightAnchor == 56
-            self.more.rightAnchor == self.toolbar!.rightAnchor
-
-            self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
-            self.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
-            self.more.transform = CGAffineTransform(scaleX: 1, y: 1)
-        }
-    }*/
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //menuNav?.configureToolbarSwipe()
@@ -479,7 +347,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 navigationController?.setToolbarHidden(true, animated: false)
             }
         }
-        if !links.isEmpty {
+        if !dataSource.hasContent() {
             self.autoplayHandler.autoplayOnce(self.tableView)
         }
     }
@@ -872,7 +740,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     }
                     DispatchQueue.main.async {
                         self.hasHeader = true
-                        if self.loaded && !self.loading {
+                        if self.dataSource.loaded && !self.dataSource.loading {
                             self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                             self.tableView.reloadData()
                             if UIDevice.current.userInterfaceIdiom != .pad {
@@ -954,13 +822,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
-        if (SingleSubredditViewController.firstPresented && !single && self.links.count == 0) || (self.links.count == 0 && !single && !SettingValues.subredditBar) {
-            load(reset: true)
+        if (SingleSubredditViewController.firstPresented && !single && !dataSource.hasContent()) || (!dataSource.hasContent() && !single && !SettingValues.subredditBar) {
+            dataSource.getData(reload: true)
             SingleSubredditViewController.firstPresented = false
         }
-
-        self.sort = SettingValues.getLinkSorting(forSubreddit: self.sub)
-        self.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
+        
+        dataSource.sorting = SettingValues.getLinkSorting(forSubreddit: self.sub)
+        dataSource.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
         
         let offline = MainViewController.isOffline
 
@@ -1048,7 +916,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             label.sizeToFit()
             self.navigationItem.titleView = label
 
-            if !loaded {
+            if !dataSource.loaded {
                 do {
                     try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
                         switch result {
@@ -1056,7 +924,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             print(result.error!.description)
                             DispatchQueue.main.async {
                                 if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
-                                    self.load(reset: true)
+                                    self.dataSource.getData(reload: true)
                                     self.loadBubbles()
                                 } else {
                                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
@@ -1099,7 +967,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                             }
                                         }
                                     }
-                                    self.load(reset: true)
+                                    self.dataSource.getData(reload: true)
                                     self.loadBubbles()
                                 }
                                 
@@ -1109,15 +977,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 } catch {
                 }
             }
-        } else if offline && single && !loaded {
+        } else if offline && single && !dataSource.loaded {
             title = sub
             //hideMenuNav()
-            self.load(reset: true)
+            dataSource.getData(reload: true)
         }
     }
     
     func doSortImage(_ sortButton: UIButton) {
-        switch sort {
+        switch dataSource.sorting {
         case .best:
             sortButton.setImage(UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         case .hot:
@@ -1205,76 +1073,31 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     @objc func hideReadPosts() {
-        var indexPaths: [IndexPath] = []
-
-        var index = 0
-        var count = 0
-        self.lastTopItem = 0
-        for submission in links {
-            if History.getSeen(s: submission) {
-                indexPaths.append(IndexPath(row: count, section: 0))
-                links.remove(at: index)
-            } else {
-                index += 1
-            }
-            count += 1
-        }
-
-       // TODO: - save realm
-        DispatchQueue.main.async {
-            if !indexPaths.isEmpty {
-                self.tableView.performBatchUpdates({
-                    self.tableView.deleteItems(at: indexPaths)
-                }, completion: { (_) in
-                    self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
-                    self.tableView.reloadData()
-                })
+        dataSource.hideReadPosts { (indexPaths: [IndexPath]) in
+            DispatchQueue.main.async {
+                if !indexPaths.isEmpty {
+                    self.tableView.performBatchUpdates({
+                        self.tableView.deleteItems(at: indexPaths)
+                    }, completion: { (_) in
+                        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
+                        self.tableView.reloadData()
+                    })
+                }
             }
         }
     }
     
     func hideReadPostsPermanently() {
-        var indexPaths: [IndexPath] = []
-        var toRemove: [RSubmission] = []
-        
-        var index = 0
-        var count = 0
-        for submission in links {
-            if History.getSeen(s: submission) {
-                indexPaths.append(IndexPath(row: count, section: 0))
-                toRemove.append(submission)
-                links.remove(at: index)
-            } else {
-                index += 1
-            }
-            count += 1
-        }
-        
-       // TODO: - save realm
-        DispatchQueue.main.async {
-            if !indexPaths.isEmpty {
-                self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
-                self.tableView.performBatchUpdates({
-                    self.tableView.deleteItems(at: indexPaths)
-                }, completion: { (_) in
+        dataSource.hideReadPostsPermanently { (indexPaths: [IndexPath]) in
+            DispatchQueue.main.async {
+                if !indexPaths.isEmpty {
                     self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
-                    self.tableView.reloadData()
-                })
-            }
-        }
-        
-        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
-            if !indexPaths.isEmpty {
-                var hideString = ""
-                for item in toRemove {
-                    hideString.append(item.getId() + ",")
-                }
-                hideString = hideString.substring(0, length: hideString.length - 1)
-                do {
-                    try session.setHide(true, name: hideString) { (result) in
-                        print(result)
-                    }
-                } catch {
+                    self.tableView.performBatchUpdates({
+                        self.tableView.deleteItems(at: indexPaths)
+                    }, completion: { (_) in
+                        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
+                        self.tableView.reloadData()
+                    })
                 }
             }
         }
@@ -1366,7 +1189,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         filterView.heightAnchor == CGFloat(50 * settings.tableView(settings.tableView, numberOfRowsInSection: 0))
         alert.addAction(AlertAction(title: "Apply", style: .preferred, handler: { (_) in
             if reload {
-                self.load(reset: true)
+                self.dataSource.getData(reload: true)
             } else {
                 self.applyFilters()
             }
@@ -1385,12 +1208,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func shadowboxMode() {
-        if !VCPresenter.proDialogShown(feature: true, self) && !links.isEmpty && !self.loading && self.loaded {
+        if !VCPresenter.proDialogShown(feature: true, self) && self.dataSource.hasContent() && !dataSource.loading && dataSource.loaded {
             let visibleRect = CGRect(origin: tableView.contentOffset, size: tableView.bounds.size)
             let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
             let visibleIndexPath = tableView.indexPathForItem(at: visiblePoint)
 
-            let controller = ShadowboxViewController.init(submissions: links, subreddit: sub, index: visibleIndexPath?.row ?? 0, paginator: paginator, sort: sort, time: time)
+            let controller = ShadowboxViewController(index: visibleIndexPath?.row ?? 0, submissionDataSource: dataSource)
             controller.modalPresentationStyle = .overFullScreen
             present(controller, animated: true, completion: nil)
         }
@@ -1399,18 +1222,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    func loadMore() {
-        if !showing {
-            showLoader()
-        }
-        load(reset: false)
-    }
-
-    func showLoader() {
-        showing = true
-       // TODO: - maybe?
     }
 
     @objc func showSortMenu(_ selector: UIView?) {
@@ -1456,7 +1267,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 }
             }
             
-            actionSheetController.addAction(title: link.description, icon: sortIcon, primary: sort == link) {
+            actionSheetController.addAction(title: link.description, icon: sortIcon, primary: dataSource.sorting == link) {
                 self.showTimeMenu(s: link, selector: selector, isDefault: isDefault)
             }
         }
@@ -1466,7 +1277,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func showTimeMenu(s: LinkSortType, selector: UIView?, isDefault: UISwitch) {
         if s == .hot || s == .new || s == .rising || s == .best {
-            sort = s
+            dataSource.sorting = s
             if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
                 self.doSortImage(mainVC.sortButton)
             } else {
@@ -1484,14 +1295,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
             for t in TimeFilterWithin.cases {
                 actionSheetController.addAction(title: t.param, icon: nil) {
-                    self.sort = s
+                    self.dataSource.sorting = s
                     if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
                         self.doSortImage(mainVC.sortButton)
                     } else {
                         self.doSortImage(self.sortButton)
                     }
 
-                    self.time = t
+                    self.dataSource.time = t
                     if isDefault.isOn {
                         SettingValues.setSubSorting(forSubreddit: self.sub, linkSorting: s, timePeriod: t)
                         BannerUtil.makeBanner(text: "Default sorting set", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 2, context: self, top: false, callback: nil)
@@ -1513,13 +1324,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             })
         }
         
-        links = []
+        dataSource.removeData()
+        
         self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         flowLayout.invalidateLayout()
         UIView.transition(with: self.tableView, duration: 0.10, options: .transitionCrossDissolve, animations: {
             self.tableView.reloadData()
         }, completion: nil)
-        load(reset: true)
+        
+        dataSource.getData(reload: true)
     }
 
     func deleteSelf(_ cell: LinkCellView) {
@@ -1537,307 +1350,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         }
     }
-    
-    var page = 0
-    var reset = false
-    var tries = 0
-
-    func load(reset: Bool) {
-        self.reset = reset
-        self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
-        self.emptyStateView.isHidden = true
-        PagingCommentViewController.savedComment = nil
-        LinkCellView.checkedWifi = false
-        if sub.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
-            DispatchQueue.main.async {
-                let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
-                alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
-                    self.navigationController?.popViewController(animated: true)
-                    self.dismiss(animated: true, completion: nil)
-                }))
-                self.present(alert, animated: true, completion: nil)
-            }
-            self.refreshControl.endRefreshing()
-            return
-        } else if sub.lowercased() == "myrandom" && !AccountController.isGold {
-            DispatchQueue.main.async {
-                let alert = UIAlertController.init(title: "r/\(self.sub) requires gold", message: "See reddit.com/gold/about for more details", preferredStyle: .alert)
-                alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
-                    self.navigationController?.popViewController(animated: true)
-                    self.dismiss(animated: true, completion: nil)
-                }))
-                self.present(alert, animated: true, completion: nil)
-            }
-            self.refreshControl.endRefreshing()
-            return
-        }
-        if !loading {
-            if !loaded {
-                if indicator == nil {
-                    indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
-                    indicator?.strokeWidth = 5
-                    indicator?.radius = 15
-                    indicator?.indicatorMode = .indeterminate
-                    indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
-                    self.view.addSubview(indicator!)
-                    indicator!.centerAnchors == self.view.centerAnchors
-                    indicator?.startAnimating()
-                }
-            }
-
-            do {
-                loading = true
-                if reset {
-                    paginator = Paginator()
-                    self.page = 0
-                    self.lastTopItem = 0
-                }
-                if reset || !loaded {
-                    self.startTime = Date()
-                }
-                var subreddit: SubredditURLPath = Subreddit.init(subreddit: sub)
-
-                if sub.hasPrefix("/m/") {
-                    subreddit = Multireddit.init(name: sub.substring(3, length: sub.length - 3), user: AccountController.currentName)
-                }
-                if sub.contains("/u/") {
-                    subreddit = Multireddit.init(name: sub.split("/")[3], user: sub.split("/")[1])
-                }
-                
-                try session?.getList(paginator, subreddit: subreddit, sort: sort, timeFilterWithin: time, limit: SettingValues.submissionLimit, completion: { (result) in
-                    self.loaded = true
-                    self.reset = false
-                    switch result {
-                    case .failure:
-                        print(result.error!)
-                        //test if realm exists and show that
-                            print("Getting realm data")
-                                DispatchQueue.main.async {
-                                    do {
-                                        let realm = try Realm()
-                                        var updated = NSDate()
-                                        if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
-                                            return item.subreddit == self.sub
-                                        }).first {
-                                            self.links = []
-                                            for i in listing.links {
-                                                self.links.append(i)
-                                            }
-                                            updated = listing.updated
-                                        }
-                                        var paths = [IndexPath]()
-                                        for i in 0..<self.links.count {
-                                            paths.append(IndexPath.init(item: i, section: 0))
-                                        }
-                                        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
-                                        self.tableView.reloadData()
-                                        
-                                        self.refreshControl.endRefreshing()
-                                        self.indicator?.stopAnimating()
-                                        self.indicator?.isHidden = true
-                                        self.loading = false
-                                        self.loading = false
-                                        self.nomore = true
-                                        self.offline = true
-                                        
-                                        var is13Popover = false
-                                        if self.navigationController != nil {
-                                            if #available(iOS 13.0, *) {
-                                                if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
-                                                    is13Popover = true
-                                                }
-                                            }
-                                        }
-
-                                        var top = CGFloat(0)
-                                        if !is13Popover {
-                                            if #available(iOS 11, *) {
-                                                top += 26
-                                                if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
-                                                    top -= 18
-                                                }
-                                            }
-                                        } else {
-                                            top -= 4
-                                        }
-                                        let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-                                        self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top)
-
-                                        if self.tries < 1 {
-                                            self.tries += 1
-                                            self.load(reset: true)
-                                        } else {
-                                            if self.links.isEmpty {
-                                                self.emptyStateView.setText(title: "No offline content found!", message: "When online, you can set up subreddit caching in Settings > Auto Cache")
-                                                self.emptyStateView.isHidden = false
-                                            } else {
-                                                self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Content \(DateFormatter().timeSince(from: updated, numericDates: true)) old")
-                                            }
-                                        }
-                                        UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
-                                    } catch {
-                                        
-                                    }
-
-                                }
-                    case .success(let listing):
-                        self.tries = 0
-                        if reset {
-                            self.links = []
-                            self.page = 0
-                            self.numberFiltered = 0
-                        }
-                        self.offline = false
-                        let before = self.links.count
-                        if self.realmListing == nil {
-                            self.realmListing = RListing()
-                            self.realmListing!.subreddit = self.sub
-                            self.realmListing!.updated = NSDate()
-                        }
-                        if reset && self.realmListing!.links.count > 0 {
-                            self.realmListing!.links.removeAll()
-                        }
-
-                        let newLinks = listing.children.compactMap({ $0 as? Link })
-                        var converted: [RSubmission] = []
-                        for link in newLinks {
-                            let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
-                            converted.append(newRS)
-                            CachedTitle.addTitle(s: newRS)
-                        }
-                        var values = PostFilter.filter(converted, previous: self.links, baseSubreddit: self.sub, gallery: self.isGallery).map { $0 as! RSubmission }
-                        self.numberFiltered += (converted.count - values.count)
-                        if self.page > 0 && !values.isEmpty && SettingValues.showPages {
-                            let pageItem = RSubmission()
-                            pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
-                            pageItem.author = "PAGE_SEPARATOR"
-                            pageItem.title = "Page \(self.page + 1)\n\(self.links.count + values.count - self.page) posts"
-                            values.insert(pageItem, at: 0)
-                        }
-                        self.page += 1
-                        
-                        self.links += values
-                        self.paginator = listing.paginator
-                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
-                        do {
-                            let realm = try Realm()
-                           // TODO: - insert
-                            realm.beginWrite()
-                            for submission in self.links {
-                                if submission.author != "PAGE_SEPARATOR" {
-                                    realm.create(type(of: submission), value: submission, update: .all)
-                                    if let listing = self.realmListing {
-                                        listing.links.append(submission)
-                                    }
-                                }
-                            }
-                            
-                            try realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
-                            try realm.commitWrite()
-                        } catch {
-
-                        }
-                        
-                        self.preloadImages(values)
-                        DispatchQueue.main.async { [weak self] in
-                            guard let strongSelf = self else { return }
-                            if strongSelf.links.isEmpty && !SettingValues.hideSeen {
-                                strongSelf.flowLayout.reset(modal: strongSelf.presentingViewController != nil, vc: strongSelf, isGallery: strongSelf.isGallery)
-                                strongSelf.tableView.reloadData()
-                                
-                                strongSelf.refreshControl.endRefreshing()
-                                strongSelf.indicator?.stopAnimating()
-                                strongSelf.indicator?.isHidden = true
-                                strongSelf.loading = false
-                                if MainViewController.first {
-                                    MainViewController.first = false
-                                    strongSelf.parentController?.checkForMail()
-                                }
-                                
-                                if listing.children.isEmpty {
-                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit with \(strongSelf.sort.path.substring(1, length: strongSelf.sort.path.length - 1)) sorting.")
-                                    strongSelf.emptyStateView.isHidden = false
-                                } else {
-                                    strongSelf.emptyStateView.setText(title: "Nothing to see here!", message: "All posts were filtered while loading this subreddit. Check your global filters in Slide's Settings, or tap here to view this sub's content filters")
-                                    strongSelf.emptyStateView.isHidden = false
-                                    strongSelf.emptyStateView.addTapGestureRecognizer {
-                                        strongSelf.filterContent(true)
-                                    }
-                                }
-                            } else if strongSelf.links.isEmpty && newLinks.count != 0 && strongSelf.paginator.hasMore() {
-                                strongSelf.loading = false
-                                strongSelf.loadMore()
-                            } else {
-                                strongSelf.oldPosition = CGPoint.zero
-                                var paths = [IndexPath]()
-                                for i in before..<strongSelf.links.count {
-                                    paths.append(IndexPath.init(item: i + strongSelf.headerOffset(), section: 0))
-                                }
-
-                                if before == 0 {
-                                    strongSelf.flowLayout.invalidateLayout()
-                                    UIView.transition(with: strongSelf.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
-                                        strongSelf.tableView.reloadData()
-                                    }, completion: { (_) in
-                                        strongSelf.autoplayHandler.autoplayOnce(strongSelf.tableView)
-                                    })
-
-                                    var is13Popover = false
-                                    
-                                    if strongSelf.navigationController != nil {
-                                        if #available(iOS 13.0, *) {
-                                            if strongSelf.navigationController!.modalPresentationStyle == .pageSheet && strongSelf.navigationController!.viewControllers.count == 1 && !(strongSelf.navigationController!.viewControllers[0] is MainViewController) {
-                                                is13Popover = true
-                                            }
-                                        }
-                                    }
-                                    
-                                    let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : strongSelf.headerHeight(false))
-
-                                    var top = CGFloat(0)
-                                    if !is13Popover {
-                                        if #available(iOS 11, *) {
-                                            top += 26
-                                            if UIDevice.current.userInterfaceIdiom == .pad || !strongSelf.hasTopNotch {
-                                                top -= 18
-                                            }
-                                        }
-                                    } else {
-                                        top -= 4
-                                        if headerHeight != 0 {
-                                            top -= 12
-                                        }
-                                    }
-                                    let navoffset = (-1 * ( (strongSelf.navigationController?.navigationBar.frame.size.height ?? 64)))
-                                    strongSelf.tableView.contentOffset = CGPoint.init(x: 0, y: -22 + navoffset - top + headerHeight)
-                                } else {
-                                    strongSelf.flowLayout.invalidateLayout()
-                                    strongSelf.tableView.insertItems(at: paths)
-                                }
-                                strongSelf.tableView.isUserInteractionEnabled = true
-
-                                strongSelf.indicator?.stopAnimating()
-                                strongSelf.indicator?.isHidden = true
-                                strongSelf.refreshControl.endRefreshing()
-                                strongSelf.loading = false
-                                if MainViewController.first {
-                                    MainViewController.first = false
-                                    strongSelf.parentController?.checkForMail()
-                                    strongSelf.parentController?.checkSubs()
-                                }
-                                
-                            }
-//                            UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
-                        }
-                    }
-                })
-            } catch {
-                print(error)
-            }
-
-        }
-    }
-    
+        
     var hasTopNotch: Bool {
         if #available(iOS 11.0, *) {
             return UIApplication.shared.delegate?.window??.safeAreaInsets.top ?? 0 > 20
@@ -2285,6 +1798,175 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 }
 
+extension SingleSubredditViewController: SubmissionDataSouceDelegate {
+    func vcIsGallery() -> Bool {
+        return isGallery
+    }
+    
+    func showIndicator() {
+        if indicator == nil {
+            indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
+            indicator?.strokeWidth = 5
+            indicator?.radius = 15
+            indicator?.indicatorMode = .indeterminate
+            indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
+            self.view.addSubview(indicator!)
+            indicator!.centerAnchors == self.view.centerAnchors
+            indicator?.startAnimating()
+        }
+    }
+    
+    func generalError(title: String, message: String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController.init(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                self.navigationController?.popViewController(animated: true)
+                self.dismiss(animated: true, completion: nil)
+            }))
+            self.present(alert, animated: true, completion: nil)
+        }
+        self.refreshControl.endRefreshing()
+    }
+        
+    func loadSuccess(before: Int, count: Int) {
+        self.oldPosition = CGPoint.zero
+        var paths = [IndexPath]()
+        for i in before..<count {
+            paths.append(IndexPath.init(item: i + self.headerOffset(), section: 0))
+        }
+
+        if before == 0 {
+            self.flowLayout.invalidateLayout()
+            UIView.transition(with: self.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
+                self.tableView.reloadData()
+            }, completion: { (_) in
+                self.autoplayHandler.autoplayOnce(self.tableView)
+            })
+
+            var is13Popover = false
+            
+            if self.navigationController != nil {
+                if #available(iOS 13.0, *) {
+                    if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
+                        is13Popover = true
+                    }
+                }
+            }
+            
+            let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight(false))
+
+            var top = CGFloat(0)
+            if !is13Popover {
+                if #available(iOS 11, *) {
+                    top += 26
+                    if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
+                        top -= 18
+                    }
+                }
+            } else {
+                top -= 4
+                if headerHeight != 0 {
+                    top -= 12
+                }
+            }
+            let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
+            self.tableView.contentOffset = CGPoint.init(x: 0, y: -22 + navoffset - top + headerHeight)
+        } else {
+            self.flowLayout.invalidateLayout()
+            self.tableView.insertItems(at: paths)
+        }
+        self.tableView.isUserInteractionEnabled = true
+
+        self.indicator?.stopAnimating()
+        self.indicator?.isHidden = true
+        self.refreshControl.endRefreshing()
+        if MainViewController.first {
+            MainViewController.first = false
+            self.parentController?.checkForMail()
+            self.parentController?.checkSubs()
+        }
+    }
+    
+    func preLoadItems() {
+        self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
+        self.emptyStateView.isHidden = true
+        PagingCommentViewController.savedComment = nil
+        LinkCellView.checkedWifi = false
+    }
+    
+    func loadOffline() {
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
+        self.tableView.reloadData()
+        
+        self.refreshControl.endRefreshing()
+        self.indicator?.stopAnimating()
+        self.indicator?.isHidden = true
+        
+        var is13Popover = false
+        if self.navigationController != nil {
+            if #available(iOS 13.0, *) {
+                if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
+                    is13Popover = true
+                }
+            }
+        }
+
+        var top = CGFloat(0)
+        if !is13Popover {
+            if #available(iOS 11, *) {
+                top += 26
+                if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
+                    top -= 18
+                }
+            }
+        } else {
+            top -= 4
+        }
+        let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
+        self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top)
+
+        dataSource.handleTries { (isEmpty: Bool) in
+            if isEmpty {
+                self.emptyStateView.setText(title: "No offline content found!", message: "When online, you can set up subreddit caching in Settings > Auto Cache")
+                self.emptyStateView.isHidden = false
+            } else {
+                self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Content \(DateFormatter().timeSince(from: self.dataSource.updated, numericDates: true)) old")
+            }
+        }
+        
+        UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
+    }
+    
+    func doPreloadImages(values: [RSubmission]) {
+        self.preloadImages(values)
+    }
+    
+    func emptyState(_ listing: Listing) {
+        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
+        self.tableView.reloadData()
+        
+        self.refreshControl.endRefreshing()
+        self.indicator?.stopAnimating()
+        self.indicator?.isHidden = true
+        if MainViewController.first {
+            MainViewController.first = false
+            self.parentController?.checkForMail()
+        }
+        
+        if listing.children.isEmpty {
+            self.emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit with \(dataSource.sorting.path.substring(1, length: dataSource.sorting.path.length - 1)) sorting.")
+            self.emptyStateView.isHidden = false
+        } else {
+            self.emptyStateView.setText(title: "Nothing to see here!", message: "All posts were filtered while loading this subreddit. Check your global filters in Slide's Settings, or tap here to view this subreddit's content filters")
+            self.emptyStateView.isHidden = false
+            self.emptyStateView.addTapGestureRecognizer {
+                self.filterContent(true)
+            }
+        }
+
+    }
+}
+
 // MARK: - Actions
 extension SingleSubredditViewController {
 
@@ -2306,17 +1988,6 @@ extension SingleSubredditViewController {
 
     @objc func showMoreNone(_ sender: AnyObject) {
         showMore(sender, parentVC: nil)
-    }
-
-    @objc func hideAll(_ sender: AnyObject) {
-        for submission in links {
-            if History.getSeen(s: submission) {
-                let index = links.firstIndex(of: submission)!
-                links.remove(at: index)
-            }
-        }
-        self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
-        tableView.reloadData()
     }
     
     @objc func pickTheme(sender: AnyObject?, parent: MainViewController?) {
@@ -2476,7 +2147,7 @@ extension SingleSubredditViewController {
             }
         }
 
-        alertController.addAction(title: "Sort (currently \(sort.path))", icon: UIImage(named: "filter")!.menuIcon()) {
+        alertController.addAction(title: "Sort (currently \(dataSource.sorting.path))", icon: UIImage(named: "filter")!.menuIcon()) {
             self.showSortMenu(self.more)
         }
 
@@ -2526,7 +2197,7 @@ extension SingleSubredditViewController {
         }
 
         alertController.addAction(title: "Filter content from \(sub)", icon: UIImage(named: "filter")!.menuIcon()) {
-            if !self.links.isEmpty || self.loaded {
+            if self.dataSource.hasContent() || self.dataSource.loaded {
                 self.filterContent()
             }
         }
@@ -2583,9 +2254,9 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
             print(lastTopItem)
             if !top.isEmpty {
                 let topItem = top[0].row - 1
-                if topItem > lastTopItem && topItem < links.count {
+                if topItem > lastTopItem && topItem < dataSource.content.count {
                     for item in lastTopItem..<topItem {
-                        History.addSeen(s: links[item], skipDuplicates: true)
+                        History.addSeen(s: dataSource.content[item], skipDuplicates: true)
                     }
                     lastTopItem = topItem
                 }
@@ -2606,7 +2277,7 @@ extension SingleSubredditViewController: UIScrollViewDelegate {
 extension SingleSubredditViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (loaded && (!loading || self.links.count > 0) ? headerOffset() : 0) + links.count + (loaded && !reset && self.links.count != 0 ? 1 : 0)
+        return (dataSource.loaded && (!dataSource.loading || dataSource.hasContent()) ? headerOffset() : 0) + dataSource.content.count + (dataSource.loaded && !dataSource.isReset && dataSource.hasContent() ? 1 : 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -2619,10 +2290,10 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         if hasHeader {
             row -= 1
         }
-        if row >= self.links.count {
-            if nomore {
+        if row >= dataSource.content.count {
+            if dataSource.nomore {
                 let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nothing", for: indexPath) as! NothingHereCell
-                if links.count < 10 {
+                if dataSource.content.count < 10 {
                     var title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                     title.append(NSAttributedString(string: "\n"))
                     title.append(NSMutableAttributedString(string: "\(numberFiltered) posts were filtered out", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
@@ -2634,13 +2305,13 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
             cell.loader.color = ColorUtil.theme.fontColor
             cell.loader.startAnimating()
-            if !loading && !nomore {
-                self.loadMore()
+            if !dataSource.loading && !dataSource.nomore {
+                dataSource.getData(reload: false)
             }
             return cell
         }
 
-        let submission = self.links[row]
+        let submission = dataSource.content[row]
 
         if submission.author == "PAGE_SEPARATOR" {
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "page", for: indexPath) as! PageCell
@@ -2734,9 +2405,9 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
 
         cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub, np: false)
-        if row > self.links.count - 4 {
-            if !loading && !nomore {
-                self.loadMore()
+        if row > dataSource.content.count - 4 {
+            if !dataSource.loading && !dataSource.nomore {
+                self.dataSource.getData(reload: false)
             }
         }
         return cell
@@ -2756,22 +2427,19 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
 
     func openComments(id: String, subreddit: String?) {
         if let nav = ((self.splitViewController?.viewControllers.count ?? 0 > 1) ? self.splitViewController?.viewControllers[1] : nil) as? UINavigationController, let detail = nav.viewControllers[0] as? PagingCommentViewController {
-            if detail.submissions[0].getId() == id {
+            if detail.submissionDataSource.content[detail.startIndex].getId() == id {
                 return
             }
         }
         var index = 0
-        for s in links {
+        for s in dataSource.content {
             if s.getId() == id {
                 break
             }
             index += 1
         }
-        var newLinks: [RSubmission] = []
-        for i in index ..< links.count {
-            newLinks.append(links[i])
-        }
-        let comment = PagingCommentViewController.init(submissions: newLinks, offline: self.offline, reloadCallback: { [weak self] in
+
+        let comment = PagingCommentViewController.init(submissionDataSource: dataSource, currentIndex: index, reloadCallback: { [weak self] in
             if let strongSelf = self {
                 strongSelf.tableView.reloadData()
             }
@@ -2823,8 +2491,8 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
             return CGSize(width: width, height: headerHeight())
         }
         row -= self.headerOffset()
-        if row < links.count {
-            let submission = links[row]
+        if row < dataSource.content.count {
+            let submission = dataSource.content[row]
             if submission.author == "PAGE_SEPARATOR" {
                 return CGSize(width: width, height: 80)
             }
@@ -2837,7 +2505,7 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
 // MARK: - Submission More Delegate
 extension SingleSubredditViewController: SubmissionMoreDelegate {
     func hide(index: Int) {
-        links.remove(at: index)
+        dataSource.content.remove(at: index)
         self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
     }
@@ -2916,11 +2584,11 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             try session?.setHide(true, name: cell.link!.getId(), completion: { (_) in })
             let id = cell.link!.getId()
             var location = 0
-            var item = links[0]
-            for submission in links {
+            var item = dataSource.content[0]
+            for submission in dataSource.content {
                 if submission.getId() == id {
-                    item = links[location]
-                    links.remove(at: location)
+                    item = dataSource.content[location]
+                    dataSource.content.remove(at: location)
                     break
                 }
                 location += 1
@@ -2928,7 +2596,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
             self.tableView.isUserInteractionEnabled = false
 
-            if !loading {
+            if !dataSource.loading {
                 tableView.performBatchUpdates({
                     self.tableView.deleteItems(at: [IndexPath.init(item: location, section: 0)])
                 }, completion: { (_) in
@@ -2941,7 +2609,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                 tableView.reloadData()
             }
             BannerUtil.makeBanner(text: "Hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, top: false, callback: {
-                self.links.insert(item, at: location)
+                self.dataSource.content.insert(item, at: location)
                 self.tableView.insertItems(at: [IndexPath.init(item: location + self.headerOffset(), section: 0)])
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.reloadData()
@@ -2978,7 +2646,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
     }
     
     func applyFilters() {
-        self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
+        self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
         self.reloadDataReset()
     }
 
@@ -2992,7 +2660,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts by u/\(link.author)", style: .default) { _ -> Void in
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -3000,7 +2668,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts from r/\(link.subreddit)", style: .default) { _ -> Void in
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -3008,7 +2676,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { _ -> Void in
             PostFilter.domains.append(link.domain as NSString)
             PostFilter.saveAndUpdate()
-            self.links = PostFilter.filter(self.links, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -3299,7 +2967,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
         self.del = delegate
         self.hasHeaderImage = delegate.headerImage != nil
         setupViews()
-        switch del?.sort ?? LinkSortType.top {
+        switch del?.dataSource.sorting ?? LinkSortType.top {
         case .best:
             sortImage.image = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
         case .hot:
@@ -3319,7 +2987,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
         }
         sortTitle.font = UIFont.boldSystemFont(ofSize: 14)
         sortTitle.textColor = ColorUtil.theme.fontColor
-        sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
+        sortTitle.text = (del?.dataSource.sorting ?? LinkSortType.top).description.uppercased()
     }
     
     func addSubscribe(_ stack: UIStackView, _ scroll: UIScrollView) -> CGFloat {

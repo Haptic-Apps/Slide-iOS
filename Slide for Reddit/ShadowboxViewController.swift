@@ -13,11 +13,7 @@ import UIKit
 
 class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
-    var baseSubmissions: [RSubmission] = []
-    var paginator: Paginator
-    var sort: LinkSortType
-    var time: TimeFilterWithin
-    var subreddit: String
+    var submissionDataSource: SubmissionsDataSource
     var index: Int
 
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
@@ -50,17 +46,13 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
     }
     
-    public init(submissions: [RSubmission], subreddit: String, index: Int, paginator: Paginator, sort: LinkSortType, time: TimeFilterWithin) {
-        self.subreddit = subreddit
-        self.sort = sort
-        self.time = time
+    public init(index: Int, submissionDataSource: SubmissionsDataSource) {
+        
+        self.submissionDataSource = submissionDataSource
         self.index = index
-        self.paginator = paginator
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
-        self.baseSubmissions = submissions
-        
-        let s = baseSubmissions[index]
+        let s = submissionDataSource.content[index]
         let firstViewController = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         currentVc = firstViewController
         (currentVc as! ShadowboxLinkViewController).populateContent()
@@ -80,7 +72,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        
+        submissionDataSource.delegate = self
     }
     
     var navItem: UINavigationItem?
@@ -151,68 +143,19 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         currentVc = self.viewControllers!.first!
     }
     
-    var loading = false
-    var nomore = false
-    func loadMore() {
-        if !loading {
-            do {
-                loading = true
-                var path: SubredditURLPath = Subreddit.init(subreddit: self.subreddit)
-                
-                if subreddit.hasPrefix("/m/") {
-                    path = Multireddit.init(name: subreddit.substring(3, length: subreddit.length - 3), user: AccountController.currentName)
-                }
-                if subreddit.contains("/u/") {
-                    path = Multireddit.init(name: subreddit.split("/")[3], user: subreddit.split("/")[1])
-                }
-                
-                try (UIApplication.shared.delegate as? AppDelegate)?.session?.getList(paginator, subreddit: path, sort: sort, timeFilterWithin: time, completion: { (result) in
-                    switch result {
-                    case .failure:
-                        print(result.error!)
-                        //Loading failed, ignore
-                    case .success(let listing):
-                        let newLinks = listing.children.compactMap({ $0 as? Link })
-                        var converted: [RSubmission] = []
-                        for link in newLinks {
-                            let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
-                            converted.append(newRS)
-                        }
-                        
-                        let values = PostFilter.filter(converted, previous: self.baseSubmissions, baseSubreddit: self.subreddit).map { $0 as! RSubmission }
-                        
-                        self.baseSubmissions += values
-                        self.paginator = listing.paginator
-                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
-                        
-                        DispatchQueue.main.async {
-                            self.setViewControllers([self.currentVc],
-                                                    direction: .forward,
-                                                    animated: false ,
-                                                    completion: nil)
-                        }
-                    }
-                })
-            } catch {
-                print(error)
-            }
-            
-        }
-    }
-    
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
         let id = (viewController as! ShadowboxLinkViewController).submission.getId()
         var viewControllerIndex = -1
         
-        for item in baseSubmissions {
+        for item in submissionDataSource.content {
             viewControllerIndex += 1
             if item.getId() == id {
                 break
             }
         }
         
-        if viewControllerIndex < 0 || viewControllerIndex > baseSubmissions.count {
+        if viewControllerIndex < 0 || viewControllerIndex > submissionDataSource.content.count {
             return nil
         }
         
@@ -222,11 +165,11 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             return nil
         }
         
-        guard baseSubmissions.count > previousIndex else {
+        guard submissionDataSource.content.count > previousIndex else {
             return nil
         }
         
-        let s = baseSubmissions[previousIndex]
+        let s = submissionDataSource.content[previousIndex]
         let shadowbox = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         if !shadowbox.populated {
             shadowbox.populated = true
@@ -241,19 +184,19 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         let id = (viewController as! ShadowboxLinkViewController).submission.getId()
         var viewControllerIndex = -1
         
-        for item in baseSubmissions {
+        for item in submissionDataSource.content {
             viewControllerIndex += 1
             if item.getId() == id {
                 break
             }
         }
         
-        if viewControllerIndex < 0 || viewControllerIndex > baseSubmissions.count {
+        if viewControllerIndex < 0 || viewControllerIndex > submissionDataSource.content.count {
             return nil
         }
         
         let nextIndex = viewControllerIndex + 1
-        let orderedViewControllersCount = baseSubmissions.count
+        let orderedViewControllersCount = submissionDataSource.content.count
         
         guard orderedViewControllersCount != nextIndex else {
             return nil
@@ -263,11 +206,11 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             return nil
         }
         
-        if nextIndex == baseSubmissions.count - 2 && !loading {
-            loadMore()
+        if nextIndex == submissionDataSource.content.count - 2 && !submissionDataSource.loading {
+            submissionDataSource.getData(reload: false)
         }
         
-        let s = baseSubmissions[nextIndex]
+        let s = submissionDataSource.content[nextIndex]
         let shadowbox = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         if !shadowbox.populated {
             shadowbox.populated = true
@@ -287,6 +230,39 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         return true
     }
 
+}
+
+extension ShadowboxViewController: SubmissionDataSouceDelegate {
+    func showIndicator() {
+    }
+    
+    func generalError(title: String, message: String) {
+    }
+    
+    func loadSuccess(before: Int, count: Int) {
+        DispatchQueue.main.async {
+            self.setViewControllers([self.currentVc],
+                                    direction: .forward,
+                                    animated: false,
+                                    completion: nil)
+        }
+    }
+    
+    func preLoadItems() {
+    }
+    
+    func doPreloadImages(values: [RSubmission]) {
+    }
+    
+    func loadOffline() {
+    }
+    
+    func emptyState(_ listing: Listing) {
+    }
+    
+    func vcIsGallery() -> Bool {
+        return false
+    }
 }
 
 private var hasSwizzled = false
