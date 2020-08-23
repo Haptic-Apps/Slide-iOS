@@ -41,6 +41,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     var titleLabel: YYLabel!
+    var gradientView = GradientView(gradientStartColor: UIColor.black, gradientEndColor: UIColor.clear)
 
     var comment = UIImageView()
     var upvote = UIImageView()
@@ -58,12 +59,18 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     var infoContainer = UIView()
     var info = UILabel()
     var topBody = UIView()
+    var closeButton = UIButton().then {
+        $0.accessibilityIdentifier = "Close Button"
+        $0.accessibilityTraits = UIAccessibilityTraits.button
+        $0.accessibilityLabel = "Close button"
+        $0.accessibilityHint = "Closes the media view"
+    }
 
-    var parentVC: ShadowboxViewController
+    weak var parentVC: ShadowboxViewController?
     
     var backgroundColor: UIColor {
         didSet {
-            if parent is SwipeDownModalVC && parentVC.currentVc == self {
+            if parent is SwipeDownModalVC && parentVC?.currentVc == self {
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 0.25) {
                         (self.parent as! SwipeDownModalVC).background!.backgroundColor = self.backgroundColor
@@ -192,8 +199,12 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
         self.thumbImageContainer.addSubview(self.thumbImage)
         self.thumbImage.edgeAnchors == self.thumbImageContainer.edgeAnchors
+        closeButton.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: .normal)
+        closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
 
-        baseBody.addSubviews(titleLabel)
+        self.view.addSubview(gradientView)
+        gradientView.addSubview(closeButton)
+        gradientView.addSubview(titleLabel)
 
         box.addArrangedSubviews(submissionicon, horizontalSpace(2), score, horizontalSpace(8), commenticon, horizontalSpace(2), comments)
         self.baseBody.addSubview(box)
@@ -207,6 +218,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
         buttons.addArrangedSubviews( upvote, downvote)
         self.baseBody.addSubview(buttons)
+        baseBody.topAnchor == buttons.topAnchor
        // TODO: - add gestures here
         self.view.addSubview(baseBody)
         self.view.addSubview(topBody)
@@ -215,6 +227,12 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         topBody.horizontalAnchors == self.view.horizontalAnchors
         topBody.bottomAnchor == baseBody.topAnchor
         topBody.topAnchor == self.view.topAnchor
+        
+        self.view.bringSubviewToFront(gradientView)
+    }
+    
+    @objc func exit() {
+        parentVC?.dismiss(animated: true, completion: nil)
     }
     
     func configureLayout() {
@@ -228,10 +246,26 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         buttons.rightAnchor == baseBody.rightAnchor - 12
         buttons.bottomAnchor == baseBody.bottomAnchor - 8
         buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-        titleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-        titleLabel.topAnchor == baseBody.topAnchor
-        titleLabel.horizontalAnchors == baseBody.horizontalAnchors + 12
-        titleLabel.bottomAnchor == box.topAnchor - 8
+        
+        gradientView.horizontalAnchors == self.view.horizontalAnchors
+        gradientView.topAnchor == self.view.topAnchor
+
+        closeButton.sizeAnchors == .square(size: 38)
+        closeButton.topAnchor == gradientView.safeTopAnchor + 8
+        closeButton.leftAnchor == gradientView.safeLeftAnchor + 12
+        closeButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        closeButton.layer.masksToBounds = true
+        closeButton.layer.cornerRadius = 18
+        
+        titleLabel.leftAnchor == closeButton.rightAnchor + 8
+        titleLabel.topAnchor == gradientView.safeTopAnchor + 8
+        titleLabel.rightAnchor == gradientView.safeRightAnchor - 8
+        titleLabel.bottomAnchor == gradientView.bottomAnchor - 8
+            
+        gradientView.layoutIfNeeded()
+        titleLabel.preferredMaxLayoutWidth = self.titleLabel.frame.size.width
+        titleLabel.sizeToFit()
+
     }
 
     func populateData() {
@@ -256,7 +290,12 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             
             comments.text = "\(link.commentCount)"
             
-            titleLabel.attributedText = CachedTitle.getTitleAttributedString(link, force: false, gallery: true, full: true, white: false)
+            let title = CachedTitle.getTitleForMedia(submission: link)
+            let finalTitle = NSMutableAttributedString(attributedString: title.infoLine!)
+            finalTitle.append(NSAttributedString(string: "\n"))
+            finalTitle.append(title.mainTitle!)
+            
+            titleLabel.attributedText = finalTitle
 
             let size = CGSize(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude)
             let layout = YYTextLayout(containerSize: size, text: titleLabel.attributedText!)!
@@ -290,7 +329,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     
     func doBackground() {
-        if SettingValues.blackShadowbox {
+        if SettingValues.blackShadowbox || true { //Disable this setting completely
             self.backgroundColor = .black
         } else {
             if content is RSubmission {
@@ -313,7 +352,6 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     
     func populateContent() {
-        self.populated = true
         self.baseBody.addTapGestureRecognizer {
             self.comments(self.view)
         }
@@ -338,10 +376,12 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             textView.topAnchor == bodyScrollView.topAnchor + 50
             textView.heightAnchor == textView.estimatedHeight + 50
             bodyScrollView.contentSize = CGSize(width: bodyScrollView.bounds.width, height: textView.estimatedHeight + 100)
-            parentVC.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
-            parentVC.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
+            parentVC?.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
+            parentVC?.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
+            self.populated = true
         } else if type != .ALBUM && type != .REDDIT_GALLERY && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is RSubmission && !(content as! RSubmission).nsfw) || SettingValues.nsfwPreviews) {
             if !ContentType.displayVideo(t: type) || !populated {
+                self.populated = true
                 let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false, buttons: false))
                 if embed != nil {
                     self.embeddedVC = embed
@@ -358,6 +398,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 populated = false
             }
         } else if type == .LINK || type == .NONE || type == .ALBUM || type == .REDDIT_GALLERY || ((content is RSubmission && (content as! RSubmission).nsfw) && !SettingValues.nsfwPreviews) {
+            self.populated = true
             topBody.addSubviews(thumbImageContainer, infoContainer)
             thumbImageContainer.centerAnchors == topBody.centerAnchors
             infoContainer.horizontalAnchors == topBody.horizontalAnchors
