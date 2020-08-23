@@ -184,8 +184,12 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             return nil
         }
         
-        let previousIndex = viewControllerIndex - 1
+        var previousIndex = viewControllerIndex - 1
         
+        if submissionDataSource.content[previousIndex + startIndex].author == "PAGE_SEPARATOR" {
+            previousIndex -= 1
+        }
+
         guard previousIndex >= 0 else {
             return nil
         }
@@ -218,7 +222,10 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             (viewController as! CommentViewController).refresh(viewController)
         }
         
-        let nextIndex = viewControllerIndex + 1
+        var nextIndex = viewControllerIndex + 1
+        if submissionDataSource.content[nextIndex + startIndex].author == "PAGE_SEPARATOR" {
+            nextIndex += 1
+        }
         let orderedViewControllersCount = submissionDataSource.content.count
         
         guard orderedViewControllersCount != startIndex + nextIndex else {
