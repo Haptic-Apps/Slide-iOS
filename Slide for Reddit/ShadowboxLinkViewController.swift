@@ -329,7 +329,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     
     func doBackground() {
-        if SettingValues.blackShadowbox {
+        if SettingValues.blackShadowbox || true { //Disable this setting completely
             self.backgroundColor = .black
         } else {
             if content is RSubmission {

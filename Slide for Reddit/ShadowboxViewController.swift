@@ -52,15 +52,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         self.index = index
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
-        let s = submissionDataSource.content[index]
-        let firstViewController = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
-        currentVc = firstViewController
-        (currentVc as! ShadowboxLinkViewController).populateContent()
-        
-        self.setViewControllers([firstViewController],
-                                direction: .forward,
-                                animated: true,
-                                completion: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -76,7 +67,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     }
     
     var navItem: UINavigationItem?
-    var navigationBar = UINavigationBar()
     
     @objc func exit() {
         self.dismiss(animated: true, completion: nil)
@@ -89,16 +79,22 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         self.navigationController?.view.backgroundColor = UIColor.clear
         viewToMux = self.background
+        let s = submissionDataSource.content[index]
+        let firstViewController = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
+        currentVc = firstViewController
+        (currentVc as! ShadowboxLinkViewController).populateContent()
         
-        navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
-        navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationBar.shadowImage = UIImage()
-        navigationBar.isTranslucent = true
-
-        self.view.addSubview(navigationBar)
-        
-        navigationBar.topAnchor == self.view.safeTopAnchor
-        navigationBar.horizontalAnchors == self.view.horizontalAnchors
+        self.setViewControllers([firstViewController],
+                                direction: .forward,
+                                animated: true,
+                                completion: { [weak self](_) in
+                                    guard let self = self else { return }
+                                    if (self.currentVc as! ShadowboxLinkViewController).embeddedVC == nil {
+                                        self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).thumbImageContainer.superview
+                                    } else {
+                                        self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).embeddedVC.view
+                                    }
+                                })
     }
     
     @objc func color() {
@@ -120,6 +116,11 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
         
         currentVc = self.viewControllers!.first!
+        if (self.currentVc as! ShadowboxLinkViewController).embeddedVC == nil {
+            self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).thumbImageContainer.superview
+        } else {
+            self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).embeddedVC.view
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
