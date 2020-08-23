@@ -121,7 +121,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     
     //From https://stackoverflow.com/a/25167681/3697225
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if currentIndex - startIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
+        if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
         } else if currentIndex + startIndex == submissionDataSource.content.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
@@ -130,7 +130,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     
     //From https://stackoverflow.com/a/25167681/3697225
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if currentIndex - startIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
+        if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         } else if currentIndex + startIndex == submissionDataSource.content.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
@@ -221,11 +221,11 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = submissionDataSource.content.count
         
-        guard orderedViewControllersCount != nextIndex else {
+        guard orderedViewControllersCount != startIndex + nextIndex else {
             return nil
         }
         
-        guard orderedViewControllersCount > nextIndex else {
+        guard orderedViewControllersCount > startIndex + nextIndex else {
             return nil
         }
         let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex], single: false)
