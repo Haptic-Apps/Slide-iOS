@@ -95,7 +95,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true
 
-        doButtons()
         self.view.addSubview(navigationBar)
         
         navigationBar.topAnchor == self.view.safeTopAnchor
@@ -106,7 +105,6 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         SettingValues.blackShadowbox = !SettingValues.blackShadowbox
         UserDefaults.standard.set(SettingValues.blackShadowbox, forKey: SettingValues.pref_blackShadowbox)
         UserDefaults.standard.synchronize()
-        doButtons()
         if SettingValues.blackShadowbox {
             UIView.animate(withDuration: 0.25) {
                 self.background?.backgroundColor = .black
@@ -115,26 +113,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             (currentVc as! ShadowboxLinkViewController).doBackground()
         }
     }
-    
-    func doButtons() {
-        navItem = UINavigationItem(title: "")
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-        navItem?.leftBarButtonItem = closeB
         
-        let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage(named: !SettingValues.blackShadowbox ? "colors" : "nocolors")?.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
-        shadowbox.addTarget(self, action: #selector(self.color), for: UIControl.Event.touchUpInside)
-        shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let shadowboxB = UIBarButtonItem.init(customView: shadowbox)
-        navItem?.rightBarButtonItem = shadowboxB
-        
-        navigationBar.setItems([navItem!], animated: false)
-    }
-    
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         guard didFinishAnimating else {
             return
