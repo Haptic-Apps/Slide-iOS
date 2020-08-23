@@ -138,7 +138,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             return nil
         }
         
-        let previousIndex = viewControllerIndex - 1
+        var previousIndex = viewControllerIndex - 1
         
         guard previousIndex >= 0 else {
             return nil
@@ -148,6 +148,10 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             return nil
         }
         
+        if submissionDataSource.content[previousIndex].author == "PAGE_SEPARATOR" {
+            previousIndex -= 1
+        }
+
         let s = submissionDataSource.content[previousIndex]
         let shadowbox = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         if !shadowbox.populated {
@@ -174,7 +178,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             return nil
         }
         
-        let nextIndex = viewControllerIndex + 1
+        var nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = submissionDataSource.content.count
         
         guard orderedViewControllersCount != nextIndex else {
@@ -185,6 +189,10 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             return nil
         }
         
+        if submissionDataSource.content[nextIndex].author == "PAGE_SEPARATOR" {
+            nextIndex += 1
+        }
+
         if nextIndex == submissionDataSource.content.count - 2 && !submissionDataSource.loading {
             submissionDataSource.getData(reload: false)
         }

@@ -186,10 +186,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         
         var previousIndex = viewControllerIndex - 1
         
-        if submissionDataSource.content[previousIndex + startIndex].author == "PAGE_SEPARATOR" {
-            previousIndex -= 1
-        }
-
         guard previousIndex >= 0 else {
             return nil
         }
@@ -198,6 +194,10 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             return nil
         }
         
+        if submissionDataSource.content[previousIndex + startIndex].author == "PAGE_SEPARATOR" {
+            previousIndex -= 1
+        }
+
         let comment = CommentViewController(submission: submissionDataSource.content[ startIndex + previousIndex], single: false)
         return comment
     }
@@ -223,9 +223,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
         
         var nextIndex = viewControllerIndex + 1
-        if submissionDataSource.content[nextIndex + startIndex].author == "PAGE_SEPARATOR" {
-            nextIndex += 1
-        }
         let orderedViewControllersCount = submissionDataSource.content.count
         
         guard orderedViewControllersCount != startIndex + nextIndex else {
@@ -235,6 +232,11 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         guard orderedViewControllersCount > startIndex + nextIndex else {
             return nil
         }
+        
+        if submissionDataSource.content[nextIndex + startIndex].author == "PAGE_SEPARATOR" {
+            nextIndex += 1
+        }
+
         let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex], single: false)
         if nextIndex == 0 {
             comment.setupSwipeGesture()
