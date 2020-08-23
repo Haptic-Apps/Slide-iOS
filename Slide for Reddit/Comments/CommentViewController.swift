@@ -112,6 +112,8 @@ class CommentViewController: MediaViewController {
     var isSearching = false
     
     var isReply = false
+    
+    var cellGestureRecognizer: UIPanGestureRecognizer!
     // MARK: - UI Properties
     public var inHeadView = UIView()
     var commentDepthColors = [UIColor]()
