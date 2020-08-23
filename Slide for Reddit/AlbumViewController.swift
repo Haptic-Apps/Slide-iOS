@@ -65,7 +65,21 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         self.setViewControllers([firstViewController],
                                 direction: .forward,
                                 animated: true,
-                                completion: nil)
+                                completion: { [weak self] (_) in
+                                    guard let self = self else { return }
+                                    var currentVc = firstViewController
+                                    if currentVc.embeddedVC == nil {
+                                        self.viewToMove = currentVc.view
+                                    } else {
+                                        let embedded = currentVc.embeddedVC
+                                        if let image = embedded as? ImageMediaViewController {
+                                            self.viewToMove = image.imageView
+                                        } else if let video = embedded as? VideoMediaViewController {
+                                            self.viewToMove = video.videoView
+                                        }
+                                    }
+
+                                })
         self.navItem?.title = "1/\(self.urlStringKeys.count)"
         let overview = UIButton.init(type: .custom)
         overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
@@ -131,7 +145,21 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 self.setViewControllers([firstViewController],
                                         direction: .forward,
                                         animated: true,
-                                        completion: nil)
+                                        completion: { [weak self] (_) in
+                                            guard let self = self else { return }
+                                            var currentVc = firstViewController
+                                            if currentVc.embeddedVC == nil {
+                                                self.viewToMove = currentVc.view
+                                            } else {
+                                                let embedded = currentVc.embeddedVC
+                                                if let image = embedded as? ImageMediaViewController {
+                                                    self.viewToMove = image.imageView
+                                                } else if let video = embedded as? VideoMediaViewController {
+                                                    self.viewToMove = video.videoView
+                                                }
+                                            }
+
+                                        })
                 self.navItem?.title = ""
             }
         } else {
@@ -159,7 +187,21 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                     self.setViewControllers([firstViewController],
                                             direction: .forward,
                                             animated: true,
-                                            completion: nil)
+                                            completion: { [weak self] (_) in
+                                                guard let self = self else { return }
+                                                var currentVc = firstViewController
+                                                if currentVc.embeddedVC == nil {
+                                                    self.viewToMove = currentVc.view
+                                                } else {
+                                                    let embedded = currentVc.embeddedVC
+                                                    if let image = embedded as? ImageMediaViewController {
+                                                        self.viewToMove = image.imageView
+                                                    } else if let video = embedded as? VideoMediaViewController {
+                                                        self.viewToMove = video.videoView
+                                                    }
+                                                }
+
+                                            })
                     self.navItem?.title = "\(self.urlStringKeys.firstIndex(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
                     let overview = UIButton.init(type: .custom)
                     overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
@@ -314,7 +356,21 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             self.setViewControllers([firstViewController],
                                     direction: .forward,
                                     animated: true,
-                                    completion: nil)
+                                    completion: { [weak self] (_) in
+                                        guard let self = self else { return }
+                                        var currentVc = firstViewController
+                                        if currentVc.embeddedVC == nil {
+                                            self.viewToMove = currentVc.view
+                                        } else {
+                                            let embedded = currentVc.embeddedVC
+                                            if let image = embedded as? ImageMediaViewController {
+                                                self.viewToMove = image.imageView
+                                            } else if let video = embedded as? VideoMediaViewController {
+                                                self.viewToMove = video.videoView
+                                            }
+                                        }
+
+                                    })
             self.navItem?.title = "\(self.urlStringKeys.firstIndex(of: ((self.viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(self.urlStringKeys.count)"
             let overview = UIButton.init(type: .custom)
             overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
@@ -359,7 +415,21 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                 self.setViewControllers([firstViewController],
                                         direction: .forward,
                                         animated: true,
-                                        completion: nil)
+                                        completion: { [weak self] (_) in
+                                            guard let self = self else { return }
+                                            var currentVc = firstViewController
+                                            if currentVc.embeddedVC == nil {
+                                                self.viewToMove = currentVc.view
+                                            } else {
+                                                let embedded = currentVc.embeddedVC
+                                                if let image = embedded as? ImageMediaViewController {
+                                                    self.viewToMove = image.imageView
+                                                } else if let video = embedded as? VideoMediaViewController {
+                                                    self.viewToMove = video.videoView
+                                                }
+                                            }
+
+                                        })
                 self.navItem?.title = "\((image ?? 0) + 1)/\(self.urlStringKeys.count)"
                 alert.dismiss(animated: true, completion: nil)
             }))
@@ -371,6 +441,18 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         navItem?.title = "\(urlStringKeys.firstIndex(of: ((viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(urlStringKeys.count)"
+        let currentVc = self.viewControllers!.first!
+
+        if (currentVc as! ModalMediaViewController).embeddedVC == nil {
+            self.viewToMove = (currentVc as! ModalMediaViewController).view
+        } else {
+            let embedded = (currentVc as! ModalMediaViewController).embeddedVC
+            if let image = embedded as? ImageMediaViewController {
+                self.viewToMove = image.imageView
+            } else if let video = embedded as? VideoMediaViewController {
+                self.viewToMove = video.videoView
+            }
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
