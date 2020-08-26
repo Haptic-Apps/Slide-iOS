@@ -15,6 +15,8 @@ final class NetworkMonitor {
     public static let shared = NetworkMonitor()
     /// Accesses Network Path Monitor.
     private var pathMonitor: NWPathMonitor?
+    /// Online notification
+    let onlineNotification = NotificationCenter.default
     /**
      Types of Interfaces the User could be connected with.
      - Wi-Fi: Uses Wi-Fi as a connection source.
@@ -45,7 +47,6 @@ final class NetworkMonitor {
             guard let pathMonitor = pathMonitor else { return false }
             return pathMonitor.currentPath.status == .satisfied
         }
-        // Allows for setting this property when network status changes.
         set {
         }
     }
@@ -63,7 +64,7 @@ final class NetworkMonitor {
     /// Used to check if pathMonitor is currently Monitoring.
     private var isPathMonitoring: Bool = false
     /// Monitoring Queue used for start monitoring Network.
-    private let networkQueue = DispatchQueue(label: "NetworkMonitorQueue", qos: .background)
+    public let networkQueue = DispatchQueue(label: "NetworkMonitorQueue", qos: .background)
     // MARK: Network Handlers
     /**
      Handler starting the monitoring of the Network.
@@ -75,11 +76,6 @@ final class NetworkMonitor {
      - Make any updates to the User alerting them that the Monitoring Stopped.
      */
     public var stoppedMonitoringNetwork: (() -> Void)?
-    /**
-     Handler called every time the Network changes. Bool represents if the Network is Online or not.
-     - Only call once if needed in a View Controller. The function this is called in will be triggered and called whenever there is a change in networks.
-     */
-    public var networkStatusDidChange: ((Bool) -> Void)?
     
     deinit {
         stopNetworkMonitoring()
@@ -99,8 +95,13 @@ final class NetworkMonitor {
         pathMonitor?.start(queue: networkQueue)
         // Handler which updates anytime changes happen with Network.
         pathMonitor?.pathUpdateHandler = { [weak self] path in
-            // Calls property handler for any changes made to Network.
-            self?.networkStatusDidChange?(path.status == .satisfied)
+            print("Online: \(path.status == .satisfied)")
+            // Sets value to Online Property
+            self?.online = (path.status == .satisfied)
+            // Online Dictionary
+            let onlineDictionary = ["online": path.status == .satisfied]
+            // Post Online Notification
+            self?.onlineNotification.post(name: .online, object: nil, userInfo: onlineDictionary)
         }
         // Sets monitoring to True.
         isPathMonitoring = true
@@ -123,4 +124,10 @@ final class NetworkMonitor {
         isPathMonitoring = false
     }
     
+}
+
+
+// Online Notification Name
+extension Notification.Name {
+    static let online = Notification.Name("onlineNotification")
 }

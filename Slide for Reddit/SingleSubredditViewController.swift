@@ -247,6 +247,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if #available(iOS 11.0, *) {
             self.tableView.contentInsetAdjustmentBehavior = .never
         }
+        // Notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(onlineStatusChanged(_:)), name: .online, object: nil)
     }
     
     func reTheme() {
@@ -772,6 +774,20 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         actionSheetController.show(self)
+    }
+    
+    // MARK: - Online Action
+    /**
+     Notification action called when online status changes.
+     - Parameters:
+        - notification: Notification
+     */
+    @objc private func onlineStatusChanged(_ notification: Notification) {
+        if let online = notification.userInfo?["online"] as? Bool {
+            if online == true {
+            } else {
+            }
+        }
     }
 
     var lastVersion = 0

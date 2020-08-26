@@ -364,7 +364,11 @@ class CommentViewController: MediaViewController {
         if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
             panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         }
+        // Notifications
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        NotificationCenter.default.addObserver(forName: .online, object: nil, queue: .main) { [weak self] notification in
+            self?.onlineStatusChanged(notification)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -374,7 +378,7 @@ class CommentViewController: MediaViewController {
         if navigationController != nil {
             sortButton = UIButton.init(type: .custom)
             sortButton.accessibilityLabel = "Change sort type"
-            sortButton.addTarget(self, action: #selector(self.sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.addTarget(self, action: #selector(sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
             sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             sortB = UIBarButtonItem.init(customView: sortButton)
             
@@ -855,6 +859,24 @@ class CommentViewController: MediaViewController {
         return self
     }
     
+    // MARK: - Online Action
+    /**
+     Notification action called when online status changes.
+     - Parameters:
+        - notification: Notification
+     */
+    @objc private func onlineStatusChanged(_ notification: Notification) {
+        if let online = notification.userInfo?["online"] as? Bool {
+            print("Online: \(online)")
+            switch online {
+                case true:
+                    refreshAll(self)
+                case false:
+                    loadOffline()
+            }
+        }
+    }
+    
     // MARK: - Offline Functions
     /// Loads cached data for offline use.
     func loadOffline() {
@@ -1161,11 +1183,6 @@ class CommentViewController: MediaViewController {
         - sender: AnyObject
      */
     @objc func refreshComments(_ sender: AnyObject) {
-        // Monitors network changes automatically even without calling this in any other method. Any changes go through this refreshComments method.
-        NetworkMonitor.shared.networkStatusDidChange = { online in
-            // Assigns the Network Monitor property to the newly changed network status.
-            NetworkMonitor.shared.online = online
-        }
         // Removes any saved data that can be lingering behind.
         removeCommentsData()
         // Checks if there is a submission.
@@ -1342,6 +1359,12 @@ class CommentViewController: MediaViewController {
                 }
                 var sortIcon = UIImage()
                 
+                if c == .controversial {
+                    actionSheetController.addAction(title: "Sort by Live", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
+                        self.loadLiveComments()
+                    }
+                }
+                
                 switch c {
                 case .suggested, .confidence:
                     sortIcon = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
@@ -1393,23 +1416,8 @@ class CommentViewController: MediaViewController {
 
                 self.refreshComments(self)
             }
-        }
-        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
-        panGesture.direction = .horizontal
-        panGesture.delegate = self
-        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-           //navGesture.require(toFail: panGesture)
-        }
-        
-        self.presentationController?.delegate = self
-
-        if !loaded && (single || forceLoad) {
-            refreshComments(self)
-        }
-        
-        self.tableView.addGestureRecognizer(panGesture)
-        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
-            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+            
+            actionSheetController.show(self)
         }
     }
     
@@ -1454,7 +1462,7 @@ class CommentViewController: MediaViewController {
         self.tableView.reloadData()
         
         sortButton = UIButton.init(type: .custom)
-        sortButton.addTarget(self, action: #selector(self.sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.addTarget(self, action: #selector(sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
         sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sortButton)
 
@@ -2075,7 +2083,7 @@ class CommentViewController: MediaViewController {
 
     }
 
-    // TODO: What does this do?
+    /// Adds all items to the toolbar section.
     func updateToolbar() {
         navigationController?.setToolbarHidden(false, animated: false)
         self.isToolbarHidden = false
