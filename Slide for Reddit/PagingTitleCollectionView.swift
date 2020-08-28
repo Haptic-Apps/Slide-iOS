@@ -248,7 +248,7 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
             self.icon.isHidden = false
         }
         
-        title.adjustsFontSizeToFitWidth = false
+        title.adjustsFontSizeToFitWidth = true
         title.translatesAutoresizingMaskIntoConstraints = false
         title.text = subreddit
         title.numberOfLines = 1
