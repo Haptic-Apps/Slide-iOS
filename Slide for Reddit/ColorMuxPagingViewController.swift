@@ -41,7 +41,16 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         self.match = scrollView
     }
     
+    var lastContentOffset: CGPoint = CGPoint.zero
+
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        var isRight = false //scroll to right
+        if self.lastContentOffset.x > scrollView.contentOffset.x {
+            isRight = true
+        }
+        
+        self.lastContentOffset = scrollView.contentOffset
+
         let point = scrollView.contentOffset
         var percentComplete: CGFloat
         percentComplete = abs(point.x - self.view.frame.size.width) / self.view.frame.size.width
@@ -66,12 +75,29 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                 var currentBackgroundOffset = strongMatch.contentOffset
                             
                 //Translate percentage of current view translation to the parent scroll view, add in original offset
-                //currentBackgroundOffset.x = ((currentY - (CGFloat(currentIndex) * strongMatch.collectionViewLayout.itemSize.width)) / (scrollView.frame.size.width - 140 )) * parent.frame.size.width
-                var offsetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
-                currentBackgroundOffset.x = offsetX + ((scrollView.contentOffset.x / scrollView.frame.size.width) * (strongMatch.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) + (strongMatch.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width * CGFloat(currentIndex - 1)
+                let offsetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
+                let currentWidth = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex)
+                let nextWidth = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex + 1)
+                    let centerOffset = -1 * (strongMatch.frame.size.width - currentWidth + 24) / 2
+                    currentBackgroundOffset.x = offsetX + (percentComplete * nextWidth) + centerOffset + (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).offsetAt(currentIndex - 1)
+                    print(currentBackgroundOffset)
+                    strongMatch.contentOffset = currentBackgroundOffset
+                    strongMatch.layoutIfNeeded()
+              /*  } else {
+                    let currentWidth = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex - 1)
+                    let centerOffset = (strongMatch.frame.size.width - currentWidth + 24) / 2
+                    currentBackgroundOffset.x = offsetX + (percentComplete * currentWidth) + centerOffset + (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).offsetAt(currentIndex - 2)
+                    print(currentBackgroundOffset)
+                    strongMatch.contentOffset = currentBackgroundOffset
+                    strongMatch.layoutIfNeeded()
+                }*/
+                
+                /*var offsetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
+                currentBackgroundOffset.x = offsetX + (percentComplete * (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex)) + (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).offsetAt(currentIndex - 1)
                 print(currentBackgroundOffset)
                 strongMatch.contentOffset = currentBackgroundOffset
-                strongMatch.layoutIfNeeded()
+                strongMatch.layoutIfNeeded()*/
+
             }
 
         }

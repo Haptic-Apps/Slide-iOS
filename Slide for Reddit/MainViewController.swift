@@ -373,10 +373,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func doToolbarOffset() {
         var currentBackgroundOffset = tabBar.collectionView.contentOffset
-        var frameOffset = (tabBar.frame.origin.x / 2) - ((tabBar.frame.maxX - tabBar.frame.size.width) / 2)
-        currentBackgroundOffset.x = frameOffset + ((tabBar.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * CGFloat(currentIndex)
+        let frameOffset = (tabBar.frame.origin.x / 2) - ((tabBar.frame.maxX - tabBar.frame.size.width) / 2)
+        currentBackgroundOffset.x = frameOffset + (tabBar.collectionView.collectionViewLayout as! WrappingHeaderFlowLayout).offsetAt(currentIndex - 1)
+        let currentWidth = (tabBar.collectionView.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex)
+        let centerOffset = -1 * (tabBar.frame.size.width - currentWidth) / 2
+        currentBackgroundOffset.x = frameOffset + currentWidth + 12 + centerOffset + (tabBar.collectionView.collectionViewLayout as! WrappingHeaderFlowLayout).offsetAt(currentIndex - 1)
         self.tabBar?.collectionView.contentOffset = currentBackgroundOffset
-        print("Set offset \(currentBackgroundOffset.x)")
     }
     
     func goToSubreddit(index: Int) {

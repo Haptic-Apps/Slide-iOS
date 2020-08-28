@@ -275,7 +275,7 @@ class SplitMainViewController: MainViewController {
         }
         
         UIView.animate(withDuration: 0.4, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-            self.doToolbarOffset()
+            //self.doToolbarOffset()
         }, completion: { [weak self] (_)in
             self?.dontMatch = false
         })

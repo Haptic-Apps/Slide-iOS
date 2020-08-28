@@ -15,7 +15,7 @@ public protocol PagingTitleDelegate {
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
     public var collectionView: UICollectionView!
-    private var collectionViewLayout: FadingCollectionViewLayout!
+    private var collectionViewLayout: WrappingHeaderFlowLayout!
     private var delegate: PagingTitleDelegate
     
     private var dataSource: [String] = []
@@ -30,12 +30,14 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
 
         super.init(frame: CGRect.zero)
         configureViews()
-        collectionViewLayout.minimumLineSpacing = 0
     }
     
     func configureViews() {
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.collectionViewLayout = FadingCollectionViewLayout(scrollDirection: .horizontal)
+        self.collectionViewLayout = WrappingHeaderFlowLayout()
+        self.collectionViewLayout.scrollDirection = .horizontal
+        
+        self.collectionViewLayout.delegate = self
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         self.addSubview(collectionView)
         collectionView.edgeAnchors == self.edgeAnchors
@@ -52,9 +54,6 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     
     public override var intrinsicContentSize: CGSize {
         get {
-            if widthSet {
-                return CGSize(width: collectionViewLayout.itemSize.width + 140, height: 40)
-            }
             return CGSize(width: UIView.layoutFittingExpandedSize.width, height: UIView.layoutFittingExpandedSize.height)
         }
     }
@@ -62,34 +61,16 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private func calculateSectionInset() -> CGFloat {
-        let deviceIsIpad = UIDevice.current.userInterfaceIdiom == .pad
-        let deviceOrientationIsLandscape = UIDevice.current.orientation.isLandscape
-        let cellBodyViewIsExpended = deviceIsIpad || deviceOrientationIsLandscape
-        let cellBodyWidth: CGFloat = 236 + (cellBodyViewIsExpended ? 174 : 0)
         
-        let buttonWidth: CGFloat = 50
-        
-        let inset = (collectionViewLayout.collectionView!.frame.width - cellBodyWidth + buttonWidth) / 4
-        return inset
-    }
-    
     public override func layoutSubviews() {
         let oldOffset = collectionView.contentOffset
         super.layoutSubviews()
         if !widthSet {
-            configureCollectionViewLayoutItemSize()
+            widthSet = true
+            print("Setting width")
+            collectionViewLayout.reset()
             collectionView.reloadData()
-            let diff = (collectionViewLayout.collectionView!.frame.size.width - 140 - (self.collectionViewLayout.itemSize.width)) / 2
-            collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70 + diff, bottom: 0, right: 70 + diff)
         } else {
-            let diff = (collectionViewLayout.collectionView!.frame.size.width - 140 - (self.collectionViewLayout.itemSize.width)) / 2
-            if diff <= 0 && collectionViewLayout.sectionInset.left > 70 {
-                collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70, bottom: 0, right: 70)
-            } else if diff > 0 && collectionViewLayout.sectionInset.left == 70 {
-                collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70 + diff, bottom: 0, right: 70 + diff)
-            }
         }
         addGradientMask()
         
@@ -109,23 +90,16 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
          coverLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
         collectionView.mask = coverView
     }
-
-    public func configureCollectionViewLayoutItemSize() {
-        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70, bottom: 0, right: 70)
-        
-        collectionViewLayout.itemSize = CGSize(width: min(250, collectionViewLayout.collectionView!.frame.size.width - 140), height: collectionViewLayout.collectionView!.frame.size.height)
-        widthSet = true
-    }
         
     //From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.count
     }
-        
+            
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subreddit", for: indexPath) as! SubredditTitleCollectionViewCell
         
-        cell.setSubreddit(subreddit: dataSource[indexPath.row], width: collectionViewLayout.itemSize.width)
+        cell.setSubreddit(subreddit: dataSource[indexPath.row])
         return cell
     }
 
@@ -141,7 +115,6 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.collectionView.mask?.frame = self.collectionView.bounds
-        print(scrollView.contentOffset.x)
         /* Disable for now
         print(scrollView.contentOffset.x)
         if let parent = parentScroll {
@@ -256,25 +229,26 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
             title.centerYAnchor == innerView.centerYAnchor
             title.rightAnchor == innerView.rightAnchor - 4
             
-            innerView.centerAnchors == self.contentView.centerAnchors
+            innerView.edgeAnchors == self.contentView.edgeAnchors
         }
     }
     
-    var widthConstraints: [NSLayoutConstraint] = []
-
-    func setSubreddit(subreddit: String, width: CGFloat) {
+    func setSubreddit(subreddit: String) {
         title.textColor = ColorUtil.theme.fontColor
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.subreddit = subreddit
         self.sideView.isHidden = false
         self.icon.isHidden = false
         
-        innerView.removeConstraints(widthConstraints)
-        widthConstraints = batch {
-            innerView.widthAnchor <= width
+        if !SettingValues.subredditIcons {
+            self.sideView.isHidden = true
+            self.icon.isHidden = true
+        } else {
+            self.sideView.isHidden = false
+            self.icon.isHidden = false
         }
-
-        title.adjustsFontSizeToFitWidth = true
+        
+        title.adjustsFontSizeToFitWidth = false
         title.translatesAutoresizingMaskIntoConstraints = false
         title.text = subreddit
         title.numberOfLines = 1
@@ -307,6 +281,17 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         }
     }
 }
+
+extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
+    func collectionView(_ collectionView: UICollectionView, indexPath: IndexPath) -> CGSize {
+        var width = CGFloat(30) //icon size
+        width += 4 //icon leading padding
+        width += 12 //title padding
+        width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
+        return CGSize(width: width, height: 40)
+    }
+}
+
 class GradientMaskView: UIView {
     override class var layerClass: AnyClass {
         get {
@@ -316,12 +301,9 @@ class GradientMaskView: UIView {
 }
 
 //Based on https://stackoverflow.com/a/42705208/3697225
-class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDelegateFlowLayout {
+class FadingCollectionViewLayout: WrappingHeaderFlowLayout, UICollectionViewDelegateFlowLayout {
 
     private let fadeFactor: CGFloat = 0.65
-    private var cellWidth: CGFloat {
-        return itemSize.width
-    }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -334,11 +316,11 @@ class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDe
     }
 
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        return true
+        return false
     }
 
     func scrollDirectionOver() -> UICollectionView.ScrollDirection {
-        return UICollectionView.ScrollDirection.vertical
+        return UICollectionView.ScrollDirection.horizontal
     }
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
