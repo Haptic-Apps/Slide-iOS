@@ -410,6 +410,7 @@ class SplitMainViewController: MainViewController {
     
     override func goToSubreddit(subreddit: String, override: Bool = false) {
         if finalSubs.firstIndex(of: subreddit) == currentIndex {
+            (self.viewControllers?[0] as? SingleSubredditViewController)?.refresh()
             return
         }
         //Temporary fix for 13
