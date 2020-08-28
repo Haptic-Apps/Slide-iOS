@@ -90,11 +90,16 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                 let padding: CGFloat = 12
                             
                 //Translate percentage of current view translation to the parent scroll view, add in original offset
-                let currentWidth = layout.widthAt(currentIndex + (percentCompleteDirectional >= 0 ? 0 : 1))
-                let nextWidth = layout.widthAt(currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1))
-                let lerped = ((percentCompleteDirectional > 0 ? 1 : -1) * lerp(progress: percentComplete,
-                                                                               min: 0,
-                                                                               max: (currentWidth / 2) + (nextWidth / 2)))
+                let currentWidth = layout.widthAt(currentIndex)
+                let nextWidthIndex = currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1)
+                let lerped: CGFloat
+                if nextWidthIndex < 0 || nextWidthIndex > totalCount - 1 {
+                    lerped = 0
+                } else {
+                    let nextWidth = layout.widthAt(nextWidthIndex)
+                    lerped = (percentCompleteDirectional > 0 ? 1 : -1) *
+                                lerp(progress: percentComplete, min: 0, max: (currentWidth / 2) + (nextWidth / 2))
+                }
                 
                 let insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
 
