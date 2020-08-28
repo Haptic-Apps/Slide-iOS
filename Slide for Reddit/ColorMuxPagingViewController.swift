@@ -54,6 +54,9 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         let point = scrollView.contentOffset
         var percentComplete: CGFloat
         percentComplete = abs(point.x - self.view.frame.size.width) / self.view.frame.size.width
+        
+        var percentCompleteDirectional: CGFloat
+        percentCompleteDirectional = (point.x - self.view.frame.size.width) / self.view.frame.size.width
 
         if let color1 = color1, let color2 = color2 {
             if !color2.cgColor.__equalTo(color1.cgColor) {
@@ -65,6 +68,15 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
             }
         }
         
+        /**
+         Interpolates between min and max using progress.
+         Progress is a value between 0 and 1.
+         At 0, you get min. At 1, you get max.
+         */
+        func lerp(progress: CGFloat, min: CGFloat, max: CGFloat) -> CGFloat {
+            return min + (progress * (max - min))
+        }
+
         if let currentIndex = (self as? MainViewController)?.currentIndex, let totalCount = (self as? MainViewController)?.finalSubs.count {
             if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
                 scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
@@ -73,31 +85,28 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
             }
             if let strongMatch = match, !dontMatch {
                 var currentBackgroundOffset = strongMatch.contentOffset
+
+                let layout = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout)
+                let padding: CGFloat = 12
                             
                 //Translate percentage of current view translation to the parent scroll view, add in original offset
-                let offsetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
-                let currentWidth = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex)
-                let nextWidth = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex + 1)
-                    let centerOffset = -1 * (strongMatch.frame.size.width - currentWidth + 24) / 2
-                    currentBackgroundOffset.x = offsetX + (percentComplete * nextWidth) + centerOffset + (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).offsetAt(currentIndex - 1)
-                    print(currentBackgroundOffset)
-                    strongMatch.contentOffset = currentBackgroundOffset
-                    strongMatch.layoutIfNeeded()
-              /*  } else {
-                    let currentWidth = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex - 1)
-                    let centerOffset = (strongMatch.frame.size.width - currentWidth + 24) / 2
-                    currentBackgroundOffset.x = offsetX + (percentComplete * currentWidth) + centerOffset + (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).offsetAt(currentIndex - 2)
-                    print(currentBackgroundOffset)
-                    strongMatch.contentOffset = currentBackgroundOffset
-                    strongMatch.layoutIfNeeded()
-                }*/
-                
-                /*var offsetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
-                currentBackgroundOffset.x = offsetX + (percentComplete * (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).widthAt(currentIndex)) + (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout).offsetAt(currentIndex - 1)
-                print(currentBackgroundOffset)
-                strongMatch.contentOffset = currentBackgroundOffset
-                strongMatch.layoutIfNeeded()*/
+                let currentWidth = layout.widthAt(currentIndex + (percentCompleteDirectional >= 0 ? 0 : 1))
+                let nextWidth = layout.widthAt(currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1))
+                let lerped = ((percentCompleteDirectional > 0 ? 1 : -1) * lerp(progress: percentComplete,
+                                                                               min: 0,
+                                                                               max: (currentWidth / 2) + (nextWidth / 2)))
+                var insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
 
+                let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
+                    (currentWidth / 2) - // Width of current cell
+                    (strongMatch.frame.size.width / 2) +
+                    insetX -
+                    (padding) + // Padding
+                    lerped // progress between current width and next cell width
+                print("%\(percentCompleteDirectional) lerp \(lerped) offset \(offsetX) to left \(layout.offsetAt(currentIndex - 1)) half width self \((currentWidth / 2)) parent \((strongMatch.frame.size.width / 2))")
+                currentBackgroundOffset.x = offsetX
+                strongMatch.contentOffset = currentBackgroundOffset
+                strongMatch.layoutIfNeeded()
             }
 
         }
