@@ -95,7 +95,8 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                 let lerped = ((percentCompleteDirectional > 0 ? 1 : -1) * lerp(progress: percentComplete,
                                                                                min: 0,
                                                                                max: (currentWidth / 2) + (nextWidth / 2)))
-                var insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
+                
+                let insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
 
                 let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
                     (currentWidth / 2) - // Width of current cell
@@ -103,7 +104,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                     insetX -
                     (padding) + // Padding
                     lerped // progress between current width and next cell width
-                print("%\(percentCompleteDirectional) lerp \(lerped) offset \(offsetX) to left \(layout.offsetAt(currentIndex - 1)) half width self \((currentWidth / 2)) parent \((strongMatch.frame.size.width / 2))")
+                //print("%\(percentCompleteDirectional) lerp \(lerped) offset \(offsetX) to left \(layout.offsetAt(currentIndex - 1)) half width self \((currentWidth / 2)) parent \((strongMatch.frame.size.width / 2))")
                 currentBackgroundOffset.x = offsetX
                 strongMatch.contentOffset = currentBackgroundOffset
                 strongMatch.layoutIfNeeded()
