@@ -14,10 +14,6 @@ protocol WrappingHeaderFlowLayoutDelegate: class {
 class WrappingHeaderFlowLayout: UICollectionViewFlowLayout {
     weak var delegate: WrappingHeaderFlowLayoutDelegate!
     
-    override func invalidateLayout() {
-        cache.removeAll()
-        super.invalidateLayout()
-    }
     var xOffset = [CGFloat]()
 
     private var cache = [UICollectionViewLayoutAttributes]()
@@ -37,7 +33,6 @@ class WrappingHeaderFlowLayout: UICollectionViewFlowLayout {
     }
     
     override func prepare() {
-        // 1
         if cache.isEmpty && collectionView!.numberOfItems(inSection: 0) != 0 {
             
             xOffset = [CGFloat](repeating: 0, count: collectionView!.numberOfItems(inSection: 0))
@@ -84,6 +79,9 @@ class WrappingHeaderFlowLayout: UICollectionViewFlowLayout {
     }
 
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        if cache.isEmpty {
+            return nil
+        }
         return cache[indexPath.item]
     }
 

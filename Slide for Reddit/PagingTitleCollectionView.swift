@@ -15,7 +15,7 @@ public protocol PagingTitleDelegate {
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
     public var collectionView: UICollectionView!
-    private var collectionViewLayout: WrappingHeaderFlowLayout!
+    private var collectionViewLayout: FadingCollectionViewLayout!
     private var delegate: PagingTitleDelegate
     
     private var dataSource: [String] = []
@@ -34,8 +34,8 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     
     func configureViews() {
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.collectionViewLayout = WrappingHeaderFlowLayout()
-        self.collectionViewLayout.scrollDirection = .horizontal
+        self.collectionViewLayout = FadingCollectionViewLayout(scrollDirection: .horizontal)
+        //self.collectionViewLayout.scrollDirection = .horizontal
         
         self.collectionViewLayout.delegate = self
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
@@ -301,9 +301,9 @@ class GradientMaskView: UIView {
 }
 
 //Based on https://stackoverflow.com/a/42705208/3697225
-class FadingCollectionViewLayout: WrappingHeaderFlowLayout, UICollectionViewDelegateFlowLayout {
+class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
 
-    private let fadeFactor: CGFloat = 0.65
+    private let fadeFactor: CGFloat = 0.8
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -316,7 +316,7 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout, UICollectionViewDele
     }
 
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        return false
+        return true
     }
 
     func scrollDirectionOver() -> UICollectionView.ScrollDirection {
@@ -347,14 +347,18 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout, UICollectionViewDele
     }
 
     override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        let attributes = super.layoutAttributesForItem(at: itemIndexPath)! as UICollectionViewLayoutAttributes
-        attributes.alpha = 0
-        return attributes
+        if let attributes = super.layoutAttributesForItem(at: itemIndexPath) as? UICollectionViewLayoutAttributes {
+            attributes.alpha = 0
+            return attributes
+        }
+        return nil
     }
 
     override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        let attributes = super.layoutAttributesForItem(at: itemIndexPath)! as UICollectionViewLayoutAttributes
-        attributes.alpha = 0
-        return attributes
+        if let attributes = super.layoutAttributesForItem(at: itemIndexPath) as? UICollectionViewLayoutAttributes {
+            attributes.alpha = 0
+            return attributes
+        }
+        return nil
     }
 }
