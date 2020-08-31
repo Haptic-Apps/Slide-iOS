@@ -96,9 +96,10 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                 if nextWidthIndex < 0 || nextWidthIndex > totalCount - 1 {
                     lerped = 0
                 } else {
-                    let nextWidth = layout.widthAt(nextWidthIndex)
-                    lerped = (percentCompleteDirectional > 0 ? 1 : -1) *
-                                lerp(progress: percentComplete, min: 0, max: (currentWidth / 2) + (nextWidth / 2))
+                    let nextWidth = layout.widthAt(currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1))
+                    lerped = ((percentCompleteDirectional > 0 ? 1 : -1) * lerp(progress: percentComplete,
+                                                                                   min: 0,
+                                                                                   max: (currentWidth / 2) + (nextWidth / 2)))
                 }
                 
                 let insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon

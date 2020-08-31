@@ -218,18 +218,26 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
 
     func configureLayout() {
         batch {
-            sideView.leftAnchor == innerView.leftAnchor + 4
-            sideView.sizeAnchors == CGSize.square(size: 30)
-            sideView.centerYAnchor == innerView.centerYAnchor
+            if SettingValues.subredditIcons {
+                sideView.leftAnchor == innerView.leftAnchor + 4
+                sideView.sizeAnchors == CGSize.square(size: 30)
+                sideView.centerYAnchor == innerView.centerYAnchor
 
-            icon.edgeAnchors == sideView.edgeAnchors
-            icon.sizeAnchors == CGSize.square(size: 30)
+                icon.edgeAnchors == sideView.edgeAnchors
+                icon.sizeAnchors == CGSize.square(size: 30)
 
-            title.leftAnchor == sideView.rightAnchor + 8
-            title.centerYAnchor == innerView.centerYAnchor
-            title.rightAnchor == innerView.rightAnchor - 4
-            
-            innerView.edgeAnchors == self.contentView.edgeAnchors
+                title.leftAnchor == sideView.rightAnchor + 8
+                title.centerYAnchor == innerView.centerYAnchor
+                title.rightAnchor == innerView.rightAnchor - 4
+                
+                innerView.edgeAnchors == self.contentView.edgeAnchors
+            } else {
+                title.leftAnchor == innerView.leftAnchor + 4
+                title.centerYAnchor == innerView.centerYAnchor
+                title.rightAnchor == innerView.rightAnchor - 4
+                
+                innerView.edgeAnchors == self.contentView.edgeAnchors
+            }
         }
     }
     
@@ -284,11 +292,18 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
 
 extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, indexPath: IndexPath) -> CGSize {
-        var width = CGFloat(30) //icon size
-        width += 4 //icon leading padding
-        width += 12 //title padding
-        width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
-        return CGSize(width: width, height: 40)
+        if SettingValues.subredditIcons {
+            var width = CGFloat(30) //icon size
+            width += 4 //icon leading padding
+            width += 12 //title padding
+            width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
+            return CGSize(width: width, height: 40)
+        } else {
+            var width = CGFloat(0) //icon size
+            width += 8 //title padding
+            width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
+            return CGSize(width: width, height: 40)
+        }
     }
 }
 
