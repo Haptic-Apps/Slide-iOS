@@ -72,7 +72,7 @@ class WrappingHeaderFlowLayout: UICollectionViewFlowLayout {
     }
     
     func widthAt(_ index: Int) -> CGFloat {
-        if index < 0 {
+        if index < 0 || xOffset.isEmpty {
             return 0
         }
          return xOffset[index]
