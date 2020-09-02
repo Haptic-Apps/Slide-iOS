@@ -329,7 +329,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return ((indexPath.section == 1 && indexPath.row == 1) || (indexPath.section == 0 && indexPath.row == 3)) ? 108 : 70
+        return ((indexPath.section == 1 && indexPath.row == 1) || (indexPath.section == 0 && indexPath.row == 2)) ? 108 : 70
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
