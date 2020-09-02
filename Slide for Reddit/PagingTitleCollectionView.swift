@@ -219,7 +219,7 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
     func configureLayout() {
         batch {
             if SettingValues.subredditIcons {
-                sideView.leftAnchor == innerView.leftAnchor + 4
+                sideView.leftAnchor == innerView.leftAnchor + 10
                 sideView.sizeAnchors == CGSize.square(size: 30)
                 sideView.centerYAnchor == innerView.centerYAnchor
 
@@ -228,16 +228,14 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
 
                 title.leftAnchor == sideView.rightAnchor + 8
                 title.centerYAnchor == innerView.centerYAnchor
-                title.rightAnchor == innerView.rightAnchor - 4
-                
-                innerView.edgeAnchors == self.contentView.edgeAnchors
+                title.rightAnchor == innerView.rightAnchor - 10
             } else {
                 title.leftAnchor == innerView.leftAnchor + 4
                 title.centerYAnchor == innerView.centerYAnchor
                 title.rightAnchor == innerView.rightAnchor - 4
-                
-                innerView.edgeAnchors == self.contentView.edgeAnchors
             }
+            innerView.centerYAnchor == self.contentView.centerYAnchor
+            innerView.centerXAnchor == self.contentView.centerXAnchor
         }
     }
     
@@ -295,7 +293,12 @@ extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
         if SettingValues.subredditIcons {
             var width = CGFloat(30) //icon size
             width += 4 //icon leading padding
-            width += 12 //title padding
+            
+            if collectionView.frame.size.width > 400 {
+                width += 24 //title padding
+            } else {
+                width += 12
+            }
             width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
             return CGSize(width: width, height: 40)
         } else {
@@ -318,7 +321,7 @@ class GradientMaskView: UIView {
 //Based on https://stackoverflow.com/a/42705208/3697225
 class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
 
-    private let fadeFactor: CGFloat = 0.8
+    private var fadeFactor: CGFloat = 0.6
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -344,6 +347,9 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
                 var visibleRect = CGRect()
                 visibleRect.origin = collectionView!.contentOffset
                 visibleRect.size = collectionView!.bounds.size
+                if collectionView!.frame.size.width > 400 {
+                    self.fadeFactor = 0.4
+                }
                 for attrs in attributes {
                     if attrs.frame.intersects(rect) {
                         let distance = visibleRect.midX - attrs.center.x
