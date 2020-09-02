@@ -372,11 +372,24 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func doToolbarOffset() {
+        guard let tabBar = tabBar else { return }
         var currentBackgroundOffset = tabBar.collectionView.contentOffset
-        var frameOffset = (tabBar.frame.origin.x / 2) - ((tabBar.frame.maxX - tabBar.frame.size.width) / 2)
-        currentBackgroundOffset.x = frameOffset + ((tabBar.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * CGFloat(currentIndex)
-        self.tabBar?.collectionView.contentOffset = currentBackgroundOffset
-        print("Set offset \(currentBackgroundOffset.x)")
+        
+        let layout = (tabBar.collectionView.collectionViewLayout as! WrappingHeaderFlowLayout)
+
+        let currentWidth = layout.widthAt(currentIndex)
+        
+        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
+
+        let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
+            (currentWidth / 2) - // Width of current cell
+            (self.tabBar!.collectionView.frame.size.width / 2) +
+            insetX -
+            (12)
+        
+        currentBackgroundOffset.x = offsetX
+        self.tabBar.collectionView.contentOffset = currentBackgroundOffset
+        self.tabBar.collectionView.layoutIfNeeded()
     }
     
     func goToSubreddit(index: Int) {

@@ -202,7 +202,6 @@ class SubmissionsDataSource {
                                 }
                                 
                                 self.loading = false
-                                self.loading = false
                                 self.nomore = true
                                 self.offline = true
                                 

@@ -30,12 +30,14 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
 
         super.init(frame: CGRect.zero)
         configureViews()
-        collectionViewLayout.minimumLineSpacing = 0
     }
     
     func configureViews() {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.collectionViewLayout = FadingCollectionViewLayout(scrollDirection: .horizontal)
+        //self.collectionViewLayout.scrollDirection = .horizontal
+        
+        self.collectionViewLayout.delegate = self
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         self.addSubview(collectionView)
         collectionView.edgeAnchors == self.edgeAnchors
@@ -52,9 +54,6 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     
     public override var intrinsicContentSize: CGSize {
         get {
-            if widthSet {
-                return CGSize(width: collectionViewLayout.itemSize.width + 140, height: 40)
-            }
             return CGSize(width: UIView.layoutFittingExpandedSize.width, height: UIView.layoutFittingExpandedSize.height)
         }
     }
@@ -62,34 +61,16 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private func calculateSectionInset() -> CGFloat {
-        let deviceIsIpad = UIDevice.current.userInterfaceIdiom == .pad
-        let deviceOrientationIsLandscape = UIDevice.current.orientation.isLandscape
-        let cellBodyViewIsExpended = deviceIsIpad || deviceOrientationIsLandscape
-        let cellBodyWidth: CGFloat = 236 + (cellBodyViewIsExpended ? 174 : 0)
         
-        let buttonWidth: CGFloat = 50
-        
-        let inset = (collectionViewLayout.collectionView!.frame.width - cellBodyWidth + buttonWidth) / 4
-        return inset
-    }
-    
     public override func layoutSubviews() {
         let oldOffset = collectionView.contentOffset
         super.layoutSubviews()
         if !widthSet {
-            configureCollectionViewLayoutItemSize()
+            widthSet = true
+            print("Setting width")
+            collectionViewLayout.reset()
             collectionView.reloadData()
-            let diff = (collectionViewLayout.collectionView!.frame.size.width - 140 - (self.collectionViewLayout.itemSize.width)) / 2
-            collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70 + diff, bottom: 0, right: 70 + diff)
         } else {
-            let diff = (collectionViewLayout.collectionView!.frame.size.width - 140 - (self.collectionViewLayout.itemSize.width)) / 2
-            if diff <= 0 && collectionViewLayout.sectionInset.left > 70 {
-                collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70, bottom: 0, right: 70)
-            } else if diff > 0 && collectionViewLayout.sectionInset.left == 70 {
-                collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70 + diff, bottom: 0, right: 70 + diff)
-            }
         }
         addGradientMask()
         
@@ -109,23 +90,16 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
          coverLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
         collectionView.mask = coverView
     }
-
-    public func configureCollectionViewLayoutItemSize() {
-        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 70, bottom: 0, right: 70)
-        
-        collectionViewLayout.itemSize = CGSize(width: min(250, collectionViewLayout.collectionView!.frame.size.width - 140), height: collectionViewLayout.collectionView!.frame.size.height)
-        widthSet = true
-    }
         
     //From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.count
     }
-        
+            
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subreddit", for: indexPath) as! SubredditTitleCollectionViewCell
         
-        cell.setSubreddit(subreddit: dataSource[indexPath.row], width: collectionViewLayout.itemSize.width)
+        cell.setSubreddit(subreddit: dataSource[indexPath.row])
         return cell
     }
 
@@ -141,7 +115,6 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.collectionView.mask?.frame = self.collectionView.bounds
-        print(scrollView.contentOffset.x)
         /* Disable for now
         print(scrollView.contentOffset.x)
         if let parent = parentScroll {
@@ -245,35 +218,42 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
 
     func configureLayout() {
         batch {
-            sideView.leftAnchor == innerView.leftAnchor + 4
-            sideView.sizeAnchors == CGSize.square(size: 30)
-            sideView.centerYAnchor == innerView.centerYAnchor
+            if SettingValues.subredditIcons {
+                sideView.leftAnchor == innerView.leftAnchor + 10
+                sideView.sizeAnchors == CGSize.square(size: 30)
+                sideView.centerYAnchor == innerView.centerYAnchor
 
-            icon.edgeAnchors == sideView.edgeAnchors
-            icon.sizeAnchors == CGSize.square(size: 30)
+                icon.edgeAnchors == sideView.edgeAnchors
+                icon.sizeAnchors == CGSize.square(size: 30)
 
-            title.leftAnchor == sideView.rightAnchor + 8
-            title.centerYAnchor == innerView.centerYAnchor
-            title.rightAnchor == innerView.rightAnchor - 4
-            
-            innerView.centerAnchors == self.contentView.centerAnchors
+                title.leftAnchor == sideView.rightAnchor + 8
+                title.centerYAnchor == innerView.centerYAnchor
+                title.rightAnchor == innerView.rightAnchor - 10
+            } else {
+                title.leftAnchor == innerView.leftAnchor + 4
+                title.centerYAnchor == innerView.centerYAnchor
+                title.rightAnchor == innerView.rightAnchor - 4
+            }
+            innerView.centerYAnchor == self.contentView.centerYAnchor
+            innerView.centerXAnchor == self.contentView.centerXAnchor
         }
     }
     
-    var widthConstraints: [NSLayoutConstraint] = []
-
-    func setSubreddit(subreddit: String, width: CGFloat) {
+    func setSubreddit(subreddit: String) {
         title.textColor = ColorUtil.theme.fontColor
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.subreddit = subreddit
         self.sideView.isHidden = false
         self.icon.isHidden = false
         
-        innerView.removeConstraints(widthConstraints)
-        widthConstraints = batch {
-            innerView.widthAnchor <= width
+        if !SettingValues.subredditIcons {
+            self.sideView.isHidden = true
+            self.icon.isHidden = true
+        } else {
+            self.sideView.isHidden = false
+            self.icon.isHidden = false
         }
-
+        
         title.adjustsFontSizeToFitWidth = true
         title.translatesAutoresizingMaskIntoConstraints = false
         title.text = subreddit
@@ -307,6 +287,29 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         }
     }
 }
+
+extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
+    func collectionView(_ collectionView: UICollectionView, indexPath: IndexPath) -> CGSize {
+        if SettingValues.subredditIcons {
+            var width = CGFloat(30) //icon size
+            width += 4 //icon leading padding
+            
+            if collectionView.frame.size.width > 400 {
+                width += 24 //title padding
+            } else {
+                width += 12
+            }
+            width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
+            return CGSize(width: width, height: 40)
+        } else {
+            var width = CGFloat(0) //icon size
+            width += 8 //title padding
+            width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
+            return CGSize(width: width, height: 40)
+        }
+    }
+}
+
 class GradientMaskView: UIView {
     override class var layerClass: AnyClass {
         get {
@@ -316,12 +319,9 @@ class GradientMaskView: UIView {
 }
 
 //Based on https://stackoverflow.com/a/42705208/3697225
-class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDelegateFlowLayout {
+class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
 
-    private let fadeFactor: CGFloat = 0.65
-    private var cellWidth: CGFloat {
-        return itemSize.width
-    }
+    private var fadeFactor: CGFloat = 0.6
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -338,7 +338,7 @@ class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDe
     }
 
     func scrollDirectionOver() -> UICollectionView.ScrollDirection {
-        return UICollectionView.ScrollDirection.vertical
+        return UICollectionView.ScrollDirection.horizontal
     }
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -347,6 +347,9 @@ class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDe
                 var visibleRect = CGRect()
                 visibleRect.origin = collectionView!.contentOffset
                 visibleRect.size = collectionView!.bounds.size
+                if collectionView!.frame.size.width > 400 {
+                    self.fadeFactor = 0.4
+                }
                 for attrs in attributes {
                     if attrs.frame.intersects(rect) {
                         let distance = visibleRect.midX - attrs.center.x
@@ -365,14 +368,18 @@ class FadingCollectionViewLayout: UICollectionViewFlowLayout, UICollectionViewDe
     }
 
     override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        let attributes = super.layoutAttributesForItem(at: itemIndexPath)! as UICollectionViewLayoutAttributes
-        attributes.alpha = 0
-        return attributes
+        if let attributes = super.layoutAttributesForItem(at: itemIndexPath) as? UICollectionViewLayoutAttributes {
+            attributes.alpha = 0
+            return attributes
+        }
+        return nil
     }
 
     override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        let attributes = super.layoutAttributesForItem(at: itemIndexPath)! as UICollectionViewLayoutAttributes
-        attributes.alpha = 0
-        return attributes
+        if let attributes = super.layoutAttributesForItem(at: itemIndexPath) as? UICollectionViewLayoutAttributes {
+            attributes.alpha = 0
+            return attributes
+        }
+        return nil
     }
 }
