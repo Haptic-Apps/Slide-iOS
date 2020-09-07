@@ -65,7 +65,9 @@ class HistoryContributionLoader: ContributionLoader {
                         let baseContent = listing.children.compactMap({ $0 })
                         for item in baseContent {
                             if item is Link {
-                                self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                                if !(item as! Link).over18 || SettingValues.saveNSFWHistory {
+                                    self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                                }
                             }
                         }
                         self.canGetMore = self.content.count < self.ids.count

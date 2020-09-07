@@ -317,7 +317,6 @@ class SettingsGeneral: BubbleSettingTableViewController {
         pv.heightAnchor == CGFloat(216)
         pickerView.didMove(toParent: alert)
         
-        alert.addCancelButton()
         alert.addBlurView()
         
         self.present(alert, animated: true, completion: nil)

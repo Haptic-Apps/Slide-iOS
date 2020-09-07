@@ -336,11 +336,11 @@ class SettingValues {
         func description() -> String {
             switch self {
             case .HALF:
-                return "Gestures"
+                return "Right-side Gestures"
             case .NONE:
                 return "No Gestures"
             case .FULL:
-                return "Full gesutres (disables swipe between posts)"
+                return "Full gestures"
             }
         }
     }

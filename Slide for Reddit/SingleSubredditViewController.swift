@@ -471,6 +471,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if !(dataSource.delegate is SingleSubredditViewController) {
+            dataSource.delegate = self
+        }
         autoplayHandler.scrollViewDidScroll(scrollView)
     }
     
@@ -2306,7 +2309,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             if dataSource.nomore {
                 let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nothing", for: indexPath) as! NothingHereCell
                 if dataSource.content.count < 10 {
-                    var title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                    let title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                     title.append(NSAttributedString(string: "\n"))
                     title.append(NSMutableAttributedString(string: "\(numberFiltered) posts were filtered out", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
                     cell.text.attributedText = title
@@ -2500,7 +2503,9 @@ extension SingleSubredditViewController: WrappingFlowLayoutDelegate {
         if row == 0 && hasHeader {
             return CGSize(width: width, height: headerHeight())
         }
-        row -= self.headerOffset()
+        if hasHeader {
+            row -= 1
+        }
         if row < dataSource.content.count {
             let submission = dataSource.content[row]
             if submission.author == "PAGE_SEPARATOR" {
