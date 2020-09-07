@@ -34,7 +34,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     func next() {
         if currentIndex + 1 < submissionDataSource.content.count {
             currentIndex += 1
-            let vc = CommentViewController(submission: submissionDataSource.content[currentIndex + startIndex], single: false)
+            let vc = CommentViewController(submission: submissionDataSource.content[currentIndex + startIndex])
             setViewControllers([vc],
                                    direction: .forward,
                                    animated: true,
@@ -89,7 +89,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
             firstViewController = PagingCommentViewController.savedComment!
         } else {
-            let comment = CommentViewController.init(submission: sub, single: false)
+            let comment = CommentViewController.init(submission: sub)
             firstViewController = comment
         }
         first = false
@@ -195,7 +195,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             previousIndex -= 1
         }
 
-        let comment = CommentViewController(submission: submissionDataSource.content[ startIndex + previousIndex], single: false)
+        let comment = CommentViewController(submission: submissionDataSource.content[ startIndex + previousIndex])
         return comment
     }
     
@@ -234,7 +234,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             nextIndex += 1
         }
 
-        let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex], single: false)
+        let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex])
         if nextIndex == 0 {
             comment.setupSwipeGesture()
         }

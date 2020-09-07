@@ -16,7 +16,7 @@ final class NetworkMonitor {
     /// Accesses Network Path Monitor.
     private var pathMonitor: NWPathMonitor?
     /// Online notification
-    let onlineNotification = NotificationCenter.default
+    private var onlineNotification = NotificationCenter.default
     /**
      Types of Interfaces the User could be connected with.
      - Wi-Fi: Uses Wi-Fi as a connection source.
