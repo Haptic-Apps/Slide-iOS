@@ -20,7 +20,7 @@ Below are the steps to getting started:
 1. Clone this repo and open the Terminal
 2. In Terminal, run `pod install`
 3. Open "Slide for Reddit.xcworkspace" through Finder
-4. Modify [/scripts/install-filter.sh](/scripts/install-filter.sh) with the information it asks for, then run it from the repo root directory (`sh ./scripts/install-filter.sh`). Once done, your developer info will automatically replace the defaults (even if you change branches!), and you can't accidentally overwrite the defaults. (If you don't want to do this, just put a new value in the USR_DOMAIN variable in the main target's Build Settings, then modify the signing info yourself. Make sure you don't commit changes to the signing info.)
+4. Modify [/scripts/install-filter.sh](/scripts/install-filter.sh) with the information it asks for, then run it from the repo root directory (`sh scripts/install-filter.sh`). Once done, your developer info will automatically replace the defaults (even if you change branches!), and you can't accidentally overwrite the defaults. (If you don't want to do this, just put a new value in the USR_DOMAIN variable in the main target's Build Settings, then modify the signing info yourself. Make sure you don't commit changes to the signing info.)
 
 ### If you are having trouble building on XCode 10 or MacOS Mojave
 
