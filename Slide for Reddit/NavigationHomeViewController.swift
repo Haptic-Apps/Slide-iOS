@@ -1062,10 +1062,10 @@ extension CurrentAccountHeaderView {
             let month = Calendar.current.ordinality(of: .month, in: .year, for: Date()) == Calendar.current.ordinality(of: .month, in: .year, for: creationDate as Date)
             let attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: accountAgeLabel.font]
             let currentText = NSMutableAttributedString()
-            currentText.append(NSAttributedString(string: day && month ? "🍰 Created \(creationDateString) 🍰" : "Created \(creationDateString)", attributes: attrs as [NSAttributedString.Key : Any]))
+            currentText.append(NSAttributedString(string: day && month ? "🍰 Created \(creationDateString) 🍰" : "Created \(creationDateString)", attributes: attrs as [NSAttributedString.Key: Any]))
             currentText.append(NSAttributedString(string: "\n"))
-            currentText.append(NSAttributedString(string: "\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: accountAgeLabel.font.makeBold()]))
-            currentText.append(NSAttributedString(string: " Karma", attributes: attrs))
+            currentText.append(NSAttributedString(string: "\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0))", attributes: attrs as [NSAttributedString.Key: Any]))
+            currentText.append(NSAttributedString(string: " karma", attributes: attrs as [NSAttributedString.Key: Any]))
             
             accountAgeLabel.attributedText = currentText
             setLoadingState(false)
@@ -1283,7 +1283,7 @@ class AccountShortcutsView: UIView {
         //infoStack.topAnchor == topAnchor
         //infoStack.horizontalAnchors == horizontalAnchors
         
-        cellStack.topAnchor == topAnchor + 10
+        cellStack.topAnchor == topAnchor
         cellStack.horizontalAnchors == horizontalAnchors
         
         cellStack.bottomAnchor == bottomAnchor
