@@ -23,6 +23,14 @@ import WidgetKit
 
 class SplitMainViewController: MainViewController {
     
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+
     static var isFirst = true
 
     override func handleToolbars() {
@@ -511,7 +519,7 @@ class SplitMainViewController: MainViewController {
             }
         }
         let faveSubs = Array(finalSubs[0..<4])
-        let suite = UserDefaults(suiteName: "group.slide.prefs")
+        let suite = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         suite?.setValue(faveSubs, forKey: "favorites")
         suite?.synchronize()
 

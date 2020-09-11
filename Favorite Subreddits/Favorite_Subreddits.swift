@@ -14,9 +14,17 @@ struct SubredditsProvider: IntentTimelineProvider {
     public typealias Intent = TimelineSubredditIntent
     public typealias Entry = SubredditEntry
     
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+    
     func placeholder(in context: Context) -> SubredditEntry {
         var imageData: Data?
-        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         if let data = shared?.data(forKey: "rawall") {
             imageData = data
         }
@@ -26,7 +34,7 @@ struct SubredditsProvider: IntentTimelineProvider {
 
     public func snapshot(for configuration: TimelineSubredditIntent, with context: Context, completion: @escaping (SubredditEntry) -> ()) {
         var imageData: Data?
-        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         if let data = shared?.data(forKey: "rawall") {
             imageData = data
         }
@@ -42,7 +50,7 @@ struct SubredditsProvider: IntentTimelineProvider {
         let currentDate = Date()
         for hourOffset in 0 ..< 5 {
             let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let shared = UserDefaults(suiteName: "group.slide.prefs")
+            let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
             var imageData: Data?
             if let data = shared?.data(forKey: "raw" + (configuration.title?.lowercased() ?? "")) {
                 imageData = data
@@ -95,6 +103,14 @@ struct SubredditView: View {
 }
 
 struct Favorite_SubredditsEntryView: View {
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+
     var entry: SubredditsProvider.Entry
     @Environment(\.widgetFamily) var widgetFamily
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -124,12 +140,12 @@ struct Favorite_SubredditsEntryView: View {
     }
     
     func getImage(item: String) -> String {
-        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         return shared?.string(forKey: item.lowercased()) ?? ""
     }
     
     func getTitle(item: Int) -> String {
-        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         let subs = shared?.stringArray(forKey: "favorites") ?? [""]
         return subs[item]
     }
@@ -137,6 +153,14 @@ struct Favorite_SubredditsEntryView: View {
 
 @main
 struct Favorite_Subreddits: Widget {
+    /*
+     Corresponds to USR_DOMAIN in info.plist, which derives its value
+     from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+     */
+     func USR_DOMAIN() -> String {
+        return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+     }
+
     let kind: String = "Favorite_Subreddits"
 
     var body: some WidgetConfiguration {
@@ -150,6 +174,14 @@ struct Favorite_Subreddits: Widget {
 }
 
 struct Favorite_Subreddits_Previews: PreviewProvider {
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    static func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+
     static var previews: some View {
         Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddit: "all", imageData: getPreviewData()))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
@@ -157,7 +189,7 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
     
     static func getPreviewData() -> Data {
         var imageData: Data?
-        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         if let data = shared?.data(forKey: "rawall") {
             imageData = data
         }
@@ -166,6 +198,14 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
 }
 
 class ImageLoader: ObservableObject {
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+
     var didChange = PassthroughSubject<Data, Never>()
     
     public private(set) var data = Data() {
@@ -175,7 +215,7 @@ class ImageLoader: ObservableObject {
     }
 
     init(urlString: String, subreddit: String) {
-        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         if let data = shared?.data(forKey: "raw" + subreddit.lowercased()) {
             DispatchQueue.main.async {
                 self.data = data
