@@ -10,6 +10,7 @@ import Alamofire
 import Anchorage
 import AudioToolbox
 import BadgeSwift
+import SDWebImage
 import SwiftyJSON
 import MaterialComponents.MaterialTabs
 import RealmSwift
@@ -18,6 +19,7 @@ import SDCAlertView
 import StoreKit
 import UIKit
 import WatchConnectivity
+import WidgetKit
 
 class SplitMainViewController: MainViewController {
     
@@ -508,6 +510,49 @@ class SplitMainViewController: MainViewController {
                 subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
             }
         }
+        let faveSubs = Array(finalSubs[0..<4])
+        let suite = UserDefaults(suiteName: "group.slide.prefs")
+        suite?.setValue(faveSubs, forKey: "favorites")
+        suite?.synchronize()
+        WidgetCenter.shared.reloadAllTimelines()
+
+        DispatchQueue.global().async {
+            for item in faveSubs {
+                if item.contains("m/") {
+                    let image = SubredditCellView.defaultIconMulti
+                    let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
+                    suite?.setValue(data, forKey: item)
+                    suite?.synchronize()
+                } else if item.lowercased() == "all" {
+                    let image = SubredditCellView.allIcon
+                    let data = image?.withPadding(10)?.withBackground(color: GMColor.blue500Color()).pngData() ?? Data()
+                    suite?.setValue(data, forKey: item)
+                    suite?.synchronize()
+                } else if item.lowercased() == "frontpage" {
+                    let image = SubredditCellView.frontpageIcon
+                    let data = image?.withPadding(10)?.withBackground(color: GMColor.green500Color()).pngData() ?? Data()
+                    suite?.setValue(data, forKey: item)
+                    suite?.synchronize()
+                } else if item.lowercased() == "popular" {
+                    let image = SubredditCellView.popularIcon
+                    let data = image?.withPadding(10)?.withBackground(color: GMColor.purple500Color()).pngData() ?? Data()
+                    suite?.setValue(data, forKey: item)
+                    suite?.synchronize()
+                } else if let icon = Subscriptions.icon(for: item) {
+                    SDWebImageManager.shared.loadImage(with: URL(string: icon.unescapeHTML), options: [.allowInvalidSSLCertificates, .decodeFirstFrameOnly], progress: nil) { (image, data, _, _, _, _) in
+                        if data != nil {
+                            suite?.setValue(data, forKey: item)
+                            suite?.synchronize()
+                        }
+                    }
+                } else {
+                    let image = SubredditCellView.defaultIcon
+                    let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
+                    suite?.setValue(data, forKey: item)
+                    suite?.synchronize()
+                }
+            }
+        }
         
         subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" as NSSecureCoding ]))
         subs.reverse()
@@ -846,5 +891,40 @@ extension SplitMainViewController: NavigationHomeDelegate {
 extension MainViewController: PagingTitleDelegate {
     func didSelect(_ subreddit: String) {
         goToSubreddit(subreddit: subreddit)
+    }
+}
+
+extension UIImage {
+  func withBackground(color: UIColor, opaque: Bool = true) -> UIImage {
+    UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        
+    guard let ctx = UIGraphicsGetCurrentContext(), let image = cgImage else { return self }
+    defer { UIGraphicsEndImageContext() }
+        
+    let rect = CGRect(origin: .zero, size: size)
+    ctx.setFillColor(color.cgColor)
+    ctx.fill(rect)
+    ctx.concatenate(CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: size.height))
+    ctx.draw(image, in: rect)
+        
+    return UIGraphicsGetImageFromCurrentImageContext() ?? self
+  }
+}
+extension UIImage {
+    func withPadding(_ padding: CGFloat) -> UIImage? {
+        return withPadding(x: padding, y: padding)
+    }
+
+    func withPadding(x: CGFloat, y: CGFloat) -> UIImage? {
+        let newWidth = size.width + 2 * x
+        let newHeight = size.height + 2 * y
+        let newSize = CGSize(width: newWidth, height: newHeight)
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
+        let origin = CGPoint(x: (newWidth - size.width) / 2, y: (newHeight - size.height) / 2)
+        draw(at: origin)
+        let imageWithPadding = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return imageWithPadding
     }
 }

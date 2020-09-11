@@ -363,6 +363,10 @@
 	<string>Slide uses this permission to save photos and videos to your camera roll</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Slide uses photos in order to attach images to comments and submissions</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>TimelineSubredditIntent</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>googleicon.ttf</string>
