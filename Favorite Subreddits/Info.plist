@@ -27,5 +27,7 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.widgetkit-extension</string>
 	</dict>
+	<key>USR_DOMAIN</key>
+	<string>${USR_DOMAIN}</string>
 </dict>
 </plist>
