@@ -247,15 +247,15 @@ class SettingsLayout: BubbleSettingTableViewController {
             link = BannerLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         }
         
-        link.aspectWidth = self.tableView.frame.size.width
+        link.aspectWidth = min(self.tableView.frame.size.width, 350)
         self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true, np: false)
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
-        link.contentView.frame = CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: link.estimateHeight(false, true, np: false))
+        link.contentView.heightAnchor == link.estimateHeight(false, true, np: false)
+        link.contentView.widthAnchor == min(self.tableView.frame.size.width, 350)
         linkCell.contentView.addSubview(link.contentView)
         link.contentView.centerAnchors == linkCell.contentView.centerAnchors
-        linkCell.frame = CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: link.estimateHeight(false, true, np: false))
         
         switch SettingValues.postViewMode {
         case .CARD:
@@ -467,7 +467,7 @@ class SettingsLayout: BubbleSettingTableViewController {
     override func loadView() {
         super.loadView()
         
-        headers = ["Preview", "Display", "Information line", "Thumbnails", "Advanced"]
+        headers = ["", "Display", "Information line", "Thumbnails", "Advanced"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Submission layout"
@@ -551,8 +551,8 @@ class SettingsLayout: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            return 0
+        if section == 0 || section == 1 {
+            return 40
         }
         return super.tableView(tableView, heightForHeaderInSection: section)
     }

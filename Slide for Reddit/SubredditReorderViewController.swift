@@ -152,7 +152,7 @@ class SubredditReorderViewController: UITableViewController {
 
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
-                    let indexPath = IndexPath.init(row: self.subs.indexes(of: sub), section: self.pinned.isEmpty ? 0 : 1)
+                    let indexPath = IndexPath.init(row: self.subs.indexes(of: sub)[0], section: self.pinned.isEmpty ? 0 : 1)
                     self.tableView.scrollToRow(at: indexPath,
                                                at: UITableView.ScrollPosition.top, animated: true)
                 }
