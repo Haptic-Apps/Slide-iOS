@@ -6,6 +6,7 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import Combine
 import WidgetKit
 import SwiftUI
 
@@ -14,11 +15,23 @@ struct SubredditsProvider: IntentTimelineProvider {
     public typealias Entry = SubredditEntry
     
     func placeholder(in context: Context) -> SubredditEntry {
-        SubredditEntry(date: Date(), subreddit: "all")
+        var imageData: Data?
+        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        if let data = shared?.data(forKey: "rawall") {
+            imageData = data
+        }
+
+        return SubredditEntry(date: Date(), subreddit: "all", imageData: imageData ?? Data())
     }
 
     public func snapshot(for configuration: TimelineSubredditIntent, with context: Context, completion: @escaping (SubredditEntry) -> ()) {
-        let entry = SubredditEntry(date: Date(), subreddit: configuration.title as? String ?? "all")
+        var imageData: Data?
+        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        if let data = shared?.data(forKey: "rawall") {
+            imageData = data
+        }
+
+        let entry = SubredditEntry(date: Date(), subreddit: configuration.title ?? "all", imageData: imageData ?? Data())
         completion(entry)
     }
 
@@ -29,7 +42,25 @@ struct SubredditsProvider: IntentTimelineProvider {
         let currentDate = Date()
         for hourOffset in 0 ..< 5 {
             let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SubredditEntry(date: entryDate, subreddit: configuration.title as? String ?? "all")
+            let shared = UserDefaults(suiteName: "group.slide.prefs")
+            var imageData: Data?
+            if let data = shared?.data(forKey: "raw" + (configuration.title?.lowercased() ?? "")) {
+                imageData = data
+            } else if let url = URL(string: shared?.string(forKey: configuration.title?.lowercased() ?? "") ?? "") {
+                do {
+                    imageData = try Data(contentsOf: url)
+                } catch {
+                    if let data = shared?.data(forKey: "raw") {
+                        imageData = data
+                    }
+                }
+            } else {
+                if let data = shared?.data(forKey: "raw") {
+                    imageData = data
+                }
+            }
+            
+            let entry = SubredditEntry(date: entryDate, subreddit: configuration.title ?? "all", imageData: imageData ?? Data())
             entries.append(entry)
         }
 
@@ -41,27 +72,25 @@ struct SubredditsProvider: IntentTimelineProvider {
 struct SubredditEntry: TimelineEntry {
     let date: Date
     let subreddit: String
+    let imageData: Data
 }
 
 struct SubredditView: View {
-    var icon: Data
+    var imageData: Data
     var title: String
+
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
         VStack {
-            Image(uiImage: UIImage(data: icon) ?? UIImage())
+            Image(uiImage: UIImage(data: imageData) ?? UIImage())
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 50, height: 50, alignment: .center)
                 .clipShape(Circle())
                 .clipped()
-            Text(title).font(.headline).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.8)
-            //Image(uiImage: entry.icons[0])
-              //  .clipShape(Circle())
-             //   .aspectRatio(contentMode: .fill)
+            Text(self.title).font(.headline).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.8)
         }.widgetURL(URL(string: "slide://www.reddit.com/r/\(title)")).frame(maxWidth: .infinity)
-
     }
 }
 
@@ -69,30 +98,39 @@ struct Favorite_SubredditsEntryView: View {
     var entry: SubredditsProvider.Entry
     @Environment(\.widgetFamily) var widgetFamily
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
+    init(entry: SubredditsProvider.Entry) {
+        self.entry = entry
+    }
 
     var body: some View {
         VStack {
             HStack {
                 if widgetFamily == .systemMedium {
-                    SubredditView(icon: getImage(item: getTitle(item: 0)), title: getTitle(item: 0))
-                    SubredditView(icon: getImage(item: getTitle(item: 1)), title: getTitle(item: 1))
-                    SubredditView(icon: getImage(item: getTitle(item: 2)), title: getTitle(item: 2))
+                    SubredditView(imageData: entry.imageData, title: getTitle(item: 0))
+                    SubredditView(imageData: entry.imageData, title: getTitle(item: 1))
+                    SubredditView(imageData: entry.imageData, title: getTitle(item: 2))
                 } else {
-                    SubredditView(icon: getImage(item: entry.subreddit), title: entry.subreddit)
+                    SubredditView(imageData: entry.imageData, title: entry.subreddit)
                 }
             }
-        }.frame(maxHeight: .infinity).background(Color.init(widgetFamily == .systemSmall ? (UIImage(data: getImage(item: entry.subreddit))?.averageColor ?? (colorScheme == .light ? .white : .black)) : (colorScheme == .light ? .white : .black)).opacity(0.8))
+        }.frame(maxHeight: .infinity)
+        .background(Color(widgetFamily == .systemSmall ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor())
+                .opacity(0.8))
     }
     
-    func getImage(item: String) -> Data {
-        var shared = UserDefaults(suiteName: "group.slide.prefs")
-        var subs = shared?.stringArray(forKey: "favorites") ?? []
-        return shared?.data(forKey: item) ?? Data()
+    func getSchemeColor() -> UIColor {
+        return colorScheme == .light ? .white : .black
+    }
+    
+    func getImage(item: String) -> String {
+        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        return shared?.string(forKey: item.lowercased()) ?? ""
     }
     
     func getTitle(item: Int) -> String {
-        var shared = UserDefaults(suiteName: "group.slide.prefs")
-        var subs = shared?.stringArray(forKey: "favorites") ?? [""]
+        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        let subs = shared?.stringArray(forKey: "favorites") ?? [""]
         return subs[item]
     }
 }
@@ -113,8 +151,54 @@ struct Favorite_Subreddits: Widget {
 
 struct Favorite_Subreddits_Previews: PreviewProvider {
     static var previews: some View {
-        Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddit: "all"))
+        Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddit: "all", imageData: getPreviewData()))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
+    }
+    
+    static func getPreviewData() -> Data {
+        var imageData: Data?
+        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        if let data = shared?.data(forKey: "rawall") {
+            imageData = data
+        }
+        return imageData ?? Data()
+    }
+}
+
+class ImageLoader: ObservableObject {
+    var didChange = PassthroughSubject<Data, Never>()
+    
+    public private(set) var data = Data() {
+        willSet {
+            didChange.send(newValue)
+        }
+    }
+
+    init(urlString: String, subreddit: String) {
+        let shared = UserDefaults(suiteName: "group.slide.prefs")
+        if let data = shared?.data(forKey: "raw" + subreddit.lowercased()) {
+            DispatchQueue.main.async {
+                self.data = data
+            }
+            return
+        }
+
+        guard let url = URL(string: urlString) else {
+            if let data = shared?.data(forKey: "raw") {
+                DispatchQueue.main.async {
+                    self.data = data
+                }
+            }
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, _, _ in
+            guard let data = data else { return }
+            DispatchQueue.main.async {
+                self.data = data
+            }
+        }
+        task.resume()
     }
 }
 
