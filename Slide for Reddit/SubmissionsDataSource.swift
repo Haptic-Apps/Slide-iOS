@@ -239,53 +239,52 @@ class SubmissionsDataSource {
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
-                        
-                        var values = PostFilter.filter(converted, previous: self.content, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
-                        self.numberFiltered += (converted.count - values.count)
-                        if self.page > 0 && !values.isEmpty && SettingValues.showPages {
-                            let pageItem = RSubmission()
-                            pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
-                            pageItem.author = "PAGE_SEPARATOR"
-                            pageItem.title = "Page \(self.page + 1)\n\(self.content.count + values.count - self.page) posts"
-                            values.insert(pageItem, at: 0)
-                        }
-                        self.page += 1
-                        
-                        self.content += values
-                        self.paginator = listing.paginator
-                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
-                        do {
-                            let realm = try Realm()
-                           // TODO: - insert
-                            realm.beginWrite()
-                            for submission in self.content {
-                                if submission.author != "PAGE_SEPARATOR" {
-                                    realm.create(type(of: submission), value: submission, update: .all)
-                                    if let listing = self.realmListing {
-                                        listing.links.append(submission)
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self = self else { return }
+                            var values = PostFilter.filter(converted, previous: self.content, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
+                            self.numberFiltered += (converted.count - values.count)
+                            if self.page > 0 && !values.isEmpty && SettingValues.showPages {
+                                let pageItem = RSubmission()
+                                pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
+                                pageItem.author = "PAGE_SEPARATOR"
+                                pageItem.title = "Page \(self.page + 1)\n\(self.content.count + values.count - self.page) posts"
+                                values.insert(pageItem, at: 0)
+                            }
+                            self.page += 1
+                            
+                            self.content += values
+                            self.paginator = listing.paginator
+                            self.nomore = !listing.paginator.hasMore() || values.isEmpty
+                            do {
+                                let realm = try Realm()
+                               // TODO: - insert
+                                realm.beginWrite()
+                                for submission in self.content {
+                                    if submission.author != "PAGE_SEPARATOR" {
+                                        realm.create(type(of: submission), value: submission, update: .all)
+                                        if let listing = self.realmListing {
+                                            listing.links.append(submission)
+                                        }
                                     }
                                 }
+                                
+                                try realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
+                                try realm.commitWrite()
+                            } catch {
+
                             }
                             
-                            try realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
-                            try realm.commitWrite()
-                        } catch {
-
-                        }
+                            self.delegate?.doPreloadImages(values: values)
                         
-                        self.delegate?.doPreloadImages(values: values)
-                        
-                        DispatchQueue.main.async { [weak self] in
-                            guard let strongSelf = self else { return }
-                            if strongSelf.content.isEmpty && !SettingValues.hideSeen {
-                                strongSelf.loading = false
-                                strongSelf.delegate?.emptyState(listing)
-                            } else if strongSelf.content.isEmpty && newLinks.count != 0 && strongSelf.paginator.hasMore() {
-                                strongSelf.loading = false
-                                strongSelf.loadMore()
+                            if self.content.isEmpty && !SettingValues.hideSeen {
+                                self.loading = false
+                                self.delegate?.emptyState(listing)
+                            } else if self.content.isEmpty && newLinks.count != 0 && self.paginator.hasMore() {
+                                self.loading = false
+                                self.loadMore()
                             } else {
-                                strongSelf.loading = false
-                                strongSelf.delegate?.loadSuccess(before: before, count: strongSelf.content.count)
+                                self.loading = false
+                                self.delegate?.loadSuccess(before: before, count: self.content.count)
                             }
                         }
                     }

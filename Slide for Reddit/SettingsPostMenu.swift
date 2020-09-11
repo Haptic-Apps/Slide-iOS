@@ -27,6 +27,9 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         tableView.reloadData()
         
         self.tableView.tableFooterView = UIView()
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -43,6 +46,9 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         UserDefaults.standard.synchronize()
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = true
+        }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = false
         }
     }
     

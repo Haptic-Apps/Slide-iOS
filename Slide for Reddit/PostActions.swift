@@ -47,7 +47,7 @@ class PostActions: NSObject {
         alertController.show(parent)
     }
     
-    public static func handleAction(action: SettingValues.PostOverflowAction, cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
+    public static func handleAction(action: SettingValues.PostOverflowAction, cell: LinkCellView, parent: UIViewController, nav: UINavigationController?, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
         switch action {
         case .PROFILE:
@@ -142,7 +142,7 @@ class PostActions: NSObject {
         }
     }
     
-    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
+    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController?, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
         
         let alertController: DragDownAlertMenu = DragDownAlertMenu(title: "Submission", subtitle: link.title, icon: link.thumbnailUrl)

@@ -99,7 +99,9 @@ class SubredditReorderViewController: UITableViewController {
         self.navigationItem.rightBarButtonItems = normalItems
 
         self.tableView.tableFooterView = UIView()
-
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
     }
 
     @objc func close(_ sender: AnyObject?) {
@@ -120,6 +122,9 @@ class SubredditReorderViewController: UITableViewController {
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = true
         }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = false
+        }
     }
 
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -130,7 +135,6 @@ class SubredditReorderViewController: UITableViewController {
         SubredditReorderViewController.changed = true
         Subscriptions.setPinned(name: AccountController.currentName, subs: pinned, completion: {
             Subscriptions.set(name: AccountController.currentName, subs: self.subs, completion: {
-                self.dismiss(animated: true, completion: nil)
             })
         })
     }
@@ -148,7 +152,7 @@ class SubredditReorderViewController: UITableViewController {
 
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
-                    let indexPath = IndexPath.init(row: self.subs.count - 1, section: self.pinned.isEmpty ? 0 : 1)
+                    let indexPath = IndexPath.init(row: self.subs.indexes(of: sub), section: self.pinned.isEmpty ? 0 : 1)
                     self.tableView.scrollToRow(at: indexPath,
                                                at: UITableView.ScrollPosition.top, animated: true)
                 }

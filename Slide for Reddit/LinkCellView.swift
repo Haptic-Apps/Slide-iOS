@@ -3164,7 +3164,9 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     postContentTransitioningDelegate.sourceImageView = self.videoView
                     vc.transitioningDelegate = postContentTransitioningDelegate
                     vc.modalPresentationStyle = .custom
-                    (vc as! AnyModalViewController).forceStartUnmuted = !self.videoView.player!.isMuted
+                    if let vc = vc as? AnyModalViewController, let player = self.videoView.player {
+                        vc.forceStartUnmuted = player.isMuted
+                    }
                     
                     self.parentViewController?.present(vc, animated: true, completion: nil)
                 } else {

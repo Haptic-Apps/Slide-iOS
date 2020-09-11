@@ -1928,12 +1928,14 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
         self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top)
 
-        dataSource.handleTries { (isEmpty: Bool) in
-            if isEmpty {
-                self.emptyStateView.setText(title: "No offline content found!", message: "When online, you can set up subreddit caching in Settings > Auto Cache")
-                self.emptyStateView.isHidden = false
-            } else {
-                self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Content \(DateFormatter().timeSince(from: self.dataSource.updated, numericDates: true)) old")
+        DispatchQueue.main.async {
+            self.dataSource.handleTries { (isEmpty: Bool) in
+                if isEmpty {
+                    self.emptyStateView.setText(title: "No offline content found!", message: "When online, you can set up subreddit caching in Settings > Auto Cache")
+                    self.emptyStateView.isHidden = false
+                } else {
+                    self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Content \(DateFormatter().timeSince(from: self.dataSource.updated, numericDates: true)) old")
+                }
             }
         }
         

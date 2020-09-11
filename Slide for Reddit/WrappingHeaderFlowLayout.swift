@@ -65,6 +65,9 @@ class WrappingHeaderFlowLayout: UICollectionViewFlowLayout {
         if index < 0 {
             return 0
         }
+        if index < 0 || xOffset.count <= index {
+            return calculatedOffset
+        }
         for ind in 0...index {
             calculatedOffset += xOffset[ind]
         }

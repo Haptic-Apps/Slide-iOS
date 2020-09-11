@@ -708,7 +708,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func more(_ cell: LinkCellView) {
         if !offline {
-            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self, index: 0)
+            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: 0)
         }
     }
 
@@ -2039,7 +2039,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             lastMoved = 0
         } else {
             var contents = content[dataArray[topCell]]
-            while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell {
+            while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell + 1 {
                 topCell += 1
                 contents = content[dataArray[topCell]]
             }

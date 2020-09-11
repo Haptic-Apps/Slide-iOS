@@ -196,9 +196,7 @@ class NavigationHomeViewController: UIViewController {
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: "", true)
         
-        if SettingValues.subredditBar {
-            self.view.addSubview(inHeadView)
-        }
+        self.view.addSubview(inHeadView)
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = ColorUtil.theme.foregroundColor

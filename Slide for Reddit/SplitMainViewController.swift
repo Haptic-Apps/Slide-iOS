@@ -270,7 +270,9 @@ class SplitMainViewController: MainViewController {
                 vc.refresh(false)
             } else {
                 vc.loadBubbles()
-                vc.dataSource.getData(reload: true)
+                DispatchQueue.main.async {
+                    vc.dataSource.getData(reload: true)
+                }
             }
         }
         
@@ -303,6 +305,7 @@ class SplitMainViewController: MainViewController {
         MainViewController.needsReTheme = false
     }
     
+    var isReappear = false
     override func viewWillAppearActions(override: Bool = false) {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
@@ -341,7 +344,7 @@ class SplitMainViewController: MainViewController {
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.handleToolbars()
-
+        
         ReadLater.delegate = self
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
             MainViewController.isOffline = true
@@ -382,6 +385,11 @@ class SplitMainViewController: MainViewController {
         super.viewDidAppear(animated)
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
+        }
+        if !isReappear {
+            isReappear = true
+        } else {
+            self.doToolbarOffset()
         }
     }
 
@@ -573,6 +581,18 @@ extension SplitMainViewController: NavigationHomeDelegate {
         case .TRENDING:
             ()
             //TODO trending page
+        }
+    }
+    
+    func doPresent(callback: @escaping () -> Void) {
+        
+    }
+    
+    func doClose(needsHome: Bool, callback: @escaping () -> Void) {
+        if needsHome {
+            
+        } else {
+            doPresent(callback: callback)
         }
     }
     

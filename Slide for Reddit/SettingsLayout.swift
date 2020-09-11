@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import reddift
 import UIKit
 
@@ -241,9 +242,9 @@ class SettingsLayout: BubbleSettingTableViewController {
 
         link.contentView.removeFromSuperview()
         if SettingValues.postImageMode == .THUMBNAIL {
-            link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+            link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         } else {
-            link = BannerLinkCellView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+            link = BannerLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         }
         
         link.aspectWidth = self.tableView.frame.size.width
@@ -251,9 +252,10 @@ class SettingsLayout: BubbleSettingTableViewController {
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
-        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true, np: false))
+        link.contentView.frame = CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: link.estimateHeight(false, true, np: false))
         linkCell.contentView.addSubview(link.contentView)
-        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true, np: false))
+        link.contentView.centerAnchors == linkCell.contentView.centerAnchors
+        linkCell.frame = CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: link.estimateHeight(false, true, np: false))
         
         switch SettingValues.postViewMode {
         case .CARD:
@@ -464,7 +466,6 @@ class SettingsLayout: BubbleSettingTableViewController {
     
     override func loadView() {
         super.loadView()
-        doLink()
         
         headers = ["Preview", "Display", "Information line", "Thumbnails", "Advanced"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
@@ -521,6 +522,11 @@ class SettingsLayout: BubbleSettingTableViewController {
 
         doDisables()
         self.tableView.tableFooterView = UIView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        doLink()
     }
     
     func doDisables() {

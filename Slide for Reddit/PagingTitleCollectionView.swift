@@ -264,26 +264,24 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         selectedView.backgroundColor = ColorUtil.theme.backgroundColor
         selectedBackgroundView = selectedView
         
-        if let icon = Subscriptions.icon(for: subreddit) {
+        self.icon.contentMode = .center
+        if subreddit.contains("m/") {
+            self.icon.image = SubredditCellView.defaultIconMulti
+        } else if subreddit.lowercased() == "all" {
+            self.icon.image = SubredditCellView.allIcon
+            self.sideView.backgroundColor = GMColor.blue500Color()
+        } else if subreddit.lowercased() == "frontpage" {
+            self.icon.image = SubredditCellView.frontpageIcon
+            self.sideView.backgroundColor = GMColor.green500Color()
+        } else if subreddit.lowercased() == "popular" {
+            self.icon.image = SubredditCellView.popularIcon
+            self.sideView.backgroundColor = GMColor.purple500Color()
+        } else if let icon = Subscriptions.icon(for: subreddit) {
             self.icon.contentMode = .scaleAspectFill
             self.icon.image = UIImage()
             self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
         } else {
-            self.icon.contentMode = .center
-            if subreddit.contains("m/") {
-                self.icon.image = SubredditCellView.defaultIconMulti
-            } else if subreddit.lowercased() == "all" {
-                self.icon.image = SubredditCellView.allIcon
-                self.sideView.backgroundColor = GMColor.blue500Color()
-            } else if subreddit.lowercased() == "frontpage" {
-                self.icon.image = SubredditCellView.frontpageIcon
-                self.sideView.backgroundColor = GMColor.green500Color()
-            } else if subreddit.lowercased() == "popular" {
-                self.icon.image = SubredditCellView.popularIcon
-                self.sideView.backgroundColor = GMColor.purple500Color()
-            } else {
-                self.icon.image = SubredditCellView.defaultIcon
-            }
+            self.icon.image = SubredditCellView.defaultIcon
         }
     }
 }

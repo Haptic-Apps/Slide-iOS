@@ -389,7 +389,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         currentBackgroundOffset.x = offsetX
         self.tabBar.collectionView.contentOffset = currentBackgroundOffset
-        self.tabBar.collectionView.layoutIfNeeded()
+        //elf.tabBar.collectionView.layoutIfNeeded()
     }
     
     func goToSubreddit(index: Int) {
