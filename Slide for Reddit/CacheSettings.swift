@@ -88,8 +88,8 @@ class CacheSettings: BubbleSettingTableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         save(nil)
-        if let nav = self.navigationController as? SwipeForwardNavigationController {
-            nav.fullWidthBackGestureRecognizer.isEnabled = true
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = false
         }
     }
 
@@ -241,8 +241,8 @@ class CacheSettings: BubbleSettingTableViewController {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         self.title = "Manage offline caching"
-        if let nav = self.navigationController as? SwipeForwardNavigationController {
-            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
         }
     }
 

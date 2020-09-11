@@ -41,10 +41,9 @@ class SettingsShortcutMenu: BubbleSettingTableViewController {
         }
         UserDefaults.standard.set(saveArray, forKey: "headerMenu")
         UserDefaults.standard.synchronize()
-        if let nav = self.navigationController as? SwipeForwardNavigationController {
-            nav.fullWidthBackGestureRecognizer.isEnabled = true
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = false
         }
-
     }
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
@@ -107,8 +106,8 @@ class SettingsShortcutMenu: BubbleSettingTableViewController {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         self.title = "Arrange Shortcuts menu"
-        if let nav = self.navigationController as? SwipeForwardNavigationController {
-            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
         }
     }
 }

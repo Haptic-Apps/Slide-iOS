@@ -44,9 +44,6 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         }
         UserDefaults.standard.set(saveArray, forKey: "postMenu")
         UserDefaults.standard.synchronize()
-        if let nav = self.navigationController as? SwipeForwardNavigationController {
-            nav.fullWidthBackGestureRecognizer.isEnabled = true
-        }
         if #available(iOS 13, *) {
             self.isModalInPresentation = false
         }
@@ -112,9 +109,5 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         self.title = "Arrange post menu"
-        
-        if let nav = self.navigationController as? SwipeForwardNavigationController {
-            nav.fullWidthBackGestureRecognizer.isEnabled = false
-        }
     }
 }
