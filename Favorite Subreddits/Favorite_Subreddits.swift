@@ -11,6 +11,7 @@ import WidgetKit
 import SwiftUI
 
 struct SubredditsProvider: IntentTimelineProvider {
+
     public typealias Intent = TimelineSubredditIntent
     public typealias Entry = SubredditEntry
     
@@ -32,7 +33,7 @@ struct SubredditsProvider: IntentTimelineProvider {
         return SubredditEntry(date: Date(), subreddit: "all", imageData: imageData ?? Data())
     }
 
-    public func snapshot(for configuration: TimelineSubredditIntent, with context: Context, completion: @escaping (SubredditEntry) -> ()) {
+    func getSnapshot(for configuration: TimelineSubredditIntent, in context: Context, completion: @escaping (SubredditEntry) -> Void) {
         var imageData: Data?
         let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         if let data = shared?.data(forKey: "rawall") {
@@ -43,7 +44,7 @@ struct SubredditsProvider: IntentTimelineProvider {
         completion(entry)
     }
 
-    public func timeline(for configuration: TimelineSubredditIntent, with context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+    func getTimeline(for configuration: TimelineSubredditIntent, in context: Context, completion: @escaping (Timeline<SubredditEntry>) -> Void) {
         var entries: [SubredditEntry] = []
 
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
