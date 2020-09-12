@@ -65,6 +65,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     public var inHeadView: UIView?
     var lastTopItem: Int = 0
     
+    var oldCount: Int = 0 //Tells us if we need to reload the dataset when going back to the view, if new posts have been added
+    
     let margin: CGFloat = 10
     let cellsPerRow = 3
     var readLaterCount: Int {
@@ -266,9 +268,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
         
         dataSource.delegate = self
-        if dataSource.loaded {
-            self.tableView.reloadData()
-        }
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
         if isModal {
@@ -327,6 +326,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //menuNav?.configureToolbarSwipe()
+        
+        if dataSource.loaded && dataSource.content.count > oldCount {
+            self.tableView.reloadData()
+        }
 
         if toolbarEnabled && !MainViewController.isOffline {
             //showMenuNav()
@@ -521,6 +524,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func showUI(_ disableBottom: Bool = false) {
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
+        }
+        
+        if parentController != nil {
+            parentController!.doToolbarOffset()
         }
         
         if self.fab?.superview != nil {
@@ -1888,6 +1895,8 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             self.parentController?.checkForMail()
             self.parentController?.checkSubs()
         }
+        
+        oldCount = dataSource.content.count
     }
     
     func preLoadItems() {

@@ -130,10 +130,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     static var removeDict = NSMutableDictionary()
     
+    var launchedURL: URL?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
-        //UIApplication.shared.registerUserNotificationSettings(settings)
-
+        if #available(iOS 13.0, *) { return true } else {
+            self.window = UIWindow(frame: UIScreen.main.bounds)
+            
+            didFinishLaunching()
+            launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
+            let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
+            
+            if remoteNotif != nil {
+                if let url = remoteNotif!.userInfo?["permalink"] as? String {
+                    VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+                } else {
+                    VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+                }
+            }
+            return true
+        }
+    }
+    
+    func didFinishLaunching() {
         UIPanGestureRecognizer.swizzle()
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
@@ -350,8 +368,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = ColorUtil.doInit()
 
         UIApplication.shared.applicationIconBadgeNumber = 0
-
-        self.window = UIWindow(frame: UIScreen.main.bounds)
            
         if #available(iOS 14, *) {
             _ = resetStackNew()
@@ -361,16 +377,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window?.makeKeyAndVisible()
         
-        let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
-        
-        if remoteNotif != nil {
-            if let url = remoteNotif!.userInfo?["permalink"] as? String {
-                VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
-            } else {
-                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
-            }
-        }
-
         WatchSessionManager.sharedManager.doInit()
 
         if SettingValues.notifications {
@@ -396,7 +402,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
         }
         
-        return true
+
     }
     
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -868,14 +874,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
     }
-
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        
+        return handleURL(url)
+    }
+    
+    func handleURL(_ url: URL) -> Bool {
+        print("Handling URL \(url)")
         let bUrl = url.absoluteString
         if bUrl.startsWith("googlechrome://") || bUrl.startsWith("firefox://") || bUrl.startsWith("opera-http://") {
             return false
         }
-        
+                
         if url.absoluteString.contains("/r/") {
             VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)
             return true
@@ -940,9 +950,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        if #available(iOS 13.0, *) { return } else {
+            didBecomeActive()
+        }
+    }
+    
+    func didBecomeActive() {
         if AccountController.current == nil && UserDefaults.standard.string(forKey: "name") != "GUEST" {
             AccountController.initialize()
         }
+        
+        if let url = launchedURL {
+            handleURL(url)
+            launchedURL = nil
+        }
+        
         UIView.animate(withDuration: 0.25, animations: {
             self.backView?.alpha = 0
         }, completion: { (_) in
@@ -973,6 +995,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var backView: UIView?
     func applicationWillResignActive(_ application: UIApplication) {
+        if #available(iOS 13.0, *) { return } else {
+            willResignActive()
+        }
+    }
+    
+    func willResignActive() {
         if SettingValues.biometrics {
             if backView == nil {
                 backView = UIView.init(frame: self.window!.frame)
@@ -986,8 +1014,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.backView?.isHidden = false
         }
         totalBackground = false
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
     
     var readLaterRecord: CKRecord?
@@ -1057,6 +1083,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        if #available(iOS 13.0, *) { return } else {
+            didEnterBackground()
+        }
+    }
+        
+    func didEnterBackground() {
         totalBackground = true
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
@@ -1074,16 +1106,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         self.refreshSession()
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        History.seenTimes.write(toFile: seenFile!, atomically: true)
-        History.commentCounts.write(toFile: commentsFile!, atomically: true)
-        ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
-        Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
-        Subscriptions.subIcons.write(toFile: iconsFile!, atomically: true)
-        Subscriptions.subColors.write(toFile: colorsFile!, atomically: true)
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
     func refreshSession() {
@@ -1229,6 +1251,82 @@ class CustomSplitController: UISplitViewController {
 
         } else {
             return .lightContent
+        }
+    }
+}
+
+@available(iOS 13.0, *)
+extension AppDelegate: UIWindowSceneDelegate {
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            handleURL(url)
+        }
+    }
+        
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        didBecomeActive()
+    }
+    
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        self.refreshSession()
+    }
+    
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        didEnterBackground()
+    }
+    
+    func sceneWillResignActive(_ scene: UIScene) {
+        willResignActive()
+    }
+    
+    func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        if let url = shortcutItem.userInfo?["sub"] {
+            VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)
+        } else if shortcutItem.userInfo?["clipboard"] != nil {
+            var clipUrl: URL?
+            if let url = UIPasteboard.general.url {
+                if ContentType.getContentType(baseUrl: url) == .REDDIT {
+                    clipUrl = url
+                }
+            }
+            if clipUrl == nil {
+                if let urlS = UIPasteboard.general.string {
+                    if let url = URL.init(string: urlS) {
+                        if ContentType.getContentType(baseUrl: url) == .REDDIT {
+                            clipUrl = url
+                        }
+                    }
+                }
+            }
+            
+            if clipUrl != nil {
+                VCPresenter.openRedditLink(clipUrl!.absoluteString, window?.rootViewController as? UINavigationController, window?.rootViewController)
+            }
+
+        }
+    }
+    
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard let _ = (scene as? UIWindowScene) else { return }
+
+        if let url = connectionOptions.urlContexts.first?.url {
+            launchedURL = url
+        }
+        
+        if let windowScene = scene as? UIWindowScene {
+            self.window = UIWindow(windowScene: windowScene)
+
+            didFinishLaunching()
+            /* TODO This launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
+            let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
+            
+            if remoteNotif != nil {
+                if let url = remoteNotif!.userInfo?["permalink"] as? String {
+                    VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+                } else {
+                    VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+                }
+            }*/
         }
     }
 }

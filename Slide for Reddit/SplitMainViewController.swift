@@ -10,6 +10,7 @@ import Alamofire
 import Anchorage
 import AudioToolbox
 import BadgeSwift
+import SDWebImage
 import SwiftyJSON
 import MaterialComponents.MaterialTabs
 import RealmSwift
@@ -18,9 +19,18 @@ import SDCAlertView
 import StoreKit
 import UIKit
 import WatchConnectivity
+import WidgetKit
 
 class SplitMainViewController: MainViewController {
     
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+
     static var isFirst = true
 
     override func handleToolbars() {
@@ -223,6 +233,7 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
         
     @objc func onThemeChanged() {
@@ -344,7 +355,8 @@ class SplitMainViewController: MainViewController {
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.handleToolbars()
-        
+        doReAppearToolbar()
+
         ReadLater.delegate = self
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
             MainViewController.isOffline = true
@@ -386,6 +398,9 @@ class SplitMainViewController: MainViewController {
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
         }
+    }
+    
+    @objc func doReAppearToolbar() {
         if !isReappear {
             isReappear = true
         } else {
@@ -507,6 +522,42 @@ class SplitMainViewController: MainViewController {
             if subs.count < 2 && !subname.contains("/") {
                 subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
             }
+        }
+        let faveSubs = Array(finalSubs[0..<4])
+        let suite = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+        suite?.setValue(faveSubs, forKey: "favorites")
+        suite?.synchronize()
+
+        DispatchQueue.global().async {
+            for raw in self.finalSubs {
+                let item = raw.lowercased()
+                if item.contains("m/") {
+                    let image = SubredditCellView.defaultIconMulti
+                    let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
+                    suite?.setValue(data, forKey: "raw" + item)
+                } else if item == "all" {
+                    let image = SubredditCellView.allIcon
+                    let data = image?.withPadding(10)?.withBackground(color: GMColor.blue500Color()).pngData() ?? Data()
+                    suite?.setValue(data, forKey: "raw" + item)
+                } else if item == "frontpage" {
+                    let image = SubredditCellView.frontpageIcon
+                    let data = image?.withPadding(10)?.withBackground(color: GMColor.green500Color()).pngData() ?? Data()
+                    suite?.setValue(data, forKey: "raw" + item)
+                } else if item == "popular" {
+                    let image = SubredditCellView.popularIcon
+                    let data = image?.withPadding(10)?.withBackground(color: GMColor.purple500Color()).pngData() ?? Data()
+                    suite?.setValue(data, forKey: "raw" + item)
+                } else if let icon = Subscriptions.icon(for: item) {
+                    suite?.setValue(icon.unescapeHTML, forKey: item)
+                }
+            }
+            
+            let image = SubredditCellView.defaultIcon
+            let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
+            suite?.setValue(data, forKey: "raw")
+            suite?.synchronize()
+            
+            WidgetCenter.shared.reloadAllTimelines()
         }
         
         subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" as NSSecureCoding ]))
@@ -846,5 +897,40 @@ extension SplitMainViewController: NavigationHomeDelegate {
 extension MainViewController: PagingTitleDelegate {
     func didSelect(_ subreddit: String) {
         goToSubreddit(subreddit: subreddit)
+    }
+}
+
+extension UIImage {
+  func withBackground(color: UIColor, opaque: Bool = true) -> UIImage {
+    UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        
+    guard let ctx = UIGraphicsGetCurrentContext(), let image = cgImage else { return self }
+    defer { UIGraphicsEndImageContext() }
+        
+    let rect = CGRect(origin: .zero, size: size)
+    ctx.setFillColor(color.cgColor)
+    ctx.fill(rect)
+    ctx.concatenate(CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: size.height))
+    ctx.draw(image, in: rect)
+        
+    return UIGraphicsGetImageFromCurrentImageContext() ?? self
+  }
+}
+extension UIImage {
+    func withPadding(_ padding: CGFloat) -> UIImage? {
+        return withPadding(x: padding, y: padding)
+    }
+
+    func withPadding(x: CGFloat, y: CGFloat) -> UIImage? {
+        let newWidth = size.width + 2 * x
+        let newHeight = size.height + 2 * y
+        let newSize = CGSize(width: newWidth, height: newHeight)
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
+        let origin = CGPoint(x: (newWidth - size.width) / 2, y: (newHeight - size.height) / 2)
+        draw(at: origin)
+        let imageWithPadding = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return imageWithPadding
     }
 }
