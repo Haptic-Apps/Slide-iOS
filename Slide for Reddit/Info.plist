@@ -365,7 +365,8 @@
 	<string>Slide uses photos in order to attach images to comments and submissions</string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>TimelineSubredditIntent</string>
+		<string>SingleSubredditIntent</string>
+		<string>SubredditIntent</string>
 	</array>
 	<key>UIAppFonts</key>
 	<array>
