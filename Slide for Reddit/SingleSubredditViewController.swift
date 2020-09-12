@@ -523,6 +523,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
         
+        if parentController != nil {
+            parentController!.doToolbarOffset()
+        }
+        
         if self.fab?.superview != nil {
             self.fab?.isHidden = false
             self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
