@@ -436,12 +436,6 @@ class SplitMainViewController: MainViewController {
             (self.viewControllers?[0] as? SingleSubredditViewController)?.refresh()
             return
         }
-        //Temporary fix for 13
-        UIView.animate(withDuration: 0.3, animations: {
-            if SettingValues.appMode == .MULTI_COLUMN {
-                self.splitViewController?.preferredDisplayMode = .primaryHidden
-            }
-        }, completion: nil)
         
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
@@ -607,6 +601,14 @@ class SplitMainViewController: MainViewController {
 }
 
 extension SplitMainViewController: NavigationHomeDelegate {
+    
+    enum OpenState {
+        case POPOVER_ANY
+        case POPOVER_ANY_NAV
+        case POPOVER_AFTER_NAVIGATION
+        case POPOVER_SIMULTANEOUSLY
+    }
+    
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestAction: SettingValues.NavigationHeaderActions) {
         switch didRequestAction {
         case .HOME:
@@ -635,28 +637,79 @@ extension SplitMainViewController: NavigationHomeDelegate {
         }
     }
     
-    func doPresent(callback: @escaping () -> Void) {
-        
-    }
-    
-    func doClose(needsHome: Bool, callback: @escaping () -> Void) {
-        if needsHome {
-            
-        } else {
-            doPresent(callback: callback)
-        }
-    }
-    
-    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
-        if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
-            nav.pushNextViewControllerFromRight() {
-                if !self.finalSubs.contains(didRequestSubreddit) {
-                    self.goToSubreddit(subreddit: didRequestSubreddit)
-                    return
+    func doOpen(_ state: OpenState, _ homeViewController: NavigationHomeViewController, toExecute: ( () -> Void)?, toPresent: UIViewController? = nil) {
+        switch state {
+        case .POPOVER_ANY:
+            if let present = toPresent {
+                homeViewController.present(present, animated: true)
+            } else {
+                toExecute?()
+            }
+        case .POPOVER_ANY_NAV:
+            if let present = toPresent {
+                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: nil, parentViewController: homeViewController)
+            } else {
+                toExecute?()
+            }
+        case .POPOVER_AFTER_NAVIGATION:
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self, nav.pushableViewControllers.count > 0 {
+                nav.pushNextViewControllerFromRight() {
+                    if let present = toPresent {
+                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                    } else {
+                        toExecute?()
+                    }
+                }
+            } else {
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target {
+                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+                    if let present = toPresent {
+                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                    } else {
+                        toExecute?()
+                    }
+                } else {
+                    UIView.animate(withDuration: 0.3, animations: {
+                        if SettingValues.appMode == .MULTI_COLUMN {
+                            self.splitViewController?.preferredDisplayMode = .primaryHidden
+                        }
+                    }, completion: { _ in
+                        if let present = toPresent {
+                            VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                        } else {
+                            toExecute?()
+                        }
+                    })
+                }
+            }
+        case .POPOVER_SIMULTANEOUSLY:
+            if let present = toPresent {
+                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+            } else {
+                toExecute?()
+            }
+
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+                nav.pushNextViewControllerFromRight() {
+                }
+            } else {
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target {
+                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                 }
             }
         }
-        goToSubreddit(subreddit: didRequestSubreddit)
+        
+    }
+        
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
+        var currentState = OpenState.POPOVER_AFTER_NAVIGATION
+        if self.finalSubs.contains(didRequestSubreddit) {
+            currentState = .POPOVER_SIMULTANEOUSLY
+        }
+        
+        doOpen(currentState, homeViewController) {
+            self.goToSubreddit(subreddit: didRequestSubreddit)
+        }
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
@@ -705,14 +758,11 @@ extension SplitMainViewController: NavigationHomeDelegate {
             }
         }, inputPlaceholder: "Name...", inputValue: nil, inputIcon: UIImage(named: "wiki")!.menuIcon(), textRequired: true, exitOnAction: false)
         
-        if let parent = parent {
-            alert.show(parent)
-        }
-
+        doOpen(.POPOVER_ANY, homeViewController, toExecute: nil, toPresent: alert)
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSearch: String) {
-        VCPresenter.showVC(viewController: SearchViewController(subreddit: self.currentTitle, searchFor: didRequestSearch), popupIfPossible: false, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: SearchViewController(subreddit: self.currentTitle, searchFor: didRequestSearch))
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSwitchAccountMenu: Void) {
@@ -747,25 +797,23 @@ extension SplitMainViewController: NavigationHomeDelegate {
             self.navigation(homeViewController, didRequestNewAccount: ())
         }
         
-        homeViewController.present(optionMenu, animated: true, completion: nil)
+        doOpen(OpenState.POPOVER_ANY, homeViewController, toExecute: nil, toPresent: optionMenu)
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestModMenu: Void) {
         let vc = ModerationViewController()
-        let navVC = SwipeForwardNavigationController(rootViewController: vc)
-        navVC.navigationBar.isTranslucent = false
-        homeViewController.present(navVC, animated: true)
+        
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
     }
 
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestInbox: Void) {
         let vc = InboxViewController()
-        let navVC = SwipeForwardNavigationController(rootViewController: vc)
-        navVC.navigationBar.isTranslucent = false
-        homeViewController.present(navVC, animated: true)
+        
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestUser: String) {
-        VCPresenter.openRedditLink("/u/" + didRequestUser.replacingOccurrences(of: " ", with: ""), homeViewController.navigationController, homeViewController)
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: "/u/" + didRequestUser.replacingOccurrences(of: " ", with: ""))!))
     }
 
     func random(_ vc: NavigationHomeViewController) {
@@ -777,7 +825,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
                 let json = try JSON(data: data)
                 if let sub = json["data"]["display_name"].string {
-                    VCPresenter.openRedditLink("/r/\(sub)", vc.navigationController, vc)
+                    self.doOpen(OpenState.POPOVER_ANY_NAV, vc, toExecute: nil, toPresent: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: "/r/\(sub)")!))
                 } else {
                     BannerUtil.makeBanner(text: "Random subreddit not found", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)
                 }
@@ -789,7 +837,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSettingsMenu: Void) {
         let settings = SettingsViewController()
-        VCPresenter.showVC(viewController: settings, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: settings)
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, goToMultireddit multireddit: String) {
@@ -797,7 +845,16 @@ extension SplitMainViewController: NavigationHomeDelegate {
         finalSubs.append(contentsOf: Subscriptions.pinned)
         finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
         redoSubs()
-        goToSubreddit(subreddit: multireddit)
+        
+        var currentState = OpenState.POPOVER_AFTER_NAVIGATION
+        if self.finalSubs.contains(multireddit) {
+            currentState = .POPOVER_SIMULTANEOUSLY
+        }
+        
+        doOpen(currentState, homeViewController) {
+            self.goToSubreddit(subreddit: multireddit)
+        }
+
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestCacheNow: Void) {
@@ -811,14 +868,17 @@ extension SplitMainViewController: NavigationHomeDelegate {
             
             alert.addCloseButton()
             alert.addBlurView()
-            present(alert, animated: true, completion: nil)
+            
+            doOpen(OpenState.POPOVER_ANY, homeViewController, toExecute: nil, toPresent: alert)
         } else {
-            _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+            doOpen(OpenState.POPOVER_AFTER_NAVIGATION, homeViewController, toExecute: {
+                _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+            }, toPresent: nil)
         }
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestHistory: Void) {
-        VCPresenter.showVC(viewController: HistoryViewController(), popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: HistoryViewController())
     }
 
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestCollections: Void) {
@@ -832,12 +892,12 @@ extension SplitMainViewController: NavigationHomeDelegate {
             
             alert.addCloseButton()
             alert.addBlurView()
-            homeViewController.present(alert, animated: true, completion: nil)
+
+            doOpen(OpenState.POPOVER_ANY, homeViewController, toExecute: nil, toPresent: alert)
         } else {
             let vc = CollectionsViewController()
-            let navVC = SwipeForwardNavigationController(rootViewController: vc)
-            navVC.navigationBar.isTranslucent = false
-            homeViewController.present(navVC, animated: true)
+            
+            doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
         }
     }
 
@@ -888,9 +948,8 @@ extension SplitMainViewController: NavigationHomeDelegate {
     func accountHeaderView(_ homeViewController: NavigationHomeViewController, didRequestProfilePageAtIndex index: Int) {
         let vc = ProfileViewController(name: AccountController.currentName)
         vc.openTo = index
-        let navVC = SwipeForwardNavigationController(rootViewController: vc)
-        navVC.navigationBar.isTranslucent = false
-        homeViewController.present(navVC, animated: true)
+        
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
     }
 }
 
