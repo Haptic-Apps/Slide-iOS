@@ -19,7 +19,9 @@ import SDCAlertView
 import StoreKit
 import UIKit
 import WatchConnectivity
+#if canImport(WidgetKit)
 import WidgetKit
+#endif
 
 class SplitMainViewController: MainViewController {
     
@@ -517,41 +519,44 @@ class SplitMainViewController: MainViewController {
                 subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
             }
         }
-        let faveSubs = Array(finalSubs[0..<4])
-        let suite = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-        suite?.setValue(faveSubs, forKey: "favorites")
-        suite?.synchronize()
-
-        DispatchQueue.global().async {
-            for raw in self.finalSubs {
-                let item = raw.lowercased()
-                if item.contains("m/") {
-                    let image = SubredditCellView.defaultIconMulti
-                    let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
-                    suite?.setValue(data, forKey: "raw" + item)
-                } else if item == "all" {
-                    let image = SubredditCellView.allIcon
-                    let data = image?.withPadding(10)?.withBackground(color: GMColor.blue500Color()).pngData() ?? Data()
-                    suite?.setValue(data, forKey: "raw" + item)
-                } else if item == "frontpage" {
-                    let image = SubredditCellView.frontpageIcon
-                    let data = image?.withPadding(10)?.withBackground(color: GMColor.green500Color()).pngData() ?? Data()
-                    suite?.setValue(data, forKey: "raw" + item)
-                } else if item == "popular" {
-                    let image = SubredditCellView.popularIcon
-                    let data = image?.withPadding(10)?.withBackground(color: GMColor.purple500Color()).pngData() ?? Data()
-                    suite?.setValue(data, forKey: "raw" + item)
-                } else if let icon = Subscriptions.icon(for: item) {
-                    suite?.setValue(icon.unescapeHTML, forKey: item)
-                }
-            }
-            
-            let image = SubredditCellView.defaultIcon
-            let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
-            suite?.setValue(data, forKey: "raw")
+        
+        if #available(iOS 14, *) {
+            let faveSubs = Array(finalSubs[0..<4])
+            let suite = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+            suite?.setValue(faveSubs, forKey: "favorites")
             suite?.synchronize()
-            
-            WidgetCenter.shared.reloadAllTimelines()
+
+            DispatchQueue.global().async {
+                for raw in self.finalSubs {
+                    let item = raw.lowercased()
+                    if item.contains("m/") {
+                        let image = SubredditCellView.defaultIconMulti
+                        let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
+                        suite?.setValue(data, forKey: "raw" + item)
+                    } else if item == "all" {
+                        let image = SubredditCellView.allIcon
+                        let data = image?.withPadding(10)?.withBackground(color: GMColor.blue500Color()).pngData() ?? Data()
+                        suite?.setValue(data, forKey: "raw" + item)
+                    } else if item == "frontpage" {
+                        let image = SubredditCellView.frontpageIcon
+                        let data = image?.withPadding(10)?.withBackground(color: GMColor.green500Color()).pngData() ?? Data()
+                        suite?.setValue(data, forKey: "raw" + item)
+                    } else if item == "popular" {
+                        let image = SubredditCellView.popularIcon
+                        let data = image?.withPadding(10)?.withBackground(color: GMColor.purple500Color()).pngData() ?? Data()
+                        suite?.setValue(data, forKey: "raw" + item)
+                    } else if let icon = Subscriptions.icon(for: item) {
+                        suite?.setValue(icon.unescapeHTML, forKey: item)
+                    }
+                }
+                
+                let image = SubredditCellView.defaultIcon
+                let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
+                suite?.setValue(data, forKey: "raw")
+                suite?.synchronize()
+                
+                WidgetCenter.shared.reloadAllTimelines()
+            }
         }
         
         subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: "Open link", localizedSubtitle: "Open current clipboard url", icon: UIApplicationShortcutIcon.init(templateImageName: "nav"), userInfo: [ "clipboard": "true" as NSSecureCoding ]))

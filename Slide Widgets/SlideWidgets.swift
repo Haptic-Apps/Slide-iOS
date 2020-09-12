@@ -7,7 +7,9 @@
 //
 
 import Combine
+#if canImport(WidgetKit)
 import WidgetKit
+#endif
 import SwiftUI
 
 struct SubredditsProvider: IntentTimelineProvider {
