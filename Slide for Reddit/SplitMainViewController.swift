@@ -233,7 +233,7 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector:#selector(doReAppear), name: NSNotification.Name.NSExtensionHostWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(doReAppear), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
         
     @objc func onThemeChanged() {
