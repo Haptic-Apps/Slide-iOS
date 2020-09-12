@@ -239,6 +239,8 @@ class SubmissionsDataSource {
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
+                        
+                        self.delegate?.doPreloadImages(values: converted)
                         DispatchQueue.main.async { [weak self] in
                             guard let self = self else { return }
                             var values = PostFilter.filter(converted, previous: self.content, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
@@ -274,8 +276,7 @@ class SubmissionsDataSource {
 
                             }
                             
-                            self.delegate?.doPreloadImages(values: values)
-                        
+
                             if self.content.isEmpty && !SettingValues.hideSeen {
                                 self.loading = false
                                 self.delegate?.emptyState(listing)

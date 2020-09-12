@@ -233,7 +233,7 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(doReAppear), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
         
     @objc func onThemeChanged() {
@@ -355,7 +355,8 @@ class SplitMainViewController: MainViewController {
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.handleToolbars()
-        
+        doReAppearToolbar()
+
         ReadLater.delegate = self
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
             MainViewController.isOffline = true
@@ -397,10 +398,9 @@ class SplitMainViewController: MainViewController {
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
         }
-        doReAppear()
     }
     
-    @objc func doReAppear() {
+    @objc func doReAppearToolbar() {
         if !isReappear {
             isReappear = true
         } else {
