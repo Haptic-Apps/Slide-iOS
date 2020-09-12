@@ -130,10 +130,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     static var removeDict = NSMutableDictionary()
     
+    var launchedURL: URL?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
         //UIApplication.shared.registerUserNotificationSettings(settings)
 
+        launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
+        print("LAUNCHED URL IS \(launchedURL)")
         UIPanGestureRecognizer.swizzle()
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
@@ -870,12 +874,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        
+        return handleURL(url)
+    }
+    
+    func handleURL(_ url: URL) -> Bool {
         let bUrl = url.absoluteString
         if bUrl.startsWith("googlechrome://") || bUrl.startsWith("firefox://") || bUrl.startsWith("opera-http://") {
             return false
         }
-        
+                
         if url.absoluteString.contains("/r/") {
             VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)
             return true
@@ -943,6 +950,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if AccountController.current == nil && UserDefaults.standard.string(forKey: "name") != "GUEST" {
             AccountController.initialize()
         }
+        
+        if let url = launchedURL {
+            handleURL(url)
+            launchedURL = nil
+        }
+        
         UIView.animate(withDuration: 0.25, animations: {
             self.backView?.alpha = 0
         }, completion: { (_) in
