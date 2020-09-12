@@ -11,6 +11,18 @@ Slide is a powerful open-source, ad-free, Swift-based Reddit browser for iOS. Fe
 <br>
 <br>
 
+## Sponsors
+
+Thank you to our awesome Github Sponsors, who help keep the Slide project going
+
+|  | GitHub profile |
+| --------- | ------------- |
+| **KevinNThomas** | https://github.com/KevinNThomas |
+| **andrewkdinh** | https://github.com/andrewkdinh |
+
+If you're interested in sponsoring our work, check out the sponsor slots for Slide contributors on the right-hand **Sponsorship** menu
+
+
 ## Getting started
 
 To get started with Slide iOS development, you need to set up CocoaPods integration and open the Coacoapods workspace, not the default xcworkspace. **NOTE: You must open the .xcworkspace file instead of the .xcodeproj file for dependencies to load. If you are having issues with Pods or are setting up the Slide repository for the first time, try the steps below.**
