@@ -872,12 +872,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
     }
-
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         return handleURL(url)
     }
     
     func handleURL(_ url: URL) -> Bool {
+        print("Handling URL \(url)")
         let bUrl = url.absoluteString
         if bUrl.startsWith("googlechrome://") || bUrl.startsWith("firefox://") || bUrl.startsWith("opera-http://") {
             return false
@@ -1242,6 +1243,21 @@ class CustomSplitController: UISplitViewController {
 
         } else {
             return .lightContent
+        }
+    }
+}
+
+@available(iOS 13.0, *)
+extension AppDelegate: UIWindowSceneDelegate {
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            handleURL(url)
+        }
+    }
+    
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        if let url = connectionOptions.urlContexts.first?.url {
+            launchedURL = url
         }
     }
 }
