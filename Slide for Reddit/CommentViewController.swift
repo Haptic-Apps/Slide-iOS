@@ -3197,9 +3197,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer.delegate = self
         cellGestureRecognizer.maximumNumberOfTouches = 1
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        if UIDevice.current.userInterfaceIdiom != .pad {
-            cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
-        }
+        cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
         if let parent = parent as? ColorMuxPagingViewController {
             parent.requireFailureOf(cellGestureRecognizer)
         }
@@ -3304,7 +3302,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         }
         
         translatingCell?.handlePan(recognizer)
-        if recognizer.state == .ended {
+        if recognizer.state == .ended || recognizer.state == .cancelled {
             translatingCell = nil
         }
     }

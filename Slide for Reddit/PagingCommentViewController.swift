@@ -101,15 +101,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             PagingCommentViewController.savedComment = firstViewController
             firstViewController.forceLoad = true
         }
-        if SettingValues.commentGesturesMode == .FULL {
-            for view in self.view.subviews {
-                if !(view is UICollectionView) {
-                    if let scrollView = view as? UIScrollView {
-                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                    }
-                }
-            }
-        }
 
         setViewControllers([firstViewController],
                            direction: .forward,

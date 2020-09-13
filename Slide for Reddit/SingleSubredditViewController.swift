@@ -2705,13 +2705,14 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
     func setupGestures() {
+        if cellGestureRecognizer != nil {
+            return
+        }
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
         cellGestureRecognizer.maximumNumberOfTouches = 1
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        if UIDevice.current.userInterfaceIdiom != .pad {
-            cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
-        }
+
         if let parent = parent as? ColorMuxPagingViewController, SettingValues.subredditBar {
             parent.requireFailureOf(cellGestureRecognizer)
         }
@@ -2768,7 +2769,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                     return false
                 }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.submissionGestureMode == .FULL {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.submissionGestureMode == .FULL || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad) {
                         return true
                     }
                 } else if SettingValues.submissionGestureMode == .FULL && abs(translation.x) > abs(translation.y) {
@@ -2816,12 +2817,16 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 return
             }
             
+            if recognizer.location(in: cell).x < cell.contentView.bounds.width / 2 && SettingValues.submissionGestureMode != .FULL {
+                recognizer.cancel()
+                return
+            }
             tableView.panGestureRecognizer.cancel()
 
             translatingCell = cell
         }
         translatingCell?.handlePan(recognizer)
-        if recognizer.state == .ended {
+        if recognizer.state == .ended || recognizer.state == .cancelled {
             translatingCell = nil
         }
     }
