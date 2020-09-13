@@ -134,24 +134,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         if #available(iOS 13.0, *) { return true } else {
-            self.window = UIWindow(frame: UIScreen.main.bounds)
-            
-            didFinishLaunching()
+            let window = UIWindow(frame: UIScreen.main.bounds)
+            self.window = window
+            didFinishLaunching(window: window)
             launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
             let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
             
             if remoteNotif != nil {
                 if let url = remoteNotif!.userInfo?["permalink"] as? String {
-                    VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+                    VCPresenter.openRedditLink(url, window.rootViewController as? UINavigationController, window.rootViewController)
                 } else {
-                    VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+                    VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window.rootViewController as? UINavigationController, parentViewController: window.rootViewController)
                 }
             }
             return true
         }
     }
     
-    func didFinishLaunching() {
+    func didFinishLaunching(window: UIWindow) {
         UIPanGestureRecognizer.swizzle()
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
@@ -370,12 +370,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.applicationIconBadgeNumber = 0
            
         if #available(iOS 14, *) {
-            _ = resetStackNew()
+            _ = resetStackNew(window: window)
         } else {
             _ = resetStack()
         }
         
-        window?.makeKeyAndVisible()
+        window.makeKeyAndVisible()
         
         WatchSessionManager.sharedManager.doInit()
 
@@ -501,8 +501,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     @available(iOS 14.0, *)
-    func resetStackNew(_ soft: Bool = false) -> MainViewController {
-        guard let window = self.window else {
+    func resetStackNew(_ soft: Bool = false, window: UIWindow?) -> MainViewController {
+        guard let window = window else {
             fatalError("Window must exist when resetting the stack!")
         }
 
@@ -596,10 +596,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 splitViewController.preferredSplitBehavior = .automatic
                 
                 splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
-                splitViewController.preferredSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.33
-                splitViewController.preferredPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+                splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
 
                 let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
                 splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), for: .primary)
@@ -1314,9 +1314,10 @@ extension AppDelegate: UIWindowSceneDelegate {
         }
         
         if let windowScene = scene as? UIWindowScene {
-            self.window = UIWindow(windowScene: windowScene)
+            let window = UIWindow(windowScene: windowScene)
+            self.window = window
 
-            didFinishLaunching()
+            didFinishLaunching(window: window)
             /* TODO This launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
             let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
             

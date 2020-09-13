@@ -423,7 +423,7 @@ struct SubredditLoader {
         var posts = [Post]()
         for child in children {
             let data = child["data"] as! [String: Any]
-            let thumbnail = data["thumbnail"] as! String
+            let thumbnail = data["thumbnail"] as? String ?? ""
             var imageData = Data()
             if let url = URL(string: thumbnail) {
                 do {
@@ -431,7 +431,7 @@ struct SubredditLoader {
                 } catch {
                 }
             }
-            posts.append(Post(id: data["id"] as! String, author: data["author"] as! String, subreddit: data["subreddit_name_prefixed"] as! String, title: data["title"] as! String, image: data["thumbnail"] as! String, date: data["created_utc"] as! Double, imageData: imageData))
+            posts.append(Post(id: data["id"] as! String, author: data["author"] as! String, subreddit: data["subreddit_name_prefixed"] as! String, title: data["title"] as! String, image: data["thumbnail"] as? String ?? "", date: data["created_utc"] as! Double, imageData: imageData))
         }
         
         return SubredditPosts(date: Date(), subreddit: subreddit, posts: posts)
@@ -514,8 +514,10 @@ struct Hot_PostsEntryView: View {
     var body: some View {
         VStack(alignment: .leading) {
             SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-            ForEach((0..<(widgetFamily == .systemMedium ? 2 : 5))) { post in
-                PostView(post: entry.posts.posts[post])
+            if !entry.posts.posts.isEmpty {
+                ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
+                    PostView(post: entry.posts.posts[post])
+                }
             }
             Spacer()
         }.frame(maxHeight: .infinity).background(Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() )

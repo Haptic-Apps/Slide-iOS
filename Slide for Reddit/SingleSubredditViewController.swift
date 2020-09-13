@@ -203,7 +203,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if single && !isModal && navigationController != nil {
             //panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         } else if isModal {
-            navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+            //navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         }
         
         if single && !(parent is SplitMainViewController) {

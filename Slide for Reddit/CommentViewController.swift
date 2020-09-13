@@ -3292,7 +3292,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
 
             guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
-            for view in cell.commentBody.subviews {
+            for view in cell.commentBody.recursiveSubviews {
                 let cellPoint = recognizer.location(in: view)
                 if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
                     recognizer.cancel()

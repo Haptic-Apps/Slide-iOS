@@ -11,7 +11,7 @@
 	<key>INIntentDefinitionSystemVersion</key>
 	<string>19G46c</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>12A8189h</string>
+	<string>12A8189n</string>
 	<key>INIntentDefinitionToolsVersion</key>
 	<string>12.0</string>
 	<key>INIntents</key>
@@ -25,6 +25,8 @@
 			<string>Set this widget's subreddit</string>
 			<key>INIntentDescriptionID</key>
 			<string>Fpz2v1</string>
+			<key>INIntentEligibleForWidgets</key>
+			<true/>
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>
@@ -246,6 +248,8 @@
 			<string>Set this widget's subreddit</string>
 			<key>INIntentDescriptionID</key>
 			<string>7T2otB</string>
+			<key>INIntentEligibleForWidgets</key>
+			<true/>
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>

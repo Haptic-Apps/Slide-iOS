@@ -382,7 +382,7 @@ class SplitMainViewController: MainViewController {
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
             if #available(iOS 14, *) {
-                (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: UIApplication.shared.keyWindow)
             } else {
                 (UIApplication.shared.delegate as! AppDelegate).resetStack()
             }
@@ -415,7 +415,7 @@ class SplitMainViewController: MainViewController {
 
         let main: MainViewController!
         if #available(iOS 14, *) {
-            main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+            main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: UIApplication.shared.keyWindow)
         } else {
             main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
         }

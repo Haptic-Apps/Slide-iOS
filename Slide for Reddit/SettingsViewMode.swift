@@ -211,7 +211,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             }
                
             if #available(iOS 14, *) {
-                (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: UIApplication.shared.keyWindow)
             } else {
                 (UIApplication.shared.delegate as! AppDelegate).resetStack()
             }

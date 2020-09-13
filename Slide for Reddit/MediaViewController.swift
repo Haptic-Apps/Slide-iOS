@@ -70,6 +70,9 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         if saveHistory {
             History.addSeen(s: link, skipDuplicates: true)
         }
+        if link.url == nil {
+            return
+        }
         let url = link.url!
         let type = ContentType.getContentType(submission: link)
         commentCallback = { () in
