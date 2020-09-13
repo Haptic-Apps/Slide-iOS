@@ -3197,7 +3197,9 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer.delegate = self
         cellGestureRecognizer.maximumNumberOfTouches = 1
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        if UIDevice.current.userInterfaceIdiom != .pad {
+           // cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        }
         if let parent = parent as? ColorMuxPagingViewController {
             parent.requireFailureOf(cellGestureRecognizer)
         }
@@ -3271,7 +3273,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         }
         return false
     }
-
+    
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {
@@ -3298,12 +3300,14 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 }
             }
             tableView.panGestureRecognizer.cancel()
+            disableDismissalRecognizers()
             translatingCell = cell
         }
         
         translatingCell?.handlePan(recognizer)
         if recognizer.state == .ended || recognizer.state == .cancelled {
             translatingCell = nil
+            enableDismissalRecognizers()
         }
     }
 }

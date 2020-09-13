@@ -44,6 +44,10 @@ class SettingsShortcutMenu: BubbleSettingTableViewController {
         if #available(iOS 13, *) {
             self.isModalInPresentation = false
         }
+        enableDismissalRecognizers()
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = true
+        }
     }
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
@@ -102,12 +106,20 @@ class SettingsShortcutMenu: BubbleSettingTableViewController {
         return false
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
+        disableDismissalRecognizers()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         self.title = "Arrange Shortcuts menu"
-        if #available(iOS 13, *) {
-            self.isModalInPresentation = true
-        }
     }
 }

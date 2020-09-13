@@ -127,7 +127,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
         }
     }
-    
+        
     static var removeDict = NSMutableDictionary()
     
     var launchedURL: URL?
@@ -1327,6 +1327,18 @@ extension AppDelegate: UIWindowSceneDelegate {
                     VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
                 }
             }*/
+        }
+    }
+}
+
+@available(iOS 10.0, *)
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo as? NSDictionary
+        if let url = userInfo?["permalink"] as? String {
+            VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+        } else {
+            VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
         }
     }
 }

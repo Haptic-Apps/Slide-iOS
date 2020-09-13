@@ -27,9 +27,6 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         tableView.reloadData()
         
         self.tableView.tableFooterView = UIView()
-        if #available(iOS 13, *) {
-            self.isModalInPresentation = true
-        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -46,6 +43,10 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         UserDefaults.standard.synchronize()
         if #available(iOS 13, *) {
             self.isModalInPresentation = false
+        }
+        enableDismissalRecognizers()
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = true
         }
     }
     
@@ -104,7 +105,18 @@ class SettingsPostMenu: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         return false
     }
-    
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
+        disableDismissalRecognizers()
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()

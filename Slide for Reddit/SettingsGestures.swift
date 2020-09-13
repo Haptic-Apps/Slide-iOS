@@ -416,6 +416,7 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionLeftRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftRight)
                     UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
                     self.parentController?.updateCells()
                 }
             }))
@@ -425,6 +426,7 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionLeftLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftLeft)
                     UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
                     self.parentController?.updateCells()
                 }
             }))
@@ -434,6 +436,7 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionRightLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightLeft)
                     UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
                     self.parentController?.updateCells()
                 }
             }))
@@ -442,6 +445,7 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionRightRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightRight)
                     UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
                     self.parentController?.updateCells()
                 }
             }))
@@ -452,6 +456,7 @@ public class GesturePreviewCell: InsetCell {
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionLeft)
                     SubredditReorderViewController.changed = true
                     UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
                     self.parentController?.updateCells()
                 }
             }))
@@ -462,6 +467,7 @@ public class GesturePreviewCell: InsetCell {
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionRight)
                     SubredditReorderViewController.changed = true
                     UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
                     self.parentController?.updateCells()
                 }
             }))

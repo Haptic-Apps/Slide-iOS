@@ -2795,7 +2795,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             parent.openDrawer(recognizer)
         }
     }
-
+    
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         if recognizer.view != nil && recognizer.state == .began {
             let velocity = recognizer.velocity(in: self.tableView).x
@@ -2822,12 +2822,13 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 return
             }
             tableView.panGestureRecognizer.cancel()
-
+            disableDismissalRecognizers()
             translatingCell = cell
         }
         translatingCell?.handlePan(recognizer)
         if recognizer.state == .ended || recognizer.state == .cancelled {
             translatingCell = nil
+            enableDismissalRecognizers()
         }
     }
 }

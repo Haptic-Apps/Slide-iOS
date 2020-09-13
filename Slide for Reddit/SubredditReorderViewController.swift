@@ -116,6 +116,7 @@ class SubredditReorderViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         save(nil)
+        enableDismissalRecognizers()
         if #available(iOS 13, *) {
             self.isModalInPresentation = false
         }
@@ -353,12 +354,17 @@ class SubredditReorderViewController: UITableViewController {
         self.tableView.separatorStyle = .none
         setupBaseBarColors()
         self.title = "Manage subscriptions"
-        if #available(iOS 13, *) {
-            self.isModalInPresentation = true
-        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = false
         }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
+        disableDismissalRecognizers()
     }
     
     private func refreshListActionButtons() {
