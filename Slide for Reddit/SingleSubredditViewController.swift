@@ -218,21 +218,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
 
-        if !(navigationController is TapBehindModalViewController) {
-            inHeadView = UIView().then {
-                $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
-                if SettingValues.fullyHideNavbar {
-                    $0.backgroundColor = .clear
-                }
-            }
-            self.view.addSubview(inHeadView!)
-            inHeadView!.isHidden = UIDevice.current.orientation.isLandscape
-
-            inHeadView!.topAnchor == view.topAnchor
-            inHeadView!.horizontalAnchors == view.horizontalAnchors
-            inHeadView!.heightAnchor == (UIApplication.shared.statusBarUIView?.frame.size.height ?? 0)
-        }
-
         reloadNeedingColor()
         self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
@@ -267,6 +252,29 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
         
+        if !(navigationController is TapBehindModalViewController) && inHeadView == nil {
+            inHeadView = UIView().then {
+                $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
+                if SettingValues.fullyHideNavbar {
+                    $0.backgroundColor = .clear
+                }
+            }
+            self.view.addSubview(inHeadView!)
+            inHeadView!.isHidden = UIDevice.current.orientation.isLandscape
+
+            inHeadView!.topAnchor == view.topAnchor
+            inHeadView!.horizontalAnchors == view.horizontalAnchors
+            inHeadView!.heightAnchor == (UIApplication.shared.statusBarUIView?.frame.size.height ?? 0)
+            
+            let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
+            var topOffset = UIApplication.shared.statusBarUIView?.frame.size.height ?? 20
+            if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+                topOffset = 0
+            }
+
+            self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(navOffset + topOffset + 8), left: 0, bottom: 65, right: 0)
+        }
+
         dataSource.delegate = self
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
@@ -815,20 +823,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header")
         lastVersion = SingleSubredditViewController.cellVersion
 
-        var top = 64
-        if #available(iOS 11.0, *) {
-            top += 28
-        }
-                
-        if self.navigationController != nil {
-            if #available(iOS 13.0, *) {
-                if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
-                    top -= 32
-                }
-            }
+        let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
+        var topOffset = self.inHeadView?.frame.size.height ?? 20
+        if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+            topOffset = 0
         }
 
-        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(navOffset + topOffset + 8), left: 0, bottom: 65, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
@@ -1853,34 +1854,15 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
                 self.autoplayHandler.autoplayOnce(self.tableView)
             })
 
-            var is13Popover = false
-            
-            if self.navigationController != nil {
-                if #available(iOS 13.0, *) {
-                    if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
-                        is13Popover = true
-                    }
-                }
+            let navOffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
+            var topOffset = (-1 * ( (self.inHeadView?.frame.size.height ?? 20)))
+            if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+                topOffset = 0
             }
+            let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
+            let paddingOffset = CGFloat(headerHeight == 0 ? -4 : 0)
             
-            let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight(false))
-
-            var top = CGFloat(0)
-            if !is13Popover {
-                if #available(iOS 11, *) {
-                    top += 26
-                    if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
-                        top -= 18
-                    }
-                }
-            } else {
-                top -= 4
-                if headerHeight != 0 {
-                    top -= 12
-                }
-            }
-            let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-            self.tableView.contentOffset = CGPoint.init(x: 0, y: -22 + navoffset - top + headerHeight)
+            self.tableView.contentOffset = CGPoint.init(x: 0, y: paddingOffset + navOffset + topOffset + headerHeight)
         } else {
             self.flowLayout.invalidateLayout()
             self.tableView.insertItems(at: paths)
@@ -1914,28 +1896,13 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         self.indicator?.stopAnimating()
         self.indicator?.isHidden = true
         
-        var is13Popover = false
-        if self.navigationController != nil {
-            if #available(iOS 13.0, *) {
-                if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
-                    is13Popover = true
-                }
-            }
+        let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
+        var topOffset = UIApplication.shared.statusBarUIView?.frame.size.height ?? 20
+        if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+            topOffset = 0
         }
 
-        var top = CGFloat(0)
-        if !is13Popover {
-            if #available(iOS 11, *) {
-                top += 26
-                if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
-                    top -= 18
-                }
-            }
-        } else {
-            top -= 4
-        }
-        let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top)
+        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(navOffset + topOffset + 8), left: 0, bottom: 65, right: 0)
 
         DispatchQueue.main.async {
             self.dataSource.handleTries { (isEmpty: Bool) in
