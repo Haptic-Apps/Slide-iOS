@@ -372,7 +372,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 14, *) {
             _ = resetStackNew(window: window)
         } else {
-            _ = resetStack()
+            _ = resetStack(window: window)
         }
         
         window.makeKeyAndVisible()
@@ -401,8 +401,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             
         }
-        
-
     }
     
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -412,8 +410,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var statusBar = UIView()
     var splitVC = CustomSplitController()
     
-    func resetStack(_ soft: Bool = false) -> MainViewController {
-        guard let window = self.window else {
+    func resetStack(_ soft: Bool = false, window: UIWindow?) -> MainViewController {
+        guard let window = window else {
             fatalError("Window must exist when resetting the stack!")
         }
         
@@ -452,7 +450,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func doHard(_ window: UIWindow) -> MainViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            if SettingValues.appMode == .MULTI_COLUMN {
+            if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
                 let splitViewController = UISplitViewController()
                 splitViewController.preferredDisplayMode = .secondaryOnly
                 splitViewController.presentsWithGesture = true
@@ -510,7 +508,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return doHard14(window)
         } else if let oldSplit = window.rootViewController as? UISplitViewController {
             if UIDevice.current.userInterfaceIdiom == .pad {
-                if SettingValues.appMode == .MULTI_COLUMN {
+                if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
                     let splitViewController = UISplitViewController(style: .doubleColumn)
                     splitViewController.preferredDisplayMode = .secondaryOnly
                     splitViewController.presentsWithGesture = true
@@ -575,7 +573,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            if SettingValues.appMode == .MULTI_COLUMN {
+            if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
                 let splitViewController = UISplitViewController(style: .doubleColumn)
                 splitViewController.preferredDisplayMode = .secondaryOnly
                 splitViewController.presentsWithGesture = true

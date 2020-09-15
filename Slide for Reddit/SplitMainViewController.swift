@@ -379,12 +379,27 @@ class SplitMainViewController: MainViewController {
     }
 
     override func hardReset(soft: Bool = false) {
+        var keyWindow = UIApplication.shared.keyWindow
+        if keyWindow == nil {
+            if #available(iOS 13.0, *) {
+                keyWindow = UIApplication.shared.connectedScenes
+                    .filter({ $0.activationState == .foregroundActive })
+                    .map({ $0 as? UIWindowScene })
+                    .compactMap({$0})
+                    .first?.windows
+                    .filter({ $0.isKeyWindow }).first
+            }
+        }
+        guard keyWindow != nil else {
+            fatalError("Window must exist when resetting the stack!")
+        }
+
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
             if #available(iOS 14, *) {
-                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: UIApplication.shared.keyWindow)
+                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
             } else {
-                (UIApplication.shared.delegate as! AppDelegate).resetStack()
+                (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
             }
         }
     }
@@ -409,15 +424,26 @@ class SplitMainViewController: MainViewController {
     }
     
     override func doAddAccount(register: Bool) {
-        guard UIApplication.shared.keyWindow != nil else {
+        var keyWindow = UIApplication.shared.keyWindow
+        if keyWindow == nil {
+            if #available(iOS 13.0, *) {
+                keyWindow = UIApplication.shared.connectedScenes
+                    .filter({ $0.activationState == .foregroundActive })
+                    .map({ $0 as? UIWindowScene })
+                    .compactMap({$0})
+                    .first?.windows
+                    .filter({ $0.isKeyWindow }).first
+            }
+        }
+        guard keyWindow != nil else {
             fatalError("Window must exist when resetting the stack!")
         }
 
         let main: MainViewController!
         if #available(iOS 14, *) {
-            main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: UIApplication.shared.keyWindow)
+            main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
         } else {
-            main = (UIApplication.shared.delegate as! AppDelegate).resetStack()
+            main = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         }
         (UIApplication.shared.delegate as! AppDelegate).login = main
         AccountController.addAccount(context: main, register: register)
@@ -669,7 +695,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     }
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if SettingValues.appMode == .MULTI_COLUMN {
+                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
                             self.splitViewController?.preferredDisplayMode = .primaryHidden
                         }
                     }, completion: { _ in

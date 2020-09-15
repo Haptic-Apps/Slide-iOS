@@ -417,21 +417,25 @@ struct SubredditLoader {
     }
 
     static func getSubredditInfo(subreddit: String, fromData data: Foundation.Data) -> SubredditPosts {
-        let json = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-        
-        let children = (json["data"] as! [String: Any])["children"] as! [[String: Any]]
         var posts = [Post]()
-        for child in children {
-            let data = child["data"] as! [String: Any]
-            let thumbnail = data["thumbnail"] as? String ?? ""
-            var imageData = Data()
-            if let url = URL(string: thumbnail) {
-                do {
-                    imageData = try Data(contentsOf: url)
-                } catch {
+        do {
+            let json = try? JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+            if let json = json, json["data"] != nil && (json["data"] as? [String:Any])?["children"] != nil {
+                let children = (json["data"] as! [String: Any])["children"] as! [[String: Any]]
+                for child in children {
+                    let data = child["data"] as! [String: Any]
+                    let thumbnail = data["thumbnail"] as? String ?? ""
+                    var imageData = Data()
+                    if let url = URL(string: thumbnail) {
+                        do {
+                            imageData = try Data(contentsOf: url)
+                        } catch {
+                        }
+                    }
+                    posts.append(Post(id: data["id"] as! String, author: data["author"] as! String, subreddit: data["subreddit_name_prefixed"] as! String, title: data["title"] as! String, image: data["thumbnail"] as? String ?? "", date: data["created_utc"] as! Double, imageData: imageData))
                 }
             }
-            posts.append(Post(id: data["id"] as! String, author: data["author"] as! String, subreddit: data["subreddit_name_prefixed"] as! String, title: data["title"] as! String, image: data["thumbnail"] as? String ?? "", date: data["created_utc"] as! Double, imageData: imageData))
+        } catch {
         }
         
         return SubredditPosts(date: Date(), subreddit: subreddit, posts: posts)
