@@ -28,7 +28,6 @@ target 'Slide for Reddit' do
   pod 'YYText'
   pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON', :git => 'https://github.com/ccrama/SwiftyJSON.git', :branch => 'hotfix-xcode12'
-  pod 'RealmSwift'
   pod 'Anchorage', '~>4.3'
   pod 'Then'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"

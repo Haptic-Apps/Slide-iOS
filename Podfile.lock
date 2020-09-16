@@ -80,11 +80,6 @@ PODS:
   - MTColorDistance (0.0.3)
   - OpalImagePicker (3.0.0)
   - QuickLayout (3.0.0)
-  - Realm (5.4.0):
-    - Realm/Headers (= 5.4.0)
-  - Realm/Headers (5.4.0)
-  - RealmSwift (5.4.0):
-    - Realm (= 5.4.0)
   - reddift (2.0.3):
     - HTMLSpecialCharacters
     - MiniKeychain
@@ -119,7 +114,6 @@ DEPENDENCIES:
   - MKColorPicker (from `https://github.com/ccrama/MKColorPicker`)
   - MTColorDistance
   - OpalImagePicker
-  - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
   - SDCAlertView (from `https://github.com/ccrama/SDCAlertView`)
@@ -154,8 +148,6 @@ SPEC REPOS:
     - MTColorDistance
     - OpalImagePicker
     - QuickLayout
-    - Realm
-    - RealmSwift
     - SDWebImage
     - Starscream
     - SubtleVolume
@@ -226,8 +218,6 @@ SPEC CHECKSUMS:
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   OpalImagePicker: 38e772dd93a54431fc516b33e1f337c50f745834
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
-  Realm: 8949757d76e2451a53d727954c607e49c2542b77
-  RealmSwift: 0b7d7121e842724188123c6086831ae6d2952050
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: c93e83c13526a5840b67eb52f702d3f83eeaac6a
   SDCAlertView: 5fbc48cae6d7bf9781097e3f27883924ef3b922c
@@ -243,6 +233,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 33060347e8b00e95fe117e381626fbfbb6465ae7
+PODFILE CHECKSUM: f5c9d54873947e059a5417aec07c8f8b99bf13eb
 
 COCOAPODS: 1.8.4
