@@ -319,6 +319,7 @@ class SplitMainViewController: MainViewController {
         self.splitViewController?.presentsWithGesture = true
         //self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.setNeedsStatusBarAppearanceUpdate()
+        self.navigationController?.hidesBarsWhenVerticallyCompact = false
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         var subChanged = false
@@ -977,6 +978,19 @@ extension SplitMainViewController: NavigationHomeDelegate {
         
         doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
     }
+    
+    override func separateSecondaryViewController(for splitViewController: UISplitViewController) -> UIViewController? {
+            return SwipeForwardNavigationController(rootViewController: self)
+    }
+    
+    override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
+        if let secondaryAsNav = secondaryViewController as? UINavigationController, let current = self.navigationController {
+            current.viewControllers += secondaryAsNav.viewControllers
+        } else {
+            super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
+        }
+    }
+
 }
 
 extension MainViewController: PagingTitleDelegate {

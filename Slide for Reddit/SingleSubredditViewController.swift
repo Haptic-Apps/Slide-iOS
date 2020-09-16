@@ -337,6 +337,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if dataSource.loaded && dataSource.content.count > oldCount {
             self.tableView.reloadData()
+            oldCount = dataSource.content.count
         }
 
         if toolbarEnabled && !MainViewController.isOffline {
@@ -410,21 +411,38 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         }
     }
+    
+    var cancelRotationOffset: CGPoint?
+    var didScroll = true
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
                 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
         fab?.removeFromSuperview()
+        
+        if cancelRotationOffset == nil {
+            cancelRotationOffset = tableView.contentOffset
+        }
+        
+        var indexPathRect = CGRect(x: tableView.contentOffset.x, y: tableView.contentOffset.y, width: tableView.bounds.size.width, height: tableView.bounds.size.height)
+        let indexToPin = self.tableView.indexPathForItem(at: CGPoint(x: indexPathRect.width / (CGFloat(flowLayout.numberOfColumns) * 2), y: indexPathRect.midY))
 
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
+                if let oldLocation = cancelRotationOffset, !didScroll {
+                    tableView.contentOffset = oldLocation
+                    cancelRotationOffset = nil
+                } else if let indexPath = indexToPin {
+                    self.tableView.scrollToItem(at: indexPath, at: UICollectionView.ScrollPosition.centeredVertically, animated: true)
+                }
                // TODO: - content offset
             }, completion: { (_) in
                 self.setupFab(size)
+                self.didScroll = false
             }
         )
 
@@ -483,8 +501,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
+            if dataSource.loaded && dataSource.content.count > oldCount {
+                self.tableView.reloadData()
+                self.oldCount = dataSource.content.count
+            }
+            
         }
         autoplayHandler.scrollViewDidScroll(scrollView)
+        didScroll = true
     }
     
     func hideUI(inHeader: Bool) {
@@ -2709,7 +2733,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             return
         }
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
-        if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
+        if let interactivePopGestureRecognizer = parent?.splitViewController?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
             fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {

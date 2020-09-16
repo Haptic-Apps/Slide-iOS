@@ -484,11 +484,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         } else {
             let splitViewController = UISplitViewController()
-            splitViewController.preferredDisplayMode = .primaryOverlay
+            splitViewController.preferredDisplayMode = .oneOverSecondary
             splitViewController.presentsWithGesture = true
-            
+
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
+            let navHome = NavigationHomeViewController(controller: main)
+
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
             
             window.rootViewController = splitViewController
             self.window = window
@@ -610,12 +612,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             }
         } else {
-            let splitViewController = UISplitViewController()
-            splitViewController.preferredDisplayMode = .primaryOverlay
+            let splitViewController = UISplitViewController(style: .doubleColumn)
+            splitViewController.preferredDisplayMode = .automatic
             splitViewController.presentsWithGesture = true
             
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
+            let navHome = NavigationHomeViewController(controller: main)
+
+            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: navHome), for: .primary)
+            splitViewController.setViewController( main, for: .secondary)
             
             window.rootViewController = splitViewController
             self.window = window
