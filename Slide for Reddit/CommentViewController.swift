@@ -3227,7 +3227,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
         }
         if SettingValues.commentGesturesMode == .FULL {
-            setupFullSwipeView(self.tableView.tableHeaderView)
+            //setupFullSwipeView(self.tableView.tableHeaderView)
             return
         }
         
@@ -3250,6 +3250,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
                 fullWidthBackGestureRecognizer.require(toFail: navGesture)
             }
+            fullWidthBackGestureRecognizer.require(toFail: interactivePopGestureRecognizer)
             for view in parent?.view.subviews ?? [] {
                 if view is UIScrollView {
                     (view as! UIScrollView).panGestureRecognizer.require(toFail: fullWidthBackGestureRecognizer)
@@ -3308,7 +3309,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForRow(at: point)
             if indexpath == nil {
-                //recognizer.cancel() For some reason this causes swipe back to happen twice?
+                recognizer.cancel()
                 return
             }
 
