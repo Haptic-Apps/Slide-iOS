@@ -113,7 +113,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             originalOffset = parent.contentOffset.x
         }*/
     }
-        
+            
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.collectionView.mask?.frame = self.collectionView.bounds
         /* Disable for now

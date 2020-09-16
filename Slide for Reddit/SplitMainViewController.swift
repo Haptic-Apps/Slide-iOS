@@ -985,7 +985,7 @@ extension MainViewController: PagingTitleDelegate {
     }
     
     func didSetWidth() {
-        UIView.animate(withDuration: 0.2, delay: 0.2, options: .curveEaseInOut) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.doToolbarOffset()
         }
     }
