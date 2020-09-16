@@ -21,7 +21,7 @@ from optparse import OptionParser
 from optparse import Option, OptionValueError
 from copy import deepcopy
 
-VERSION = '0.3'
+VERSION = '0.3' # NOTE: Jon modified v0.3 to make this source. We should put in a PR after rebasing our changes off of their latest version.
 PROG = os.path.basename(os.path.splitext(__file__)[0])
 DESCRIPTION = '''Recursively searches the input directory for 'LICENSE.*' files and compiles them into a Settings.bundle friendly plist. Inspired by JosephH and Sean's comments on stackoverflow: http://stackoverflow.com/q/6428353'''
 
@@ -39,18 +39,19 @@ class MultipleOption(Option):
 
 
 def main(argv):
-    def exclude_callback(option, opt, value, parser):
-        setattr(parser.values, option.dest, value.split(','))
+    def list_callback(option, opt, value, parser):
+        setattr(parser.values, option.dest, [item.strip() for item in value.split(',')])
 
     parser = OptionParser(option_class=MultipleOption,
                               usage='usage: %prog -s source_path -o output_plist -e [exclude_paths]',
                               version='%s %s' % (PROG, VERSION),
                               description=DESCRIPTION)
     parser.add_option('-s', '--source', 
-                   type="string",
-                  dest='inputpath', 
+                   action="callback", type="string",
+                  dest='inputpaths', 
                   metavar='source_path', 
-                  help='source directory to search for licenses')
+                  help='comma separated list of directories to recursively search for licenses',
+                  callback=list_callback)
     parser.add_option('-o', '--output-plist', 
                    type="string",
                   dest='outputfile', 
@@ -61,37 +62,40 @@ def main(argv):
                   dest='excludes', 
                   metavar='path1, ...', 
                   help='comma separated list of paths to be excluded',
-                  callback=exclude_callback)
+                  callback=list_callback)
     if len(sys.argv) == 1:
         parser.parse_args(['--help'])
 
     OPTIONS, args = parser.parse_args()
 
-    if(not os.path.isdir(OPTIONS.inputpath)):
-        print "Error: Invalid source path: %s" % OPTIONS.inputpath
-        sys.exit(2)
+    for inputpath in OPTIONS.inputpaths:
+        if(not os.path.isdir(inputpath)):
+            print "Error: Source path does not exist: %s" % inputpath
+            sys.exit(2)
 
     if(not OPTIONS.outputfile.endswith('.plist')):
         print "Error: Outputfile must end in .plist"
         sys.exit(2)
 
-    plist = plistFromDir(OPTIONS.inputpath, OPTIONS.excludes)
+    plist = plistFromDirs(OPTIONS.inputpaths, OPTIONS.excludes)
     plistlib.writePlist(plist,OPTIONS.outputfile)
     return 0
 
-def plistFromDir(dir, excludes):
+def plistFromDirs(dirs, excludes):
     """
-    Recursilvely search 'dir' to generates plist objects from LICENSE files.
+    Recursively searches each directory in 'dirs' and generate plists objects 
+    from any LICENSE files found.
     """
     plist = {'PreferenceSpecifiers': [], 'StringsTable': 'Acknowledgements'}
     os.chdir(sys.path[0])
-    for root, dirs, files in os.walk(dir):
-        for file in files:
-            if file.startswith("LICENSE"):
-                plistPath = os.path.join(root, file)
-                if not excludePath(plistPath, excludes):
-                    license = plistFromFile(plistPath)
-                    plist['PreferenceSpecifiers'].append(license)
+    for dir in dirs:
+        for root, dirs, files in os.walk(dir):
+            for file in files:
+                if file.startswith("LICENSE"):
+                    plistPath = os.path.join(root, file)
+                    if not excludePath(plistPath, excludes):
+                        license = plistFromFile(plistPath)
+                        plist['PreferenceSpecifiers'].append(license)
     return plist
 
 def plistFromFile(path):
