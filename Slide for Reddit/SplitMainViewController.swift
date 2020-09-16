@@ -316,6 +316,7 @@ class SplitMainViewController: MainViewController {
     override func viewWillAppearActions(override: Bool = false) {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
+        self.splitViewController?.presentsWithGesture = true
         //self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.setNeedsStatusBarAppearanceUpdate()
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
