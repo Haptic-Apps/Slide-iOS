@@ -11,6 +11,7 @@ import UIKit
 
 public protocol PagingTitleDelegate {
     func didSelect(_ subreddit: String)
+    func didSetWidth()
 }
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
@@ -38,11 +39,12 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         //self.collectionViewLayout.scrollDirection = .horizontal
         
         self.collectionViewLayout.delegate = self
+
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         self.addSubview(collectionView)
         collectionView.edgeAnchors == self.edgeAnchors
         collectionView.backgroundColor = .clear
-        
+
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         self.collectionView.bounces = false
@@ -67,14 +69,13 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         super.layoutSubviews()
         if !widthSet {
             widthSet = true
-            print("Setting width")
             collectionViewLayout.reset()
             collectionView.reloadData()
+            delegate.didSetWidth()
         } else {
+            collectionView.contentOffset = oldOffset
         }
         addGradientMask()
-        
-        collectionView.contentOffset = oldOffset
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -328,7 +329,6 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
     init(scrollDirection: UICollectionView.ScrollDirection) {
         super.init()
         self.scrollDirection = scrollDirection
-
     }
 
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {

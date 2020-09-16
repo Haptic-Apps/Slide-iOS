@@ -983,6 +983,12 @@ extension MainViewController: PagingTitleDelegate {
     func didSelect(_ subreddit: String) {
         goToSubreddit(subreddit: subreddit)
     }
+    
+    func didSetWidth() {
+        UIView.animate(withDuration: 0.2, delay: 0.2, options: .curveEaseInOut) {
+            self.doToolbarOffset()
+        }
+    }
 }
 
 extension UIImage {
