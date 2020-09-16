@@ -1978,7 +1978,7 @@
 		};
 		BE77470620366576006C72E8 /* Generate Credits.plist */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
@@ -1986,9 +1986,9 @@
 			name = "Generate Credits.plist";
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "# Search source directory and Swift Package Manager checkout directory for LICENSE files\n./credits.py -s \"$SRCROOT, $CONFIGURATION_BUILD_DIR/../../../SourcePackages/checkouts\" -o \"$SRCROOT/Slide for Reddit/Credits.plist\"\n";
+			shellScript = "# Search source directory and Swift Package Manager checkout directory for LICENSE files\n./credits.py -s \"$SRCROOT, $DWARF_DSYM_FOLDER_PATH/../../../SourcePackages/checkouts\" -o \"$SRCROOT/Slide for Reddit/Credits.plist\"\n";
 		};
 		BE85916B221BC9A7009ACF9E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
