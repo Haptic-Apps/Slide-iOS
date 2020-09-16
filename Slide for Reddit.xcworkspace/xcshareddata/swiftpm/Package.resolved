@@ -1,0 +1,97 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Anchorage",
+        "repositoryURL": "https://github.com/Rightpoint/Anchorage",
+        "state": {
+          "branch": null,
+          "revision": "18fed38e95db3200aecbd5b7101b981f91656084",
+          "version": "4.4.0"
+        }
+      },
+      {
+        "package": "BiometricAuthentication",
+        "repositoryURL": "https://github.com/rushisangani/BiometricAuthentication",
+        "state": {
+          "branch": null,
+          "revision": "085569f12692a964ef580d4ec6e04956e879929a",
+          "version": "3.1.2"
+        }
+      },
+      {
+        "package": "Embassy",
+        "repositoryURL": "https://github.com/envoy/Embassy",
+        "state": {
+          "branch": null,
+          "revision": "189436100c00efbf5fb2653fe7972a9371db0a91",
+          "version": "4.1.1"
+        }
+      },
+      {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-cocoa.git",
+        "state": {
+          "branch": null,
+          "revision": "6310911a38d55003f0b8acca96635aa2bfc3e2c0",
+          "version": "5.4.0"
+        }
+      },
+      {
+        "package": "RealmCore",
+        "repositoryURL": "https://github.com/realm/realm-core",
+        "state": {
+          "branch": null,
+          "revision": "34d7fbcbab2a94bcad081bddf9d172961cd84659",
+          "version": "6.0.25"
+        }
+      },
+      {
+        "package": "SDWebImage",
+        "repositoryURL": "https://github.com/SDWebImage/SDWebImage",
+        "state": {
+          "branch": null,
+          "revision": "7a21432a370a34925046244462281bd36ebab73d",
+          "version": "5.9.1"
+        }
+      },
+      {
+        "package": "Starscream",
+        "repositoryURL": "https://github.com/daltoniam/Starscream",
+        "state": {
+          "branch": null,
+          "revision": "e6b65c6d9077ea48b4a7bdda8994a1d3c6969c8d",
+          "version": "3.1.1"
+        }
+      },
+      {
+        "package": "BadgeSwift",
+        "repositoryURL": "https://github.com/evgenyneu/swift-badge",
+        "state": {
+          "branch": null,
+          "revision": "f6cd330ed423556e909b7126b710c13ee23ccf45",
+          "version": "8.0.2"
+        }
+      },
+      {
+        "package": "swift-nio-zlib-support",
+        "repositoryURL": "https://github.com/apple/swift-nio-zlib-support.git",
+        "state": {
+          "branch": null,
+          "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "Then",
+        "repositoryURL": "https://github.com/devxoul/Then",
+        "state": {
+          "branch": null,
+          "revision": "e421a7b3440a271834337694e6050133a3958bc7",
+          "version": "2.7.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
