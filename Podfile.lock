@@ -1,8 +1,6 @@
 PODS:
   - Alamofire (4.9.1)
   - Anchorage (4.4.0)
-  - BadgeSwift (8.0.0)
-  - BiometricAuthentication (3.1.2)
   - DTCoreText (1.6.25):
     - DTCoreText/Core (= 1.6.25)
     - DTFoundation/Core (~> 1.7.5)
@@ -85,9 +83,6 @@ PODS:
     - MiniKeychain
   - RLBAlertsPickers (1.1.1)
   - SDCAlertView (10.0)
-  - SDWebImage (5.9.1):
-    - SDWebImage/Core (= 5.9.1)
-  - SDWebImage/Core (5.9.1)
   - Starscream (3.1.1)
   - SubtleVolume (1.1.0)
   - SwiftEntryKit (1.2.1):
@@ -103,8 +98,6 @@ PODS:
 DEPENDENCIES:
   - Alamofire (~> 4.3)
   - Anchorage (~> 4.3)
-  - BadgeSwift (~> 8.0)
-  - BiometricAuthentication
   - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
   - Embassy (~> 4.1.0)
   - LicensesViewController (~> 0.7.0)
@@ -117,7 +110,6 @@ DEPENDENCIES:
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
   - SDCAlertView (from `https://github.com/ccrama/SDCAlertView`)
-  - SDWebImage
   - Starscream (~> 3.1.1)
   - SubtleVolume
   - SwiftEntryKit (from `https://github.com/ccrama/SwiftEntryKit`)
@@ -133,8 +125,6 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - Anchorage
-    - BadgeSwift
-    - BiometricAuthentication
     - DTFoundation
     - Embassy
     - HTMLSpecialCharacters
@@ -148,7 +138,6 @@ SPEC REPOS:
     - MTColorDistance
     - OpalImagePicker
     - QuickLayout
-    - SDWebImage
     - Starscream
     - SubtleVolume
     - SwiftLinkPreview
@@ -201,8 +190,6 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   Anchorage: d7f02c4f9425b537053237aab11ae97e59b55f36
-  BadgeSwift: a81547ffde1f462bb5fc02e3fa3fdcbc1b888354
-  BiometricAuthentication: 36445f3ab77699489f91995bed887be89890afac
   DTCoreText: e92f4cf6b36d9d71ce4436d12cf089d74ab0596b
   DTFoundation: 767ca882209ef4d5132ec7e702526d5ed5bb71a2
   Embassy: eb36dc783ea20b792426461bbaff8c3f256e0331
@@ -221,7 +208,6 @@ SPEC CHECKSUMS:
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: c93e83c13526a5840b67eb52f702d3f83eeaac6a
   SDCAlertView: 5fbc48cae6d7bf9781097e3f27883924ef3b922c
-  SDWebImage: a990c053fff71e388a10f3357edb0be17929c9c5
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
   SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
   SwiftEntryKit: 1661b766dd22b07679e6ebb326ccfbd81ceb0a20
@@ -233,6 +219,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: f5c9d54873947e059a5417aec07c8f8b99bf13eb
+PODFILE CHECKSUM: 1afb36b24097d50c9fd4d892ed1d3c62a32539c5
 
 COCOAPODS: 1.8.4

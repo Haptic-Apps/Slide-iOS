@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "BiometricAuthentication",
+        "repositoryURL": "https://github.com/rushisangani/BiometricAuthentication",
+        "state": {
+          "branch": null,
+          "revision": "085569f12692a964ef580d4ec6e04956e879929a",
+          "version": "3.1.2"
+        }
+      },
+      {
         "package": "Realm",
         "repositoryURL": "https://github.com/realm/realm-cocoa.git",
         "state": {
@@ -17,6 +26,24 @@
           "branch": null,
           "revision": "34d7fbcbab2a94bcad081bddf9d172961cd84659",
           "version": "6.0.25"
+        }
+      },
+      {
+        "package": "SDWebImage",
+        "repositoryURL": "https://github.com/SDWebImage/SDWebImage",
+        "state": {
+          "branch": null,
+          "revision": "7a21432a370a34925046244462281bd36ebab73d",
+          "version": "5.9.1"
+        }
+      },
+      {
+        "package": "BadgeSwift",
+        "repositoryURL": "https://github.com/evgenyneu/swift-badge",
+        "state": {
+          "branch": null,
+          "revision": "f6cd330ed423556e909b7126b710c13ee23ccf45",
+          "version": "8.0.2"
         }
       }
     ]

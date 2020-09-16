@@ -7,11 +7,8 @@ target 'Slide for Reddit' do
   # Pods for Slide for Reddit
 
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
-  pod 'SDWebImage'
   pod 'MKColorPicker', :git => 'https://github.com/ccrama/MKColorPicker'
-  pod 'BadgeSwift', '~> 8.0'
   pod 'LicensesViewController', '~> 0.7.0'
-  pod 'BiometricAuthentication'
   pod 'OpalImagePicker'
   pod 'MaterialComponents/ActivityIndicator'
   pod 'MaterialComponents/Tabs'

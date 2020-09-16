@@ -51,6 +51,9 @@
 		B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */; };
 		B4F333B925126FCE0032BB64 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333B825126FCE0032BB64 /* Realm */; };
 		B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333BA25126FCE0032BB64 /* RealmSwift */; };
+		B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333E0251273AF0032BB64 /* SDWebImage */; };
+		B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333EA251274050032BB64 /* BadgeSwift */; };
+		B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333F42512742E0032BB64 /* BiometricAuthentication */; };
 		B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */; };
 		B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B2AEE4A2438F5803329C /* SettingsPro.swift */; };
 		B776B1E23F4DEC18069F1579 /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BC65995FE8D1EE75E2AB /* MediaViewController.swift */; };
@@ -811,8 +814,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4F333B925126FCE0032BB64 /* Realm in Frameworks */,
+				B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */,
 				BEC2AB3A250D8D2C00AD5BEA /* WidgetKit.framework in Frameworks */,
+				B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */,
 				B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */,
+				B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */,
 				BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */,
 				BE2E9F0823492B4300FE07B4 /* CloudKit.framework in Frameworks */,
 				BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */,
@@ -1530,6 +1536,9 @@
 			packageProductDependencies = (
 				B4F333B825126FCE0032BB64 /* Realm */,
 				B4F333BA25126FCE0032BB64 /* RealmSwift */,
+				B4F333E0251273AF0032BB64 /* SDWebImage */,
+				B4F333EA251274050032BB64 /* BadgeSwift */,
+				B4F333F42512742E0032BB64 /* BiometricAuthentication */,
 			);
 			productName = "Slide for Reddit";
 			productReference = BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */;
@@ -1693,6 +1702,9 @@
 			mainGroup = BE8FC9FB1E0C46090063B8EF;
 			packageReferences = (
 				B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
+				B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */,
+				B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */,
 			);
 			productRefGroup = BE8FCA051E0C46090063B8EF /* Products */;
 			projectDirPath = "";
@@ -1936,75 +1948,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/Anchorage/Anchorage.framework",
-				"${BUILT_PRODUCTS_DIR}/BadgeSwift/BadgeSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/BiometricAuthentication/BiometricAuthentication.framework",
-				"${BUILT_PRODUCTS_DIR}/DTCoreText/DTCoreText.framework",
-				"${BUILT_PRODUCTS_DIR}/DTFoundation/DTFoundation.framework",
-				"${BUILT_PRODUCTS_DIR}/Embassy/Embassy.framework",
-				"${BUILT_PRODUCTS_DIR}/HTMLSpecialCharacters/HTMLSpecialCharacters.framework",
-				"${BUILT_PRODUCTS_DIR}/LicensesViewController/LicensesViewController.framework",
-				"${BUILT_PRODUCTS_DIR}/MDFInternationalization/MDFInternationalization.framework",
-				"${BUILT_PRODUCTS_DIR}/MDFTextAccessibility/MDFTextAccessibility.framework",
-				"${BUILT_PRODUCTS_DIR}/MKColorPicker/MKColorPicker.framework",
-				"${BUILT_PRODUCTS_DIR}/MTColorDistance/MTColorDistance.framework",
-				"${BUILT_PRODUCTS_DIR}/MaterialComponents/MaterialComponents.framework",
-				"${BUILT_PRODUCTS_DIR}/MiniKeychain/MiniKeychain.framework",
-				"${BUILT_PRODUCTS_DIR}/MotionAnimator/MotionAnimator.framework",
-				"${BUILT_PRODUCTS_DIR}/MotionInterchange/MotionInterchange.framework",
-				"${BUILT_PRODUCTS_DIR}/OpalImagePicker/OpalImagePicker.framework",
-				"${BUILT_PRODUCTS_DIR}/QuickLayout/QuickLayout.framework",
-				"${BUILT_PRODUCTS_DIR}/RLBAlertsPickers/RLBAlertsPickers.framework",
-				"${BUILT_PRODUCTS_DIR}/SDCAlertView/SDCAlertView.framework",
-				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
-				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
-				"${BUILT_PRODUCTS_DIR}/SubtleVolume/SubtleVolume.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftEntryKit/SwiftEntryKit.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftLinkPreview/SwiftLinkPreview.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/TGPControls/TGPControls.framework",
-				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
-				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
-				"${BUILT_PRODUCTS_DIR}/YoutubePlayer-in-WKWebView/YoutubePlayer_in_WKWebView.framework",
-				"${BUILT_PRODUCTS_DIR}/reddift/reddift.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Anchorage.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BadgeSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BiometricAuthentication.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTCoreText.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTFoundation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Embassy.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HTMLSpecialCharacters.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LicensesViewController.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MDFInternationalization.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MDFTextAccessibility.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MKColorPicker.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MTColorDistance.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MaterialComponents.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MiniKeychain.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MotionAnimator.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MotionInterchange.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpalImagePicker.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QuickLayout.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RLBAlertsPickers.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDCAlertView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SubtleVolume.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftEntryKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLinkPreview.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TGPControls.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YoutubePlayer_in_WKWebView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/reddift.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2732,8 +2681,6 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"\"SDWebImage\"",
-					"-framework",
 					"\"reddift\"",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
@@ -2773,8 +2720,6 @@
 				MARKETING_VERSION = 5.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-framework",
-					"\"SDWebImage\"",
 					"-framework",
 					"\"reddift\"",
 				);
@@ -3091,6 +3036,30 @@
 				minimumVersion = 5.4.0;
 			};
 		};
+		B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.9.1;
+			};
+		};
+		B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/swift-badge";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.2;
+			};
+		};
+		B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rushisangani/BiometricAuthentication";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3103,6 +3072,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
 			productName = RealmSwift;
+		};
+		B4F333E0251273AF0032BB64 /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+		B4F333EA251274050032BB64 /* BadgeSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */;
+			productName = BadgeSwift;
+		};
+		B4F333F42512742E0032BB64 /* BiometricAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */;
+			productName = BiometricAuthentication;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
