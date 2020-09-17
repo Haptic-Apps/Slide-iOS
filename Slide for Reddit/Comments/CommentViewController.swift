@@ -2467,7 +2467,7 @@ class CommentViewController: MediaViewController {
         - cell: CommentDepthCell
      */
     func deleteComment(cell: CommentDepthCell) {
-        let alert = UIAlertController.init(title: "Really, delete this comment?", message: "", preferredStyle: .alert)
+        let alert = UIAlertController.init(title: "Remove your comment permanently?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
             do {
                 try self.session?.deleteCommentOrLink(cell.comment!.getIdentifier(), completion: { (_) in
