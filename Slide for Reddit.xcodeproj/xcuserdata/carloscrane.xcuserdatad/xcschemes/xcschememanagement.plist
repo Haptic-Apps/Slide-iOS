@@ -4,98 +4,45 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Favorite SubredditsExtension.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>51</integer>
-		</dict>
-		<key>Hot PostsExtension.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>53</integer>
-		</dict>
 		<key>Open in Slide.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>5</integer>
+			<integer>44</integer>
 		</dict>
 		<key>Share to Slide.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>45</integer>
 		</dict>
 		<key>Slide Release.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>49</integer>
 		</dict>
 		<key>Slide Screenshot Automation.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>6</integer>
+			<integer>50</integer>
 		</dict>
 		<key>Slide Widgets.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>48</integer>
-		</dict>
-		<key>Slide for Apple Watch (Notification).xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>36</integer>
+			<integer>51</integer>
 		</dict>
 		<key>Slide for Apple Watch.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>46</integer>
 		</dict>
 		<key>Slide for Reddit Prod Test.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>4</integer>
+			<integer>48</integer>
 		</dict>
 		<key>Slide for Reddit.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
-		</dict>
-	</dict>
-	<key>SuppressBuildableAutocreation</key>
-	<dict>
-		<key>BE0EF7C81F43F9C20058D572</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>BE20851021588F3900D8F33C</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>BE257A6A21F64AA30082A47E</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>BE8FCA031E0C46090063B8EF</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>BE8FCA171E0C46090063B8EF</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>BE8FCA221E0C46090063B8EF</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>BE99C9F32378AC91007911E2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
+			<integer>47</integer>
 		</dict>
 	</dict>
 </dict>
