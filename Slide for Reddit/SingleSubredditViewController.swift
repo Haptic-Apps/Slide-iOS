@@ -2007,7 +2007,7 @@ extension SingleSubredditViewController {
     
     @available(iOS 14.0, *)
     func editTheme() {
-        let vc = SubredditThemeEditViewController(subreddit: sub)
+        let vc = SubredditThemeEditViewController(subreddit: sub, delegate: self)
         VCPresenter.presentModally(viewController: vc, self, CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: 200))
     }
     
@@ -2500,7 +2500,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
     }
 }
 
-// MARK: - Color Picker View Delegate
+// MARK: - Color Picker View Delegates
 extension SingleSubredditViewController: ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         if isAccent {
@@ -2508,6 +2508,28 @@ extension SingleSubredditViewController: ColorPickerViewDelegate {
             self.fab?.backgroundColor = accentChosen
         } else {
             let c = colorPickerView.colors[indexPath.row]
+            primaryChosen = c
+            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
+            sideView.backgroundColor = c
+            sideView.backgroundColor = c
+            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
+            if SettingValues.fullyHideNavbar {
+                inHeadView?.backgroundColor = .clear
+            }
+            if parentController != nil {
+                parentController?.colorChanged(c)
+            }
+        }
+    }
+}
+
+extension SingleSubredditViewController: SubredditThemeEditViewControllerDelegate {
+    public func didChangeColors(_ isAccent: Bool, color: UIColor) {
+        if isAccent {
+            accentChosen = color
+            self.fab?.backgroundColor = accentChosen
+        } else {
+            let c = color
             primaryChosen = c
             self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
             sideView.backgroundColor = c

@@ -9,6 +9,10 @@
 import Anchorage
 import UIKit
 
+protocol SubredditThemeEditViewControllerDelegate {
+    func didChangeColors(_ isAccent: Bool, color: UIColor)
+}
+
 @available(iOS 14.0, *)
 class SubredditThemeEditViewController: UIViewController, UIColorPickerViewControllerDelegate {
     
@@ -20,9 +24,11 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     var primaryWell: UIColorWell?
     var accentWell: UIColorWell?
 
+    var delegate: SubredditThemeEditViewControllerDelegate
 
-    init(subreddit: String) {
+    init(subreddit: String, delegate: SubredditThemeEditViewControllerDelegate) {
         self.subreddit = subreddit
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -59,9 +65,13 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         
         primaryWell = UIColorWell().then {
             $0.selectedColor = ColorUtil.getColorForSub(sub: subreddit)
+            $0.supportsAlpha = false
+            $0.addTarget(self, action: #selector(colorWellChangedPrimary(_:)), for: .valueChanged)
         }
         accentWell = UIColorWell().then {
             $0.selectedColor = ColorUtil.accentColorForSub(sub: subreddit)
+            $0.supportsAlpha = false
+            $0.addTarget(self, action: #selector(colorWellChangedAccent(_:)), for: .valueChanged)
         }
 
         view.addSubviews(primary, accent, primaryWell!, accentWell!)
@@ -81,6 +91,21 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         
         accentWell!.centerYAnchor == accent.centerYAnchor
         accentWell!.leftAnchor == self.view.leftAnchor + 16
+    }
+    
+    @objc func colorWellChangedPrimary(_ sender: Any) {
+        if let selected = primaryWell?.selectedColor {
+            ColorUtil.setColorForSub(sub: subreddit, color: selected)
+            setupTitleView(subreddit)
+            delegate.didChangeColors(false, color: selected)
+        }
+    }
+
+    @objc func colorWellChangedAccent(_ sender: Any) {
+        if let selected = accentWell?.selectedColor {
+            ColorUtil.setAccentColorForSub(sub: subreddit, color: selected)
+            delegate.didChangeColors(true, color: selected)
+        }
     }
 
     func setupTitleView(_ sub: String) {
@@ -129,11 +154,6 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         label.sizeToFit()
         self.navigationItem.titleView = label
     }
-
-    func selectColor(_ primary: Bool) {
-        let vc = SingleColorPickerVC(selectedColor: ColorUtil.getColorForSub(sub: subreddit), delegate: self)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -144,44 +164,5 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         
         self.title = subreddit
         configureLayout()
-    }
-}
-
-@available(iOS 14.0, *)
-extension SubredditThemeEditViewController: SelectedColorDelegate {
-    func didSelect(color: UIColor) {
-        
-    }
-}
-
-protocol SelectedColorDelegate {
-    func didSelect(color: UIColor)
-}
-
-@available(iOS 14.0, *)
-class SingleColorPickerVC: UIViewController {
-    var delegate: SelectedColorDelegate
-    var selectedColor: UIColor
-    
-    init(selectedColor: UIColor, delegate: SelectedColorDelegate) {
-        self.delegate = delegate
-        self.selectedColor = selectedColor
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        configureViews()
-    }
-    
-    func configureViews() {
-        let colorPicker = UIColorWell()
-        colorPicker.selectedColor = selectedColor
-        colorPicker.supportsAlpha = false
-        self.view.addSubview(colorPicker)
-        colorPicker.edgeAnchors == self.view.edgeAnchors
     }
 }
