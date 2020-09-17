@@ -146,7 +146,7 @@ class SettingsHistory: BubbleSettingTableViewController {
     func exportCollectionsCSV(from: NSDictionary) {
         var csvString = "\("Collection Name"),\("Reddit permalink")\n\n"
         for key in from.allKeys {
-            csvString += "\(from[key] ?? "") , https://redd.it/\(key.replacingOccurrences(of: "t3_", with: ""))\n"
+            csvString += "\(from[key] ?? "") , https://redd.it/\((key as! String).replacingOccurrences(of: "t3_", with: ""))\n"
         }
 
         let fileManager = FileManager.default

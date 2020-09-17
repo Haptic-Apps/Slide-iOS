@@ -2005,6 +2005,12 @@ extension SingleSubredditViewController {
         showMore(sender, parentVC: nil)
     }
     
+    @available(iOS 14.0, *)
+    func editTheme() {
+        let vc = SubredditThemeEditViewController(subreddit: sub)
+        VCPresenter.presentModally(viewController: vc, self, CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: 200))
+    }
+    
     @objc func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -2176,6 +2182,19 @@ extension SingleSubredditViewController {
             }
         }
         
+        alertController.addAction(title: "Edit \(sub) theme", icon: generateThemePreviewImage(subreddit: sub).getCopy(withSize: CGSize(width: 20, height: 20))) {
+            if #available(iOS 14, *) {
+                self.editTheme()
+            } else {
+                if parentVC != nil {
+                    let p = (parentVC!)
+                    self.pickTheme(sender: sender, parent: p)
+                } else {
+                    self.pickTheme(sender: sender, parent: nil)
+                }
+            }
+        }
+
         alertController.addAction(title: "Cache for offline viewing", icon: UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")!.menuIcon()) {
             _ = AutoCache.init(baseController: self, subs: [self.sub])
         }
@@ -2196,15 +2215,6 @@ extension SingleSubredditViewController {
             self.galleryMode()
         }
 
-        alertController.addAction(title: "Custom theme for \(sub)", icon: UIImage(named: "colors")!.menuIcon()) {
-            if parentVC != nil {
-                let p = (parentVC!)
-                self.pickTheme(sender: sender, parent: p)
-            } else {
-                self.pickTheme(sender: sender, parent: nil)
-            }
-        }
-
         if !special {
             alertController.addAction(title: "Submit new post", icon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()) {
                 self.newPost(sender)
@@ -2222,6 +2232,32 @@ extension SingleSubredditViewController {
         }
 
         alertController.show(self)
+    }
+    
+    func generateThemePreviewImage(subreddit: String) -> UIImage {
+        let baseImage = UIImage(named: "circle")!
+        let rect = CGRect(x: 0, y: 0, width: baseImage.size.width, height: baseImage.size.height)
+
+        UIGraphicsBeginImageContextWithOptions(baseImage.size, false, baseImage.scale)
+        baseImage.draw(in: rect)
+
+        let context = UIGraphicsGetCurrentContext()!
+        context.setBlendMode(CGBlendMode.sourceIn)
+
+        context.setFillColor(ColorUtil.getColorForSub(sub: subreddit).cgColor)
+
+        var rectToFill = CGRect(x: 0, y: 0, width: baseImage.size.width * 0.5, height: baseImage.size.height)
+        context.fill(rectToFill)
+
+        context.setFillColor(ColorUtil.accentColorForSub(sub: subreddit).cgColor)
+
+        rectToFill = CGRect(x: baseImage.size.width * 0.5, y: 0, width: baseImage.size.width, height: baseImage.size.height)
+        context.fill(rectToFill)
+
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage!
     }
 
 }
