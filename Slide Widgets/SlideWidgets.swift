@@ -226,7 +226,7 @@ struct SubredditLoader {
         var posts = [Post]()
         do {
             let json = try? JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-            if let json = json, json["data"] != nil && (json["data"] as? [String:Any])?["children"] != nil {
+            if let json = json, json["data"] != nil && (json["data"] as? [String : Any])?["children"] != nil {
                 let children = (json["data"] as! [String: Any])["children"] as! [[String: Any]]
                 for child in children {
                     let data = child["data"] as! [String: Any]
@@ -242,6 +242,7 @@ struct SubredditLoader {
                 }
             }
         } catch {
+            
         }
         
         return SubredditPosts(date: Date(), subreddit: subreddit, posts: posts)

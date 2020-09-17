@@ -291,21 +291,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 var dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
                 var directoryContents: NSArray = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
-                print(dirPath)
                 for path in directoryContents {
                     let fullPath = dirPath + "/" + (path as! String)
                     if fullPath.contains(".mp4") {
-                        print(fullPath)
                         try FileManager.default.removeItem(atPath: fullPath)
                     }
                 }
                 dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0].substring(0, length: dirPath.length - 7)
                 directoryContents = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
-                print(dirPath)
                 for path in directoryContents {
                     let fullPath = dirPath + "/" + (path as! String)
                     if fullPath.contains(".mp4") {
-                        print(fullPath)
                         try FileManager.default.removeItem(atPath: fullPath)
                     }
                 }
@@ -1033,7 +1029,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         do {
             let data: NSData = try PropertyListSerialization.data(fromPropertyList: dictionary, format: PropertyListSerialization.PropertyListFormat.xml, options: 0) as NSData
             if let datastring = NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue) {
-                print(datastring)
                collectionsRecord.setValue(datastring, forKey: "data_xml")
             } else {
                 print("Could not turn nsdata to string")
@@ -1067,8 +1062,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             do {
                                 let dict = try PropertyListSerialization.propertyList(from: data, options: PropertyListSerialization.ReadOptions.mutableContainersAndLeaves, format: nil) as? NSMutableDictionary
                                 for item in dict ?? [:] {
-                                    print(item.key)
-                                    print(item.value)
                                     dictionaryToAppend[item.key] = item.value
                                 }
                                 completion?(unwrappedRecord)
@@ -1311,6 +1304,7 @@ extension AppDelegate: UIWindowSceneDelegate {
     
     //Siri shortcuts and deep links
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        print(userActivity.userInfo)
         if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
             VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
         } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {

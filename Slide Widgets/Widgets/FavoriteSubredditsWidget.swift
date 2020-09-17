@@ -149,20 +149,20 @@ struct SubredditView: View {
             }.widgetURL(URL(string: "slide://www.reddit.com/r/\(title)")).frame(maxWidth: .infinity)
         } else {
             //Grid widget
-            HStack {
-                VStack(alignment: .leading) {
-                    Link(destination: URL(string: "slide://www.reddit.com/r/\(title)")!) {
-                        Image(uiImage: UIImage(data: imageData) ?? UIImage())
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 30, height: 30, alignment: .center)
-                            .clipShape(Circle())
-                            .clipped()
-                        Text(self.title).font(.caption).foregroundColor(colorScheme == .light ? .primary : .white).padding(EdgeInsets(top: 4, leading: 4, bottom: 0, trailing: 0))
-                    }.alignmentGuide(.leading) { d in d[.leading] }
-                }.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-                Spacer()
-            }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(UIImage(data: imageData)?.averageColor ?? getSchemeColor()).opacity(0.8).cornerRadius(15))
+            Link(destination: URL(string: "slide://www.reddit.com/r/\(title)")!) {
+                HStack {
+                    VStack(alignment: .leading) {
+                            Image(uiImage: UIImage(data: imageData) ?? UIImage())
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 30, height: 30, alignment: .center)
+                                .clipShape(Circle())
+                                .clipped()
+                            Text(self.title).font(.caption).foregroundColor(colorScheme == .light ? .primary : .white).padding(EdgeInsets(top: 4, leading: 4, bottom: 0, trailing: 0))
+                    }.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                    Spacer()
+                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(UIImage(data: imageData)?.averageColor ?? getSchemeColor()).opacity(0.8).cornerRadius(15))
+            }.alignmentGuide(.leading) { d in d[.leading] }
         }
     }
 
