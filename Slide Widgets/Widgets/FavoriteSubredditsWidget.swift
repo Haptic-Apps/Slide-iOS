@@ -130,7 +130,7 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
     }
 }
 
-// MARK: - Views
+// MARK: - Widget Views
 
 private struct SmallWidgetView: View {
     var imageData: Data
@@ -189,6 +189,8 @@ private struct MediumWidgetView: View {
     }
 
 }
+
+// MARK: - Component Views
 
 private struct SubredditView: View {
     var imageData: Data
