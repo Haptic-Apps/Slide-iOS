@@ -180,12 +180,12 @@ private struct SmallWidgetView: View {
                     .clipShape(Circle())
                     .clipped()
                     .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 0))
+                Spacer()
                 Text(self.title)
-                    .font(.system(.subheadline, design: .rounded)).bold()
+                    .font(.system(.headline)).bold()
                     .foregroundColor(colorScheme == .light ? .primary : .white)
                     .opacity(0.8)
-                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 0))
-                Spacer()
+                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 10, trailing: 0))
             }
             Spacer()
         }
