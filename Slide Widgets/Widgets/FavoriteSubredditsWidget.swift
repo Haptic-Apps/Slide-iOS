@@ -170,25 +170,22 @@ private struct MediumWidgetView: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
-        GeometryReader { geom in
-            VStack {
-//            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 8), count: 2), alignment: .leading, spacing: 8) {
-                HStack {
-                    ForEach(entry.subreddits.prefix(2), id: \.self) { key in
-                        SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
-                            .cornerRadius(15)
-                    }
-                }
-                HStack {
-                    ForEach(entry.subreddits.suffix(from: 2), id: \.self) { key in
-                        SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
-                            .cornerRadius(15)
-                    }
+        VStack {
+            HStack {
+                ForEach(entry.subreddits.prefix(2), id: \.self) { key in
+                    SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
+                        .cornerRadius(15)
                 }
             }
-            .background(Color.blue)
-            .padding(8)
+            HStack {
+                ForEach(entry.subreddits.suffix(from: 2), id: \.self) { key in
+                    SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
+                        .cornerRadius(15)
+                }
+            }
         }
+        .background(Color.blue)
+        .padding(8)
     }
 
 }
