@@ -249,6 +249,7 @@ class SplitMainViewController: MainViewController {
         doButtons()
         super.viewWillTransition(to: size, with: coordinator)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            self.setupTabBar(self.finalSubs)
             self.getSubredditVC()?.showUI(false)
         }
     }
@@ -977,10 +978,6 @@ extension SplitMainViewController: NavigationHomeDelegate {
         vc.openTo = index
         
         doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
-    }
-    
-    override func separateSecondaryViewController(for splitViewController: UISplitViewController) -> UIViewController? {
-            return SwipeForwardNavigationController(rootViewController: self)
     }
     
     override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {

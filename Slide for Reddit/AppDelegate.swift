@@ -608,15 +608,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             }
         } else {
-            let splitViewController = UISplitViewController(style: .doubleColumn)
-            splitViewController.preferredDisplayMode = .automatic
+            let splitViewController = UISplitViewController()
+            splitViewController.preferredDisplayMode = .oneOverSecondary
             splitViewController.presentsWithGesture = true
             
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
             let navHome = NavigationHomeViewController(controller: main)
 
-            splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: navHome), for: .primary)
-            splitViewController.setViewController( main, for: .secondary)
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
             
             window.rootViewController = splitViewController
             self.window = window

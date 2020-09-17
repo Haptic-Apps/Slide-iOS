@@ -427,9 +427,18 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         var indexPathRect = CGRect(x: tableView.contentOffset.x, y: tableView.contentOffset.y, width: tableView.bounds.size.width, height: tableView.bounds.size.height)
         let indexToPin = self.tableView.indexPathForItem(at: CGPoint(x: indexPathRect.width / (CGFloat(flowLayout.numberOfColumns) * 2), y: indexPathRect.midY))
-
+        
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            self.splitViewController?.preferredDisplayMode = .secondaryOnly
+        }
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
+                self.navigationController?.navigationBar.shadowImage = UIImage()
+                self.navigationController?.navigationBar.isTranslucent = false
+                self.navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
+                self.navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
+                self.navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
@@ -438,6 +447,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     cancelRotationOffset = nil
                 } else if let indexPath = indexToPin {
                     self.tableView.scrollToItem(at: indexPath, at: UICollectionView.ScrollPosition.centeredVertically, animated: true)
+                    self.lastY = self.tableView.contentOffset.y
                 }
                // TODO: - content offset
             }, completion: { (_) in
@@ -2733,7 +2743,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             return
         }
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
-        if let interactivePopGestureRecognizer = parent?.splitViewController?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
+        if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
             fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
@@ -2742,9 +2752,6 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
             tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
-            if #available(iOS 13.4, *) {
-                (fullWidthBackGestureRecognizer as! UIPanGestureRecognizer).allowedScrollTypesMask = .continuous
-            }
         }
     }
 
