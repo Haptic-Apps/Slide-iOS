@@ -42,16 +42,43 @@ struct Hot_PostsEntryView: View {
             }.frame(maxHeight: .infinity).background(Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() )
                                                         .opacity(0.8)).redacted(reason: .placeholder)
         } else {
-            VStack(alignment: .leading) {
-                SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                if !entry.posts.posts.isEmpty {
-                    ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
-                        PostView(post: entry.posts.posts[post], redacted: false)
+            if widgetFamily == .systemSmall {
+                VStack(alignment: .leading) {
+                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    Spacer()
+                }.frame(maxHeight: .infinity).background(
+                    ZStack(alignment: .bottomTrailing) {
+                        Link(destination: URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!) {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text(entry.posts.posts.first!.subreddit).font(.subheadline).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
+                                    Text(entry.posts.posts.first!.author).font(.subheadline).foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
+                                }
+                                Text(entry.posts.posts.first!.title).font(.subheadline).bold().multilineTextAlignment(.leading)
+                            }.padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 4))
+                        }
+
+                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity).background(Image(uiImage: UIImage(data: entry.posts.posts.first!.imageData) ?? UIImage())
+                                                                                                                .resizable()
+                                                                                                                .aspectRatio(contentMode: .fill)
+                                                                                                                .cornerRadius(CGFloat(5))
+                                                                                                                .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
+                                                                                                                .background(
+                                                                                                                    Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor()))
+                                    .opacity(0.8))
+                )
+            } else {
+                VStack(alignment: .leading) {
+                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    if !entry.posts.posts.isEmpty {
+                        ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
+                            PostView(post: entry.posts.posts[post], redacted: false)
+                        }
                     }
-                }
-                Spacer()
-            }.frame(maxHeight: .infinity).background(Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() )
-                                                        .opacity(0.8))
+                    Spacer()
+                }.frame(maxHeight: .infinity).background(Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() )
+                                                            .opacity(0.8))
+            }
         }
     }
 
