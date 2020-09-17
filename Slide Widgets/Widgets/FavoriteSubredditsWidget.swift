@@ -55,11 +55,11 @@ struct Favorite_SubredditsEntryView: View {
             switch widgetFamily {
             case .systemSmall:
                 SmallWidgetView(imageData: entry.imageData[entry.subreddits[0]] ?? Data(), title: entry.subreddits[0])
-                    .background(Color(UIImage(data: entry.imageData[entry.subreddits[0]] ?? Data())?.averageColor ?? getSchemeColor()))
+                    .background(Color(UIImage(data: entry.imageData[entry.subreddits[0]] ?? Data())?.averageColor ?? getSchemeColor()).opacity(colorScheme == .dark ? 0.4 : 0.7).background(Color(.black)))
             default:
                 MediumWidgetView(entry: entry)
                     .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
-                    .background(Color.green)
+                    .background(Color(getSchemeColor()))
             }
         }
     }
@@ -132,7 +132,8 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
 
 // MARK: - Widget Views
 
-private struct SmallWidgetView: View {
+//Unused
+private struct SmallWidgetViewCentered: View {
     var imageData: Data
     var title: String
 
@@ -141,26 +142,55 @@ private struct SmallWidgetView: View {
     @ViewBuilder
     var body: some View {
         //Full size small widget
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center, spacing: 0) {
+        HStack(alignment: .center, spacing: 0) {
+            VStack(alignment: .center, spacing: 0) {
                 Image(uiImage: UIImage(data: imageData) ?? UIImage())
                     .resizable()
                     .frame(width: 50, height: 50, alignment: .center)
                     .aspectRatio(1, contentMode: .fit)
                     .clipShape(Circle())
                     .clipped()
-                Spacer()
-            }
-            Spacer()
-            Text(self.title)
-                .font(Font.subheadline.leading(.tight)).bold()
-                .foregroundColor(colorScheme == .light ? .primary : .white)
-                .opacity(0.8)
-                .background(Color.red)
+                Text(self.title)
+                    .font(Font.subheadline.leading(.tight)).bold()
+                    .foregroundColor(colorScheme == .light ? .primary : .white)
+                    .opacity(0.8)
+                    .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
+                    .frame(maxWidth: .infinity)
+            }.frame(maxHeight: .infinity)
         }
         .widgetURL(URL(string: "slide://www.reddit.com/r/\(title)"))
         .frame(maxWidth: .infinity)
-        .background(Color.green)
+    }
+}
+
+private struct SmallWidgetView: View {
+    var imageData: Data
+    var title: String
+
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+
+    @ViewBuilder
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 0) {
+                Image(uiImage: UIImage(data: imageData) ?? UIImage())
+                    .resizable()
+                    .frame(width: 50, height: 50, alignment: .center)
+                    .aspectRatio(1, contentMode: .fit)
+                    .clipShape(Circle())
+                    .clipped()
+                    .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 0))
+                Text(self.title)
+                    .font(.system(.subheadline, design: .rounded)).bold()
+                    .foregroundColor(colorScheme == .light ? .primary : .white)
+                    .opacity(0.8)
+                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 0, trailing: 0))
+                Spacer()
+            }
+            Spacer()
+        }
+        .widgetURL(URL(string: "slide://www.reddit.com/r/\(title)"))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -180,7 +210,6 @@ private struct MediumWidgetView: View {
                 }
             }
         }
-        .background(Color.blue)
         .padding(8)
     }
 
@@ -211,19 +240,17 @@ private struct SubredditView: View {
                                 // TODOccrama: .leading is an issue here. .center works but we want left alignment.
                             .clipShape(Circle())
                             .clipped()
-                            .background(Color.red)
                         Spacer()
                     }
                     Spacer()
                     HStack(alignment: .center, spacing: 0) {
                         Spacer()
-                            .frame(width: 8)
+                            .frame(width: 4)
                         Text(self.title)
                             .font(Font.caption.leading(.tight))
                             .foregroundColor(colorScheme == .light ? .primary : .white)
                             .lineLimit(1)
                     }
-                    .background(Color.green)
                 }
             }
         }
