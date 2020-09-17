@@ -11,7 +11,7 @@ import reddift
 import SDWebImage
 import UIKit
 
-class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDelegate, UIGestureRecognizerDelegate {
+class SubredditFindReturnViewController: UITableViewController, UISearchBarDelegate, UIGestureRecognizerDelegate {
     
     var baseSubs: [String] = []
     var popular: [String] = []
@@ -89,14 +89,18 @@ class SubredditFindReturnViewController: MediaTableViewController, UISearchBarDe
             getTrending()
         }
     }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let cell = tableView.cellForRow(at: indexPath) as! SubredditCellView
         let sub = cell.subreddit
         
         if !subscribe {
-            self.navigationController?.popViewController(animated: true)
-            self.dismiss(animated: true, completion: nil)
+            if self.navigationController?.viewControllers.count == 1 {
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                self.navigationController?.popViewController(animated: true)
+            }
             self.callback(sub)
             return
         }

@@ -7,11 +7,8 @@ target 'Slide for Reddit' do
   # Pods for Slide for Reddit
 
   pod 'reddift', :git =>  'https://github.com/ccrama/reddift'
-  pod 'SDWebImage'
   pod 'MKColorPicker', :git => 'https://github.com/ccrama/MKColorPicker'
-  pod 'BadgeSwift', '~> 8.0'
   pod 'LicensesViewController', '~> 0.7.0'
-  pod 'BiometricAuthentication'
   pod 'OpalImagePicker'
   pod 'MaterialComponents/ActivityIndicator'
   pod 'MaterialComponents/Tabs'
@@ -19,18 +16,13 @@ target 'Slide for Reddit' do
   pod 'SwiftEntryKit', :git => 'https://github.com/ccrama/SwiftEntryKit'
   pod 'SubtleVolume'
   pod 'SDCAlertView', :git => 'https://github.com/ccrama/SDCAlertView'
-  pod 'Embassy', '~> 4.1.0'
   pod 'MTColorDistance'
   pod 'SwiftLinkPreview', '~> 3.0.1'
   pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'
-  pod 'Starscream', '~> 3.1.1'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
   pod 'YYText'
   pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON', :git => 'https://github.com/ccrama/SwiftyJSON.git', :branch => 'hotfix-xcode12'
-  pod 'RealmSwift'
-  pod 'Anchorage', '~>4.3'
-  pod 'Then'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
   pod 'TGPControls'
 

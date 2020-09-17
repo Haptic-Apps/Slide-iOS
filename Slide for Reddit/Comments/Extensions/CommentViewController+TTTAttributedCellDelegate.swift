@@ -48,15 +48,12 @@ extension CommentViewController: TTTAttributedCellDelegate {
                                 hiddenPersons.remove(at: hiddenPersons.firstIndex(of: id)!)
                             }
                             if let oldHeight = oldHeights[id] {
-                                // TODO: Add either a parameter or delegates of some sort to make this happen inside a UIViewController
-                                
-//                                UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-//                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
-//                                }, completion: { (_) in
+                                UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
+                                }, completion: { (_) in
                                     cell.expandSingle()
                                     self.oldHeights.removeValue(forKey: id)
-//                                })
-                                
+                                })
                                 tableView.beginUpdates()
                                 tableView.endUpdates()
                             } else {
@@ -83,22 +80,19 @@ extension CommentViewController: TTTAttributedCellDelegate {
                         if hiddenPersons.contains((id)) && childNumber > 0 {
                             hiddenPersons.remove(at: hiddenPersons.firstIndex(of: id)!)
                             if let oldHeight = oldHeights[id] {
-                                // TODO: Add either a parameter or delegates of some sort to make this happen inside a UIViewController
-                                
-//                                UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-//                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
-//                                }, completion: { (_) in
+                                UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                                    cell.contentView.frame = CGRect(x: 0, y: 0, width: cell.contentView.frame.size.width, height: oldHeight)
+                                }, completion: { (_) in
                                     cell.expand()
                                     self.oldHeights.removeValue(forKey: id)
-//                                })
-                                
+                                })
                             } else {
                                 cell.expand()
                                 tableView.beginUpdates()
                                 tableView.endUpdates()
                             }
                             unhideAll(comment: comment.getId(), i: row!)
-                           // TODO: hide child number
+                           // TODO: - hide child number
                         } else {
                             if childNumber > 0 {
                                 if childNumber > 0 {
@@ -206,7 +200,6 @@ extension CommentViewController: TTTAttributedCellDelegate {
                 }
             }
         }
-
     }
     
     /// Returns a bool based upon if Menu is shown.

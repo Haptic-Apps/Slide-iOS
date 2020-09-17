@@ -813,6 +813,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if direction == 0 {
                 if xVelocity > 0 {
                     direction = 1
+                    print("Direction change to 1")
                     diff = self.contentView.frame.width - diff
                     action = getFirstAction(left: true)
                     if action == .NONE {
@@ -825,6 +826,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
                     }
                 } else {
+                    print("Direction change to -1")
                     direction = -1
                     action = getFirstAction(left: false)
                     diff = self.contentView.frame.width - originalLocation
@@ -868,7 +870,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             
             let progress = Float(min(abs(currentTranslation) / (self.contentView.bounds.width), 1))
-            
+            print(progress)
             if progress > 0.1 && previousProgress <= 0.1 {
                 typeImage.alpha = 0
                 UIView.animate(withDuration: 0.2) {
@@ -3129,7 +3131,9 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     postContentTransitioningDelegate.sourceImageView = self.videoView
                     vc.transitioningDelegate = postContentTransitioningDelegate
                     vc.modalPresentationStyle = .custom
-                    (vc as! AnyModalViewController).forceStartUnmuted = !self.videoView.player!.isMuted
+                    if let vc = vc as? AnyModalViewController, let player = self.videoView.player {
+                        vc.forceStartUnmuted = player.isMuted
+                    }
                     
                     self.parentViewController?.present(vc, animated: true, completion: nil)
                 } else {

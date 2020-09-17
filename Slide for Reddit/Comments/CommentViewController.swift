@@ -117,6 +117,7 @@ class CommentViewController: MediaViewController {
     // Gesture Recognizer
     var cellGestureRecognizer: UIPanGestureRecognizer!
     var swipeBackAdded = false
+    var shouldSetupSwipe = false
     var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
     // MARK: - UI Properties
     public var inHeadView = UIView()
@@ -846,7 +847,7 @@ class CommentViewController: MediaViewController {
             }
         }*/
     }
-
+    
     /// Filters comments not hidden.
     func doArrays() {
         dataArray = comments.filter({ (s) -> Bool in
@@ -867,7 +868,6 @@ class CommentViewController: MediaViewController {
      */
     @objc private func onlineStatusChanged(_ notification: Notification) {
         if let online = notification.userInfo?["online"] as? Bool {
-            print("Online: \(online)")
             switch online {
                 case true:
                     refreshAll(self)
@@ -960,7 +960,7 @@ class CommentViewController: MediaViewController {
         if !self.comments.isEmpty {
             do {
                 let realm = try Realm()
-               // TODO: insert
+                // TODO: insert
                 realm.beginWrite()
                 for comment in self.comments {
                     if let content = self.content[comment] {
@@ -2023,7 +2023,7 @@ class CommentViewController: MediaViewController {
             lastMoved = 0
         } else {
             var contents = content[dataArray[topCell]]
-            while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell {
+            while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell + 1 {
                 topCell += 1
                 contents = content[dataArray[topCell]]
             }
@@ -2866,7 +2866,7 @@ class CommentViewController: MediaViewController {
     }
 
 } // Class End
-// TODO: Remove these from here and add to a Helper Function file
+
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
     guard let input = input else { return nil }

@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01BBE6AB1AC863FE2E897632 /* Pods_Slide_for_Reddit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B12412FF705B2BEB9D3B245F /* Pods_Slide_for_Reddit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		05B4954EEA46A4492FCAB86A /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF803995AF8B02E34D23A12C /* Pods_Slide_for_RedditUITests.framework */; };
 		0924E525219C8EA700C31D5E /* NSDate+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0924E524219C8EA700C31D5E /* NSDate+Extensions.swift */; };
 		0924E527219E088800C31D5E /* UIWindow+RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0924E526219E088800C31D5E /* UIWindow+RootViewController.swift */; };
 		09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09328D7720F9547B00A48983 /* VideoScrubberView.swift */; };
@@ -45,6 +47,18 @@
 		21350A6FDEAA9F9D4DA87AD2 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8C548645B1B8BEE24800967 /* Pods_Slide_for_RedditUITests.framework */; };
 		323EFB2821434781005157FA /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323EFB2721434781005157FA /* ProgressBarView.swift */; };
 		43FC69AA5FDDB2E1753B145A /* Pods_Slide_for_Reddit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47F5CD2143829E838F504F89 /* Pods_Slide_for_Reddit.framework */; };
+		B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */; };
+		B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */; };
+		B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */; };
+		B4F333B925126FCE0032BB64 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333B825126FCE0032BB64 /* Realm */; };
+		B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333BA25126FCE0032BB64 /* RealmSwift */; };
+		B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333E0251273AF0032BB64 /* SDWebImage */; };
+		B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333EA251274050032BB64 /* BadgeSwift */; };
+		B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333F42512742E0032BB64 /* BiometricAuthentication */; };
+		B4F3348B2512770F0032BB64 /* Embassy in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3348A2512770F0032BB64 /* Embassy */; };
+		B4F3349F251277B80032BB64 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3349E251277B80032BB64 /* Starscream */; };
+		B4F3354C25127BAB0032BB64 /* Anchorage in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3354B25127BAB0032BB64 /* Anchorage */; };
+		B4F3355625127BD20032BB64 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3355525127BD20032BB64 /* Then */; };
 		B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */; };
 		B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B2AEE4A2438F5803329C /* SettingsPro.swift */; };
 		B776B1E23F4DEC18069F1579 /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BC65995FE8D1EE75E2AB /* MediaViewController.swift */; };
@@ -296,6 +310,7 @@
 		BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DA1E23383D00764BB8 /* seen.plist */; };
 		BEBF45DD1E23384500764BB8 /* comments.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DC1E23384500764BB8 /* comments.plist */; };
 		BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45E01E23EED800764BB8 /* SettingValues.swift */; };
+		BEC2AB3A250D8D2C00AD5BEA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BED90FE0250BF71600090DF5 /* WidgetKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		BEC2FE19235BA2B100374013 /* adaway.json in Resources */ = {isa = PBXBuildFile; fileRef = BEC2FE18235BA2B100374013 /* adaway.json */; };
 		BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494271E307D57006618F3 /* GalleryTableViewController.swift */; };
 		BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494291E307DDA006618F3 /* GalleryCellView.swift */; };
@@ -318,6 +333,13 @@
 		BED3B31924CE278B00B9A664 /* SettingsShortcutMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED3B31824CE278B00B9A664 /* SettingsShortcutMenu.swift */; };
 		BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */; };
 		BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED7B6B91F2258E700E31A82 /* CachedTitle.swift */; };
+		BED90FE1250BF71600090DF5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BED90FE0250BF71600090DF5 /* WidgetKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		BED90FE3250BF71600090DF5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BED90FE2250BF71600090DF5 /* SwiftUI.framework */; };
+		BED90FE6250BF71600090DF5 /* SlideWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED90FE5250BF71600090DF5 /* SlideWidgets.swift */; };
+		BED90FE8250BF71800090DF5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BED90FE7250BF71800090DF5 /* Assets.xcassets */; };
+		BED90FEC250BF71800090DF5 /* Slide Widgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BED90FDF250BF71600090DF5 /* Slide Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BED90FF5250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */; };
+		BED90FF6250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */; };
 		BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */; };
 		BEDDA9931E19AEF2003CD6C3 /* AdDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */; };
 		BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */; };
@@ -379,6 +401,13 @@
 			remoteGlobalIDString = BE8FCA031E0C46090063B8EF;
 			remoteInfo = "Slide for Reddit";
 		};
+		BED90FEA250BF71800090DF5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BED90FDE250BF71600090DF5;
+			remoteInfo = "Favorite SubredditsExtension";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -388,6 +417,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				BED90FEC250BF71800090DF5 /* Slide Widgets.appex in Embed App Extensions */,
 				BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -470,6 +500,15 @@
 		6EB292DDEFA6E46669FD4C04 /* Pods-Slide for Reddit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.release.xcconfig"; path = "Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.release.xcconfig"; sourceTree = "<group>"; };
 		72CC3B60297EA77512A6F489 /* Pods-Slide for RedditTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.release.xcconfig"; path = "Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig"; sourceTree = "<group>"; };
 		AF97AEAB3093231C39D15F2D /* Pods-Slide for RedditTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.debug.xcconfig"; path = "Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3276AFC3227D7D1F64803B12 /* Pods-Slide for RedditTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3A8827A415FF9E81FEE6ABA8 /* Pods-Slide for RedditUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.release.xcconfig"; sourceTree = "<group>"; };
+		446A11C03114FAC84A0B96D9 /* Pods-Slide for Reddit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig"; sourceTree = "<group>"; };
+		5A3C22D1F67B7A388DDF34E6 /* Pods-Slide for Reddit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.release.xcconfig"; sourceTree = "<group>"; };
+		733616027CB406046CABF77A /* Pods_Slide_for_RedditTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B12412FF705B2BEB9D3B245F /* Pods_Slide_for_Reddit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_Reddit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotPostsWidget.swift; sourceTree = "<group>"; };
+		B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSubredditsWidget.swift; sourceTree = "<group>"; };
+		B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorMuxPagingViewController.swift; sourceTree = "<group>"; };
 		B776B2AEE4A2438F5803329C /* SettingsPro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPro.swift; sourceTree = "<group>"; };
 		B776B2E54F7438959A76E42E /* LiveThreadUpdate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveThreadUpdate.swift; sourceTree = "<group>"; };
@@ -735,6 +774,7 @@
 		BEBF45DA1E23383D00764BB8 /* seen.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = seen.plist; sourceTree = "<group>"; };
 		BEBF45DC1E23384500764BB8 /* comments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = comments.plist; sourceTree = "<group>"; };
 		BEBF45E01E23EED800764BB8 /* SettingValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingValues.swift; sourceTree = "<group>"; };
+		BEC2AB38250D87F900AD5BEA /* Slide Widgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Slide Widgets.entitlements"; sourceTree = "<group>"; };
 		BEC2FE18235BA2B100374013 /* adaway.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = adaway.json; sourceTree = "<group>"; };
 		BEC494271E307D57006618F3 /* GalleryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryTableViewController.swift; sourceTree = "<group>"; };
 		BEC494291E307DDA006618F3 /* GalleryCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryCellView.swift; sourceTree = "<group>"; };
@@ -757,6 +797,14 @@
 		BED3B31824CE278B00B9A664 /* SettingsShortcutMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsShortcutMenu.swift; sourceTree = "<group>"; };
 		BED76E641E3A9576008E7717 /* RealmDataWrappers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmDataWrappers.swift; sourceTree = "<group>"; };
 		BED7B6B91F2258E700E31A82 /* CachedTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedTitle.swift; sourceTree = "<group>"; };
+		BED90FDF250BF71600090DF5 /* Slide Widgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Slide Widgets.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BED90FE0250BF71600090DF5 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		BED90FE2250BF71600090DF5 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		BED90FE5250BF71600090DF5 /* SlideWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideWidgets.swift; sourceTree = "<group>"; };
+		BED90FE7250BF71800090DF5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BED90FE9250BF71800090DF5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BED90FF0250C017C00090DF5 /* Favorite SubredditsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Favorite SubredditsExtension.entitlements"; sourceTree = "<group>"; };
+		BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = TimelineSubreddit.intentdefinition; sourceTree = "<group>"; };
 		BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteViewController.swift; sourceTree = "<group>"; };
 		BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdDictionary.swift; sourceTree = "<group>"; };
 		BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagingCommentViewController.swift; sourceTree = "<group>"; };
@@ -803,10 +851,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4F333B925126FCE0032BB64 /* Realm in Frameworks */,
+				B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */,
+				BEC2AB3A250D8D2C00AD5BEA /* WidgetKit.framework in Frameworks */,
+				B4F3355625127BD20032BB64 /* Then in Frameworks */,
+				B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */,
+				B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */,
+				B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */,
 				BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */,
+				B4F3354C25127BAB0032BB64 /* Anchorage in Frameworks */,
+				B4F3348B2512770F0032BB64 /* Embassy in Frameworks */,
 				BE2E9F0823492B4300FE07B4 /* CloudKit.framework in Frameworks */,
 				BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */,
 				43FC69AA5FDDB2E1753B145A /* Pods_Slide_for_Reddit.framework in Frameworks */,
+				B4F3349F251277B80032BB64 /* Starscream in Frameworks */,
+				01BBE6AB1AC863FE2E897632 /* Pods_Slide_for_Reddit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -830,6 +889,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BED90FDC250BF71600090DF5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BED90FE3250BF71600090DF5 /* SwiftUI.framework in Frameworks */,
+				BED90FE1250BF71600090DF5 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -940,6 +1008,11 @@
 				47F5CD2143829E838F504F89 /* Pods_Slide_for_Reddit.framework */,
 				F9A5BF825E1CDC8B92A5DC0D /* Pods_Slide_for_RedditTests.framework */,
 				B8C548645B1B8BEE24800967 /* Pods_Slide_for_RedditUITests.framework */,
+				B12412FF705B2BEB9D3B245F /* Pods_Slide_for_Reddit.framework */,
+				733616027CB406046CABF77A /* Pods_Slide_for_RedditTests.framework */,
+				CF803995AF8B02E34D23A12C /* Pods_Slide_for_RedditUITests.framework */,
+				BED90FE0250BF71600090DF5 /* WidgetKit.framework */,
+				BED90FE2250BF71600090DF5 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -988,6 +1061,23 @@
 				BD43E0F224EA162500D18328 /* NetworkMonitor.swift */,
 			);
 			path = Networking;
+			sourceTree = "<group>";
+		};
+		B49EFE502511A20F002D6AEE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B49EFE5A2511A256002D6AEE /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */,
+				B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */,
+			);
+			path = Widgets;
 			sourceTree = "<group>";
 		};
 		BE13C2CA21655A31002687F2 /* Extensions */ = {
@@ -1240,11 +1330,14 @@
 		BE8FC9FB1E0C46090063B8EF = {
 			isa = PBXGroup;
 			children = (
+				BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */,
+				BED90FF0250C017C00090DF5 /* Favorite SubredditsExtension.entitlements */,
 				BE77470720367D98006C72E8 /* Credits.plist */,
 				BE20851221588F3900D8F33C /* Slide for Apple Watch */,
 				BE20852121588F3B00D8F33C /* Slide for Apple Watch Extension */,
 				BE257A6C21F64AA30082A47E /* Open in Slide */,
 				BE99C9F52378AC91007911E2 /* Slide Screenshot Automation */,
+				BED90FE4250BF71600090DF5 /* Slide Widgets */,
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				BE8FCA051E0C46090063B8EF /* Products */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
@@ -1264,6 +1357,7 @@
 				BE20851D21588F3A00D8F33C /* Slide for Apple Watch Extension.appex */,
 				BE257A6B21F64AA30082A47E /* Open in Slide.appex */,
 				BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */,
+				BED90FDF250BF71600090DF5 /* Slide Widgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1436,6 +1530,19 @@
 			path = "Slide Screenshot Automation";
 			sourceTree = "<group>";
 		};
+		BED90FE4250BF71600090DF5 /* Slide Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				B49EFE5A2511A256002D6AEE /* Widgets */,
+				B49EFE502511A20F002D6AEE /* Extensions */,
+				BED90FE5250BF71600090DF5 /* SlideWidgets.swift */,
+				BEC2AB38250D87F900AD5BEA /* Slide Widgets.entitlements */,
+				BED90FE7250BF71800090DF5 /* Assets.xcassets */,
+				BED90FE9250BF71800090DF5 /* Info.plist */,
+			);
+			path = "Slide Widgets";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1498,10 +1605,10 @@
 				007C3C20E5274031E2037266 /* [CP] Check Pods Manifest.lock */,
 				BE8FCA001E0C46090063B8EF /* Sources */,
 				BE8FCA011E0C46090063B8EF /* Frameworks */,
+				BE77470620366576006C72E8 /* Generate Credits.plist */,
 				BE8FCA021E0C46090063B8EF /* Resources */,
 				BE2B8A061E25BD220053D493 /* Embed Frameworks */,
 				BE0EF7D71F43F9C40058D572 /* Embed App Extensions */,
-				BE77470620366576006C72E8 /* Generate Credits.plist */,
 				0991C18B2108CDC600B6BA16 /* Run SwiftLint */,
 				0984BE512114C9490091C2E1 /* Integrate Reveal Server */,
 				BE20853621588F3B00D8F33C /* Embed Watch Content */,
@@ -1513,8 +1620,20 @@
 			dependencies = (
 				BE20852D21588F3B00D8F33C /* PBXTargetDependency */,
 				BE257A7621F64AA30082A47E /* PBXTargetDependency */,
+				BED90FEB250BF71800090DF5 /* PBXTargetDependency */,
 			);
 			name = "Slide for Reddit";
+			packageProductDependencies = (
+				B4F333B825126FCE0032BB64 /* Realm */,
+				B4F333BA25126FCE0032BB64 /* RealmSwift */,
+				B4F333E0251273AF0032BB64 /* SDWebImage */,
+				B4F333EA251274050032BB64 /* BadgeSwift */,
+				B4F333F42512742E0032BB64 /* BiometricAuthentication */,
+				B4F3348A2512770F0032BB64 /* Embassy */,
+				B4F3349E251277B80032BB64 /* Starscream */,
+				B4F3354B25127BAB0032BB64 /* Anchorage */,
+				B4F3355525127BD20032BB64 /* Then */,
+			);
 			productName = "Slide for Reddit";
 			productReference = BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */;
 			productType = "com.apple.product-type.application";
@@ -1575,6 +1694,23 @@
 			productReference = BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		BED90FDE250BF71600090DF5 /* Slide Widgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BED90FEF250BF71800090DF5 /* Build configuration list for PBXNativeTarget "Slide Widgets" */;
+			buildPhases = (
+				BED90FDB250BF71600090DF5 /* Sources */,
+				BED90FDC250BF71600090DF5 /* Frameworks */,
+				BED90FDD250BF71600090DF5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Slide Widgets";
+			productName = "Favorite SubredditsExtension";
+			productReference = BED90FDF250BF71600090DF5 /* Slide Widgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1583,6 +1719,8 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1120;
 				LastUpgradeCheck = 1200;
+				LastSwiftUpdateCheck = 1200;
+				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
 					BE20851021588F3900D8F33C = {
@@ -1642,6 +1780,11 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
+					BED90FDE250BF71600090DF5 = {
+						CreatedOnToolsVersion = 12.0;
+						DevelopmentTeam = FTT89576VQ;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = BE8FC9FF1E0C46090063B8EF /* Build configuration list for PBXProject "Slide for Reddit" */;
@@ -1653,6 +1796,16 @@
 				Base,
 			);
 			mainGroup = BE8FC9FB1E0C46090063B8EF;
+			packageReferences = (
+				B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
+				B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */,
+				B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */,
+				B4F334892512770F0032BB64 /* XCRemoteSwiftPackageReference "Embassy" */,
+				B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */,
+				B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */,
+				B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */,
+			);
 			productRefGroup = BE8FCA051E0C46090063B8EF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1664,6 +1817,7 @@
 				BE20851C21588F3A00D8F33C /* Slide for Apple Watch Extension */,
 				BE257A6A21F64AA30082A47E /* Open in Slide */,
 				BE99C9F32378AC91007911E2 /* Slide Screenshot Automation */,
+				BED90FDE250BF71600090DF5 /* Slide Widgets */,
 			);
 		};
 /* End PBXProject section */
@@ -1796,6 +1950,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BED90FDD250BF71600090DF5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BED90FE8250BF71800090DF5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -1833,7 +1995,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "REVEAL_APP_PATH=$(mdfind kMDItemCFBundleIdentifier=\"com.ittybittyapps.Reveal2\" | head -n 1)\nBUILD_SCRIPT_PATH=\"${REVEAL_APP_PATH}/Contents/SharedSupport/Scripts/reveal_server_build_phase.sh\"\nif [ \"${REVEAL_APP_PATH}\" -a -e \"${BUILD_SCRIPT_PATH}\" ]; then\n    \"${BUILD_SCRIPT_PATH}\"\nelse\n    echo \"Reveal Server not loaded: Cannot find a compatible Reveal app.\"\nfi";
+			shellScript = "REVEAL_APP_PATH=$(mdfind kMDItemCFBundleIdentifier=\"com.ittybittyapps.Reveal2\" | head -n 1)\nBUILD_SCRIPT_PATH=\"${REVEAL_APP_PATH}/Contents/SharedSupport/Scripts/reveal_server_build_phase.sh\"\nif [ \"${REVEAL_APP_PATH}\" -a -e \"${BUILD_SCRIPT_PATH}\" ]; then\n    \"${BUILD_SCRIPT_PATH}\"\nelse\n    echo \"Reveal Server not loaded: Cannot find a compatible Reveal app.\"\nfi\n";
 		};
 		0991C18B2108CDC600B6BA16 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1925,84 +2087,44 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/Anchorage/Anchorage.framework",
-				"${BUILT_PRODUCTS_DIR}/BadgeSwift/BadgeSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/BiometricAuthentication/BiometricAuthentication.framework",
-				"${BUILT_PRODUCTS_DIR}/DTCoreText/DTCoreText.framework",
-				"${BUILT_PRODUCTS_DIR}/DTFoundation/DTFoundation.framework",
-				"${BUILT_PRODUCTS_DIR}/Embassy/Embassy.framework",
-				"${BUILT_PRODUCTS_DIR}/HTMLSpecialCharacters/HTMLSpecialCharacters.framework",
-				"${BUILT_PRODUCTS_DIR}/LicensesViewController/LicensesViewController.framework",
-				"${BUILT_PRODUCTS_DIR}/MDFInternationalization/MDFInternationalization.framework",
-				"${BUILT_PRODUCTS_DIR}/MDFTextAccessibility/MDFTextAccessibility.framework",
-				"${BUILT_PRODUCTS_DIR}/MKColorPicker/MKColorPicker.framework",
-				"${BUILT_PRODUCTS_DIR}/MTColorDistance/MTColorDistance.framework",
-				"${BUILT_PRODUCTS_DIR}/MaterialComponents/MaterialComponents.framework",
-				"${BUILT_PRODUCTS_DIR}/MiniKeychain/MiniKeychain.framework",
-				"${BUILT_PRODUCTS_DIR}/MotionAnimator/MotionAnimator.framework",
-				"${BUILT_PRODUCTS_DIR}/MotionInterchange/MotionInterchange.framework",
-				"${BUILT_PRODUCTS_DIR}/OpalImagePicker/OpalImagePicker.framework",
-				"${BUILT_PRODUCTS_DIR}/QuickLayout/QuickLayout.framework",
-				"${BUILT_PRODUCTS_DIR}/RLBAlertsPickers/RLBAlertsPickers.framework",
-				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
-				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/SDCAlertView/SDCAlertView.framework",
-				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
-				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
-				"${BUILT_PRODUCTS_DIR}/SubtleVolume/SubtleVolume.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftEntryKit/SwiftEntryKit.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftLinkPreview/SwiftLinkPreview.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/TGPControls/TGPControls.framework",
-				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
-				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
-				"${BUILT_PRODUCTS_DIR}/YoutubePlayer-in-WKWebView/YoutubePlayer_in_WKWebView.framework",
-				"${BUILT_PRODUCTS_DIR}/reddift/reddift.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Anchorage.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BadgeSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BiometricAuthentication.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTCoreText.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTFoundation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Embassy.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HTMLSpecialCharacters.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LicensesViewController.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MDFInternationalization.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MDFTextAccessibility.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MKColorPicker.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MTColorDistance.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MaterialComponents.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MiniKeychain.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MotionAnimator.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MotionInterchange.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpalImagePicker.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QuickLayout.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RLBAlertsPickers.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDCAlertView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SubtleVolume.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftEntryKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLinkPreview.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TGPControls.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YoutubePlayer_in_WKWebView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/reddift.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		BE77470620366576006C72E8 /* Generate Credits.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Credits.plist";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "# Search source directory and Swift Package Manager checkout directory for LICENSE files\n./credits.py -s \"$SRCROOT, $DWARF_DSYM_FOLDER_PATH/../../../SourcePackages/checkouts\" -o \"$SRCROOT/Slide for Reddit/Credits.plist\"\n";
+		};
+		BE85916B221BC9A7009ACF9E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "find \"${SRCROOT}/Pods\" -type f -name *frameworks.sh -exec bash -c \"touch \\\"{}\\\"\" \\;\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2084,6 +2206,7 @@
 				09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */,
 				BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */,
 				BE780B641E3405F300DAA1EB /* SettingsTheme.swift in Sources */,
+				BED90FF5250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */,
 				BE6EA6CB1E1C1E9400E9E709 /* StreamableJSONBase.swift in Sources */,
 				BE602AFA229F3A5200AF0DC3 /* LinkBubble.swift in Sources */,
 				BE6EA6E21E1DA1A300E9E709 /* ContributionLoader.swift in Sources */,
@@ -2288,6 +2411,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BED90FDB250BF71600090DF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BED90FF6250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */,
+				B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */,
+				B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */,
+				BED90FE6250BF71600090DF5 /* SlideWidgets.swift in Sources */,
+				B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2320,6 +2455,11 @@
 			isa = PBXTargetDependency;
 			target = BE8FCA031E0C46090063B8EF /* Slide for Reddit */;
 			targetProxy = BE99C9F92378AC91007911E2 /* PBXContainerItemProxy */;
+		};
+		BED90FEB250BF71800090DF5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BED90FDE250BF71600090DF5 /* Slide Widgets */;
+			targetProxy = BED90FEA250BF71800090DF5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2364,7 +2504,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 179;
+				CURRENT_PROJECT_VERSION = 183;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
@@ -2398,7 +2538,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 179;
+				CURRENT_PROJECT_VERSION = 183;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
@@ -2426,11 +2566,15 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 179;
+				CURRENT_PROJECT_VERSION = 183;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 5.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -2456,11 +2600,15 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 179;
+				CURRENT_PROJECT_VERSION = 183;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
@@ -2486,12 +2634,18 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 179;
+				CURRENT_PROJECT_VERSION = 183;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 5.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -2516,12 +2670,18 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 179;
+				CURRENT_PROJECT_VERSION = 183;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).debug.Open-in-Slide";
@@ -2647,7 +2807,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_DISPLAY_NAME = Slide;
@@ -2668,17 +2829,20 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 179;
+				CURRENT_PROJECT_VERSION = 183;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 5.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-framework",
-					"\"SDWebImage\"",
 					"-framework",
 					"\"reddift\"",
 				);
@@ -2707,18 +2871,21 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 179;
+				CURRENT_PROJECT_VERSION = 183;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 5.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-framework",
-					"\"SDWebImage\"",
 					"-framework",
 					"\"reddift\"",
 				);
@@ -2740,7 +2907,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -2759,7 +2930,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -2775,7 +2950,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -2793,7 +2972,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_DOMAIN).Slide-for-RedditUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -2814,7 +2997,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Slide-Screenshot-Automation";
@@ -2840,7 +3027,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Slide-Screenshot-Automation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2848,6 +3039,76 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Slide for Reddit";
+			};
+			name = Release;
+		};
+		BED90FED250BF71800090DF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Slide Widgets/Slide Widgets.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 183;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Slide Widgets/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 5.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).widgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BED90FEE250BF71800090DF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Slide Widgets/Slide Widgets.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 183;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Slide Widgets/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 5.4;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwidgets 1599951103";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -2926,7 +3187,131 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		BED90FEF250BF71800090DF5 /* Build configuration list for PBXNativeTarget "Slide Widgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BED90FED250BF71800090DF5 /* Debug */,
+				BED90FEE250BF71800090DF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-cocoa.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 4.4.0;
+			};
+		};
+		B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.9.1;
+			};
+		};
+		B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/swift-badge";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.2;
+			};
+		};
+		B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rushisangani/BiometricAuthentication";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.2;
+			};
+		};
+		B4F334892512770F0032BB64 /* XCRemoteSwiftPackageReference "Embassy" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/envoy/Embassy";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.1;
+			};
+		};
+		B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream";
+			requirement = {
+				kind = exactVersion;
+				version = 3.1.1;
+			};
+		};
+		B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Rightpoint/Anchorage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.4.0;
+			};
+		};
+		B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B4F333B825126FCE0032BB64 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
+			productName = Realm;
+		};
+		B4F333BA25126FCE0032BB64 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
+			productName = RealmSwift;
+		};
+		B4F333E0251273AF0032BB64 /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+		B4F333EA251274050032BB64 /* BadgeSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */;
+			productName = BadgeSwift;
+		};
+		B4F333F42512742E0032BB64 /* BiometricAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */;
+			productName = BiometricAuthentication;
+		};
+		B4F3348A2512770F0032BB64 /* Embassy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F334892512770F0032BB64 /* XCRemoteSwiftPackageReference "Embassy" */;
+			productName = Embassy;
+		};
+		B4F3349E251277B80032BB64 /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+		B4F3354B25127BAB0032BB64 /* Anchorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */;
+			productName = Anchorage;
+		};
+		B4F3355525127BD20032BB64 /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BE8FC9FC1E0C46090063B8EF /* Project object */;
 }

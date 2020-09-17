@@ -16,7 +16,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer.maximumNumberOfTouches = 1
         tableView.addGestureRecognizer(cellGestureRecognizer)
         if UIDevice.current.userInterfaceIdiom != .pad {
-            cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+           // cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
         }
         if let parent = parent as? ColorMuxPagingViewController {
             parent.requireFailureOf(cellGestureRecognizer)
@@ -28,26 +28,43 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
         }
     }
-        
+    
     func setupSwipeGesture() {
+        shouldSetupSwipe = true
         if swipeBackAdded {
             return
         }
-        if UIDevice.current.userInterfaceIdiom == .pad {
+
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SINGLE {
             if #available(iOS 14, *) {
                 return
             }
         }
         if SettingValues.commentGesturesMode == .FULL {
+            //setupFullSwipeView(self.tableView.tableHeaderView)
             return
         }
+        
+        setupFullSwipeView(self.tableView)
+        shouldSetupSwipe = false
+        swipeBackAdded = true
+    }
+    
+    func setupFullSwipeView(_ view: UIView?) {
+        if shouldSetupSwipe == false {
+            return
+        }
+        if let full = fullWidthBackGestureRecognizer {
+            full.view?.removeGestureRecognizer(full)
+        }
+
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController, !swipeBackAdded {
-            swipeBackAdded = true
             fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
                 fullWidthBackGestureRecognizer.require(toFail: navGesture)
             }
+            fullWidthBackGestureRecognizer.require(toFail: interactivePopGestureRecognizer)
             for view in parent?.view.subviews ?? [] {
                 if view is UIScrollView {
                     (view as! UIScrollView).panGestureRecognizer.require(toFail: fullWidthBackGestureRecognizer)
@@ -57,7 +74,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
-            tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            view?.addGestureRecognizer(fullWidthBackGestureRecognizer)
             if #available(iOS 13.4, *) {
                 fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
             }
@@ -91,7 +108,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         }
         return false
     }
-
+    
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {
@@ -106,11 +123,12 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForRow(at: point)
             if indexpath == nil {
+                recognizer.cancel()
                 return
             }
 
             guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
-            for view in cell.commentBody.subviews {
+            for view in cell.commentBody.recursiveSubviews {
                 let cellPoint = recognizer.location(in: view)
                 if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
                     recognizer.cancel()
@@ -118,12 +136,14 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 }
             }
             tableView.panGestureRecognizer.cancel()
+            disableDismissalRecognizers()
             translatingCell = cell
         }
         
         translatingCell?.handlePan(recognizer)
-        if recognizer.state == .ended {
+        if recognizer.state == .ended || recognizer.state == .cancelled {
             translatingCell = nil
+            enableDismissalRecognizers()
         }
     }
     

@@ -41,6 +41,10 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         }
         UserDefaults.standard.set(saveArray, forKey: "postMenu")
         UserDefaults.standard.synchronize()
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = false
+        }
+        enableDismissalRecognizers()
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = true
         }
@@ -101,14 +105,21 @@ class SettingsPostMenu: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         return false
     }
-    
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
+        disableDismissalRecognizers()
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         self.title = "Arrange post menu"
-        
-        if let nav = self.navigationController as? SwipeForwardNavigationController {
-            nav.fullWidthBackGestureRecognizer.isEnabled = false
-        }
     }
 }

@@ -209,11 +209,25 @@ class SettingsViewMode: BubbleSettingTableViewController {
             default:
                 break
             }
-               
+            var keyWindow = UIApplication.shared.keyWindow
+            if keyWindow == nil {
+                if #available(iOS 13.0, *) {
+                    keyWindow = UIApplication.shared.connectedScenes
+                        .filter({ $0.activationState == .foregroundActive })
+                        .map({ $0 as? UIWindowScene })
+                        .compactMap({$0})
+                        .first?.windows
+                        .filter({ $0.isKeyWindow }).first
+                }
+            }
+            guard keyWindow != nil else {
+                fatalError("Window must exist when resetting the stack!")
+            }
+
             if #available(iOS 14, *) {
-                (UIApplication.shared.delegate as! AppDelegate).resetStackNew()
+                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
             } else {
-                (UIApplication.shared.delegate as! AppDelegate).resetStack()
+                (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
             }
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()

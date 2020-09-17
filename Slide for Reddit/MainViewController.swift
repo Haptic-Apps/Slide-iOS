@@ -386,7 +386,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         currentBackgroundOffset.x = offsetX
         self.tabBar.collectionView.contentOffset = currentBackgroundOffset
-        self.tabBar.collectionView.layoutIfNeeded()
+        //self.tabBar.collectionView.layoutIfNeeded()
     }
     
     func goToSubreddit(index: Int) {
@@ -464,20 +464,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if !SettingValues.subredditBar {
             self.navigationItem.titleView = label
         }
-
-        var items: [UIBarButtonItem] = []
-        
-        let splitButton = UIButton.init(type: .custom)
-        splitButton.setImage(UIImage(sfString: SFSymbol.sidebarLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
-        let splitB = UIBarButtonItem(customView: splitButton)
-        
-        self.splitViewController?.navigationItem.backBarButtonItem = splitB
-        
-        items.append(accountB)
-        
+                
         self.navigationItem.setHidesBackButton(true, animated: false)
         self.splitViewController?.navigationItem.setHidesBackButton(true, animated: false)
-        self.navigationItem.setLeftBarButtonItems(items, animated: false)
+        self.navigationItem.leftBarButtonItem = accountB
     }
     
     @objc func popToPrimary(_ sender: AnyObject) {

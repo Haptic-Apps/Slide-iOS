@@ -47,10 +47,10 @@ public class VCPresenter {
 
         override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
         
-        if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .MULTI_COLUMN) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad && popupIfPossible) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
+        } else if ((SettingValues.appMode == .MULTI_COLUMN) && UIDevice.current.userInterfaceIdiom == .pad && popupIfPossible) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && override13) || parentNavigationController == nil {
             
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true

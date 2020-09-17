@@ -47,7 +47,57 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
             navigationItem.rightBarButtonItems = [sortB, navB]
         }
+        updateToolbar()
+        navigationController?.setToolbarHidden(false, animated: false)
+        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
+        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+    }
+    
+    func updateToolbar() {
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        var items: [UIBarButtonItem] = []
+        
+        let back = UIButton(type: .custom)
+        back.accessibilityLabel = "Go to last page"
+        back.setImage(UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back")?.toolbarIcon(), for: UIControl.State.normal)
+        back.addTarget(self, action: #selector(goBack), for: UIControl.Event.touchUpInside)
+        back.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        let backB = UIBarButtonItem(customView: back)
+        
+        if !webView.canGoBack {
+            backB.isEnabled = false
+            back.alpha = 0.5
+        }
 
+        let forward = UIButton(type: .custom)
+        forward.accessibilityLabel = "Go forward"
+        forward.setImage(UIImage(sfString: SFSymbol.chevronRight, overrideString: "next")?.toolbarIcon(), for: UIControl.State.normal)
+        forward.addTarget(self, action: #selector(goNext), for: UIControl.Event.touchUpInside)
+        forward.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        let forwardB = UIBarButtonItem(customView: forward)
+
+        if !webView.canGoForward {
+            forwardB.isEnabled = false
+            forward.alpha = 0.5
+        }
+
+        items.append(space)
+        items.append(backB)
+        items.append(space)
+        items.append(forwardB)
+        items.append(space)
+
+        toolbarItems = items
+    }
+    
+    @objc func goBack() {
+        webView.goBack()
+        updateToolbar()
+    }
+    
+    @objc func goNext() {
+        webView.goForward()
+        updateToolbar()
     }
     
     @objc func openExternally(_ sender: UIButton) {
@@ -133,7 +183,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         webView = WKWebView(frame: self.view.frame)
 
         webView.navigationDelegate = self
-        webView.allowsBackForwardNavigationGestures = true
+        webView.allowsBackForwardNavigationGestures = false
 
         self.view.addSubview(webView)
         webView.edgeAnchors == self.view.edgeAnchors
@@ -195,10 +245,18 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "estimatedProgress" {
             myProgressView.progress = Float(webView.estimatedProgress)
+            if webView.estimatedProgress > 0.98 {
+                myProgressView.isHidden = true
+            } else {
+                myProgressView.isHidden = false
+            }
         }
     }
     
     func loadUrl() {
+        if url?.host == "twitter.com" {
+            webView.customUserAgent = "Googlebot/2.1 (+http://www.google.com/bot.html)"
+        }
         let myURLRequest: URLRequest = URLRequest(url: url!)
         webView.load(myURLRequest)
         self.title = url!.host
@@ -279,6 +337,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         } else {
             decisionHandler(WKNavigationActionPolicy.allow)
         }
+        updateToolbar()
     }
 
     func isAd(url: URL) -> Bool {

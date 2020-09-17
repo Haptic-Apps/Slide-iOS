@@ -196,9 +196,7 @@ class NavigationHomeViewController: UIViewController {
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: "", true)
         
-        if SettingValues.subredditBar {
-            self.view.addSubview(inHeadView)
-        }
+        self.view.addSubview(inHeadView)
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = ColorUtil.theme.foregroundColor
@@ -265,6 +263,7 @@ class NavigationHomeViewController: UIViewController {
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "profile")
 
         view.addSubview(tableView)
+
         setColors(MainViewController.current)
     }
 
@@ -447,9 +446,14 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel()
+        let label: UILabel = UILabel()
         label.textColor = ColorUtil.baseAccent
-        label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        label.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
+        let toReturn = UIView()
+        toReturn.addSubview(label)
+        label.centerYAnchor == toReturn.centerYAnchor
+        label.leftAnchor == toReturn.safeLeftAnchor + 16
+        toReturn.backgroundColor = ColorUtil.theme.foregroundColor
 
         if section == 0 {
             return headerView
@@ -476,8 +480,6 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
             }
         }
 
-        let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.foregroundColor
         return toReturn
     }
 
@@ -680,6 +682,20 @@ extension NavigationHomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // Any scrolling
         lastY = scrollView.contentOffset.y
+        if lastY > self.headerView.frame.size.height * 0.5 && (self.tableView.sectionIndexView?.isHidden ?? false) {
+            tableView.sectionIndexView?.isHidden = false
+            tableView.sectionIndexView?.alpha = 0
+            UIView.animate(withDuration: 0.2) {
+                self.tableView.sectionIndexView?.alpha = 1
+            }
+        } else if lastY < self.headerView.frame.size.height * 0.5 && !(self.tableView.sectionIndexView?.isHidden ?? true) {
+            tableView.sectionIndexView?.alpha = 1
+            UIView.animate(withDuration: 0.2, animations: {
+                self.tableView.sectionIndexView?.alpha = 0
+            }) { (_) in
+                self.tableView.sectionIndexView?.isHidden = true
+            }
+        }
     }
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -867,7 +883,7 @@ class CurrentAccountHeaderView: UIView {
     var accountAgeLabel = UILabel().then {
         $0.font = FontGenerator.fontOfSize(size: 10, submission: false)
         $0.textColor = ColorUtil.theme.fontColor
-        $0.numberOfLines = 1
+        $0.numberOfLines = 0
         $0.text = ""
     }
     
@@ -956,8 +972,8 @@ extension CurrentAccountHeaderView {
                         
         upperButtonStack.heightAnchor == 44
         
-        contentView.horizontalAnchors == self.horizontalAnchors
-        contentView.verticalAnchors == self.verticalAnchors
+        contentView.horizontalAnchors == self.horizontalAnchors + 4
+        contentView.verticalAnchors == self.verticalAnchors + 4
         
         accountImageView.leftAnchor == contentView.safeLeftAnchor + 10
         accountImageView.topAnchor == contentView.topAnchor
@@ -1044,11 +1060,14 @@ extension CurrentAccountHeaderView {
             }()
             let day = Calendar.current.ordinality(of: .day, in: .month, for: Date()) == Calendar.current.ordinality(of: .day, in: .month, for: creationDate as Date)
             let month = Calendar.current.ordinality(of: .month, in: .year, for: Date()) == Calendar.current.ordinality(of: .month, in: .year, for: creationDate as Date)
-            if day && month {
-                accountAgeLabel.text = "🍰 Created \(creationDateString) 🍰\n\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0)) Karma"
-            } else {
-                accountAgeLabel.text = "Created \(creationDateString)\n\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0)) Karma"
-            }
+            let attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: accountAgeLabel.font]
+            let currentText = NSMutableAttributedString()
+            currentText.append(NSAttributedString(string: day && month ? "🍰 Created \(creationDateString) 🍰" : "Created \(creationDateString)", attributes: attrs as [NSAttributedString.Key: Any]))
+            currentText.append(NSAttributedString(string: "\n"))
+            currentText.append(NSAttributedString(string: "\((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0))", attributes: attrs as [NSAttributedString.Key: Any]))
+            currentText.append(NSAttributedString(string: " karma", attributes: attrs as [NSAttributedString.Key: Any]))
+            
+            accountAgeLabel.attributedText = currentText
             setLoadingState(false)
         } else {
             print("No account to show!")
@@ -1264,7 +1283,7 @@ class AccountShortcutsView: UIView {
         //infoStack.topAnchor == topAnchor
         //infoStack.horizontalAnchors == horizontalAnchors
         
-        cellStack.topAnchor == topAnchor + 10
+        cellStack.topAnchor == topAnchor
         cellStack.horizontalAnchors == horizontalAnchors
         
         cellStack.bottomAnchor == bottomAnchor

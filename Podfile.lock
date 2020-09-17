@@ -1,61 +1,57 @@
 PODS:
   - Alamofire (4.9.1)
-  - Anchorage (4.4.0)
-  - BadgeSwift (8.0.0)
-  - BiometricAuthentication (3.1.2)
-  - DTCoreText (1.6.23):
-    - DTCoreText/Core (= 1.6.23)
+  - DTCoreText (1.6.25):
+    - DTCoreText/Core (= 1.6.25)
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTCoreText/Core (1.6.23):
+  - DTCoreText/Core (1.6.25):
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTFoundation/Core (1.7.14)
-  - DTFoundation/DTAnimatedGIF (1.7.14)
-  - DTFoundation/DTHTMLParser (1.7.14):
+  - DTFoundation/Core (1.7.15)
+  - DTFoundation/DTAnimatedGIF (1.7.15)
+  - DTFoundation/DTHTMLParser (1.7.15):
     - DTFoundation/Core
-  - DTFoundation/UIKit (1.7.14):
+  - DTFoundation/UIKit (1.7.15):
     - DTFoundation/Core
-  - Embassy (4.1.1)
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (111.0.0):
+  - MaterialComponents/ActivityIndicator (116.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (111.0.0)
-  - MaterialComponents/Availability (111.0.0)
-  - MaterialComponents/Elevation (111.0.0):
+  - MaterialComponents/AnimationTiming (116.0.0)
+  - MaterialComponents/Availability (116.0.0)
+  - MaterialComponents/Elevation (116.0.0):
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Ink (111.0.0):
+  - MaterialComponents/Ink (116.0.0):
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (111.0.0)
-  - MaterialComponents/private/Application (111.0.0)
-  - MaterialComponents/private/Color (111.0.0):
+  - MaterialComponents/Palettes (116.0.0)
+  - MaterialComponents/private/Application (116.0.0)
+  - MaterialComponents/private/Color (116.0.0):
     - MaterialComponents/Availability
-  - MaterialComponents/private/Math (111.0.0)
-  - MaterialComponents/ProgressView (111.0.0):
+  - MaterialComponents/private/Math (116.0.0)
+  - MaterialComponents/ProgressView (116.0.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
-  - MaterialComponents/Ripple (111.0.0):
+  - MaterialComponents/Ripple (116.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/ShadowElevations (111.0.0)
-  - MaterialComponents/ShadowLayer (111.0.0):
+  - MaterialComponents/ShadowElevations (116.0.0)
+  - MaterialComponents/ShadowLayer (116.0.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (111.0.0):
+  - MaterialComponents/Tabs (116.0.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Elevation
     - MaterialComponents/Ink
@@ -66,7 +62,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (111.0.0):
+  - MaterialComponents/Typography (116.0.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
     - MDFTextAccessibility
@@ -80,38 +76,24 @@ PODS:
   - MTColorDistance (0.0.3)
   - OpalImagePicker (3.0.0)
   - QuickLayout (3.0.0)
-  - Realm (5.3.3):
-    - Realm/Headers (= 5.3.3)
-  - Realm/Headers (5.3.3)
-  - RealmSwift (5.3.3):
-    - Realm (= 5.3.3)
   - reddift (2.0.3):
     - HTMLSpecialCharacters
     - MiniKeychain
   - RLBAlertsPickers (1.1.1)
   - SDCAlertView (10.0)
-  - SDWebImage (5.8.4):
-    - SDWebImage/Core (= 5.8.4)
-  - SDWebImage/Core (5.8.4)
-  - Starscream (3.1.1)
   - SubtleVolume (1.1.0)
   - SwiftEntryKit (1.2.1):
     - QuickLayout (= 3.0.0)
   - SwiftLinkPreview (3.0.1)
-  - SwiftLint (0.39.2)
+  - SwiftLint (0.40.2)
   - SwiftyJSON (5.0.0)
   - TGPControls (5.1.0)
-  - Then (2.7.0)
   - YoutubePlayer-in-WKWebView (0.3.4)
   - YYText (1.0.7)
 
 DEPENDENCIES:
   - Alamofire (~> 4.3)
-  - Anchorage (~> 4.3)
-  - BadgeSwift (~> 8.0)
-  - BiometricAuthentication
   - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
-  - Embassy (~> 4.1.0)
   - LicensesViewController (~> 0.7.0)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/ProgressView
@@ -119,30 +101,22 @@ DEPENDENCIES:
   - MKColorPicker (from `https://github.com/ccrama/MKColorPicker`)
   - MTColorDistance
   - OpalImagePicker
-  - RealmSwift
   - reddift (from `https://github.com/ccrama/reddift`)
   - RLBAlertsPickers (from `https://github.com/ccrama/Alerts-Pickers`)
   - SDCAlertView (from `https://github.com/ccrama/SDCAlertView`)
-  - SDWebImage
-  - Starscream (~> 3.1.1)
   - SubtleVolume
   - SwiftEntryKit (from `https://github.com/ccrama/SwiftEntryKit`)
   - SwiftLinkPreview (~> 3.0.1)
   - SwiftLint
   - SwiftyJSON (from `https://github.com/ccrama/SwiftyJSON.git`, branch `hotfix-xcode12`)
   - TGPControls
-  - Then
   - YoutubePlayer-in-WKWebView (~> 0.3.0)
   - YYText
 
 SPEC REPOS:
   trunk:
     - Alamofire
-    - Anchorage
-    - BadgeSwift
-    - BiometricAuthentication
     - DTFoundation
-    - Embassy
     - HTMLSpecialCharacters
     - LicensesViewController
     - MaterialComponents
@@ -154,15 +128,10 @@ SPEC REPOS:
     - MTColorDistance
     - OpalImagePicker
     - QuickLayout
-    - Realm
-    - RealmSwift
-    - SDWebImage
-    - Starscream
     - SubtleVolume
     - SwiftLinkPreview
     - SwiftLint
     - TGPControls
-    - Then
     - YoutubePlayer-in-WKWebView
     - YYText
 
@@ -185,7 +154,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   DTCoreText:
-    :commit: 27ab92f3e42f31a27e3f68db004a5583f502e101
+    :commit: 361b9f8741866eee875d9bcdcfd635fca4533027
     :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
@@ -208,15 +177,11 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
-  Anchorage: d7f02c4f9425b537053237aab11ae97e59b55f36
-  BadgeSwift: a81547ffde1f462bb5fc02e3fa3fdcbc1b888354
-  BiometricAuthentication: 36445f3ab77699489f91995bed887be89890afac
-  DTCoreText: 67023bb51b26711d5f640c851f4845aea14c24c9
-  DTFoundation: 25aa19bb7c6e225b1dfae195604fb8cf1da0ab4c
-  Embassy: eb36dc783ea20b792426461bbaff8c3f256e0331
+  DTCoreText: e92f4cf6b36d9d71ce4436d12cf089d74ab0596b
+  DTFoundation: 767ca882209ef4d5132ec7e702526d5ed5bb71a2
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 533042da998b97ad13a6f544268f8026e8161cc5
+  MaterialComponents: a6cf920307c2864f71e37972620f24c4d14fae8d
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MDFTextAccessibility: 85c09a1bd9c321f494348e632a25063bcda35a53
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
@@ -226,23 +191,18 @@ SPEC CHECKSUMS:
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   OpalImagePicker: 38e772dd93a54431fc516b33e1f337c50f745834
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
-  Realm: 2d57ea355bf8ca2a0964d6bfb38d28d7ff2addf6
-  RealmSwift: 0a709536ecea30eea1d3c514f6ade2ed078dee3c
   reddift: 42af05f3d2db6315cdf144be9256de36e86a523a
   RLBAlertsPickers: c93e83c13526a5840b67eb52f702d3f83eeaac6a
   SDCAlertView: 5fbc48cae6d7bf9781097e3f27883924ef3b922c
-  SDWebImage: cf6922231e95550934da2ada0f20f2becf2ceba9
-  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
   SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
   SwiftEntryKit: 1661b766dd22b07679e6ebb326ccfbd81ceb0a20
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
-  SwiftLint: 22ccbbe3b8008684be5955693bab135e0ed6a447
+  SwiftLint: 1216c910d27c2633ade33b4f071bb6b930982e62
   SwiftyJSON: f0574c07d8ca1644050db687067209e3033a89a0
   TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
-  Then: acfe0be7e98221c6204e12f8161459606d5d822d
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 33060347e8b00e95fe117e381626fbfbb6465ae7
+PODFILE CHECKSUM: 3ba39067eb1b6cbb76b4f6c8739f48bf578e2f7b
 
 COCOAPODS: 1.9.3

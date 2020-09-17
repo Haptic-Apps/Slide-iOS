@@ -79,7 +79,7 @@ extension CommentViewController: LinkCellViewDelegate, SubmissionMoreDelegate {
     /// Displays more info and presents alert.
     func more(_ cell: LinkCellView) {
         if NetworkMonitor.shared.online {
-            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self, index: 0)
+            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: 0)
         }
     }
     
@@ -109,7 +109,7 @@ extension CommentViewController: LinkCellViewDelegate, SubmissionMoreDelegate {
                     }
                 })
             } catch {
-                
+
             }
         }
     }

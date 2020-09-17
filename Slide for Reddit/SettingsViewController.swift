@@ -130,7 +130,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     
     var oldAppMode = SettingValues.appMode
     
-
     override func loadView() {
         super.loadView()
         if SettingValues.isPro {

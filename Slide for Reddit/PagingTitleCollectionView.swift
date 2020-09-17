@@ -11,6 +11,7 @@ import UIKit
 
 public protocol PagingTitleDelegate {
     func didSelect(_ subreddit: String)
+    func didSetWidth()
 }
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
@@ -38,11 +39,12 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         //self.collectionViewLayout.scrollDirection = .horizontal
         
         self.collectionViewLayout.delegate = self
+
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         self.addSubview(collectionView)
         collectionView.edgeAnchors == self.edgeAnchors
         collectionView.backgroundColor = .clear
-        
+
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         self.collectionView.bounces = false
@@ -67,14 +69,13 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         super.layoutSubviews()
         if !widthSet {
             widthSet = true
-            print("Setting width")
             collectionViewLayout.reset()
             collectionView.reloadData()
+            delegate.didSetWidth()
         } else {
+            collectionView.contentOffset = oldOffset
         }
         addGradientMask()
-        
-        collectionView.contentOffset = oldOffset
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -112,7 +113,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             originalOffset = parent.contentOffset.x
         }*/
     }
-        
+            
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.collectionView.mask?.frame = self.collectionView.bounds
         /* Disable for now
@@ -264,26 +265,24 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         selectedView.backgroundColor = ColorUtil.theme.backgroundColor
         selectedBackgroundView = selectedView
         
-        if let icon = Subscriptions.icon(for: subreddit) {
+        self.icon.contentMode = .center
+        if subreddit.contains("m/") {
+            self.icon.image = SubredditCellView.defaultIconMulti
+        } else if subreddit.lowercased() == "all" {
+            self.icon.image = SubredditCellView.allIcon
+            self.sideView.backgroundColor = GMColor.blue500Color()
+        } else if subreddit.lowercased() == "frontpage" {
+            self.icon.image = SubredditCellView.frontpageIcon
+            self.sideView.backgroundColor = GMColor.green500Color()
+        } else if subreddit.lowercased() == "popular" {
+            self.icon.image = SubredditCellView.popularIcon
+            self.sideView.backgroundColor = GMColor.purple500Color()
+        } else if let icon = Subscriptions.icon(for: subreddit) {
             self.icon.contentMode = .scaleAspectFill
             self.icon.image = UIImage()
             self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
         } else {
-            self.icon.contentMode = .center
-            if subreddit.contains("m/") {
-                self.icon.image = SubredditCellView.defaultIconMulti
-            } else if subreddit.lowercased() == "all" {
-                self.icon.image = SubredditCellView.allIcon
-                self.sideView.backgroundColor = GMColor.blue500Color()
-            } else if subreddit.lowercased() == "frontpage" {
-                self.icon.image = SubredditCellView.frontpageIcon
-                self.sideView.backgroundColor = GMColor.green500Color()
-            } else if subreddit.lowercased() == "popular" {
-                self.icon.image = SubredditCellView.popularIcon
-                self.sideView.backgroundColor = GMColor.purple500Color()
-            } else {
-                self.icon.image = SubredditCellView.defaultIcon
-            }
+            self.icon.image = SubredditCellView.defaultIcon
         }
     }
 }
@@ -330,7 +329,6 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
     init(scrollDirection: UICollectionView.ScrollDirection) {
         super.init()
         self.scrollDirection = scrollDirection
-
     }
 
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {

@@ -73,6 +73,8 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         setNeedsStatusBarAppearanceUpdate()
         
         submissionDataSource.delegate = self
+        
+        self.splitViewController?.presentsWithGesture = false
     }
     
     var first = true
@@ -97,15 +99,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         if !firstViewController.loaded {
             PagingCommentViewController.savedComment = firstViewController
             firstViewController.forceLoad = true
-        }
-        if SettingValues.commentGesturesMode == .FULL {
-            for view in self.view.subviews {
-                if !(view is UICollectionView) {
-                    if let scrollView = view as? UIScrollView {
-                        scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                    }
-                }
-            }
         }
 
         setViewControllers([firstViewController],
@@ -165,9 +158,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        if SettingValues.commentGesturesMode == .FULL {
-            return nil
-        }
         let id = (viewController as! CommentViewController).submission!.getId()
         var viewControllerIndex = -1
         for item in startIndex..<submissionDataSource.content.count {

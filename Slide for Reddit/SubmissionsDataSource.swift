@@ -240,6 +240,7 @@ class SubmissionsDataSource {
                             CachedTitle.addTitle(s: newRS)
                         }
                         
+                        self.delegate?.doPreloadImages(values: converted)
                         var values = PostFilter.filter(converted, previous: self.content, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
                         self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
@@ -272,20 +273,19 @@ class SubmissionsDataSource {
                         } catch {
 
                         }
-                        
-                        self.delegate?.doPreloadImages(values: values)
-                        
+                            
                         DispatchQueue.main.async { [weak self] in
-                            guard let strongSelf = self else { return }
-                            if strongSelf.content.isEmpty && !SettingValues.hideSeen {
-                                strongSelf.loading = false
-                                strongSelf.delegate?.emptyState(listing)
-                            } else if strongSelf.content.isEmpty && newLinks.count != 0 && strongSelf.paginator.hasMore() {
-                                strongSelf.loading = false
-                                strongSelf.loadMore()
+                            guard let self = self else { return }
+
+                            if self.content.isEmpty && !SettingValues.hideSeen {
+                                self.loading = false
+                                self.delegate?.emptyState(listing)
+                            } else if self.content.isEmpty && newLinks.count != 0 && self.paginator.hasMore() {
+                                self.loading = false
+                                self.loadMore()
                             } else {
-                                strongSelf.loading = false
-                                strongSelf.delegate?.loadSuccess(before: before, count: strongSelf.content.count)
+                                self.loading = false
+                                self.delegate?.loadSuccess(before: before, count: self.content.count)
                             }
                         }
                     }

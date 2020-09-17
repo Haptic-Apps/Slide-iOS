@@ -17,6 +17,18 @@ extension UIViewController {
         
         setNeedsStatusBarAppearanceUpdate()
     }
+    
+    public func disableDismissalRecognizers() {
+        navigationController?.presentationController?.presentedView?.gestureRecognizers?.forEach {
+            $0.isEnabled = false
+        }
+    }
+
+    public func enableDismissalRecognizers() {
+        navigationController?.presentationController?.presentedView?.gestureRecognizers?.forEach {
+            $0.isEnabled = true
+        }
+    }
 }
 
 // Helper function inserted by Swift 4.2 migrator.
@@ -29,3 +41,4 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 	guard let input = input else { return nil }
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
+

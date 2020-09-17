@@ -332,7 +332,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>179</string>
+	<string>183</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -363,6 +363,12 @@
 	<string>Slide uses this permission to save photos and videos to your camera roll</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Slide uses photos in order to attach images to comments and submissions</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>SingleSubredditIntent</string>
+		<string>SubredditIntent</string>
+		<string>TimelineSubredditIntent</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>googleicon.ttf</string>
@@ -377,6 +383,23 @@
 		<string>RobotoCondensed-Italic.ttf</string>
 		<string>Roboto-Italic.ttf</string>
 	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).AppDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

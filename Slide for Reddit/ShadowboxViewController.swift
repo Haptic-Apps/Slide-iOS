@@ -195,7 +195,9 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
 
         if nextIndex == submissionDataSource.content.count - 2 && !submissionDataSource.loading {
-            submissionDataSource.getData(reload: false)
+            DispatchQueue.main.async {
+                self.submissionDataSource.getData(reload: false)
+            }
         }
         
         let s = submissionDataSource.content[nextIndex]

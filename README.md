@@ -11,6 +11,18 @@ Slide is a powerful open-source, ad-free, Swift-based Reddit browser for iOS. Fe
 <br>
 <br>
 
+## Sponsors
+
+Thank you to our awesome Github Sponsors, who help keep the Slide project going
+
+|  | GitHub profile |
+| --------- | ------------- |
+| **KevinNThomas** | https://github.com/KevinNThomas |
+| **andrewkdinh** | https://github.com/andrewkdinh |
+
+If you're interested in sponsoring our work, check out the sponsor slots for Slide contributors on the right-hand **Sponsorship** menu
+
+
 ## Getting started
 
 To get started with Slide iOS development, you need to set up CocoaPods integration and open the Coacoapods workspace, not the default xcworkspace. **NOTE: You must open the .xcworkspace file instead of the .xcodeproj file for dependencies to load. If you are having issues with Pods or are setting up the Slide repository for the first time, try the steps below.**
@@ -20,7 +32,7 @@ Below are the steps to getting started:
 1. Clone this repo and open the Terminal
 2. In Terminal, run `pod install`
 3. Open "Slide for Reddit.xcworkspace" through Finder
-4. Modify [/scripts/install-filter.sh](/scripts/install-filter.sh) with the information it asks for, then run it from the repo root directory (`sh ./scripts/install-filter.sh`). Once done, your developer info will automatically replace the defaults (even if you change branches!), and you can't accidentally overwrite the defaults. (If you don't want to do this, just put a new value in the USR_DOMAIN variable in the main target's Build Settings, then modify the signing info yourself. Make sure you don't commit changes to the signing info.)
+4. Modify [/scripts/install-filter.sh](/scripts/install-filter.sh) with the information it asks for, then run it from the repo root directory (`sh scripts/install-filter.sh`). Once done, your developer info will automatically replace the defaults (even if you change branches!), and you can't accidentally overwrite the defaults. (If you don't want to do this, just put a new value in the USR_DOMAIN variable in the main target's Build Settings, then modify the signing info yourself. Make sure you don't commit changes to the signing info.)
 
 ### If you are having trouble building on XCode 10 or MacOS Mojave
 
