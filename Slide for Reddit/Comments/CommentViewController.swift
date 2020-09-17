@@ -65,7 +65,6 @@ class CommentViewController: MediaViewController {
     
     var keyboardHeight = CGFloat(0)
     
-    var single = true
     var hasDone = false
     var configuredOnce = false
     
@@ -194,21 +193,6 @@ class CommentViewController: MediaViewController {
     
     // MARK: - Initializations
     /**
-     Initializes CommentVC with a submission and Single.
-     - Parameters:
-        - submission: RSubmission
-        - single: Bool
-     */
-    init(submission: RSubmission, single: Bool) {
-        self.submission = submission
-        self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
-        self.single = single
-        self.text = [:]
-        super.init(nibName: nil, bundle: nil)
-        setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
-    }
-
-    /**
      Initializes CommentVC with a submission.
      - Parameters:
         - submission: RSubmission
@@ -313,7 +297,7 @@ class CommentViewController: MediaViewController {
         tableView.addSubview(refreshControl!)
 
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
-        
+
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBar.Style.minimal
         searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
@@ -331,44 +315,26 @@ class CommentViewController: MediaViewController {
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
 
         tableView.separatorStyle = .none
-        NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(keyboardWillShow(_:)),
-                name: UIResponder.keyboardWillShowNotification,
-                object: nil
-        )
-        NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(keyboardWillHide(_:)),
-                name: UIResponder.keyboardWillHideNotification,
-                object: nil)
+        // Notifications
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onlineStatusChanged(_:)), name: .online, object: nil)
 
         headerCell = FullLinkCellView()
         headerCell!.del = self
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
-        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
-        panGesture.direction = .horizontal
-        panGesture.delegate = self
-        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-           //navGesture.require(toFail: panGesture)
-        }
-        self.presentationController?.delegate = self
-//        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
-//        pan.direction = .horizontal
-        if !loaded && (single || forceLoad) {
-            refreshComments(self)
+        if SettingValues.commentGesturesMode != .NONE {
+            setupGestures()
         }
         
-        self.tableView.addGestureRecognizer(panGesture)
-        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
-            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-        }
-        // Notifications
-        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
-        NotificationCenter.default.addObserver(forName: .online, object: nil, queue: .main) { [weak self] notification in
-            self?.onlineStatusChanged(notification)
+        self.presentationController?.delegate = self
+
+        if !loaded && forceLoad {
+            print("Ummmm.")
+            refreshComments(self)
         }
     }
     
@@ -388,7 +354,7 @@ class CommentViewController: MediaViewController {
             let search = UIButton.init(type: .custom)
             search.accessibilityLabel = "Search"
             search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
-            search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
+            search.addTarget(self, action: #selector(search(_:)), for: UIControl.Event.touchUpInside)
             search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             searchB = UIBarButtonItem.init(customView: search)
             
@@ -430,7 +396,9 @@ class CommentViewController: MediaViewController {
         
         setNeedsStatusBarAppearanceUpdate()
         if navigationController != nil && (didDisappearCompletely || !loaded) {
-            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
+            DispatchQueue.main.async {
+                self.setupTitleView(self.submission == nil ? self.subreddit : self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+            }
             self.updateToolbar()
         }
     }
@@ -444,6 +412,7 @@ class CommentViewController: MediaViewController {
             }
             if !configuredOnce {
                 headerCell.aspectWidth = self.view.frame.size.width
+                // TODO: Leak here with headerCell initialization.
                 headerCell.configure(submission: submission!, parent: self, nav: self.navigationController, baseSub: submission!.subreddit, parentWidth: self.navigationController?.view.bounds.size.width ?? self.tableView.frame.size.width, np: np)
                 if submission!.isSelf {
                     headerCell.showBody(width: self.view.frame.size.width - 24)
@@ -775,7 +744,6 @@ class CommentViewController: MediaViewController {
         - cell: CommentDepthCell
      */
     func pushedMoreButton(_ cell: CommentDepthCell) {
-
     }
 
     /**
@@ -866,11 +834,15 @@ class CommentViewController: MediaViewController {
      - Parameters:
         - notification: Notification
      */
+    // TODO: Leak here. And in it's usage area.
     @objc private func onlineStatusChanged(_ notification: Notification) {
         if let online = notification.userInfo?["online"] as? Bool {
             switch online {
                 case true:
-                    refreshAll(self)
+                    DispatchQueue.main.async {
+                        self.refreshComments(self)
+                        self.updateToolbar()
+                    }
                 case false:
                     loadOffline()
             }
@@ -879,6 +851,7 @@ class CommentViewController: MediaViewController {
     
     // MARK: - Offline Functions
     /// Loads cached data for offline use.
+    // TODO: Has a leak.
     func loadOffline() {
         self.loaded = true
             do {
@@ -940,8 +913,10 @@ class CommentViewController: MediaViewController {
     // MARK: - Comment Functions
     // Removes saved data for Comments.
     private func removeCommentsData() {
-        self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
-        session = (UIApplication.shared.delegate as! AppDelegate).session
+        DispatchQueue.main.async {
+            self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
+        }
+        self.session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
         self.shouldAnimateLoad = false
@@ -952,10 +927,13 @@ class CommentViewController: MediaViewController {
         cDepth.removeAll()
         comments.removeAll()
         hidden.removeAll()
-        tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     // Adds the comments as an RComment.
+    // TODO: Leak here.
     private func addCommentsToRealm() {
         if !self.comments.isEmpty {
             do {
@@ -982,7 +960,12 @@ class CommentViewController: MediaViewController {
         }
     }
     
-    // Refreshes and loads Comments
+    /**
+     Refreshes and loads Comments
+     - Parameters:
+        - tuple: ((Listing, Listing))
+        - link: RSubmission
+     */
     private func loadOnlineComments(from tuple: ((Listing, Listing)), and link: RSubmission) {
         let startDepth = 1
         let listing = tuple.1
@@ -1029,11 +1012,11 @@ class CommentViewController: MediaViewController {
         gettimeofday(&time, nil)
         self.paginator = listing.paginator
         
+        addCommentsToRealm()
+        
         if !allIncoming.isEmpty {
             self.updateStrings(allIncoming)
         }
-        
-        addCommentsToRealm()
         
         self.doArrays()
         self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
@@ -1145,6 +1128,7 @@ class CommentViewController: MediaViewController {
                 self.tableView.reloadData()
                 self.collapseAll()
             } else {
+                print("Else.")
                 if self.finishedPush {
                     self.tableViewReloadingAnimation()
                 } else {
@@ -1166,13 +1150,14 @@ class CommentViewController: MediaViewController {
             try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, limit: SettingValues.commentLimit, completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):
-                    print(error)
+                    print("Session Error: \(error.localizedDescription)")
                     self.loadOffline()
                 case .success(let tuple):
                     self.loadOnlineComments(from: tuple, and: link)
                 }
             })
         } catch {
+            print("Error retrieving these comments, error 101.")
             BannerUtil.makeBanner(text: "Unable to Retrieve Comments! Try Again Later.", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
         }
     }
@@ -1190,7 +1175,9 @@ class CommentViewController: MediaViewController {
             // Assigning global variable to link.subreddit.
             sub = link.subreddit
             // Changes the Bar accordingly.
-            setupTitleView(link.subreddit, icon: link.subreddit_icon)
+            DispatchQueue.main.async {
+                self.setupTitleView(link.subreddit, icon: link.subreddit_icon)
+            }
             reset = false
             // Assigns name of the Post.
             var name = link.name
@@ -1198,10 +1185,8 @@ class CommentViewController: MediaViewController {
                 name = name.replacingOccurrences(of: "t3_", with: "")
             }
             if !NetworkMonitor.shared.online {
-                // Loads offline if there is no connection.
                 self.loadOffline()
             } else {
-                // Automatically reloads and refreshes data and tableView if connection comes back on.
                 self.retrieveCommentsFromPost(with: name, and: link)
             }
         }
@@ -1450,7 +1435,9 @@ class CommentViewController: MediaViewController {
             }
         }
         
-        self.setupTitleView(self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+        DispatchQueue.main.async {
+            self.setupTitleView(self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+        }
         
         self.navigationItem.backBarButtonItem?.title = ""
         self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
@@ -1479,7 +1466,9 @@ class CommentViewController: MediaViewController {
         
         self.createJumpButton(true)
         if let submission = self.submission {
-            self.setupTitleView(submission.subreddit, icon: submission.subreddit_icon)
+            DispatchQueue.main.async {
+                self.setupTitleView(submission.subreddit, icon: submission.subreddit_icon)
+            }
         }
         self.updateToolbar()
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
@@ -1577,7 +1566,9 @@ class CommentViewController: MediaViewController {
             
             self.commentDepthColors = ColorUtil.getCommentDepthColors()
             
-            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
+            DispatchQueue.main.async {
+                self.setupTitleView(self.submission == nil ? self.subreddit : self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+            }
             
             self.navigationItem.backBarButtonItem?.title = ""
             
@@ -1879,9 +1870,11 @@ class CommentViewController: MediaViewController {
     @objc func refreshAll(_ sender: AnyObject) {
         context = ""
         reset = true
-        refreshControl?.beginRefreshing()
-        refreshComments(sender)
-        updateToolbar()
+        DispatchQueue.main.async {
+            self.refreshControl?.beginRefreshing()
+            self.refreshComments(sender)
+            self.updateToolbar()
+        }
     }
 
     /**
@@ -2085,13 +2078,15 @@ class CommentViewController: MediaViewController {
 
     /// Adds all items to the toolbar section.
     func updateToolbar() {
-        navigationController?.setToolbarHidden(false, animated: false)
+        DispatchQueue.main.async {
+            self.navigationController?.setToolbarHidden(false, animated: false)
+        }
         self.isToolbarHidden = false
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         if !context.isEmpty() {
             items.append(space)
-            let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.refreshAll(_:)))
+            let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(refreshAll(_:)))
             loadFullThreadButton.accessibilityLabel = "Load full thread"
             items.append(loadFullThreadButton)
             items.append(space)
@@ -2735,7 +2730,7 @@ class CommentViewController: MediaViewController {
         return children.count - 1
     }
     
-    // TODO: What does this do?
+    // Loads all comments
     func loadAllMore() {
         expandAll()
         

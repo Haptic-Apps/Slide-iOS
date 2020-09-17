@@ -76,7 +76,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         let url = link.url!
         let type = ContentType.getContentType(submission: link)
         commentCallback = { () in
-            let comment = CommentViewController.init(submission: link, single: true)
+            let comment = CommentViewController.init(submission: link)
                 VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
         

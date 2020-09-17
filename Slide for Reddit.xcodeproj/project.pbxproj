@@ -294,7 +294,6 @@
 		BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9742371F0409BA00BF48E0 /* SettingsComments.swift */; };
 		BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE981D341E31855500BD3846 /* OpenInChrome.swift */; };
 		BE99C9F72378AC91007911E2 /* Slide_Screenshot_Automation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */; };
-		BE99C9FF2378ACF6007911E2 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */; };
 		BE9BFDC824F7198200D74167 /* WrappingHeaderFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */; };
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
@@ -758,7 +757,6 @@
 		BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Slide Screenshot Automation.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slide_Screenshot_Automation.swift; sourceTree = "<group>"; };
 		BE99C9F82378AC91007911E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
 		BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingHeaderFlowLayout.swift; sourceTree = "<group>"; };
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
@@ -2544,14 +2542,12 @@
 				MARKETING_VERSION = 5.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
@@ -2577,13 +2573,13 @@
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide WatchKit 2020";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN)";
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.bundledwatchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
@@ -2616,7 +2612,6 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
@@ -2643,9 +2638,7 @@
 				);
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide 2020";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2681,12 +2674,10 @@
 				MARKETING_VERSION = 5.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).debug.Open-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
@@ -2716,9 +2707,7 @@
 				);
 				MARKETING_VERSION = 5.4;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).debug.Open-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide 2020";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2785,7 +2774,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide.debug";
 				USR_DISPLAY_NAME = "Slide Debug";
-				USR_DOMAIN = ccrama.me;
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
@@ -2844,7 +2832,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_DISPLAY_NAME = Slide;
-				USR_DOMAIN = ccrama.me;
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.bundledwatchkitapp.watchkitextension";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -2879,7 +2866,6 @@
 					"\"reddift\"",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -2887,7 +2873,6 @@
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
@@ -2922,7 +2907,6 @@
 					"\"reddift\"",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide 2020";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -2949,7 +2933,6 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide for Reddit.app/Slide for Reddit";
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
@@ -2992,7 +2975,6 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Slide for Reddit";
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;
@@ -3042,7 +3024,6 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Slide for Reddit";
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.debug.watchkitapp.watchkitextension";
 			};
 			name = Debug;

@@ -67,7 +67,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         let type = ContentType.getContentType(submission: link)
 
         commentCallback = { () in
-            let comment = CommentViewController.init(submission: link, single: true)
+            let comment = CommentViewController.init(submission: link)
             VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
         isUpvoted = ActionStates.getVoteDirection(s: link) == VoteDirection.up
