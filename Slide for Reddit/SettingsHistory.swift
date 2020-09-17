@@ -34,6 +34,8 @@ class SettingsHistory: BubbleSettingTableViewController {
     var dot = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    
+    var exportCollectionsCell: UITableViewCell = InsetCell()
 
     var clearHistory: UITableViewCell = InsetCell()
 
@@ -81,12 +83,15 @@ class SettingsHistory: BubbleSettingTableViewController {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "History"
-        self.headers = ["Settings", "Clear history"]
+        self.headers = ["Settings", "Clear history", "Export data"]
 
         createCell(saveHistoryCell, saveHistory, isOn: SettingValues.saveHistory, text: "Save submission and subreddit history")
         createCell(saveNSFWHistoryCell, saveNSFWHistory, isOn: !SettingValues.saveNSFWHistory, text: "Hide NSFW submission and subreddit history")
         createCell(readOnScrollCell, readOnScroll, isOn: SettingValues.markReadOnScroll, text: "Mark submissions as read when scrolled off screen")
         createCell(dotCell, dot, isOn: SettingValues.newIndicator, text: "New submissions indicator")
+        createCell(exportCollectionsCell, nil, isOn: false, text: "Export your Slide collections as .csv")
+        exportCollectionsCell.accessoryType = .disclosureIndicator
+
         dotCell.detailTextLabel?.numberOfLines = 0
         dotCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         dotCell.detailTextLabel?.text = "Enabling this will disable the 'grayed out' effect of read submissions"
@@ -123,6 +128,9 @@ class SettingsHistory: BubbleSettingTableViewController {
                 BannerUtil.makeBanner(text: "Subreddit history cleared!", color: GMColor.green500Color(), seconds: 5, context: self)
             }
         }
+        if indexPath.section == 2 {
+           exportCollectionsCSV(from: Collections.collectionIDs)
+       }
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -135,8 +143,31 @@ class SettingsHistory: BubbleSettingTableViewController {
             readOnScroll.isEnabled = false
         }
     }
+    func exportCollectionsCSV(from: NSDictionary) {
+        var csvString = "\("Collection Name"),\("Reddit permalink")\n\n"
+        for key in from.allKeys {
+            csvString += "\(from[key] ?? "") , https://redd.it/\(key.replacingOccurrences(of: "t3_", with: ""))\n"
+        }
+
+        let fileManager = FileManager.default
+        do {
+            let path = try fileManager.url(for: .documentDirectory, in: .allDomainsMask, appropriateFor: nil, create: false)
+            let fileURL = path.appendingPathComponent("Slide-Collections\(Date().dateString().replacingOccurrences(of: " ", with: "-").replacingOccurrences(of: ",", with: "-")).csv")
+            try csvString.write(to: fileURL, atomically: true, encoding: .utf8)
+            var filesToShare = [Any]()
+
+            filesToShare.append(fileURL)
+
+            let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
+            self.present(activityViewController, animated: true, completion: nil)
+        } catch {
+            print("error creating file")
+        }
+
+    }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -156,6 +187,8 @@ class SettingsHistory: BubbleSettingTableViewController {
             case 1: return self.clearSubs
             default: fatalError("Unknown row in section 0")
             }
+        case 2:
+            return exportCollectionsCell
 
         default: fatalError("Unknown section")
         }
@@ -165,6 +198,7 @@ class SettingsHistory: BubbleSettingTableViewController {
         switch section {
         case 0: return 5   // section 0 has 2 rows
         case 1: return 2
+        case 2: return 1
         default: fatalError("Unknown number of sections")
         }
     }
