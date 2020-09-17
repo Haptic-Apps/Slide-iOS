@@ -2710,7 +2710,6 @@
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
-				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Debug;
 		};
@@ -2748,7 +2747,6 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
-				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Release;
 		};
