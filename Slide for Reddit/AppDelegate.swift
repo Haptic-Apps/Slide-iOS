@@ -519,11 +519,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                     splitViewController.setViewController(main, for: .secondary)
                     
-                    let snapshotImageView = UIImageView(image: window.snapshotImage())
+                    guard let snapshotImageView = window.snapshotView(afterScreenUpdates: true) else {
+                        return main
+                    }
                     window.addSubview(snapshotImageView)
                     window.rootViewController = splitViewController
                     window.bringSubviewToFront(snapshotImageView)
-                    
+
                     UIView.animate(withDuration: 0.4, animations: { () -> Void in
                         snapshotImageView.alpha = 0
                     }, completion: { (success) -> Void in
@@ -548,7 +550,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     splitViewController.setViewController(main, for: .supplementary)
                     splitViewController.setViewController(PlaceholderViewController(), for: .secondary)
 
-                    let snapshotImageView = UIImageView(image: window.snapshotImage())
+                    guard let snapshotImageView = window.snapshotView(afterScreenUpdates: true) else {
+                        return main
+                    }
                     window.addSubview(snapshotImageView)
                     window.rootViewController = splitViewController
                     window.bringSubviewToFront(snapshotImageView)

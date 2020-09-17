@@ -43,7 +43,8 @@ class MultipleOption(Option):
 
 def main(_):
     def list_callback(option, _, value, option_parser):
-        setattr(option_parser.values, option.dest, [item.strip() for item in value.split(',')])
+        values = [item.strip() for item in value.split(',')]
+        setattr(option_parser.values, option.dest, values)
 
     parser = OptionParser(option_class=MultipleOption,
                           usage='usage: %prog -s source_path -o output_plist -e [exclude_paths]',
@@ -53,7 +54,8 @@ def main(_):
                       action="callback", type="string",
                       dest='input_path',
                       metavar='source_path',
-                      help='comma separated list of directories to recursively search for licenses',
+                      help='comma separated list of directories to \
+                          recursively search for licenses',
                       callback=list_callback)
     parser.add_option('-o', '--output-plist',
                       type="string",
@@ -98,13 +100,13 @@ def main(_):
 
 def plist_from_dirs(directories, excludes, include_tests):
     """
-    Recursively searches each directory in 'directories' and generate plists objects 
-    from any LICENSE files found.
+    Recursively searches each directory in 'directories' and
+    generates plist objects from any LICENSE files found.
     """
     plist = {'PreferenceSpecifiers': [], 'StringsTable': 'Acknowledgements'}
     for directory in directories:
         license_paths = license_paths_from_dir(directory)
-        plist_paths = (plist_path for plist_path in license_paths if not exclude_path(plist_path, excludes, include_tests))
+        plist_paths = [plist_path for plist_path in license_paths if not exclude_path(plist_path, excludes, include_tests)]
         for plist_path in plist_paths:
             license_dict = plist_from_file(plist_path)
             plist['PreferenceSpecifiers'].append(license_dict)

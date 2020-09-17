@@ -20,6 +20,24 @@
         }
       },
       {
+        "package": "DTCoreText",
+        "repositoryURL": "https://github.com/Cocoanetics/DTCoreText",
+        "state": {
+          "branch": null,
+          "revision": "4babc9c96b716a58d393d3c0dec914d4c13e2bd9",
+          "version": "1.6.25"
+        }
+      },
+      {
+        "package": "DTFoundation",
+        "repositoryURL": "https://github.com/Cocoanetics/DTFoundation.git",
+        "state": {
+          "branch": null,
+          "revision": "0d3fbd4479a768a02b04388c305554fa7a96659a",
+          "version": "1.7.15"
+        }
+      },
+      {
         "package": "Embassy",
         "repositoryURL": "https://github.com/envoy/Embassy",
         "state": {
