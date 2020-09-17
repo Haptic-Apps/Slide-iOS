@@ -46,30 +46,30 @@ struct Hot_PostsEntryView: View {
                 VStack(alignment: .leading) {
                     SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
                     Spacer()
-                }.frame(maxHeight: .infinity).background(
-                    ZStack(alignment: .bottomTrailing) {
-                        Link(destination: URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!) {
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text(entry.posts.posts.first!.subreddit).font(.subheadline).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
-                                    Text(entry.posts.posts.first!.author).font(.subheadline).foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
-                                }
-                                Text(entry.posts.posts.first!.title).font(.subheadline).bold().multilineTextAlignment(.leading)
-                            }.padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 4))
-                        }
-
-                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity).background(Image(uiImage: UIImage(data: entry.posts.posts.first!.imageData) ?? UIImage())
-                                                                                                                .resizable()
-                                                                                                                .aspectRatio(contentMode: .fill)
-                                                                                                                .cornerRadius(CGFloat(5))
-                                                                                                                .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
-                                                                                                                .background(
-                                                                                                                    Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor()))
-                                    .opacity(0.8))
+                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(
+                    ZStack(alignment: .bottomLeading) {
+                        Color.clear
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
+                                Text(entry.posts.posts.first!.author).font(.caption).foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
+                            }
+                            Text(entry.posts.posts.first!.title).font(.title3).bold().multilineTextAlignment(.leading)
+                        }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4)).widgetURL(URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!)
+                    }
+                    .background(
+                        Image(uiImage: UIImage(data: entry.posts.posts.first!.imageData) ?? UIImage())
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .cornerRadius(CGFloat(5))
+                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
+                        .background(
+                            Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor()))
+                                .opacity(0.8))
                 )
             } else {
                 VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0)).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)"))
                     if !entry.posts.posts.isEmpty {
                         ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
                             PostView(post: entry.posts.posts[post], redacted: false)
@@ -92,11 +92,11 @@ struct Hot_PostsEntryView: View {
 struct Hot_Posts_Previews: PreviewProvider {
     static var previews: some View {
         Hot_PostsEntryView(entry: SubredditWithPosts(date: Date(), subreddit: "redacted", posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData()))
-            .previewContext(WidgetPreviewContext(family: .systemMedium))
+            .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 
     static func getBlankPosts() -> [Post] {
-        return [Post(id: UUID().uuidString, author: "ccrama", subreddit: "slide_ios", title: "Slide is awesome!", image: "", date: 0, imageData: Data()), Post(id: UUID().uuidString, author: "ccrama", subreddit: "slide_ios", title: "Slide is awesome!", image: "", date: 0, imageData: Data())]
+        return [Post(id: UUID().uuidString, author: "ccrama", subreddit: "slide_ios", title: "Slide is awesome Slide is awesome!", image: "", date: 0, imageData: Data()), Post(id: UUID().uuidString, author: "ccrama", subreddit: "slide_ios", title: "Slide is awesome!", image: "", date: 0, imageData: Data())]
     }
 
     /*
@@ -191,6 +191,6 @@ struct SubredditViewHorizontal: View {
                     .clipped()
                 Text(self.title).font(.headline).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.8).alignmentGuide(.leading) { d in d[.leading] }
             }
-        }.widgetURL(URL(string: "slide://www.reddit.com/r/\(title)")).padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0))
+        }.padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0))
     }
 }
