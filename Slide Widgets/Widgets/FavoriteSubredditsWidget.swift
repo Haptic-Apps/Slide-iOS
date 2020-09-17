@@ -170,17 +170,13 @@ private struct MediumWidgetView: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
-        VStack {
-            HStack {
-                ForEach(entry.subreddits.prefix(2), id: \.self) { key in
-                    SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
-                        .cornerRadius(15)
-                }
-            }
-            HStack {
-                ForEach(entry.subreddits.suffix(from: 2), id: \.self) { key in
-                    SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
-                        .cornerRadius(15)
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(entry.subreddits.chunked(into: 2), id: \.self) { subreddits in
+                HStack(alignment: .top, spacing: 8) {
+                    ForEach(subreddits, id: \.self) { key in
+                        SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
+                            .cornerRadius(15)
+                    }
                 }
             }
         }
@@ -211,7 +207,7 @@ private struct SubredditView: View {
                             .frame(
                                 maxWidth: min(30, geometry.size.height * 0.75),
                                 maxHeight: min(30, geometry.size.height * 0.75),
-                                alignment: .center)
+                                alignment: .leading)
                                 // TODOccrama: .leading is an issue here. .center works but we want left alignment.
                             .clipShape(Circle())
                             .clipped()
@@ -237,5 +233,13 @@ private struct SubredditView: View {
 
     func getSchemeColor() -> UIColor {
         return colorScheme == .light ? .white : .black
+    }
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
+        }
     }
 }
