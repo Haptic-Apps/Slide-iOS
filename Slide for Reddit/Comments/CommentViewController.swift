@@ -847,8 +847,8 @@ class CommentViewController: MediaViewController {
             }
         }*/
     }
-    
-    /// Filters comments not hidden.
+
+    // Filters comments array.
     func doArrays() {
         dataArray = comments.filter({ (s) -> Bool in
             !hidden.contains(s)
@@ -2865,7 +2865,7 @@ class CommentViewController: MediaViewController {
         }
     }
 
-} // Class End
+}
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {

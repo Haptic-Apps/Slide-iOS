@@ -720,8 +720,34 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                 }
             }
+        case .POPOVER_SIMULTANEOUSLY:
+            if let present = toPresent {
+                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+            } else {
+                toExecute?()
+            }
+
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+                nav.pushNextViewControllerFromRight() {
+                }
+            } else {
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target {
+                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+                }
+            }
         }
         
+    }
+        
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
+        var currentState = OpenState.POPOVER_AFTER_NAVIGATION
+        if self.finalSubs.contains(didRequestSubreddit) {
+            currentState = .POPOVER_SIMULTANEOUSLY
+        }
+        
+        doOpen(currentState, homeViewController) {
+            self.goToSubreddit(subreddit: didRequestSubreddit)
+        }
     }
         
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {

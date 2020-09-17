@@ -1080,6 +1080,23 @@
 			path = Widgets;
 			sourceTree = "<group>";
 		};
+		B49EFE502511A20F002D6AEE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B49EFE5A2511A256002D6AEE /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */,
+				B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
 		BE13C2CA21655A31002687F2 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -2090,6 +2107,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks-${CONFIGURATION}-output-files.xcfilelist",
@@ -2408,6 +2428,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE99C9F72378AC91007911E2 /* Slide_Screenshot_Automation.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BED90FDB250BF71600090DF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BED90FF6250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */,
+				B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */,
+				B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */,
+				BED90FE6250BF71600090DF5 /* SlideWidgets.swift in Sources */,
+				B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
