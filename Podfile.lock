@@ -1,22 +1,5 @@
 PODS:
   - Alamofire (4.9.1)
-  - DTCoreText (1.6.25):
-    - DTCoreText/Core (= 1.6.25)
-    - DTFoundation/Core (~> 1.7.5)
-    - DTFoundation/DTAnimatedGIF (~> 1.7.5)
-    - DTFoundation/DTHTMLParser (~> 1.7.5)
-    - DTFoundation/UIKit (~> 1.7.5)
-  - DTCoreText/Core (1.6.25):
-    - DTFoundation/Core (~> 1.7.5)
-    - DTFoundation/DTAnimatedGIF (~> 1.7.5)
-    - DTFoundation/DTHTMLParser (~> 1.7.5)
-    - DTFoundation/UIKit (~> 1.7.5)
-  - DTFoundation/Core (1.7.15)
-  - DTFoundation/DTAnimatedGIF (1.7.15)
-  - DTFoundation/DTHTMLParser (1.7.15):
-    - DTFoundation/Core
-  - DTFoundation/UIKit (1.7.15):
-    - DTFoundation/Core
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
   - MaterialComponents/ActivityIndicator (116.0.0):
@@ -93,7 +76,6 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 4.3)
-  - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
   - LicensesViewController (~> 0.7.0)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/ProgressView
@@ -116,7 +98,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
-    - DTFoundation
     - HTMLSpecialCharacters
     - LicensesViewController
     - MaterialComponents
@@ -136,8 +117,6 @@ SPEC REPOS:
     - YYText
 
 EXTERNAL SOURCES:
-  DTCoreText:
-    :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
@@ -153,9 +132,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/ccrama/SwiftyJSON.git
 
 CHECKOUT OPTIONS:
-  DTCoreText:
-    :commit: 361b9f8741866eee875d9bcdcfd635fca4533027
-    :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
@@ -177,8 +153,6 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
-  DTCoreText: e92f4cf6b36d9d71ce4436d12cf089d74ab0596b
-  DTFoundation: 767ca882209ef4d5132ec7e702526d5ed5bb71a2
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
   MaterialComponents: a6cf920307c2864f71e37972620f24c4d14fae8d
@@ -203,6 +177,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 3ba39067eb1b6cbb76b4f6c8739f48bf578e2f7b
+PODFILE CHECKSUM: 2c2d6e4fc8ca6623914cfc4db6b6eb97483d96e4
 
 COCOAPODS: 1.8.4
