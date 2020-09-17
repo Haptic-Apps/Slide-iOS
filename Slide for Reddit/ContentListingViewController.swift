@@ -548,17 +548,20 @@ extension ContentListingViewController: LinkCellViewDelegate {
         PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
     }
     
-    func upvote(_ cell: LinkCellView) {
+    @objc func upvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (_) in
-                
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in
+
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
-            History.addSeen(s: cell.link!)
+            History.addSeen(s: cell.link!, skipDuplicates: true)
             cell.refresh()
-            cell.refreshTitle(force: true)
+            if parent is PagingCommentViewController {
+                _ = (parent as! PagingCommentViewController).reloadCallback?()
+            }
+            _ = CachedTitle.getTitle(submission: cell.link!, full: false, true, gallery: false)
         } catch {
-            
+
         }
     }
     
