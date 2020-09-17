@@ -24,8 +24,7 @@ struct Favorite_Subreddits: Widget {
     let kind: String = "Favorite_Subreddits"
 
     var body: some WidgetConfiguration {
-
-        IntentConfiguration(kind: kind, intent: TimelineSubredditIntent.self, provider: SubredditsProvider()) { entry in
+        IntentConfiguration(kind: kind, intent: SubredditsProvider.Intent.self, provider: SubredditsProvider()) { entry in
             Favorite_SubredditsEntryView(entry: entry)
         }
         .configurationDisplayName("Subreddit")
@@ -50,20 +49,19 @@ struct Favorite_SubredditsEntryView: View {
         self.entry = entry
     }
 
+    @ViewBuilder
     var body: some View {
-        VStack {
-            if widgetFamily != .systemSmall {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading) {
-                    ForEach(entry.subreddits, id: \.self) { key in
-                        SubredditView(imageData: entry.imageData[key] ?? Data(), title: key, small: true)
-                    }
-                }.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-            } else {
-                SubredditView(imageData: entry.imageData[entry.subreddits[0]] ?? Data(), title: entry.subreddits[0])
+        GeometryReader { geometry in
+            switch widgetFamily {
+            case .systemSmall:
+                SmallWidgetView(imageData: entry.imageData[entry.subreddits[0]] ?? Data(), title: entry.subreddits[0])
+                    .background(Color(UIImage(data: entry.imageData[entry.subreddits[0]] ?? Data())?.averageColor ?? getSchemeColor()))
+            default:
+                MediumWidgetView(entry: entry)
+                    .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                    .background(Color.green)
             }
-        }.frame(maxHeight: .infinity)
-        .background(Color(widgetFamily == .systemSmall ? UIImage(data: entry.imageData[entry.subreddits[0]] ?? Data())?.averageColor ?? getSchemeColor() : getSchemeColor())
-                .opacity(0.8))
+        }
     }
 
     func getSchemeColor() -> UIColor {
@@ -94,8 +92,14 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
+        Group {
+            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
+                .previewContext(WidgetPreviewContext(family: .systemSmall))
+            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
+                .previewContext(WidgetPreviewContext(family: .systemMedium))
+            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
+                .previewContext(WidgetPreviewContext(family: .systemLarge))
+        }
     }
 
     static func getPlaceholderData(_ subs: [String]) -> [String: Data] {
@@ -126,47 +130,116 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
     }
 }
 
-// MARK: - Views
+// MARK: - Widget Views
 
-struct SubredditView: View {
+private struct SmallWidgetView: View {
     var imageData: Data
     var title: String
-    var small = false
+
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+
+    @ViewBuilder
+    var body: some View {
+        //Full size small widget
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center, spacing: 0) {
+                Image(uiImage: UIImage(data: imageData) ?? UIImage())
+                    .resizable()
+                    .frame(width: 50, height: 50, alignment: .center)
+                    .aspectRatio(1, contentMode: .fit)
+                    .clipShape(Circle())
+                    .clipped()
+                Spacer()
+            }
+            Spacer()
+            Text(self.title)
+                .font(Font.subheadline.leading(.tight)).bold()
+                .foregroundColor(colorScheme == .light ? .primary : .white)
+                .opacity(0.8)
+                .background(Color.red)
+        }
+        .widgetURL(URL(string: "slide://www.reddit.com/r/\(title)"))
+        .frame(maxWidth: .infinity)
+        .background(Color.green)
+    }
+}
+
+private struct MediumWidgetView: View {
+    var entry: SubredditsProvider.Entry
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
-        if !small {
-            //Full size small widget
-            VStack {
-                Image(uiImage: UIImage(data: imageData) ?? UIImage())
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 50, height: 50, alignment: .center)
-                    .clipShape(Circle())
-                    .clipped()
-                Text(self.title).font(.subheadline).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.8).padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-            }.widgetURL(URL(string: "slide://www.reddit.com/r/\(title)")).frame(maxWidth: .infinity)
-        } else {
-            //Grid widget
-            Link(destination: URL(string: "slide://www.reddit.com/r/\(title)")!) {
-                HStack {
-                    VStack(alignment: .leading) {
-                            Image(uiImage: UIImage(data: imageData) ?? UIImage())
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 30, height: 30, alignment: .center)
-                                .clipShape(Circle())
-                                .clipped()
-                            Text(self.title).font(.caption).foregroundColor(colorScheme == .light ? .primary : .white).padding(EdgeInsets(top: 4, leading: 4, bottom: 0, trailing: 0))
-                    }.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-                    Spacer()
-                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(UIImage(data: imageData)?.averageColor ?? getSchemeColor()).opacity(0.8).cornerRadius(15))
-            }.alignmentGuide(.leading) { d in d[.leading] }
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(entry.subreddits.chunked(into: 2), id: \.self) { subreddits in
+                HStack(alignment: .top, spacing: 8) {
+                    ForEach(subreddits, id: \.self) { key in
+                        SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
+                            .cornerRadius(15)
+                    }
+                }
+            }
         }
+        .background(Color.blue)
+        .padding(8)
+    }
+
+}
+
+// MARK: - Component Views
+
+private struct SubredditView: View {
+    var imageData: Data
+    var title: String
+
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+
+    @ViewBuilder
+    var body: some View {
+        //Grid widget
+        Link(destination: URL(string: "slide://www.reddit.com/r/\(title)")!) {
+            GeometryReader { geometry in
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .center, spacing: 0) {
+                        Image(uiImage: UIImage(data: imageData) ?? UIImage())
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(
+                                maxWidth: min(30, geometry.size.height * 0.75),
+                                maxHeight: min(30, geometry.size.height * 0.75),
+                                alignment: .leading)
+                                // TODOccrama: .leading is an issue here. .center works but we want left alignment.
+                            .clipShape(Circle())
+                            .clipped()
+                            .background(Color.red)
+                        Spacer()
+                    }
+                    Spacer()
+                    HStack(alignment: .center, spacing: 0) {
+                        Spacer()
+                            .frame(width: 8)
+                        Text(self.title)
+                            .font(Font.caption.leading(.tight))
+                            .foregroundColor(colorScheme == .light ? .primary : .white)
+                            .lineLimit(1)
+                    }
+                    .background(Color.green)
+                }
+            }
+        }
+        .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+        .background(Color(UIImage(data: imageData)?.averageColor ?? getSchemeColor()).opacity(0.8))
     }
 
     func getSchemeColor() -> UIColor {
         return colorScheme == .light ? .white : .black
+    }
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
+        }
     }
 }
