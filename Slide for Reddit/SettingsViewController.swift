@@ -188,13 +188,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.general.textLabel?.textColor = ColorUtil.theme.fontColor
         self.general.imageView?.image = UIImage(sfString: SFSymbol.gear, overrideString: "settings")?.toolbarIcon()
         self.general.imageView?.tintColor = ColorUtil.theme.fontColor
-        if false && !UserDefaults.standard.bool(forKey: "2notifs") { //Disabled now
-            self.general.detailTextLabel?.textColor = ColorUtil.baseAccent
-            self.general.detailTextLabel?.text = "New in 2.0: set up notifications here!"
-        } else {
-            self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-            self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
-        }
+        self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
+
         self.general.detailTextLabel?.numberOfLines = 0
         self.general.detailTextLabel?.lineBreakMode = .byWordWrapping
 

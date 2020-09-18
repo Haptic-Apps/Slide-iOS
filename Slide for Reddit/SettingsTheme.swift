@@ -817,21 +817,20 @@ extension SettingsTheme: UIColorPickerViewControllerDelegate {
     func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
         if isAccent {
             accentChosen = viewController.selectedColor
-            titleLabel.textColor = self.accentChosen
+            titleLabel.textColor = viewController.selectedColor
             self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: accentChosen!)
             reduceColor.onTintColor = accentChosen!
-            tableView.beginUpdates()
-            tableView.endUpdates()
+
             UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "accentcolor")
-            self.titleLabel.textColor = self.accentChosen!
-            self.tochange!.tableView.reloadData()
-            self.setupViews()
-            self.tochange!.doCells()
-            self.tochange!.tableView.reloadData()
+            ColorUtil.baseAccent = viewController.selectedColor
+            
+            tochange?.tableView.reloadData()
+            nightEnabled.onTintColor = ColorUtil.baseAccent
         } else {
             primaryChosen = viewController.selectedColor
             self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: primaryChosen!)
-            UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "basecolor")
+            UserDefaults.standard.setColor(color: viewController.selectedColor, forKey: "basecolor")
+            ColorUtil.baseColor = viewController.selectedColor
         }
         
         UserDefaults.standard.synchronize()
