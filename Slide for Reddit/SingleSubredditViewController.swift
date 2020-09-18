@@ -112,6 +112,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             PagingCommentViewController.savedComment = nil
         }
     }
+    
+    var headerVersion = 0
 
     var more = UIButton()
     var searchbutton = UIButton()
@@ -854,7 +856,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.tableView.register(NothingHereCell.classForCoder(), forCellWithReuseIdentifier: "nothing")
         self.tableView.register(ReadLaterCell.classForCoder(), forCellWithReuseIdentifier: "readlater")
         self.tableView.register(PageCell.classForCoder(), forCellWithReuseIdentifier: "page")
-        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header")
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
         lastVersion = SingleSubredditViewController.cellVersion
 
         let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
@@ -2334,7 +2336,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var row = indexPath.row
         if row == 0 && hasHeader {
-            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "header", for: indexPath) as! LinksHeaderCellView
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "header\(headerVersion)", for: indexPath) as! LinksHeaderCellView
             cell.setLinks(links: self.subLinks, sub: self.sub, delegate: self)
             return cell
         }
@@ -2503,44 +2505,32 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
 // MARK: - Color Picker View Delegates
 extension SingleSubredditViewController: ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-        if isAccent {
-            accentChosen = colorPickerView.colors[indexPath.row]
-            self.fab?.backgroundColor = accentChosen
-        } else {
-            let c = colorPickerView.colors[indexPath.row]
-            primaryChosen = c
-            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
-            sideView.backgroundColor = c
-            sideView.backgroundColor = c
-            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
-            if SettingValues.fullyHideNavbar {
-                inHeadView?.backgroundColor = .clear
-            }
-            if parentController != nil {
-                parentController?.colorChanged(c)
-            }
+        self.fab?.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
+        CachedTitle.titles.removeAll()
+        
+        headerVersion += 1
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
+
+        self.tableView.reloadData()
+        if let parent = self.parentController as? SplitMainViewController {
+            parent.tabBar.collectionView.reloadData()
+            parent.doToolbarOffset()
         }
     }
 }
 
 extension SingleSubredditViewController: SubredditThemeEditViewControllerDelegate {
     public func didChangeColors(_ isAccent: Bool, color: UIColor) {
-        if isAccent {
-            accentChosen = color
-            self.fab?.backgroundColor = accentChosen
-        } else {
-            let c = color
-            primaryChosen = c
-            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
-            sideView.backgroundColor = c
-            sideView.backgroundColor = c
-            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
-            if SettingValues.fullyHideNavbar {
-                inHeadView?.backgroundColor = .clear
-            }
-            if parentController != nil {
-                parentController?.colorChanged(c)
-            }
+        self.fab?.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
+        CachedTitle.titles.removeAll()
+        
+        headerVersion += 1
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
+
+        self.tableView.reloadData()
+        if let parent = self.parentController as? SplitMainViewController {
+            parent.tabBar.collectionView.reloadData()
+            parent.doToolbarOffset()
         }
     }
 }
