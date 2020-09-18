@@ -259,13 +259,13 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         self.headers = ["App colors", "Night mode", "Custom themes", "Standard themes"]
         self.tableView.separatorStyle = .none
         
-        self.primary.textLabel?.text = "Primary subreddit color"
+        self.primary.textLabel?.text = "Default subreddit color"
         self.primary.accessoryType = .none
         self.primary.backgroundColor = ColorUtil.theme.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.theme.fontColor
         self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
 
-        self.accent.textLabel?.text = "Primary accent color"
+        self.accent.textLabel?.text = "Default accent color"
         self.accent.accessoryType = .none
         self.accent.backgroundColor = ColorUtil.theme.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -822,10 +822,19 @@ extension SettingsTheme: UIColorPickerViewControllerDelegate {
             reduceColor.onTintColor = accentChosen!
             tableView.beginUpdates()
             tableView.endUpdates()
+            UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "accentcolor")
+            self.titleLabel.textColor = self.accentChosen!
+            self.tochange!.tableView.reloadData()
+            self.setupViews()
+            self.tochange!.doCells()
+            self.tochange!.tableView.reloadData()
         } else {
             primaryChosen = viewController.selectedColor
-            setupBaseBarColors(primaryChosen)
             self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: primaryChosen!)
+            UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "basecolor")
         }
+        
+        UserDefaults.standard.synchronize()
+        self.tableView.reloadData()
     }
 }
