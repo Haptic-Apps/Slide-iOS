@@ -26,6 +26,8 @@ class SettingsCustomTheme: UITableViewController {
     var fontColor = UIColor.black.withAlphaComponent(0.85)
     var navIconColor = UIColor.black.withAlphaComponent(0.85)
     var statusbarEnabled = true
+    
+    var selectedRow = -1
 
     var statusbarSwitch: UISwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -327,141 +329,165 @@ class SettingsCustomTheme: UITableViewController {
         if indexPath.row == 4 {
             return
         }
-        let alert = AlertController(title: "", message: "", preferredStyle: .alert)
-        var color: UIColor
-        switch indexPath.row {
-        case 0:
-            color = foregroundColor
-            alert.attributedMessage = NSAttributedString(string: "Foreground color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        case 1:
-            color = backgroundColor
-            alert.attributedMessage = NSAttributedString(string: "Background color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        case 2:
-            color = fontColor
-            alert.attributedMessage = NSAttributedString(string: "Font color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        default:
-            color = navIconColor
-            alert.attributedMessage = NSAttributedString(string: "Icons color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        }
-
-        let selection: ColorPickerViewController.Selection? = { color in
+        
+        if #available(iOS 14, *) {
+            let vc = UIColorPickerViewController()
+            vc.supportsAlpha = false
+            vc.delegate = self
+            
+            self.selectedRow = indexPath.row
             switch indexPath.row {
             case 0:
-                self.foregroundColor = color
+                vc.selectedColor = foregroundColor
+                vc.title = "Foreground color"
             case 1:
-                self.backgroundColor = color
+                vc.selectedColor = backgroundColor
+                vc.title = "Background color"
             case 2:
-                self.fontColor = color
+                vc.selectedColor = fontColor
+                vc.title = "Font color"
             default:
-                self.navIconColor = color
-                self.doToolbar(color)
+                vc.selectedColor = navIconColor
+                vc.title = "Icons color"
             }
-            self.cleanup()
-        }
-        
-        let buttonSelection = AlertAction(title: "Save", style: .normal) { _ in
-            selection?(color)
-        }
-        
-        buttonSelection.isEnabled = true
-        alert.addAction(buttonSelection)
-        
-        let hexSelection = AlertAction(title: "Enter HEX code", style: .normal) { _ in
-            alert.dismiss()
-            let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
-            let confirmAction = AlertAction(title: "Set", style: .preferred) { (_) in
-                if let text = self.tagText {
-                    let color = UIColor(hexString: text)
-                    switch indexPath.row {
-                    case 0:
-                        self.foregroundColor = color
-                    case 1:
-                        self.backgroundColor = color
-                    case 2:
-                        self.fontColor = color
-                    default:
-                        self.navIconColor = color
-                        self.doToolbar(color)
+            present(vc, animated: true)
+        } else {
+            let alert = AlertController(title: "", message: "", preferredStyle: .alert)
+            var color: UIColor
+            switch indexPath.row {
+            case 0:
+                color = foregroundColor
+                alert.attributedMessage = NSAttributedString(string: "Foreground color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            case 1:
+                color = backgroundColor
+                alert.attributedMessage = NSAttributedString(string: "Background color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            case 2:
+                color = fontColor
+                alert.attributedMessage = NSAttributedString(string: "Font color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            default:
+                color = navIconColor
+                alert.attributedMessage = NSAttributedString(string: "Icons color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            }
+
+            let selection: ColorPickerViewController.Selection? = { color in
+                switch indexPath.row {
+                case 0:
+                    self.foregroundColor = color
+                case 1:
+                    self.backgroundColor = color
+                case 2:
+                    self.fontColor = color
+                default:
+                    self.navIconColor = color
+                    self.doToolbar(color)
+                }
+                self.cleanup()
+            }
+            
+            let buttonSelection = AlertAction(title: "Save", style: .normal) { _ in
+                selection?(color)
+            }
+            
+            buttonSelection.isEnabled = true
+            alert.addAction(buttonSelection)
+            
+            let hexSelection = AlertAction(title: "Enter HEX code", style: .normal) { _ in
+                alert.dismiss()
+                let alert = AlertController(title: "", message: nil, preferredStyle: .alert)
+                let confirmAction = AlertAction(title: "Set", style: .preferred) { (_) in
+                    if let text = self.tagText {
+                        let color = UIColor(hexString: text)
+                        switch indexPath.row {
+                        case 0:
+                            self.foregroundColor = color
+                        case 1:
+                            self.backgroundColor = color
+                        case 2:
+                            self.fontColor = color
+                        default:
+                            self.navIconColor = color
+                            self.doToolbar(color)
+                        }
+                        self.cleanup()
+                    } else {
                     }
-                    self.cleanup()
-                } else {
                 }
-            }
-            
-            let config: TextField.Config = { textField in
-                textField.becomeFirstResponder()
-                textField.textColor = ColorUtil.theme.fontColor
-                textField.attributedPlaceholder = NSAttributedString(string: "HEX String", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage(named: "pallete")?.menuIcon(), color: ColorUtil.theme.fontColor)
-                textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.theme.foregroundColor
-                textField.leftViewPadding = 12
-                textField.layer.borderWidth = 1
-                textField.layer.cornerRadius = 8
-                textField.keyboardAppearance = .default
-                textField.keyboardType = .default
-                textField.returnKeyType = .done
-                textField.text = color.hexString()
-                textField.action { textField in
-                    self.tagText = textField.text
+                
+                let config: TextField.Config = { textField in
+                    textField.becomeFirstResponder()
+                    textField.textColor = ColorUtil.theme.fontColor
+                    textField.attributedPlaceholder = NSAttributedString(string: "HEX String", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
+                    textField.left(image: UIImage(named: "pallete")?.menuIcon(), color: ColorUtil.theme.fontColor)
+                    textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+                    textField.backgroundColor = ColorUtil.theme.foregroundColor
+                    textField.leftViewPadding = 12
+                    textField.layer.borderWidth = 1
+                    textField.layer.cornerRadius = 8
+                    textField.keyboardAppearance = .default
+                    textField.keyboardType = .default
+                    textField.returnKeyType = .done
+                    textField.text = color.hexString()
+                    textField.action { textField in
+                        self.tagText = textField.text
+                    }
                 }
+                
+                let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+                
+                alert.setupTheme()
+                
+                alert.attributedTitle = NSAttributedString(string: "Enter HEX color code", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                
+                alert.contentView.addSubview(textField)
+                
+                textField.edgeAnchors == alert.contentView.edgeAnchors
+                textField.heightAnchor == CGFloat(44 + 12)
+                
+                alert.addAction(confirmAction)
+                alert.addCancelButton()
+                
+                alert.addBlurView()
+                self.present(alert, animated: true, completion: nil)
             }
+        
+            alert.addAction(hexSelection)
             
-            let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            guard let vc = storyboard.instantiateViewController(withIdentifier: "ColorPicker") as? ColorPickerViewController else { return }
+            
+            alert.addChild(vc)
+            let vcv = vc.view!
+            
+            let view = UIView()
+            alert.contentView.addSubview(view)
+            view.edgeAnchors == alert.contentView.edgeAnchors
+            view.heightAnchor == 400
+
+            vcv.isUserInteractionEnabled = true
+            vcv.backgroundColor = UIColor.clear
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: "Enter HEX color code", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
             
-            alert.contentView.addSubview(textField)
+            vc.set(color: color) { new in
+                color = new
+                alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            }
             
-            textField.edgeAnchors == alert.contentView.edgeAnchors
-            textField.heightAnchor == CGFloat(44 + 12)
-            
-            alert.addAction(confirmAction)
             alert.addCancelButton()
             
             alert.addBlurView()
-            self.present(alert, animated: true, completion: nil)
+            
+            self.present(alert, animated: true) {
+            }
+            alert.view!.addSubview(vcv)
+            vc.didMove(toParent: alert)
+            vcv.horizontalAnchors == alert.contentView.superview!.horizontalAnchors
+            vcv.topAnchor == alert.contentView.superview!.topAnchor + 70
+            vcv.bottomAnchor == alert.contentView.superview!.bottomAnchor
+            vcv.heightAnchor == 400
         }
-        
-        alert.addAction(hexSelection)
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let vc = storyboard.instantiateViewController(withIdentifier: "ColorPicker") as? ColorPickerViewController else { return }
-        
-        alert.addChild(vc)
-        let vcv = vc.view!
-        
-        let view = UIView()
-        alert.contentView.addSubview(view)
-        view.edgeAnchors == alert.contentView.edgeAnchors
-        view.heightAnchor == 400
-
-        vcv.isUserInteractionEnabled = true
-        vcv.backgroundColor = UIColor.clear
-        
-        alert.setupTheme()
-        
-        alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        
-        vc.set(color: color) { new in
-            color = new
-            alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        }
-        
-        alert.addCancelButton()
-        
-        alert.addBlurView()
-        
-        self.present(alert, animated: true) {
-        }
-        alert.view!.addSubview(vcv)
-        vc.didMove(toParent: alert)
-        vcv.horizontalAnchors == alert.contentView.superview!.horizontalAnchors
-        vcv.topAnchor == alert.contentView.superview!.topAnchor + 70
-        vcv.bottomAnchor == alert.contentView.superview!.bottomAnchor
-        vcv.heightAnchor == 400
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -471,4 +497,23 @@ class SettingsCustomTheme: UITableViewController {
         }
     }
 
+}
+
+@available(iOS 14, *)
+extension SettingsCustomTheme: UIColorPickerViewControllerDelegate {
+    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
+        var color = viewController.selectedColor
+        switch selectedRow {
+        case 0:
+            self.foregroundColor = color
+        case 1:
+            self.backgroundColor = color
+        case 2:
+            self.fontColor = color
+        default:
+            self.navIconColor = color
+            self.doToolbar(color)
+        }
+        self.cleanup()
+    }
 }
