@@ -112,6 +112,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             PagingCommentViewController.savedComment = nil
         }
     }
+    
+    var headerVersion = 0
 
     var more = UIButton()
     var searchbutton = UIButton()
@@ -869,7 +871,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.tableView.register(NothingHereCell.classForCoder(), forCellWithReuseIdentifier: "nothing")
         self.tableView.register(ReadLaterCell.classForCoder(), forCellWithReuseIdentifier: "readlater")
         self.tableView.register(PageCell.classForCoder(), forCellWithReuseIdentifier: "page")
-        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header")
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
         lastVersion = SingleSubredditViewController.cellVersion
 
         let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
@@ -2018,6 +2020,12 @@ extension SingleSubredditViewController {
         showMore(sender, parentVC: nil)
     }
     
+    @available(iOS 14.0, *)
+    func editTheme() {
+        let vc = SubredditThemeEditViewController(subreddit: sub, delegate: self)
+        VCPresenter.presentModally(viewController: vc, self, CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: 200))
+    }
+    
     @objc func pickTheme(sender: AnyObject?, parent: MainViewController?) {
         parentController = parent
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -2188,6 +2196,19 @@ extension SingleSubredditViewController {
             }
         }
         
+        alertController.addAction(title: "Edit \(sub) theme", icon: generateThemePreviewImage(subreddit: sub).getCopy(withSize: CGSize(width: 20, height: 20))) {
+            if #available(iOS 14, *) {
+                self.editTheme()
+            } else {
+                if parentVC != nil {
+                    let p = (parentVC!)
+                    self.pickTheme(sender: sender, parent: p)
+                } else {
+                    self.pickTheme(sender: sender, parent: nil)
+                }
+            }
+        }
+
         alertController.addAction(title: "Cache for offline viewing", icon: UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")!.menuIcon()) {
             _ = AutoCache.init(baseController: self, subs: [self.sub])
         }
@@ -2208,15 +2229,6 @@ extension SingleSubredditViewController {
             self.galleryMode()
         }
 
-        alertController.addAction(title: "Custom theme for \(sub)", icon: UIImage(named: "colors")!.menuIcon()) {
-            if parentVC != nil {
-                let p = (parentVC!)
-                self.pickTheme(sender: sender, parent: p)
-            } else {
-                self.pickTheme(sender: sender, parent: nil)
-            }
-        }
-
         if !special {
             alertController.addAction(title: "Submit new post", icon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()) {
                 self.newPost(sender)
@@ -2234,6 +2246,32 @@ extension SingleSubredditViewController {
         }
 
         alertController.show(self)
+    }
+    
+    func generateThemePreviewImage(subreddit: String) -> UIImage {
+        let baseImage = UIImage(named: "circle")!
+        let rect = CGRect(x: 0, y: 0, width: baseImage.size.width, height: baseImage.size.height)
+
+        UIGraphicsBeginImageContextWithOptions(baseImage.size, false, baseImage.scale)
+        baseImage.draw(in: rect)
+
+        let context = UIGraphicsGetCurrentContext()!
+        context.setBlendMode(CGBlendMode.sourceIn)
+
+        context.setFillColor(ColorUtil.getColorForSub(sub: subreddit).cgColor)
+
+        var rectToFill = CGRect(x: 0, y: 0, width: baseImage.size.width * 0.5, height: baseImage.size.height)
+        context.fill(rectToFill)
+
+        context.setFillColor(ColorUtil.accentColorForSub(sub: subreddit).cgColor)
+
+        rectToFill = CGRect(x: baseImage.size.width * 0.5, y: 0, width: baseImage.size.width, height: baseImage.size.height)
+        context.fill(rectToFill)
+
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage!
     }
 
 }
@@ -2310,7 +2348,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var row = indexPath.row
         if row == 0 && hasHeader {
-            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "header", for: indexPath) as! LinksHeaderCellView
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "header\(headerVersion)", for: indexPath) as! LinksHeaderCellView
             cell.setLinks(links: self.subLinks, sub: self.sub, delegate: self)
             return cell
         }
@@ -2474,25 +2512,35 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
     }
 }
 
-// MARK: - Color Picker View Delegate
+// MARK: - Color Picker View Delegates
 extension SingleSubredditViewController: ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-        if isAccent {
-            accentChosen = colorPickerView.colors[indexPath.row]
-            self.fab?.backgroundColor = accentChosen
-        } else {
-            let c = colorPickerView.colors[indexPath.row]
-            primaryChosen = c
-            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
-            sideView.backgroundColor = c
-            sideView.backgroundColor = c
-            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
-            if SettingValues.fullyHideNavbar {
-                inHeadView?.backgroundColor = .clear
-            }
-            if parentController != nil {
-                parentController?.colorChanged(c)
-            }
+        self.fab?.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
+        CachedTitle.titles.removeAll()
+        
+        headerVersion += 1
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
+
+        self.tableView.reloadData()
+        if let parent = self.parentController as? SplitMainViewController {
+            parent.tabBar.collectionView.reloadData()
+            parent.doToolbarOffset()
+        }
+    }
+}
+
+extension SingleSubredditViewController: SubredditThemeEditViewControllerDelegate {
+    public func didChangeColors(_ isAccent: Bool, color: UIColor) {
+        self.fab?.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
+        CachedTitle.titles.removeAll()
+        
+        headerVersion += 1
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
+
+        self.tableView.reloadData()
+        if let parent = self.parentController as? SplitMainViewController {
+            parent.tabBar.collectionView.reloadData()
+            parent.doToolbarOffset()
         }
     }
 }
