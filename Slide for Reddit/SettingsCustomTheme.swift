@@ -7,7 +7,6 @@
 //
 
 import Anchorage
-import MKColorPicker
 import RLBAlertsPickers
 import SDCAlertView
 import UIKit

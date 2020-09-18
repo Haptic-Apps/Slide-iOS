@@ -70,71 +70,62 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         }
     }
 
-    func pickTheme() {
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+    func pickPrimary() {
         isAccent = false
-        let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
-        let MKColorPicker = ColorPickerView.init(frame: rect)
-        MKColorPicker.delegate = self
-        MKColorPicker.colors = GMPalette.allColor()
-        MKColorPicker.selectionStyle = .check
-        MKColorPicker.scrollDirection = .vertical
-        let firstColor = ColorUtil.baseColor
-        for i in 0 ..< MKColorPicker.colors.count {
-            if MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor) {
-                MKColorPicker.preselectedIndex = i
-                break
+        if #available(iOS 14, *) {
+            let vc = UIColorPickerViewController()
+            vc.supportsAlpha = false
+            vc.selectedColor = ColorUtil.baseColor
+            vc.delegate = self
+            present(vc, animated: true)
+        } else {
+            let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+            let margin: CGFloat = 10.0
+            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+            let MKColorPicker = ColorPickerView.init(frame: rect)
+            MKColorPicker.delegate = self
+            MKColorPicker.colors = GMPalette.allColor()
+            MKColorPicker.selectionStyle = .check
+            MKColorPicker.scrollDirection = .vertical
+            let firstColor = ColorUtil.baseColor
+            for i in 0 ..< MKColorPicker.colors.count {
+                if MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor) {
+                    MKColorPicker.preselectedIndex = i
+                    break
+                }
             }
-        }
 
-        MKColorPicker.style = .circle
+            MKColorPicker.style = .circle
 
-        alertController.view.addSubview(MKColorPicker)
+            alertController.view.addSubview(MKColorPicker)
 
-        // TODO: - maybe ?
-        /* let custom = UIAlertAction(title: "Custom color", style: .default, handler: { (alert: UIAlertAction!) in
-            if(!VCPresenter.proDialogShown(feature: false, self)){
-                let alert = UIAlertController.init(title: "Choose a color", message: nil, preferredStyle: .actionSheet)
-                alert.addColorPicker(color: (self.navigationController?.navigationBar.barTintColor)!, selection: { (color) in
-                    UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
+            let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (_: UIAlertAction!) in
+                if self.primaryChosen != nil {
+                    UserDefaults.standard.setColor(color: self.primaryChosen!, forKey: "basecolor")
                     UserDefaults.standard.synchronize()
-                    ColorUtil.doInit()
-                })
-                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { (action) in
-                    self.pickTheme()
-                }))
-                self.present(alert, animated: true)
-            }
-        })*/
+                }
 
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (_: UIAlertAction!) in
-            if self.primaryChosen != nil {
-                UserDefaults.standard.setColor(color: self.primaryChosen!, forKey: "basecolor")
+                UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
                 UserDefaults.standard.synchronize()
+                _ = ColorUtil.doInit()
+            })
+
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
+                self.setupBaseBarColors()
+                self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
+            })
+
+            alertController.addAction(somethingAction)
+            alertController.addAction(cancelAction)
+
+            alertController.modalPresentationStyle = .popover
+            if let presenter = alertController.popoverPresentationController {
+                presenter.sourceView = selectedTableView
+                presenter.sourceRect = selectedTableView.bounds
             }
 
-            UserDefaults.standard.setColor(color: (self.navigationController?.navigationBar.barTintColor)!, forKey: "basecolor")
-            UserDefaults.standard.synchronize()
-            _ = ColorUtil.doInit()
-        })
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
-            self.setupBaseBarColors()
-            self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
-        })
-
-        //alertController.addAction(custom)
-        alertController.addAction(somethingAction)
-        alertController.addAction(cancelAction)
-
-        alertController.modalPresentationStyle = .popover
-        if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = selectedTableView
-            presenter.sourceRect = selectedTableView.bounds
+            present(alertController, animated: true, completion: nil)
         }
-
-        present(alertController, animated: true, completion: nil)
     }
     
     func redoThemes() {
@@ -157,59 +148,68 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
     }
 
     func pickAccent() {
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-
-        let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
-        let MKColorPicker = ColorPickerView.init(frame: rect)
-        MKColorPicker.delegate = self
-        MKColorPicker.colors = GMPalette.allColorAccent()
-        MKColorPicker.selectionStyle = .check
-
         self.isAccent = true
-        MKColorPicker.scrollDirection = .vertical
-        let firstColor = ColorUtil.baseColor
-        for i in 0 ..< MKColorPicker.colors.count {
-            if MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor) {
-                MKColorPicker.preselectedIndex = i
-                break
+        if #available(iOS 14, *) {
+            let vc = UIColorPickerViewController()
+            vc.supportsAlpha = false
+            vc.selectedColor = ColorUtil.baseAccent
+            vc.delegate = self
+            present(vc, animated: true)
+        } else {
+            let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+
+            let margin: CGFloat = 10.0
+            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+            let MKColorPicker = ColorPickerView.init(frame: rect)
+            MKColorPicker.delegate = self
+            MKColorPicker.colors = GMPalette.allColorAccent()
+            MKColorPicker.selectionStyle = .check
+
+            MKColorPicker.scrollDirection = .vertical
+            let firstColor = ColorUtil.baseColor
+            for i in 0 ..< MKColorPicker.colors.count {
+                if MKColorPicker.colors[i].cgColor.__equalTo(firstColor.cgColor) {
+                    MKColorPicker.preselectedIndex = i
+                    break
+                }
             }
-        }
 
-        MKColorPicker.style = .circle
+            MKColorPicker.style = .circle
 
-        alertController.view.addSubview(MKColorPicker)
+            alertController.view.addSubview(MKColorPicker)
 
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (_: UIAlertAction!) in
-            if self.accentChosen != nil {
-                UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "accentcolor")
-                UserDefaults.standard.synchronize()
-                _ = ColorUtil.doInit()
-                self.titleLabel.textColor = self.accentChosen!
-                self.tochange!.tableView.reloadData()
-                self.setupViews()
-                self.tochange!.doCells()
-                self.tochange!.tableView.reloadData()
-                self.tableView.reloadData()
+            let somethingAction = UIAlertAction(title: "Save", style: .default, handler: { (_: UIAlertAction!) in
+                if self.accentChosen != nil {
+                    UserDefaults.standard.setColor(color: self.accentChosen!, forKey: "accentcolor")
+                    UserDefaults.standard.synchronize()
+                    _ = ColorUtil.doInit()
+                    self.titleLabel.textColor = self.accentChosen!
+                    self.tochange!.tableView.reloadData()
+                    self.setupViews()
+                    self.tochange!.doCells()
+                    self.tochange!.tableView.reloadData()
+                    self.tableView.reloadData()
+                }
+            })
+
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
+                self.accentChosen = nil
+                self.reduceColor.onTintColor = ColorUtil.baseAccent
+                self.titleLabel.textColor = ColorUtil.baseAccent
+                self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
+            })
+
+            alertController.addAction(somethingAction)
+            alertController.addAction(cancelAction)
+            alertController.modalPresentationStyle = .popover
+            if let presenter = alertController.popoverPresentationController {
+                presenter.sourceView = selectedTableView
+                presenter.sourceRect = selectedTableView.bounds
             }
-        })
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction!) in
-            self.accentChosen = nil
-            self.reduceColor.onTintColor = ColorUtil.baseAccent
-            self.titleLabel.textColor = ColorUtil.baseAccent
-            self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
-        })
+            present(alertController, animated: true, completion: nil)
 
-        alertController.addAction(somethingAction)
-        alertController.addAction(cancelAction)
-        alertController.modalPresentationStyle = .popover
-        if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = selectedTableView
-            presenter.sourceRect = selectedTableView.bounds
         }
-
-        present(alertController, animated: true, completion: nil)
     }
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
@@ -259,18 +259,21 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         self.headers = ["App colors", "Night mode", "Custom themes", "Standard themes"]
         self.tableView.separatorStyle = .none
         
-        self.primary.textLabel?.text = "Header color"
+        self.primary.textLabel?.text = "Primary subreddit color"
         self.primary.accessoryType = .none
         self.primary.backgroundColor = ColorUtil.theme.foregroundColor
         self.primary.textLabel?.textColor = ColorUtil.theme.fontColor
         self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
-        
-        self.accent.textLabel?.text = "Links and buttons color"
+
+        self.accent.textLabel?.text = "Primary accent color"
         self.accent.accessoryType = .none
         self.accent.backgroundColor = ColorUtil.theme.foregroundColor
         self.accent.textLabel?.textColor = ColorUtil.theme.fontColor
         self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
-        
+        self.accent.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.accent.detailTextLabel?.numberOfLines = 0
+        self.accent.detailTextLabel?.text = "Applies to links and buttons"
+
         self.custom.textLabel?.text = "New custom theme"
         self.custom.accessoryType = .disclosureIndicator
         self.custom.backgroundColor = ColorUtil.theme.foregroundColor
@@ -339,17 +342,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.reduceColorCell.imageView?.image = UIImage(sfString: SFSymbol.circleLefthalfFill, overrideString: "nocolors")?.toolbarIcon()
         self.reduceColorCell.imageView?.tintColor = ColorUtil.theme.fontColor
-        
-        if SettingValues.reduceColor {
-            self.primary.isUserInteractionEnabled = false
-            self.primary.textLabel?.isEnabled = false
-            self.primary.detailTextLabel?.isEnabled = false
-            
-            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-            self.primary.detailTextLabel?.numberOfLines = 0
-            self.primary.detailTextLabel?.text = "Requires Minimal Mode to be disabled"
-        }
-        
+                
         createCell(reduceColorCell, reduceColor, isOn: SettingValues.reduceColor, text: "Minimal Mode")
         
         let button = UIButtonWithContext.init(type: .custom)
@@ -545,7 +538,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         selectedTableView = tableView.cellForRow(at: indexPath)!.contentView
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 0 && indexPath.row == 0 {
-            pickTheme()
+            pickPrimary()
         } else if indexPath.section == 0 && indexPath.row == 1 {
             pickAccent()
         } else if indexPath.section == 1 && indexPath.row == 0 {
@@ -816,5 +809,23 @@ extension PickerViewViewControllerColored: UIPickerViewDataSource, UIPickerViewD
      */
     public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         action?(self, pickerView, Index(column: component, row: row), values)
+    }
+}
+
+@available(iOS 14.0, *)
+extension SettingsTheme: UIColorPickerViewControllerDelegate {
+    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
+        if isAccent {
+            accentChosen = viewController.selectedColor
+            titleLabel.textColor = self.accentChosen
+            self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: accentChosen!)
+            reduceColor.onTintColor = accentChosen!
+            tableView.beginUpdates()
+            tableView.endUpdates()
+        } else {
+            primaryChosen = viewController.selectedColor
+            setupBaseBarColors(primaryChosen)
+            self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: primaryChosen!)
+        }
     }
 }

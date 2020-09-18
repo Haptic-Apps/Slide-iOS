@@ -13,6 +13,7 @@ protocol SubredditThemeEditViewControllerDelegate {
     func didChangeColors(_ isAccent: Bool, color: UIColor)
 }
 
+//VC for presenting theme pickers for a specific subreddit
 @available(iOS 14.0, *)
 class SubredditThemeEditViewController: UIViewController, UIColorPickerViewControllerDelegate {
     
@@ -23,7 +24,8 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
 
     var primaryWell: UIColorWell?
     var accentWell: UIColorWell?
-
+    
+    //Delegate will handle instant color changes
     var delegate: SubredditThemeEditViewControllerDelegate
 
     init(subreddit: String, delegate: SubredditThemeEditViewControllerDelegate) {
@@ -47,6 +49,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         setupTitleView(subreddit)
     }
     
+    //Configure wells and set constraints
     func configureLayout() {
         primary = UILabel().then {
             $0.backgroundColor = ColorUtil.theme.backgroundColor
@@ -93,6 +96,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         accentWell!.leftAnchor == self.view.leftAnchor + 16
     }
     
+    //Primary color changed, set color and call delegate
     @objc func colorWellChangedPrimary(_ sender: Any) {
         if let selected = primaryWell?.selectedColor {
             ColorUtil.setColorForSub(sub: subreddit, color: selected)
@@ -101,13 +105,15 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         }
     }
 
+    //Accent color changed, set color and call delegate
     @objc func colorWellChangedAccent(_ sender: Any) {
         if let selected = accentWell?.selectedColor {
             ColorUtil.setAccentColorForSub(sub: subreddit, color: selected)
             delegate.didChangeColors(true, color: selected)
         }
     }
-
+    
+    //Create view for header with icon and subreddit name
     func setupTitleView(_ sub: String) {
         let label = UILabel()
         label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
