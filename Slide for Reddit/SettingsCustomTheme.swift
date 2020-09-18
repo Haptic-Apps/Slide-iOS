@@ -502,7 +502,7 @@ class SettingsCustomTheme: UITableViewController {
 @available(iOS 14, *)
 extension SettingsCustomTheme: UIColorPickerViewControllerDelegate {
     func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
-        var color = viewController.selectedColor
+        let color = viewController.selectedColor
         switch selectedRow {
         case 0:
             self.foregroundColor = color

@@ -74,6 +74,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         isAccent = false
         if #available(iOS 14, *) {
             let vc = UIColorPickerViewController()
+            vc.title = "Default subreddit color"
             vc.supportsAlpha = false
             vc.selectedColor = ColorUtil.baseColor
             vc.delegate = self
@@ -151,6 +152,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         self.isAccent = true
         if #available(iOS 14, *) {
             let vc = UIColorPickerViewController()
+            vc.title = "Default accent color"
             vc.supportsAlpha = false
             vc.selectedColor = ColorUtil.baseAccent
             vc.delegate = self

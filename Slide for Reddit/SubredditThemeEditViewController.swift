@@ -69,11 +69,13 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         primaryWell = UIColorWell().then {
             $0.selectedColor = ColorUtil.getColorForSub(sub: subreddit)
             $0.supportsAlpha = false
+            $0.title = "Primary color"
             $0.addTarget(self, action: #selector(colorWellChangedPrimary(_:)), for: .valueChanged)
         }
         accentWell = UIColorWell().then {
             $0.selectedColor = ColorUtil.accentColorForSub(sub: subreddit)
             $0.supportsAlpha = false
+            $0.title = "Accent color"
             $0.addTarget(self, action: #selector(colorWellChangedAccent(_:)), for: .valueChanged)
         }
 

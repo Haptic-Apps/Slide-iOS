@@ -45,6 +45,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     func pickColor(sender: AnyObject) {
         if #available(iOS 14, *) {
             let picker = UIColorPickerViewController()
+            picker.title = "Profile color"
             picker.supportsAlpha = false
             picker.selectedColor = ColorUtil.getColorForUser(name: name)
             picker.delegate = self
