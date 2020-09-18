@@ -1736,9 +1736,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author + (comment.cakeday ? " 🎂" : ""), small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
-        authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)"), "profile": comment.author])
+        if comment.author != "[deleted]" && comment.author != "[removed]" {
+            authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)"), "profile": comment.author])
+        }
         let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): parent?.authorColor ?? ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
-        authorStringNoFlair.yy_setTextHighlight(NSRange(location: 0, length: authorStringNoFlair.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)"), "profile": comment.author])
+        
+        if comment.author != "[deleted]" && comment.author != "[removed]" {
+            authorStringNoFlair.yy_setTextHighlight(NSRange(location: 0, length: authorStringNoFlair.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)"), "profile": comment.author])
+        }
 
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair.unescapeHTML)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.theme.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         

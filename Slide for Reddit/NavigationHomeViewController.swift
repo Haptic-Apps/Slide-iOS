@@ -930,7 +930,7 @@ class CurrentAccountHeaderView: UIView {
         let forwardItem = UIBarButtonItem(customView: forwardButton)
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
-        parent.toolbarItems = [leftItem, space, rightItem]
+        parent.toolbarItems = [leftItem, space, rightItem, forwardItem]
         //parent.toolbarItems.rightBarButtonItems = [forwardItem, rightItem]
 
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
