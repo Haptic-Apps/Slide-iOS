@@ -124,6 +124,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var listingId: String = "" //a random id for use in Realm
 
     var fab: UIButton?
+    var fabHelper: UIView?
 
     var first = true
     var indicator: MDCActivityIndicator?
@@ -669,10 +670,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab = nil
         }
         
+        if self.fabHelper != nil {
+            self.fabHelper?.removeFromSuperview()
+            self.fabHelper = nil
+        }
+        
         if !MainViewController.isOffline && !SettingValues.hiddenFAB {
-            self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
+            self.fab = ExpandedHitTestButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
             self.fab!.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
+            self.fab!.accessibilityFrame = self.fab!.frame
             self.fab!.layer.cornerRadius = 22.5
             self.fab!.clipsToBounds = true
             let title = "  " + SettingValues.fabType.getTitleShort()
@@ -683,11 +690,25 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab!.titleLabel?.textAlignment = .center
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
             
+            fabHelper = UIView(frame: self.fab!.frame)
+            fabHelper?.addTapGestureRecognizer(action: {
+                self.doFabActions()
+            })
+            fabHelper?.addLongTapGestureRecognizer(action: {
+                self.changeFab()
+            })
+                        
             let width = title.size(with: self.fab!.titleLabel!.font).width + CGFloat(65)
             self.fab!.frame = CGRect.init(x: (size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
             
             self.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             self.navigationController?.toolbar.addSubview(self.fab!)
+            self.tableView.addSubview(fabHelper!)
+            self.fabHelper!.bottomAnchor == self.tableView.bottomAnchor
+            self.fabHelper!.backgroundColor = .clear
+            self.fabHelper!.heightAnchor == self.fab!.frame.size.height + 50
+            self.fabHelper!.widthAnchor == self.fab!.frame.size.width
+            self.fabHelper!.centerXAnchor == self.tableView.centerXAnchor
 
             self.fab?.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
@@ -698,6 +719,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 strongSelf.fab?.addLongTapGestureRecognizer {
                     strongSelf.changeFab()
                 }
+                
             })
         }
     }
@@ -2010,7 +2032,7 @@ extension SingleSubredditViewController {
     @available(iOS 14.0, *)
     func editTheme() {
         let vc = SubredditThemeEditViewController(subreddit: sub, delegate: self)
-        VCPresenter.presentModally(viewController: vc, self, CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: 200))
+        VCPresenter.presentModally(viewController: vc, self, CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: 300))
     }
     
     @objc func pickTheme(sender: AnyObject?, parent: MainViewController?) {

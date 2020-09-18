@@ -25,6 +25,10 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     var primaryWell: UIColorWell?
     var accentWell: UIColorWell?
     
+    var primaryCard = UIView()
+    var accentCard = UIView()
+    var resetCard = UIView()
+    
     //Delegate will handle instant color changes
     var delegate: SubredditThemeEditViewControllerDelegate
 
@@ -52,14 +56,12 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     //Configure wells and set constraints
     func configureLayout() {
         primary = UILabel().then {
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
             $0.textColor = ColorUtil.theme.fontColor
             $0.text = "Primary color"
             $0.font = UIFont.boldSystemFont(ofSize: 16)
             $0.textAlignment = .left
         }
         accent = UILabel().then {
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
             $0.textColor = ColorUtil.theme.fontColor
             $0.text = "Accent color"
             $0.font = UIFont.boldSystemFont(ofSize: 16)
@@ -79,23 +81,53 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
             $0.addTarget(self, action: #selector(colorWellChangedAccent(_:)), for: .valueChanged)
         }
 
-        view.addSubviews(primary, accent, primaryWell!, accentWell!)
+        primaryCard.backgroundColor = ColorUtil.theme.backgroundColor
+        primaryCard.clipsToBounds = true
+        primaryCard.layer.cornerRadius = 10
         
-        primary.topAnchor == self.view.safeTopAnchor + 16
-        primary.rightAnchor == self.view.rightAnchor - 8
+        primaryCard.addSubviews(primary, primaryWell!)
+        
+        accentCard.backgroundColor = ColorUtil.theme.backgroundColor
+        accentCard.clipsToBounds = true
+        accentCard.layer.cornerRadius = 10
+        
+        accentCard.addSubviews(accent, accentWell!)
+
+        resetCard.backgroundColor = ColorUtil.theme.backgroundColor
+        resetCard.clipsToBounds = true
+        resetCard.layer.cornerRadius = 10
+        
+        var resetLabel = UILabel().then {
+            $0.textColor = ColorUtil.theme.fontColor
+            $0.text = "Reset colors"
+            $0.font = UIFont.boldSystemFont(ofSize: 16)
+            $0.textAlignment = .left
+        }
+        
+        resetCard.addSubview(resetLabel)
+
+        view.addSubviews(primaryCard, accentCard, resetCard)
+        
+        primaryCard.topAnchor == self.view.safeTopAnchor + 16
+        primaryCard.horizontalAnchors == self.view.horizontalAnchors + 8
+        primary.rightAnchor == primaryCard.rightAnchor - 8
         primary.leftAnchor == primaryWell!.rightAnchor + 8
-        primary.heightAnchor == 50
+        primaryCard.heightAnchor == 50
         
-        primaryWell!.centerYAnchor == primary.centerYAnchor
-        primaryWell!.leftAnchor == self.view.leftAnchor + 16
+        primaryWell!.centerYAnchor == primaryCard.centerYAnchor
+        primaryWell!.leftAnchor == primaryCard.leftAnchor + 8
         
-        accent.topAnchor == primary.bottomAnchor + 8
-        accent.rightAnchor == self.view.rightAnchor - 8
+        accentCard.topAnchor == self.primaryCard.bottomAnchor + 16
+        accentCard.horizontalAnchors == self.view.horizontalAnchors + 8
+        accent.rightAnchor == accentCard.rightAnchor - 8
         accent.leftAnchor == accentWell!.rightAnchor + 8
-        accent.heightAnchor == 50
+        accentCard.heightAnchor == 50
         
-        accentWell!.centerYAnchor == accent.centerYAnchor
-        accentWell!.leftAnchor == self.view.leftAnchor + 16
+        accentWell!.centerYAnchor == accentCard.centerYAnchor
+        accentWell!.leftAnchor == accentCard.leftAnchor + 8
+        
+        resetCard.topAnchor == self.accentCard.bottomAnchor + 24
+        resetCard.horizontalAnchors == self.view.horizontalAnchors + 8
     }
     
     //Primary color changed, set color and call delegate

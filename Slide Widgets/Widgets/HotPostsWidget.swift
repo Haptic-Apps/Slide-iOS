@@ -40,9 +40,9 @@ struct Hot_PostsEntryView: View {
                         Color.clear
                         VStack(alignment: .leading) {
                             HStack {
-                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
+                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(.white).opacity(0.6).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
                             }
-                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).redacted(reason: .placeholder)
+                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).redacted(reason: .placeholder).foregroundColor(.white)
                         }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4)).widgetURL(URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!)
                     }
                     .background(
@@ -77,9 +77,9 @@ struct Hot_PostsEntryView: View {
                         Color.clear
                         VStack(alignment: .leading) {
                             HStack {
-                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
+                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(.white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
                             }
-                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15)
+                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).foregroundColor(.white)
                         }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4)).widgetURL(URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!)
                     }
                     .background(
@@ -204,7 +204,7 @@ struct SubredditViewHorizontal: View {
                     .frame(width: 30, height: 30, alignment: .center)
                     .clipShape(Circle())
                     .clipped().redacted(reason: .placeholder)
-                Text(self.title).font(.headline).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.8).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
+                Text(self.title).font(.headline).bold().foregroundColor(.white).opacity(0.8).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
                 Spacer()
             } else {
                 Image(uiImage: UIImage(data: imageData) ?? UIImage())
@@ -213,7 +213,7 @@ struct SubredditViewHorizontal: View {
                     .frame(width: 30, height: 30, alignment: .center)
                     .clipShape(Circle())
                     .clipped()
-                Text(self.title).font(.headline).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.8).alignmentGuide(.leading) { d in d[.leading] }
+                Text(self.title).font(.headline).bold().foregroundColor(.white).opacity(0.8).alignmentGuide(.leading) { d in d[.leading] }
                 Spacer()
             }
         }.padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0)).frame(maxWidth: .infinity)
