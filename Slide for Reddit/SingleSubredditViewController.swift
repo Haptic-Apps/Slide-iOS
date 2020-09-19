@@ -526,6 +526,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     func hideUI(inHeader: Bool) {
         isHiding = true
+        self.fabHelper?.isUserInteractionEnabled = false
+        
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
@@ -567,6 +569,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func showUI(_ disableBottom: Bool = false) {
+        
+        self.fabHelper?.isUserInteractionEnabled = true
+
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
@@ -703,12 +708,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             
             self.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             self.navigationController?.toolbar.addSubview(self.fab!)
-            self.tableView.addSubview(fabHelper!)
-            self.fabHelper!.bottomAnchor == self.tableView.bottomAnchor
+            self.view.addSubview(fabHelper!)
+            self.fabHelper!.bottomAnchor == self.view.safeBottomAnchor
             self.fabHelper!.backgroundColor = .clear
-            self.fabHelper!.heightAnchor == self.fab!.frame.size.height + 50
+            
+            self.fabHelper!.heightAnchor == 45
             self.fabHelper!.widthAnchor == self.fab!.frame.size.width
-            self.fabHelper!.centerXAnchor == self.tableView.centerXAnchor
+            self.fabHelper!.centerXAnchor == self.view.centerXAnchor
 
             self.fab?.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
