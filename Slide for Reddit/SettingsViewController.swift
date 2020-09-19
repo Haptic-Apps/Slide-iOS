@@ -736,41 +736,48 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 } catch let error as NSError {
                     print("error - \(error.localizedDescription)")
                 }
-
-                SDImageCache.shared.clearMemory()
-                SDImageCache.shared.clearDisk()
                 
-                do {
-                    var cache_path = SDImageCache.shared.diskCachePath
-                    cache_path += cache_path.endsWith("/") ? "" : "/"
-                    let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
-                    for file in files {
-                        if file.endsWith(".mp4") {
-                            try FileManager.default.removeItem(atPath: cache_path + file)
+                let activity = UIActivityIndicatorView()
+                activity.color = ColorUtil.theme.navIconColor
+                activity.startAnimating()
+                
+                clearCell.accessoryView = activity
+
+                DispatchQueue.global(qos: .background).async { [weak self] in
+                    guard let self = self else { return }
+                    
+                    SDImageCache.shared.clearMemory()
+                    SDImageCache.shared.clearDisk()
+                    
+                    do {
+                        var cache_path = SDImageCache.shared.diskCachePath
+                        cache_path += cache_path.endsWith("/") ? "" : "/"
+                        let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
+                        for file in files {
+                            if file.endsWith(".mp4") {
+                                try FileManager.default.removeItem(atPath: cache_path + file)
+                            }
                         }
+                    } catch {
+                        print(error)
                     }
-                } catch {
-                    print(error)
+                    
+                    let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
+                    let defaultParentURL = defaultURL.deletingLastPathComponent()
+                    let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
+
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize() + UInt(self.checkRealmFileSize())))
+                    self.clearCell.detailTextLabel?.text = fileSize
+                    
+                    DispatchQueue.main.async {
+                        self.clearCell.accessoryType = .disclosureIndicator
+                        BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
+                    }
                 }
-                
-                let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
-                let defaultParentURL = defaultURL.deletingLastPathComponent()
-                let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
 
-                autoreleasepool {
-                    let realm = try! Realm()
-                    try! realm.writeCopy(toFile: compactedURL)
-                    try! FileManager.default.removeItem(at: defaultURL)
-                    try! FileManager.default.moveItem(at: compactedURL, to: defaultURL)
-                }
-
-                let countBytes = ByteCountFormatter()
-                countBytes.allowedUnits = [.useMB]
-                countBytes.countStyle = .file
-                let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize() + UInt(checkRealmFileSize())))
-                self.clearCell.detailTextLabel?.text = fileSize
-
-                BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
             case 7:
                 if !SettingValues.isPro {
                     ch = SettingsPro()
