@@ -217,7 +217,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                     // This lets us invisibly swap in-place.
                     strongSelf.imageView.image = image
                 } else {
-                    if let size = finalSize {
+                    if let size = finalSize, finalSize != CGSize.zero {
                         strongSelf.imageView.image = image
                         let maxFrame = strongSelf.view.frame.size
                         var newSize = maxFrame
