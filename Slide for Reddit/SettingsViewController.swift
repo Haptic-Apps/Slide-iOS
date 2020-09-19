@@ -739,9 +739,14 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 
                 let activity = UIActivityIndicatorView()
                 activity.color = ColorUtil.theme.navIconColor
+                activity.hidesWhenStopped = true
+                activity.backgroundColor = ColorUtil.theme.foregroundColor
+
+                clearCell.addSubview(activity)
                 activity.startAnimating()
                 
-                clearCell.accessoryView = activity
+                activity.rightAnchor == clearCell.rightAnchor - 16
+                activity.centerYAnchor == clearCell.centerYAnchor
 
                 DispatchQueue.global(qos: .background).async { [weak self] in
                     guard let self = self else { return }
@@ -770,11 +775,12 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                     countBytes.allowedUnits = [.useMB]
                     countBytes.countStyle = .file
                     let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize() + UInt(self.checkRealmFileSize())))
-                    self.clearCell.detailTextLabel?.text = fileSize
                     
                     DispatchQueue.main.async {
                         self.clearCell.accessoryType = .disclosureIndicator
                         BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
+                        self.clearCell.detailTextLabel?.text = fileSize
+                        activity.stopAnimating()
                     }
                 }
 
