@@ -97,14 +97,27 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         resetCard.clipsToBounds = true
         resetCard.layer.cornerRadius = 10
         
-        var resetLabel = UILabel().then {
+        let resetLabel = UILabel().then {
             $0.textColor = ColorUtil.theme.fontColor
             $0.text = "Reset colors"
             $0.font = UIFont.boldSystemFont(ofSize: 16)
             $0.textAlignment = .left
         }
         
-        resetCard.addSubview(resetLabel)
+        let resetIcon = UIImageView().then {
+            $0.image = UIImage(sfString: SFSymbol.clear, overrideString: "close")?.navIcon()
+            $0.contentMode = .center
+        }
+        
+        resetCard.addTapGestureRecognizer {
+            UserDefaults.standard.removeObject(forKey: "color+" + self.subreddit)
+            UserDefaults.standard.removeObject(forKey: "accent+" + self.subreddit)
+            UserDefaults.standard.synchronize()
+            self.setupTitleView(self.subreddit)
+            self.delegate.didChangeColors(false, color: ColorUtil.getColorForSub(sub: self.subreddit))
+        }
+        
+        resetCard.addSubviews(resetLabel, resetIcon)
 
         view.addSubviews(primaryCard, accentCard, resetCard)
         
@@ -112,6 +125,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         primaryCard.horizontalAnchors == self.view.horizontalAnchors + 8
         primary.rightAnchor == primaryCard.rightAnchor - 8
         primary.leftAnchor == primaryWell!.rightAnchor + 8
+        primary.centerYAnchor == primaryCard.centerYAnchor
         primaryCard.heightAnchor == 50
         
         primaryWell!.centerYAnchor == primaryCard.centerYAnchor
@@ -121,6 +135,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         accentCard.horizontalAnchors == self.view.horizontalAnchors + 8
         accent.rightAnchor == accentCard.rightAnchor - 8
         accent.leftAnchor == accentWell!.rightAnchor + 8
+        accent.centerYAnchor == accentCard.centerYAnchor
         accentCard.heightAnchor == 50
         
         accentWell!.centerYAnchor == accentCard.centerYAnchor
@@ -128,6 +143,15 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         
         resetCard.topAnchor == self.accentCard.bottomAnchor + 24
         resetCard.horizontalAnchors == self.view.horizontalAnchors + 8
+        resetCard.heightAnchor == 50
+        
+        resetIcon.sizeAnchors == CGSize.square(size: 30)
+        resetIcon.centerYAnchor == resetCard.centerYAnchor
+        resetIcon.leftAnchor == resetCard.leftAnchor + 8
+        resetLabel.rightAnchor == resetCard.rightAnchor
+        resetLabel.leftAnchor == resetIcon.rightAnchor + 8
+        
+        resetLabel.centerYAnchor == resetCard.centerYAnchor
     }
     
     //Primary color changed, set color and call delegate
