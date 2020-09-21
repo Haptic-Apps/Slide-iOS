@@ -56,8 +56,24 @@ class OnboardingPageViewController: UIPageViewController {
         super.viewDidLoad()
 
         dataSource = self
+        delegate = self
+        
+        self.setViewControllers([pages[0]], direction: UIPageViewController.NavigationDirection.forward, animated: false, completion: nil)
     }
 
+}
+
+extension OnboardingPageViewController: UIPageViewControllerDelegate {
+    func presentationCount(for pageViewController: UIPageViewController) -> Int {
+        return pages.count
+    }
+    
+    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
+        guard let firstVC = viewControllers?.first, let index = pages.indexes(of: firstVC).first,
+              index != 0 // Not at the first page
+        else { return 0 }
+        return index
+    }
 }
 
 extension OnboardingPageViewController: UIPageViewControllerDataSource {

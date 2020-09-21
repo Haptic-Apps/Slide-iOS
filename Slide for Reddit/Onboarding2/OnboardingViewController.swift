@@ -31,6 +31,8 @@ class OnboardingViewController: UIViewController {
         view.addSubview(pageViewController.view)
         addChild(pageViewController)
         pageViewController.didMove(toParent: self)
+        
+        view.addSubview(finishButton)
 
         setupConstraints()
     }

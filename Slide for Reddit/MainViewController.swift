@@ -581,7 +581,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     func checkForUpdate() {
-        VCPresenter.presentModally(viewController: OnboardingViewController(), self)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 6) {
+            VCPresenter.presentModally(viewController: OnboardingViewController(), self)
+        }
         if !SettingValues.doneVersion() {
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {

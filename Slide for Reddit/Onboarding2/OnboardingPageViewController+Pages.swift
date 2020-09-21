@@ -61,9 +61,11 @@ class OnboardingVideoPageViewController: UIViewController {
     let text: String
     let video: String
     
-    let textView = UILabel()
+    var textView = UILabel()
     var videoPlayer = AVPlayer()
     let videoContainer = UIView()
+    
+    var layer: AVPlayerLayer?
 
     init(text: String, video: String) {
         self.text = text
@@ -82,31 +84,31 @@ class OnboardingVideoPageViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
+        
+        startVideos()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
     
     func setupViews() {
-        textView.then {
+        self.textView = UILabel().then {
             $0.font = UIFont.boldSystemFont(ofSize: 20)
             $0.textColor = ColorUtil.theme.fontColor
             $0.textAlignment = .center
+            $0.text = text
         }
         self.view.addSubview(textView)
+        self.view.addSubview(videoContainer)
+    }
         
-        let bundle = Bundle.main
-        if let videoPath = bundle.path(forResource: video, ofType: "mp4") {
-            videoPlayer = AVPlayer(url: URL(fileURLWithPath: videoPath))
-            let layer: AVPlayerLayer = AVPlayerLayer(player: videoPlayer)
-            
-            layer.frame = videoContainer.bounds
-            layer.videoGravity = .resizeAspect
-            
-            videoContainer.layer.addSublayer(layer)
-        }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        layer?.frame = videoContainer.bounds
     }
-    
-    func loopVideo() {
-    }
-    
+
     func setupConstraints() {
         textView.horizontalAnchors == self.view.horizontalAnchors
         textView.topAnchor == self.view.safeTopAnchor + 8
@@ -114,5 +116,31 @@ class OnboardingVideoPageViewController: UIViewController {
         videoContainer.topAnchor == textView.bottomAnchor + 8
         videoContainer.bottomAnchor == self.view.bottomAnchor + 8
         videoContainer.horizontalAnchors == self.view.horizontalAnchors
+    }
+    
+    func startVideos() {
+        let bundle = Bundle.main
+        if let videoPath = bundle.path(forResource: video, ofType: "mp4") {
+            videoPlayer = AVPlayer(url: URL(fileURLWithPath: videoPath))
+            layer = AVPlayerLayer(player: videoPlayer)
+            
+            layer!.needsDisplayOnBoundsChange = true
+            layer!.videoGravity = .resizeAspect
+            
+            videoContainer.layer.addSublayer(layer!)
+            videoContainer.clipsToBounds = true
+            videoContainer.layer.masksToBounds = true
+            videoContainer.layer.cornerRadius = 20
+            
+            videoPlayer.play()
+            videoPlayer.actionAtItemEnd = .none
+            NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd(notification:)), name: .AVPlayerItemDidPlayToEndTime, object: videoPlayer.currentItem)
+        }
+    }
+    
+    @objc func playerItemDidReachEnd(notification: Notification) {
+        if let playerItem = notification.object as? AVPlayerItem {
+            playerItem.seek(to: CMTime.zero, completionHandler: nil)
+        }
     }
 }
