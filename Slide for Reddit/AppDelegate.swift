@@ -163,7 +163,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         colorsFile = documentDirectory.appending("/subcolors.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 28,
+                schemaVersion: 29,
                 migrationBlock: migrationBlock,
                 deleteRealmIfMigrationNeeded: true)
 
@@ -291,21 +291,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 var dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
                 var directoryContents: NSArray = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
-                print(dirPath)
                 for path in directoryContents {
                     let fullPath = dirPath + "/" + (path as! String)
                     if fullPath.contains(".mp4") {
-                        print(fullPath)
                         try FileManager.default.removeItem(atPath: fullPath)
                     }
                 }
                 dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0].substring(0, length: dirPath.length - 7)
                 directoryContents = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
-                print(dirPath)
                 for path in directoryContents {
                     let fullPath = dirPath + "/" + (path as! String)
                     if fullPath.contains(".mp4") {
-                        print(fullPath)
                         try FileManager.default.removeItem(atPath: fullPath)
                     }
                 }
@@ -372,7 +368,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 14, *) {
             _ = resetStackNew(window: window)
         } else {
-            _ = resetStack()
+            _ = resetStack(window: window)
         }
         
         window.makeKeyAndVisible()
@@ -401,8 +397,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             
         }
-        
-
     }
     
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -412,8 +406,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var statusBar = UIView()
     var splitVC = CustomSplitController()
     
-    func resetStack(_ soft: Bool = false) -> MainViewController {
-        guard let window = self.window else {
+    func resetStack(_ soft: Bool = false, window: UIWindow?) -> MainViewController {
+        guard let window = window else {
             fatalError("Window must exist when resetting the stack!")
         }
         
@@ -452,7 +446,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func doHard(_ window: UIWindow) -> MainViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            if SettingValues.appMode == .MULTI_COLUMN {
+            if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
                 let splitViewController = UISplitViewController()
                 splitViewController.preferredDisplayMode = .secondaryOnly
                 splitViewController.presentsWithGesture = true
@@ -486,11 +480,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         } else {
             let splitViewController = UISplitViewController()
-            splitViewController.preferredDisplayMode = .primaryOverlay
+            splitViewController.preferredDisplayMode = .oneOverSecondary
             splitViewController.presentsWithGesture = true
-            
+
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
+            let navHome = NavigationHomeViewController(controller: main)
+
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
             
             window.rootViewController = splitViewController
             self.window = window
@@ -510,7 +506,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return doHard14(window)
         } else if let oldSplit = window.rootViewController as? UISplitViewController {
             if UIDevice.current.userInterfaceIdiom == .pad {
-                if SettingValues.appMode == .MULTI_COLUMN {
+                if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
                     let splitViewController = UISplitViewController(style: .doubleColumn)
                     splitViewController.preferredDisplayMode = .secondaryOnly
                     splitViewController.presentsWithGesture = true
@@ -523,11 +519,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                     splitViewController.setViewController(main, for: .secondary)
                     
-                    let snapshotImageView = UIImageView(image: window.snapshotImage())
+                    guard let snapshotImageView = window.snapshotView(afterScreenUpdates: true) else {
+                        return main
+                    }
                     window.addSubview(snapshotImageView)
                     window.rootViewController = splitViewController
                     window.bringSubviewToFront(snapshotImageView)
-                    
+
                     UIView.animate(withDuration: 0.4, animations: { () -> Void in
                         snapshotImageView.alpha = 0
                     }, completion: { (success) -> Void in
@@ -552,7 +550,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     splitViewController.setViewController(main, for: .supplementary)
                     splitViewController.setViewController(PlaceholderViewController(), for: .secondary)
 
-                    let snapshotImageView = UIImageView(image: window.snapshotImage())
+                    guard let snapshotImageView = window.snapshotView(afterScreenUpdates: true) else {
+                        return main
+                    }
                     window.addSubview(snapshotImageView)
                     window.rootViewController = splitViewController
                     window.bringSubviewToFront(snapshotImageView)
@@ -575,7 +575,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            if SettingValues.appMode == .MULTI_COLUMN {
+            if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
                 let splitViewController = UISplitViewController(style: .doubleColumn)
                 splitViewController.preferredDisplayMode = .secondaryOnly
                 splitViewController.presentsWithGesture = true
@@ -613,11 +613,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         } else {
             let splitViewController = UISplitViewController()
-            splitViewController.preferredDisplayMode = .primaryOverlay
+            splitViewController.preferredDisplayMode = .oneOverSecondary
             splitViewController.presentsWithGesture = true
             
             let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)), main]
+            let navHome = NavigationHomeViewController(controller: main)
+
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
             
             window.rootViewController = splitViewController
             self.window = window
@@ -1030,7 +1032,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         do {
             let data: NSData = try PropertyListSerialization.data(fromPropertyList: dictionary, format: PropertyListSerialization.PropertyListFormat.xml, options: 0) as NSData
             if let datastring = NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue) {
-                print(datastring)
                collectionsRecord.setValue(datastring, forKey: "data_xml")
             } else {
                 print("Could not turn nsdata to string")
@@ -1064,8 +1065,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             do {
                                 let dict = try PropertyListSerialization.propertyList(from: data, options: PropertyListSerialization.ReadOptions.mutableContainersAndLeaves, format: nil) as? NSMutableDictionary
                                 for item in dict ?? [:] {
-                                    print(item.key)
-                                    print(item.value)
                                     dictionaryToAppend[item.key] = item.value
                                 }
                                 completion?(unwrappedRecord)
@@ -1306,6 +1305,19 @@ extension AppDelegate: UIWindowSceneDelegate {
         }
     }
     
+    //Siri shortcuts and deep links
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        print(userActivity.userInfo)
+        if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
+            VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
+        } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
+            VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+        } else if let url = userActivity.webpageURL {
+            handleURL(url)
+        }
+
+    }
+
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let _ = (scene as? UIWindowScene) else { return }
 

@@ -56,7 +56,7 @@ class RedditLink {
         }
                 
         var safeURL = url.startsWith("/") ? "https://www.reddit.com" + url : url
-        if safeURL.startsWith("reddit.com") {
+        if !safeURL.contains("www.reddit.com") && safeURL.contains("reddit.com") {
             safeURL = "https://www." + safeURL
         }
         

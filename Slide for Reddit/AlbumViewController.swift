@@ -307,6 +307,10 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.heightAnchor == 56
         
         if galleryItems.isEmpty {
+            if baseURL == nil {
+                dismiss(animated: true, completion: nil)
+                return
+            }
             spinnerIndicator.startAnimating()
             var url = baseURL!.absoluteString
             if url.contains("/layout/") {

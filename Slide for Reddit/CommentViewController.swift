@@ -20,6 +20,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     var version = 0
     var swipeBackAdded = false
+    var shouldSetupSwipe = false
     var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
     var cellGestureRecognizer: UIPanGestureRecognizer!
     var liveView: UILabel?
@@ -941,6 +942,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                     }
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
+
                                     if let tableHeaderView = self.headerCell {
                                         var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
                                         // Add safe area insets to left and right if available
@@ -953,6 +955,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                             let view = UIView(frame: tableHeaderView.frame)
                                             view.addSubview(tableHeaderView)
                                             self.tableView.tableHeaderView = view
+                                            self.setupFullSwipeView(self.tableView.tableHeaderView)
                                         }
                                     }
                                     
@@ -978,6 +981,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     let view = UIView(frame: self.headerCell!.contentView.frame)
                                     view.addSubview(self.headerCell!.contentView)
                                     self.tableView.tableHeaderView = view
+                                    self.setupFullSwipeView(self.tableView.tableHeaderView)
                                 }
                                 self.refreshControl?.endRefreshing()
                                 self.activityIndicator.stopAnimating()
@@ -3212,24 +3216,41 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
     
     func setupSwipeGesture() {
+        shouldSetupSwipe = true
         if swipeBackAdded {
             return
         }
-        if UIDevice.current.userInterfaceIdiom == .pad {
+
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SINGLE {
             if #available(iOS 14, *) {
                 return
             }
         }
         if SettingValues.commentGesturesMode == .FULL {
+            //setupFullSwipeView(self.tableView.tableHeaderView)
             return
         }
+        
+        setupFullSwipeView(self.tableView)
+        shouldSetupSwipe = false
+        swipeBackAdded = true
+    }
+    
+    func setupFullSwipeView(_ view: UIView?) {
+        if shouldSetupSwipe == false {
+            return
+        }
+        if let full = fullWidthBackGestureRecognizer {
+            full.view?.removeGestureRecognizer(full)
+        }
+
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController, !swipeBackAdded {
-            swipeBackAdded = true
             fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
                 fullWidthBackGestureRecognizer.require(toFail: navGesture)
             }
+            fullWidthBackGestureRecognizer.require(toFail: interactivePopGestureRecognizer)
             for view in parent?.view.subviews ?? [] {
                 if view is UIScrollView {
                     (view as! UIScrollView).panGestureRecognizer.require(toFail: fullWidthBackGestureRecognizer)
@@ -3239,7 +3260,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
-            tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            view?.addGestureRecognizer(fullWidthBackGestureRecognizer)
             if #available(iOS 13.4, *) {
                 fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
             }
@@ -3288,6 +3309,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForRow(at: point)
             if indexpath == nil {
+                recognizer.cancel()
                 return
             }
 

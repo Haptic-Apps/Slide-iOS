@@ -11,6 +11,7 @@ import UIKit
 
 public protocol PagingTitleDelegate {
     func didSelect(_ subreddit: String)
+    func didSetWidth()
 }
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
@@ -38,16 +39,21 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         //self.collectionViewLayout.scrollDirection = .horizontal
         
         self.collectionViewLayout.delegate = self
+
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         self.addSubview(collectionView)
         collectionView.edgeAnchors == self.edgeAnchors
         collectionView.backgroundColor = .clear
-        
+
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         self.collectionView.bounces = false
         self.collectionView.showsHorizontalScrollIndicator = false
         self.collectionView.showsVerticalScrollIndicator = false
+        
+        if SettingValues.fullWidthHeaderCells {
+            self.collectionView.isUserInteractionEnabled = false
+        }
         //self.collectionView.isPagingEnabled = true
         self.collectionView.register(SubredditTitleCollectionViewCell.classForCoder(), forCellWithReuseIdentifier: "subreddit")
     }
@@ -67,14 +73,13 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         super.layoutSubviews()
         if !widthSet {
             widthSet = true
-            print("Setting width")
             collectionViewLayout.reset()
             collectionView.reloadData()
+            delegate.didSetWidth()
         } else {
+            collectionView.contentOffset = oldOffset
         }
         addGradientMask()
-        
-        collectionView.contentOffset = oldOffset
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -112,7 +117,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             originalOffset = parent.contentOffset.x
         }*/
     }
-        
+            
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.collectionView.mask?.frame = self.collectionView.bounds
         /* Disable for now
@@ -288,6 +293,9 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
 
 extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, indexPath: IndexPath) -> CGSize {
+        if SettingValues.fullWidthHeaderCells {
+            return CGSize(width: collectionView.frame.size.width, height: 40)
+        }
         if SettingValues.subredditIcons {
             var width = CGFloat(30) //icon size
             width += 4 //icon leading padding
@@ -328,7 +336,6 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
     init(scrollDirection: UICollectionView.ScrollDirection) {
         super.init()
         self.scrollDirection = scrollDirection
-
     }
 
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {

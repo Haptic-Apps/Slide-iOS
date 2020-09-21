@@ -389,7 +389,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         currentBackgroundOffset.x = offsetX
         self.tabBar.collectionView.contentOffset = currentBackgroundOffset
-        //elf.tabBar.collectionView.layoutIfNeeded()
+        //self.tabBar.collectionView.layoutIfNeeded()
     }
     
     func goToSubreddit(index: Int) {
@@ -467,20 +467,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if !SettingValues.subredditBar {
             self.navigationItem.titleView = label
         }
-
-        var items: [UIBarButtonItem] = []
-        
-        let splitButton = UIButton.init(type: .custom)
-        splitButton.setImage(UIImage(sfString: SFSymbol.sidebarLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
-        let splitB = UIBarButtonItem(customView: splitButton)
-        
-        self.splitViewController?.navigationItem.backBarButtonItem = splitB
-        
-        items.append(accountB)
-        
+                
         self.navigationItem.setHidesBackButton(true, animated: false)
         self.splitViewController?.navigationItem.setHidesBackButton(true, animated: false)
-        self.navigationItem.setLeftBarButtonItems(items, animated: false)
+        self.navigationItem.leftBarButtonItem = accountB
     }
     
     @objc func popToPrimary(_ sender: AnyObject) {
@@ -852,6 +842,12 @@ class ExpandedHitButton: UIButton {
         let hitTestEdgeInsets = UIEdgeInsets( top: -44, left: -44, bottom: -44, right: -44 )
         let hitFrame = relativeFrame.inset(by: hitTestEdgeInsets)
         return hitFrame.contains(point)
+    }
+}
+
+class ExpandedHitTestButton: UIButton {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        return bounds.insetBy(dx: -20, dy: -20).contains(point)
     }
 }
 

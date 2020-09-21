@@ -112,6 +112,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             PagingCommentViewController.savedComment = nil
         }
     }
+    
+    var headerVersion = 0
 
     var more = UIButton()
     var searchbutton = UIButton()
@@ -122,6 +124,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var listingId: String = "" //a random id for use in Realm
 
     var fab: UIButton?
+    var fabHelper: UIView?
 
     var first = true
     var indicator: MDCActivityIndicator?
@@ -218,21 +221,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.tableView.dataSource = self
         refreshControl = UIRefreshControl()
 
-        if !(navigationController is TapBehindModalViewController) {
-            inHeadView = UIView().then {
-                $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
-                if SettingValues.fullyHideNavbar {
-                    $0.backgroundColor = .clear
-                }
-            }
-            self.view.addSubview(inHeadView!)
-            inHeadView!.isHidden = UIDevice.current.orientation.isLandscape
-
-            inHeadView!.topAnchor == view.topAnchor
-            inHeadView!.horizontalAnchors == view.horizontalAnchors
-            inHeadView!.heightAnchor == (UIApplication.shared.statusBarUIView?.frame.size.height ?? 0)
-        }
-
         reloadNeedingColor()
         self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
@@ -267,6 +255,29 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
         
+        if !(navigationController is TapBehindModalViewController) && inHeadView == nil {
+            inHeadView = UIView().then {
+                $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
+                if SettingValues.fullyHideNavbar {
+                    $0.backgroundColor = .clear
+                }
+            }
+            self.view.addSubview(inHeadView!)
+            inHeadView!.isHidden = UIDevice.current.orientation.isLandscape
+
+            inHeadView!.topAnchor == view.topAnchor
+            inHeadView!.horizontalAnchors == view.horizontalAnchors
+            inHeadView!.heightAnchor == (UIApplication.shared.statusBarUIView?.frame.size.height ?? 0)
+            
+            let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
+            var topOffset = UIApplication.shared.statusBarUIView?.frame.size.height ?? 20
+            if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+                topOffset = 0
+            }
+
+            self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(navOffset + topOffset + 8), left: 0, bottom: 65, right: 0)
+        }
+
         dataSource.delegate = self
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
@@ -329,6 +340,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if dataSource.loaded && dataSource.content.count > oldCount {
             self.tableView.reloadData()
+            oldCount = dataSource.content.count
         }
 
         if toolbarEnabled && !MainViewController.isOffline {
@@ -402,21 +414,48 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         }
     }
+    
+    var cancelRotationOffset: CGPoint?
+    var didScroll = true
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
                 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
         fab?.removeFromSuperview()
-
+        
+        if cancelRotationOffset == nil {
+            cancelRotationOffset = tableView.contentOffset
+        }
+        
+        var indexPathRect = CGRect(x: tableView.contentOffset.x, y: tableView.contentOffset.y, width: tableView.bounds.size.width, height: tableView.bounds.size.height)
+        let indexToPin = self.tableView.indexPathForItem(at: CGPoint(x: indexPathRect.width / (CGFloat(flowLayout.numberOfColumns) * 2), y: indexPathRect.midY))
+        
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            self.splitViewController?.preferredDisplayMode = .secondaryOnly
+        }
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
+                self.navigationController?.navigationBar.shadowImage = UIImage()
+                self.navigationController?.navigationBar.isTranslucent = false
+                self.navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
+                self.navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
+                self.navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.reloadData()
                 self.view.setNeedsLayout()
+                if let oldLocation = cancelRotationOffset, !didScroll {
+                    tableView.contentOffset = oldLocation
+                    cancelRotationOffset = nil
+                } else if let indexPath = indexToPin {
+                    self.tableView.scrollToItem(at: indexPath, at: UICollectionView.ScrollPosition.centeredVertically, animated: true)
+                    self.lastY = self.tableView.contentOffset.y
+                }
                // TODO: - content offset
             }, completion: { (_) in
                 self.setupFab(size)
+                self.didScroll = false
             }
         )
 
@@ -475,12 +514,20 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
+            if dataSource.loaded && dataSource.content.count > oldCount {
+                self.tableView.reloadData()
+                self.oldCount = dataSource.content.count
+            }
+            
         }
         autoplayHandler.scrollViewDidScroll(scrollView)
+        didScroll = true
     }
     
     func hideUI(inHeader: Bool) {
         isHiding = true
+        self.fabHelper?.isUserInteractionEnabled = false
+        
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
@@ -522,6 +569,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func showUI(_ disableBottom: Bool = false) {
+        
+        self.fabHelper?.isUserInteractionEnabled = true
+
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(false, animated: true)
         }
@@ -625,10 +675,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab = nil
         }
         
+        if self.fabHelper != nil {
+            self.fabHelper?.removeFromSuperview()
+            self.fabHelper = nil
+        }
+        
         if !MainViewController.isOffline && !SettingValues.hiddenFAB {
-            self.fab = UIButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
+            self.fab = ExpandedHitTestButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
             self.fab!.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
+            self.fab!.accessibilityFrame = self.fab!.frame
             self.fab!.layer.cornerRadius = 22.5
             self.fab!.clipsToBounds = true
             let title = "  " + SettingValues.fabType.getTitleShort()
@@ -639,11 +695,26 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab!.titleLabel?.textAlignment = .center
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
             
+            fabHelper = UIView(frame: self.fab!.frame)
+            fabHelper?.addTapGestureRecognizer(action: {
+                self.doFabActions()
+            })
+            fabHelper?.addLongTapGestureRecognizer(action: {
+                self.changeFab()
+            })
+                        
             let width = title.size(with: self.fab!.titleLabel!.font).width + CGFloat(65)
             self.fab!.frame = CGRect.init(x: (size.width / 2) - (width / 2), y: -20, width: width, height: CGFloat(45))
             
             self.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             self.navigationController?.toolbar.addSubview(self.fab!)
+            self.view.addSubview(fabHelper!)
+            self.fabHelper!.bottomAnchor == self.view.safeBottomAnchor
+            self.fabHelper!.backgroundColor = .clear
+            
+            self.fabHelper!.heightAnchor == 45
+            self.fabHelper!.widthAnchor == self.fab!.frame.size.width
+            self.fabHelper!.centerXAnchor == self.view.centerXAnchor
 
             self.fab?.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
@@ -654,6 +725,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 strongSelf.fab?.addLongTapGestureRecognizer {
                     strongSelf.changeFab()
                 }
+                
             })
         }
     }
@@ -812,23 +884,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.tableView.register(NothingHereCell.classForCoder(), forCellWithReuseIdentifier: "nothing")
         self.tableView.register(ReadLaterCell.classForCoder(), forCellWithReuseIdentifier: "readlater")
         self.tableView.register(PageCell.classForCoder(), forCellWithReuseIdentifier: "page")
-        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header")
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
         lastVersion = SingleSubredditViewController.cellVersion
 
-        var top = 64
-        if #available(iOS 11.0, *) {
-            top += 28
-        }
-                
-        if self.navigationController != nil {
-            if #available(iOS 13.0, *) {
-                if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
-                    top -= 32
-                }
-            }
+        let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
+        var topOffset = self.inHeadView?.frame.size.height ?? 20
+        if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+            topOffset = 0
         }
 
-        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(top), left: 0, bottom: 65, right: 0)
+        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(navOffset + topOffset + 8), left: 0, bottom: 65, right: 0)
 
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
@@ -1853,34 +1918,15 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
                 self.autoplayHandler.autoplayOnce(self.tableView)
             })
 
-            var is13Popover = false
-            
-            if self.navigationController != nil {
-                if #available(iOS 13.0, *) {
-                    if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
-                        is13Popover = true
-                    }
-                }
+            let navOffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
+            var topOffset = (-1 * ( (self.inHeadView?.frame.size.height ?? 20)))
+            if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+                topOffset = 0
             }
+            let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
+            let paddingOffset = CGFloat(headerHeight == 0 ? -4 : 0)
             
-            let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad ? 0 : self.headerHeight(false))
-
-            var top = CGFloat(0)
-            if !is13Popover {
-                if #available(iOS 11, *) {
-                    top += 26
-                    if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
-                        top -= 18
-                    }
-                }
-            } else {
-                top -= 4
-                if headerHeight != 0 {
-                    top -= 12
-                }
-            }
-            let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-            self.tableView.contentOffset = CGPoint.init(x: 0, y: -22 + navoffset - top + headerHeight)
+            self.tableView.contentOffset = CGPoint.init(x: 0, y: paddingOffset + navOffset + topOffset + headerHeight)
         } else {
             self.flowLayout.invalidateLayout()
             self.tableView.insertItems(at: paths)
@@ -1914,28 +1960,13 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         self.indicator?.stopAnimating()
         self.indicator?.isHidden = true
         
-        var is13Popover = false
-        if self.navigationController != nil {
-            if #available(iOS 13.0, *) {
-                if self.navigationController!.modalPresentationStyle == .pageSheet && self.navigationController!.viewControllers.count == 1 && !(self.navigationController!.viewControllers[0] is MainViewController) {
-                    is13Popover = true
-                }
-            }
+        let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
+        var topOffset = UIApplication.shared.statusBarUIView?.frame.size.height ?? 20
+        if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+            topOffset = 0
         }
 
-        var top = CGFloat(0)
-        if !is13Popover {
-            if #available(iOS 11, *) {
-                top += 26
-                if UIDevice.current.userInterfaceIdiom == .pad || !self.hasTopNotch {
-                    top -= 18
-                }
-            }
-        } else {
-            top -= 4
-        }
-        let navoffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-        self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + navoffset - top)
+        self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(navOffset + topOffset + 8), left: 0, bottom: 65, right: 0)
 
         DispatchQueue.main.async {
             self.dataSource.handleTries { (isEmpty: Bool) in
@@ -2002,6 +2033,12 @@ extension SingleSubredditViewController {
 
     @objc func showMoreNone(_ sender: AnyObject) {
         showMore(sender, parentVC: nil)
+    }
+    
+    @available(iOS 14.0, *)
+    func editTheme() {
+        let vc = SubredditThemeEditViewController(subreddit: sub, delegate: self)
+        VCPresenter.presentModally(viewController: vc, self, CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: 300))
     }
     
     @objc func pickTheme(sender: AnyObject?, parent: MainViewController?) {
@@ -2175,6 +2212,19 @@ extension SingleSubredditViewController {
             }
         }
         
+        alertController.addAction(title: "Edit \(sub) theme", icon: generateThemePreviewImage(subreddit: sub).getCopy(withSize: CGSize(width: 20, height: 20))) {
+            if #available(iOS 14, *) {
+                self.editTheme()
+            } else {
+                if parentVC != nil {
+                    let p = (parentVC!)
+                    self.pickTheme(sender: sender, parent: p)
+                } else {
+                    self.pickTheme(sender: sender, parent: nil)
+                }
+            }
+        }
+
         alertController.addAction(title: "Cache for offline viewing", icon: UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")!.menuIcon()) {
             _ = AutoCache.init(baseController: self, subs: [self.sub])
         }
@@ -2195,15 +2245,6 @@ extension SingleSubredditViewController {
             self.galleryMode()
         }
 
-        alertController.addAction(title: "Custom theme for \(sub)", icon: UIImage(named: "colors")!.menuIcon()) {
-            if parentVC != nil {
-                let p = (parentVC!)
-                self.pickTheme(sender: sender, parent: p)
-            } else {
-                self.pickTheme(sender: sender, parent: nil)
-            }
-        }
-
         if !special {
             alertController.addAction(title: "Submit new post", icon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon()) {
                 self.newPost(sender)
@@ -2221,6 +2262,32 @@ extension SingleSubredditViewController {
         }
 
         alertController.show(self)
+    }
+    
+    func generateThemePreviewImage(subreddit: String) -> UIImage {
+        let baseImage = UIImage(named: "circle")!
+        let rect = CGRect(x: 0, y: 0, width: baseImage.size.width, height: baseImage.size.height)
+
+        UIGraphicsBeginImageContextWithOptions(baseImage.size, false, baseImage.scale)
+        baseImage.draw(in: rect)
+
+        let context = UIGraphicsGetCurrentContext()!
+        context.setBlendMode(CGBlendMode.sourceIn)
+
+        context.setFillColor(ColorUtil.getColorForSub(sub: subreddit).cgColor)
+
+        var rectToFill = CGRect(x: 0, y: 0, width: baseImage.size.width * 0.5, height: baseImage.size.height)
+        context.fill(rectToFill)
+
+        context.setFillColor(ColorUtil.accentColorForSub(sub: subreddit).cgColor)
+
+        rectToFill = CGRect(x: baseImage.size.width * 0.5, y: 0, width: baseImage.size.width, height: baseImage.size.height)
+        context.fill(rectToFill)
+
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage!
     }
 
 }
@@ -2297,7 +2364,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var row = indexPath.row
         if row == 0 && hasHeader {
-            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "header", for: indexPath) as! LinksHeaderCellView
+            let cell = tableView.dequeueReusableCell(withReuseIdentifier: "header\(headerVersion)", for: indexPath) as! LinksHeaderCellView
             cell.setLinks(links: self.subLinks, sub: self.sub, delegate: self)
             return cell
         }
@@ -2459,29 +2526,39 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             }
             return
         })
-        VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SINGLE) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 
-// MARK: - Color Picker View Delegate
+// MARK: - Color Picker View Delegates
 extension SingleSubredditViewController: ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
-        if isAccent {
-            accentChosen = colorPickerView.colors[indexPath.row]
-            self.fab?.backgroundColor = accentChosen
-        } else {
-            let c = colorPickerView.colors[indexPath.row]
-            primaryChosen = c
-            self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
-            sideView.backgroundColor = c
-            sideView.backgroundColor = c
-            inHeadView?.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : c
-            if SettingValues.fullyHideNavbar {
-                inHeadView?.backgroundColor = .clear
-            }
-            if parentController != nil {
-                parentController?.colorChanged(c)
-            }
+        self.fab?.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
+        CachedTitle.titles.removeAll()
+        
+        headerVersion += 1
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
+
+        self.tableView.reloadData()
+        if let parent = self.parentController as? SplitMainViewController {
+            parent.tabBar.collectionView.reloadData()
+            parent.doToolbarOffset()
+        }
+    }
+}
+
+extension SingleSubredditViewController: SubredditThemeEditViewControllerDelegate {
+    public func didChangeColors(_ isAccent: Bool, color: UIColor) {
+        self.fab?.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
+        CachedTitle.titles.removeAll()
+        
+        headerVersion += 1
+        self.tableView.register(LinksHeaderCellView.classForCoder(), forCellWithReuseIdentifier: "header\(headerVersion)")
+
+        self.tableView.reloadData()
+        if let parent = self.parentController as? SplitMainViewController {
+            parent.tabBar.collectionView.reloadData()
+            parent.doToolbarOffset()
         }
     }
 }
@@ -2751,9 +2828,6 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
             tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
-            if #available(iOS 13.4, *) {
-                (fullWidthBackGestureRecognizer as! UIPanGestureRecognizer).allowedScrollTypesMask = .continuous
-            }
         }
     }
 

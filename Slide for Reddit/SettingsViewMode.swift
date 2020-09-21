@@ -34,8 +34,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == subredditBarSwitch {
             MainViewController.needsRestart = true
-            SettingValues.subredditBar = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subBar)
+            SettingValues.fullWidthHeaderCells = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_fullWidthHeaderCells)
         } else if changed == thireenPopupSwitch {
             SettingValues.disable13Popup = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disable13Popup)
@@ -65,7 +65,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         // set the title
         self.title = "App Behavior"
         
-        createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
+        createCell(subredditBar, subredditBarSwitch, isOn: !SettingValues.fullWidthHeaderCells, text: "Swipable subreddit bar on homepage")
         createCell(thireenPopup, thireenPopupSwitch, isOn: SettingValues.disable13Popup, text: "Disable iOS 13 popup behavior")
         createCell(singleMode, isOn: false, text: "Single-column posts")
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
@@ -209,11 +209,25 @@ class SettingsViewMode: BubbleSettingTableViewController {
             default:
                 break
             }
-               
+            var keyWindow = UIApplication.shared.keyWindow
+            if keyWindow == nil {
+                if #available(iOS 13.0, *) {
+                    keyWindow = UIApplication.shared.connectedScenes
+                        .filter({ $0.activationState == .foregroundActive })
+                        .map({ $0 as? UIWindowScene })
+                        .compactMap({$0})
+                        .first?.windows
+                        .filter({ $0.isKeyWindow }).first
+                }
+            }
+            guard keyWindow != nil else {
+                fatalError("Window must exist when resetting the stack!")
+            }
+
             if #available(iOS 14, *) {
-                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: UIApplication.shared.keyWindow)
+                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
             } else {
-                (UIApplication.shared.delegate as! AppDelegate).resetStack()
+                (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
             }
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()

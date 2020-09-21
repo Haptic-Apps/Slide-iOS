@@ -75,6 +75,8 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         setNeedsStatusBarAppearanceUpdate()
         
         submissionDataSource.delegate = self
+        
+        self.splitViewController?.presentsWithGesture = false
     }
     
     var first = true
@@ -159,9 +161,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        if SettingValues.commentGesturesMode == .FULL {
-            return nil
-        }
         let id = (viewController as! CommentViewController).submission!.getId()
         var viewControllerIndex = -1
         for item in startIndex..<submissionDataSource.content.count {
