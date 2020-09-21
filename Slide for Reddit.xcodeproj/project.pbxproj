@@ -999,6 +999,7 @@
 				B4487F442511511100C49018 /* OnboardingPageViewController+Pages.swift */,
 			);
 			path = Onboarding;
+        };
 		B49EFE502511A20F002D6AEE /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
