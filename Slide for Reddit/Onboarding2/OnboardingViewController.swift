@@ -13,7 +13,7 @@ import UIKit
 class OnboardingViewController: UIViewController {
 
     let models: [OnboardingPageViewModel] = [
-        .video(text: "Welcome to slide v6", video: "v6howtonavigate")
+        .video(text: "Welcome to slide v6", video: "v6howtonavigate", aspectRatio: 0.679)
     ]
 
     var pageViewController: OnboardingPageViewController!

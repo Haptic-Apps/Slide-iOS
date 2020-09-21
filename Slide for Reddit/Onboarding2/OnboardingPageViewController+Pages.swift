@@ -64,12 +64,14 @@ class OnboardingVideoPageViewController: UIViewController {
     var textView = UILabel()
     var videoPlayer = AVPlayer()
     let videoContainer = UIView()
+    let aspectRatio: Float
     
     var layer: AVPlayerLayer?
 
-    init(text: String, video: String) {
+    init(text: String, video: String, aspectRatio: Float) {
         self.text = text
         self.video = video
+        self.aspectRatio = aspectRatio
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -77,6 +79,7 @@ class OnboardingVideoPageViewController: UIViewController {
     required init?(coder: NSCoder) {
         self.text = ""
         self.video = ""
+        self.aspectRatio = 1
         super.init(coder: coder)
     }
     
@@ -114,8 +117,9 @@ class OnboardingVideoPageViewController: UIViewController {
         textView.topAnchor == self.view.safeTopAnchor + 8
         
         videoContainer.topAnchor == textView.bottomAnchor + 8
-        videoContainer.bottomAnchor == self.view.bottomAnchor + 8
-        videoContainer.horizontalAnchors == self.view.horizontalAnchors
+        videoContainer.bottomAnchor == self.view.bottomAnchor - 8
+        videoContainer.widthAnchor == self.videoContainer.heightAnchor * aspectRatio
+        videoContainer.centerXAnchor == self.view.centerXAnchor
     }
     
     func startVideos() {
@@ -126,6 +130,8 @@ class OnboardingVideoPageViewController: UIViewController {
             
             layer!.needsDisplayOnBoundsChange = true
             layer!.videoGravity = .resizeAspect
+            layer!.cornerRadius = 20
+            layer!.masksToBounds = true
             
             videoContainer.layer.addSublayer(layer!)
             videoContainer.clipsToBounds = true
