@@ -137,6 +137,7 @@ class SettingValues {
     public static let pref_hideAwards = "HIDE_AWARDS"
     public static let pref_subredditIcons = "SUBREDDIT_ICONS"
     public static let pref_streamVideos = "STREAM_VIDEOS"
+    public static let pref_fullWidthHeaderCells = "FULL_WIDTH_HEADER_CELLS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -270,6 +271,7 @@ class SettingValues {
     public static var thumbTag = true
     public static var hideAwards = false
     public static var streamVideos = true
+    public static var fullWidthHeaderCells = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -545,6 +547,7 @@ class SettingValues {
         SettingValues.hideImageSelftext = settings.object(forKey: SettingValues.pref_hideImageSelftext) == nil ? true : settings.bool(forKey: SettingValues.pref_hideImageSelftext)
         SettingValues.disable13Popup = false //REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
         SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
+        SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
 
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
 

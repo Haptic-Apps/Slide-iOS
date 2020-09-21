@@ -147,6 +147,7 @@ struct HotPostsProvider: IntentTimelineProvider {
     public typealias Entry = SubredditWithPosts
 
     func placeholder(in context: Context) -> SubredditWithPosts {
+        
         SubredditWithPosts(date: Date(), subreddit: "redacted", posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
     }
 
@@ -208,7 +209,7 @@ struct SubredditLoader {
     static func fetch(subreddit: String, completion: @escaping (Result<SubredditPosts, Error>) -> Void) {
         var apiUrl = "https://reddit.com/r/\(subreddit).json?limit=5&raw_json=1"
         if subreddit == "frontpage" {
-            apiUrl = "https://reddit.com.json?limit=5&raw_json=1"
+            apiUrl = "https://reddit.com/.json?limit=5&raw_json=1"
         }
         let branchContentsURL = URL(string: apiUrl)!
         let task = URLSession.shared.dataTask(with: branchContentsURL) { (data, response, error) in

@@ -50,6 +50,10 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         self.collectionView.bounces = false
         self.collectionView.showsHorizontalScrollIndicator = false
         self.collectionView.showsVerticalScrollIndicator = false
+        
+        if SettingValues.fullWidthHeaderCells {
+            self.collectionView.isUserInteractionEnabled = false
+        }
         //self.collectionView.isPagingEnabled = true
         self.collectionView.register(SubredditTitleCollectionViewCell.classForCoder(), forCellWithReuseIdentifier: "subreddit")
     }
@@ -289,6 +293,9 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
 
 extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, indexPath: IndexPath) -> CGSize {
+        if SettingValues.fullWidthHeaderCells {
+            return CGSize(width: collectionView.frame.size.width, height: 40)
+        }
         if SettingValues.subredditIcons {
             var width = CGFloat(30) //icon size
             width += 4 //icon leading padding

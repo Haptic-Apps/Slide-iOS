@@ -188,13 +188,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.general.textLabel?.textColor = ColorUtil.theme.fontColor
         self.general.imageView?.image = UIImage(sfString: SFSymbol.gear, overrideString: "settings")?.toolbarIcon()
         self.general.imageView?.tintColor = ColorUtil.theme.fontColor
-        if false && !UserDefaults.standard.bool(forKey: "2notifs") { //Disabled now
-            self.general.detailTextLabel?.textColor = ColorUtil.baseAccent
-            self.general.detailTextLabel?.text = "New in 2.0: set up notifications here!"
-        } else {
-            self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-            self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
-        }
+        self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
+
         self.general.detailTextLabel?.numberOfLines = 0
         self.general.detailTextLabel?.lineBreakMode = .byWordWrapping
 
@@ -740,41 +736,54 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 } catch let error as NSError {
                     print("error - \(error.localizedDescription)")
                 }
-
-                SDImageCache.shared.clearMemory()
-                SDImageCache.shared.clearDisk()
                 
-                do {
-                    var cache_path = SDImageCache.shared.diskCachePath
-                    cache_path += cache_path.endsWith("/") ? "" : "/"
-                    let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
-                    for file in files {
-                        if file.endsWith(".mp4") {
-                            try FileManager.default.removeItem(atPath: cache_path + file)
+                let activity = UIActivityIndicatorView()
+                activity.color = ColorUtil.theme.navIconColor
+                activity.hidesWhenStopped = true
+                activity.backgroundColor = ColorUtil.theme.foregroundColor
+
+                clearCell.addSubview(activity)
+                activity.startAnimating()
+                
+                activity.rightAnchor == clearCell.rightAnchor - 16
+                activity.centerYAnchor == clearCell.centerYAnchor
+
+                DispatchQueue.global(qos: .background).async { [weak self] in
+                    guard let self = self else { return }
+                    
+                    SDImageCache.shared.clearMemory()
+                    SDImageCache.shared.clearDisk()
+                    
+                    do {
+                        var cache_path = SDImageCache.shared.diskCachePath
+                        cache_path += cache_path.endsWith("/") ? "" : "/"
+                        let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
+                        for file in files {
+                            if file.endsWith(".mp4") {
+                                try FileManager.default.removeItem(atPath: cache_path + file)
+                            }
                         }
+                    } catch {
+                        print(error)
                     }
-                } catch {
-                    print(error)
+                    
+                    let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
+                    let defaultParentURL = defaultURL.deletingLastPathComponent()
+                    let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
+
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize() + UInt(self.checkRealmFileSize())))
+                    
+                    DispatchQueue.main.async {
+                        self.clearCell.accessoryType = .disclosureIndicator
+                        BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
+                        self.clearCell.detailTextLabel?.text = fileSize
+                        activity.stopAnimating()
+                    }
                 }
-                
-                let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
-                let defaultParentURL = defaultURL.deletingLastPathComponent()
-                let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
 
-                autoreleasepool {
-                    let realm = try! Realm()
-                    try! realm.writeCopy(toFile: compactedURL)
-                    try! FileManager.default.removeItem(at: defaultURL)
-                    try! FileManager.default.moveItem(at: compactedURL, to: defaultURL)
-                }
-
-                let countBytes = ByteCountFormatter()
-                countBytes.allowedUnits = [.useMB]
-                countBytes.countStyle = .file
-                let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize() + UInt(checkRealmFileSize())))
-                self.clearCell.detailTextLabel?.text = fileSize
-
-                BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
             case 7:
                 if !SettingValues.isPro {
                     ch = SettingsPro()

@@ -34,8 +34,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == subredditBarSwitch {
             MainViewController.needsRestart = true
-            SettingValues.subredditBar = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subBar)
+            SettingValues.fullWidthHeaderCells = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_fullWidthHeaderCells)
         } else if changed == thireenPopupSwitch {
             SettingValues.disable13Popup = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disable13Popup)
@@ -65,7 +65,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         // set the title
         self.title = "App Behavior"
         
-        createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
+        createCell(subredditBar, subredditBarSwitch, isOn: !SettingValues.fullWidthHeaderCells, text: "Swipable subreddit bar on homepage")
         createCell(thireenPopup, thireenPopupSwitch, isOn: SettingValues.disable13Popup, text: "Disable iOS 13 popup behavior")
         createCell(singleMode, isOn: false, text: "Single-column posts")
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")

@@ -841,6 +841,12 @@ class ExpandedHitButton: UIButton {
     }
 }
 
+class ExpandedHitTestButton: UIButton {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        return bounds.insetBy(dx: -20, dy: -20).contains(point)
+    }
+}
+
 @available(iOS 13.0, *)
 extension SplitMainViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
