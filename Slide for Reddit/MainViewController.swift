@@ -591,6 +591,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     func checkForUpdate() {
+        VCPresenter.presentModally(viewController: OnboardingViewController(), self)
         if !SettingValues.doneVersion() {
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {

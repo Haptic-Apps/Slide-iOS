@@ -17,6 +17,7 @@ import UIKit
  */
 enum OnboardingPageViewModel {
     case feature(text: String, image: UIImage)
+    case video(text: String, video: String)
     case changelog(link: Link)
 
     var viewController: UIViewController {
@@ -25,6 +26,8 @@ enum OnboardingPageViewModel {
             return OnboardingFeaturePageViewController(text: text, image: image)
         case .changelog(let link):
             return OnboardingChangelogPageViewController(link: link)
+        case .video(let text, let video):
+            return OnboardingVideoPageViewController(text: text, video: video)
         }
     }
 }

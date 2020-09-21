@@ -273,6 +273,7 @@
 		BE99C9F72378AC91007911E2 /* Slide_Screenshot_Automation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */; };
 		BE99C9FF2378ACF6007911E2 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */; };
 		BE9BFDC824F7198200D74167 /* WrappingHeaderFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */; };
+		BEAE5C90251820A0007E0759 /* v6howtonavigate.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BEAE5C8F2518208E007E0759 /* v6howtonavigate.mp4 */; };
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
 		BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2381E35D64F00BF761C /* MessageCellView.swift */; };
@@ -717,6 +718,7 @@
 		BE99C9F82378AC91007911E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
 		BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingHeaderFlowLayout.swift; sourceTree = "<group>"; };
+		BEAE5C8F2518208E007E0759 /* v6howtonavigate.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = v6howtonavigate.mp4; sourceTree = "<group>"; };
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
 		BEB2B2381E35D64F00BF761C /* MessageCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCellView.swift; sourceTree = "<group>"; };
@@ -964,6 +966,7 @@
 		B4487F3F2511439700C49018 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				BEAE5C8F2518208E007E0759 /* v6howtonavigate.mp4 */,
 				B4487F40251143A800C49018 /* OnboardingViewController.swift */,
 				B4487F42251145CA00C49018 /* OnboardingPageViewController.swift */,
 				B4487F442511511100C49018 /* OnboardingPageViewController+Pages.swift */,
@@ -1722,6 +1725,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEAE5C90251820A0007E0759 /* v6howtonavigate.mp4 in Resources */,
 				BE1B57DF21CE965000FF6F98 /* ic_cottoncandy@3x.png in Resources */,
 				BE1DA5DF2208AC80001C7DB4 /* ic_blue@2x~ipad.png in Resources */,
 				BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */,
