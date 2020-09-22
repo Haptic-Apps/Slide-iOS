@@ -511,7 +511,20 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
 
+    var canRefresh = true
+    var setOffset = CGFloat.zero
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y < setOffset - 75 - self.headerHeight() && dataSource.loaded {
+            if canRefresh && !self.refreshControl.isRefreshing {
+                self.canRefresh = false
+                self.refreshControl.beginRefreshing()
+                self.drefresh(self.refreshControl)
+            }
+        } else if scrollView.contentOffset.y >= setOffset {
+            self.canRefresh = true
+        }
+
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
             if dataSource.loaded && dataSource.content.count > oldCount {
@@ -1926,7 +1939,9 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
             let paddingOffset = CGFloat(headerHeight == 0 ? -4 : 0)
             
-            self.tableView.contentOffset = CGPoint.init(x: 0, y: paddingOffset + navOffset + topOffset + headerHeight)
+            setOffset = paddingOffset + navOffset + topOffset + headerHeight
+            
+            self.tableView.contentOffset = CGPoint.init(x: 0, y: setOffset)
         } else {
             self.flowLayout.invalidateLayout()
             self.tableView.insertItems(at: paths)
