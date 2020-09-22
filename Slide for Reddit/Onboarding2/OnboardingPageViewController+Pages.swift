@@ -261,7 +261,6 @@ class PreviewSubredditView: UIView {
 
     func setupViews() {
         bubble = UIView().then {
-            $0.layer.cornerRadius = 15
             $0.clipsToBounds = true
         }
     }
@@ -274,6 +273,8 @@ class PreviewSubredditView: UIView {
         
         bubble.widthAnchor == 30 * scale
         bubble.heightAnchor == 30 * scale
+        
+        bubble.layer.cornerRadius = 15 * scale
         
         label.widthAnchor == CGFloat(Int.random(in: 40...150)) * scale
         label.heightAnchor == 25 * scale
