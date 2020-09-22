@@ -50,11 +50,12 @@ class OnboardingSplashPageViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setupMovingViews()
+        self.view.clipsToBounds = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIView.animateKeyframes(withDuration: 1, delay: 0, options: []) {
+        UIView.animate(withDuration: 1) {
             self.baseView.alpha = 0
         } completion: { (_) in
             self.stopMoving()
@@ -66,6 +67,7 @@ class OnboardingSplashPageViewController: UIViewController {
     }
     
     func setupMovingViews() {
+        baseView.removeFromSuperview()
         baseView = UIView()
         view.addSubview(baseView)
         
@@ -73,27 +75,47 @@ class OnboardingSplashPageViewController: UIViewController {
         baseView.widthAnchor == CGFloat(bubbles) * 30
         baseView.heightAnchor == CGFloat(bubbles) * 30
 
-        for i in 0..<bubbles {
+        for i in 0..<10 {
+            if i % 2 == 0 {
+                self.lanes[i] = 2
+                continue
+            }
             let movingView = PreviewSubredditView(frame: CGRect.zero)
             baseView.addSubview(movingView)
             
             movingView.setFrame(getInitialFrame(for: movingView, in: i))
+            movingView.alpha = 0
             movingView.tag = i
             
             self.lanes[i] += 1
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(Int.random(in: 0...10))) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(Int.random(in: 0...6))) {
+                movingView.alpha = 1
+                
                 self.moveView(view: movingView, chosenLane: i)
             }
         }
         
-        let radians = -45 / 180.0 * CGFloat.pi
+        let radians = -30 / 180.0 * CGFloat.pi
         baseView.transform = CGAffineTransform(rotationAngle: radians)
         baseView.alpha = 0.4
         
         view.bringSubviewToFront(imageView)
         view.bringSubviewToFront(textView)
         view.bringSubviewToFront(subTextView)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let gradientMaskLayer = CAGradientLayer()
+        gradientMaskLayer.frame = baseView.bounds
+
+        gradientMaskLayer.colors =  [UIColor.clear.cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.cgColor, UIColor.clear.cgColor]
+        gradientMaskLayer.locations = [0, 0.2, 0.8, 1]
+        gradientMaskLayer.startPoint = CGPoint(x: 0, y: 0)
+        gradientMaskLayer.endPoint = CGPoint(x: 1, y: 0)
+
+        baseView.layer.mask = gradientMaskLayer
     }
     
     func getInitialFrame(for view: PreviewSubredditView, in lane: Int) -> CGRect {
@@ -106,7 +128,8 @@ class OnboardingSplashPageViewController: UIViewController {
     }
 
     func moveView(view: PreviewSubredditView, chosenLane: Int) {
-        UIView.animate(withDuration: Double(15), delay: 0, options: .curveLinear, animations: { () -> Void in
+        let time = Int.random(in: 5...10)
+        UIView.animate(withDuration: Double(time), delay: 0, options: .curveLinear, animations: { () -> Void in
             view.frame = self.getFinalFrame(for: view, in: chosenLane)
         }, completion: { (Bool) -> Void in
             if self.shouldMove {
@@ -120,7 +143,7 @@ class OnboardingSplashPageViewController: UIViewController {
                 }
                 
                 print("VIew frame is \(view.frame)")
-                
+
                 let newLane = emptyIndexes.randomItem ?? 0
                 self.lanes[newLane] += 1
                 view.setFrame(self.getInitialFrame(for: view, in: newLane))
@@ -200,9 +223,17 @@ class PreviewSubredditView: UIView {
     
     func randomizeColors() {
         let seed = Int.random(in: 0...100)
-        if seed < 50 {
+        if seed < 30 {
             self.bubble.backgroundColor = ColorUtil.theme.fontColor
             self.label.backgroundColor = ColorUtil.theme.fontColor
+            self.label.alpha = 0.6
+        } else if seed < 50 {
+            self.bubble.backgroundColor = GMColor.green500Color()
+            self.label.backgroundColor = GMColor.green500Color()
+            self.label.alpha = 0.6
+        } else if seed < 60 {
+            self.bubble.backgroundColor = GMColor.red500Color()
+            self.label.backgroundColor = GMColor.red500Color()
             self.label.alpha = 0.6
         } else if seed < 70 {
             self.bubble.backgroundColor = GMColor.orange500Color()
@@ -237,15 +268,19 @@ class PreviewSubredditView: UIView {
     
     func setupConstraints() {
         self.addSubviews(bubble, label)
-        bubble.widthAnchor == 30
-        bubble.heightAnchor == 30
         
-        label.widthAnchor == CGFloat(Int.random(in: 40...100))
-        label.heightAnchor == 25
-        label.layer.cornerRadius = 5
+        let size = Int.random(in: 5...10)
+        let scale = CGFloat(5) / CGFloat(size)
+        
+        bubble.widthAnchor == 30 * scale
+        bubble.heightAnchor == 30 * scale
+        
+        label.widthAnchor == CGFloat(Int.random(in: 40...150)) * scale
+        label.heightAnchor == 25 * scale
+        label.layer.cornerRadius = 5 * scale
         label.clipsToBounds = true
         
-        label.leftAnchor == bubble.rightAnchor + 8
+        label.leftAnchor == bubble.rightAnchor + 8 * scale
         label.centerYAnchor == bubble.centerYAnchor
     }
 }
