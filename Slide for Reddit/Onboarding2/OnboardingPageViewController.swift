@@ -16,18 +16,21 @@ import UIKit
  If you make a new case, make a new VC in `OnboardingPageViewController+Pages.swift`.
  */
 enum OnboardingPageViewModel {
-    case feature(text: String, image: UIImage)
-    case video(text: String, video: String, aspectRatio: Float)
+    case feature(text: String, subText: String, image: UIImage)
+    case video(text: String, subText: String, video: String, aspectRatio: Float)
     case changelog(link: Link)
+    case splash(text: String, subText: String, image: UIImage)
 
     var viewController: UIViewController {
         switch self {
-        case .feature(let text, let image):
-            return OnboardingFeaturePageViewController(text: text, image: image)
+        case .feature(let text, let subText, let image):
+            return OnboardingFeaturePageViewController(text: text, subText: subText, image: image)
+        case .splash(let text, let subText, let image):
+            return OnboardingSplashPageViewController(text: text, subText: subText, image: image)
         case .changelog(let link):
             return OnboardingChangelogPageViewController(link: link)
-        case .video(let text, let video, let aspectRatio):
-            return OnboardingVideoPageViewController(text: text, video: video, aspectRatio: aspectRatio)
+        case .video(let text, let subText, let video, let aspectRatio):
+            return OnboardingVideoPageViewController(text: text, subText: subText, video: video, aspectRatio: aspectRatio)
         }
     }
 }

@@ -12,8 +12,9 @@ import UIKit
 
 class OnboardingViewController: UIViewController {
 
-    let models: [OnboardingPageViewModel] = [
-        .video(text: "Welcome to slide v6", video: "v6howtonavigate", aspectRatio: 0.679)
+     let models: [OnboardingPageViewModel] = [
+        .splash(text: "Welcome to Slide v6", subText: "Swipe to see what's new", image: UIImage(named: "ic_retroapple")!),
+        .video(text: "Subreddits have a new home!", subText: "Swipe from the left edge of the homepage to access your profile, search, and communities.", video: "v6howtonavigate", aspectRatio: 0.679)
     ]
 
     var pageViewController: OnboardingPageViewController!

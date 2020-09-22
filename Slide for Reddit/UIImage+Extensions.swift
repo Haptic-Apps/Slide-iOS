@@ -294,4 +294,24 @@ extension UIImage {
         return result
     }
     
+    /**
+     https://stackoverflow.com/a/62862742/3697225
+     Rounds corners of UIImage
+     - Parameter proportion: Proportion to minimum paramter (width or height)
+                             in order to have the same look of corner radius independetly
+                             from aspect ratio and actual size
+     */
+    func roundCorners(proportion: CGFloat) -> UIImage {
+        let minValue = min(self.size.width, self.size.height)
+        let radius = minValue/proportion
+        
+        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: self.size)
+        UIGraphicsBeginImageContextWithOptions(self.size, false, 1)
+        UIBezierPath(roundedRect: rect, cornerRadius: radius).addClip()
+        self.draw(in: rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext() ?? self
+        UIGraphicsEndImageContext()
+        return image
+    }
+
 }
