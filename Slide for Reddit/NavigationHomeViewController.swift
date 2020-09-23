@@ -1247,37 +1247,39 @@ class AccountShortcutsView: UIView {
         
         addSubviews(cellStack)
         //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        for action in actions {
-            cellStack.addArrangedSubview(UITableViewCell().then {
-                $0.configure(text: action.getTitle(), image: action.getImage())
-                $0.addTapGestureRecognizer {
-                    if let delegate = self.delegate, let parent = self.parent {
-                        delegate.navigation(parent, didRequestAction: action)
-                    }
-                }
-                $0.heightAnchor >= 50
-                $0.backgroundColor = ColorUtil.theme.foregroundColor
-                $0.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-                $0.accessoryType = .disclosureIndicator
-            })
-        }
-        
-        cellStack.addArrangedSubview(UITableViewCell().then {
-            $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
-            $0.addTapGestureRecognizer {
-                let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
-                for action in SettingValues.NavigationHeaderActions.cases {
-                    optionMenu.addAction(title: action.getTitle(), icon: action.getImage()) {
+        if AccountController.isLoggedIn {
+            for action in actions {
+                cellStack.addArrangedSubview(UITableViewCell().then {
+                    $0.configure(text: action.getTitle(), image: action.getImage())
+                    $0.addTapGestureRecognizer {
                         if let delegate = self.delegate, let parent = self.parent {
                             delegate.navigation(parent, didRequestAction: action)
                         }
                     }
-                }
-                self.delegate?.displayMenu(self.parent!, optionMenu)
+                    $0.heightAnchor >= 50
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
+                    $0.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+                    $0.accessoryType = .disclosureIndicator
+                })
             }
-            $0.heightAnchor >= 50
-            $0.accessoryType = .disclosureIndicator
-        })
+            
+            cellStack.addArrangedSubview(UITableViewCell().then {
+                $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
+                $0.addTapGestureRecognizer {
+                    let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
+                    for action in SettingValues.NavigationHeaderActions.cases {
+                        optionMenu.addAction(title: action.getTitle(), icon: action.getImage()) {
+                            if let delegate = self.delegate, let parent = self.parent {
+                                delegate.navigation(parent, didRequestAction: action)
+                            }
+                        }
+                    }
+                    self.delegate?.displayMenu(self.parent!, optionMenu)
+                }
+                $0.heightAnchor >= 50
+                $0.accessoryType = .disclosureIndicator
+            })
+        }
 
         self.clipsToBounds = true
         
@@ -1290,7 +1292,7 @@ class AccountShortcutsView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return CGFloat((actions.count + 1) * 50) + 10 + CGFloat((actions.count + 1) * 2)
+        return (!AccountController.isLoggedIn ? 75 : CGFloat((actions.count + 1) * 50)) + 10 + CGFloat((actions.count + 1) * 2)
     }
         
     required init?(coder aDecoder: NSCoder) {

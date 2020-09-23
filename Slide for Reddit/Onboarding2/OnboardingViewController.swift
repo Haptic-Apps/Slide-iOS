@@ -75,8 +75,7 @@ class OnboardingViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        //    .object(forKey: Bundle.main.releaseVersionNumber!)
+        UserDefaults.standard.set(true, forKey: Bundle.main.releaseVersionNumber!)
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -586,7 +586,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 VCPresenter.presentModally(viewController: OnboardingViewController(), self)
             }
 
-            /*
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
                 try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
@@ -625,14 +624,18 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         }
                         
                         if !storedTitle.isEmpty && !storedLink.isEmpty {
-                            DispatchQueue.main.async {
+                            let settings = UserDefaults.standard
+                            settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
+                            settings.set(title, forKey: "vtitle")
+                            settings.set(submission.permalink, forKey: "vlink")
+                            /* disable for now DispatchQueue.main.async {
                                 SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
-                            }
+                            }*/
                         }
                     }
                 })
             } catch {
-            }*/
+            }
         }
     }
     @objc func showSortMenu(_ sender: UIButton?) {
