@@ -19,6 +19,7 @@ enum OnboardingPageViewModel {
     case feature(text: String, subText: String, image: UIImage)
     case video(text: String, subText: String, video: String, aspectRatio: Float)
     case changelog(link: Link)
+    case hardcodedChangelog(paragraphs: [String: String])
     case splash(text: String, subText: String, image: UIImage)
 
     var viewController: UIViewController {
@@ -29,6 +30,8 @@ enum OnboardingPageViewModel {
             return OnboardingSplashPageViewController(text: text, subText: subText, image: image)
         case .changelog(let link):
             return OnboardingChangelogPageViewController(link: link)
+        case .hardcodedChangelog(let paragraphs):
+            return OnboardingHardcodedChangelogPageViewController(paragraphs: paragraphs)
         case .video(let text, let subText, let video, let aspectRatio):
             return OnboardingVideoPageViewController(text: text, subText: subText, video: video, aspectRatio: aspectRatio)
         }

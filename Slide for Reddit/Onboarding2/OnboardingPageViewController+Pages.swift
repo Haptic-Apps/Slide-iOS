@@ -379,6 +379,83 @@ class OnboardingChangelogPageViewController: UIViewController {
 
 /**
  ViewController for a single page in the OnboardingPageViewController.
+ Describes the app's latest changelog as Strings.
+ */
+class OnboardingHardcodedChangelogPageViewController: UIViewController {
+    let paragraphs: [String: String]
+    let subButton = UILabel()
+    let body = UIScrollView()
+    let content = UILabel()
+
+    init(paragraphs: [String: String]) {
+        self.paragraphs = paragraphs
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        self.paragraphs = [:]
+        super.init(coder: coder)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupViews()
+        setupConstraints()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        self.content.preferredMaxLayoutWidth = self.body.frame.size.width - 16
+        self.content.sizeToFit()
+        
+    }
+    
+    func setupViews() {
+        let attributedChangelog = NSMutableAttributedString()
+        for paragraph in paragraphs.keys {
+            attributedChangelog.append(NSAttributedString(string: paragraph, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)]))
+            attributedChangelog.append(NSAttributedString(string: "\n"))
+            attributedChangelog.append(NSAttributedString(string: "\n"))
+            attributedChangelog.append(NSAttributedString(string: paragraphs[paragraph]!, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]))
+            attributedChangelog.append(NSAttributedString(string: "\n"))
+            attributedChangelog.append(NSAttributedString(string: "\n"))
+        }
+        
+        content.numberOfLines = 0
+        content.attributedText = attributedChangelog
+        body.addSubview(content)
+            
+        self.view.addSubviews(body, subButton)
+        
+        subButton.backgroundColor = GMColor.orange500Color()
+        subButton.textColor = .white
+        subButton.layer.cornerRadius = 20
+        subButton.clipsToBounds = true
+        subButton.textAlignment = .center
+        subButton.font = UIFont.boldSystemFont(ofSize: 20)
+        subButton.text = "Awesome!"
+    }
+    
+    func setupConstraints() {
+        body.horizontalAnchors == self.view.horizontalAnchors + 8
+        body.bottomAnchor == self.subButton.topAnchor - 16
+        body.topAnchor == self.view.topAnchor + 4
+        content.edgeAnchors == body.edgeAnchors
+        
+        self.subButton.bottomAnchor == self.view.bottomAnchor + 8
+        self.subButton.horizontalAnchors == self.view.horizontalAnchors + 8
+        
+        self.subButton.heightAnchor == 40
+    }
+    
+    
+}
+
+/**
+ ViewController for a single page in the OnboardingPageViewController.
  Shows a video with a given resource name.
  */
 class OnboardingVideoPageViewController: UIViewController {
