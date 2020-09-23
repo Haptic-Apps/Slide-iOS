@@ -69,7 +69,7 @@ class OnboardingViewController: UIViewController {
         
         if !widthSet {
             widthSet = true
-            finishButton.widthAnchor == min(max(200, self.view.frame.size.width), 400)
+            finishButton.widthAnchor == min(max(200, self.view.frame.size.width - 16), 400)
         }
     }
     
