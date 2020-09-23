@@ -1341,17 +1341,6 @@ extension AppDelegate: UIWindowSceneDelegate {
                 }
             }*/
         }
-        
-        if let userActivity = connectionOptions.userActivities.first {
-            if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
-                VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
-            } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
-                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
-            } else if let url = userActivity.webpageURL {
-                handleURL(url)
-            }
-
-        }
     }
 }
 
