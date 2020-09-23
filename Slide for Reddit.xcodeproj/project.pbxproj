@@ -282,6 +282,10 @@
 		BE99C9F72378AC91007911E2 /* Slide_Screenshot_Automation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9F62378AC91007911E2 /* Slide_Screenshot_Automation.swift */; };
 		BE99C9FF2378ACF6007911E2 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */; };
 		BE9BFDC824F7198200D74167 /* WrappingHeaderFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */; };
+		BE9BFF1B25182D8700C9F7EC /* OnboardingPageViewController+Pages.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9BFF1725182D8600C9F7EC /* OnboardingPageViewController+Pages.swift */; };
+		BE9BFF1C25182D8700C9F7EC /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9BFF1825182D8600C9F7EC /* OnboardingViewController.swift */; };
+		BE9BFF1D25182D8700C9F7EC /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9BFF1925182D8600C9F7EC /* OnboardingPageViewController.swift */; };
+		BE9BFF2725182EDB00C9F7EC /* v6howtonavigate.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BE9BFF2625182ED500C9F7EC /* v6howtonavigate.mp4 */; };
 		BEAD1F75251424CB0096A216 /* SubredditThemeEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEAD1F74251424CB0096A216 /* SubredditThemeEditViewController.swift */; };
 		BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */; };
 		BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB2B2361E35D48000BF761C /* InboxViewController.swift */; };
@@ -728,6 +732,10 @@
 		BE99C9F82378AC91007911E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE99C9FE2378ACF6007911E2 /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
 		BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingHeaderFlowLayout.swift; sourceTree = "<group>"; };
+		BE9BFF1725182D8600C9F7EC /* OnboardingPageViewController+Pages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "OnboardingPageViewController+Pages.swift"; path = "Slide for Reddit/Onboarding2/OnboardingPageViewController+Pages.swift"; sourceTree = SOURCE_ROOT; };
+		BE9BFF1825182D8600C9F7EC /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingViewController.swift; path = "Slide for Reddit/Onboarding2/OnboardingViewController.swift"; sourceTree = SOURCE_ROOT; };
+		BE9BFF1925182D8600C9F7EC /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingPageViewController.swift; path = "Slide for Reddit/Onboarding2/OnboardingPageViewController.swift"; sourceTree = SOURCE_ROOT; };
+		BE9BFF2625182ED500C9F7EC /* v6howtonavigate.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = v6howtonavigate.mp4; sourceTree = "<group>"; };
 		BEAD1F74251424CB0096A216 /* SubredditThemeEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditThemeEditViewController.swift; sourceTree = "<group>"; };
 		BEB2B2341E35D25100BF761C /* InboxContributionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxContributionLoader.swift; sourceTree = "<group>"; };
 		BEB2B2361E35D48000BF761C /* InboxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxViewController.swift; sourceTree = "<group>"; };
@@ -1284,6 +1292,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BE9BFF0F25182D6900C9F7EC /* Onboarding */,
 				B4EE03E62513C0C50080E315 /* Slide for Reddit-Bridging-Header.h */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEC2FE18235BA2B100374013 /* adaway.json */,
@@ -1451,6 +1460,17 @@
 				BE53812F24B0D67F00F6F1A6 /* StoreKit.framework */,
 			);
 			path = "Slide Screenshot Automation";
+			sourceTree = "<group>";
+		};
+		BE9BFF0F25182D6900C9F7EC /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				BE9BFF1925182D8600C9F7EC /* OnboardingPageViewController.swift */,
+				BE9BFF1725182D8600C9F7EC /* OnboardingPageViewController+Pages.swift */,
+				BE9BFF1825182D8600C9F7EC /* OnboardingViewController.swift */,
+				BE9BFF2625182ED500C9F7EC /* v6howtonavigate.mp4 */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		BED90FE4250BF71600090DF5 /* Slide Widgets */ = {
@@ -1774,6 +1794,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE9BFF2725182EDB00C9F7EC /* v6howtonavigate.mp4 in Resources */,
 				BE1B57DF21CE965000FF6F98 /* ic_cottoncandy@3x.png in Resources */,
 				BE1DA5DF2208AC80001C7DB4 /* ic_blue@2x~ipad.png in Resources */,
 				BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */,
@@ -2073,6 +2094,7 @@
 				09B51D052114E22C00BCB745 /* PostContentPresentationController.swift in Sources */,
 				0984BE502114C4D50091C2E1 /* SlideInPresentationManager.swift in Sources */,
 				BE3B74372107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift in Sources */,
+				BE9BFF1C25182D8700C9F7EC /* OnboardingViewController.swift in Sources */,
 				BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */,
 				BE17EE172219FD7B0043185B /* SettingsDonate.swift in Sources */,
 				0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */,
@@ -2168,6 +2190,7 @@
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
+				BE9BFF1D25182D8700C9F7EC /* OnboardingPageViewController.swift in Sources */,
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SingleSubredditViewController.swift in Sources */,
@@ -2250,6 +2273,7 @@
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
 				BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */,
 				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,
+				BE9BFF1B25182D8700C9F7EC /* OnboardingPageViewController+Pages.swift in Sources */,
 				B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */,
 				09526EF8214C399F005A3F6B /* UIPanGestureRecognizer+Utilities.swift in Sources */,
 				B776B69E386227A51C8E10DF /* MediaTableViewController.swift in Sources */,
