@@ -824,7 +824,7 @@ class CurrentAccountHeaderView: UIView {
     }
     
     var forwardButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: ColorUtil.theme.fontColor), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: UIDevice.current.userInterfaceIdiom == .pad ? .xmark : .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: ColorUtil.theme.fontColor), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Go home"
     }
@@ -1147,8 +1147,26 @@ extension CurrentAccountHeaderView {
     }
     
     @objc func goForward(_ sender: UIButton) {
-        if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
+        if let nav = self.parent?.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0 {
             nav.pushNextViewControllerFromRight(nil)
+        } else {
+            var is14Column = false
+            if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                is14Column = true
+            }
+            if let barButtonItem = self.parent?.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
+                UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+            } else {
+                UIView.animate(withDuration: 0.3, animations: {
+                    if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                        UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                            self.parent?.splitViewController?.preferredDisplayMode = .primaryHidden
+                        }, completion: { (_) in
+                        })
+                    }
+                }, completion: { _ in
+                })
+            }
         }
     }
         

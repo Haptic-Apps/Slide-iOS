@@ -689,7 +689,12 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     }
                 }
             } else {
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target {
+                var is14Column = false
+                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                    is14Column = true
+                }
+
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                     if let present = toPresent {
                         VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
@@ -699,7 +704,10 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
                         if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                            self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                                self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            }, completion: { (_) in
+                            })
                         }
                     }, completion: { _ in
                         if let present = toPresent {
@@ -717,12 +725,27 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 toExecute?()
             }
 
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0 {
                 nav.pushNextViewControllerFromRight() {
                 }
             } else {
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target {
+                var is14Column = false
+                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                    is14Column = true
+                }
+
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+                } else {
+                    UIView.animate(withDuration: 0.3, animations: {
+                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                                self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            }, completion: { (_) in
+                            })
+                        }
+                    }, completion: { _ in
+                    })
                 }
             }
         }
