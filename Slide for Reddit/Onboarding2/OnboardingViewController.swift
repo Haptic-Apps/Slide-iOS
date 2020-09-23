@@ -19,10 +19,17 @@ class OnboardingViewController: UIViewController {
     ]
 
     var pageViewController: OnboardingPageViewController!
+    
+    var widthSet = false
 
-    var finishButton = UIButton().then {
-        $0.setTitle("Done", for: .normal)
+    var finishButton = UILabel().then {
+        $0.text = "Done"
         $0.accessibilityLabel = "Done"
+        $0.textAlignment = .center
+        $0.textColor = ColorUtil.theme.fontColor
+        $0.layer.cornerRadius = 20
+        $0.clipsToBounds = true
+        $0.layer.backgroundColor = ColorUtil.theme.backgroundColor.cgColor
     }
 
     override func viewDidLoad() {
@@ -37,6 +44,10 @@ class OnboardingViewController: UIViewController {
         view.addSubview(finishButton)
 
         setupConstraints()
+        
+        finishButton.addTapGestureRecognizer {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
 
     private func setupConstraints() {
@@ -47,9 +58,25 @@ class OnboardingViewController: UIViewController {
 
             // Finish button
             finishButton.topAnchor == pageViewController.view.bottomAnchor
-            finishButton.horizontalAnchors == view.horizontalAnchors
-            finishButton.bottomAnchor == view.safeAreaLayoutGuide.bottomAnchor
+            finishButton.heightAnchor == 40
+            finishButton.centerXAnchor == view.centerXAnchor
+            finishButton.bottomAnchor == view.safeAreaLayoutGuide.bottomAnchor - 16
         }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if !widthSet {
+            widthSet = true
+            finishButton.widthAnchor == min(max(200, self.view.frame.size.width), 400)
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        //    .object(forKey: Bundle.main.releaseVersionNumber!)
     }
     
     override func viewWillAppear(_ animated: Bool) {

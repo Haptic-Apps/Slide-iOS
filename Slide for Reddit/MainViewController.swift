@@ -581,10 +581,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     func checkForUpdate() {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 6) {
-            VCPresenter.presentModally(viewController: OnboardingViewController(), self)
-        }
         if !SettingValues.doneVersion() {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                VCPresenter.presentModally(viewController: OnboardingViewController(), self)
+            }
+
+            /*
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
                 try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
@@ -630,7 +632,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                     }
                 })
             } catch {
-            }
+            }*/
         }
     }
     @objc func showSortMenu(_ sender: UIButton?) {

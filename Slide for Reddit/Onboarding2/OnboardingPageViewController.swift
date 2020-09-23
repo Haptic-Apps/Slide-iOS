@@ -89,6 +89,26 @@ extension OnboardingPageViewController: UIPageViewControllerDataSource {
         else { return nil }
         return pages[index - 1]
     }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        if let vc = self.viewControllers?.first, let page = self.pages.indexes(of: vc).first, let button = (self.parent as? OnboardingViewController)?.finishButton {
+            if page == self.pages.count - 1 {
+                button.text = "Awesome!"
+
+                UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                    button.layer.backgroundColor = GMColor.orange500Color().cgColor
+                    button.textColor = .white
+                })
+            } else {
+                button.text = "Done"
+
+                UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                    button.layer.backgroundColor = ColorUtil.theme.backgroundColor.cgColor
+                    button.textColor = ColorUtil.theme.fontColor
+                })
+            }
+        }
+    }
 
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let index = pages.indexes(of: viewController).first,

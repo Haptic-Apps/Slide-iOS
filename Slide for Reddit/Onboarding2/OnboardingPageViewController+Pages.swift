@@ -27,6 +27,7 @@ class OnboardingSplashPageViewController: UIViewController {
     var baseView = UIView()
     
     var shouldMove = true
+    var gradientSet = false
     
     let bubbles = 15
     
@@ -67,6 +68,7 @@ class OnboardingSplashPageViewController: UIViewController {
     }
     
     func setupMovingViews() {
+        gradientSet = false
         baseView.removeFromSuperview()
         baseView = UIView()
         view.addSubview(baseView)
@@ -107,15 +109,20 @@ class OnboardingSplashPageViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let gradientMaskLayer = CAGradientLayer()
-        gradientMaskLayer.frame = baseView.bounds
+        
+        if !gradientSet {
+            gradientSet = true
+            
+            let gradientMaskLayer = CAGradientLayer()
+            gradientMaskLayer.frame = baseView.bounds
 
-        gradientMaskLayer.colors =  [UIColor.clear.cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.cgColor, UIColor.clear.cgColor]
-        gradientMaskLayer.locations = [0, 0.2, 0.8, 1]
-        gradientMaskLayer.startPoint = CGPoint(x: 0, y: 0)
-        gradientMaskLayer.endPoint = CGPoint(x: 1, y: 0)
+            gradientMaskLayer.colors =  [UIColor.clear.cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.cgColor, UIColor.clear.cgColor]
+            gradientMaskLayer.locations = [0, 0.2, 0.8, 1]
+            gradientMaskLayer.startPoint = CGPoint(x: 0, y: 0)
+            gradientMaskLayer.endPoint = CGPoint(x: 1, y: 0)
 
-        baseView.layer.mask = gradientMaskLayer
+            baseView.layer.mask = gradientMaskLayer
+        }
     }
     
     func getInitialFrame(for view: PreviewSubredditView, in lane: Int) -> CGRect {
@@ -205,9 +212,15 @@ class PreviewSubredditView: UIView {
     var label = UIView()
     var toSetFrame = CGRect.zero
     
+    var frameSet = false
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.frame = toSetFrame
+        
+        if !frameSet {
+            frameSet = true
+            self.frame = toSetFrame
+        }
     }
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -386,6 +399,8 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
     let subButton = UILabel()
     let body = UIScrollView()
     let content = UILabel()
+    
+    var sizeSet = false
 
     init(paragraphs: [String: String]) {
         self.paragraphs = paragraphs
@@ -408,9 +423,15 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        self.content.preferredMaxLayoutWidth = self.body.frame.size.width - 16
-        self.content.sizeToFit()
-        
+        if !sizeSet {
+            sizeSet = true
+            self.content.preferredMaxLayoutWidth = self.body.frame.size.width - 16
+            self.content.sizeToFit()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
     
     func setupViews() {
@@ -440,15 +461,16 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
     }
     
     func setupConstraints() {
-        body.horizontalAnchors == self.view.horizontalAnchors + 8
+        body.horizontalAnchors == self.view.horizontalAnchors + 16
         body.bottomAnchor == self.subButton.topAnchor - 16
         body.topAnchor == self.view.topAnchor + 4
         content.edgeAnchors == body.edgeAnchors
         
-        self.subButton.bottomAnchor == self.view.bottomAnchor + 8
+        self.subButton.bottomAnchor == self.view.bottomAnchor - 8
         self.subButton.horizontalAnchors == self.view.horizontalAnchors + 8
         
-        self.subButton.heightAnchor == 40
+        self.subButton.alpha = 0 //Hide for now
+        self.subButton.heightAnchor == 0
     }
     
     
@@ -470,6 +492,8 @@ class OnboardingVideoPageViewController: UIViewController {
     let aspectRatio: Float
     
     var layer: AVPlayerLayer?
+    
+    var frameSet = false
 
     init(text: String, subText: String, video: String, aspectRatio: Float) {
         self.text = text
@@ -525,7 +549,10 @@ class OnboardingVideoPageViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        layer?.frame = videoContainer.bounds
+        if !frameSet {
+            frameSet = true
+            layer?.frame = videoContainer.bounds
+        }
     }
 
     func setupConstraints() {
@@ -561,6 +588,10 @@ class OnboardingVideoPageViewController: UIViewController {
             videoPlayer.actionAtItemEnd = .none
             NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd(notification:)), name: .AVPlayerItemDidPlayToEndTime, object: videoPlayer.currentItem)
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     @objc func playerItemDidReachEnd(notification: Notification) {
