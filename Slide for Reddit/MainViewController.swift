@@ -626,8 +626,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         if !storedTitle.isEmpty && !storedLink.isEmpty {
                             let settings = UserDefaults.standard
                             settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
-                            settings.set(title, forKey: "vtitle")
-                            settings.set(submission.permalink, forKey: "vlink")
+                            settings.set(storedTitle, forKey: "vtitle")
+                            settings.set(submissions[0], forKey: "vlink")
                             /* disable for now DispatchQueue.main.async {
                                 SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
                             }*/

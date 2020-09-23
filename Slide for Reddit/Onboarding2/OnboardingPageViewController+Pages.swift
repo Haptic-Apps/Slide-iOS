@@ -396,20 +396,23 @@ class OnboardingChangelogPageViewController: UIViewController {
  */
 class OnboardingHardcodedChangelogPageViewController: UIViewController {
     let paragraphs: [String: String]
+    let order: [String]
     let subButton = UILabel()
     let body = UIScrollView()
     let content = UILabel()
     
     var sizeSet = false
 
-    init(paragraphs: [String: String]) {
+    init(order: [String], paragraphs: [String: String]) {
         self.paragraphs = paragraphs
+        self.order = order
         super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         self.paragraphs = [:]
+        self.order = []
         super.init(coder: coder)
     }
     
@@ -436,7 +439,7 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
     
     func setupViews() {
         let attributedChangelog = NSMutableAttributedString()
-        for paragraph in paragraphs.keys {
+        for paragraph in order {
             attributedChangelog.append(NSAttributedString(string: paragraph, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)]))
             attributedChangelog.append(NSAttributedString(string: "\n"))
             attributedChangelog.append(NSAttributedString(string: "\n"))
