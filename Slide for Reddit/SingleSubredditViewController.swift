@@ -2597,6 +2597,10 @@ extension SingleSubredditViewController: SubredditThemeEditViewControllerDelegat
             parent.doToolbarOffset()
         }
     }
+    
+    public func didClear() -> Bool {
+        return false
+    }
 }
 
 // MARK: - Wrapping Flow Layout Delegate
