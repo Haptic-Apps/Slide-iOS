@@ -23,6 +23,7 @@ class SettingsIcon: BubbleSettingTableViewController {
             ("outrun", "Outrun"),
             ("blackwhite", "Black and White u/Baselt95"),
             ("pride", "Trans Pride u/Username-blank"),
+            ("space", "Space u/hilabius"),
             ("stars", "Starry night u/TyShark"),
             ("ghost", "Ghost"),
             ("mint", "Mint u/Baselt95"),

@@ -21,6 +21,15 @@
                 <key>UIPrerenderedIcon</key>
                 <false/>
             </dict>
+            <key>space</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_space</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
             <key>blackwhite</key>
             <dict>
                 <key>CFBundleIconFiles</key>
@@ -185,6 +194,15 @@
                 <key>CFBundleIconFiles</key>
                 <array>
                     <string>ic_black</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>space</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_space</string>
                 </array>
                 <key>UIPrerenderedIcon</key>
                 <false/>

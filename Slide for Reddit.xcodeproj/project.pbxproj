@@ -265,6 +265,9 @@
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
 		BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */; };
+		BE8833F1251FB66900131DEB /* ic_space@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833EE251FB66800131DEB /* ic_space@2x.png */; };
+		BE8833F2251FB66900131DEB /* ic_space@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833EF251FB66900131DEB /* ic_space@2x~ipad.png */; };
+		BE8833F3251FB66900131DEB /* ic_space@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833F0251FB66900131DEB /* ic_space@3x.png */; };
 		BE8AE94121F919FF00E1C0D1 /* SettingsCustomTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8AE94021F919FF00E1C0D1 /* SettingsCustomTheme.swift */; };
 		BE8AE94321F9225000E1C0D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE8AE94221F9225000E1C0D1 /* Main.storyboard */; };
 		BE8AE94721F922F400E1C0D1 /* ColorPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */; };
@@ -713,6 +716,9 @@
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
 		BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
+		BE8833EE251FB66800131DEB /* ic_space@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@2x.png"; sourceTree = "<group>"; };
+		BE8833EF251FB66900131DEB /* ic_space@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@2x~ipad.png"; sourceTree = "<group>"; };
+		BE8833F0251FB66900131DEB /* ic_space@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@3x.png"; sourceTree = "<group>"; };
 		BE8AE94021F919FF00E1C0D1 /* SettingsCustomTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCustomTheme.swift; sourceTree = "<group>"; };
 		BE8AE94221F9225000E1C0D1 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
@@ -1165,6 +1171,9 @@
 			children = (
 				BE232697222DE433005CA83A /* ic_ghost@2x~ipad.png */,
 				BE232693222DE428005CA83A /* ic_ghost@2x.png */,
+				BE8833EE251FB66800131DEB /* ic_space@2x.png */,
+				BE8833EF251FB66900131DEB /* ic_space@2x~ipad.png */,
+				BE8833F0251FB66900131DEB /* ic_space@3x.png */,
 				BE232694222DE428005CA83A /* ic_ghost@3x.png */,
 				BE1DA5CF2208AC7F001C7DB4 /* ic_black@2x~ipad.png */,
 				BE1DA5D02208AC7F001C7DB4 /* ic_blue@2x~ipad.png */,
@@ -1816,6 +1825,7 @@
 				BE15E74E251ED69000946412 /* ic_blackwhite@2x~ipad.png in Resources */,
 				BE1B57DF21CE965000FF6F98 /* ic_cottoncandy@3x.png in Resources */,
 				BE1DA5DF2208AC80001C7DB4 /* ic_blue@2x~ipad.png in Resources */,
+				BE8833F2251FB66900131DEB /* ic_space@2x~ipad.png in Resources */,
 				BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */,
 				BE0C4F8E21BCBE83006C54FF /* ic_tronteal@2x.png in Resources */,
 				BE77470820367D98006C72E8 /* Credits.plist in Resources */,
@@ -1854,6 +1864,7 @@
 				BE0C4F9821BCBE83006C54FF /* ic_blue@3x.png in Resources */,
 				BE1DA5D82208AC80001C7DB4 /* ic_stars@2x~ipad.png in Resources */,
 				BEF6F5361E19B4A2002B03B6 /* adsources.txt in Resources */,
+				BE8833F3251FB66900131DEB /* ic_space@3x.png in Resources */,
 				BE0C4F9521BCBE83006C54FF /* ic_purple@2x.png in Resources */,
 				BE1B57EB21DED23000FF6F98 /* ic_stars@3x.png in Resources */,
 				BE1DA5E42208AC80001C7DB4 /* ic_mint@2x~ipad.png in Resources */,
@@ -1872,6 +1883,7 @@
 				BE1DA5E02208AC80001C7DB4 /* ic_outrun@2x~ipad.png in Resources */,
 				BEBF45DD1E23384500764BB8 /* comments.plist in Resources */,
 				BE1DA5DD2208AC80001C7DB4 /* ic_yellow@2x~ipad.png in Resources */,
+				BE8833F1251FB66900131DEB /* ic_space@2x.png in Resources */,
 				BE1B57E621DEB5B600FF6F98 /* ic_mint@3x.png in Resources */,
 				BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */,
 				BE1DA5E32208AC80001C7DB4 /* ic_tronblue@2x~ipad.png in Resources */,
