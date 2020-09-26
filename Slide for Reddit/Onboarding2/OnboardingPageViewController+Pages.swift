@@ -25,7 +25,7 @@ class OnboardingSplashPageViewController: UIViewController {
     var subTextView = UILabel()
     var imageView = UIImageView()
     var baseView = UIView()
-    
+
     var shouldMove = true
     var gradientSet = false
     
@@ -114,14 +114,16 @@ class OnboardingSplashPageViewController: UIViewController {
             gradientSet = true
             
             let gradientMaskLayer = CAGradientLayer()
-            gradientMaskLayer.frame = baseView.bounds
+            gradientMaskLayer.frame = self.view.bounds
+            gradientMaskLayer.shadowRadius = 50
+            gradientMaskLayer.shadowPath = CGPath(roundedRect: self.view.bounds.insetBy(dx: 0, dy: 0), cornerWidth: 0, cornerHeight: 0, transform: nil)
 
-            gradientMaskLayer.colors =  [UIColor.clear.cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.cgColor, UIColor.clear.cgColor]
-            gradientMaskLayer.locations = [0, 0.2, 0.8, 1]
-            gradientMaskLayer.startPoint = CGPoint(x: 0, y: 0)
-            gradientMaskLayer.endPoint = CGPoint(x: 1, y: 0)
+            gradientMaskLayer.shadowOpacity = 1
+            
+            gradientMaskLayer.shadowOffset = CGSize.zero
+            gradientMaskLayer.shadowColor = ColorUtil.theme.foregroundColor.cgColor
 
-            baseView.layer.mask = gradientMaskLayer
+            view.layer.mask = gradientMaskLayer
         }
     }
     
@@ -138,7 +140,8 @@ class OnboardingSplashPageViewController: UIViewController {
         let time = Int.random(in: 5...10)
         UIView.animate(withDuration: Double(time), delay: 0, options: .curveLinear, animations: { () -> Void in
             view.frame = self.getFinalFrame(for: view, in: chosenLane)
-        }, completion: { (Bool) -> Void in
+        }, completion: { [weak self] (Bool) -> Void in
+            guard let self = self else { return }
             if self.shouldMove {
                 view.randomizeColors()
                 self.lanes[chosenLane] -= 1
@@ -149,8 +152,6 @@ class OnboardingSplashPageViewController: UIViewController {
                     }
                 }
                 
-                print("VIew frame is \(view.frame)")
-
                 let newLane = emptyIndexes.randomItem ?? 0
                 self.lanes[newLane] += 1
                 view.setFrame(self.getInitialFrame(for: view, in: newLane))
@@ -163,11 +164,17 @@ class OnboardingSplashPageViewController: UIViewController {
     }
     
     func setupViews() {
+        var newTitle = NSMutableAttributedString(string: text.split("\n").first ?? "", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)])
+        newTitle.append(NSAttributedString(string: "\n"))
+        newTitle.append(NSMutableAttributedString(string: text.split("\n").last ?? "", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30)]))
+
+
         self.textView = UILabel().then {
-            $0.font = UIFont.boldSystemFont(ofSize: 20)
+            $0.font = UIFont.boldSystemFont(ofSize: 30)
             $0.textColor = ColorUtil.theme.fontColor
             $0.textAlignment = .center
-            $0.text = text
+            $0.numberOfLines = 0
+            $0.attributedText = newTitle
         }
         
         self.subTextView = UILabel().then {
@@ -187,14 +194,14 @@ class OnboardingSplashPageViewController: UIViewController {
     }
         
     func setupConstriants() {
-        textView.horizontalAnchors == self.view.horizontalAnchors + 16
-        textView.topAnchor == self.view.safeTopAnchor + 8
+        textView.horizontalAnchors == self.view.horizontalAnchors + 32
+        textView.bottomAnchor == self.imageView.topAnchor - 40
         
         imageView.centerAnchors == self.view.centerAnchors
         imageView.widthAnchor == 100
         imageView.heightAnchor == 100
         
-        subTextView.horizontalAnchors == self.view.horizontalAnchors + 16
+        subTextView.horizontalAnchors == self.view.horizontalAnchors + 32
         subTextView.bottomAnchor == self.view.safeBottomAnchor - 8
     }
 
@@ -464,8 +471,8 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
     }
     
     func setupConstraints() {
-        body.horizontalAnchors == self.view.horizontalAnchors + 16
-        body.bottomAnchor == self.subButton.topAnchor - 16
+        body.horizontalAnchors == self.view.horizontalAnchors + 32
+        body.bottomAnchor == self.subButton.topAnchor - 4
         body.topAnchor == self.view.topAnchor + 4
         content.edgeAnchors == body.edgeAnchors
         
@@ -562,8 +569,8 @@ class OnboardingVideoPageViewController: UIViewController {
         textView.horizontalAnchors == self.view.horizontalAnchors + 16
         textView.topAnchor == self.view.safeTopAnchor + 8
         
-        videoContainer.topAnchor == textView.bottomAnchor + 8
-        videoContainer.bottomAnchor == self.subTextView.topAnchor - 8
+        videoContainer.topAnchor == textView.bottomAnchor + 32
+        videoContainer.bottomAnchor == self.subTextView.topAnchor - 32
         videoContainer.widthAnchor == self.videoContainer.heightAnchor * aspectRatio
         videoContainer.centerXAnchor == self.view.centerXAnchor
         
