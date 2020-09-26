@@ -164,10 +164,9 @@ class OnboardingSplashPageViewController: UIViewController {
     }
     
     func setupViews() {
-        var newTitle = NSMutableAttributedString(string: text.split("\n").first ?? "", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)])
+        let newTitle = NSMutableAttributedString(string: text.split("\n").first ?? "", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)])
         newTitle.append(NSAttributedString(string: "\n"))
         newTitle.append(NSMutableAttributedString(string: text.split("\n").last ?? "", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30)]))
-
 
         self.textView = UILabel().then {
             $0.font = UIFont.boldSystemFont(ofSize: 30)

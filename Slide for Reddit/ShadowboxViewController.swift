@@ -117,7 +117,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         
         currentVc = self.viewControllers!.first!
         if (self.currentVc as! ShadowboxLinkViewController).embeddedVC == nil {
-            self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).thumbImageContainer.superview
+            self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).topBody
         } else {
             self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).embeddedVC.view
         }
