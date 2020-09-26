@@ -8,7 +8,7 @@ import Foundation
 public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDelegate {
     public var color1, color2: UIColor?
     public var viewToMux: UIView?
-    public var navToMux: UINavigationBar?
+    public weak var navToMux: UINavigationBar?
     private weak var match: UICollectionView?
     public var dontMatch = false
     

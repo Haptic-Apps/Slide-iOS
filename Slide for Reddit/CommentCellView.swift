@@ -161,8 +161,8 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     }
     
     var comment: RComment?
-    public var parentViewController: (UIViewController & MediaVCDelegate)?
-    public var navViewController: UIViewController?
+    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
+    public weak var navViewController: UIViewController?
     
     @objc func openComment(sender: UITapGestureRecognizer? = nil) {
         VCPresenter.openRedditLink(self.comment!.permalink, parentViewController?.navigationController, parentViewController)

@@ -29,9 +29,9 @@ class OnboardingSplashPageViewController: UIViewController {
     var shouldMove = true
     var gradientSet = false
     
-    let bubbles = 15
+    let bubbles = UIScreen.main.bounds.height / 30
     
-    var lanes = [Int](repeating: 0, count: 15)
+    var lanes = [Int](repeating: 0, count: Int(UIScreen.main.bounds.height / 30))
     
     init(text: String, subText: String, image: UIImage) {
         self.text = text
@@ -77,7 +77,7 @@ class OnboardingSplashPageViewController: UIViewController {
         baseView.widthAnchor == CGFloat(bubbles) * 30
         baseView.heightAnchor == CGFloat(bubbles) * 30
 
-        for i in 0..<10 {
+        for i in 0..<Int(bubbles) {
             if i % 2 == 0 {
                 self.lanes[i] = 2
                 continue

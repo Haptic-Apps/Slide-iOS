@@ -581,10 +581,37 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     func checkForUpdate() {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            let viewController = OnboardingViewController()
+            viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+            let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+            newParent.navigationBar.shadowImage = UIImage()
+            newParent.navigationBar.isTranslucent = false
+            newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+
+            newParent.navigationBar.shadowImage = UIImage()
+            newParent.navigationBar.isTranslucent = false
+
+            let button = UIButtonWithContext.init(type: .custom)
+            button.parentController = newParent
+            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            button.imageView?.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3)
+            button.imageView?.layer.cornerRadius = 20
+            button.imageView?.clipsToBounds = true
+            button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
+            button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+            button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
+
+            let barButton = UIBarButtonItem.init(customView: button)
+            barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+            newParent.modalPresentationStyle = .pageSheet
+
+            viewController.navigationItem.rightBarButtonItems = [barButton]
+
+            self.present(newParent, animated: true, completion: nil)
+        }
+
         if !SettingValues.doneVersion() {
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                VCPresenter.presentModally(viewController: OnboardingViewController(), self)
-            }
 
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {

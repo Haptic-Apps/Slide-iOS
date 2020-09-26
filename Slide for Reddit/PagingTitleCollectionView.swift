@@ -274,13 +274,10 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
             self.icon.image = SubredditCellView.defaultIconMulti
         } else if subreddit.lowercased() == "all" {
             self.icon.image = SubredditCellView.allIcon
-            self.sideView.backgroundColor = GMColor.blue500Color()
         } else if subreddit.lowercased() == "frontpage" {
             self.icon.image = SubredditCellView.frontpageIcon
-            self.sideView.backgroundColor = GMColor.green500Color()
         } else if subreddit.lowercased() == "popular" {
             self.icon.image = SubredditCellView.popularIcon
-            self.sideView.backgroundColor = GMColor.purple500Color()
         } else if let icon = Subscriptions.icon(for: subreddit) {
             self.icon.contentMode = .scaleAspectFill
             self.icon.image = UIImage()

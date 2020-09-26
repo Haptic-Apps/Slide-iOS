@@ -194,13 +194,10 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
                     sideView.image = SubredditCellView.defaultIconMulti
                 } else if subreddit.lowercased() == "all" {
                     sideView.image = SubredditCellView.allIcon
-                    sideView.backgroundColor = GMColor.blue500Color()
                 } else if subreddit.lowercased() == "frontpage" {
                     sideView.image = SubredditCellView.frontpageIcon
-                    sideView.backgroundColor = GMColor.green500Color()
                 } else if subreddit.lowercased() == "popular" {
                     sideView.image = SubredditCellView.popularIcon
-                    sideView.backgroundColor = GMColor.purple500Color()
                 } else {
                     sideView.image = SubredditCellView.defaultIcon
                 }

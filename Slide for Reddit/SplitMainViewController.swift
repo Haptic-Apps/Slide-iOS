@@ -493,8 +493,7 @@ class SplitMainViewController: MainViewController {
             self.setViewControllers([firstViewController],
                                     direction: index! > self.currentPage ? .forward : .reverse,
                                     animated: false,
-                                    completion: { (_) in
-                                     })
+                                    completion: nil)
         } else {
             VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         }
@@ -558,15 +557,15 @@ class SplitMainViewController: MainViewController {
                         suite?.setValue(data, forKey: "raw" + item)
                     } else if item == "all" {
                         let image = SubredditCellView.allIcon
-                        let data = image?.withPadding(10)?.withBackground(color: GMColor.blue500Color()).pngData() ?? Data()
+                        let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
                         suite?.setValue(data, forKey: "raw" + item)
                     } else if item == "frontpage" {
                         let image = SubredditCellView.frontpageIcon
-                        let data = image?.withPadding(10)?.withBackground(color: GMColor.green500Color()).pngData() ?? Data()
+                        let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
                         suite?.setValue(data, forKey: "raw" + item)
                     } else if item == "popular" {
                         let image = SubredditCellView.popularIcon
-                        let data = image?.withPadding(10)?.withBackground(color: GMColor.purple500Color()).pngData() ?? Data()
+                        let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
                         suite?.setValue(data, forKey: "raw" + item)
                     } else if let icon = Subscriptions.icon(for: item) {
                         suite?.setValue(icon.unescapeHTML, forKey: item)
