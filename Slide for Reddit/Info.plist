@@ -12,15 +12,33 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
-			<key>black</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>ic_black</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
+            <key>black</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_black</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>blackwhite</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_blackwhite</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>pride</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_pride</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -162,15 +180,33 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
-			<key>black</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>ic_black</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
+            <key>black</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_black</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>pride</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_pride</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
+            <key>blackwhite</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_blackwhite</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
 			<key>blue</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
