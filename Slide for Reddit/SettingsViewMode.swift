@@ -25,7 +25,16 @@ class SettingsViewMode: BubbleSettingTableViewController {
     var subredditBarSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
-    
+
+    var disablePopup = InsetCell()
+    var disablePopupSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var disableMulticolumn = InsetCell()
+    var disableMulticolumnSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var thireenPopup = InsetCell()
     var thireenPopupSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -39,6 +48,12 @@ class SettingsViewMode: BubbleSettingTableViewController {
         } else if changed == thireenPopupSwitch {
             SettingValues.disable13Popup = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disable13Popup)
+        } else if changed == disableMulticolumnSwitch {
+            SettingValues.disableMulticolumnCollections = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_disableMulticolumnCollections)
+        } else if changed == disablePopupSwitch {
+            SettingValues.disablePopupIpad = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disablePopupIpad)
         }
         UserDefaults.standard.synchronize()
     }
@@ -67,6 +82,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
         
         createCell(subredditBar, subredditBarSwitch, isOn: !SettingValues.fullWidthHeaderCells, text: "Swipable subreddit bar on homepage")
         createCell(thireenPopup, thireenPopupSwitch, isOn: SettingValues.disable13Popup, text: "Disable iOS 13 popup behavior")
+        createCell(disablePopup, disablePopupSwitch, isOn: SettingValues.disablePopupIpad, text: "Show comments and subreddits full screen")
+        createCell(disableMulticolumn, disableMulticolumnSwitch, isOn: !SettingValues.disableMulticolumnCollections, text: "Multi-column in profile and inbox")
         createCell(singleMode, isOn: false, text: "Single-column posts")
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
         createCell(splitMode, isOn: false, text: "Split-content")
@@ -185,7 +202,9 @@ class SettingsViewMode: BubbleSettingTableViewController {
             case 0: return self.multicolumnCount
             case 1: return self.galleryCount
             case 2: return self.subredditBar
-            case 3: return self.thireenPopup
+            case 3: return self.disablePopup
+            case 4: return self.disableMulticolumn
+                
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -307,13 +326,13 @@ class SettingsViewMode: BubbleSettingTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var thirteenOffset = 0
-        /* Disable this settingif #available(iOS 13, *) {
-            thirteenOffset = 1
-        }*/
+        var ipadOffset = 0
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            ipadOffset = 2
+        }
         switch section {
         case 0: return 3
-        case 1: return 3 + thirteenOffset
+        case 1: return 3 + ipadOffset
         default: fatalError("Unknown number of sections")
         }
     }

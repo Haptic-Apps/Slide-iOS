@@ -15,7 +15,7 @@ extension UIViewController {
             self.navigationController?.navigationBar.standardAppearance.configureWithOpaqueBackground()
             self.navigationController?.navigationBar.standardAppearance.backgroundColor = overrideColor ?? ColorUtil.getColorForSub(sub: "", true)
             self.navigationController?.navigationBar.standardAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white]
-
+            self.navigationController?.navigationBar.standardAppearance.shadowColor = UIColor.clear
 
             self.navigationController?.navigationBar.compactAppearance = UINavigationBarAppearance()
             self.navigationController?.navigationBar.compactAppearance?.configureWithOpaqueBackground()

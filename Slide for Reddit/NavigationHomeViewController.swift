@@ -195,7 +195,7 @@ class NavigationHomeViewController: UIViewController {
 
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
-        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: "", true)
+        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.theme.foregroundColor
         
         self.view.addSubview(inHeadView)
 

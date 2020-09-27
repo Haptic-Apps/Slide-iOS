@@ -516,11 +516,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var setOffset = CGFloat.zero
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y < setOffset - 75 - self.headerHeight() && dataSource.loaded {
+        if scrollView.contentOffset.y < setOffset - 75 - self.headerHeight() && dataSource.loaded && !dataSource.loading {
             if canRefresh && !self.refreshControl.isRefreshing {
                 self.canRefresh = false
                 self.refreshControl.beginRefreshing()
                 self.drefresh(self.refreshControl)
+                HapticUtility.hapticActionStrong()
             }
         } else if scrollView.contentOffset.y >= setOffset {
             self.canRefresh = true
@@ -2561,7 +2562,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             }
             return
         })
-        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SINGLE) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disablePopupIpad) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 

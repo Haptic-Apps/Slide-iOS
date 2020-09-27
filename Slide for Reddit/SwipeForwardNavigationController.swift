@@ -203,13 +203,13 @@ extension SwipeForwardNavigationController {
     func push(_ viewController: UIViewController?, animated: Bool, completion: @escaping SWNavigationControllerPushCompletion) {
         pushedViewController = viewController
         pushCompletion = completion
-        if let viewController = viewController {
+        if let viewController = viewController, !(viewController is UINavigationController) {
             super.pushViewController(viewController, animated: animated)
         }
     }
     
     override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
-        if let secondaryAsNav = secondaryViewController as? UINavigationController {
+        if let secondaryAsNav = secondaryViewController as? UINavigationController, UIDevice.current.userInterfaceIdiom == .phone {
             viewControllers += secondaryAsNav.viewControllers
         } else {
             super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
@@ -232,19 +232,21 @@ extension SwipeForwardNavigationController {
 
 extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
     func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-        var main: UIViewController?
-        for viewController in viewControllers {
-            if viewController is MainViewController {
-                main = viewController
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            var main: UIViewController?
+            for viewController in viewControllers {
+                if viewController is MainViewController {
+                    main = viewController
+                }
             }
-        }
-        for viewController in pushableViewControllers {
-            if viewController is MainViewController {
-                main = viewController
+            for viewController in pushableViewControllers {
+                if viewController is MainViewController {
+                    main = viewController
+                }
             }
-        }
-        if let main = main {
-            return SwipeForwardNavigationController(rootViewController: main)
+            if let main = main {
+                return SwipeForwardNavigationController(rootViewController: main)
+            }
         }
         return nil
     }

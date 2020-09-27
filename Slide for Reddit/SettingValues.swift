@@ -138,6 +138,8 @@ class SettingValues {
     public static let pref_subredditIcons = "SUBREDDIT_ICONS"
     public static let pref_streamVideos = "STREAM_VIDEOS"
     public static let pref_fullWidthHeaderCells = "FULL_WIDTH_HEADER_CELLS"
+    public static let pref_disablePopupIpad = "DISABLE_POPUP_IPAD"
+    public static let pref_disableMulticolumnCollections = "DISABLE_MULTICOLUMN_COLLECTIONS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -272,6 +274,8 @@ class SettingValues {
     public static var hideAwards = false
     public static var streamVideos = true
     public static var fullWidthHeaderCells = false
+    public static var disablePopupIpad = false
+    public static var disableMulticolumnCollections = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -550,6 +554,8 @@ class SettingValues {
         SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
 
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
+        SettingValues.disablePopupIpad = settings.bool(forKey: SettingValues.pref_disablePopupIpad)
+        SettingValues.disableMulticolumnCollections = settings.bool(forKey: SettingValues.pref_disableMulticolumnCollections)
 
         SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
         SettingValues.smallerTag = settings.object(forKey: SettingValues.pref_smallTag) == nil ? true : settings.bool(forKey: SettingValues.pref_smallTag)
