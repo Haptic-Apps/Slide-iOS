@@ -63,7 +63,12 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                 let lerpedColor = ColorMuxPagingViewController.fadeFromColor(fromColor: color1, toColor: color2, withPercentage: percentComplete)
                 if !lerpedColor.cgColor.__equalTo(color1.cgColor) && percentComplete > 0.1 && percentComplete != 1 {
                     viewToMux?.backgroundColor = lerpedColor
-                    navToMux?.barTintColor = lerpedColor
+                    if #available(iOS 13, *) {
+                        navToMux?.standardAppearance.backgroundColor = lerpedColor
+                        navToMux?.compactAppearance?.backgroundColor = lerpedColor
+                    } else {
+                        navToMux?.barTintColor = lerpedColor
+                    }
                 }
             }
         }

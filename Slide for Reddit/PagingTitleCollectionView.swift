@@ -218,7 +218,7 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         }
         self.contentView.addSubview(innerView)
         self.innerView.addSubviews(sideView, title, icon)
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = .clear
     }
 
     func configureLayout() {
@@ -245,8 +245,8 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
     }
     
     func setSubreddit(subreddit: String) {
-        title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        title.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        self.contentView.backgroundColor = .clear
         self.subreddit = subreddit
         self.sideView.isHidden = false
         self.icon.isHidden = false
@@ -266,7 +266,7 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         title.sizeToFit()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
-        selectedView.backgroundColor = ColorUtil.theme.backgroundColor
+        selectedView.backgroundColor = .clear
         selectedBackgroundView = selectedView
         
         self.icon.contentMode = .center

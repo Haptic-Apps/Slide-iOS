@@ -296,8 +296,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         first = false
         tableView.delegate = self
 
-        if single {
-            setupBaseBarColors()
+        if single && !(parent is SplitMainViewController) {
+            setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
         }
         
         if !dataSource.loaded {
@@ -316,12 +316,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             bar.heightAnchor == 0
         }
 
-        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
-        
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.splitViewController?.navigationController?.navigationBar.shadowImage = UIImage()
 
         if single && !(parent is SplitMainViewController) {
+            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
         

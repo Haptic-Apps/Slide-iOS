@@ -264,11 +264,10 @@ class SplitMainViewController: MainViewController {
         } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
         }
+
         MainViewController.current = vc.sub
+        self.currentTitle = vc.sub
         UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
-        self.currentTitle = MainViewController.current
-        self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
-        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: vc.sub, true)
         
         if !(vc).dataSource.loaded || !SettingValues.subredditBar {
             if vc.dataSource.loaded {
@@ -291,8 +290,12 @@ class SplitMainViewController: MainViewController {
         })
 
         doLeftItem()
-        self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
-        self.parent?.navigationController?.navigationBar.layoutIfNeeded()
+
+        self.setupBaseBarColors(ColorUtil.getColorForSub(sub: vc.sub, true))
+        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: vc.sub, true)
+
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.layoutIfNeeded()
         
         tabBar?.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
     }
@@ -307,7 +310,7 @@ class SplitMainViewController: MainViewController {
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
         }
-        setupBaseBarColors()
+        setupBaseBarColors(ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
         toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         self.doButtons()
         MainViewController.needsReTheme = false
@@ -494,6 +497,7 @@ class SplitMainViewController: MainViewController {
                                     direction: index! > self.currentPage ? .forward : .reverse,
                                     animated: false,
                                     completion: nil)
+            
         } else {
             VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         }

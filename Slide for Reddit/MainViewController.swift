@@ -805,6 +805,7 @@ extension MainViewController: UIPageViewControllerDelegate {
         guard page != nil else {
             return
         }
+
         doCurrentPage(page!)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
