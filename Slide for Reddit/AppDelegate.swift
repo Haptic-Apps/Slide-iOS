@@ -673,7 +673,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
         }
 
-        print("getData running...")
+        NSLog("getData running...")
         guard let session = session,
             let request = try? session.getMessageRequest(.unread) else {
             completionHandler(.failed)
@@ -724,17 +724,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastMessageUpdate")
 
-                print("Unread count: \(newCount)")
+                NSLog("Unread count: \(newCount)")
 
                 DispatchQueue.main.sync {
                     UIApplication.shared.applicationIconBadgeNumber = newCount
                 }
 
                 if newCount > 0 {
-                    print("getData completed with new data.")
+                    NSLog("getData completed with new data.")
                     completionHandler(.newData)
                 } else {
-                    print("getData completed with no new data.")
+                    NSLog("getData completed with no new data.")
                     completionHandler(.noData)
                 }
                 cleanup()
@@ -749,11 +749,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         }
 
+        if self.fetcher != nil && self.backgroundTaskId != nil {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
+            fetcher = nil
+        }
         if self.fetcher == nil {
             self.fetcher = BackgroundFetch(current: session,
                                            request: request,
                                            taskHandler: handler)
         }
+        
         self.fetcher?.resume()
 
     }
@@ -761,6 +766,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func postLocalNotification(_ message: String, _ author: String = "", _ permalink: String? = nil, _ id: String) {
         if #available(iOS 10.0, *) {
             let center = UNUserNotificationCenter.current()
+            center.delegate = self
 
             let content = UNMutableNotificationContent()
             content.categoryIdentifier = "SlideMail"
@@ -1314,15 +1320,24 @@ extension AppDelegate: UIWindowSceneDelegate {
             VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
         } else if let url = userActivity.webpageURL {
             handleURL(url)
+        } else if let permalink = userActivity.userInfo?["permalink"] as? String {
+            VCPresenter.openRedditLink(permalink, window?.rootViewController as? UINavigationController, window?.rootViewController)
         }
 
     }
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let _ = (scene as? UIWindowScene) else { return }
 
         if let url = connectionOptions.urlContexts.first?.url {
             launchedURL = url
+        }
+        
+        if let notification = connectionOptions.notificationResponse {
+            let userInfo = notification.notification.request.content.userInfo as? NSDictionary
+            if let url = userInfo?["permalink"] as? String {
+                launchedURL = URL(string: url)
+            }
         }
         
         if let windowScene = scene as? UIWindowScene {
@@ -1359,10 +1374,21 @@ extension AppDelegate: UIWindowSceneDelegate {
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo as? NSDictionary
+
         if let url = userInfo?["permalink"] as? String {
-            VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+            if #available(iOS 13, *) {
+                guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? AppDelegate)?.window?.rootViewController else { return }
+                VCPresenter.openRedditLink(url, rootViewController as? UINavigationController, rootViewController)
+            } else {
+                VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+            }
         } else {
-            VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+            if #available(iOS 13, *) {
+                guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? AppDelegate)?.window?.rootViewController else { return }
+                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: rootViewController as? UINavigationController, parentViewController: rootViewController)
+            } else {
+                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+            }
         }
     }
 }

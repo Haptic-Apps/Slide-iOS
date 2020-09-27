@@ -7,27 +7,27 @@
 		<key>Open in Slide.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Share to Slide.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>28</integer>
+			<integer>2</integer>
 		</dict>
 		<key>Slide Release.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>36</integer>
+			<integer>6</integer>
 		</dict>
 		<key>Slide Screenshot Automation.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>1</integer>
 		</dict>
 		<key>Slide Widgets.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>45</integer>
+			<integer>48</integer>
 		</dict>
 		<key>Slide for Apple Watch (Notification).xcscheme</key>
 		<dict>
@@ -37,17 +37,17 @@
 		<key>Slide for Apple Watch.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>31</integer>
+			<integer>3</integer>
 		</dict>
 		<key>Slide for Reddit Prod Test.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>35</integer>
+			<integer>5</integer>
 		</dict>
 		<key>Slide for Reddit.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>33</integer>
+			<integer>4</integer>
 		</dict>
 	</dict>
 </dict>
