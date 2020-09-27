@@ -741,9 +741,15 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
-            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
-                if themeChanged {
+            if #available(iOS 14.0, *) {
+                if previousTraitCollection?.activeAppearance != traitCollection.activeAppearance {
                     ColorUtil.matchTraitCollection()
+                }
+            } else {
+                if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                    if themeChanged {
+                        ColorUtil.matchTraitCollection()
+                    }
                 }
             }
         }
