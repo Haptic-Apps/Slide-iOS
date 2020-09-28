@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 import reddift
 
-protocol SubmissionDataSouceDelegate {
+protocol SubmissionDataSouceDelegate: class {
     func showIndicator()
     func generalError(title: String, message: String)
     func loadSuccess(before: Int, count: Int)
@@ -48,7 +48,7 @@ class SubmissionsDataSource {
     
     var paginator: Paginator
     var content: [RSubmission]
-    var delegate: SubmissionDataSouceDelegate?
+    weak var delegate: SubmissionDataSouceDelegate?
     
     var loading = false
     var loaded = false

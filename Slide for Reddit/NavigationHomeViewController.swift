@@ -99,10 +99,6 @@ class NavigationHomeViewController: UIViewController {
         super.viewDidLoad()
         
         doViews()
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
-                                               name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
-                                               name: UIResponder.keyboardWillHideNotification, object: nil)
         
         updateAccessibility()
         searchBar.isUserInteractionEnabled = true
@@ -123,9 +119,15 @@ class NavigationHomeViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
-            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
-                if themeChanged {
+            if #available(iOS 14.0, *) {
+                if previousTraitCollection?.activeAppearance != traitCollection.activeAppearance {
                     ColorUtil.matchTraitCollection()
+                }
+            } else {
+                if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                    if themeChanged {
+                        ColorUtil.matchTraitCollection()
+                    }
                 }
             }
         }
@@ -192,9 +194,14 @@ class NavigationHomeViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
+                                               name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden),
+                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+
         inHeadView.removeFromSuperview()
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
-        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: "", true)
+        self.inHeadView.backgroundColor = ColorUtil.theme.foregroundColor
         
         self.view.addSubview(inHeadView)
 
@@ -228,6 +235,9 @@ class NavigationHomeViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         searchBar.endEditing(true)
+        
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     func configureViews() {
@@ -824,7 +834,7 @@ class CurrentAccountHeaderView: UIView {
     }
     
     var forwardButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: ColorUtil.theme.fontColor), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: UIDevice.current.userInterfaceIdiom == .pad ? .xmark : .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: ColorUtil.theme.fontColor), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Go home"
     }
@@ -1147,8 +1157,26 @@ extension CurrentAccountHeaderView {
     }
     
     @objc func goForward(_ sender: UIButton) {
-        if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
+        if let nav = self.parent?.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0 {
             nav.pushNextViewControllerFromRight(nil)
+        } else {
+            var is14Column = false
+            if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                is14Column = true
+            }
+            if let barButtonItem = self.parent?.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
+                UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+            } else {
+                UIView.animate(withDuration: 0.3, animations: {
+                    if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                        UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                            self.parent?.splitViewController?.preferredDisplayMode = .primaryHidden
+                        }, completion: { (_) in
+                        })
+                    }
+                }, completion: { _ in
+                })
+            }
         }
     }
         
@@ -1229,37 +1257,39 @@ class AccountShortcutsView: UIView {
         
         addSubviews(cellStack)
         //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        for action in actions {
-            cellStack.addArrangedSubview(UITableViewCell().then {
-                $0.configure(text: action.getTitle(), image: action.getImage())
-                $0.addTapGestureRecognizer {
-                    if let delegate = self.delegate, let parent = self.parent {
-                        delegate.navigation(parent, didRequestAction: action)
-                    }
-                }
-                $0.heightAnchor >= 50
-                $0.backgroundColor = ColorUtil.theme.foregroundColor
-                $0.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-                $0.accessoryType = .disclosureIndicator
-            })
-        }
-        
-        cellStack.addArrangedSubview(UITableViewCell().then {
-            $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
-            $0.addTapGestureRecognizer {
-                let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
-                for action in SettingValues.NavigationHeaderActions.cases {
-                    optionMenu.addAction(title: action.getTitle(), icon: action.getImage()) {
+        if AccountController.isLoggedIn {
+            for action in actions {
+                cellStack.addArrangedSubview(UITableViewCell().then {
+                    $0.configure(text: action.getTitle(), image: action.getImage())
+                    $0.addTapGestureRecognizer {
                         if let delegate = self.delegate, let parent = self.parent {
                             delegate.navigation(parent, didRequestAction: action)
                         }
                     }
-                }
-                self.delegate?.displayMenu(self.parent!, optionMenu)
+                    $0.heightAnchor >= 50
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
+                    $0.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+                    $0.accessoryType = .disclosureIndicator
+                })
             }
-            $0.heightAnchor >= 50
-            $0.accessoryType = .disclosureIndicator
-        })
+            
+            cellStack.addArrangedSubview(UITableViewCell().then {
+                $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
+                $0.addTapGestureRecognizer {
+                    let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
+                    for action in SettingValues.NavigationHeaderActions.cases {
+                        optionMenu.addAction(title: action.getTitle(), icon: action.getImage()) {
+                            if let delegate = self.delegate, let parent = self.parent {
+                                delegate.navigation(parent, didRequestAction: action)
+                            }
+                        }
+                    }
+                    self.delegate?.displayMenu(self.parent!, optionMenu)
+                }
+                $0.heightAnchor >= 50
+                $0.accessoryType = .disclosureIndicator
+            })
+        }
 
         self.clipsToBounds = true
         
@@ -1272,7 +1302,7 @@ class AccountShortcutsView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return CGFloat((actions.count + 1) * 50) + 10 + CGFloat((actions.count + 1) * 2)
+        return (!AccountController.isLoggedIn ? 75 : CGFloat((actions.count + 1) * 50)) + 10 + CGFloat((actions.count + 1) * 2)
     }
         
     required init?(coder aDecoder: NSCoder) {

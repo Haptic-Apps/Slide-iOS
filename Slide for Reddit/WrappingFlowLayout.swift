@@ -60,7 +60,11 @@ class WrappingFlowLayout: UICollectionViewLayout {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
                     numberOfColumns = 1
                 } else {
-                    numberOfColumns = portraitCount
+                    if SettingValues.disableMulticolumnCollections {
+                        numberOfColumns = 1
+                    } else {
+                        numberOfColumns = portraitCount
+                    }
                 }
             } else {
                 numberOfColumns = SettingValues.multiColumnCount

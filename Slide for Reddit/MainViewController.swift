@@ -579,6 +579,33 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
     func checkForUpdate() {
         if !SettingValues.doneVersion() {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                let viewController = OnboardingViewController()
+                viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+                let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+                newParent.navigationBar.shadowImage = UIImage()
+                newParent.navigationBar.isTranslucent = false
+                newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+
+                newParent.navigationBar.shadowImage = UIImage()
+                newParent.navigationBar.isTranslucent = false
+
+                let button = UIButtonWithContext.init(type: .custom)
+                button.parentController = newParent
+                button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+                button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
+                button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+                button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
+
+                let barButton = UIBarButtonItem.init(customView: button)
+                barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+                newParent.modalPresentationStyle = .pageSheet
+
+                viewController.navigationItem.rightBarButtonItems = [barButton]
+
+                self.present(newParent, animated: true, completion: nil)
+            }
+
             let session = (UIApplication.shared.delegate as! AppDelegate).session
             do {
                 try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
@@ -617,9 +644,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         }
                         
                         if !storedTitle.isEmpty && !storedLink.isEmpty {
-                            DispatchQueue.main.async {
+                            let settings = UserDefaults.standard
+                            settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
+                            settings.set(storedTitle, forKey: "vtitle")
+                            settings.set(submissions[0], forKey: "vlink")
+                            /* disable for now DispatchQueue.main.async {
                                 SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
-                            }
+                            }*/
                         }
                     }
                 })
@@ -707,9 +738,15 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
-            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
-                if themeChanged {
+            if #available(iOS 14.0, *) {
+                if previousTraitCollection?.activeAppearance != traitCollection.activeAppearance {
                     ColorUtil.matchTraitCollection()
+                }
+            } else {
+                if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                    if themeChanged {
+                        ColorUtil.matchTraitCollection()
+                    }
                 }
             }
         }
@@ -771,6 +808,7 @@ extension MainViewController: UIPageViewControllerDelegate {
         guard page != nil else {
             return
         }
+
         doCurrentPage(page!)
         self.navigationController?.setNavigationBarHidden(false, animated: true)
     }

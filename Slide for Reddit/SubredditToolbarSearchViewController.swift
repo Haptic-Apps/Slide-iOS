@@ -17,7 +17,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     var filteredContent: [String] = []
     var suggestions = [String]()
     var results = [RSubmission]()
-    var parentController: SingleSubredditViewController?
+    weak var parentController: SingleSubredditViewController?
     var backgroundView = UIView()
     var topView: UIView?
     var bottomOffset: CGFloat = 64
@@ -710,13 +710,10 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                 subIconView.image = SubredditCellView.defaultIconMulti
             } else if subreddit.lowercased() == "all" {
                 subIconView.image = SubredditCellView.allIcon
-                subIconView.backgroundColor = GMColor.blue500Color()
             } else if subreddit.lowercased() == "frontpage" {
                 subIconView.image = SubredditCellView.frontpageIcon
-                subIconView.backgroundColor = GMColor.green500Color()
             } else if subreddit.lowercased() == "popular" {
                 subIconView.image = SubredditCellView.popularIcon
-                subIconView.backgroundColor = GMColor.purple500Color()
             } else {
                 subIconView.image = SubredditCellView.defaultIcon
             }

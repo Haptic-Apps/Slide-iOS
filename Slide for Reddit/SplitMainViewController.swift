@@ -262,11 +262,10 @@ class SplitMainViewController: MainViewController {
         } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
         }
+
         MainViewController.current = vc.sub
+        self.currentTitle = vc.sub
         UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
-        self.currentTitle = MainViewController.current
-        self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: vc.sub, true)
-        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: vc.sub, true)
         
         if !(vc).dataSource.loaded || !SettingValues.subredditBar {
             if vc.dataSource.loaded {
@@ -289,8 +288,12 @@ class SplitMainViewController: MainViewController {
         })
 
         doLeftItem()
-        self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
-        self.parent?.navigationController?.navigationBar.layoutIfNeeded()
+
+        self.setupBaseBarColors(ColorUtil.getColorForSub(sub: vc.sub, true))
+        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: vc.sub, true)
+
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.layoutIfNeeded()
         
         tabBar?.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
     }
@@ -305,7 +308,7 @@ class SplitMainViewController: MainViewController {
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
         }
-        setupBaseBarColors()
+        setupBaseBarColors(ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
         toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         self.doButtons()
         MainViewController.needsReTheme = false
@@ -490,8 +493,8 @@ class SplitMainViewController: MainViewController {
             self.setViewControllers([firstViewController],
                                     direction: index! > self.currentPage ? .forward : .reverse,
                                     animated: false,
-                                    completion: { (_) in
-                                     })
+                                    completion: nil)
+            
         } else {
             VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
         }
@@ -553,15 +556,15 @@ class SplitMainViewController: MainViewController {
                         suite?.setValue(data, forKey: "raw" + item)
                     } else if item == "all" {
                         let image = SubredditCellView.allIcon
-                        let data = image?.withPadding(10)?.withBackground(color: GMColor.blue500Color()).pngData() ?? Data()
+                        let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
                         suite?.setValue(data, forKey: "raw" + item)
                     } else if item == "frontpage" {
                         let image = SubredditCellView.frontpageIcon
-                        let data = image?.withPadding(10)?.withBackground(color: GMColor.green500Color()).pngData() ?? Data()
+                        let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
                         suite?.setValue(data, forKey: "raw" + item)
                     } else if item == "popular" {
                         let image = SubredditCellView.popularIcon
-                        let data = image?.withPadding(10)?.withBackground(color: GMColor.purple500Color()).pngData() ?? Data()
+                        let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
                         suite?.setValue(data, forKey: "raw" + item)
                     } else if let icon = Subscriptions.icon(for: item) {
                         suite?.setValue(icon.unescapeHTML, forKey: item)
@@ -684,7 +687,12 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     }
                 }
             } else {
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target {
+                var is14Column = false
+                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                    is14Column = true
+                }
+
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                     if let present = toPresent {
                         VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
@@ -694,7 +702,10 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
                         if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                            self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                                self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            }, completion: { (_) in
+                            })
                         }
                     }, completion: { _ in
                         if let present = toPresent {
@@ -712,12 +723,27 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 toExecute?()
             }
 
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0 {
                 nav.pushNextViewControllerFromRight() {
                 }
             } else {
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target {
+                var is14Column = false
+                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                    is14Column = true
+                }
+
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+                } else {
+                    UIView.animate(withDuration: 0.3, animations: {
+                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                                self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            }, completion: { (_) in
+                            })
+                        }
+                    }, completion: { _ in
+                    })
                 }
             }
         case .POPOVER_SIMULTANEOUSLY:

@@ -94,7 +94,8 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
 
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
-        
+        setupBaseBarColors()
+
         self.edgesForExtendedLayout = UIRectEdge.all
     
         self.extendedLayoutIncludesOpaqueBars = true

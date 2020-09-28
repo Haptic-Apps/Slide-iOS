@@ -59,7 +59,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var toolbarEnabled: Bool {
         return true
     }
-
+    
     let maxHeaderHeight: CGFloat = 120
     let minHeaderHeight: CGFloat = 56
     public var inHeadView: UIView?
@@ -297,8 +297,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         first = false
         tableView.delegate = self
 
-        if single {
-            setupBaseBarColors()
+        if single && !(parent is SplitMainViewController) {
+            setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
         }
         
         if !dataSource.loaded {
@@ -317,12 +317,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             bar.heightAnchor == 0
         }
 
-        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
-        
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.splitViewController?.navigationController?.navigationBar.shadowImage = UIImage()
 
         if single && !(parent is SplitMainViewController) {
+            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
         
@@ -405,8 +404,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
             if AccountController.isLoggedIn && AccountController.isGold && !History.currentSeen.isEmpty {
                 do {
-                    try session.setVisited(names: History.currentSeen) { (result) in
-                        print(result)
+                    try session.setVisited(names: History.currentSeen) { [weak self] (result) in
+                        guard let self = self else { return }
+
                         History.currentSeen.removeAll()
                     }
                 } catch let error {
@@ -454,7 +454,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     self.lastY = self.tableView.contentOffset.y
                 }
                // TODO: - content offset
-            }, completion: { (_) in
+            }, completion: { [weak self] (_) in
+                guard let self = self else { return }
                 self.setupFab(size)
                 self.didScroll = false
             }
@@ -512,7 +513,21 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
 
+    var canRefresh = true
+    var setOffset = CGFloat.zero
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y < setOffset - 75 - self.headerHeight() && dataSource.loaded && !dataSource.loading {
+            if canRefresh && !self.refreshControl.isRefreshing {
+                self.canRefresh = false
+                self.refreshControl.beginRefreshing()
+                self.drefresh(self.refreshControl)
+                HapticUtility.hapticActionStrong()
+            }
+        } else if scrollView.contentOffset.y >= setOffset {
+            self.canRefresh = true
+        }
+
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
             if dataSource.loaded && dataSource.content.count > oldCount {
@@ -643,7 +658,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             if animated {
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
                     self.fab!.alpha = 0
-                }, completion: { _ in
+                }, completion: { [weak self] _ in
+                    guard let self = self else { return }
+
                     self.fab!.isHidden = true
                 })
             } else {
@@ -734,19 +751,25 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     @objc func doFabActions() {
         if UserDefaults.standard.bool(forKey: "FAB_SHOWN") == false {
             let a = UIAlertController(title: "Subreddit Action Button", message: "This is the subreddit action button!\n\nThis button's actions can be customized by long pressing on it at any time, and this button can be removed completely in Settings > General.", preferredStyle: .alert)
-            a.addAction(UIAlertAction(title: "Change action", style: .default, handler: { (_) in
+            a.addAction(UIAlertAction(title: "Change action", style: .default, handler: { [weak self] (_) in
+                guard let self = self else { return }
+
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
                 UserDefaults.standard.synchronize()
                 self.changeFab()
             }))
-            a.addAction(UIAlertAction(title: "Hide button", style: .default, handler: { (_) in
+            a.addAction(UIAlertAction(title: "Hide button", style: .default, handler: { [weak self] (_) in
+                guard let self = self else { return }
+                
                 SettingValues.hiddenFAB = true
                 UserDefaults.standard.set(true, forKey: SettingValues.pref_hiddenFAB)
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
                 UserDefaults.standard.synchronize()
                 self.setupFab(self.view.bounds.size)
             }))
-            a.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
+            a.addAction(UIAlertAction(title: "Continue", style: .default, handler: { [weak self] (_) in
+                guard let self = self else { return }
+
                 UserDefaults.standard.set(true, forKey: "FAB_SHOWN")
                 UserDefaults.standard.synchronize()
                 self.doFabActions()
@@ -783,7 +806,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             return
         }
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.getStyles(sub, completion: { (result) in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.getStyles(sub, completion: { [weak self] (result) in
+                guard let self = self else { return }
+
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -981,13 +1006,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         sideView.image = SubredditCellView.defaultIconMulti
                     } else if subreddit.lowercased() == "all" {
                         sideView.image = SubredditCellView.allIcon
-                        sideView.backgroundColor = GMColor.blue500Color()
                     } else if subreddit.lowercased() == "frontpage" {
                         sideView.image = SubredditCellView.frontpageIcon
-                        sideView.backgroundColor = GMColor.green500Color()
                     } else if subreddit.lowercased() == "popular" {
                         sideView.image = SubredditCellView.popularIcon
-                        sideView.backgroundColor = GMColor.purple500Color()
                     } else {
                         sideView.image = SubredditCellView.defaultIcon
                     }
@@ -1007,7 +1029,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
             if !dataSource.loaded {
                 do {
-                    try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { (result) in
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.about(sub, completion: { [weak self] (result) in
+                        guard let self = self else { return }
+
                         switch result {
                         case .failure:
                             print(result.error!.description)
@@ -1018,7 +1042,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                 } else {
                                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
                                         let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
-                                        alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                        alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { [weak self] (_) in
+                                            guard let self = self else { return }
+
                                             self.navigationController?.popViewController(animated: true)
                                             self.dismiss(animated: true, completion: nil)
                                             
@@ -1162,7 +1188,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     @objc func hideReadPosts() {
-        dataSource.hideReadPosts { (indexPaths: [IndexPath]) in
+        dataSource.hideReadPosts { [weak self] (indexPaths: [IndexPath]) in
+            guard let self = self else { return }
+
             DispatchQueue.main.async {
                 if !indexPaths.isEmpty {
                     self.tableView.performBatchUpdates({
@@ -1177,7 +1205,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
     
     func hideReadPostsPermanently() {
-        dataSource.hideReadPostsPermanently { (indexPaths: [IndexPath]) in
+        dataSource.hideReadPostsPermanently { [weak self] (indexPaths: [IndexPath]) in
+            guard let self = self else { return }
+
             DispatchQueue.main.async {
                 if !indexPaths.isEmpty {
                     self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
@@ -1928,7 +1958,9 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             self.flowLayout.invalidateLayout()
             UIView.transition(with: self.tableView, duration: 0.15, options: .transitionCrossDissolve, animations: {
                 self.tableView.reloadData()
-            }, completion: { (_) in
+            }, completion: { [weak self] (_) in
+                guard let self = self else { return }
+
                 self.autoplayHandler.autoplayOnce(self.tableView)
             })
 
@@ -1940,7 +1972,9 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
             let paddingOffset = CGFloat(headerHeight == 0 ? -4 : 0)
             
-            self.tableView.contentOffset = CGPoint.init(x: 0, y: paddingOffset + navOffset + topOffset + headerHeight)
+            setOffset = paddingOffset + navOffset + topOffset + headerHeight
+            
+            self.tableView.contentOffset = CGPoint.init(x: 0, y: setOffset)
         } else {
             self.flowLayout.invalidateLayout()
             self.tableView.insertItems(at: paths)
@@ -1982,7 +2016,9 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(navOffset + topOffset + 8), left: 0, bottom: 65, right: 0)
 
         DispatchQueue.main.async {
-            self.dataSource.handleTries { (isEmpty: Bool) in
+            self.dataSource.handleTries { [weak self] (isEmpty: Bool) in
+                guard let self = self else { return }
+                
                 if isEmpty {
                     self.emptyStateView.setText(title: "No offline content found!", message: "When online, you can set up subreddit caching in Settings > Auto Cache")
                     self.emptyStateView.isHidden = false
@@ -2536,7 +2572,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             }
             return
         })
-        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SINGLE) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disablePopupIpad) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 
@@ -2570,6 +2606,10 @@ extension SingleSubredditViewController: SubredditThemeEditViewControllerDelegat
             parent.tabBar.collectionView.reloadData()
             parent.doToolbarOffset()
         }
+    }
+    
+    public func didClear() -> Bool {
+        return false
     }
 }
 

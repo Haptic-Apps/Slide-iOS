@@ -121,6 +121,13 @@ public class ColorUtil {
         } else if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
             return color
         } else {
+            if sub.lowercased() == "all" {
+                return GMColor.blue500Color()
+            } else if sub.lowercased() == "frontpage" {
+                return GMColor.green500Color()
+            } else if sub.lowercased() == "popular" {
+                return GMColor.purple500Color()
+            }
             return baseColor
         }
     }

@@ -373,9 +373,9 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             bodyScrollView.addSubview(textView)
             textView.leftAnchor == bodyScrollView.leftAnchor
             textView.widthAnchor == textView.estimatedWidth
-            textView.topAnchor == bodyScrollView.topAnchor + 50
+            textView.topAnchor == bodyScrollView.topAnchor + 58
             textView.heightAnchor == textView.estimatedHeight + 50
-            bodyScrollView.contentSize = CGSize(width: bodyScrollView.bounds.width, height: textView.estimatedHeight + 100)
+            bodyScrollView.contentSize = CGSize(width: bodyScrollView.bounds.width, height: textView.estimatedHeight + 108)
             parentVC?.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC?.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
             self.populated = true
