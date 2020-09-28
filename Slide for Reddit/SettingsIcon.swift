@@ -27,6 +27,7 @@ class SettingsIcon: BubbleSettingTableViewController {
             ("stars", "Starry night u/TyShark"),
             ("ghost", "Ghost"),
             ("mint", "Mint u/Baselt95"),
+            ("garbage", "Garbage - u/SandwichEconomist"),
         ]),
         ("basic", "Basic icons", [
             ("red", "Red"),
