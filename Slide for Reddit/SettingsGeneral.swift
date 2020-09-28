@@ -490,6 +490,10 @@ public class InsetCell: UITableViewCell {
     }
     var top = false
     var bottom = false
+
+    /// Minimum height of the cell. Only effective when the table view's
+    /// row height is set to `UITableView.automaticDimension`.
+    var minHeight: CGFloat? = 60
     
     override public func layoutSubviews() {
         super.layoutSubviews()
@@ -524,6 +528,20 @@ public class InsetCell: UITableViewCell {
         shape.path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: 10, height: 10)).cgPath
         layer.mask = shape
         layer.masksToBounds = true
+    }
+}
+
+extension InsetCell { // Support minHeight variable. See https://stackoverflow.com/a/48853081/7138792
+    public override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+        let size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+        guard let minHeight = minHeight else { return size }
+        return CGSize(width: size.width, height: max(size.height, minHeight))
+    }
+
+    public override func systemLayoutSizeFitting(_ targetSize: CGSize) -> CGSize {
+        let size = super.systemLayoutSizeFitting(targetSize)
+        guard let minHeight = minHeight else { return size }
+        return CGSize(width: size.width, height: max(size.height, minHeight))
     }
 }
 
