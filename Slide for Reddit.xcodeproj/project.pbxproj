@@ -77,6 +77,7 @@
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
 		BD43E0F324EA162500D18328 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD43E0F224EA162500D18328 /* NetworkMonitor.swift */; };
+		BD78A6942523AA540000639C /* FallbackNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD78A6932523AA540000639C /* FallbackNetworkMonitor.swift */; };
 		BD87553724D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */; };
 		BD87553924D8AA210096732F /* CommentViewController+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */; };
 		BD87553B24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */; };
@@ -537,6 +538,7 @@
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
 		B8E6966A298CAF0C655B14D9 /* Pods-Slide for RedditTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.debug.xcconfig"; path = "Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BD43E0F224EA162500D18328 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		BD78A6932523AA540000639C /* FallbackNetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackNetworkMonitor.swift; sourceTree = "<group>"; };
 		BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDelegate.swift"; sourceTree = "<group>"; };
 		BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDataSource.swift"; sourceTree = "<group>"; };
 		BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UISearchBarDelegate.swift"; sourceTree = "<group>"; };
@@ -1091,6 +1093,7 @@
 			isa = PBXGroup;
 			children = (
 				BD43E0F224EA162500D18328 /* NetworkMonitor.swift */,
+				BD78A6932523AA540000639C /* FallbackNetworkMonitor.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -2307,7 +2310,6 @@
 				BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */,
-				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				BE9BFF1D25182D8700C9F7EC /* OnboardingPageViewController.swift in Sources */,
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
@@ -2390,6 +2392,7 @@
 				B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */,
 				B776BB7F8D38650384698FD1 /* LiveThreadViewController.swift in Sources */,
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
+				BD78A6942523AA540000639C /* FallbackNetworkMonitor.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
 				BD87554924D8AB270096732F /* CommentViewController+TapBehindModalViewControllerDelegate.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
