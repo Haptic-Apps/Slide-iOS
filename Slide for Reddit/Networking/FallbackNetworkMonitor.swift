@@ -9,6 +9,22 @@
 import Foundation
 import SystemConfiguration
 
-class FallbackNetworkMonitor {
+final class FallbackNetworkMonitor {
+    // MARK: References / Properties
+    // Shared constant
+    public static let shared = FallbackNetworkMonitor()
+    // Instantiating a SCNetworkReachability Object using hostname.
+    private let reachabilityHost = SCNetworkReachabilityCreateWithName(nil, "www.reddit.com")
+    // Creates the flags which get status of network
+    private var reachabilityFlags = SCNetworkReachabilityFlags()
+    // Returns current network status
+    public var isReachable: Bool {
+        return reachabilityFlags.contains(.reachable)
+    }
+    // MARK: Methods
+    // Starts initial Monitoring
+    public func startFallbackNetworkMonitoring() {
+        SCNetworkReachabilityGetFlags(reachabilityHost, &reachabilityFlags)
+    }
     
 }

@@ -9,6 +9,7 @@
 import Foundation
 import Network
 
+@available(iOS 12.0, *)
 final class NetworkMonitor {
     // MARK: - References / Properties
     /// Refers to NetworkMonitor class once throughout application.
