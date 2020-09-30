@@ -651,7 +651,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SubredditReorderViewController()
             case 2:
                 if !SettingValues.isPro {
-                    ch = SettingsPro()
+                    VCPresenter.proDialogShown(feature: true, self)
                 } else {
                     ch = SettingsViewMode()
                 }
