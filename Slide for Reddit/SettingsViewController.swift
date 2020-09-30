@@ -204,7 +204,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.manageSubs.imageView?.image = UIImage(sfString: .rCircleFill, overrideString: "subs")?.toolbarIcon()
         self.manageSubs.imageView?.tintColor = ColorUtil.theme.fontColor
         self.manageSubs.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange your subreddits"
+        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange the sidebar"
         self.manageSubs.detailTextLabel?.numberOfLines = 0
 
         self.postActionCell.textLabel?.text = "Reorder post actions"
@@ -296,7 +296,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.cacheCell.imageView?.image = UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")?.toolbarIcon()
         self.cacheCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
-        self.postLayout.textLabel?.text = "Submission layout"
+        self.postLayout.textLabel?.text = "Card layout"
         self.postLayout.accessoryType = .disclosureIndicator
         self.postLayout.backgroundColor = ColorUtil.theme.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.theme.fontColor
