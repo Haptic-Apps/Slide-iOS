@@ -77,14 +77,13 @@ class CommentViewController: MediaViewController {
     var duringAnimation = false
     var finishedPush = false
     
+    var liveNewCount = 0
+    var olderY = CGFloat(0)
+    
     var sub: String = ""
     var allCollapsed = false
 
     var subInfo: Subreddit?
-    // Background View
-    private var blurView: UIVisualEffectView?
-    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
-    private var blackView = UIView()
     
     var text: [String: NSAttributedString]
     
@@ -145,6 +144,12 @@ class CommentViewController: MediaViewController {
     var sortB: UIBarButtonItem!
     var searchB: UIBarButtonItem!
     var liveB: UIBarButtonItem!
+    var liveView: UILabel?
+    
+    // Background View
+    private var blurView: UIVisualEffectView?
+    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
+    private var blackView = UIView()
     
     var activityIndicator = UIActivityIndicatorView()
     

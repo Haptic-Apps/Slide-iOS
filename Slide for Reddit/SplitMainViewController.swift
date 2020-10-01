@@ -775,17 +775,6 @@ extension SplitMainViewController: NavigationHomeDelegate {
             self.goToSubreddit(subreddit: didRequestSubreddit)
         }
     }
-        
-    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
-        var currentState = OpenState.POPOVER_AFTER_NAVIGATION
-        if self.finalSubs.contains(didRequestSubreddit) {
-            currentState = .POPOVER_SIMULTANEOUSLY
-        }
-        
-        doOpen(currentState, homeViewController) {
-            self.goToSubreddit(subreddit: didRequestSubreddit)
-        }
-    }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
         let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)

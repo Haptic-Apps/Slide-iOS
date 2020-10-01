@@ -26,6 +26,7 @@ final class FallbackNetworkMonitor {
     // MARK: Methods
     // Starts initial Monitoring
     public func startFallbackNetworkMonitoring() {
+        guard let reachabilityHost = reachabilityHost else { print("SCNetworkReachabilityCreateWithName error!"); return }
         SCNetworkReachabilityGetFlags(reachabilityHost, &reachabilityFlags)
     }
     
