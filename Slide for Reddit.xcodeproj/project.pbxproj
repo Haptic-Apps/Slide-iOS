@@ -46,6 +46,12 @@
 		4BB1332D824D4CD6076ACE36 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAEA5E4377232980442DB2F4 /* Pods_Slide_for_RedditTests.framework */; };
 		AB1C8BEC9402BB27138F00B2 /* Pods_Slide_for_Reddit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B75BA65338EBA079387BD2C1 /* Pods_Slide_for_Reddit.framework */; };
 		B10965021D080B70313A5BD2 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4913ED7EAB039D771E51F8 /* Pods_Slide_for_RedditUITests.framework */; };
+		68893CEE1A2BFBD6C35176C7 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 915ED518E6B9ED6C4BEFFD9D /* Pods_Slide_for_RedditTests.framework */; };
+		6BD349B859B9F8395991A817 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18531AD38F7AB98B9AA0D139 /* Pods_Slide_for_RedditUITests.framework */; };
+		835F7C0C6CC2D9F681EED6C3 /* Pods_Slide_for_Reddit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB4FD449588B015728C06B4 /* Pods_Slide_for_Reddit.framework */; };
+		B422D252252270AD00A168BB /* ic_garbage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D24F252270AD00A168BB /* ic_garbage@3x.png */; };
+		B422D253252270AD00A168BB /* ic_garbage@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D250252270AD00A168BB /* ic_garbage@2x~ipad.png */; };
+		B422D254252270AD00A168BB /* ic_garbage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D251252270AD00A168BB /* ic_garbage@2x.png */; };
 		B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */; };
 		B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */; };
 		B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */; };
@@ -512,6 +518,20 @@
 		634D48B04A9C3CCED5085D1F /* Pods-Slide for RedditTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.release.xcconfig"; path = "Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig"; sourceTree = "<group>"; };
 		68BB1541CAC9B494136DF56D /* Pods-Slide for Reddit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.debug.xcconfig"; path = "Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig"; sourceTree = "<group>"; };
 		6B4B1028DFBCC9C75D897610 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		558A5BB80A5F789402602347 /* Pods-Slide for RedditUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.release.xcconfig"; path = "Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.release.xcconfig"; sourceTree = "<group>"; };
+		5DB4FD449588B015728C06B4 /* Pods_Slide_for_Reddit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_Reddit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1724440B35F1E523BF1226 /* Pods-Slide for RedditTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.release.xcconfig"; path = "Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig"; sourceTree = "<group>"; };
+		915ED518E6B9ED6C4BEFFD9D /* Pods_Slide_for_RedditTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEB9CCB25C7270CFCFA9A2F0 /* Pods-Slide for Reddit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.debug.xcconfig"; path = "Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig"; sourceTree = "<group>"; };
+		3276AFC3227D7D1F64803B12 /* Pods-Slide for RedditTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3A8827A415FF9E81FEE6ABA8 /* Pods-Slide for RedditUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.release.xcconfig"; sourceTree = "<group>"; };
+		446A11C03114FAC84A0B96D9 /* Pods-Slide for Reddit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig"; sourceTree = "<group>"; };
+		5A3C22D1F67B7A388DDF34E6 /* Pods-Slide for Reddit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.release.xcconfig"; path = "Pods/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.release.xcconfig"; sourceTree = "<group>"; };
+		733616027CB406046CABF77A /* Pods_Slide_for_RedditTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B12412FF705B2BEB9D3B245F /* Pods_Slide_for_Reddit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_Reddit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B422D24F252270AD00A168BB /* ic_garbage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@3x.png"; sourceTree = "<group>"; };
+		B422D250252270AD00A168BB /* ic_garbage@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@2x~ipad.png"; sourceTree = "<group>"; };
+		B422D251252270AD00A168BB /* ic_garbage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@2x.png"; sourceTree = "<group>"; };
 		B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotPostsWidget.swift; sourceTree = "<group>"; };
 		B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSubredditsWidget.swift; sourceTree = "<group>"; };
 		B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
@@ -1252,6 +1272,9 @@
 		BE4AB49C21BC4DAE001092C4 /* App Icons */ = {
 			isa = PBXGroup;
 			children = (
+				B422D251252270AD00A168BB /* ic_garbage@2x.png */,
+				B422D250252270AD00A168BB /* ic_garbage@2x~ipad.png */,
+				B422D24F252270AD00A168BB /* ic_garbage@3x.png */,
 				BE232697222DE433005CA83A /* ic_ghost@2x~ipad.png */,
 				BE232693222DE428005CA83A /* ic_ghost@2x.png */,
 				BE8833EE251FB66800131DEB /* ic_space@2x.png */,
@@ -1915,6 +1938,7 @@
 				BE0C4F9021BCBE83006C54FF /* ic_green@3x.png in Resources */,
 				BE232696222DE429005CA83A /* ic_ghost@3x.png in Resources */,
 				BE0C4F8821BCBE83006C54FF /* ic_tronteal@3x.png in Resources */,
+				B422D253252270AD00A168BB /* ic_garbage@2x~ipad.png in Resources */,
 				BE0C4F9221BCBE83006C54FF /* ic_purple@3x.png in Resources */,
 				BE232695222DE429005CA83A /* ic_ghost@2x.png in Resources */,
 				BE0C4F8521BCBE83006C54FF /* ic_retroapple@2x.png in Resources */,
@@ -1938,9 +1962,11 @@
 				BE0C4F9821BCBE83006C54FF /* ic_blue@3x.png in Resources */,
 				BE1DA5D82208AC80001C7DB4 /* ic_stars@2x~ipad.png in Resources */,
 				BEF6F5361E19B4A2002B03B6 /* adsources.txt in Resources */,
+				B422D252252270AD00A168BB /* ic_garbage@3x.png in Resources */,
 				BE8833F3251FB66900131DEB /* ic_space@3x.png in Resources */,
 				BE0C4F9521BCBE83006C54FF /* ic_purple@2x.png in Resources */,
 				BE1B57EB21DED23000FF6F98 /* ic_stars@3x.png in Resources */,
+				B422D254252270AD00A168BB /* ic_garbage@2x.png in Resources */,
 				BE1DA5E42208AC80001C7DB4 /* ic_mint@2x~ipad.png in Resources */,
 				BE0C4F8921BCBE83006C54FF /* ic_red@3x.png in Resources */,
 				BE8FCA0F1E0C46090063B8EF /* Assets.xcassets in Resources */,

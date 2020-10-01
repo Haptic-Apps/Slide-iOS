@@ -163,7 +163,29 @@ public class VCPresenter {
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
         if (feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro) {
             let viewController = SettingsPro()
-            presentModally(viewController: viewController, parentViewController, nil)
+            viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+            let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+            newParent.navigationBar.shadowImage = UIImage()
+            newParent.navigationBar.isTranslucent = false
+            newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+
+            newParent.navigationBar.shadowImage = UIImage()
+            newParent.navigationBar.isTranslucent = false
+
+            let button = UIButtonWithContext.init(type: .custom)
+            button.parentController = newParent
+            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
+            button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+            button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
+
+            let barButton = UIBarButtonItem.init(customView: button)
+            barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+            newParent.modalPresentationStyle = .pageSheet
+
+            viewController.navigationItem.rightBarButtonItems = [barButton]
+
+            parentViewController.present(newParent, animated: true, completion: nil)
             return true
         }
         return false
