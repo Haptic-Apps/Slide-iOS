@@ -183,6 +183,15 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
+            <key>garbage</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_garbage</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
 		</dict>
 	</dict>
 	<key>CFBundleIcons~ipad</key>
@@ -360,6 +369,15 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
+            <key>garbage</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>ic_garbage</string>
+                </array>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+            </dict>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
