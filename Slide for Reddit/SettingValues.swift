@@ -411,7 +411,7 @@ class SettingValues {
         case .ALWAYS:
             return true
         case .WIFI:
-            return NetworkMonitor.shared.online
+            return Constants.shared.isNetworkOnline
         case .NEVER:
             return false
         case .TAP:

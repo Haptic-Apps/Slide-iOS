@@ -19,6 +19,8 @@ final class FallbackNetworkMonitor {
     private var reachabilityFlags = SCNetworkReachabilityFlags()
     // Returns current network status
     public var isReachable: Bool {
+        print("Getting Bool")
+        print(reachabilityFlags.contains(.reachable))
         return reachabilityFlags.contains(.reachable)
     }
     // MARK: Methods

@@ -930,7 +930,7 @@ class CommentViewController: MediaViewController {
                     if !self.comments.isEmpty {
                         self.updateStringsSingle(temp)
                         self.doArrays()
-                        if NetworkMonitor.shared.online {
+                        if Constants.shared.isNetworkOnline {
                             self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
                         }
                     }
@@ -1232,7 +1232,7 @@ class CommentViewController: MediaViewController {
             if name.contains("t3_") {
                 name = name.replacingOccurrences(of: "t3_", with: "")
             }
-            if !NetworkMonitor.shared.online {
+            if !Constants.shared.isNetworkOnline {
                 self.loadOffline()
             } else {
                 self.retrieveCommentsFromPost(with: name, and: link)
@@ -1369,7 +1369,7 @@ class CommentViewController: MediaViewController {
         - selector: UIButton?
      */
     @objc func sortCommentsAction(_ selector: UIButton?) {
-        if NetworkMonitor.shared.online {
+        if Constants.shared.isNetworkOnline {
             let isDefault = UISwitch()
             isDefault.onTintColor = ColorUtil.accentColorForSub(sub: self.sub)
             let defaultLabel = UILabel()
@@ -1676,7 +1676,7 @@ class CommentViewController: MediaViewController {
         - sender: AnyObject
      */
     @objc func showOptionsMenu(_ sender: AnyObject) {
-        if NetworkMonitor.shared.online {
+        if Constants.shared.isNetworkOnline {
             let link = submission!
 
             let alertController = DragDownAlertMenu(title: "Comment actions", subtitle: self.submission?.title ?? "", icon: self.submission?.thumbnailUrl)

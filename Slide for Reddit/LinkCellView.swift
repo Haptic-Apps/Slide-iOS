@@ -1620,7 +1620,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             big = false
         }
 //        let checkWifi = LinkCellView.checkWiFi()
-        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online)
+        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline)
         if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf {
             big = false
@@ -1646,7 +1646,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             big = false
         }
         
-        if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online) {
+        if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) {
             big = false
             thumb = false
         }
@@ -2138,7 +2138,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.longBlocking = false
             return
         }
-        if !self.cancelled && NetworkMonitor.shared.online && parentViewController?.presentedViewController == nil {
+        if !self.cancelled && Constants.shared.isNetworkOnline && parentViewController?.presentedViewController == nil {
             if #available(iOS 10.0, *) {
                 HapticUtility.hapticActionStrong()
             } else if SettingValues.hapticFeedback {
@@ -3042,7 +3042,7 @@ class PostActionsManager {
     var submission: RSubmission
 
     private lazy var networkActionsArePossible: Bool = {
-        return AccountController.isLoggedIn && NetworkMonitor.shared.online
+        return AccountController.isLoggedIn && Constants.shared.isNetworkOnline
     }()
 
     var isSaveEnabled: Bool {

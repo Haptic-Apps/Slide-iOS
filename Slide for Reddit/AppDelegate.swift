@@ -134,8 +134,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Starts Monitoring of Network Connection based off iOS version.
         if #available(iOS 12.0, *) {
+            print("12.0+")
             NetworkMonitor.shared.startNetworkMonitoring()
         } else {
+            print("-12.0")
             FallbackNetworkMonitor.shared.startFallbackNetworkMonitoring()
         }
         if #available(iOS 13.0, *) { return true } else {
@@ -1099,7 +1101,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     func didEnterBackground() {
         totalBackground = true
-        NetworkMonitor.shared.stopNetworkMonitoring()
+        if #available(iOS 12.0, *) {
+            NetworkMonitor.shared.stopNetworkMonitoring()
+        } else {
+            print("Not 12.0")
+        }
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)

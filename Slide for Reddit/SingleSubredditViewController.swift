@@ -343,7 +343,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             oldCount = dataSource.content.count
         }
 
-        if toolbarEnabled && NetworkMonitor.shared.online {
+        if toolbarEnabled && Constants.shared.isNetworkOnline {
             // showMenuNav()
             self.navigationController?.setToolbarHidden(false, animated: false)
             self.isToolbarHidden = false
@@ -605,7 +605,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             })
         }
 
-        if single && NetworkMonitor.shared.online {
+        if single && Constants.shared.isNetworkOnline {
             self.navigationController?.setToolbarHidden(false, animated: true)
         } else if !disableBottom {
             /*UIView.animate(withDuration: 0.25) {
@@ -698,7 +698,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fabHelper = nil
         }
         
-        if NetworkMonitor.shared.online && !SettingValues.hiddenFAB {
+        if Constants.shared.isNetworkOnline && !SettingValues.hiddenFAB {
             self.fab = ExpandedHitTestButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
             self.fab!.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
@@ -840,7 +840,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         }
                         if let styles = data["style"] as? [String: Any] {
                             if let headerUrl = styles["bannerBackgroundImage"] as? String {
-                                if !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online && SettingValues.dataSavingEnabled) {
+                                if !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline && SettingValues.dataSavingEnabled) {
                                     self.headerImage = URL(string: headerUrl.unescapeHTML)
                                 }
                             }
@@ -970,7 +970,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             toolbarItems = [searchB, flexButton, moreB]
         }
 
-        if single && NetworkMonitor.shared.online {
+        if single && Constants.shared.isNetworkOnline {
             sortButton = UIButton.init(type: .custom)
             sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -1092,7 +1092,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 } catch {
                 }
             }
-        } else if !NetworkMonitor.shared.online && single && !dataSource.loaded {
+        } else if !Constants.shared.isNetworkOnline && single && !dataSource.loaded {
             title = sub
             //hideMenuNav()
             dataSource.getData(reload: true)
@@ -1479,7 +1479,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
-        if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online) && SettingValues.dataSavingEnabled {
+        if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.dataSavingEnabled {
             for submission in values {
                 var thumb = submission.thumbnail
                 var big = submission.banner
@@ -1513,7 +1513,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     big = false
                 }
 
-                let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online)
+                let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline)
                 if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                         || SettingValues.noImages && submission.isSelf {
                     big = false
@@ -1614,7 +1614,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = true
         }
         
-        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online) && SettingValues.dataSavingEnabled {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }
@@ -1814,7 +1814,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = false
         }
         
-        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online) && SettingValues.dataSavingEnabled {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }

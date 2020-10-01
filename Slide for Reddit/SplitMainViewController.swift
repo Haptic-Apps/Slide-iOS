@@ -153,7 +153,7 @@ class SplitMainViewController: MainViewController {
         for view in toolbar?.subviews ?? [UIView]() {
             view.removeFromSuperview()
         }
-        if !NetworkMonitor.shared.online {
+        if !Constants.shared.isNetworkOnline {
             toolbarItems = [settingsB, accountB, flexButton, offlineB]
         }
         didUpdate()
@@ -358,7 +358,7 @@ class SplitMainViewController: MainViewController {
         doReAppearToolbar()
 
         ReadLater.delegate = self
-        if !NetworkMonitor.shared.online {
+        if !Constants.shared.isNetworkOnline {
             let offlineVC = OfflineOverviewViewController(subs: finalSubs)
             VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
         }
