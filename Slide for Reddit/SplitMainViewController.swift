@@ -540,16 +540,23 @@ class SplitMainViewController: MainViewController {
 
         MainViewController.isOffline = false
         var subs = [UIMutableApplicationShortcutItem]()
-        for subname in finalSubs {
-            if subs.count < 2 && !subname.contains("/") {
-                subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
+        if !finalSubs.isEmpty {
+            for subname in finalSubs {
+                if subs.count < 2 && !subname.contains("/") {
+                    subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
+                } else if subs.count > 2 {
+                    break
+                }
             }
         }
         
         if #available(iOS 14, *) {
-            let faveSubs = Array(finalSubs[0..<4])
             let suite = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-            suite?.setValue(faveSubs, forKey: "favorites")
+            
+            if !finalSubs.isEmpty && finalSubs.count > 4 {
+                let faveSubs = Array(finalSubs[0..<4])
+                suite?.setValue(faveSubs, forKey: "favorites")
+            }
             suite?.synchronize()
 
             DispatchQueue.global().async {

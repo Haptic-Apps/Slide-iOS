@@ -167,9 +167,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func checkSubs() {
+        let currentAccount = AccountController.currentName
         if let session = (UIApplication.shared.delegate as! AppDelegate).session {
             Subscriptions.getSubscriptionsFully(session: session, completion: { (newSubs, newMultis) in
-                if AccountController.isLoggedIn {
+                if AccountController.isLoggedIn && currentAccount == AccountController.currentName { //Ensure the user did not switch accounts before applying subs
                     var allSubs = [String]()
                     allSubs.append(contentsOf: newSubs.map { $0.displayName })
                     allSubs.append(contentsOf: newMultis.map { "/m/" + $0.displayName })
@@ -181,7 +182,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                             finalSubs.append(sub)
                         }
                     }
-                    Subscriptions.set(name: AccountController.currentName, subs: finalSubs, completion: {
+                    Subscriptions.set(name: currentAccount, subs: finalSubs, completion: {
                     })
                 }
             })
@@ -580,6 +581,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         didUpdate()
     }
 
+    @objc public func handleCloseNav(controller: UIButtonWithContext) {
+        controller.parentController?.dismiss(animated: true, completion: nil)
+    }
+
     func checkForUpdate() {
         if !SettingValues.doneVersion() {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -598,7 +603,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
                 button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
                 button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
-                button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
+                button.addTarget(self, action: #selector(self.handleCloseNav(controller:)), for: .touchUpInside)
 
                 let barButton = UIBarButtonItem.init(customView: button)
                 barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)

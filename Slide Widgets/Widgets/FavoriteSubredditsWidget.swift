@@ -29,6 +29,7 @@ struct Favorite_Subreddits: Widget {
         }
         .configurationDisplayName("Subreddit")
         .description("Quick links to your favorite Subreddit.")
+        .supportedFamilies([WidgetFamily.systemMedium, WidgetFamily.systemLarge])
     }
 }
 
@@ -93,8 +94,6 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
-                .previewContext(WidgetPreviewContext(family: .systemSmall))
             Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
             Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))

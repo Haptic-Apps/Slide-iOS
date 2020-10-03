@@ -11,9 +11,9 @@
 	<key>INIntentDefinitionSystemVersion</key>
 	<string>19G46c</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>12A7208</string>
+	<string>12A7300</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>12.0</string>
+	<string>12.0.1</string>
 	<key>INIntents</key>
 	<array>
 		<dict>

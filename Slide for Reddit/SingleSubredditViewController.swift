@@ -26,7 +26,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var isScrollingDown = true
     var emptyStateView = EmptyStateView()
     var numberFiltered = 0
-    
+    var setOffset = CGFloat.zero
+
     var lastScrollDirectionWasDown = false
     var fullWidthBackGestureRecognizer: UIGestureRecognizer!
     var cellGestureRecognizer: UIPanGestureRecognizer!
@@ -254,7 +255,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewWillAppear(animated)
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
-        
+
         if !(navigationController is TapBehindModalViewController) && inHeadView == nil {
             inHeadView = UIView().then {
                 $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
@@ -336,7 +337,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //menuNav?.configureToolbarSwipe()
-        
+        refreshControl.setValue(100, forKey: "_snappingHeight")
+
         if dataSource.loaded && dataSource.content.count > oldCount {
             self.tableView.reloadData()
             oldCount = dataSource.content.count
@@ -512,20 +514,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
 
-    var canRefresh = true
-    var setOffset = CGFloat.zero
-
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y < setOffset - 75 - self.headerHeight() && dataSource.loaded && !dataSource.loading {
-            if canRefresh && !self.refreshControl.isRefreshing {
-                self.canRefresh = false
-                self.refreshControl.beginRefreshing()
-                self.drefresh(self.refreshControl)
-                HapticUtility.hapticActionStrong()
-            }
-        } else if scrollView.contentOffset.y >= setOffset {
-            self.canRefresh = true
-        }
 
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
@@ -894,9 +883,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         refreshControl.tintColor = ColorUtil.theme.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
+
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         tableView.alwaysBounceVertical = true
-        
+
         self.automaticallyAdjustsScrollViewInsets = false
 
         // TODO: - Can just use .self instead of .classForCoder()
@@ -1543,7 +1533,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
     
     static func sizeWith(_ submission: RSubmission, _ width: CGFloat, _ isCollection: Bool, _ isGallery: Bool) -> CGSize {
-        let itemWidth = width
+        var itemWidth = width
+        
+        if itemWidth < 10 { //Not a valid width
+            itemWidth = UIScreen.main.bounds.width
+        }
         var thumb = submission.thumbnail
         var big = submission.banner
         
@@ -1735,7 +1729,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title side padding
             }
         }
-        
+                
         let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
         let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))!
         let textSize = layout.textBoundingSize
