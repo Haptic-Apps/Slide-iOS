@@ -553,9 +553,8 @@ class SplitMainViewController: MainViewController {
         if #available(iOS 14, *) {
             let suite = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
             
-            if !finalSubs.isEmpty && finalSubs.count > 4 {
-                let faveSubs = Array(finalSubs[0..<4])
-                suite?.setValue(faveSubs, forKey: "favorites")
+            if !finalSubs.isEmpty {
+                suite?.setValue(finalSubs, forKey: "subscriptions")
             }
             suite?.synchronize()
 

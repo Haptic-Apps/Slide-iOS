@@ -86,10 +86,10 @@ struct SubredditsProvider: IntentTimelineProvider {
         guard let widgetID = configuration.widgetconfig?.identifier, let widgetForConfig = TimelineSubredditProvider.all().first(where: { widget in
             widget.id == widgetID
         })
-      else {
-        return TimelineSubredditProvider.all()[0]
-      }
-      return widgetForConfig
+        else {
+            return TimelineSubredditProvider.all()[0]
+        }
+        return widgetForConfig
     }
 
 }
@@ -177,9 +177,10 @@ struct HotPostsProvider: IntentTimelineProvider {
         let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: currentDate)!
         let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         var imageData: Data?
-        if let data = shared?.data(forKey: "raw" + (configuration.subreddit?.lowercased() ?? "")) {
+        let subreddit = lookupWidgetDetails(for: configuration).name
+        if let data = shared?.data(forKey: "raw" + subreddit) {
             imageData = data
-        } else if let url = URL(string: shared?.string(forKey: configuration.subreddit?.lowercased() ?? "") ?? "") {
+        } else if let url = URL(string: shared?.string(forKey: subreddit) ?? "") {
             do {
                 imageData = try Data(contentsOf: url)
             } catch {
@@ -193,19 +194,29 @@ struct HotPostsProvider: IntentTimelineProvider {
             }
         }
 
-        SubredditLoader.fetch(subreddit: configuration.subreddit ?? "all") { result in
+        SubredditLoader.fetch(subreddit: subreddit) { result in
             let subredditPosts: SubredditPosts
             if case .success(let subreddit) = result {
                 subredditPosts = subreddit
             } else {
-                subredditPosts = SubredditPosts(date: Date(), subreddit: configuration.subreddit ?? "all", posts: [])
+                subredditPosts = SubredditPosts(date: Date(), subreddit: subreddit, posts: [])
             }
-            let entry = SubredditWithPosts(date: Date(), subreddit: configuration.subreddit ?? "all", posts: subredditPosts, imageData: imageData ?? Data())
+            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, posts: subredditPosts, imageData: imageData ?? Data())
             let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
             completion(timeline)
         }
     }
     
+    private func lookupWidgetDetails(for configuration: SingleSubredditIntent) -> SingleSubredditDetails {
+        guard let widgetID = configuration.subreddit?.identifier, let widgetForConfig = SingleSubredditProvider.all().first(where: { widget in
+            widget.id == widgetID
+        })
+      else {
+        return SingleSubredditProvider.all()[0]
+      }
+      return widgetForConfig
+    }
+
     func getPreviewData() -> Data {
         var imageData: Data?
         let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")

@@ -85,6 +85,7 @@
 		BE0334B325294B8400B8C6B6 /* WidgetConfigIntent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BE0334CF25294C0700B8C6B6 /* TimelineSubreddit.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */; };
 		BE03351225294CEE00B8C6B6 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */; };
+		BE03356725295AB500B8C6B6 /* SettingsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE03356625295AB500B8C6B6 /* SettingsWidget.swift */; };
 		BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0958DE218A08620076966C /* SettingsViewMode.swift */; };
 		BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */; };
 		BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */; };
@@ -545,6 +546,8 @@
 		BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetConfigIntent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
 		BE0334B025294B8400B8C6B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BE03355D2529594B00B8C6B6 /* WidgetConfigIntent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetConfigIntent.entitlements; sourceTree = "<group>"; };
+		BE03356625295AB500B8C6B6 /* SettingsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWidget.swift; sourceTree = "<group>"; };
 		BE0958DE218A08620076966C /* SettingsViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewMode.swift; sourceTree = "<group>"; };
 		BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_lightblue@2x.png"; sourceTree = "<group>"; };
 		BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_red@2x.png"; sourceTree = "<group>"; };
@@ -1056,6 +1059,7 @@
 		BE0334AD25294B8400B8C6B6 /* WidgetConfigIntent */ = {
 			isa = PBXGroup;
 			children = (
+				BE03355D2529594B00B8C6B6 /* WidgetConfigIntent.entitlements */,
 				BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */,
 				BE0334B025294B8400B8C6B6 /* Info.plist */,
 			);
@@ -1169,6 +1173,7 @@
 				BEBE0C6E222199DA0044FF55 /* IAPHandlerTip.swift */,
 				BEBE0C70222330010044FF55 /* SettingsPostMenu.swift */,
 				BED3B31824CE278B00B9A664 /* SettingsShortcutMenu.swift */,
+				BE03356625295AB500B8C6B6 /* SettingsWidget.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -2391,6 +2396,7 @@
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
 				BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */,
+				BE03356725295AB500B8C6B6 /* SettingsWidget.swift in Sources */,
 				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,
 				BE9BFF1B25182D8700C9F7EC /* OnboardingPageViewController+Pages.swift in Sources */,
 				B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */,
@@ -2519,6 +2525,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = WidgetConfigIntent/WidgetConfigIntent.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -2551,6 +2558,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = WidgetConfigIntent/WidgetConfigIntent.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;

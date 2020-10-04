@@ -134,7 +134,7 @@
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>
-			<integer>7</integer>
+			<integer>8</integer>
 			<key>INIntentManagedParameterCombinations</key>
 			<dict>
 				<key>subreddit</key>
@@ -158,19 +158,12 @@
 					<string>eYPzfM</string>
 					<key>INIntentParameterDisplayPriority</key>
 					<integer>1</integer>
-					<key>INIntentParameterMetadata</key>
-					<dict>
-						<key>INIntentParameterMetadataCapitalization</key>
-						<string>None</string>
-						<key>INIntentParameterMetadataDefaultValue</key>
-						<string>all</string>
-						<key>INIntentParameterMetadataDefaultValueID</key>
-						<string>9L9YgK</string>
-						<key>INIntentParameterMetadataDisableAutocorrect</key>
-						<true/>
-					</dict>
 					<key>INIntentParameterName</key>
 					<string>subreddit</string>
+					<key>INIntentParameterObjectType</key>
+					<string>SingleSubredditINO</string>
+					<key>INIntentParameterObjectTypeNamespace</key>
+					<string>eiy3jD</string>
 					<key>INIntentParameterPromptDialogs</key>
 					<array>
 						<dict>
@@ -186,10 +179,12 @@
 							<string>Primary</string>
 						</dict>
 					</array>
+					<key>INIntentParameterSupportsDynamicEnumeration</key>
+					<true/>
 					<key>INIntentParameterTag</key>
-					<integer>1</integer>
+					<integer>8</integer>
 					<key>INIntentParameterType</key>
-					<string>String</string>
+					<string>Object</string>
 				</dict>
 			</array>
 			<key>INIntentResponse</key>
@@ -229,6 +224,69 @@
 			<integer>99</integer>
 			<key>INTypeName</key>
 			<string>TimelineSubredditINO</string>
+			<key>INTypeProperties</key>
+			<array>
+				<dict>
+					<key>INTypePropertyDefault</key>
+					<true/>
+					<key>INTypePropertyDisplayPriority</key>
+					<integer>1</integer>
+					<key>INTypePropertyName</key>
+					<string>identifier</string>
+					<key>INTypePropertyTag</key>
+					<integer>1</integer>
+					<key>INTypePropertyType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INTypePropertyDefault</key>
+					<true/>
+					<key>INTypePropertyDisplayPriority</key>
+					<integer>2</integer>
+					<key>INTypePropertyName</key>
+					<string>displayString</string>
+					<key>INTypePropertyTag</key>
+					<integer>2</integer>
+					<key>INTypePropertyType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INTypePropertyDefault</key>
+					<true/>
+					<key>INTypePropertyDisplayPriority</key>
+					<integer>3</integer>
+					<key>INTypePropertyName</key>
+					<string>pronunciationHint</string>
+					<key>INTypePropertyTag</key>
+					<integer>3</integer>
+					<key>INTypePropertyType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INTypePropertyDefault</key>
+					<true/>
+					<key>INTypePropertyDisplayPriority</key>
+					<integer>4</integer>
+					<key>INTypePropertyName</key>
+					<string>alternativeSpeakableMatches</string>
+					<key>INTypePropertySupportsMultipleValues</key>
+					<true/>
+					<key>INTypePropertyTag</key>
+					<integer>4</integer>
+					<key>INTypePropertyType</key>
+					<string>SpeakableString</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>INTypeDisplayName</key>
+			<string>Single Subreddit INO</string>
+			<key>INTypeDisplayNameID</key>
+			<string>uGMQGp</string>
+			<key>INTypeLastPropertyTag</key>
+			<integer>100</integer>
+			<key>INTypeName</key>
+			<string>SingleSubredditINO</string>
 			<key>INTypeProperties</key>
 			<array>
 				<dict>
