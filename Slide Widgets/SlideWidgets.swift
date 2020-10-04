@@ -75,12 +75,23 @@ struct SubredditsProvider: IntentTimelineProvider {
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         let currentDate = Date()
         let entryDate = Calendar.current.date(byAdding: .hour, value: 0, to: currentDate)!
-        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-        let subreddits = [configuration.sub1 ?? "all", configuration.sub2 ?? "frontpage", configuration.sub3 ?? "popular", configuration.sub4 ?? "slide_ios"]
+
+        let subreddits = lookupWidgetDetails(for: configuration).subs
         let entry = SubredditEntry(date: entryDate, subreddits: subreddits, imageData: getPlaceholderData(subreddits))
         let timeline = Timeline(entries: [entry], policy: .atEnd)
         completion(timeline)
     }
+    
+    private func lookupWidgetDetails(for configuration: TimelineSubredditIntent) -> TimelineSubredditDetails {
+        guard let widgetID = configuration.widgetconfig?.identifier, let widgetForConfig = TimelineSubredditProvider.all().first(where: { widget in
+            widget.id == widgetID
+        })
+      else {
+        return TimelineSubredditProvider.all()[0]
+      }
+      return widgetForConfig
+    }
+
 }
 
 struct SubredditEntry: TimelineEntry {
