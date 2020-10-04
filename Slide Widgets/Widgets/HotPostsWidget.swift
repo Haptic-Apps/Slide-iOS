@@ -33,7 +33,7 @@ struct Hot_PostsEntryView: View {
         if entry.subreddit == "redacted" {
             if widgetFamily == .systemSmall {
                 VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: true).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: true, fontColor: entry.colorful ? .white : Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
                     Spacer()
                 }.frame(maxWidth: .infinity, maxHeight: .infinity).background(
                     ZStack(alignment: .bottomLeading) {
@@ -42,7 +42,7 @@ struct Hot_PostsEntryView: View {
                             HStack {
                                 Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(.white).opacity(0.6).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
                             }
-                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).redacted(reason: .placeholder).foregroundColor(.white)
+                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).redacted(reason: .placeholder).foregroundColor(entry.colorful ? Color.white : Color(getSchemeFontColor()))
                         }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4)).widgetURL(URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!)
                     }
                     .background(
@@ -52,34 +52,34 @@ struct Hot_PostsEntryView: View {
                         .cornerRadius(CGFloat(5))
                         .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
                         .background(
-                            Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor()))
+                            Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()))
                                 .opacity(0.8))
                 )
             } else {
                 VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: true).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: true, fontColor: Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
                     if !entry.posts.posts.isEmpty {
                         ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
                             PostView(post: entry.posts.posts[post], redacted: true)
                         }
                     }
                     Spacer()
-                }.frame(maxHeight: .infinity).background(Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() )
+                }.frame(maxHeight: .infinity).background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor() )
                                                             .opacity(0.8)).redacted(reason: .placeholder)
             }
         } else {
             if widgetFamily == .systemSmall {
                 VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: entry.colorful ? .white : Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
                     Spacer()
                 }.frame(maxWidth: .infinity, maxHeight: .infinity).background(
                     ZStack(alignment: .bottomLeading) {
                         Color.clear
                         VStack(alignment: .leading) {
                             HStack {
-                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(.white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
+                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(entry.colorful ? Color.white : Color(getSchemeFontColor())).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
                             }
-                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).foregroundColor(.white)
+                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).foregroundColor(entry.colorful ? Color.white : Color(getSchemeFontColor()))
                         }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4)).widgetURL(URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!)
                     }
                     .background(
@@ -89,19 +89,19 @@ struct Hot_PostsEntryView: View {
                         .cornerRadius(CGFloat(5))
                         .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
                         .background(
-                            Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor()))
+                            Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()))
                                 .opacity(0.8))
                 )
             } else {
                 VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0)).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)"))
+                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0)).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)"))
                     if !entry.posts.posts.isEmpty {
                         ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
                             PostView(post: entry.posts.posts[post], redacted: false)
                         }
                     }
                     Spacer()
-                }.frame(maxHeight: .infinity).background(Color(UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() )
+                }.frame(maxHeight: .infinity).background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor() )
                                                             .opacity(0.8))
             }
         }
@@ -110,13 +110,17 @@ struct Hot_PostsEntryView: View {
     func getSchemeColor() -> UIColor {
         return colorScheme == .light ? .white : .black
     }
+    
+    func getSchemeFontColor() -> UIColor {
+        return colorScheme == .light ? .black : .white
+    }
 }
 
 // MARK: SwiftUI Previews
 
 struct Hot_Posts_Previews: PreviewProvider {
     static var previews: some View {
-        Hot_PostsEntryView(entry: SubredditWithPosts(date: Date(), subreddit: "redacted", posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData()))
+        Hot_PostsEntryView(entry: SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData()))
             .previewContext(WidgetPreviewContext(family: .systemMedium))
     }
 
@@ -192,6 +196,7 @@ struct SubredditViewHorizontal: View {
     var imageData: Data
     var title: String
     var redacted: Bool
+    var fontColor: Color
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
@@ -204,7 +209,7 @@ struct SubredditViewHorizontal: View {
                     .frame(width: 30, height: 30, alignment: .center)
                     .clipShape(Circle())
                     .clipped().redacted(reason: .placeholder)
-                Text(self.title).font(.headline).bold().foregroundColor(.white).opacity(0.8).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
+                Text(self.title).font(.headline).bold().foregroundColor(fontColor).opacity(0.8).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
                 Spacer()
             } else {
                 Image(uiImage: UIImage(data: imageData) ?? UIImage())
@@ -213,7 +218,7 @@ struct SubredditViewHorizontal: View {
                     .frame(width: 30, height: 30, alignment: .center)
                     .clipShape(Circle())
                     .clipped()
-                Text(self.title).font(.headline).bold().foregroundColor(.white).opacity(0.8).alignmentGuide(.leading) { d in d[.leading] }
+                Text(self.title).font(.headline).bold().foregroundColor(fontColor).opacity(0.8).alignmentGuide(.leading) { d in d[.leading] }
                 Spacer()
             }
         }.padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0)).frame(maxWidth: .infinity)

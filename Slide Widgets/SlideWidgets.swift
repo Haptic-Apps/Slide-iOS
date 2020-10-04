@@ -159,11 +159,11 @@ struct HotPostsProvider: IntentTimelineProvider {
 
     func placeholder(in context: Context) -> SubredditWithPosts {
         
-        SubredditWithPosts(date: Date(), subreddit: "redacted", posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
+        SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
     }
 
     func getSnapshot(for configuration: SingleSubredditIntent, in context: Context, completion: @escaping (SubredditWithPosts) -> Void) {
-        let entry = SubredditWithPosts(date: Date(), subreddit: "redacted", posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
+        let entry = SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
         completion(entry)
     }
     
@@ -201,7 +201,7 @@ struct HotPostsProvider: IntentTimelineProvider {
             } else {
                 subredditPosts = SubredditPosts(date: Date(), subreddit: subreddit, posts: [])
             }
-            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, posts: subredditPosts, imageData: imageData ?? Data())
+            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, colorful: configuration.colorful?.boolValue ?? true, posts: subredditPosts, imageData: imageData ?? Data())
             let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
             completion(timeline)
         }
@@ -281,6 +281,7 @@ struct SubredditPosts {
 struct SubredditWithPosts: TimelineEntry {
     let date: Date
     let subreddit: String
+    let colorful: Bool
     let posts: SubredditPosts
     let imageData: Data
 }

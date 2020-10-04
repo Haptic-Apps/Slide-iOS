@@ -195,12 +195,12 @@ private struct SmallWidgetView: View {
 
 private struct MediumWidgetView: View {
     var entry: SubredditsProvider.Entry
-
+    @Environment(\.widgetFamily) var widgetFamily
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ForEach(entry.subreddits.chunked(into: 2), id: \.self) { subreddits in
+            ForEach(getSubs().chunked(into: 2), id: \.self) { subreddits in
                 HStack(alignment: .top, spacing: 8) {
                     ForEach(subreddits, id: \.self) { key in
                         SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
@@ -211,7 +211,14 @@ private struct MediumWidgetView: View {
         }
         .padding(8)
     }
-
+    
+    func getSubs() -> [String] {
+        var subs = entry.subreddits
+        if widgetFamily != .systemLarge {
+            subs = Array(subs[0..<min(subs.count, 4)])
+        }
+        return subs
+    }
 }
 
 // MARK: - Component Views

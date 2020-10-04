@@ -11,6 +11,9 @@ import MKColorPicker
 import RLBAlertsPickers
 import SDCAlertView
 import UIKit
+#if canImport(WidgetKit)
+import WidgetKit
+#endif
 
 class SettingsWidget: BubbleSettingTableViewController {
     
@@ -82,6 +85,9 @@ class SettingsWidget: BubbleSettingTableViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        if #available(iOS 14.0, *) {
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
